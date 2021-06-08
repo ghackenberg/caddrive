@@ -4,7 +4,6 @@ import { Scene, PerspectiveCamera, WebGLRenderer, PointLight, AmbientLight, sRGB
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { AuditAPI, ProductAPI, UserAPI } from '../../api'
 import { Header } from '../snippets/Header'
 
 export class Demo extends React.Component {
@@ -92,10 +91,6 @@ export class Demo extends React.Component {
         window.addEventListener('resize', this.resize)
         // Resize
         setTimeout(this.resize, 100)
-        // API
-        console.log(await UserAPI.findAll())
-        console.log(await ProductAPI.findAll())
-        console.log(await AuditAPI.findAll())
     }
     
     componentWillUnmount() {

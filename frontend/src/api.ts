@@ -3,18 +3,18 @@ import { Audit, Product, User } from 'fhooe-audit-platform-common'
 
 export class UserAPI {
     static async findAll() {
-        return (await axios.get<User>('/api/users')).data
+        return (await axios.get<User[]>('/api/users')).data
     }
 }
 
 export class ProductAPI {
     static async findAll() {
-        return (await axios.get<Product>('/api/products')).data
+        return (await axios.get<Product[]>('/api/products')).data
     }
 }
 
 export class AuditAPI {
     static async findAll() {
-        return (await axios.get<Audit>('/api/audits')).data
+        return (await axios.get<Audit[]>('/api/audits')).data
     }
 }
