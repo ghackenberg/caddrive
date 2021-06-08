@@ -1,0 +1,16 @@
+{
+    "name": "fhooe-audit-platform",
+    "version": "1.0.0",
+    "description": "TODO",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@fh-wels.at"
+    },
+    "private": "true",
+    "scripts": {
+        "start": ""
+    },
+    "devDependencies": {
+        "concurrently": "^6.2.0"
+    }
+}

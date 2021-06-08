@@ -1,0 +1,19 @@
+{
+    "name": "fhooe-audit-platform-common",
+    "version": "1.0.0",
+    "description": "TODO",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@fh-wels.at"
+    },
+    "private": "true",
+    "types": "bin/main.d.ts",
+    "main": "bin/main.js",
+    "scripts": {
+        "start": "",
+        "compile": "tsc"
+    },
+    "devDependencies": {
+        "typescript": "^4.3.2"
+    }
+}
