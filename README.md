@@ -1,19 +1,32 @@
 # FH OÖ Audit Platform
 
-TODO
+## Screenshots
+
+![Screenshot](./screenshot.png)
 
 ## Scripts
 
-Start production.
+Install dependencies.
 
 ```
-npm run start
+cd <root> && npm install
+cd <root>/common && npm install
+cd <root>/backend && npm install
+cd <root>/worker && npm install
+cd <root>/frontend && npm install
+cd <root>/gateway && npm install
 ```
 
 Start development.
 
 ```
-npm run start-dev
+cd <root> && npm run start-dev
+```
+
+Start production.
+
+```
+cd <root> && npm run start
 ```
 
 ## Diagrams
