@@ -6,25 +6,39 @@
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
+        "directory": "frontend"
+    },
     "private": "true",
     "scripts": {
-        "start": "",
+        "start": "npm run compile && npm run bundle && npm run serve",
+        "start-dev": "npm run compile && concurrently -c gray,gray,gray \"npm:compile-dev\" \"npm:bundle-dev\" \"npm:serve-dev\"",
         "compile": "tsc",
-        "bundle": "browserify bin/main.js -o public/frontend.js"
+        "compile-dev": "tsc -w",
+        "bundle": "browserify bin/main.js -o public/frontend.js -v",
+        "bundle-dev": "watchify bin/main.js -o public/frontend.js -v",
+        "serve": "http-server -p 3003",
+        "serve-dev": "http-server -p 3003"
     },
     "dependencies": {
         "fhooe-audit-platform-common": "file:../common",
+        "http-server": "^0.12.3",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
+        "react-helmet": "^6.1.0",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0"
     },
     "devDependencies": {
         "@types/react": "^17.0.9",
         "@types/react-dom": "^17.0.6",
+        "@types/react-helmet": "^6.1.1",
         "@types/react-router": "^5.1.15",
         "@types/react-router-dom": "^5.1.7",
         "browserify": "^17.0.0",
+        "concurrently": "^6.2.0",
         "typescript": "^4.3.2",
         "watchify": "^4.0.0"
     }

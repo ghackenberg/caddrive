@@ -6,17 +6,29 @@
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
+        "directory": "worker"
+    },
     "private": "true",
     "scripts": {
-        "start": "",
+        "start": "npm run compile && npm run bundle && npm run serve",
+        "start-dev": "npm run compile && concurrently -c gray,gray,gray \"npm:compile-dev\" \"npm:bundle-dev\" \"npm:serve-dev\"",
         "compile": "tsc",
-        "bundle": "browserify bin/main.js -o public/worker.js"
+        "compile-dev": "tsc -w",
+        "bundle": "browserify bin/main.js -o public/worker.js -v",
+        "bundle-dev": "watchify bin/main.js -o public/worker.js -v",
+        "serve": "http-server -p 3002",
+        "serve-dev": "http-server -p 3002"
     },
     "dependencies": {
-        "fhooe-audit-platform-common": "file:../common"
+        "fhooe-audit-platform-common": "file:../common",
+        "http-server": "^0.12.3"
     },
     "devDependencies": {
         "browserify": "^17.0.0",
+        "concurrently": "^6.2.0",
         "typescript": "^4.3.2",
         "watchify": "^4.0.0"
     }

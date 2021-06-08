@@ -6,14 +6,22 @@
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
+        "directory": "common"
+    },
     "private": "true",
     "types": "bin/main.d.ts",
     "main": "bin/main.js",
     "scripts": {
-        "start": "",
-        "compile": "tsc"
+        "compile": "tsc",
+        "compile-dev": "tsc -w"
     },
     "devDependencies": {
         "typescript": "^4.3.2"
+    },
+    "dependencies": {
+        "@nestjs/swagger": "^4.8.0"
     }
 }

@@ -6,15 +6,33 @@
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
+        "directory": "backend"
+    },
     "private": "true",
     "scripts": {
-        "start": "",
-        "compile": "tsc"
+        "start": "npm run compile && npm run serve",
+        "start-dev": "npm run compile && concurrently -c gray,gray \"npm:compile-dev\" \"npm:serve-dev\"",
+        "compile": "tsc",
+        "compile-dev": "tsc -w",
+        "serve": "node bin/main.js",
+        "serve-dev": "nodemon bin/main.js"
     },
     "dependencies": {
-        "fhooe-audit-platform-common": "file:../common"
+        "@nestjs/common": "^7.6.17",
+        "@nestjs/core": "^7.6.17",
+        "@nestjs/platform-express": "^7.6.17",
+        "@nestjs/swagger": "^4.8.0",
+        "fhooe-audit-platform-common": "file:../common",
+        "reflect-metadata": "^0.1.13",
+        "rxjs": "^6.6.7",
+        "swagger-ui-express": "^4.1.6"
     },
     "devDependencies": {
+        "concurrently": "^6.2.0",
+        "nodemon": "^2.0.7",
         "typescript": "^4.3.2"
     }
 }

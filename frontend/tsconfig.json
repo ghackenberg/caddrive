@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
         "rootDir": "src",
-        "outDir": "bin"
+        "outDir": "bin",
+        "lib": ["ES2015", "DOM"],
+        "jsx": "react",
+        "listEmittedFiles": true,
+        "preserveWatchOutput": true
     }
 }

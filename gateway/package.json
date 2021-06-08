@@ -6,15 +6,29 @@
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
+        "directory": "gateway"
+    },
     "private": "true",
     "scripts": {
-        "start": "",
-        "compile": "tsc"
+        "start": "npm run compile && npm run serve",
+        "start-dev": "npm run compile && concurrently -c gray,gray \"npm:compile-dev\" \"npm:serve-dev\"",
+        "compile": "tsc",
+        "compile-dev": "tsc -w",
+        "serve": "node bin/main.js",
+        "serve-dev": "nodemon bin/main.js"
     },
     "dependencies": {
-
+        "express": "^4.17.1",
+        "express-http-proxy": "^1.6.2"
     },
     "devDependencies": {
+        "@types/express": "^4.17.12",
+        "@types/express-http-proxy": "^1.6.1",
+        "concurrently": "^6.2.0",
+        "nodemon": "^2.0.7",
         "typescript": "^4.3.2"
     }
 }
