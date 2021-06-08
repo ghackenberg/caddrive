@@ -1,0 +1,30 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial;
+    line-height: 300%;
+}
+header {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3em;
+    padding-left: 1em;
+    padding-right: 1em;
+    overflow: hidden;
+    font-weight: bold;
+    background-color: tomato;
+    background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.2));
+    box-shadow: 0 0 1em rgba(0,0,0,0.5);
+    color: white;
+}
+main {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
