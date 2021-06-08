@@ -28,9 +28,11 @@
         "fhooe-audit-platform-common": "file:../common",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^6.6.7",
+        "shortid": "^2.2.16",
         "swagger-ui-express": "^4.1.6"
     },
     "devDependencies": {
+        "@types/shortid": "^0.0.29",
         "concurrently": "^6.2.0",
         "nodemon": "^2.0.7",
         "typescript": "^4.3.2"
