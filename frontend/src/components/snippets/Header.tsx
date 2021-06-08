@@ -4,7 +4,7 @@ export class Header extends React.Component {
     render() {
         return (
             <header>
-                FH OÖ Audit Platform
+                FH OÖ Product Audit Platform
             </header>
         )
     }

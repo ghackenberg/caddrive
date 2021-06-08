@@ -11,6 +11,9 @@ export class UserList extends React.Component<{list: User[]}> {
                         <Link to={`/users/${user.id}`}>User <em>{user.id}</em></Link>
                     </li>
                 )}
+                <li style={{backgroundImage: 'url(/images/create.png'}}>
+                    <Link to="/users/new">User</Link>
+                </li>
             </ul>
         )
     }

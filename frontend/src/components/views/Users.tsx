@@ -1,5 +1,6 @@
 import { User } from 'fhooe-audit-platform-common'
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import { UserAPI } from '../../api'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
@@ -23,7 +24,7 @@ export class Users extends React.Component<{}, State> {
                 <Header/>
                 <Navigation/>
                 <main>
-                    <h1>Users</h1>
+                    <h1><Link to="/">Index</Link> &rsaquo; Users</h1>
                     {this.state.users ? <UserList list={this.state.users}/> : <p>Loading...</p>}
                 </main>
             </React.Fragment>

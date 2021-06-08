@@ -11,6 +11,9 @@ export class AuditList extends React.Component<{list: Audit[]}> {
                         <Link to={`/audits/${audit.id}`}>Audit <em>{audit.id}</em></Link>
                     </li>
                 )}
+                <li style={{backgroundImage: 'url(/images/create.png'}}>
+                    <Link to="/audits/new">Audit</Link>
+                </li>
             </ul>
         )
     }

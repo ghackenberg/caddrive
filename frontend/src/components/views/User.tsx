@@ -1,17 +1,17 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 
-export class Missing extends React.Component {
+export class User extends React.Component<RouteComponentProps<{id: string}>> {
     render() {
         return (
             <React.Fragment>
                 <Header/>
                 <Navigation/>
                 <main>
-                    <h1><Link to="/">Index</Link> &rsaquo; Missing</h1>
-                    <p>Please fix this error.</p>
+                    <h1><Link to="/">Index</Link> &rsaquo; <Link to="/users">User</Link> &rsaquo; {this.props.match.params.id}</h1>
+                    <p>TODO</p>
                 </main>
             </React.Fragment>
         )

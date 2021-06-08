@@ -1,5 +1,6 @@
 import { Product } from 'fhooe-audit-platform-common'
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import { ProductAPI } from '../../api'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
@@ -23,7 +24,7 @@ export class Products extends React.Component<{}, State> {
                 <Header/>
                 <Navigation/>
                 <main>
-                    <h1>Products</h1>
+                    <h1><Link to="/">Index</Link> &rsaquo; Products</h1>
                     {this.state.products ? <ProductList list={this.state.products}/> : <p>Loading...</p>}
                 </main>
             </React.Fragment>

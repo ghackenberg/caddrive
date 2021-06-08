@@ -11,6 +11,9 @@ export class ProductList extends React.Component<{list: Product[]}> {
                         <Link to={`/products/${product.id}`}>Product <em>{product.id}</em></Link>
                     </li>
                 )}
+                <li style={{backgroundImage: 'url(/images/create.png'}}>
+                    <Link to="/products/new">Product</Link>
+                </li>
             </ul>
         )
     }

@@ -14,6 +14,8 @@ header {
     padding-right: 1em;
     padding-bottom: 0.75em;
     font-weight: bold;
+    font-family: 'Arial Black';
+    text-transform: uppercase;
     background-color: white;
     background-repeat: no-repeat;
     background-position: 1em center;
@@ -48,9 +50,6 @@ nav li {
 nav li:hover {
     background-color: rgba(0,0,0,0.1);
 }
-nav a {
-    color: black;
-}
 main {
     position: absolute;
     top: 3em;
@@ -83,6 +82,7 @@ p {
 }
 a {
     text-decoration: none;
+    color: blue;
 }
 h1 {
     font-size: 200%;
