@@ -4,6 +4,7 @@ import { Scene, PerspectiveCamera, WebGLRenderer, PointLight, AmbientLight, sRGB
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { AuditAPI, ProductAPI, UserAPI } from '../api'
 
 export default class Root extends React.Component {
     private main: React.RefObject<HTMLElement>
@@ -90,6 +91,10 @@ export default class Root extends React.Component {
         window.addEventListener('resize', this.resize)
         // Resize
         setTimeout(this.resize, 100)
+        // API
+        console.log(await UserAPI.findAll())
+        console.log(await ProductAPI.findAll())
+        console.log(await AuditAPI.findAll())
     }
     
     componentWillUnmount() {
