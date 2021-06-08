@@ -1,4 +1,6 @@
-# FH OÖ Audit Platform
+# FH OÖ Product Audit Platform
+
+The FH OÖ Product Audit Platform provides and open source and license cost free solution to collaborative product audits over the Web and in virtual reality (VR).
 
 ## Screenshots
 
