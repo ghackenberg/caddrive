@@ -19,6 +19,7 @@ module.exports = {
         path: path.resolve(__dirname, 'public'),
         filename: 'frontend.js'
     },
+    devtool: 'eval-source-map',
     stats: 'summary',
     devServer: {
         contentBase: path.join(__dirname, 'public'),

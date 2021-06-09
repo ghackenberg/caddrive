@@ -8,7 +8,7 @@ export const Audit = (props: RouteComponentProps<{id: string}>) => (
         <Header/>
         <Navigation/>
         <main>
-            <h1><Link to="/">Index</Link> &rsaquo; <Link to="/audits">Audit</Link> &rsaquo; {props.match.params.id}</h1>
+            <h1><Link to="/">Index</Link> &rsaquo; <Link to="/audits">Audits</Link> &rsaquo; {props.match.params.id}</h1>
             <p>TODO</p>
         </main>
     </React.Fragment>

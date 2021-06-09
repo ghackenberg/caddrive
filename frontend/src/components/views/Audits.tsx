@@ -10,7 +10,7 @@ import { AuditList } from '../widgets/AuditList'
 
 export const Audits = () => {
     const [audits, setAudits] = useState<Audit[]>(null)
-    useEffect(() => { AuditAPI.findAll().then(setAudits) })
+    useEffect(() => { AuditAPI.findAll().then(setAudits) }, [])
     return (
         <React.Fragment>
             <Header/>

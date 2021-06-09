@@ -9,7 +9,7 @@ import { UserList } from '../widgets/UserList'
 
 export const Users = () => {
     const [users, setUsers] = useState<User[]>(null)
-    useEffect(() => { UserAPI.findAll().then(setUsers) })
+    useEffect(() => { UserAPI.findAll().then(setUsers) }, [])
     return (
         <React.Fragment>
             <Header/>

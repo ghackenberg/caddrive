@@ -8,7 +8,7 @@ export const User = (props: RouteComponentProps<{id: string}>) => (
         <Header/>
         <Navigation/>
         <main>
-            <h1><Link to="/">Index</Link> &rsaquo; <Link to="/users">User</Link> &rsaquo; {props.match.params.id}</h1>
+            <h1><Link to="/">Index</Link> &rsaquo; <Link to="/users">Users</Link> &rsaquo; {props.match.params.id}</h1>
             <p>TODO</p>
         </main>
     </React.Fragment>

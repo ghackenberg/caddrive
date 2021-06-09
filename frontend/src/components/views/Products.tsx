@@ -9,7 +9,7 @@ import { ProductList } from '../widgets/ProductList'
 
 export const Products = () => {
     const [products, setProducts] = useState<Product[]>(null)
-    useEffect(() => { ProductAPI.findAll().then(setProducts) })
+    useEffect(() => { ProductAPI.findAll().then(setProducts) }, [])
     return (
         <React.Fragment>
             <Header/>

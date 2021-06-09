@@ -19,6 +19,7 @@ module.exports = {
         path: path.resolve(__dirname, 'public'),
         filename: 'worker.js'
     },
+    devtool: 'eval-source-map',
     stats: 'summary',
     devServer: {
         contentBase: path.join(__dirname, 'public'),
