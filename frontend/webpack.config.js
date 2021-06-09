@@ -18,5 +18,14 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'public'),
         filename: 'frontend.js'
+    },
+    devServer: {
+        contentBase: path.join(__dirname, 'public'),
+        port: 3003,
+        historyApiFallback: {
+            rewrites: [
+                { from: /./, to: '404.html' }
+            ]
+        }
     }
 }

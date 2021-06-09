@@ -18,5 +18,9 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'public'),
         filename: 'worker.js'
+    },
+    devServer: {
+        contentBase: path.join(__dirname, 'public'),
+        port: 3002
     }
 }
