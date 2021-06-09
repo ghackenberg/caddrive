@@ -1,33 +1,23 @@
-import { User } from 'fhooe-audit-platform-common'
 import * as React from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { User } from 'fhooe-audit-platform-common'
 import { UserAPI } from '../../api'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { UserList } from '../widgets/UserList'
 
-interface State {
-    users?: User[]
-}
-
-export class Users extends React.Component<{}, State> {
-    constructor(props: {}) {
-        super(props)
-        this.state = {}
-    }
-    async componentDidMount() {
-        this.setState({users: await UserAPI.findAll()})
-    }
-    render() {
-        return (
-            <React.Fragment>
-                <Header/>
-                <Navigation/>
-                <main>
-                    <h1><Link to="/">Index</Link> &rsaquo; Users</h1>
-                    {this.state.users ? <UserList list={this.state.users}/> : <p>Loading...</p>}
-                </main>
-            </React.Fragment>
-        )
-    }
+export const Users = () => {
+    const [users, setUsers] = useState<User[]>(null)
+    useEffect(() => { UserAPI.findAll().then(setUsers) })
+    return (
+        <React.Fragment>
+            <Header/>
+            <Navigation/>
+            <main>
+                <h1><Link to="/">Index</Link> &rsaquo; Users</h1>
+                {users ? <UserList list={users}/> : <p>Loading...</p>}
+            </main>
+        </React.Fragment>
+    )
 }

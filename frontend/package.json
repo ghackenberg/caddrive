@@ -13,14 +13,12 @@
     },
     "private": "true",
     "scripts": {
-        "start": "npm run compile && npm run bundle && npm run serve",
-        "start-dev": "npm run compile && concurrently -c gray,gray,gray \"npm:compile-dev\" \"npm:bundle-dev\" \"npm:serve-dev\"",
-        "compile": "tsc",
-        "compile-dev": "tsc -w",
+        "start": "npm run bundle && npm run serve",
+        "start-dev": "concurrently -c gray,gray \"npm:bundle-dev\" \"npm:serve-dev\"",
         "bundle": "webpack",
         "bundle-dev": "webpack --watch",
-        "serve": "http-server -p 3003",
-        "serve-dev": "http-server -p 3003"
+        "serve": "http-server -p 3003 -s",
+        "serve-dev": "http-server -p 3003 -s"
     },
     "dependencies": {
         "axios": "^0.21.1",
@@ -43,6 +41,7 @@
         "@types/react-router-dom": "^5.1.7",
         "@types/three": "^0.129.1",
         "concurrently": "^6.2.0",
+        "ts-loader": "^9.2.3",
         "typescript": "^4.3.2",
         "webpack": "^5.38.1",
         "webpack-cli": "^4.7.2"

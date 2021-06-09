@@ -13,12 +13,8 @@
     },
     "private": "true",
     "scripts": {
-        "start": "npm run compile && npm run serve",
-        "start-dev": "npm run compile && concurrently -c gray,gray \"npm:compile-dev\" \"npm:serve-dev\"",
-        "compile": "tsc",
-        "compile-dev": "tsc -w",
-        "serve": "node bin/main.js",
-        "serve-dev": "nodemon bin/main.js"
+        "start": "ts-node src/main",
+        "start-dev": "ts-node-dev src/main"
     },
     "dependencies": {
         "@nestjs/common": "^7.6.17",
@@ -29,12 +25,14 @@
         "reflect-metadata": "^0.1.13",
         "rxjs": "^6.6.7",
         "shortid": "^2.2.16",
-        "swagger-ui-express": "^4.1.6"
+        "swagger-ui-express": "^4.1.6",
+        "ts-node": "^10.0.0"
     },
     "devDependencies": {
         "@types/shortid": "^0.0.29",
         "concurrently": "^6.2.0",
         "nodemon": "^2.0.7",
+        "ts-node-dev": "^1.1.6",
         "typescript": "^4.3.2"
     }
 }

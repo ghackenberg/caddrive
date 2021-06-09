@@ -12,7 +12,7 @@
     },
     "private": "true",
     "scripts": {
-        "start": "npm run common && concurrently -c red,green,blue,gray\"npm:backend\" \"npm:frontend\" \"npm:worker\" \"npm:gateway\"",
+        "start": "npm run common && concurrently -c red,green,blue,gray \"npm:backend\" \"npm:frontend\" \"npm:worker\" \"npm:gateway\"",
         "start-dev": "npm run common && concurrently -c white,red,green,blue,gray \"npm:common-dev\" \"npm:backend-dev\" \"npm:frontend-dev\" \"npm:worker-dev\" \"npm:gateway-dev\"",
         "common": "cd common && npm run compile",
         "common-dev": "cd common && npm run compile-dev",
