@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "bin",
+        "lib": ["ES2015"],
+        "esModuleInterop": true,
+        "listEmittedFiles": true,
+        "preserveWatchOutput": true
+    }
+}

@@ -13,6 +13,7 @@ Install dependencies.
 ```
 cd <root> && npm install
 cd <root>/common && npm install
+cd <root>/broker && npm install
 cd <root>/backend && npm install
 cd <root>/worker && npm install
 cd <root>/frontend && npm install
@@ -45,10 +46,14 @@ classDiagram
     class Frontend {
         port = 3003
     }
+    class Broker {
+
+    }
     class Gateway {
         port = 3000
     }
     
+    <<Service>> Broker
     <<Service>> Backend
     <<Service>> Worker
     <<Service>> Frontend
