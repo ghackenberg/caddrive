@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { Product } from 'fhooe-audit-platform-common'
+import { Product, ProductREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
-export class ProductService {
+export class ProductService implements ProductREST {
     private readonly products: Product[] = []
 
     constructor() {

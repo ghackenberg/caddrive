@@ -1,9 +1,17 @@
 import { NestFactory } from '@nestjs/core' 
+import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { AppModule } from './app.module'
+import { MQTTModule } from './mqtt.module'
+import { RESTModule } from './rest.module'
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule)
+    const rest = await NestFactory.create(RESTModule)
+    const mqtt = await NestFactory.createMicroservice<MicroserviceOptions>(MQTTModule, {
+        transport: Transport.MQTT,
+        options: {
+            url: 'mqtt://localhost:1883'
+        }
+    })
 
     const config = new DocumentBuilder()
         .setTitle('FH OÖ Audit Platform')
@@ -11,11 +19,12 @@ async function bootstrap() {
         .setVersion('1.0.0')
         .build()
 
-    const document = SwaggerModule.createDocument(app, config)
+    const document = SwaggerModule.createDocument(rest, config)
 
-    SwaggerModule.setup('doc', app, document)
+    SwaggerModule.setup('rest-doc', rest, document)
 
-    await app.listen(3001)
+    rest.listen(3001, () => console.log('REST service listening'))
+    mqtt.listen(() => console.log('MQTT service listening'))
 }
 
 bootstrap()

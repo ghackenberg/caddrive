@@ -1,12 +1,20 @@
 import * as express from 'express'
-import * as proxy from 'express-http-proxy'
+import * as proxy from 'http-proxy-middleware'
 
 const app = express()
 
-app.use('/api', proxy('localhost:3001', {
-    proxyReqPathResolver: request => request.url.startsWith('/doc') ? request.url : `/api${request.url}`
+app.use('/', proxy.createProxyMiddleware({
+    router: {
+        '/rest': 'http://localhost:3001',
+        '/rest-doc': 'http://localhost:3001',
+        '/mqtt': 'http://localhost:3004',
+        '/worker.js': 'http://localhost:3002',
+        '/': 'http://localhost:3003'
+    },
+    pathRewrite: {
+        '/mqtt': '/'
+    },
+    ws: true
 }))
-app.use('/worker.js', proxy('localhost:3002'))
-app.use('/', proxy('localhost:3003'))
 
 app.listen(3000)

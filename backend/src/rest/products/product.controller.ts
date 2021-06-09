@@ -1,10 +1,10 @@
 import { Controller, Get } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { Product } from 'fhooe-audit-platform-common'
+import { Product, ProductREST } from 'fhooe-audit-platform-common'
 import { ProductService } from './product.service'
 
-@Controller('api/products')
-export class ProductController {
+@Controller('rest/products')
+export class ProductController implements ProductREST {
     constructor(private productService: ProductService) {
 
     }

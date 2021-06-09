@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Index } from './views/Index'
@@ -9,9 +10,17 @@ import { Products } from './views/Products'
 import { User } from './views/User'
 import { Product } from './views/Product'
 import { Audit } from './views/Audit'
+import { TestAPI } from '../mqtt'
 
-export const Root = () => (
-    <React.Fragment>
+export const Root = () => {
+    useEffect(() => {
+        const interval = setInterval(() => {
+            TestAPI.a('test-1')
+            TestAPI.b('test-2')
+        }, 1000)
+        return () => clearInterval(interval)
+    })
+    return <React.Fragment>
         <Helmet>
             <title>FH OÖ Product Audit Platform</title>
             <link rel="icon" href="/images/platform.png"/>
@@ -31,4 +40,4 @@ export const Root = () => (
             </Switch>
         </BrowserRouter>
     </React.Fragment>
-)
+}

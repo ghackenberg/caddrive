@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { User } from 'fhooe-audit-platform-common'
+import { Audit, AuditREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
-export class UserService {
-    private readonly users: User[] = []
+export class AuditService implements AuditREST {
+    private readonly audits: Audit[] = []
 
     constructor() {
         for (var i = 0; i < Math.random() * 20; i++) {
-            this.users.push({
+            this.audits.push({
                 id: shortid()
             })
         }
     }
 
     async findAll() {
-        return this.users
+        return this.audits
     }
 }

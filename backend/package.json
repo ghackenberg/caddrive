@@ -19,9 +19,11 @@
     "dependencies": {
         "@nestjs/common": "^7.6.17",
         "@nestjs/core": "^7.6.17",
+        "@nestjs/microservices": "^7.6.17",
         "@nestjs/platform-express": "^7.6.17",
         "@nestjs/swagger": "^4.8.0",
         "fhooe-audit-platform-common": "file:../common",
+        "mqtt": "^4.2.6",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^6.6.7",
         "shortid": "^2.2.16",
