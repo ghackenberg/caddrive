@@ -1,7 +1,12 @@
 import * as mqtt from 'mqtt'
 import { TestMQTT } from 'fhooe-audit-platform-common'
 
-const client = mqtt.connect('ws://localhost:3000/mqtt')
+const protocol = window.location.protocol == 'http:' ? 'ws:' : 'wss:'
+const host = window.location.host
+const path = 'mqtt'
+const url =`${protocol}//${host}/${path}`
+
+const client = mqtt.connect(url)
 
 class TestClient implements TestMQTT {
     async a(data: string) {
