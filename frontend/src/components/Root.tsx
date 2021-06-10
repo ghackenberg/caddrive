@@ -35,7 +35,7 @@ export const Root = () => {
                 <Route path="/products" component={Products}/>
                 <Route path="/audits/:id" component={Audit}/>
                 <Route path="/audits" component={Audits}/>
-                <Route path="/demo" component={Demo}/>
+                <Route path="/demo/:name" component={Demo}/>
                 <Route component={Index}/>
             </Switch>
         </BrowserRouter>
