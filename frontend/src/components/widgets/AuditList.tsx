@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom'
 export const AuditList = (props: {list: Audit[]}) => (
     <ul>
         {props.list.map(audit =>
-            <li key={audit.id} style={{backgroundImage: 'url(/images/audit.png'}}>
+            <li key={audit.id}>
                 <Link to={`/audits/${audit.id}`}>Audit <em>{audit.id}</em></Link>
             </li>
         )}
-        <li style={{backgroundImage: 'url(/images/create.png'}}>
+        <li>
             <Link to="/audits/new">Audit</Link>
         </li>
     </ul>

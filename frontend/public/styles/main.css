@@ -6,58 +6,73 @@ body {
 }
 header {
     position: absolute;
+    z-index: 1;
     top: 0;
     left: 0;
     right: 0;
-    padding-top: 0.75em;
-    padding-left: 3.5em;
-    padding-right: 1em;
-    padding-bottom: 0.75em;
+    padding: 1em;
+    line-height: 2em;
     font-weight: bold;
     font-family: 'Arial Black';
     text-transform: uppercase;
-    background-color: white;
-    background-repeat: no-repeat;
-    background-position: 1em center;
-    background-size: 2em 2em;
-    background-image: url(/images/platform.png);
-    color: black;
+    background-color: steelblue;
+    background-image: linear-gradient(rgba(255,255,255,0.1),rgba(0,0,0,0.1));
+    box-shadow: 0 0 1em rgba(0,0,0,0.5);
+    color: white;
+}
+header img {
+    display: block;
+    float: left;
+    width: 2em;
+    height: 2em;
+    margin-right: 1em;
     filter: invert();
 }
 nav {
     position: absolute;
-    top: 3em;
+    z-index: 0;
+    top: 4em;
     left: 0;
     bottom: 0;
-    width: 10em;
-    background: lightgray;
+    width: 15em;
+    background: rgba(0,0,0,0.0);
     overflow: auto;
 }
 nav ul {
-    border-top: 1px solid white;
+    padding: 0;
+    border-top: 1px solid rgba(0,0,0,0.1);
 }
 nav ul:first-child {
     border-top: 0;
 }
 nav li {
-    padding-top: 1em;
-    padding-left: 3.5em;
-    padding-right: 1em;
-    padding-bottom: 1em;
-    background-position: 1em center;
-    background-size: 2em 2em;
+    padding: 0;
 }
-nav li:hover {
-    background-color: rgba(0,0,0,0.1);
+nav a {
+    display: block;
+    padding: 1em;
+    line-height: 2em;
+}
+nav a:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+nav img {
+    display: block;
+    float: left;
+    width: 2em;
+    height: 2em;
+    margin-right: 1em;
 }
 main {
     position: absolute;
-    top: 3em;
-    left: 10em;
+    z-index: 0;
+    top: 4em;
+    left: 15em;
     right: 0;
     bottom: 0;
     padding-left: 1em;
     padding-right: 1em;
+    background-color: rgba(0,0,0,0.0);
     overflow: auto;
 }
 ul {
@@ -69,10 +84,6 @@ ul {
 }
 li {
     padding-left: 2em;
-    background-repeat: no-repeat;
-    background-position: 0 center;
-    background-size: 1.5em 1.5em;
-    background-image: url(/images/dot.png);
 }
 p {
     margin: 0;

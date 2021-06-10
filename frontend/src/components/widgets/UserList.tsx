@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom'
 export const UserList = (props: {list: User[]}) => (
     <ul>
         {props.list.map(user =>
-            <li key={user.id} style={{backgroundImage: 'url(/images/user.png'}}>
+            <li key={user.id}>
                 <Link to={`/users/${user.id}`}>User <em>{user.id}</em></Link>
             </li>
         )}
-        <li style={{backgroundImage: 'url(/images/create.png'}}>
+        <li>
             <Link to="/users/new">User</Link>
         </li>
     </ul>

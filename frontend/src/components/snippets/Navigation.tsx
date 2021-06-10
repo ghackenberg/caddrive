@@ -4,15 +4,15 @@ import { Link } from 'react-router-dom'
 export const Navigation = () => (
     <nav>
         <ul>
-            <li style={{backgroundImage: 'url(/images/index.png)'}}><Link to="/">Index</Link></li>
+            <li><Link to="/"><img src="/images/index.png"/>Index</Link></li>
         </ul>
         <ul>
-            <li style={{backgroundImage: 'url(/images/user.png)'}}><Link to="/users">Users</Link></li>
-            <li style={{backgroundImage: 'url(/images/product.png)'}}><Link to="/products">Products</Link></li>
-            <li style={{backgroundImage: 'url(/images/audit.png)'}}><Link to="/audits">Audits</Link></li>
+            <li><Link to="/users"><img src="/images/user.png"/>Users</Link></li>
+            <li><Link to="/products"><img src="/images/product.png"/>Products</Link></li>
+            <li><Link to="/audits"><img src="/images/audit.png"/>Audits</Link></li>
         </ul>
         <ul>
-            <li style={{backgroundImage: 'url(/images/demo.png)'}}><Link to="/demo">Demo</Link></li>
+            <li><Link to="/demo"><img src="/images/demo.png"/>Demo</Link></li>
         </ul>
     </nav>
 )

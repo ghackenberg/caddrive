@@ -22,7 +22,7 @@ export const Root = () => {
     })
     return <React.Fragment>
         <Helmet>
-            <title>FH OÖ Product Audit Platform</title>
+            <title>Virtual Engineering Platform</title>
             <link rel="icon" href="/images/platform.png"/>
             <link rel="stylesheet" href="/styles/main.css"/>
             <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width"/>

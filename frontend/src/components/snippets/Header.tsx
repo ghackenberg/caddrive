@@ -2,6 +2,7 @@ import * as React from 'react'
 
 export const Header = () => (
     <header>
-        FH OÖ Product Audit Platform
+        <img src="/images/platform.png"/>
+        Virtual Engineering Platform
     </header>
 )

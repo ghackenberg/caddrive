@@ -36,7 +36,7 @@ export class Demo extends React.Component {
         // Loader
         this.loader = new GLTFLoader()
         // Model
-        this.model = await this.loader.loadAsync('/models/avocado.glb')
+        this.model = await this.loader.loadAsync('/models/Avocado.glb')
         this.model.scene.position.y = 1.6
         this.model.scene.position.z = -1
         // Ambient light
@@ -52,7 +52,7 @@ export class Demo extends React.Component {
         this.renderer.outputEncoding = sRGBEncoding
         this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize(this.main.current.offsetWidth, this.main.current.offsetHeight)
-        this.renderer.setClearColor(0x888888)
+        this.renderer.setClearColor(0xffffff)
         this.renderer.setAnimationLoop(this.paint)
         // Controller 1
         this.controller1 = this.renderer.xr.getController(0)
