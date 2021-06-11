@@ -1,68 +1,3 @@
-body {
-    margin: 0;
-    overflow: hidden;
-    font-family: Arial;
-    line-height: 150%;
-}
-header {
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 1em;
-    line-height: 2em;
-    font-weight: bold;
-    font-family: 'Arial Black';
-    text-transform: uppercase;
-    background-color: steelblue;
-    background-image: linear-gradient(rgba(255,255,255,0.1),rgba(0,0,0,0.1));
-    box-shadow: 0 0 1em rgba(0,0,0,0.5);
-    color: white;
-}
-header img {
-    display: block;
-    float: left;
-    width: 2em;
-    height: 2em;
-    margin-right: 1em;
-    filter: invert();
-}
-nav {
-    position: absolute;
-    z-index: 0;
-    top: 4em;
-    left: 0;
-    bottom: 0;
-    width: 15em;
-    background: rgba(0,0,0,0.0);
-    overflow: auto;
-}
-nav ul {
-    padding: 0;
-    border-top: 1px solid rgba(0,0,0,0.1);
-}
-nav ul:first-child {
-    border-top: 0;
-}
-nav li {
-    padding: 0;
-}
-nav a {
-    display: block;
-    padding: 1em;
-    line-height: 2em;
-}
-nav a:hover {
-    background-color: rgba(0,0,0,0.05);
-}
-nav img {
-    display: block;
-    float: left;
-    width: 2em;
-    height: 2em;
-    margin-right: 1em;
-}
 main {
     position: absolute;
     z-index: 0;
@@ -75,30 +10,76 @@ main {
     background-color: rgba(0,0,0,0.0);
     overflow: auto;
 }
-ul {
+main ul {
     list-style: none;
     margin: 0;
+    margin-left: calc(0.75em - 0.5px);
     padding: 0;
-    padding-top: 0.75em;
-    padding-bottom: 0.75em;
+    white-space: nowrap;
 }
-li {
-    padding-left: 2em;
+main li {
+    padding-left: calc(1.25em - 0.5px);
+    border-left: 1px dashed black;
 }
-p {
+main li:last-child {
+    border-left: 0;
+}
+main li::before {
+    content: "";
+    display: block;
+    float: left;
+    width: calc(0.75em - 0.5px);
+    height: calc(0.75em - 0.5px);
+    margin-left: calc(-1.25em + 0.5px);
+    margin-right: 0.5em;
+    border-bottom: 1px dashed black;
+}
+main li:last-child::before {
+    border-left: 1px dashed black;
+}
+main a img {
+    display: inline-block;
+    vertical-align: top;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.5em;
+}
+main p {
     margin: 0;
     padding: 0;
     padding-top: 0.75em;
     padding-bottom: 0.75em;
 }
-a {
+main a {
     text-decoration: none;
     color: blue;
 }
-h1 {
+main h1 {
     font-size: 200%;
     line-height: 150%;
     margin: 0;
     padding-top: 0.25em;
     padding-bottom: 0.25em;
+}
+div.view.demo main {
+    overflow: hidden;
+}
+div.view.demo div.widget.scene_graph {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 23rem;
+    padding: 1rem;
+    font-size: 0.75em;
+    overflow: auto;
+    border-left: 1px solid rgba(0,0,0,0.1);
+}
+div.view.demo div.widget.scene_view {
+    position: absolute;
+    top: 0;
+    left: calc(25em + 1px);
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
 }

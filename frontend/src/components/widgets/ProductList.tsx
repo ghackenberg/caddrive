@@ -3,14 +3,16 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 
 export const ProductList = (props: {list: Product[]}) => (
-    <ul>
-        {props.list.map(product =>
-            <li key={product.id}>
-                <Link to={`/products/${product.id}`}>Product <em>{product.id}</em></Link>
+    <div className="widget list product_list">
+        <ul>
+            {props.list.map(product =>
+                <li key={product.id}>
+                    <Link to={`/products/${product.id}`}><img src="/images/product.png"/>Product <em>{product.id}</em></Link>
+                </li>
+            )}
+            <li>
+                <Link to="/products/new"><img src="/images/create.png"/>Product</Link>
             </li>
-        )}
-        <li>
-            <Link to="/products/new">Product</Link>
-        </li>
-    </ul>
+        </ul>
+    </div>
 )

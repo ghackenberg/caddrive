@@ -1,8 +1,11 @@
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 
 export const Header = () => (
     <header>
-        <img src="/images/platform.png"/>
-        Virtual Engineering Platform
+        <Link to="/">
+            <img src="/images/platform.png"/>
+            Virtual Engineering Platform
+        </Link>
     </header>
 )

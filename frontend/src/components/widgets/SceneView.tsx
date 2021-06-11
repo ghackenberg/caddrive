@@ -1,17 +1,13 @@
 import * as React from 'react'
-import { Scene, PerspectiveCamera, WebGLRenderer, PointLight, AmbientLight, sRGBEncoding, Group } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, PointLight, AmbientLight, sRGBEncoding, Group, Object3D } from 'three'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
 
-export class SceneView extends React.Component<{ url: string }> {
-    private main: React.RefObject<HTMLElement>
+export class SceneView extends React.Component<{ model: GLTF }> {
+    private div: React.RefObject<HTMLDivElement>
 
-    private loader = new GLTFLoader()
     private factory = new XRControllerModelFactory()
-    private model: GLTF
     private ambient_light: AmbientLight
     private point_light: PointLight
     private renderer: WebGLRenderer
@@ -25,10 +21,10 @@ export class SceneView extends React.Component<{ url: string }> {
 
     private fullscreen = false
 
-    constructor(props: { url: string }) {
+    constructor(props: { model: GLTF }) {
         super(props)
         // Create
-        this.main = React.createRef()
+        this.div = React.createRef()
         // Bind
         this.resize = this.resize.bind(this)
         this.paint = this.paint.bind(this)
@@ -49,7 +45,7 @@ export class SceneView extends React.Component<{ url: string }> {
         this.renderer.xr.enabled = true
         this.renderer.outputEncoding = sRGBEncoding
         this.renderer.setPixelRatio(window.devicePixelRatio)
-        this.renderer.setSize(this.main.current.offsetWidth, this.main.current.offsetHeight)
+        this.renderer.setSize(this.div.current.offsetWidth, this.div.current.offsetHeight)
         this.renderer.setClearColor(0xeeeeee)
         this.renderer.setAnimationLoop(this.paint)
         // Controller 1
@@ -78,10 +74,10 @@ export class SceneView extends React.Component<{ url: string }> {
         this.scene.add(this.controller2)
         this.scene.add(this.grip1)
         this.scene.add(this.grip2)
+        this.scene.add(new Object3D())
         // Camera
-        this.camera = new PerspectiveCamera(3, this.main.current.offsetWidth / this.main.current.offsetHeight, 0.1, 1000)
-        this.camera.position.y = 1.6
-        this.camera.position.z = 5       
+        this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
+        this.camera.position.z = 5
         // Button
         this.button = VRButton.createButton(this.renderer)
         this.button.addEventListener('click', event => {
@@ -89,8 +85,8 @@ export class SceneView extends React.Component<{ url: string }> {
             this.resize()
         })
         // Append
-        this.main.current.appendChild(this.renderer.domElement)
-        this.main.current.appendChild(this.button)
+        this.div.current.appendChild(this.renderer.domElement)
+        this.div.current.appendChild(this.button)
         // Listen
         window.addEventListener('resize', this.resize)
         // Resize
@@ -107,23 +103,23 @@ export class SceneView extends React.Component<{ url: string }> {
     }
 
     async reload() {
-        if (this.model) {
-            this.scene.remove(this.model.scene)
-        }
-        // Model
-        this.model = await this.loader.loadAsync(this.props.url)
         // Scene
-        this.scene.add(this.model.scene)
+        this.scene.remove(this.scene.children[this.scene.children.length - 1])
+        this.scene.add(this.props.model.scene)
         // Camera
-        if (this.model.cameras.length > 0 && this.model.cameras[0] instanceof PerspectiveCamera) {
-            this.camera = this.model.cameras[0] as PerspectiveCamera
-            this.resize()
+        if (this.props.model.cameras.length > 0 && this.props.model.cameras[0] instanceof PerspectiveCamera) {
+            this.camera = this.props.model.cameras[0] as PerspectiveCamera
+        } else {
+            this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
+            this.camera.position.z = 5
         }
+        // Resize
+        this.resize()
     }
 
     resize() {
-        const width = this.fullscreen ? window.innerWidth : this.main.current.offsetWidth
-        const height = this.fullscreen ? window.innerHeight : this.main.current.offsetHeight
+        const width = this.fullscreen ? window.innerWidth : this.div.current.offsetWidth
+        const height = this.fullscreen ? window.innerHeight : this.div.current.offsetHeight
         // Camera
         if (this.camera) {
             this.camera.aspect = width / height
@@ -141,14 +137,6 @@ export class SceneView extends React.Component<{ url: string }> {
     }
     
     render() {
-        return (
-            <React.Fragment>
-                <Header/>
-                <Navigation/>
-                <main ref={this.main} style={{padding: '0'}}>
-
-                </main>
-            </React.Fragment>
-        )
+        return <div className="widget scene_view" ref={this.div}/>
     }
 }

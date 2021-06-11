@@ -12,13 +12,13 @@ export const Audits = () => {
     const [audits, setAudits] = useState<Audit[]>(null)
     useEffect(() => { AuditAPI.findAll().then(setAudits) }, [])
     return (
-        <React.Fragment>
+        <div className="view audits">
             <Header/>
             <Navigation/>
             <main>
                 <h1><Link to="/">Index</Link> &rsaquo; Audits</h1>
                 {audits ? <AuditList list={audits}/> : <p>Loading...</p>}
             </main>
-        </React.Fragment>
+        </div>
     )
 }

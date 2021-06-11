@@ -11,13 +11,13 @@ export const Products = () => {
     const [products, setProducts] = useState<Product[]>(null)
     useEffect(() => { ProductAPI.findAll().then(setProducts) }, [])
     return (
-        <React.Fragment>
+        <div className="view products">
             <Header/>
             <Navigation/>
             <main>
                 <h1><Link to="/">Index</Link> &rsaquo; Products</h1>
                 {products ? <ProductList list={products}/> : <p>Loading...</p>}
             </main>
-        </React.Fragment>
+        </div>
     )
 }
