@@ -9,13 +9,14 @@ export const Navigation = () => (
             <li><Link to="/audits"><img src="/images/audit.png"/>Audits</Link></li>
         </ul>
         <ul>
-            <li><Link to="/demo/2CylinderEngine"><img src="/images/demo.png"/>2CylinderEngine</Link></li>
-            <li><Link to="/demo/Avocado"><img src="/images/demo.png"/>Avocado</Link></li>
-            <li><Link to="/demo/BrainStem"><img src="/images/demo.png"/>BrainStem</Link></li>
-            <li><Link to="/demo/Buggy"><img src="/images/demo.png"/>Buggy</Link></li>
-            <li><Link to="/demo/GearboxAssy"><img src="/images/demo.png"/>GearboxAssy</Link></li>
-            <li><Link to="/demo/ReciprocatingSaw"><img src="/images/demo.png"/>ReciprocatingSaw</Link></li>
-            <li><Link to="/demo/ToyCar"><img src="/images/demo.png"/>ToyCar</Link></li>
+            <li><Link to="/demo/2CylinderEngine.glb"><img src="/images/demo.png"/>2CylinderEngine</Link></li>
+            <li><Link to="/demo/Avocado.glb"><img src="/images/demo.png"/>Avocado</Link></li>
+            <li><Link to="/demo/BrainStem.glb"><img src="/images/demo.png"/>BrainStem</Link></li>
+            <li><Link to="/demo/Buggy.glb"><img src="/images/demo.png"/>Buggy</Link></li>
+            <li><Link to="/demo/GearboxAssy.glb"><img src="/images/demo.png"/>GearboxAssy</Link></li>
+            <li><Link to="/demo/ReciprocatingSaw.glb"><img src="/images/demo.png"/>ReciprocatingSaw</Link></li>
+            <li><Link to="/demo/ToyCar.glb"><img src="/images/demo.png"/>ToyCar</Link></li>
+            <li><Link to="/demo/Demonstrator.gltf"><img src="/images/demo.png"/>Demonstrator</Link></li>
         </ul>
     </nav>
 )

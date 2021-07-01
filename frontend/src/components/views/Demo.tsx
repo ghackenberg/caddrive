@@ -10,7 +10,7 @@ export const Demo = (props: RouteComponentProps<{ name: string }>) => {
             <Header/>
             <Navigation/>
             <main>
-                <ModelViewer url={`/models/${props.match.params.name}.glb`}/>
+                <ModelViewer url={`/models/${props.match.params.name}`}/>
             </main>
         </div>
     )
