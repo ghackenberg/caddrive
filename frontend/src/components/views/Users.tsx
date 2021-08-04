@@ -16,6 +16,7 @@ export const Users = () => {
             <Navigation/>
             <main>
                 <h1><Link to="/">Index</Link> &rsaquo; Users</h1>
+                <h1>Test</h1>
                 {users ? <UserList list={users}/> : <p>Loading...</p>}
             </main>
         </div>

@@ -9,12 +9,29 @@ export class UserService implements UserREST {
     constructor() {
         for (var i = 0; i < Math.random() * 20; i++) {
             this.users.push({
-                id: shortid()
+                id: shortid(),
+                email: shortid()
             })
         }
     }
 
     async findAll() {
         return this.users
+    }
+
+    async addUser(id: User) {
+        this.users.push(id)
+        
+        return id
+    }
+
+    async updateUser(user: User) {
+        
+        for (var i = 0; i < this.users.length; i++) {
+            if (this.users[i].id == user.id)
+                this.users.splice(i,1,user)
+        }
+
+        return user
     }
 }

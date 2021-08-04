@@ -5,6 +5,14 @@ class UserClient implements UserREST {
     async findAll() {
         return (await axios.get<User[]>('/rest/users')).data
     }
+
+    async addUser(id: User) {
+        return (await axios.post<User>('/rest/users', id)).data
+    }
+
+    async updateUser(user: User) {
+        return (await axios.put<User>('/rest/users', user)).data
+    }
 }
 
 class ProductClient implements ProductREST {
