@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
-        "lib": ["ES2015", "WebWorker"]
+        "rootDirs": ["src", "../common/src"],
+        "lib": ["ES2015", "WebWorker"],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }

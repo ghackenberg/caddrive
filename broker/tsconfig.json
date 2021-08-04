@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
+        "rootDirs": ["src", "../common/src"],
         "lib": ["ES2015"],
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }

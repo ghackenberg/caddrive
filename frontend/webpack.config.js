@@ -12,7 +12,28 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
-            },
+            },{
+                test: /\.(css)$/i,
+                use: ['style-loader', 'css-loader']
+            },{
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[hash][ext][query]'
+                }
+            },{
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'fonts/[hash][ext][query]'
+                }
+            },{
+                test: /\.(glb|gltf|bin)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'models/[hash][ext][query]'
+                }
+            }
         ],
     },
     resolve: {
@@ -38,7 +59,7 @@ module.exports = {
         port: 3003,
         historyApiFallback: {
             rewrites: [
-                { from: /./, to: '404.html' }
+                { from: /./, to: '/404.html' }
             ]
         }
     }

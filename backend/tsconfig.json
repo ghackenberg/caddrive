@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
+        "rootDirs": ["src", "../common/src"],
         "lib": ["ES2015"],
         "target": "ES5",
         "experimentalDecorators": true,
