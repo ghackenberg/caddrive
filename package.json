@@ -27,5 +27,9 @@
     },
     "dependencies": {
         "workspaces-run": "^1.0.1"
+    },
+    "engines": {
+        "node": "^14.15.0",
+        "npm": "^7.20.0"
     }
 }

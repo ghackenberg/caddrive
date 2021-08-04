@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Root } from './components/Root'
-import '/assets/styles/body.css'
+import '/src/styles/body.css'
 
 // Create root
 const root = document.createElement('div')

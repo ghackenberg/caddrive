@@ -11,7 +11,7 @@ import { Product } from './views/Product'
 import { Audit } from './views/Audit'
 import { Model } from './views/Model'
 import { TestAPI } from '../mqtt'
-import * as PlatformIcon from '/assets/images/platform.png'
+import * as PlatformIcon from '/src/images/platform.png'
 
 export const Root = () => {
     useEffect(() => {

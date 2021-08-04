@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import * as PlatformIcon from '/assets/images/platform.png'
+import * as PlatformIcon from '/src/images/platform.png'
 
 export const Header = () => (
     <header>

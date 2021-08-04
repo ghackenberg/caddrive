@@ -1,8 +1,8 @@
 import { Audit } from 'fhooe-audit-platform-common'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import * as AuditIcon from '/assets/images/audit.png'
-import * as CreateIcon from '/assets/images/create.png'
+import * as AuditIcon from '/src/images/audit.png'
+import * as CreateIcon from '/src/images/create.png'
 
 export const AuditList = (props: {list: Audit[]}) => (
     <div className="widget audit_list">
