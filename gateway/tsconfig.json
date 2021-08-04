@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
         "rootDirs": ["src", "../common/src"],
+        "outDir": "bin",
+        "lib": ["ES2015", "DOM"],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
     }

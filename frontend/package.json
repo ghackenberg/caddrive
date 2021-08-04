@@ -13,7 +13,7 @@
         "directory": "frontend"
     },
     "scripts": {
-        "clean": "rm public/frontend.js && rm public/404.html",
+        "clean": "rm -rf public",
         "build": "webpack --mode=production",
         "start": "http-server -p 3003 -s",
         "devel": "webpack serve --mode=development"

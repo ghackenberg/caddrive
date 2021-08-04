@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "rootDirs": ["src", "../common/src"],
+        "rootDirs": ["src/scripts", "../common/src"],
+        "outDir": "bin/scripts",
         "lib": ["ES2015", "DOM"],
         "jsx": "react",
         "experimentalDecorators": true,
