@@ -11,25 +11,21 @@ The FH OÖ Product Audit Platform provides and open source and license cost free
 Install dependencies.
 
 ```
-cd <root> && npm install
-cd <root>/common && npm install
-cd <root>/broker && npm install
-cd <root>/backend && npm install
-cd <root>/worker && npm install
-cd <root>/frontend && npm install
-cd <root>/gateway && npm install
+npm install
 ```
 
 Start development.
 
 ```
-cd <root> && npm run start-dev
+npm run devel
 ```
 
 Start production.
 
 ```
-cd <root> && npm run start
+npm run clean
+npm run build
+npm start
 ```
 
 ## Diagrams
@@ -70,7 +66,8 @@ classDiagram
 ## Modules
 
 * [Common](./common)
+* [Broker](./broker)
 * [Backend](./backend)
-* [Frontend](./frontend)
 * [Worker](./worker)
+* [Frontend](./frontend)
 * [Gateway](./gateway)
