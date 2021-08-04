@@ -1,6 +1,6 @@
 # FHOOE Virtual Engineering Platform
 
-The FHOOE Virtual Engineering Platform provides and open source and license cost free solution to collaborative product audits over the Web and in virtual reality (VR).
+The FHOOE Virtual Engineering Platform provides a free and open source solution to collaborative product audits over the Web and in virtual reality (VR).
 
 ## Screenshots
 
