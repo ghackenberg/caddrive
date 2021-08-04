@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 import { ApiBody, ApiResponse } from '@nestjs/swagger'
 import { User, UserREST } from 'fhooe-audit-platform-common'
 import { UserService } from './user.service'

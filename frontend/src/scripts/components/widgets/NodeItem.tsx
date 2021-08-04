@@ -9,7 +9,7 @@ import * as Object3DIcon from '/src/images/types/Object3D.png'
 import * as PerspectiveCameraIcon from '/src/images/types/PerspectiveCamera.png'
 import * as SkinnedMeshIcon from '/src/images/types/SkinnedMesh.png'
 
-const icons = {
+const icons: {[key: string]: string} = {
     Bone: BoneIcon,
     Group: GroupIcon,
     Mesh: MeshIcon,

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Scene, PerspectiveCamera, WebGLRenderer, PointLight, AmbientLight, sRGBEncoding, Group, Object3D } from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
@@ -18,7 +17,6 @@ export class SceneView extends React.Component<{ model: GLTF }> {
     private grip2: Group
     private scene: Scene
     private camera: PerspectiveCamera
-    private orbit: OrbitControls
     private button: HTMLElement
 
     private fullscreen = false
@@ -32,11 +30,11 @@ export class SceneView extends React.Component<{ model: GLTF }> {
         this.paint = this.paint.bind(this)
     }
 
-    async componentDidUpdate() {
+    override async componentDidUpdate() {
         await this.reload()
     }
     
-    async componentDidMount() {
+    override async componentDidMount() {
         // Ambient light
         this.ambient_light = new AmbientLight(0xffffff, 0.5)
         // Point light
@@ -80,11 +78,9 @@ export class SceneView extends React.Component<{ model: GLTF }> {
         // Camera
         this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
         this.camera.position.z = 5
-        // Orbit
-        this.orbit = new OrbitControls(this.camera, this.renderer.domElement)
         // Button
         this.button = VRButton.createButton(this.renderer)
-        this.button.addEventListener('click', event => {
+        this.button.addEventListener('click', () => {
             this.fullscreen = !this.fullscreen
             this.resize()
         })
@@ -99,7 +95,7 @@ export class SceneView extends React.Component<{ model: GLTF }> {
         await this.reload()
     }
     
-    componentWillUnmount() {
+    override componentWillUnmount() {
         // Frame
         this.renderer.setAnimationLoop(null)
         // Resize
@@ -140,7 +136,7 @@ export class SceneView extends React.Component<{ model: GLTF }> {
         }
     }
     
-    render() {
+    override render() {
         return <div className="widget scene_view" ref={this.div}/>
     }
 }

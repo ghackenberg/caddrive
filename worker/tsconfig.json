@@ -2,8 +2,21 @@
     "compilerOptions": {
         "rootDirs": ["src", "../common/src"],
         "outDir": "bin",
-        "lib": ["ES2015", "DOM", "WebWorker"],
+        "lib": ["ES2015", "WebWorker"],
+        "types": [],
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "noImplicitAny": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitUseStrict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noUncheckedIndexedAccess": true,
+        "noPropertyAccessFromIndexSignature": true
     }
 }

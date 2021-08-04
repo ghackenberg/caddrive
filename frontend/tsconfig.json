@@ -4,7 +4,20 @@
         "outDir": "bin/scripts",
         "lib": ["ES2015", "DOM"],
         "jsx": "react",
+        "types": [],
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "noImplicitAny": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitUseStrict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noUncheckedIndexedAccess": true,
+        "noPropertyAccessFromIndexSignature": true
     }
 }
