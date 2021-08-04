@@ -18,9 +18,9 @@ install:
 build-frontend:
   stage: build
   script:
-    - npm run build -w frontend --cache .npm
+    - npm -v #run build -w frontend --cache .npm
 
 build-worker:
   stage: build
   script:
-    - npm run build -w worker --cache .npm
+    - npm -v #run build -w worker --cache .npm
