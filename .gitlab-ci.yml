@@ -1,28 +1,6 @@
-default:
+build:
   image: node:14.17
-  before_script:
+  script:
     - npm install npm -g
-
-cache:
-  key: $CI_COMMIT_REF_SLUG
-  paths:
-    - .npm
-
-stages:
-  - install
-  - build
-
-install:
-  stage: install
-  script:
-    - npm install --cache .npm
-
-build-frontend:
-  stage: build
-  script:
-    - npm run build -w frontend --cache .npm
-
-build-worker:
-  stage: build
-  script:
-    - npm run build -w worker --cache .npm
+    - npm install
+    - npm run build
