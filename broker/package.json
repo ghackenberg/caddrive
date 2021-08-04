@@ -2,6 +2,7 @@
     "name": "fhooe-audit-platform-broker",
     "version": "1.0.0",
     "description": "TODO",
+    "private": "true",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -11,14 +12,13 @@
         "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
         "directory": "broker"
     },
-    "private": "true",
     "scripts": {
         "start": "ts-node src/main",
-        "start-dev": "ts-node-dev src/main"
+        "devel": "ts-node-dev src/main"
     },
     "dependencies": {
         "aedes": "^0.46.0",
-        "fhooe-audit-platform-common": "file:../common",
+        "fhooe-audit-platform-common": "^1.0.0",
         "ts-node": "^10.0.0",
         "websocket-stream": "^5.5.2"
     },

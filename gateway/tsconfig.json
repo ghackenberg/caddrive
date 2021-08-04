@@ -1,8 +1,5 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
-        "outDir": "bin",
-        "listEmittedFiles": true,
-        "preserveWatchOutput": true
+        "rootDir": "src"
     }
 }

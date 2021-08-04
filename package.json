@@ -2,6 +2,7 @@
     "name": "fhooe-audit-platform",
     "version": "1.0.0",
     "description": "TODO",
+    "private": "true",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -10,24 +11,21 @@
         "type": "git",
         "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git"
     },
-    "private": "true",
+    "workspaces": [
+        "backend",
+        "broker",
+        "common",
+        "frontend",
+        "gateway",
+        "worker"
+    ],
     "scripts": {
-        "start": "npm run common && concurrently -c gray,gray,gray,gray,gray \"npm:broker\" \"npm:backend\" \"npm:frontend\" \"npm:worker\" \"npm:gateway\"",
-        "start-dev": "npm run common && concurrently -c gray,gray,gray,gray,gray,gray \"npm:common-dev\" \"npm:broker-dev\" \"npm:backend-dev\" \"npm:frontend-dev\" \"npm:worker-dev\" \"npm:gateway-dev\"",
-        "common": "cd common && npm run compile",
-        "common-dev": "cd common && npm run compile-dev",
-        "broker": "cd broker && npm run start",
-        "broker-dev": "cd broker && npm run start-dev",
-        "backend": "cd backend && npm run start",
-        "backend-dev": "cd backend && npm run start-dev",
-        "frontend": "cd frontend && npm run start",
-        "frontend-dev": "cd frontend && npm run start-dev",
-        "worker": "cd worker && npm run start",
-        "worker-dev": "cd worker && npm run start-dev",
-        "gateway": "cd gateway && npm run start",
-        "gateway-dev": "cd gateway && npm run start-dev"
+        "clean": "workspaces-run --only=\"fhooe-audit-platform-{frontend,worker}\" -- npm run clean",
+        "build": "workspaces-run --only=\"fhooe-audit-platform-{frontend,worker}\" -- npm run build",
+        "start": "workspaces-run --parallel --ignore=\"fhooe-audit-platform-common\" -- npm run start",
+        "devel": "workspaces-run --parallel --ignore=\"fhooe-audit-platform-common\" -- npm run devel"
     },
-    "devDependencies": {
-        "concurrently": "^6.2.0"
+    "dependencies": {
+        "workspaces-run": "^1.0.1"
     }
 }

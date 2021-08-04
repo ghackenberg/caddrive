@@ -1,4 +1,9 @@
 node_modules
-bin
-worker.js
+
+404.html
+
 frontend.js
+frontend.js.LICENSE.txt
+
+worker.js
+worker.js.LICENSE.txt

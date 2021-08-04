@@ -2,6 +2,7 @@
     "name": "fhooe-audit-platform-worker",
     "version": "1.0.0",
     "description": "TODO",
+    "private": "true",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -11,13 +12,14 @@
         "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
         "directory": "worker"
     },
-    "private": "true",
     "scripts": {
-        "start": "webpack && http-server -p 3002 -s",
-        "start-dev": "webpack serve"
+        "clean": "rm -rf public",
+        "build": "webpack --mode=production",
+        "start": "http-server -p 3002 -s",
+        "devel": "webpack serve --mode=development"
     },
     "dependencies": {
-        "fhooe-audit-platform-common": "file:../common",
+        "fhooe-audit-platform-common": "^1.0.0",
         "http-server": "^0.12.3"
     },
     "devDependencies": {

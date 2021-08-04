@@ -2,6 +2,9 @@
     "name": "fhooe-audit-platform-common",
     "version": "1.0.0",
     "description": "TODO",
+    "private": "true",
+    "main": "src/main",
+    "types": "src/main",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -10,13 +13,6 @@
         "type": "git",
         "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
         "directory": "common"
-    },
-    "private": "true",
-    "types": "bin/main.d.ts",
-    "main": "bin/main.js",
-    "scripts": {
-        "compile": "tsc",
-        "compile-dev": "tsc -w"
     },
     "devDependencies": {
         "@types/node": "^16.4.10",

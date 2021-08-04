@@ -1,9 +1,6 @@
 {
     "compilerOptions": {
         "rootDir": "src",
-        "outDir": "bin",
-        "lib": ["ES2015", "WebWorker"],
-        "listEmittedFiles": true,
-        "preserveWatchOutput": true
+        "lib": ["ES2015", "WebWorker"]
     }
 }

@@ -22,10 +22,8 @@ export const Root = () => {
     })
     return <React.Fragment>
         <Helmet>
-            <title>Virtual Engineering Platform</title>
             <link rel="icon" href="/images/platform.png"/>
             <link rel="stylesheet" href="/styles/body.css"/>
-            <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width"/>
         </Helmet>
         <BrowserRouter>
             <Switch>

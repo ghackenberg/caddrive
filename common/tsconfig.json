@@ -1,13 +1,8 @@
 {
     "compilerOptions": {
         "rootDir": "src",
-        "outDir": "bin",
         "lib": ["ES2015"],
-        "declaration": true,
-        "declarationDir": "bin",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "listEmittedFiles": true,
-        "preserveWatchOutput": true
+        "emitDecoratorMetadata": true
     }
 }

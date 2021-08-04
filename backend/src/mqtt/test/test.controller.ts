@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common'
-import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices'
+import { Client, ClientProxy, MessagePattern, Payload, Transport } from '@nestjs/microservices'
 import { TestMQTT } from 'fhooe-audit-platform-common'
 
 @Controller()

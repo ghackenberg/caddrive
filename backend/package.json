@@ -2,6 +2,7 @@
     "name": "fhooe-audit-platform-backend",
     "version": "1.0.0",
     "description": "TODO",
+    "private": "true",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -11,10 +12,9 @@
         "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
         "directory": "backend"
     },
-    "private": "true",
     "scripts": {
         "start": "ts-node src/main",
-        "start-dev": "ts-node-dev src/main"
+        "devel": "ts-node-dev src/main"
     },
     "dependencies": {
         "@nestjs/common": "^7.6.17",
@@ -22,7 +22,7 @@
         "@nestjs/microservices": "^7.6.17",
         "@nestjs/platform-express": "^7.6.17",
         "@nestjs/swagger": "^4.8.0",
-        "fhooe-audit-platform-common": "file:../common",
+        "fhooe-audit-platform-common": "^1.0.0",
         "mqtt": "^4.2.6",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^6.6.7",

@@ -1,8 +1,10 @@
 const path = require('path')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
     mode: 'development',
+    stats: 'minimal',
     entry: './src/main.tsx',
     module: {
         rules: [
@@ -20,14 +22,17 @@ module.exports = {
         new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
             process: 'process/browser'
+        }),
+        new HtmlWebpackPlugin({
+            publicPath: '/',
+            title: 'FHOOE Virtual Engineering Platform',
+            filename: '404.html'
         })
     ],
     output: {
         path: path.resolve(__dirname, 'public'),
         filename: 'frontend.js'
     },
-    devtool: 'eval-source-map',
-    stats: 'summary',
     devServer: {
         contentBase: path.join(__dirname, 'public'),
         port: 3003,
