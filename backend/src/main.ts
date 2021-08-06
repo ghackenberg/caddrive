@@ -14,7 +14,7 @@ async function bootstrap() {
     })
 
     const config = new DocumentBuilder()
-        .setTitle('FH OÖ Audit Platform')
+        .setTitle('FHOOE Virtual Engineering Platform')
         .setDescription('TODO')
         .setVersion('1.0.0')
         .build()

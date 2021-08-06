@@ -20,12 +20,16 @@
         "worker"
     ],
     "scripts": {
-        "clean": "workspaces-run --only=\"fhooe-audit-platform-{frontend,worker}\" -- npm run clean",
-        "build": "workspaces-run --only=\"fhooe-audit-platform-{frontend,worker}\" -- npm run build",
+        "clean": "workspaces-run -- npm run clean",
+        "build": "workspaces-run -- npm run build",
         "start": "workspaces-run --parallel --ignore=\"fhooe-audit-platform-common\" -- npm run start",
         "devel": "workspaces-run --parallel --ignore=\"fhooe-audit-platform-common\" -- npm run devel"
     },
     "dependencies": {
         "workspaces-run": "^1.0.1"
+    },
+    "engines": {
+        "node": "^14.15.0",
+        "npm": "^7.20.0"
     }
 }

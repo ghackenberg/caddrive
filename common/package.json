@@ -14,6 +14,10 @@
         "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
         "directory": "common"
     },
+    "scripts": {
+        "clean": "rm -rf bin",
+        "build": "tsc"
+    },
     "devDependencies": {
         "@types/node": "^16.4.10",
         "reflect-metadata": "^0.1.13",

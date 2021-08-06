@@ -13,6 +13,8 @@
         "directory": "gateway"
     },
     "scripts": {
+        "clean": "rm -rf bin",
+        "build": "tsc",
         "start": "ts-node src/main",
         "devel": "ts-node-dev src/main"
     },

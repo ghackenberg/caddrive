@@ -1,38 +1,46 @@
-# FH OÖ Product Audit Platform
+# FHOOE Virtual Engineering Platform
 
-The FH OÖ Product Audit Platform provides and open source and license cost free solution to collaborative product audits over the Web and in virtual reality (VR).
+The FHOOE Virtual Engineering Platform provides a free and open source solution to collaborative product audits over the Web and in virtual reality (VR).
 
 ## Screenshots
 
-![Screenshot](./screenshot.png)
+Here is a recent screenshot of the software in action:
+
+![Screenshot](screenshot.png)
 
 ## Scripts
 
-Install dependencies.
+The software provides the following scripts:
+
+### Install dependencies
+
+Install third party dependencies as follows:
 
 ```
-cd <root> && npm install
-cd <root>/common && npm install
-cd <root>/broker && npm install
-cd <root>/backend && npm install
-cd <root>/worker && npm install
-cd <root>/frontend && npm install
-cd <root>/gateway && npm install
+npm install
 ```
 
-Start development.
+### Start development
+
+Start the software in development mode as follows:
 
 ```
-cd <root> && npm run start-dev
+npm run devel
 ```
 
-Start production.
+### Start production
+
+Start the software in production mode as follows:
 
 ```
-cd <root> && npm run start
+npm run clean
+npm run build
+npm start
 ```
 
 ## Diagrams
+
+The software exhibits the following architecture:
 
 ```mermaid
 classDiagram
@@ -69,8 +77,19 @@ classDiagram
 
 ## Modules
 
-* [Common](./common)
-* [Backend](./backend)
-* [Frontend](./frontend)
-* [Worker](./worker)
-* [Gateway](./gateway)
+The software comprises the following modules:
+
+* [Common](common)
+* [Broker](broker)
+* [Backend](backend)
+* [Worker](worker)
+* [Frontend](frontend)
+* [Gateway](gateway)
+
+## Documenations
+
+Here are some more resources to read through:
+
+* [License](LICENSE.md)
+* [Changelog](CHANGELOG.md)
+* [Contributing](CONTRIBUTING.md)
