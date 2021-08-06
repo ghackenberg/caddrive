@@ -8,7 +8,7 @@ export const Missing = () => (
         <Header/>
         <Navigation/>
         <main>
-            <h1><Link to="/">Index</Link> &rsaquo; Missing</h1>
+            <h1><Link to="/">Welcome Page</Link> &rsaquo; Missing</h1>
             <p>Please fix this error.</p>
         </main>
     </div>

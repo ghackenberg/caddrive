@@ -57,6 +57,13 @@ main a {
 main h1 {
     font-size: 200%;
     line-height: 150%;
+    margin-bottom: 10px;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+}
+main h2 {
+    font-size: 125%;
+    line-height: 150%;
     margin: 0;
     padding-top: 0.25em;
     padding-bottom: 0.25em;

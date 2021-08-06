@@ -19,10 +19,10 @@ export class UserService implements UserREST {
         return this.users
     }
 
-    async addUser(id: User) {
-        this.users.push(id)
+    async addUser(user: User) {
+        this.users.push(user)
         
-        return id
+        return user
     }
 
     async updateUser(user: User) {

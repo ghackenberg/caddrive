@@ -17,4 +17,20 @@ export class AuditService implements AuditREST {
     async findAll() {
         return this.audits
     }
+    
+    async addAudit(audit: Audit) {
+        this.audits.push(audit)
+        
+        return audit
+    }
+
+    async updateAudit(audit: Audit) {
+        
+        for (var i = 0; i < this.audits.length; i++) {
+            if (this.audits[i].id == audit.id)
+                this.audits.splice(i,1,audit)
+        }
+
+        return audit
+    }
 }

@@ -15,7 +15,8 @@ export const Products = () => {
             <Header/>
             <Navigation/>
             <main>
-                <h1><Link to="/">Index</Link> &rsaquo; Products</h1>
+                <h1><Link to="/">Welcome Page</Link> &rsaquo; Products</h1>
+                <h2>Available products</h2>
                 {products ? <ProductList list={products}/> : <p>Loading...</p>}
             </main>
         </div>

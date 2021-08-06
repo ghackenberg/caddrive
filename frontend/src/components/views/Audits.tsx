@@ -16,7 +16,8 @@ export const Audits = () => {
             <Header/>
             <Navigation/>
             <main>
-                <h1><Link to="/">Index</Link> &rsaquo; Audits</h1>
+                <h1><Link to="/">Welcome Page</Link> &rsaquo; Audits</h1>
+                <h2>Available audits</h2>
                 {audits ? <AuditList list={audits}/> : <p>Loading...</p>}
             </main>
         </div>

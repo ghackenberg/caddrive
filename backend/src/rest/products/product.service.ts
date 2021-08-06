@@ -17,4 +17,20 @@ export class ProductService implements ProductREST {
     async findAll() {
         return this.products
     }
+
+    async addProduct(product: Product) {
+        this.products.push(product)
+        
+        return product
+    }
+
+    async updateProduct(product: Product) {
+        
+        for (var i = 0; i < this.products.length; i++) {
+            if (this.products[i].id == product.id)
+                this.products.splice(i,1,product)
+        }
+
+        return product
+    }
 }
