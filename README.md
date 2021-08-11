@@ -75,7 +75,7 @@ classDiagram
     Frontend -- Common
 ```
 
-Data structure...
+The software implements the following data structure:
 
 ```mermaid
 classDiagram
