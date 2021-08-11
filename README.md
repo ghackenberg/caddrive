@@ -98,31 +98,34 @@ classDiagram
     class Node {
         name: string
     }
-    class CompositeNode {
-
-    }
-    class AtomicNode~T~ {
-        data: T
-    }
     class Audit {
         id: string
         start: number
         end: number
     }
-    class Comment {
+    class Event {
         time: number
+    }
+    class CommentEvent {
         text: string
+    }
+    class EnterEvent {
+
+    }
+    class LeaveEvent {
+
     }
     Product *-- Version
     Version *-- Model
     Version *-- Audit
     Model *-- Node
-    Node <|-- CompositeNode
-    Node <|-- AtomicNode
-    CompositeNode *-- Node
-    Audit *-- Comment
-    Comment ..> Node
-    Comment ..> User
+    Node *-- Node
+    Audit *-- Event
+    Event <|-- EnterEvent
+    Event <|-- LeaveEvent
+    Event <|-- CommentEvent
+    Event ..> User
+    CommentEvent ..> Node
 ```
 
 ## Modules
