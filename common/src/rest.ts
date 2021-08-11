@@ -1,8 +1,9 @@
-import { Audit, Product, User } from './data'
+import { Audit, Product, User, UserData } from './data'
 
 export interface UserREST {
     findAll(): Promise<User[]>
-    addUser(user: User): Promise<User>
+    getUser(id: string): Promise<User>
+    addUser(user: UserData): Promise<User>
     updateUser(user: User): Promise<User>
 }
 

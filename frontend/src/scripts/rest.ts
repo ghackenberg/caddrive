@@ -1,12 +1,16 @@
 import axios from 'axios'
-import { Audit, AuditREST, Product, ProductREST, User, UserREST } from 'fhooe-audit-platform-common'
+import { Audit, AuditREST, Product, ProductREST, User, UserData, UserREST } from 'fhooe-audit-platform-common'
 
 class UserClient implements UserREST {
     async findAll() {
         return (await axios.get<User[]>('/rest/users')).data
     }
 
-    async addUser(user: User) {
+    async getUser(id: string) {
+        return (await axios.get<User>(`/rest/users/${id}`)).data
+    }
+
+    async addUser(user: UserData) {
         return (await axios.post<User>('/rest/users', user)).data
     }
 

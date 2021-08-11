@@ -9,7 +9,7 @@ export const UserList = (props: {list: User[]}) => (
         <ul>
             {props.list.map(user =>
                 <li key={user.id}>
-                    <Link to={`/users/${user.id}`}><img src={UserIcon}/>User <em>{user.id}</em></Link>
+                    <Link to={`/users/${user.id}`}><img src={UserIcon}/>User <em>{user.name}</em></Link>
                 </li>
             )}
             <li>

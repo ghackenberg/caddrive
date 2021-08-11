@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { User, UserREST } from 'fhooe-audit-platform-common'
+import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class UserService implements UserREST {
@@ -10,6 +10,7 @@ export class UserService implements UserREST {
         for (var i = 0; i < Math.random() * 20; i++) {
             this.users.push({
                 id: shortid(),
+                name : shortid(),
                 email: shortid()
             })
         }
@@ -19,7 +20,17 @@ export class UserService implements UserREST {
         return this.users
     }
 
-    async addUser(user: User) {
+    async getUser(id: string): Promise<User> {
+        for (var i = 0; i < this.users.length; i++) {
+            if (this.users[i].id == id)
+                return this.users[i]
+        }
+        return null
+    }
+
+    async addUser(data: UserData) {
+        const user = { id: shortid(), ...data }
+
         this.users.push(user)
         
         return user

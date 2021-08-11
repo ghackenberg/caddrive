@@ -1,11 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class User {
+export class UserData {
     @ApiProperty()
-    id: string 
-
+    name: string
     @ApiProperty()
     email: string
+}
+
+export class User extends UserData {
+    @ApiProperty()
+    id: string 
 }
 
 export class Product {

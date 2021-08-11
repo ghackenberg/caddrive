@@ -81,6 +81,7 @@ The software implements the following data structure:
 classDiagram
     class User {
         id: string
+        name: string
         email: string
     }
     class Product {
