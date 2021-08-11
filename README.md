@@ -75,6 +75,56 @@ classDiagram
     Frontend -- Common
 ```
 
+Data structure...
+
+```mermaid
+classDiagram
+    class User {
+        id: string
+        email: string
+    }
+    class Product {
+        id: string
+        name: string
+    }
+    class Version {
+        id: string
+        name: string
+        date: number
+    }
+    class Model {
+        data: binary
+    }
+    class Node {
+        name: string
+    }
+    class CompositeNode {
+
+    }
+    class AtomicNode~T~ {
+        data: T
+    }
+    class Audit {
+        id: string
+        start: number
+        end: number
+    }
+    class Comment {
+        time: number
+        text: string
+    }
+    Product *-- Version
+    Version *-- Model
+    Version *-- Audit
+    Model *-- Node
+    Node <|-- CompositeNode
+    Node <|-- AtomicNode
+    CompositeNode *-- Node
+    Audit *-- Comment
+    Comment ..> Node
+    Comment ..> User
+```
+
 ## Modules
 
 The software comprises the following modules:
