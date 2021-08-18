@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Put } from '@nestjs/common'
-import { ApiBody, ApiResponse } from '@nestjs/swagger'
-import { Product, ProductREST } from 'fhooe-audit-platform-common'
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
+import { ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger'
+import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')
@@ -15,10 +15,17 @@ export class ProductController implements ProductREST {
         return this.productService.findAll()
     }
 
-    @Post() 
-    @ApiBody({ type: Product })
+    @Get(':id')
+    @ApiParam({ name: 'id' })
     @ApiResponse({ type: Product })
-    async addProduct(@Body() product: Product): Promise<Product> {
+    async getProduct(@Param('id') id: string): Promise<Product> {
+        return this.productService.getProduct(id)
+    }
+
+    @Post() 
+    @ApiBody({ type: ProductData })
+    @ApiResponse({ type: Product })
+    async addProduct(@Body() product: ProductData): Promise<Product> {
         return this.productService.addProduct(product)
     }
 

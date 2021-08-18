@@ -9,7 +9,7 @@ export const ProductList = (props: {list: Product[]}) => (
         <ul>
             {props.list.map(product =>
                 <li key={product.id}>
-                    <Link to={`/products/${product.id}`}><img src={ProductIcon}/>Product <em>{product.id}</em></Link>
+                    <Link to={`/products/${product.id}`}><img src={ProductIcon}/>Product <em>{product.name}</em></Link>
                 </li>
             )}
             <li>

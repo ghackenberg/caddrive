@@ -1,24 +1,46 @@
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { Audit, AuditREST } from 'fhooe-audit-platform-common'
+import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class AuditService implements AuditREST {
     private readonly audits: Audit[] = []
 
     constructor() {
+
+        var date = new Date()
+
         for (var i = 0; i < Math.random() * 20; i++) {
             this.audits.push({
-                id: shortid()
+                id: shortid(),
+                name: shortid(),
+                start: date.getUTCFullYear() + '-' + date.getMonth() + '-' + date.getDate(),
+                end: date.getUTCFullYear() + '-' + (date.getMonth() + randomInteger(1,6)) + '-' + randomInteger(1,30)
             })
         }
+
+        function randomInteger(min: number, max: number) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
     }
+
+    
 
     async findAll() {
         return this.audits
     }
+
+    async getAudit(id: string): Promise<Audit> {
+        for (var i = 0; i < this.audits.length; i++) {
+            if (this.audits[i].id == id)
+                return this.audits[i]
+        }
+        return null
+    }
     
-    async addAudit(audit: Audit) {
+    async addAudit(data: AuditData) {
+        const audit = { id: shortid(), ...data }
+
         this.audits.push(audit)
         
         return audit

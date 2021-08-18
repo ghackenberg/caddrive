@@ -81,11 +81,15 @@ The software implements the following data structure:
 classDiagram
     class User {
         id: string
+    }
+    class UserData {
         name: string
         email: string
     }
     class Product {
         id: string
+    }
+    class ProductData {
         name: string
     }
     class Version {
@@ -101,8 +105,11 @@ classDiagram
     }
     class Audit {
         id: string
-        start: number
-        end: number
+    }
+    class AuditData {
+        name: string
+        start: string
+        end: string
     }
     class Event {
         time: number
@@ -117,15 +124,18 @@ classDiagram
 
     }
     Product *-- Version
+    Product <|-- ProductData
     Version *-- Model
     Version *-- Audit
     Model *-- Node
     Node *-- Node
     Audit *-- Event
+    Audit <|-- AuditData
     Event <|-- EnterEvent
     Event <|-- LeaveEvent
     Event <|-- CommentEvent
     Event ..> User
+    User <|-- UserData
     CommentEvent ..> Node
 ```
 

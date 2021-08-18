@@ -1,4 +1,18 @@
-import { Audit, Product, User, UserData } from './data'
+import { Audit, AuditData, Product, ProductData, User, UserData, Version, VersionData } from './data'
+
+export interface ProductREST {
+    findAll(): Promise<Product[]>
+    getProduct(id: string): Promise<Product>
+    addProduct(product: ProductData): Promise<Product>
+    updateProduct(product: Product): Promise<Product>
+}
+
+export interface AuditREST {
+    findAll(): Promise<Audit[]>
+    getAudit(id: string): Promise<Audit>
+    addAudit(audit: AuditData): Promise<Audit>
+    updateAudit(audit: Audit): Promise<Audit>
+}
 
 export interface UserREST {
     findAll(): Promise<User[]>
@@ -7,14 +21,8 @@ export interface UserREST {
     updateUser(user: User): Promise<User>
 }
 
-export interface ProductREST {
-    findAll(): Promise<Product[]>
-    addProduct(product: Product): Promise<Product>
-    updateProduct(product: Product): Promise<Product>
-}
-
-export interface AuditREST {
-    findAll(): Promise<Audit[]>
-    addAudit(audit: Audit): Promise<Audit>
-    updateAudit(audit: Audit): Promise<Audit>
+export interface VersionREST {
+    findAll(): Promise<Version[]>
+    getVersion(id: string): Promise<Version>
+    addVersion(version: VersionData): Promise<Version>
 }

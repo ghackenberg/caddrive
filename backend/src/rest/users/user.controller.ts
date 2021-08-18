@@ -10,7 +10,7 @@ export class UserController implements UserREST {
     }
 
     @Get()
-    @ApiResponse({ type: [User] })
+    @ApiResponse({ type: [User] }) 
     async findAll(): Promise<User[]> {
         return this.userService.findAll()
     }

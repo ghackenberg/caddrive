@@ -1,28 +1,44 @@
 import * as React from 'react'
-import { useRef } from 'react'
+import { useRef, useState, useEffect, Fragment } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { ProductAPI } from '../../rest'
+import { ProductData, Version } from '../../data'
+import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
+import { VersionList } from '../widgets/VersionList'
 
 export const Product = (props: RouteComponentProps<{id: string}>) => {
 
-    const textInput = useRef<HTMLInputElement>(null)
-    const placeholderProduct = props.match.params.id
+    const id = props.match.params.id
+
+    const [product, setProduct] = useState<ProductData>(null)
+    const [versions, setVersion] = useState<Version[]>(null)
+
+    useEffect(() => { VersionAPI.findAll().then(setVersion) }, [])
+
+    if (id != 'new') {
+        useEffect(() => { ProductAPI.getProduct(id).then(setProduct) }, [])
+    }
+
+    const productInput = useRef<HTMLInputElement>(null)
     const history = useHistory()
 
     async function saveProduct(){
-        if(props.match.params.id == 'new')
-            if (textInput.current.value != '')
-                await ProductAPI.addProduct({id: textInput.current.value})
-        else
-            if (textInput.current.value != '')
-                await ProductAPI.updateProduct({id: textInput.current.value})
-            else
-                await ProductAPI.updateProduct({id: props.match.params.id})
+        if(id == 'new') {
+            if (productInput.current.value != '') {
+                await ProductAPI.addProduct({name: productInput.current.value})
 
-        history.goBack()
+                history.goBack()
+            }
+        }
+        else {
+            if (productInput.current.value != '') {
+                await ProductAPI.updateProduct({id: id, name: productInput.current.value})
+
+                history.goBack()
+            }
+        }
     }
 
     async function cancelInput() {
@@ -34,10 +50,22 @@ export const Product = (props: RouteComponentProps<{id: string}>) => {
             <Header/>
             <Navigation/>
             <main>
-                <h1><Link to="/">Welcome Page</Link> &rsaquo; <Link to="/products">Products</Link> &rsaquo; {props.match.params.id} Product</h1>
-                <input ref={textInput} placeholder={ props.match.params.id=='new' ? "Add here new product" : placeholderProduct}></input><br></br>
-                <button onClick={cancelInput}>Cancel</button>
-                <button onClick={saveProduct}>Save</button>
+                <h1><Link to="/">Welcome Page</Link> &rsaquo; <Link to="/products">Products</Link> &rsaquo; {id} Product</h1>
+                {id == 'new' ? (<h2>Add new Product</h2>) : (<h2>Change existing Product</h2>)}
+                {id == 'new' || product != null ? (
+                    <Fragment>
+                        <label>
+                            Product name: <br></br>
+                            <input ref={productInput} placeholder={ id=='new' ? "Add here new product" : product.name}></input><br></br>
+                        </label>
+                        <button onClick={cancelInput}>Cancel</button>
+                        <button onClick={saveProduct} >Save</button>
+                        <h2>Available product versions:</h2>
+                        {versions ? <VersionList list={versions}/> : <p>Loading...</p>}
+                    </Fragment>
+                    ) : (
+                        <p>Loading...</p>
+                    )}
             </main>
         </div>
     )

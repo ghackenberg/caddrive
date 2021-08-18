@@ -23,19 +23,20 @@ export const User = (props: RouteComponentProps<{ id: string }>) => {
     const history = useHistory()
 
     async function saveUser(){
-        if(props.match.params.id == 'new') {
-            if (emailInput.current.value != '')
+        if(id == 'new') {
+            if (userNameInput.current.value != '' && emailInput.current.value != '') {
                 await UserAPI.addUser({ name: userNameInput.current.value, email: emailInput.current.value})
 
                 history.goBack()
+            }
         }       
-        else
+        else {
             if (userNameInput.current.value != '' && emailInput.current.value != '') {
                 await UserAPI.updateUser({id: id, name: userNameInput.current.value, email: emailInput.current.value})
 
                 history.goBack()
             }
-                
+        }       
     }
 
     async function cancelInput() {
@@ -48,7 +49,8 @@ export const User = (props: RouteComponentProps<{ id: string }>) => {
             <Navigation/>
             <main>
                 <h1><Link to="/">Welcome Page</Link> &rsaquo; <Link to="/users">Users</Link> &rsaquo; {id} User</h1>
-                {id == 'new' || user != null ? (
+                {id == 'new' ? (<h2>Add new User</h2>) : (<h2>Change existing User</h2>)}
+                {id == 'new' || user != null ? (    
                     <Fragment>
                         <label>
                             Username: <br></br>
@@ -56,7 +58,6 @@ export const User = (props: RouteComponentProps<{ id: string }>) => {
                             <br></br>
                             Email: <br></br>
                             <input ref={emailInput} placeholder={ id=='new' ? 'Type in new email' : user.email} size={40}></input><br></br>
-                            <br></br>
                         </label>
                         <button onClick={cancelInput}>Cancel</button>
                         <button onClick={saveUser}>Save</button>

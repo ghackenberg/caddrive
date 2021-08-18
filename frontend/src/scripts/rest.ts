@@ -1,5 +1,41 @@
 import axios from 'axios'
-import { Audit, AuditREST, Product, ProductREST, User, UserData, UserREST } from 'fhooe-audit-platform-common'
+import { Audit, AuditData, AuditREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+
+class AuditClient implements AuditREST {
+    async findAll() {
+        return (await axios.get<Audit[]>('/rest/audits')).data
+    }
+
+    async getAudit(id: string) {
+        return (await axios.get<Audit>(`/rest/audits/${id}`)).data
+    }
+
+    async addAudit(audit: AuditData) {
+        return (await axios.post<Audit>('/rest/audits', audit)).data
+    }
+
+    async updateAudit(audit: Audit) {
+        return (await axios.put<Audit>('/rest/audits', audit)).data
+    }
+}
+
+class ProductClient implements ProductREST {
+    async findAll() {
+        return (await axios.get<Product[]>('/rest/products')).data
+    }
+
+    async getProduct(id: string) {
+        return (await axios.get<Product>(`/rest/products/${id}`)).data
+    }
+
+    async addProduct(product: ProductData) {
+        return (await axios.post<Product>('/rest/products', product)).data
+    }
+
+    async updateProduct(product: Product) {
+        return (await axios.put<Product>('/rest/products', product)).data
+    }
+}
 
 class UserClient implements UserREST {
     async findAll() {
@@ -19,34 +55,21 @@ class UserClient implements UserREST {
     }
 }
 
-class ProductClient implements ProductREST {
+class VersionClient implements VersionREST {
     async findAll() {
-        return (await axios.get<Product[]>('/rest/products')).data
+        return (await axios.get<Version[]>('/rest/versions')).data
     }
 
-    async addProduct(product: Product) {
-        return (await axios.post<Product>('/rest/products', product)).data
+    async getVersion(id: string) {
+        return (await axios.get<Version>(`/rest/versions/${id}`)).data
     }
 
-    async updateProduct(product: Product) {
-        return (await axios.put<Product>('/rest/products', product)).data
+    async addVersion(version: VersionData) {
+        return (await axios.post<Version>('/rest/versions', version)).data
     }
 }
 
-class AuditClient implements AuditREST {
-    async findAll() {
-        return (await axios.get<Audit[]>('/rest/audits')).data
-    }
-
-    async addAudit(audit: Audit) {
-        return (await axios.post<Audit>('/rest/audits', audit)).data
-    }
-
-    async updateAudit(audit: Audit) {
-        return (await axios.put<Audit>('/rest/audits', audit)).data
-    }
-}
-
-export const UserAPI = new UserClient()
 export const ProductAPI = new ProductClient()
 export const AuditAPI = new AuditClient()
+export const UserAPI = new UserClient()
+export const VersionAPI = new VersionClient()

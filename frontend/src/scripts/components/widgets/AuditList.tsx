@@ -9,7 +9,7 @@ export const AuditList = (props: {list: Audit[]}) => (
         <ul>
             {props.list.map(audit =>
                 <li key={audit.id}>
-                    <Link to={`/audits/${audit.id}`}><img src={AuditIcon}/>Audit <em>{audit.id}</em></Link>
+                    <Link to={`/audits/${audit.id}`}><img src={AuditIcon}/>Audit <em>{audit.name}</em></Link>
                 </li>
             )}
             <li>

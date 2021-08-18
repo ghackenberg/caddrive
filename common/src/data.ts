@@ -1,5 +1,34 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+export class AuditData {
+    @ApiProperty()
+    name: string
+    @ApiProperty()
+    start: string
+    @ApiProperty()
+    end: string
+}
+
+export class Audit extends AuditData {
+    @ApiProperty()
+    id: string
+}
+
+export class Event {
+    @ApiProperty()
+    time: number
+}
+
+export class ProductData {
+    @ApiProperty()
+    name: string
+}
+
+export class Product extends ProductData {
+    @ApiProperty()
+    id: string
+}
+
 export class UserData {
     @ApiProperty()
     name: string
@@ -12,12 +41,14 @@ export class User extends UserData {
     id: string 
 }
 
-export class Product {
+export class VersionData {
     @ApiProperty()
-    id: string
+    name: string
+    @ApiProperty()
+    date: string
 }
 
-export class Audit {
+export class Version extends VersionData {
     @ApiProperty()
     id: string
 }
