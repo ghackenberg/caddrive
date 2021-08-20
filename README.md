@@ -143,12 +143,12 @@ classDiagram
 
 The software comprises the following modules:
 
-* [Common](common)
-* [Broker](broker)
-* [Backend](backend)
-* [Worker](worker)
-* [Frontend](frontend)
-* [Gateway](gateway)
+* [Common](common/README.md)
+* [Broker](broker/README.md)
+* [Backend](backend/README.md)
+* [Worker](worker/README.md)
+* [Frontend](frontend/README.md)
+* [Gateway](gateway/README.md)
 
 ## Documenations
 
