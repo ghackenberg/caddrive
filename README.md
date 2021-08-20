@@ -40,7 +40,9 @@ npm start
 
 ## Diagrams
 
-The software exhibits the following architecture:
+### Module structure
+
+The software exhibits the following module structure:
 
 ```mermaid
 classDiagram
@@ -74,6 +76,8 @@ classDiagram
     Worker -- Common
     Frontend -- Common
 ```
+
+### Data structure
 
 The software implements the following data structure:
 
