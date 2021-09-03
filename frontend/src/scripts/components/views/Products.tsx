@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import { Product } from 'fhooe-audit-platform-common'
 import { ProductAPI } from '../../rest'
@@ -7,7 +7,7 @@ import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { ProductList } from '../widgets/ProductList'
 
-export const Products = () => {
+export const ProductsView = () => {
     const [products, setProducts] = useState<Product[]>(null)
     useEffect(() => { ProductAPI.findAll().then(setProducts) }, [])
     return (
@@ -15,7 +15,16 @@ export const Products = () => {
             <Header/>
             <Navigation/>
             <main>
-                <h1><Link to="/">Welcome Page</Link> &rsaquo; Products</h1>
+                <Fragment>
+                    <nav>
+                        <span>
+                            <Link to="/">Welcome Page</Link>
+                        </span>
+                        <span>
+                            <a>Products</a>
+                        </span>
+                    </nav>
+                </Fragment>
                 <h2>Available products</h2>
                 {products ? <ProductList list={products}/> : <p>Loading...</p>}
             </main>

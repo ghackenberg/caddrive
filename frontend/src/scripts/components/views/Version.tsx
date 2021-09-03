@@ -1,38 +1,46 @@
 import  * as React from 'react'
-import { useRef, useState, useEffect, Fragment } from 'react'
+import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { Version as VersionData} from 'fhooe-audit-platform-common'
-import { VersionAPI } from '../../rest'
+import { Product, Version} from 'fhooe-audit-platform-common'
+import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
+import { LinkSource } from '../widgets/LinkSource'
+import Datepicker from 'react-datepicker'
 
-export const Version = (props: RouteComponentProps<{ id: string }>) => {
+export const VersionView = (props: RouteComponentProps<{ version: string, product: string }>) => {
 
-    const id = props.match.params.id
-    var newDate = new Date().getUTCFullYear() + '-' + new Date().getMonth() + '-' + new Date().getDate()
+    const versionId = props.match.params.version
+    const productId = props.match.params.product
 
-    const [version, setVersion] = useState<VersionData>(null)
+    const [product, setProduct] = useState<Product>(null)
+    const [version, setVersion] = useState<Version>(null)
+    const [currentDate, setCurrentDate] = useState<Date>(new Date())
 
-    if (id != 'new') {
-        useEffect(() => { VersionAPI.getVersion(id).then(setVersion) }, [])
+    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
+
+    if (versionId != 'new') {
+        useEffect(() => { VersionAPI.getVersion(versionId).then(setVersion) }, [])
     }
 
     const versionNameInput = useRef<HTMLInputElement>(null)
         
     const history = useHistory()
 
-    async function addVersion(){
-        if(id == 'new') {
+    async function addVersion(event: FormEvent){
+        event.preventDefault()
+
+        if(versionId == 'new') {
             if (versionNameInput.current.value != '') {
-                await VersionAPI.addVersion({ name: versionNameInput.current.value, date: newDate})
+                await VersionAPI.addVersion({ product: productId, name: versionNameInput.current.value, date: currentDate })
 
                 history.goBack()
             }
         }          
     }
 
-    async function cancelInput() {
+    async function cancelInput(_event: React.FormEvent) {
         history.goBack()
     }
         
@@ -41,19 +49,43 @@ export const Version = (props: RouteComponentProps<{ id: string }>) => {
             <Header/>
             <Navigation/>
             <main>
-                <h1><Link to="/">Welcome Page</Link> &rsaquo; <Link to="/versions">Versions</Link> &rsaquo; {id} Version</h1>
-                {id == 'new' ? (<h2>Add new Version</h2>) : (<h2>View existing Version</h2>)}
-                {id == 'new' || version != null ? (    
+                {product && ( version || versionId == 'new' ) ? (
                     <Fragment>
-                        <label>
-                            Version name: <br></br>
-                            <input ref={versionNameInput} placeholder={ id=='new' ? 'Type in new version name' : version.name} size={25}></input><br></br>
-                            <br></br>
-                            Version date: <br></br>
-                            <input placeholder={id=='new' ? newDate : version.date} size={25}></input><br></br>
-                        </label>
-                        { id=='new' ? <button onClick={cancelInput}>Cancel</button> : <button onClick={cancelInput}>Return</button> }
-                        { id=='new' ? <button onClick={addVersion}>Save</button> : <p></p> }
+                        <nav>
+                            <LinkSource object={product} id={product.id} name={product.name} type='Product'/>     
+                            <span>
+                                <Link to={`/products/${productId}/version`}>Versions</Link>
+                            </span>
+                            <span>
+                                <Link to={`/products/${productId}/versions/${versionId}`}>{versionId == 'new' ? 'new' : version.name}</Link>
+                            </span>
+                        </nav>
+                        <h1>{ versionId == 'new' ? 'Add new version' : `View existing version` }</h1>
+                        <form onSubmit={addVersion} onReset={cancelInput}>
+                            <div>
+                                <div>
+                                    <label>Version name:</label>
+                                </div>
+                                <div>
+                                    <input ref={versionNameInput} placeholder={versionId == 'new' ? 'Add here new version' : version.name}/>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <label>Version date:</label>
+                                </div>
+                                <div>
+                                    <Datepicker selected={currentDate} onChange={(date) => setCurrentDate(date)}/>
+                                </div>
+                            </div>
+                            <div>
+                                <div/>
+                                <div>
+                                    <input type="reset" value={ versionId == 'new' ? 'Cancel' : 'Return'}/>
+                                    { versionId == 'new' && <input type="submit" value="Save"/> }
+                                </div>
+                            </div>
+                        </form>
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

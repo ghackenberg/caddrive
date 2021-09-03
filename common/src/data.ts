@@ -4,9 +4,13 @@ export class AuditData {
     @ApiProperty()
     name: string
     @ApiProperty()
-    start: string
+    start: Date
     @ApiProperty()
-    end: string
+    end: Date
+    @ApiProperty()
+    productId: string
+    @ApiProperty()
+    versionId: string
 }
 
 export class Audit extends AuditData {
@@ -14,9 +18,26 @@ export class Audit extends AuditData {
     id: string
 }
 
-export class Event {
+export class EventData {
     @ApiProperty()
-    time: number
+    time: Date
+    @ApiProperty()
+    audit: string
+    @ApiProperty()
+    user: string
+    @ApiProperty()
+    type: string
+}
+
+export class CommentEventData extends EventData {
+    override readonly type = 'comment'
+    @ApiProperty()
+    text: string
+}
+
+export class CommentEvent extends CommentEventData {
+    @ApiProperty()
+    id: string
 }
 
 export class ProductData {
@@ -45,7 +66,9 @@ export class VersionData {
     @ApiProperty()
     name: string
     @ApiProperty()
-    date: string
+    date: Date
+    @ApiProperty()
+    product: string
 }
 
 export class Version extends VersionData {

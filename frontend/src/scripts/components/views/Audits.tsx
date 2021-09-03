@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import { Audit } from 'fhooe-audit-platform-common'
 import { AuditAPI } from '../../rest'
@@ -8,17 +8,29 @@ import { Navigation } from '../snippets/Navigation'
 import { AuditList } from '../widgets/AuditList'
 
 
-export const Audits = () => {
-    const [audits, setAudits] = useState<Audit[]>(null)
-    useEffect(() => { AuditAPI.findAll().then(setAudits) }, [])
+export const AuditsView = () =>  {
+
+    const [audits, setAudit] = useState<Audit[]>(null)
+
+    useEffect(() => { AuditAPI.findAll().then(setAudit) }, [])
+
     return (
         <div className="view audits">
             <Header/>
             <Navigation/>
             <main>
-                <h1><Link to="/">Welcome Page</Link> &rsaquo; Audits</h1>
+                <Fragment>
+                    <nav>
+                        <span>
+                            <Link to="/">Welcome Page</Link> 
+                        </span>
+                        <span>
+                            <a>Audits</a>
+                        </span>
+                    </nav>
+                </Fragment>
                 <h2>Available audits</h2>
-                {audits ? <AuditList list={audits}/> : <p>Loading...</p>}
+                {audits ? <AuditList auditList={audits}/> : <p>Loading...</p>}
             </main>
         </div>
     )

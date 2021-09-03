@@ -1,31 +1,34 @@
 import * as React from 'react'
-import { useRef, useState, useEffect, Fragment } from 'react'
+import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { ProductData, Version } from '../../data'
+import { RouteComponentProps } from 'react-router-dom'
+import { Product, Version } from '../../data'
 import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
+import { LinkSource } from '../widgets/LinkSource'
 import { VersionList } from '../widgets/VersionList'
 
-export const Product = (props: RouteComponentProps<{id: string}>) => {
+export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
-    const id = props.match.params.id
+    const productId = props.match.params.product
 
-    const [product, setProduct] = useState<ProductData>(null)
-    const [versions, setVersion] = useState<Version[]>(null)
+    const [product, setProduct] = useState<Product>(null)
+    const [versions, setVersions] = useState<Version[]>(null)
 
-    useEffect(() => { VersionAPI.findAll().then(setVersion) }, [])
+    useEffect(() => { VersionAPI.findAll(productId).then(setVersions) }, [])
 
-    if (id != 'new') {
-        useEffect(() => { ProductAPI.getProduct(id).then(setProduct) }, [])
+    if (productId != 'new') {
+        useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
     }
 
     const productInput = useRef<HTMLInputElement>(null)
     const history = useHistory()
 
-    async function saveProduct(){
-        if(id == 'new') {
+    async function saveProduct(event: FormEvent){
+        event.preventDefault()
+
+        if(productId == 'new') {
             if (productInput.current.value != '') {
                 await ProductAPI.addProduct({name: productInput.current.value})
 
@@ -34,7 +37,7 @@ export const Product = (props: RouteComponentProps<{id: string}>) => {
         }
         else {
             if (productInput.current.value != '') {
-                await ProductAPI.updateProduct({id: id, name: productInput.current.value})
+                await ProductAPI.updateProduct({id: productId, name: productInput.current.value})
 
                 history.goBack()
             }
@@ -49,24 +52,43 @@ export const Product = (props: RouteComponentProps<{id: string}>) => {
         <div className="view product">
             <Header/>
             <Navigation/>
-            <main>
-                <h1><Link to="/">Welcome Page</Link> &rsaquo; <Link to="/products">Products</Link> &rsaquo; {id} Product</h1>
-                {id == 'new' ? (<h2>Add new Product</h2>) : (<h2>Change existing Product</h2>)}
-                {id == 'new' || product != null ? (
-                    <Fragment>
-                        <label>
-                            Product name: <br></br>
-                            <input ref={productInput} placeholder={ id=='new' ? "Add here new product" : product.name}></input><br></br>
-                        </label>
-                        <button onClick={cancelInput}>Cancel</button>
-                        <button onClick={saveProduct} >Save</button>
-                        <h2>Available product versions:</h2>
-                        {versions ? <VersionList list={versions}/> : <p>Loading...</p>}
-                    </Fragment>
+                <main>
+                    { productId == 'new' || product ? (
+                        <Fragment>
+                            <nav>
+                                { product ? (
+                                <LinkSource object={product} id={product.id} name={product.name} type={'Product'}/>  
+                                ) : (
+                                    <LinkSource object={'new'} id={'new'} name={'new'} type={'Product'}/>  
+                                )} 
+                            </nav>
+                            <h1>{ productId == 'new' ? 'Add new product' : 'Change existing product' }</h1>
+                            <form onSubmit={saveProduct} onReset={cancelInput}>
+                                <div>
+                                    <div>
+                                        <label>Product name:</label> 
+                                    </div>
+                                    <div>
+                                        <input ref={productInput} placeholder={ productId=='new' ? "Add here new product" : product.name }/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div/>
+                                    <div>
+                                        <input type="reset" value='Cancel'/>
+                                        <input type="submit" value="Save"/>
+                                    </div>
+                                </div>
+                            </form>
+                            { product && <h2>Available product versions:</h2> }
+                            { product && versions ? 
+                                <VersionList product={product} list={versions}/> : product && <p>Loading...</p> 
+                            }
+                        </Fragment>
                     ) : (
                         <p>Loading...</p>
                     )}
-            </main>
+                </main>
         </div>
     )
 }

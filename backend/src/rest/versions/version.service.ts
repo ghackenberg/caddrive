@@ -6,8 +6,9 @@ import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 export class VersionService implements VersionREST {
     private readonly versions: Version[] = []
 
+    /*
     constructor() {
-
+         
         var date = new Date()
 
         for (var i = 0; i < Math.random() * 20; i++) {
@@ -17,7 +18,9 @@ export class VersionService implements VersionREST {
                 date : date.getUTCFullYear() + '-' + date.getMonth() + '-' + date.getDate()
             })
         }
+        
     }
+    */
 
     async getVersion(id: string): Promise<Version> {
         for (var i = 0; i < this.versions.length; i++) {
@@ -27,8 +30,8 @@ export class VersionService implements VersionREST {
         return null
     }
 
-    async findAll() {
-        return this.versions
+    async findAll(product: string) {
+        return this.versions.filter(version => version.product == product)
     }
 
     async addVersion(data: VersionData) {

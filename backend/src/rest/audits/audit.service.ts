@@ -6,8 +6,9 @@ import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
 export class AuditService implements AuditREST {
     private readonly audits: Audit[] = []
 
+    /*
     constructor() {
-
+        /*
         var date = new Date()
 
         for (var i = 0; i < Math.random() * 20; i++) {
@@ -15,7 +16,8 @@ export class AuditService implements AuditREST {
                 id: shortid(),
                 name: shortid(),
                 start: date.getUTCFullYear() + '-' + date.getMonth() + '-' + date.getDate(),
-                end: date.getUTCFullYear() + '-' + (date.getMonth() + randomInteger(1,6)) + '-' + randomInteger(1,30)
+                end: date.getUTCFullYear() + '-' + (date.getMonth() + randomInteger(1,6)) + '-' + randomInteger(1,30),
+                version:
             })
         }
 
@@ -23,10 +25,10 @@ export class AuditService implements AuditREST {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
     }
-
+    */
     
-
     async findAll() {
+
         return this.audits
     }
 

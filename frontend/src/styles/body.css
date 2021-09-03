@@ -1,6 +1,9 @@
 @import url(./header.css);
 @import url(./nav.css);
 @import url(./main.css);
+@import "react-datepicker/dist/react-datepicker.css";
+@import "react-dropdown/style.css";
+
 
 body {
     margin: 0;

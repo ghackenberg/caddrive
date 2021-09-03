@@ -1,4 +1,4 @@
-nav {
+div.view > nav {
     position: absolute;
     z-index: 0;
     top: 4em;
@@ -8,26 +8,26 @@ nav {
     background: rgba(0,0,0,0.0);
     overflow: auto;
 }
-nav ul {
+div.view > nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
     border-top: 1px solid rgba(0,0,0,0.1);
 }
-nav ul:first-child {
+div.view > nav ul:first-child {
     border-top: 0;
 }
-nav a {
+div.view > nav a {
     display: block;
     padding: 1em;
     line-height: 2em;
     text-decoration: none;
     color: blue;
 }
-nav a:hover {
+div.view > nav a:hover {
     background-color: rgba(0,0,0,0.05);
 }
-nav img {
+div.view > nav img {
     display: block;
     float: left;
     width: 2em;

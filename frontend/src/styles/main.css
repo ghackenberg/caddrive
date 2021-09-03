@@ -1,30 +1,78 @@
-main {
+div.view > main {
     position: absolute;
     z-index: 0;
     top: 4em;
     left: 15em;
     right: 0;
     bottom: 0;
+    padding-top: 0.25em;
     padding-left: 1em;
     padding-right: 1em;
+    padding-bottom: 0.25em;
     background-color: rgba(0,0,0,0.0);
     overflow: auto;
 }
-main ul {
+
+div.view > main a {
+    text-decoration: none;
+}
+div.view > main a[href ~= ''] {
+    color: blue;
+}
+div.view > main a img {
+    display: inline-block;
+    vertical-align: top;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.5em;
+}
+
+div.view > main nav {
+    padding-top: calc(0.75rem);
+    padding-bottom: calc(0.75rem);
+}
+div.view > main nav::before {
+    content: "You are here: "
+}
+div.view > main nav > span:first-child::before {
+    content: "";
+}
+div.view > main nav > span::before {
+    content: " / ";
+}
+div.view > main nav > span > a {
+    display: inline-block;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 0.25em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    color: gray;
+}
+div.view > main nav > span > a:not([href]) {
+    font-style: italic;
+}
+div.view > main nav > span > a[href]:hover {
+    color: black;
+}
+div.view > main nav > span:last-child > a {
+    color: black;
+}
+
+div.view > main ul {
     list-style: none;
     margin: 0;
     margin-left: calc(0.75em - 0.5px);
     padding: 0;
     white-space: nowrap;
 }
-main li {
+div.view > main li {
     padding-left: calc(1.25em - 0.5px);
     border-left: 1px dashed black;
 }
-main li:last-child {
+div.view > main li:last-child {
     border-left: 0;
 }
-main li::before {
+div.view > main li::before {
     content: "";
     display: block;
     float: left;
@@ -34,49 +82,149 @@ main li::before {
     margin-right: 0.5em;
     border-bottom: 1px dashed black;
 }
-main li:last-child::before {
+div.view > main li:last-child::before {
     border-left: 1px dashed black;
 }
-main a img {
-    display: inline-block;
-    vertical-align: top;
-    width: 1.5em;
-    height: 1.5em;
-    margin-right: 0.5em;
-}
-main p {
+
+div.view > main p {
     margin: 0;
-    padding: 0;
-    padding-top: 0.75em;
-    padding-bottom: 0.75em;
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
 }
-main a {
-    text-decoration: none;
-    color: blue;
-}
-main h1 {
+
+div.view > main h1 {
     font-size: 200%;
     line-height: 150%;
-    margin-bottom: 10px;
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
+    margin: 0;
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
 }
-main h2 {
+div.view > main h2 {
     font-size: 125%;
     line-height: 150%;
     margin: 0;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
 }
-main button {
-    margin-top: 1em; 
-    margin-right: 0.75em;
-    margin-bottom: 1em;
+
+div.view > main form {
+    display: table;
+    margin: 0;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+    padding: 0;
+    border-spacing: 1.5em;
+    border-collapse: separate;
+    background-color: rgba(0,0,0,0.1);
 }
-div.view.demo main {
+div.view > main form > div {
+    display: table-row;
+}
+div.view > main form > div > div {
+    display: table-cell;
+}
+div.view > main form > div > div:last-child {
+    text-align: right;
+}
+div.view > main form > div > div > input {
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+
+    border: 0;
+    outline: 0;
+
+    background-color: rgba(0,0,0,0.1);
+    color: black
+}
+div.view > main form > div > div > input[type="submit"] {
+    margin-left: 1.5em;
+    color: white;
+    background-color: steelblue;
+}
+div.view > main form > div > div > input[type="submit"]:hover {
+    background-color: skyblue
+}
+div.view > main form > div > div > input[type="reset"] {
+    margin-left: 1.5em;
+    color: white;
+    background-color: gray;
+}
+div.view > main form > div > div > input[type="reset"]:hover {
+    background-color: darkgray;
+}
+div.view > main form > div > div > a > input.enter-audit {
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+    
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+    
+    color: white;
+    background-color: darkseagreen;
+}
+div.view > main form > div > div > a > input.leave-audit {
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+    
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+    
+    color: white;
+    background-color: gray;
+}
+div.view > main form > div > div > a > input.enter-audit:hover {
+    background-color: yellowgreen;
+}
+div.view > main form > div > div > a > input.enter-audit:hover {
+    background-color: darkgray;
+}
+
+div.view > main form > div > div > div.react-datepicker-wrapper > div.react-datepicker__input-container > input[type="text"] {
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+
+    border: 0;
+    outline: 0;
+
+    background-color: rgba(0,0,0,0.1);
+    color: black
+}
+div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control {
+    background-color: rgba(0,0,0,0.1);
+    color: black
+}
+div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > div.Dropdown-placeholder {
+    color: grey
+}
+div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > div.Dropdown-placeholder.is-selected  {
+    color: black
+}
+div.view.demo > main {
     overflow: hidden;
 }
-div.view.demo div.widget.scene_graph {
+div.view.demo > main div.widget.scene_graph {
     position: absolute;
     top: 0;
     left: 0;
@@ -87,7 +235,7 @@ div.view.demo div.widget.scene_graph {
     overflow: auto;
     border-left: 1px solid rgba(0,0,0,0.1);
 }
-div.view.demo div.widget.scene_view {
+div.view.demo > main div.widget.scene_view {
     position: absolute;
     top: 0;
     left: calc(25em + 1px);

@@ -22,7 +22,7 @@ export interface UserREST {
 }
 
 export interface VersionREST {
-    findAll(): Promise<Version[]>
+    findAll(product: string): Promise<Version[]>
     getVersion(id: string): Promise<Version>
     addVersion(version: VersionData): Promise<Version>
 }

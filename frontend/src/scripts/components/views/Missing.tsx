@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 
-export const Missing = () => (
+export const MissingView = () => (
     <div className="view missing">
         <Header/>
         <Navigation/>

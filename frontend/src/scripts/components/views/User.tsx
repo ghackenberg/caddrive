@@ -1,20 +1,21 @@
 import  * as React from 'react'
-import { useRef, useState, useEffect, Fragment } from 'react'
+import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { User as UserData } from 'fhooe-audit-platform-common'
+import { RouteComponentProps } from 'react-router-dom'
+import { User } from 'fhooe-audit-platform-common'
 import { UserAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
+import { LinkSource } from '../widgets/LinkSource'
 
-export const User = (props: RouteComponentProps<{ id: string }>) => {
+export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
-    const id = props.match.params.id
+    const userId = props.match.params.user
 
-    const [user, setUser] = useState<UserData>(null)
+    const [user, setUser] = useState<User>(null)
 
-    if (id != 'new') {
-        useEffect(() => { UserAPI.getUser(id).then(setUser) }, [])
+    if (userId != 'new') {
+        useEffect(() => { UserAPI.getUser(userId).then(setUser) }, [])
     }
 
     const userNameInput = useRef<HTMLInputElement>(null)
@@ -22,8 +23,10 @@ export const User = (props: RouteComponentProps<{ id: string }>) => {
     
     const history = useHistory()
 
-    async function saveUser(){
-        if(id == 'new') {
+    async function saveUser(event: FormEvent){
+        event.preventDefault()
+
+        if(userId == 'new') {
             if (userNameInput.current.value != '' && emailInput.current.value != '') {
                 await UserAPI.addUser({ name: userNameInput.current.value, email: emailInput.current.value})
 
@@ -32,7 +35,7 @@ export const User = (props: RouteComponentProps<{ id: string }>) => {
         }       
         else {
             if (userNameInput.current.value != '' && emailInput.current.value != '') {
-                await UserAPI.updateUser({id: id, name: userNameInput.current.value, email: emailInput.current.value})
+                await UserAPI.updateUser({id: userId, name: userNameInput.current.value, email: emailInput.current.value})
 
                 history.goBack()
             }
@@ -42,30 +45,52 @@ export const User = (props: RouteComponentProps<{ id: string }>) => {
     async function cancelInput() {
         history.goBack()
     }
-        
+
     return (
         <div className="view user">
             <Header/>
             <Navigation/>
-            <main>
-                <h1><Link to="/">Welcome Page</Link> &rsaquo; <Link to="/users">Users</Link> &rsaquo; {id} User</h1>
-                {id == 'new' ? (<h2>Add new User</h2>) : (<h2>Change existing User</h2>)}
-                {id == 'new' || user != null ? (    
-                    <Fragment>
-                        <label>
-                            Username: <br></br>
-                            <input ref={userNameInput} placeholder={ id=='new' ? 'Type in new username' : user.name}></input><br></br>
-                            <br></br>
-                            Email: <br></br>
-                            <input ref={emailInput} placeholder={ id=='new' ? 'Type in new email' : user.email} size={40}></input><br></br>
-                        </label>
-                        <button onClick={cancelInput}>Cancel</button>
-                        <button onClick={saveUser}>Save</button>
-                    </Fragment>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </main>
+                <main>
+                    { userId == 'new' || user ? (
+                        <Fragment>
+                            <nav>
+                                { user ? ( 
+                                <LinkSource object={user} id={user.id} name={user.name} type='User'/> 
+                                ) : (
+                                <LinkSource object={'new'} id={'new'} name={'new'} type='User'/> 
+                                )}
+                            </nav>
+                            <h1>{ userId == 'new' ? 'Add new user' : 'Change existing user' }</h1>
+                            <form onSubmit={saveUser} onReset={cancelInput}>
+                                <div>
+                                    <div>
+                                        <label>Username:</label>
+                                    </div>
+                                    <div>
+                                        <input ref={userNameInput} placeholder={userId == 'new' ? "Add here new user" : user.name} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div>
+                                        <label>Email:</label>
+                                    </div>
+                                    <div>
+                                        <input type='email' ref={emailInput} placeholder={userId == 'new' ? 'Type in new email' : user.email} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div/>
+                                    <div>
+                                        <input type="reset" value='Cancel'/>
+                                        <input type="submit" value="Save"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </Fragment>
+                    ) : (
+                        <p>Loading...</p>
+                    )}
+                </main>
         </div>
     )
 }

@@ -4,13 +4,13 @@ import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { ModelViewer } from '../widgets/ModelViewer'
 
-export const Model = (props: RouteComponentProps<{ id: string }>) => {
+export const ModelView = (props: RouteComponentProps<{ model: string }>) => {
     return (
         <div className="view demo">
             <Header/>
             <Navigation/>
             <main>
-                <ModelViewer url={`/models/${props.match.params.id}.glb`}/>
+                <ModelViewer url={`/models/${props.match.params.model}.glb`}/>
             </main>
         </div>
     )

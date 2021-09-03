@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger'
 import { Version, VersionREST } from 'fhooe-audit-platform-common'
 import { VersionService } from './version.service'
@@ -11,8 +11,8 @@ export class VersionController implements VersionREST {
 
     @Get()
     @ApiResponse({ type: [Version] }) 
-    async findAll(): Promise<Version[]> {
-        return this.versionService.findAll()
+    async findAll(@Query('product') product: string): Promise<Version[]> {
+        return this.versionService.findAll(product)
     }
 
     @Get(':id')

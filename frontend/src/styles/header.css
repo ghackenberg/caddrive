@@ -1,4 +1,4 @@
-header {
+div.view > header {
     position: absolute;
     z-index: 1;
     top: 0;
@@ -14,11 +14,11 @@ header {
     box-shadow: 0 0 1em rgba(0,0,0,0.5);
     color: white;
 }
-header a {
+div.view > header a {
     text-decoration: none;
     color: inherit;
 }
-header img {
+div.view > header img {
     display: block;
     float: left;
     width: 2em;

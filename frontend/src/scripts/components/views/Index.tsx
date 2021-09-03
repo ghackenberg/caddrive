@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 
-export const Index = () => (
+export const IndexView = () => (
     <div className="view index">
         <Header/>
         <Navigation/>

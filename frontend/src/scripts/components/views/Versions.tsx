@@ -1,23 +1,38 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Version } from 'fhooe-audit-platform-common'
-import { VersionAPI } from '../../rest'
+import { useState, useEffect , Fragment } from 'react'
+import { Link, RouteComponentProps } from 'react-router-dom'
+import { Product, Version } from 'fhooe-audit-platform-common'
+import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { VersionList } from '../widgets/VersionList'
+import { LinkSource } from '../widgets/LinkSource'
 
-export const Versions = () => {
+export const VersionsView = (props: RouteComponentProps<{ product: string }>) => {
+    
+    const productId = props.match.params.product 
+
+    const [product, setProduct] = useState<Product>(null)
     const [versions, setVersion] = useState<Version[]>(null)
-    useEffect(() => { VersionAPI.findAll().then(setVersion) }, [])
+
+    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
+    useEffect(() => { VersionAPI.findAll(productId).then(setVersion) }, [])
+
     return (
         <div className="view versions">
             <Header/>
             <Navigation/>
             <main>
-                <h1><Link to="/">Welcome Page</Link> &rsaquo; <Link to="/products">Products</Link> &rsaquo; Versions</h1>
+                <Fragment>
+                    <nav>
+                        <LinkSource object={product} id={product.id} name={product.name} type='Product'/>  
+                        <span>
+                            <Link to={`/products/${productId}/version`}>Versions</Link>
+                        </span>
+                    </nav>
+                </Fragment>
                 <h2>Available versions</h2>
-                {versions ? <VersionList list={versions}/> : <p>Loading...</p>}
+                {product && versions ? <VersionList product={product} list={versions}/> : <p>Loading...</p>}
             </main>
         </div>
     )

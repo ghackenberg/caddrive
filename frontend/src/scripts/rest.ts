@@ -56,8 +56,8 @@ class UserClient implements UserREST {
 }
 
 class VersionClient implements VersionREST {
-    async findAll() {
-        return (await axios.get<Version[]>('/rest/versions')).data
+    async findAll(product: string) {
+        return (await axios.get<Version[]>('/rest/versions', {params: {product}} )).data
     }
 
     async getVersion(id: string) {

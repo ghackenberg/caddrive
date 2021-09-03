@@ -6,7 +6,7 @@ import { AuditService } from './audit.service'
 @Controller('rest/audits')
 export class AuditController implements AuditREST {
     constructor(private auditService: AuditService) {
-
+        
     }
 
     @Get()
