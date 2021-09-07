@@ -19,6 +19,22 @@ export class ProductService implements ProductREST {
         return this.products
     }
 
+    async findProducts(name: string) : Promise<Product[]> {
+        
+        const productsQuery: Product[] = []
+
+        const productsNameLower = this.products.map(product => product.name.toLowerCase())
+
+        for (var i = 0; i < productsNameLower.length; i++) {
+
+            if (productsNameLower[i].includes(name.toLowerCase())) {
+                productsQuery.push(this.products[i])
+            }
+        }
+
+        return productsQuery
+    }
+
     async getProduct(id: string): Promise<Product> {
         for (var i = 0; i < this.products.length; i++) {
             if (this.products[i].id == id)

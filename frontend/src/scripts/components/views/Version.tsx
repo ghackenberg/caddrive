@@ -14,6 +14,10 @@ export const VersionView = (props: RouteComponentProps<{ version: string, produc
     const versionId = props.match.params.version
     const productId = props.match.params.product
 
+    const versionNameInput = useRef<HTMLInputElement>(null)
+        
+    const history = useHistory()
+
     const [product, setProduct] = useState<Product>(null)
     const [version, setVersion] = useState<Version>(null)
     const [currentDate, setCurrentDate] = useState<Date>(new Date())
@@ -23,10 +27,6 @@ export const VersionView = (props: RouteComponentProps<{ version: string, produc
     if (versionId != 'new') {
         useEffect(() => { VersionAPI.getVersion(versionId).then(setVersion) }, [])
     }
-
-    const versionNameInput = useRef<HTMLInputElement>(null)
-        
-    const history = useHistory()
 
     async function addVersion(event: FormEvent){
         event.preventDefault()
@@ -61,7 +61,7 @@ export const VersionView = (props: RouteComponentProps<{ version: string, produc
                             </span>
                         </nav>
                         <h1>{ versionId == 'new' ? 'Add new version' : `View existing version` }</h1>
-                        <form onSubmit={addVersion} onReset={cancelInput}>
+                        <form onSubmit={addVersion} onReset={cancelInput} className='user-input'>
                             <div>
                                 <div>
                                     <label>Version name:</label>

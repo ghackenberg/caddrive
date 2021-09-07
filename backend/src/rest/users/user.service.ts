@@ -14,10 +14,31 @@ export class UserService implements UserREST {
                 email: shortid()
             })
         }
+
+        // default user
+        this.users.push({   id: 'default',
+                            name: 'test',
+                            email: '1234.1234@1234.com'})
     }
 
     async findAll() {
         return this.users
+    }
+
+    async findUsers(name: string) : Promise<User[]> {
+        
+        const usersQuery: User[] = []
+
+        const usersNameLower = this.users.map(user => user.name.toLowerCase())
+
+        for (var i = 0; i < usersNameLower.length; i++) {
+
+            if (usersNameLower[i].includes(name.toLowerCase())) {
+                usersQuery.push(this.users[i])
+            }
+        }
+
+        return usersQuery
     }
 
     async getUser(id: string): Promise<User> {

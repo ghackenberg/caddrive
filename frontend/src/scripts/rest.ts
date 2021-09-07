@@ -1,9 +1,13 @@
 import axios from 'axios'
-import { Audit, AuditData, AuditREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+import { Audit, AuditData, AuditREST, CommentEventData, EventData, MemoREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 
 class AuditClient implements AuditREST {
     async findAll() {
         return (await axios.get<Audit[]>('/rest/audits')).data
+    }
+    
+    async findAudits(name: string) {
+        return (await axios.get<Audit[]>(`/rest/audits/${name}`)).data
     }
 
     async getAudit(id: string) {
@@ -19,9 +23,31 @@ class AuditClient implements AuditREST {
     }
 }
 
+class MemoClient implements MemoREST {
+    async findAll() {
+        return (await axios.get<CommentEventData[]>('/rest/memos')).data
+    }
+    
+    async enterMemo(enterEvent: EventData) {
+        return (await axios.post<EventData>('/rest/memos', enterEvent)).data
+    }
+
+    async leaveMemo(leaveEvent: EventData) {
+        return (await axios.post<EventData>('/rest/memos', leaveEvent)).data
+    }
+
+    async submitMemo(memo: CommentEventData) {
+        return (await axios.post<CommentEventData>('/rest/memos', memo)).data
+    }
+}
+
 class ProductClient implements ProductREST {
     async findAll() {
         return (await axios.get<Product[]>('/rest/products')).data
+    }
+
+    async findProducts(name: string) {
+        return (await axios.get<Product[]>(`/rest/products/${name}`)).data
     }
 
     async getProduct(id: string) {
@@ -40,6 +66,10 @@ class ProductClient implements ProductREST {
 class UserClient implements UserREST {
     async findAll() {
         return (await axios.get<User[]>('/rest/users')).data
+    }
+
+    async findUsers(name: string) {
+        return (await axios.get<User[]>(`/rest/users/${name}`)).data
     }
 
     async getUser(id: string) {
@@ -69,7 +99,8 @@ class VersionClient implements VersionREST {
     }
 }
 
-export const ProductAPI = new ProductClient()
 export const AuditAPI = new AuditClient()
+export const MemoAPI = new MemoClient()
+export const ProductAPI = new ProductClient()
 export const UserAPI = new UserClient()
 export const VersionAPI = new VersionClient()

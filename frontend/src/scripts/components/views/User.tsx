@@ -12,16 +12,16 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
     const userId = props.match.params.user
 
+    const userNameInput = useRef<HTMLInputElement>(null)
+    const emailInput = useRef<HTMLInputElement>(null)
+    
+    const history = useHistory()
+
     const [user, setUser] = useState<User>(null)
 
     if (userId != 'new') {
         useEffect(() => { UserAPI.getUser(userId).then(setUser) }, [])
     }
-
-    const userNameInput = useRef<HTMLInputElement>(null)
-    const emailInput = useRef<HTMLInputElement>(null)
-    
-    const history = useHistory()
 
     async function saveUser(event: FormEvent){
         event.preventDefault()
@@ -61,7 +61,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                                 )}
                             </nav>
                             <h1>{ userId == 'new' ? 'Add new user' : 'Change existing user' }</h1>
-                            <form onSubmit={saveUser} onReset={cancelInput}>
+                            <form onSubmit={saveUser} onReset={cancelInput} className='user-input'>
                                 <div>
                                     <div>
                                         <label>Username:</label>

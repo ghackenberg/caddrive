@@ -15,6 +15,13 @@ export class AuditController implements AuditREST {
         return this.auditService.findAll()
     }
 
+    @Get(':name')
+    @ApiParam({ name: 'name' })
+    @ApiResponse({ type: [Audit] })
+    async findAudits(@Param('name') name: string): Promise<Audit[]> {
+        return this.auditService.findAudits(name)
+    }
+
     @Get(':id')
     @ApiParam({ name: 'id' })
     @ApiResponse({ type: Audit })

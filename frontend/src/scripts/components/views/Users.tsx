@@ -1,15 +1,12 @@
 import * as React from 'react'
-import { useState, useEffect, Fragment } from 'react'
+import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
-import { User } from 'fhooe-audit-platform-common'
-import { UserAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { UserList } from '../widgets/UserList'
+import { SearchBarList } from '../widgets/SearchBarList'
 
 export const UsersView = () => {
-    const [users, setUsers] = useState<User[]>(null)
-    useEffect(() => { UserAPI.findAll().then(setUsers) }, [])
+
     return (
         <div className="view users">
             <Header/>
@@ -26,7 +23,7 @@ export const UsersView = () => {
                     </nav>
                 </Fragment>
                 <h2>Available users</h2>
-                {users ? <UserList list={users}/> : <p>Loading...</p>}
+                <SearchBarList type='users'/>
             </main>
         </div>
     )

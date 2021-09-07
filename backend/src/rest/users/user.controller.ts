@@ -15,6 +15,13 @@ export class UserController implements UserREST {
         return this.userService.findAll()
     }
 
+    @Get(':name')
+    @ApiParam({ name: 'name' })
+    @ApiResponse({ type: [User] })
+    async findUsers(@Param('name') name: string): Promise<User[]> {
+        return this.userService.findUsers(name)
+    }
+
     @Get(':id')
     @ApiParam({ name: 'id' })
     @ApiResponse({ type: User })

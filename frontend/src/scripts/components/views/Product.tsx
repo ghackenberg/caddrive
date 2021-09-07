@@ -13,6 +13,9 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
     const productId = props.match.params.product
 
+    const productInput = useRef<HTMLInputElement>(null)
+    const history = useHistory()
+
     const [product, setProduct] = useState<Product>(null)
     const [versions, setVersions] = useState<Version[]>(null)
 
@@ -21,9 +24,6 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     if (productId != 'new') {
         useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
     }
-
-    const productInput = useRef<HTMLInputElement>(null)
-    const history = useHistory()
 
     async function saveProduct(event: FormEvent){
         event.preventDefault()
@@ -63,7 +63,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                                 )} 
                             </nav>
                             <h1>{ productId == 'new' ? 'Add new product' : 'Change existing product' }</h1>
-                            <form onSubmit={saveProduct} onReset={cancelInput}>
+                            <form onSubmit={saveProduct} onReset={cancelInput} className='user-input'>
                                 <div>
                                     <div>
                                         <label>Product name:</label> 

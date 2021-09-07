@@ -100,14 +100,14 @@ div.view > main h1 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 div.view > main h2 {
-    font-size: 125%;
+    font-size: 175%;
     line-height: 150%;
     margin: 0;
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-div.view > main form {
+div.view > main form.user-input{
     display: table;
     margin: 0;
     margin-top: 0.75em;
@@ -116,6 +116,28 @@ div.view > main form {
     border-spacing: 1.5em;
     border-collapse: separate;
     background-color: rgba(0,0,0,0.1);
+}
+div.view > main form > input.header-search {
+    border-spacing: 0.5em;
+    background-color: white;
+    margin-top: 0.75em;
+    margin-bottom: 1.5em;
+
+    font-family: inherit;
+    font-size: inherit;
+
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+div.view > main form > input.header-search[type="text"] {
+    width: 20em;
+}
+div.view > main form > input.header-search[type="submit"] {
+    margin-left: 0.5em;
+    color: white;
+    background-color: steelblue;
 }
 div.view > main form > div {
     display: table-row;

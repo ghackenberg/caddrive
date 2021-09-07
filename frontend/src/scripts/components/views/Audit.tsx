@@ -3,7 +3,7 @@ import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Audit, Product, Version } from '../../data'
-import { AuditAPI, ProductAPI, VersionAPI } from '../../rest'
+import { AuditAPI, MemoAPI, ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { LinkSource } from '../widgets/LinkSource'
@@ -21,13 +21,6 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
     const [startDate, setStartDate] = useState<Date>(new Date())
     const [endDate, setEndDate] = useState<Date>(new Date())
 
-    useEffect(() => { ProductAPI.findAll().then(setProducts) }, [])
-    useEffect(() => { VersionAPI.findAll('productId').then(setVersions) }, [])      // TODO: change to productId from dropdown userinput
-
-    if (auditId != 'new') {
-        useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [])
-    }
-
     const productString = [ 'one', 'two', 'three']
 // TODO: implement to dropdown menu
 //   const productNames = products.map(product => product.name)
@@ -35,6 +28,13 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
 
     const auditInput = useRef<HTMLInputElement>(null)
     const history = useHistory()
+
+    useEffect(() => { ProductAPI.findAll().then(setProducts) }, [])
+    useEffect(() => { VersionAPI.findAll('productId').then(setVersions) }, [])      // TODO: change to productId from dropdown userinput
+
+    if (auditId != 'new') {
+        useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [])
+    }
 
     async function saveAudit(event: FormEvent){
         event.preventDefault()
@@ -70,8 +70,11 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
 
     async function enterAudit(event: FormEvent) {
         event.preventDefault()
-        
-        // TODO: implement AuditAPI.addComment
+
+        await MemoAPI.enterMemo({   time: new Date(),           //TODO: add User & change type
+                                    audit: audit.id,
+                                    user: 'null',
+                                    type: 'enderAudit'})
     }
 
     return (
@@ -89,7 +92,7 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                             )}
                         </nav>
                         <h1>{ auditId == 'new' ? 'Add new Audit' : 'Change existing Audit' }</h1>
-                        <form onSubmit={saveAudit} onReset={cancelInput}>
+                        <form onSubmit={saveAudit} onReset={cancelInput} className='user-input'>
                             <div>
                                 <div>
                                     <label>Audit name:</label>

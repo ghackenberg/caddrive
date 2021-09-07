@@ -15,6 +15,13 @@ export class ProductController implements ProductREST {
         return this.productService.findAll()
     }
 
+    @Get(':name')
+    @ApiParam({ name: 'name' })
+    @ApiResponse({ type: [Product] })
+    async findProducts(@Param('name') name: string): Promise<Product[]> {
+        return this.productService.findProducts(name)
+    }
+
     @Get(':id')
     @ApiParam({ name: 'id' })
     @ApiResponse({ type: Product })
