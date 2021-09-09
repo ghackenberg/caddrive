@@ -27,7 +27,7 @@ export class MemoService implements MemoREST {
     */
     
 
-    async findAll() {
+    async findAll(_audit: string, _user?: string) {
         return this.memos
     }
 

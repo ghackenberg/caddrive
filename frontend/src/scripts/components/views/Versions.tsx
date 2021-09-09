@@ -16,7 +16,7 @@ export const VersionsView = (props: RouteComponentProps<{ product: string }>) =>
     const [versions, setVersion] = useState<Version[]>(null)
 
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
-    useEffect(() => { VersionAPI.findAll(productId).then(setVersion) }, [])
+    useEffect(() => { VersionAPI.findVersions(productId).then(setVersion) }, [])
 
     return (
         <div className="view versions">

@@ -26,21 +26,17 @@ export class AuditService implements AuditREST {
         }
     }
     */
-    
-    async findAll() {
 
-        return this.audits
-    }
-
-    async findAudits(name: string) : Promise<Audit[]> {
+    async findAudits(name?: string) : Promise<Audit[]> {
         
         const auditsQuery: Audit[] = []
+
 
         const auditsNameLower = this.audits.map(audit => audit.name.toLowerCase())
 
         for (var i = 0; i < auditsNameLower.length; i++) {
 
-            if (auditsNameLower[i].includes(name.toLowerCase())) {
+            if (!name || name != null && auditsNameLower[i].includes(name.toLowerCase())) {
                 auditsQuery.push(this.audits[i])
             }
         }

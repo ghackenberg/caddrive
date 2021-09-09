@@ -1,13 +1,9 @@
 import axios from 'axios'
 import { Audit, AuditData, AuditREST, CommentEventData, EventData, MemoREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 
-class AuditClient implements AuditREST {
-    async findAll() {
-        return (await axios.get<Audit[]>('/rest/audits')).data
-    }
-    
-    async findAudits(name: string) {
-        return (await axios.get<Audit[]>(`/rest/audits/${name}`)).data
+class AuditClient implements AuditREST {  
+    async findAudits(name?: string) {
+        return (await axios.get<Audit[]>(`/rest/audits`, {params: {name}})).data
     }
 
     async getAudit(id: string) {
@@ -24,30 +20,26 @@ class AuditClient implements AuditREST {
 }
 
 class MemoClient implements MemoREST {
-    async findAll() {
-        return (await axios.get<CommentEventData[]>('/rest/memos')).data
+    async findAll(audit: string, user?: string) {
+        return (await axios.get<EventData[]>('/rest/memos', {params: {audit, user}})).data
     }
     
     async enterMemo(enterEvent: EventData) {
-        return (await axios.post<EventData>('/rest/memos', enterEvent)).data
+        return (await axios.post<EventData>('/rest/memos/enters', enterEvent)).data
     }
 
     async leaveMemo(leaveEvent: EventData) {
-        return (await axios.post<EventData>('/rest/memos', leaveEvent)).data
+        return (await axios.post<EventData>('/rest/memos/leaves', leaveEvent)).data
     }
 
     async submitMemo(memo: CommentEventData) {
-        return (await axios.post<CommentEventData>('/rest/memos', memo)).data
+        return (await axios.post<CommentEventData>('/rest/memos/comments', memo)).data
     }
 }
 
 class ProductClient implements ProductREST {
-    async findAll() {
-        return (await axios.get<Product[]>('/rest/products')).data
-    }
-
-    async findProducts(name: string) {
-        return (await axios.get<Product[]>(`/rest/products/${name}`)).data
+    async findProducts(name?: string) {
+        return (await axios.get<Product[]>(`/rest/products`, {params: {name}})).data
     }
 
     async getProduct(id: string) {
@@ -64,12 +56,8 @@ class ProductClient implements ProductREST {
 }
 
 class UserClient implements UserREST {
-    async findAll() {
-        return (await axios.get<User[]>('/rest/users')).data
-    }
-
-    async findUsers(name: string) {
-        return (await axios.get<User[]>(`/rest/users/${name}`)).data
+    async findUsers(name?: string) {
+        return (await axios.get<User[]>(`/rest/users`, {params: {name}} )).data
     }
 
     async getUser(id: string) {
@@ -86,7 +74,7 @@ class UserClient implements UserREST {
 }
 
 class VersionClient implements VersionREST {
-    async findAll(product: string) {
+    async findVersions(product?: string) {
         return (await axios.get<Version[]>('/rest/versions', {params: {product}} )).data
     }
 

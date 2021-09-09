@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
-import { Audit, CommentEventData } from '../../data'
+import { Audit, EventData } from '../../data'
 import { AuditAPI, MemoAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
@@ -17,9 +17,15 @@ export const MemoView = (props: RouteComponentProps<{audit: string}>) => {
     const history = useHistory()
 
     const [audit, setAudit] = useState<Audit>(null)
-    const [memos, setMemos] = useState<CommentEventData[]>(null)
+    const [memos, setMemos] = useState<EventData[]>(null)
 
-    useEffect(() => { MemoAPI.findAll().then(setMemos) }, [])
+    useEffect(() => {
+        MemoAPI.enterMemo({ audit: auditId, user: 'null', time: new Date(), type: 'enter' })
+        return () => {
+            MemoAPI.leaveMemo({ audit: auditId, user: 'null', time: new Date(), type: 'leave' })
+        }
+    })
+    useEffect(() => { MemoAPI.findAll(auditId).then(setMemos) }, [])
 
     if (auditId != 'new') {
         useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [])
@@ -71,7 +77,7 @@ export const MemoView = (props: RouteComponentProps<{audit: string}>) => {
                         <ul>
                             { memos.map(memo =>
                             <li key={memo.audit}>
-                                <a><img src={AuditIcon}/><em>{memo.text}</em></a>
+                                <a><img src={AuditIcon}/><em>{memo.type}</em></a>
                             </li>)}
                         </ul>
                     </div>

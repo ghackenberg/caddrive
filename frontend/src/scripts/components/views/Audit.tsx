@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Audit, Product, Version } from '../../data'
@@ -7,8 +7,8 @@ import { AuditAPI, MemoAPI, ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { LinkSource } from '../widgets/LinkSource'
-import Datepicker from 'react-datepicker'
-import Dropdown from 'react-dropdown'
+import { DateInput, TextInput } from './forms/InputForms'
+import Dropdown, { Option } from 'react-dropdown'
 
 export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -21,16 +21,13 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
     const [startDate, setStartDate] = useState<Date>(new Date())
     const [endDate, setEndDate] = useState<Date>(new Date())
 
-    const productString = [ 'one', 'two', 'three']
-// TODO: implement to dropdown menu
-//   const productNames = products.map(product => product.name)
-//    const versionNames = versions.map(version => version.name)
+    const [productInput, setProductInput] = useState<string>(null)
+    const [versionInput, setVersionInput] = useState<string>(null)
+    const [auditName, setAuditName] = useState<string>(null)
 
-    const auditInput = useRef<HTMLInputElement>(null)
     const history = useHistory()
 
-    useEffect(() => { ProductAPI.findAll().then(setProducts) }, [])
-    useEffect(() => { VersionAPI.findAll('productId').then(setVersions) }, [])      // TODO: change to productId from dropdown userinput
+    useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
 
     if (auditId != 'new') {
         useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [])
@@ -40,10 +37,10 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
         event.preventDefault()
 
         if (auditId == 'new') {
-            if (auditInput.current.value != '' && startDate.getDate() != null && endDate.getDate() != null) {
-                await AuditAPI.addAudit({   productId: 'null',
-                                            versionId: 'null',
-                                            name: auditInput.current.value,
+            if (auditName != '' && startDate.getDate() != null && endDate.getDate() != null) {
+                await AuditAPI.addAudit({   productId: productInput,
+                                            versionId: versionInput,
+                                            name: auditName,
                                             start: startDate,
                                             end: endDate})
 
@@ -51,11 +48,11 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
             }
         }
         else {
-            if (auditInput.current.value != '' && startDate.getDate() != null && endDate.getDate() != null) {
+            if (auditName != '' && startDate.getDate() != null && endDate.getDate() != null) {
                 await AuditAPI.updateAudit({id: auditId,
-                                            productId: 'null',
-                                            versionId: 'null',  
-                                            name: auditInput.current.value, 
+                                            productId: productInput,
+                                            versionId: versionInput,  
+                                            name: auditName, 
                                             start: startDate, 
                                             end: endDate})
 
@@ -77,6 +74,17 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                                     type: 'enderAudit'})
     }
 
+    async function productSelected(option: Option) {
+
+        setVersions(await VersionAPI.findVersions(option.value))
+
+        setProductInput(option.value)
+    }
+
+    async function versionSelected(option: Option) {
+        setVersionInput(option.value)
+    }
+
     return (
         <div className='view audit'>
             <Header/>
@@ -93,48 +101,35 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                         </nav>
                         <h1>{ auditId == 'new' ? 'Add new Audit' : 'Change existing Audit' }</h1>
                         <form onSubmit={saveAudit} onReset={cancelInput} className='user-input'>
-                            <div>
-                                <div>
-                                    <label>Audit name:</label>
-                                </div>
-                                <div>
-                                    <input ref={auditInput} placeholder={ auditId == 'new' ? 'Add new audit' : audit.name }/>
-                                </div>
-                            </div>
-                            <div>
-                                <div>
-                                    <label>Start time:</label>
-                                </div>
-                                <div>
-                                    <Datepicker selected={startDate} onChange={(date) => setStartDate(date)}/>
-                                </div>
-                            </div>
-                            <div>
-                                <div>
-                                    <label>End time:</label>
-                                </div>
-                                <div>
-                                    <Datepicker selected={endDate} onChange={(date) => setEndDate(date)}/>
-                                </div>
-                            </div>
+                            <TextInput  
+                                label="Audit name:" 
+                                placeholder={auditId == 'new' ? 'Add new audit' : audit.name} 
+                                change={value => setAuditName(value)}/>
+                            <DateInput  
+                                label='Start time:'
+                                change={date => setStartDate(date)}
+                                selected={startDate}/>
+                            <DateInput
+                                label='End time:'
+                                change={date => setEndDate(date)}
+                                selected={endDate}/>
 
                             <div>
                                 { products ? (
                                 <><div>
                                     <label>Chose product</label>
                                 </div><div>
-                                    <Dropdown options={productString} placeholder='Select product' /* TODO: get selected productId for version*/ />
+                                    <Dropdown options={products.map(product => { return {value: product.id, label: product.name} })} placeholder='Select product' onChange={productSelected} />
                                 </div></>
                                 ) : ( <label>No existing products available</label> )}
                             </div>
                             <div>
-                                { versions /* TODO: && add product.id*/ ? (
+                                { productInput && (
                                 <><div>
                                     <label>Chose version</label>
                                 </div><div>
-                                    <Dropdown options={productString} placeholder='Select version' /* TODO: get selected versionId */ />
-                                </div></>
-                                ) : ( <label>No existing versions to chosen product available</label> )}
+                                    <Dropdown options={versions.map(version => { return {value: version.id, label: version.name} })} placeholder='Select version' onChange={versionSelected} />
+                                </div></>)}
                             </div>
                             <div>
                                 <div/>

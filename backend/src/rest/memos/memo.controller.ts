@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common'
+import { Body, Controller, Get, Post, Query } from '@nestjs/common'
 import { ApiBody,  ApiResponse } from '@nestjs/swagger'
 import { CommentEventData, EventData, MemoREST } from 'fhooe-audit-platform-common'
 import { MemoService } from './memo.service'
@@ -10,27 +10,27 @@ export class MemoController implements MemoREST {
     }
 
     @Get()
-    @ApiResponse({ type: [CommentEventData] })
-    async findAll(): Promise<CommentEventData[]> {
-        return this.memoService.findAll()
+    @ApiResponse({ type: [EventData] })
+    async findAll(@Query('audit') audit: string, @Query('user') user?: string): Promise<EventData[]> {
+        return this.memoService.findAll(audit, user)
     }
 
 
-    @Post()
+    @Post('enters')
     @ApiBody({ type: EventData })
     @ApiResponse({ type: EventData })
     async enterMemo(@Body() enterEvent: EventData): Promise<EventData> {
         return this.memoService.enterMemo(enterEvent)
     }
 
-    @Post()
+    @Post('leaves')
     @ApiBody({ type: EventData })
     @ApiResponse({ type: EventData })
     async leaveMemo(@Body() leaveEvent: EventData): Promise<EventData> {
         return this.memoService.leaveMemo(leaveEvent)
     }
 
-    @Post() 
+    @Post('comments') 
     @ApiBody({ type: CommentEventData })
     @ApiResponse({ type: CommentEventData })
     async submitMemo(@Body() memo: CommentEventData): Promise<CommentEventData> {

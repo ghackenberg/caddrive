@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Product, Version} from 'fhooe-audit-platform-common'
@@ -7,19 +7,18 @@ import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { LinkSource } from '../widgets/LinkSource'
-import Datepicker from 'react-datepicker'
+import { DateInput, TextInput } from './forms/InputForms'
 
 export const VersionView = (props: RouteComponentProps<{ version: string, product: string }>) => {
 
     const versionId = props.match.params.version
     const productId = props.match.params.product
-
-    const versionNameInput = useRef<HTMLInputElement>(null)
         
     const history = useHistory()
 
     const [product, setProduct] = useState<Product>(null)
     const [version, setVersion] = useState<Version>(null)
+    const [versionName, setVersionName] = useState<string>(null)
     const [currentDate, setCurrentDate] = useState<Date>(new Date())
 
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
@@ -32,8 +31,8 @@ export const VersionView = (props: RouteComponentProps<{ version: string, produc
         event.preventDefault()
 
         if(versionId == 'new') {
-            if (versionNameInput.current.value != '') {
-                await VersionAPI.addVersion({ product: productId, name: versionNameInput.current.value, date: currentDate })
+            if (versionName != '') {
+                await VersionAPI.addVersion({ product: productId, name: versionName, date: currentDate })
 
                 history.goBack()
             }
@@ -62,22 +61,14 @@ export const VersionView = (props: RouteComponentProps<{ version: string, produc
                         </nav>
                         <h1>{ versionId == 'new' ? 'Add new version' : `View existing version` }</h1>
                         <form onSubmit={addVersion} onReset={cancelInput} className='user-input'>
-                            <div>
-                                <div>
-                                    <label>Version name:</label>
-                                </div>
-                                <div>
-                                    <input ref={versionNameInput} placeholder={versionId == 'new' ? 'Add here new version' : version.name}/>
-                                </div>
-                            </div>
-                            <div>
-                                <div>
-                                    <label>Version date:</label>
-                                </div>
-                                <div>
-                                    <Datepicker selected={currentDate} onChange={(date) => setCurrentDate(date)}/>
-                                </div>
-                            </div>
+                            <TextInput 
+                                label='Version name:'
+                                placeholder={versionId == 'new' ? 'Add here new version' : version.name}
+                                change={value => setVersionName(value)}/>
+                            <DateInput
+                                label='Version date:'
+                                change={date => setCurrentDate(date)}
+                                selected ={currentDate}/>
                             <div>
                                 <div/>
                                 <div>

@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
-import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 import { UserService } from './user.service'
 
@@ -10,15 +10,9 @@ export class UserController implements UserREST {
     }
 
     @Get()
-    @ApiResponse({ type: [User] }) 
-    async findAll(): Promise<User[]> {
-        return this.userService.findAll()
-    }
-
-    @Get(':name')
-    @ApiParam({ name: 'name' })
+    @ApiQuery({ name: 'name' })
     @ApiResponse({ type: [User] })
-    async findUsers(@Param('name') name: string): Promise<User[]> {
+    async findUsers(@Query('name') name?: string): Promise<User[]> {
         return this.userService.findUsers(name)
     }
 

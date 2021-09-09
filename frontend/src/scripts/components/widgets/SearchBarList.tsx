@@ -16,9 +16,9 @@ export const SearchBarList = (props: {type: string}) => {
     const [products, setProducts] = useState<Product[]>(null)
     const [users, setUsers] = useState<User[]>(null)
 
-    useEffect(() => { AuditAPI.findAll().then(setAudits) }, [])
-    useEffect(() => { ProductAPI.findAll().then(setProducts) }, [])
-    useEffect(() => { UserAPI.findAll().then(setUsers) }, [])
+    useEffect(() => { AuditAPI.findAudits().then(setAudits) }, [])
+    useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
+    useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 
     async function searchBar(event: FormEvent) {
         event.preventDefault()

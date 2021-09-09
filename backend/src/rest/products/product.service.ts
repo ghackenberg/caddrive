@@ -15,11 +15,7 @@ export class ProductService implements ProductREST {
         }
     }
 
-    async findAll() {
-        return this.products
-    }
-
-    async findProducts(name: string) : Promise<Product[]> {
+    async findProducts(name?: string) : Promise<Product[]> {
         
         const productsQuery: Product[] = []
 
@@ -27,7 +23,7 @@ export class ProductService implements ProductREST {
 
         for (var i = 0; i < productsNameLower.length; i++) {
 
-            if (productsNameLower[i].includes(name.toLowerCase())) {
+            if (!name || productsNameLower[i].includes(name.toLowerCase())) {
                 productsQuery.push(this.products[i])
             }
         }

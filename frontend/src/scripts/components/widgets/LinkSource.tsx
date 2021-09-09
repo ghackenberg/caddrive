@@ -14,6 +14,17 @@ export const LinkSource = <T, >(object: Props<T>) => {
     var objectName = ""
     var objectLink = "/default"
 
+    /*
+    const test = JSON.parse('{"type":"Audit","id":"xyz"}')
+    test.someprop = 'test'
+    delete test.someprop
+    test.otherprop = function() {
+        this.name  = 'a'
+    }
+    test.otherprop()
+    test.constructor == Object
+    */
+
     if ( object.type == 'Audit' || object.type == 'Audit' && object.id == 'new' ) {
         objectName = "Audit"
         objectLink = "/audits"

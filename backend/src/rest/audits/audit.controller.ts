@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
-import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
 import { AuditService } from './audit.service'
 
@@ -10,15 +10,9 @@ export class AuditController implements AuditREST {
     }
 
     @Get()
+    @ApiQuery({ name: 'name' })
     @ApiResponse({ type: [Audit] })
-    async findAll(): Promise<Audit[]> {
-        return this.auditService.findAll()
-    }
-
-    @Get(':name')
-    @ApiParam({ name: 'name' })
-    @ApiResponse({ type: [Audit] })
-    async findAudits(@Param('name') name: string): Promise<Audit[]> {
+    async findAudits(@Query('name') name?: string): Promise<Audit[]> {
         return this.auditService.findAudits(name)
     }
 

@@ -21,11 +21,7 @@ export class UserService implements UserREST {
                             email: '1234.1234@1234.com'})
     }
 
-    async findAll() {
-        return this.users
-    }
-
-    async findUsers(name: string) : Promise<User[]> {
+    async findUsers(name?: string) : Promise<User[]> {
         
         const usersQuery: User[] = []
 
@@ -33,7 +29,7 @@ export class UserService implements UserREST {
 
         for (var i = 0; i < usersNameLower.length; i++) {
 
-            if (usersNameLower[i].includes(name.toLowerCase())) {
+            if (!name || usersNameLower[i].includes(name.toLowerCase())) {
                 usersQuery.push(this.users[i])
             }
         }
@@ -42,9 +38,9 @@ export class UserService implements UserREST {
     }
 
     async getUser(id: string): Promise<User> {
-        for (var i = 0; i < this.users.length; i++) {
-            if (this.users[i].id == id)
-                return this.users[i]
+        for (var j = 0; j < this.users.length; j++) {
+            if (this.users[j].id == id)
+                return this.users[j]
         }
         return null
     }

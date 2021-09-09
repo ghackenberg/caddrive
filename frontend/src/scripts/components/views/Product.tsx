@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import { Product, Version } from '../../data'
@@ -8,18 +8,19 @@ import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { LinkSource } from '../widgets/LinkSource'
 import { VersionList } from '../widgets/VersionList'
+import { TextInput } from './forms/InputForms'
 
 export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
     const productId = props.match.params.product
 
-    const productInput = useRef<HTMLInputElement>(null)
     const history = useHistory()
 
     const [product, setProduct] = useState<Product>(null)
     const [versions, setVersions] = useState<Version[]>(null)
+    const [productName, setProductName] = useState<string>(null)
 
-    useEffect(() => { VersionAPI.findAll(productId).then(setVersions) }, [])
+    useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [])
 
     if (productId != 'new') {
         useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
@@ -29,15 +30,15 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
         event.preventDefault()
 
         if(productId == 'new') {
-            if (productInput.current.value != '') {
-                await ProductAPI.addProduct({name: productInput.current.value})
+            if (productName != '') {
+                await ProductAPI.addProduct({name: productName})
 
                 history.goBack()
             }
         }
         else {
-            if (productInput.current.value != '') {
-                await ProductAPI.updateProduct({id: productId, name: productInput.current.value})
+            if (productName != '') {
+                await ProductAPI.updateProduct({id: productId, name: productName})
 
                 history.goBack()
             }
@@ -64,14 +65,10 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                             </nav>
                             <h1>{ productId == 'new' ? 'Add new product' : 'Change existing product' }</h1>
                             <form onSubmit={saveProduct} onReset={cancelInput} className='user-input'>
-                                <div>
-                                    <div>
-                                        <label>Product name:</label> 
-                                    </div>
-                                    <div>
-                                        <input ref={productInput} placeholder={ productId=='new' ? "Add here new product" : product.name }/>
-                                    </div>
-                                </div>
+                                <TextInput
+                                    label='Product name:'
+                                    placeholder={productId=='new' ? "Add here new product" : product.name}
+                                    change={value => setProductName(value)}/>
                                 <div>
                                     <div/>
                                     <div>

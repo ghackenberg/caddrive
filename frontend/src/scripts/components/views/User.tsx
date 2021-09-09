@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import { User } from 'fhooe-audit-platform-common'
@@ -7,17 +7,17 @@ import { UserAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { LinkSource } from '../widgets/LinkSource'
+import { TextInput } from './forms/InputForms'
 
 export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
     const userId = props.match.params.user
-
-    const userNameInput = useRef<HTMLInputElement>(null)
-    const emailInput = useRef<HTMLInputElement>(null)
     
     const history = useHistory()
 
     const [user, setUser] = useState<User>(null)
+    const [userName, setUserName] = useState<string>(null)
+    const [userEmail, setUserEmail] = useState<string>(null)
 
     if (userId != 'new') {
         useEffect(() => { UserAPI.getUser(userId).then(setUser) }, [])
@@ -27,15 +27,15 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
 
         if(userId == 'new') {
-            if (userNameInput.current.value != '' && emailInput.current.value != '') {
-                await UserAPI.addUser({ name: userNameInput.current.value, email: emailInput.current.value})
+            if (userName != '' && userEmail != '') {
+                await UserAPI.addUser({ name: userName, email: userEmail})
 
                 history.goBack()
             }
         }       
         else {
-            if (userNameInput.current.value != '' && emailInput.current.value != '') {
-                await UserAPI.updateUser({id: userId, name: userNameInput.current.value, email: emailInput.current.value})
+            if (userName != '' && userEmail != '') {
+                await UserAPI.updateUser({id: userId, name: userName, email: userEmail})
 
                 history.goBack()
             }
@@ -62,22 +62,14 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                             </nav>
                             <h1>{ userId == 'new' ? 'Add new user' : 'Change existing user' }</h1>
                             <form onSubmit={saveUser} onReset={cancelInput} className='user-input'>
-                                <div>
-                                    <div>
-                                        <label>Username:</label>
-                                    </div>
-                                    <div>
-                                        <input ref={userNameInput} placeholder={userId == 'new' ? "Add here new user" : user.name} />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <label>Email:</label>
-                                    </div>
-                                    <div>
-                                        <input type='email' ref={emailInput} placeholder={userId == 'new' ? 'Type in new email' : user.email} />
-                                    </div>
-                                </div>
+                                <TextInput  
+                                    label='Username:'
+                                    placeholder={userId == 'new' ? 'Add here new user' : user.name}
+                                    change={value => setUserName(value)}/>
+                                <TextInput  
+                                    label='Email:'
+                                    placeholder={userId == 'new' ? 'Type in new email' : user.email}
+                                    change={value => setUserEmail(value)}/>
                                 <div>
                                     <div/>
                                     <div>
