@@ -1,22 +1,11 @@
 import * as React from 'react'
-import { useState, useEffect , Fragment } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { Product, Version } from 'fhooe-audit-platform-common'
-import { ProductAPI, VersionAPI } from '../../rest'
+import { Fragment } from 'react'
+import { Link } from 'react-router-dom'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { VersionList } from '../widgets/VersionList'
-import { LinkSource } from '../widgets/LinkSource'
+import { SearchBarList } from '../widgets/SearchBarList'
 
-export const VersionsView = (props: RouteComponentProps<{ product: string }>) => {
-    
-    const productId = props.match.params.product 
-
-    const [product, setProduct] = useState<Product>(null)
-    const [versions, setVersion] = useState<Version[]>(null)
-
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
-    useEffect(() => { VersionAPI.findVersions(productId).then(setVersion) }, [])
+export const VersionsView = () => {
 
     return (
         <div className="view versions">
@@ -25,14 +14,16 @@ export const VersionsView = (props: RouteComponentProps<{ product: string }>) =>
             <main>
                 <Fragment>
                     <nav>
-                        <LinkSource object={product} id={product.id} name={product.name} type='Product'/>  
                         <span>
-                            <Link to={`/products/${productId}/version`}>Versions</Link>
+                            <Link to="/">Welcome Page</Link>
+                        </span>
+                        <span>
+                            <a>Versions</a>
                         </span>
                     </nav>
                 </Fragment>
                 <h2>Available versions</h2>
-                {product && versions ? <VersionList product={product} list={versions}/> : <p>Loading...</p>}
+                <SearchBarList type='versions'/>
             </main>
         </div>
     )

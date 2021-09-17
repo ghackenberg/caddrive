@@ -3,12 +3,12 @@ import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Audit, Product, Version } from '../../data'
-import { AuditAPI, MemoAPI, ProductAPI, VersionAPI } from '../../rest'
+import { AuditAPI, ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { LinkSource } from '../widgets/LinkSource'
 import { DateInput, TextInput } from './forms/InputForms'
 import Dropdown, { Option } from 'react-dropdown'
+import { AuditLink } from './forms/AuditLink'
 
 export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -28,6 +28,7 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
     const history = useHistory()
 
     useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
+    useEffect(() => { VersionAPI.findVersions().then(setVersions)}, [])
 
     if (auditId != 'new') {
         useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [])
@@ -47,36 +48,15 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                 history.goBack()
             }
         }
-        else {
-            if (auditName != '' && startDate.getDate() != null && endDate.getDate() != null) {
-                await AuditAPI.updateAudit({id: auditId,
-                                            productId: productInput,
-                                            versionId: versionInput,  
-                                            name: auditName, 
-                                            start: startDate, 
-                                            end: endDate})
-
-                history.goBack()
-            }
-        }
     }
 
     async function cancelInput() {
         history.goBack()
     }
 
-    async function enterAudit(event: FormEvent) {
-        event.preventDefault()
-
-        await MemoAPI.enterMemo({   time: new Date(),           //TODO: add User & change type
-                                    audit: audit.id,
-                                    user: 'null',
-                                    type: 'enderAudit'})
-    }
-
     async function productSelected(option: Option) {
 
-        setVersions(await VersionAPI.findVersions(option.value))
+        setVersions(await VersionAPI.findVersions(null, option.value))
 
         setProductInput(option.value)
     }
@@ -93,16 +73,13 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                 { auditId == 'new' || audit ? (
                     <Fragment>
                         <nav>
-                            { audit ? ( 
-                            <LinkSource object={audit} id={audit.id} name={audit.name} type='Audit'/> 
-                            ) : (
-                            <LinkSource object={'new'} id={'new'} name={'new'} type='Audit'/> 
-                            )}
+                            { audit ? <AuditLink audit={audit}/> : <AuditLink/> }                            
                         </nav>
-                        <h1>{ auditId == 'new' ? 'Add new Audit' : 'Change existing Audit' }</h1>
+                        <h1>{ auditId == 'new' ? 'Add new audit' : 'View existing audit'}</h1>
+                        { auditId == 'new' ? (
                         <form onSubmit={saveAudit} onReset={cancelInput} className='user-input'>
                             <TextInput  
-                                label="Audit name:" 
+                                label='Audit name:' 
                                 placeholder={auditId == 'new' ? 'Add new audit' : audit.name} 
                                 change={value => setAuditName(value)}/>
                             <DateInput  
@@ -113,11 +90,10 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                                 label='End time:'
                                 change={date => setEndDate(date)}
                                 selected={endDate}/>
-
                             <div>
-                                { products ? (
+                                { products ? (                                  
                                 <><div>
-                                    <label>Chose product</label>
+                                    <label>Choose product</label>
                                 </div><div>
                                     <Dropdown options={products.map(product => { return {value: product.id, label: product.name} })} placeholder='Select product' onChange={productSelected} />
                                 </div></>
@@ -126,7 +102,7 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                             <div>
                                 { productInput && (
                                 <><div>
-                                    <label>Chose version</label>
+                                    <label>Choose version</label>
                                 </div><div>
                                     <Dropdown options={versions.map(version => { return {value: version.id, label: version.name} })} placeholder='Select version' onChange={versionSelected} />
                                 </div></>)}
@@ -141,14 +117,41 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                             <div>
                                 <div/>
                                 <div>
-                                    { audit && 
-                                    <Link to={`/audits/${audit.id}/memo`}>
-                                        <input type="button" className='enter-audit' value="Enter audit" onChange={enterAudit} />
+                                    { audit && productInput && versionInput &&
+                                    <Link to={`/audits/${auditId}/event`}>
+                                        <input type="button" className='enter-audit' value="Enter audit"/>
                                     </Link>
                                     }
                                 </div>
                             </div>
                         </form>
+                        ) : (
+                        <form className='user-input'>
+                            <TextInput  
+                                label="Audit name:" 
+                                value={audit.name} />
+                            <TextInput
+                                label='Start time:'
+                                value={startDate.getDate().toString() + '/' + startDate.getMonth().toString() + '/' + startDate.getFullYear().toString()}/>
+                            <TextInput
+                                label='End time:'
+                                value={endDate.getDate().toString() + '/' + endDate.getMonth().toString() + '/' + endDate.getFullYear().toString()}/>
+                            <TextInput
+                                label='Product:'
+                                value={products.find(product => product.id == audit.productId).name}/>
+                            <TextInput
+                                label='Version:'
+                                value={versions.find(version => version.id == audit.versionId).name}/>
+                            <div>
+                                <div/>
+                                <div>
+                                    <Link to={`/audits/${auditId}/event`}>
+                                        <input type="button" className='enter-audit' value="Enter audit"/>
+                                    </Link>
+                                </div>
+                            </div>
+                        </form>
+                        )}
                     </Fragment>
                     ) : (
                         <p>Loading...</p>

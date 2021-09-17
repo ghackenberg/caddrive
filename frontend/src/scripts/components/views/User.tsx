@@ -6,8 +6,8 @@ import { User } from 'fhooe-audit-platform-common'
 import { UserAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { LinkSource } from '../widgets/LinkSource'
 import { TextInput } from './forms/InputForms'
+import { UserLink } from './forms/UserLink'
 
 export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
@@ -54,11 +54,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                     { userId == 'new' || user ? (
                         <Fragment>
                             <nav>
-                                { user ? ( 
-                                <LinkSource object={user} id={user.id} name={user.name} type='User'/> 
-                                ) : (
-                                <LinkSource object={'new'} id={'new'} name={'new'} type='User'/> 
-                                )}
+                                { user ? <UserLink user={user}/> : <UserLink/> }
                             </nav>
                             <h1>{ userId == 'new' ? 'Add new user' : 'Change existing user' }</h1>
                             <form onSubmit={saveUser} onReset={cancelInput} className='user-input'>

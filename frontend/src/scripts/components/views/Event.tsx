@@ -1,54 +1,59 @@
 import * as React from 'react'
-import { useRef, useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
-import { Audit, EventData } from '../../data'
-import { AuditAPI, MemoAPI } from '../../rest'
+import { Audit, CommentEventData } from 'fhooe-audit-platform-common/src/data'
+import { AuditAPI, EventAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { LinkSource } from '../widgets/LinkSource'
 import * as AuditIcon from '/src/images/audit.png'
+import { TextInput } from './forms/InputForms'
+import { AuditLink } from './forms/AuditLink'
 
-export const MemoView = (props: RouteComponentProps<{audit: string}>) => {
+export const EventView = (props: RouteComponentProps<{audit: string}>) => {
 
     const auditId = props.match.params.audit
-
-    const memoInput = useRef<HTMLInputElement>(null)
 
     const history = useHistory()
 
     const [audit, setAudit] = useState<Audit>(null)
-    const [memos, setMemos] = useState<EventData[]>(null)
-
-    useEffect(() => {
-        MemoAPI.enterMemo({ audit: auditId, user: 'null', time: new Date(), type: 'enter' })
-        return () => {
-            MemoAPI.leaveMemo({ audit: auditId, user: 'null', time: new Date(), type: 'leave' })
-        }
-    })
-    useEffect(() => { MemoAPI.findAll(auditId).then(setMemos) }, [])
+    const [events, setEvents] = useState<CommentEventData[]>(null)
+    const [comment, setComment] = useState<string>(null)
 
     if (auditId != 'new') {
         useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [])
+
+        useEffect(() => {
+            EventAPI.enterEvent({ audit: auditId, user: 'null', time: new Date(), type: 'enter' })
+
+            return () => {
+                EventAPI.leaveEvent({ audit: auditId, user: 'null', time: new Date(), type: 'leave' })      // TODO: enter & leave event fired 2 times!!
+            }
+        }, [])
     }
+
+    useEffect(() => { EventAPI.findComments(auditId).then(setEvents) }, [])
 
     async function submitAudit(event: FormEvent) {
         event.preventDefault()
 
-        if (memoInput.current.value != '') {
-            await MemoAPI.submitMemo({  time: new Date(),       // TODO: Hot reload, Fill up and refresh memos array
+        window.location.reload()
+
+        if (comment != '') {
+            await EventAPI.submitEvent({  
+                time: new Date(),       
                 audit: auditId,
                 user: 'null',
                 type: 'comment',
-                text: memoInput.current.value})
+                text: comment})
         }
 
-        history.goBack()
+        useEffect(() => { EventAPI.findComments(auditId).then(setEvents) }, [])
     }
 
     async function leaveAudit(event: FormEvent) {
         event.preventDefault()
 
-        await MemoAPI.leaveMemo({   time: new Date(),       // TODO: change user & type
+        await EventAPI.leaveEvent({ time: new Date(),       // TODO: change user & type
                                     audit: auditId,
                                     user: 'null',
                                     type: 'leaveAudit'})
@@ -63,29 +68,28 @@ export const MemoView = (props: RouteComponentProps<{audit: string}>) => {
                 { auditId == 'new' || audit ? (
                 <Fragment>
                     <nav>
-                        <LinkSource object={audit} id={audit.id} name={audit.name} type='Audit'/> 
+                        <AuditLink audit={audit}/>
                         <span>
-                            <Link to={`/audits/${audit.id}/memo`}>Memos</Link>
+                            <Link to={`/audits/${audit.id}/event`}>Comments</Link>
                         </span>
                     </nav>
-                <h1>{ 'Available memos' }</h1>
+                <h1>{ 'Available comments' }</h1>
                 <form onSubmit={submitAudit} onReset={leaveAudit} className='user-input'>
                     <div>
                         <label>TODO: Add POST-IT's</label>
                     </div>
                     <div className="widget memo_list">
                         <ul>
-                            { memos.map(memo =>
-                            <li key={memo.audit}>
-                                <a><img src={AuditIcon}/><em>{memo.type}</em></a>
+                            { events.map(event =>
+                            <li key={event.audit}>
+                                <a><img src={AuditIcon}/><em>{event.text}</em></a>
                             </li>)}
                         </ul>
                     </div>
-                    <div>
-                        <div>
-                            <input ref={memoInput} placeholder={'Type in new comment'}/>
-                        </div>
-                    </div>
+                    <TextInput  
+                            label='Comment:'
+                            placeholder={'Add here new comment'}
+                            change={value => setComment(value)}/>
                     <div>
                         <div/>
                         <div>

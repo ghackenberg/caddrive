@@ -22,16 +22,37 @@ export class VersionService implements VersionREST {
     }
     */
 
+    async findVersions(name?: string, product?: string) : Promise<Version[]> {
+        
+        if (name != null) {
+            const versionsQuery: Version[] = []
+
+            const versionsNameLower = this.versions.map(version => version.name.toLowerCase())
+    
+            for (var i = 0; i < versionsNameLower.length; i++) {
+    
+                if (!name || versionsNameLower[i].includes(name.toLowerCase())) {
+                    versionsQuery.push(this.versions[i])
+                }
+            }
+    
+            return versionsQuery
+        }
+        else if (product && name == null) {
+            return this.versions.filter(version => version.product == product)
+        }
+        else {
+            return this.versions
+        }
+
+    }
+
     async getVersion(id: string): Promise<Version> {
         for (var i = 0; i < this.versions.length; i++) {
             if (this.versions[i].id == id)
                 return this.versions[i]
         }
         return null
-    }
-
-    async findAll(product: string) {
-        return this.versions.filter(version => version.product == product)
     }
 
     async addVersion(data: VersionData) {

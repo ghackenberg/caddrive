@@ -7,11 +7,11 @@ export interface AuditREST {
     updateAudit(audit: Audit): Promise<Audit>
 }
 
-export interface MemoREST {
-    findAll(audit: string, user?: string): Promise<EventData[]>
-    enterMemo(enterEvent: EventData): Promise<EventData>
-    leaveMemo(leaveEvent: EventData): Promise<EventData>
-    submitMemo(memo: CommentEventData): Promise<CommentEventData>
+export interface EventREST {
+    findComments(audit: string, user?: string): Promise<CommentEventData[]>
+    enterEvent(enterEvent: EventData): Promise<EventData>
+    leaveEvent(leaveEvent: EventData): Promise<EventData>
+    submitEvent(submitEvent: CommentEventData): Promise<CommentEventData>
 }
 
 export interface ProductREST {
@@ -29,7 +29,7 @@ export interface UserREST {
 }
 
 export interface VersionREST {
-    findVersions(product: string): Promise<Version[]>
+    findVersions(name?: string, product?: string): Promise<Version[]>
     getVersion(id: string): Promise<Version>
     addVersion(version: VersionData): Promise<Version>
 }

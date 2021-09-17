@@ -9,6 +9,9 @@ interface Props<T> {
     type: string
 }
 
+/**
+ * @deprecated
+ */
 export const LinkSource = <T, >(object: Props<T>) => {
 
     var objectName = ""

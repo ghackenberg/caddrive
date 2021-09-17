@@ -6,9 +6,9 @@ import { Product, Version } from '../../data'
 import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { LinkSource } from '../widgets/LinkSource'
-import { VersionList } from '../widgets/VersionList'
+import { ProductVersionList } from '../widgets/ProductVersionList'
 import { TextInput } from './forms/InputForms'
+import { ProductLink } from './forms/ProductLink'
 
 export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -20,7 +20,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     const [versions, setVersions] = useState<Version[]>(null)
     const [productName, setProductName] = useState<string>(null)
 
-    useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [])
+    useEffect(() => { VersionAPI.findVersions(null, productId).then(setVersions) }, [])
 
     if (productId != 'new') {
         useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
@@ -57,11 +57,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                     { productId == 'new' || product ? (
                         <Fragment>
                             <nav>
-                                { product ? (
-                                <LinkSource object={product} id={product.id} name={product.name} type={'Product'}/>  
-                                ) : (
-                                    <LinkSource object={'new'} id={'new'} name={'new'} type={'Product'}/>  
-                                )} 
+                                { product ? <ProductLink product={product}/> : <ProductLink/> }
                             </nav>
                             <h1>{ productId == 'new' ? 'Add new product' : 'Change existing product' }</h1>
                             <form onSubmit={saveProduct} onReset={cancelInput} className='user-input'>
@@ -79,7 +75,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                             </form>
                             { product && <h2>Available product versions:</h2> }
                             { product && versions ? 
-                                <VersionList product={product} list={versions}/> : product && <p>Loading...</p> 
+                                <ProductVersionList product={product} list={versions}/> : product && <p>Loading...</p> 
                             }
                         </Fragment>
                     ) : (

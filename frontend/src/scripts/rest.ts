@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Audit, AuditData, AuditREST, CommentEventData, EventData, MemoREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+import { Audit, AuditData, AuditREST, CommentEventData, EventData, EventREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 
 class AuditClient implements AuditREST {  
     async findAudits(name?: string) {
@@ -19,21 +19,21 @@ class AuditClient implements AuditREST {
     }
 }
 
-class MemoClient implements MemoREST {
-    async findAll(audit: string, user?: string) {
-        return (await axios.get<EventData[]>('/rest/memos', {params: {audit, user}})).data
+class EventClient implements EventREST {
+    async findComments(audit: string, user?: string) {
+        return (await axios.get<CommentEventData[]>('/rest/events', {params: {audit, user}})).data
     }
     
-    async enterMemo(enterEvent: EventData) {
-        return (await axios.post<EventData>('/rest/memos/enters', enterEvent)).data
+    async enterEvent(enterEvent: EventData) {
+        return (await axios.post<EventData>('/rest/events/enters', enterEvent)).data
     }
 
-    async leaveMemo(leaveEvent: EventData) {
-        return (await axios.post<EventData>('/rest/memos/leaves', leaveEvent)).data
+    async leaveEvent(leaveEvent: EventData) {
+        return (await axios.post<EventData>('/rest/events/leaves', leaveEvent)).data
     }
 
-    async submitMemo(memo: CommentEventData) {
-        return (await axios.post<CommentEventData>('/rest/memos/comments', memo)).data
+    async submitEvent(submitEvent: CommentEventData) {
+        return (await axios.post<CommentEventData>('/rest/events/comments', submitEvent)).data
     }
 }
 
@@ -74,8 +74,8 @@ class UserClient implements UserREST {
 }
 
 class VersionClient implements VersionREST {
-    async findVersions(product?: string) {
-        return (await axios.get<Version[]>('/rest/versions', {params: {product}} )).data
+    async findVersions(name?: string, product?: string) {
+        return (await axios.get<Version[]>('/rest/versions', {params: {name, product}} )).data
     }
 
     async getVersion(id: string) {
@@ -88,7 +88,7 @@ class VersionClient implements VersionREST {
 }
 
 export const AuditAPI = new AuditClient()
-export const MemoAPI = new MemoClient()
+export const EventAPI = new EventClient()
 export const ProductAPI = new ProductClient()
 export const UserAPI = new UserClient()
 export const VersionAPI = new VersionClient()

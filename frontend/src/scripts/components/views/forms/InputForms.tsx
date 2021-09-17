@@ -1,19 +1,18 @@
 import * as React from 'react'
 import Datepicker from 'react-datepicker'
 
-export const TextInput = (props: {label: string, change: (value: string) => void, placeholder?: string}) => {
+export const DateInput = (props: {label: string, change: (value: Date) => void, selected?: Date}) => {
     return (
         <GenericInput label={props.label}>
-            <input type="text" placeholder={props.placeholder} onChange={event => props.change(event.currentTarget.value)} required/>
+            <Datepicker selected={props.selected} onChange={(date) => props.change(date)} required/>
         </GenericInput>
     )
 }
 
-export const DateInput = (props: {label: string, change: (value: Date) => void, selected?: Date}) => {
-
+export const TextInput = (props: {label: string, change?: (value: string) => void, placeholder?: string, value?: string}) => {
     return (
         <GenericInput label={props.label}>
-            <Datepicker selected={props.selected} onChange={(date) => props.change(date)} required/>
+            <input type="text" placeholder={props.placeholder} value={props.value} onChange={event => props.change(event.currentTarget.value)} required/>
         </GenericInput>
     )
 }
