@@ -1,11 +1,18 @@
 import * as React from 'react'
-import { Fragment } from 'react'
+import { Fragment, useState, useEffect } from 'react'
+import { Version } from 'fhooe-audit-platform-common'
 import { Link } from 'react-router-dom'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { SearchBarList } from '../widgets/SearchBarList'
+import { VersionSearchBar } from '../widgets/SearchBar'
+import { VersionList } from '../widgets/VersionList'
+import { VersionAPI } from '../../rest'
 
 export const VersionsView = () => {
+
+    const [versions, setVersions] = useState<Version[]>()
+
+    useEffect(() => { VersionAPI.findVersions().then(setVersions) }, [])
 
     return (
         <div className="view versions">
@@ -23,7 +30,8 @@ export const VersionsView = () => {
                     </nav>
                 </Fragment>
                 <h2>Available versions</h2>
-                <SearchBarList type='versions'/>
+                <VersionSearchBar change={setVersions}/>
+                {versions ? <VersionList list={versions}/> : <p>Loading...</p>}
             </main>
         </div>
     )

@@ -6,8 +6,8 @@ import { User } from 'fhooe-audit-platform-common'
 import { UserAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { TextInput } from './forms/InputForms'
-import { UserLink } from './forms/UserLink'
+import { EmailInput, TextInput } from '../snippets/InputForms'
+import { UserLink } from '../snippets/LinkSource'
 
 export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
@@ -27,18 +27,18 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
 
         if(userId == 'new') {
-            if (userName != '' && userEmail != '') {
+            if (userName && userEmail) {
                 await UserAPI.addUser({ name: userName, email: userEmail})
 
                 history.goBack()
             }
         }       
         else {
-            if (userName != '' && userEmail != '') {
-                await UserAPI.updateUser({id: userId, name: userName, email: userEmail})
+            await UserAPI.updateUser({  id: user.id, 
+                                        name: userName ? userName : user.name,
+                                        email: userEmail ? userEmail : user.email})
 
-                history.goBack()
-            }
+            history.goBack()   
         }       
     }
 
@@ -54,23 +54,29 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                     { userId == 'new' || user ? (
                         <Fragment>
                             <nav>
-                                { user ? <UserLink user={user}/> : <UserLink/> }
+                                <UserLink user={user}/>
                             </nav>
                             <h1>{ userId == 'new' ? 'Add new user' : 'Change existing user' }</h1>
                             <form onSubmit={saveUser} onReset={cancelInput} className='user-input'>
-                                <TextInput  
-                                    label='Username:'
-                                    placeholder={userId == 'new' ? 'Add here new user' : user.name}
+                                <TextInput 
+                                    label='Username'
+                                    placeholder='Type in username'
+                                    value={user ? user.name : undefined}
                                     change={value => setUserName(value)}/>
-                                <TextInput  
-                                    label='Email:'
-                                    placeholder={userId == 'new' ? 'Type in new email' : user.email}
+                                <EmailInput
+                                    label='Email'
+                                    placeholder='Type in email'
+                                    value={user ? user.email : undefined}
                                     change={value => setUserEmail(value)}/>
                                 <div>
                                     <div/>
                                     <div>
-                                        <input type="reset" value='Cancel'/>
-                                        <input type="submit" value="Save"/>
+                                        <Fragment>
+                                            <input type="reset" value='Cancel'/>
+                                            <input  type="submit" 
+                                                    value={userName || userEmail ? "Save" : "Delete"} 
+                                                    className={userName || userEmail ? 'saveItem' : 'deleteItem'}/>                                            
+                                        </Fragment>
                                     </div>
                                 </div>
                             </form>

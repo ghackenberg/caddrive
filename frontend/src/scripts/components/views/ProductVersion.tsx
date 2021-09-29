@@ -6,8 +6,8 @@ import { Product, Version} from 'fhooe-audit-platform-common'
 import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { DateInput, TextInput } from './forms/InputForms'
-import { ProductLink } from './forms/ProductLink'
+import { DateInput, TextInput } from '../snippets/InputForms'
+import { ProductLink } from '../snippets/LinkSource'
 
 export const ProductVersionView = (props: RouteComponentProps<{ version: string, product: string }>) => {
 
@@ -19,7 +19,7 @@ export const ProductVersionView = (props: RouteComponentProps<{ version: string,
     const [product, setProduct] = useState<Product>(null)
     const [version, setVersion] = useState<Version>(null)
     const [versionName, setVersionName] = useState<string>(null)
-    const [currentDate, setCurrentDate] = useState<Date>(new Date())
+    const [currentDate, setCurrentDate] = useState<Date>()
 
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
 
@@ -32,7 +32,7 @@ export const ProductVersionView = (props: RouteComponentProps<{ version: string,
 
         if(versionId == 'new') {
             if (versionName != '') {
-                await VersionAPI.addVersion({ product: productId, name: versionName, date: currentDate })
+                await VersionAPI.addVersion({ productId: productId, name: versionName, date: currentDate })
 
                 history.goBack()
             }
@@ -62,13 +62,18 @@ export const ProductVersionView = (props: RouteComponentProps<{ version: string,
                         <h1>{ versionId == 'new' ? 'Add new version' : `View existing version` }</h1>
                         <form onSubmit={addVersion} onReset={cancelInput} className='user-input'>
                             <TextInput 
-                                label='Version name:'
-                                placeholder={versionId == 'new' ? 'Add here new version' : version.name}
-                                change={value => setVersionName(value)}/>
+                                label='Version name'
+                                placeholder='Add here new version'
+                                value={versionId != 'new' ? version.name : undefined}
+                                change={value => setVersionName(value)}
+                                disabled={versionId != 'new'}/>
+                            {versionId == 'new' || (versionId != 'new' && version) ?
                             <DateInput
-                                label='Version date:'
+                                label='Version date'
+                                placeholder='Select version date'
                                 change={date => setCurrentDate(date)}
-                                selected ={currentDate}/>
+                                selected ={versionId != 'new' ? new Date(version.date) : currentDate}
+                                disabled={versionId != 'new'}/> : <p>Loading...</p> }
                             <div>
                                 <div/>
                                 <div>

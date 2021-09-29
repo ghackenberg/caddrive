@@ -7,8 +7,8 @@ import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { ProductVersionList } from '../widgets/ProductVersionList'
-import { TextInput } from './forms/InputForms'
-import { ProductLink } from './forms/ProductLink'
+import { TextInput } from '../snippets/InputForms'
+import { ProductLink } from '../snippets/LinkSource'
 
 export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -30,18 +30,17 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
         event.preventDefault()
 
         if(productId == 'new') {
-            if (productName != '') {
+            if (productName) {
                 await ProductAPI.addProduct({name: productName})
 
                 history.goBack()
             }
         }
         else {
-            if (productName != '') {
-                await ProductAPI.updateProduct({id: productId, name: productName})
+            await ProductAPI.updateProduct({id: product.id, 
+                                            name: productName ? productName : product.name})
 
-                history.goBack()
-            }
+            history.goBack()
         }
     }
 
@@ -57,19 +56,22 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                     { productId == 'new' || product ? (
                         <Fragment>
                             <nav>
-                                { product ? <ProductLink product={product}/> : <ProductLink/> }
+                                <ProductLink product={product}/>
                             </nav>
                             <h1>{ productId == 'new' ? 'Add new product' : 'Change existing product' }</h1>
                             <form onSubmit={saveProduct} onReset={cancelInput} className='user-input'>
                                 <TextInput
-                                    label='Product name:'
-                                    placeholder={productId=='new' ? "Add here new product" : product.name}
+                                    label='Product name'
+                                    placeholder='Add here new product'
+                                    value={product ? product.name : undefined}
                                     change={value => setProductName(value)}/>
                                 <div>
                                     <div/>
                                     <div>
                                         <input type="reset" value='Cancel'/>
-                                        <input type="submit" value="Save"/>
+                                        <input  type="submit" 
+                                                value={productName ? "Save" : "Delete"} 
+                                                className={productName ? 'saveItem' : 'deleteItem'}/>
                                     </div>
                                 </div>
                             </form>

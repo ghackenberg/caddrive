@@ -8,7 +8,7 @@ export interface AuditREST {
 }
 
 export interface EventREST {
-    findComments(audit: string, user?: string): Promise<CommentEventData[]>
+    findEvents(audit?: string, type?: string): Promise<CommentEventData[]>
     enterEvent(enterEvent: EventData): Promise<EventData>
     leaveEvent(leaveEvent: EventData): Promise<EventData>
     submitEvent(submitEvent: CommentEventData): Promise<CommentEventData>
@@ -32,4 +32,5 @@ export interface VersionREST {
     findVersions(name?: string, product?: string): Promise<Version[]>
     getVersion(id: string): Promise<Version>
     addVersion(version: VersionData): Promise<Version>
+    deleteVersion(version: Version): Promise<Version>
 }

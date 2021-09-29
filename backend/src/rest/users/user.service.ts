@@ -4,7 +4,7 @@ import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class UserService implements UserREST {
-    private readonly users: User[] = []
+    private users: User[] = []
 
     constructor() {
         for (var i = 0; i < Math.random() * 20; i++) {
@@ -56,8 +56,18 @@ export class UserService implements UserREST {
     async updateUser(user: User) {
         
         for (var i = 0; i < this.users.length; i++) {
-            if (this.users[i].id == user.id)
+            if (this.users[i].id == user.id &&
+                this.users[i].name == user.name &&
+                this.users[i].email == user.email) {
+                
+                this.users = this.users.filter(users => users.id != user.id);
+            }
+            else if (this.users[i].id == user.id && (
+                    this.users[i].name == user.name ||
+                    this.users[i].email == user.email)) {
+
                 this.users.splice(i,1,user)
+            }
         }
 
         return user

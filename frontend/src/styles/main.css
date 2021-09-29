@@ -117,28 +117,6 @@ div.view > main form.user-input{
     border-collapse: separate;
     background-color: rgba(0,0,0,0.1);
 }
-div.view > main form > input.header-search {
-    border-spacing: 0.5em;
-    background-color: white;
-    margin-top: 0.75em;
-    margin-bottom: 1.5em;
-
-    font-family: inherit;
-    font-size: inherit;
-
-    padding-top: calc(0.75rem - 0.25em);
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-bottom: calc(0.75rem - 0.25em);
-}
-div.view > main form > input.header-search[type="text"] {
-    width: 20em;
-}
-div.view > main form > input.header-search[type="submit"] {
-    margin-left: 0.5em;
-    color: white;
-    background-color: steelblue;
-}
 div.view > main form > div {
     display: table-row;
 }
@@ -147,6 +125,9 @@ div.view > main form > div > div {
 }
 div.view > main form > div > div:last-child {
     text-align: right;
+}
+div.view > main form > div > div > label::after {
+    content: ":";
 }
 div.view > main form > div > div > input {
     font-family: inherit;
@@ -165,14 +146,6 @@ div.view > main form > div > div > input {
     background-color: rgba(0,0,0,0.1);
     color: black
 }
-div.view > main form > div > div > input[type="submit"] {
-    margin-left: 1.5em;
-    color: white;
-    background-color: steelblue;
-}
-div.view > main form > div > div > input[type="submit"]:hover {
-    background-color: skyblue
-}
 div.view > main form > div > div > input[type="reset"] {
     margin-left: 1.5em;
     color: white;
@@ -181,9 +154,30 @@ div.view > main form > div > div > input[type="reset"] {
 div.view > main form > div > div > input[type="reset"]:hover {
     background-color: darkgray;
 }
+div.view > main form > div > div > input.deleteItem[type="submit"] {
+    margin-left: 1.5em;
+    color: white;
+    background-color: brown;
+}
+div.view > main form > div > div > input.deleteItem[type="submit"]:hover {
+    background-color: lightcoral
+}
+div.view > main form > div > div > input.saveItem[type="submit"] {
+    margin-left: 1.5em;
+    color: white;
+    background-color: steelblue;
+}
+div.view > main form > div > div > input.saveItem[type="submit"]:hover {
+    background-color: skyblue
+}
+div.view > main form > div > div > input[type="text"] {
+    width: 90%
+}
 div.view > main form > div > div > a > input.enter-audit {
     font-family: inherit;
     font-size: inherit;
+
+    margin-left: 1em;
 
     line-height: inherit;
     
@@ -210,10 +204,10 @@ div.view > main form > div > div > a > input.leave-audit {
     background-color: gray;
 }
 div.view > main form > div > div > a > input.enter-audit:hover {
-    background-color: yellowgreen;
+    background-color: greenyellow;
 }
 div.view > main form > div > div > a > input.enter-audit:hover {
-    background-color: darkgray;
+    background-color: yellowgreen;
 }
 
 div.view > main form > div > div > div.react-datepicker-wrapper > div.react-datepicker__input-container > input[type="text"] {
@@ -229,13 +223,16 @@ div.view > main form > div > div > div.react-datepicker-wrapper > div.react-date
 
     border: 0;
     outline: 0;
+    width: 90%;
 
     background-color: rgba(0,0,0,0.1);
     color: black
 }
 div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control {
     background-color: rgba(0,0,0,0.1);
-    color: black
+    color: black;
+    text-align: left;
+    position: inherit;
 }
 div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > div.Dropdown-placeholder {
     color: grey
@@ -243,6 +240,40 @@ div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > di
 div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > div.Dropdown-placeholder.is-selected  {
     color: black
 }
+
+div.view > main > table > thead  {
+    background-color: steelblue;
+    color: white;
+    text-align: center;
+}
+div.view > main > table > thead > tr > th {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+div.view > main > table > tbody {
+    text-align: left;
+}
+div.view > main > table > tbody > tr > td:first-child {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+    text-align: center;
+}
+div.view > main > table > tbody > tr > td {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+
+    border-bottom: 1px solid #ddd;
+}
+div.view > main > table > tbody > tr.create-icon > td > a:link > img {
+    padding-left: 0;
+    width: 2em;
+    height: auto;
+}
+
 div.view.demo > main {
     overflow: hidden;
 }
@@ -264,4 +295,27 @@ div.view.demo > main div.widget.scene_view {
     right: 0;
     bottom: 0;
     overflow: hidden;
+}
+
+input.header-search {
+    border-spacing: 0.5em;
+    background-color: white;
+    margin-top: 0.75em;
+    margin-bottom: 1.5em;
+
+    font-family: inherit;
+    font-size: inherit;
+
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+input.header-search[type="text"] {
+    width: 17em;
+}
+input.header-search[type="button"] {
+    margin-left: 0.5em;
+    color: white;
+    background-color: steelblue;
 }

@@ -6,7 +6,7 @@ import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { ProductVersionList } from '../widgets/ProductVersionList'
-import { ProductLink } from './forms/ProductLink'
+import { ProductLink } from '../snippets/LinkSource'
 
 export const ProductVersionsView = (props: RouteComponentProps<{ product: string }>) => {
     

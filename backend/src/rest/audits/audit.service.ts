@@ -4,7 +4,7 @@ import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class AuditService implements AuditREST {
-    private readonly audits: Audit[] = []
+    private audits: Audit[] = []
 
     /*
     constructor() {
@@ -63,8 +63,20 @@ export class AuditService implements AuditREST {
     async updateAudit(audit: Audit) {
         
         for (var i = 0; i < this.audits.length; i++) {
-            if (this.audits[i].id == audit.id)
-                this.audits.splice(i,1,audit)
+            if (this.audits[i].id == audit.id &&
+                this.audits[i].name == audit.name &&
+                this.audits[i].productId == audit.productId &&
+                this.audits[i].versionId == audit.versionId &&
+                this.audits[i].start == audit.start &&
+                this.audits[i].end == audit.end) {
+
+                this.audits = this.audits.filter(audits => audits.id != audit.id)
+
+            }
+            else if (this.audits[i].id == audit.id){
+
+                    this.audits.splice(i,1,audit)
+            }
         }
 
         return audit

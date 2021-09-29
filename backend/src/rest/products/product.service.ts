@@ -4,7 +4,7 @@ import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class ProductService implements ProductREST {
-    private readonly products: Product[] = []
+    private products: Product[] = []
 
     constructor() {
         for (var i = 0; i < Math.random() * 20; i++) {
@@ -50,8 +50,16 @@ export class ProductService implements ProductREST {
     async updateProduct(product: Product) {
         
         for (var i = 0; i < this.products.length; i++) {
-            if (this.products[i].id == product.id)
+            if (this.products[i].id == product.id &&
+                this.products[i].name == product.name) {
+
+                this.products = this.products.filter(products => products.id != product.id)
+            }
+            else if (this.products[i].id == product.id &&
+                    this.products[i].name != product.name) {
+                        
                 this.products.splice(i,1,product)
+            }
         }
 
         return product

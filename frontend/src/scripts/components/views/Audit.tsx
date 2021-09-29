@@ -1,161 +1,99 @@
 import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
-import { useHistory } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { Audit, Product, Version } from '../../data'
-import { AuditAPI, ProductAPI, VersionAPI } from '../../rest'
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
+import { Audit, CommentEventData } from 'fhooe-audit-platform-common/src/data'
+import { AuditAPI, EventAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { DateInput, TextInput } from './forms/InputForms'
-import Dropdown, { Option } from 'react-dropdown'
-import { AuditLink } from './forms/AuditLink'
+import * as AuditIcon from '/src/images/audit.png'
+import { TextInput } from '../snippets/InputForms'
+import { AuditLink } from '../snippets/LinkSource'
 
 export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
 
     const auditId = props.match.params.audit
 
-    const [audit, setAudit] = useState<Audit>(null)
-    const [products, setProducts] = useState<Product[]>(null)
-    const [versions, setVersions] = useState<Version[]>(null)
-
-    const [startDate, setStartDate] = useState<Date>(new Date())
-    const [endDate, setEndDate] = useState<Date>(new Date())
-
-    const [productInput, setProductInput] = useState<string>(null)
-    const [versionInput, setVersionInput] = useState<string>(null)
-    const [auditName, setAuditName] = useState<string>(null)
-
     const history = useHistory()
 
-    useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
-    useEffect(() => { VersionAPI.findVersions().then(setVersions)}, [])
+    const [audit, setAudit] = useState<Audit>(null)
+    const [events, setEvents] = useState<CommentEventData[]>(null)
+    const [comment, setComment] = useState<string>(null)
 
     if (auditId != 'new') {
         useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [])
+
+        useEffect(() => {
+            EventAPI.enterEvent({ auditId: auditId, user: 'null', time: new Date(), type: 'enter' })
+
+            return () => {
+                EventAPI.leaveEvent({ auditId: auditId, user: 'null', time: new Date(), type: 'leave' })      // TODO: enter & leave event fired 2 times!!
+            }
+        }, [])
     }
 
-    async function saveAudit(event: FormEvent){
+    useEffect(() => { EventAPI.findEvents(auditId, "comment").then(setEvents) }, [])
+
+    async function submitAudit(event: FormEvent) {
         event.preventDefault()
 
-        if (auditId == 'new') {
-            if (auditName != '' && startDate.getDate() != null && endDate.getDate() != null) {
-                await AuditAPI.addAudit({   productId: productInput,
-                                            versionId: versionInput,
-                                            name: auditName,
-                                            start: startDate,
-                                            end: endDate})
-
-                history.goBack()
-            }
+        if (comment) {
+            await EventAPI.submitEvent({  
+                time: new Date(),       
+                auditId: auditId,
+                user: 'null',
+                type: 'comment',
+                text: comment})
         }
+
+        await EventAPI.findEvents(auditId, "comment").then(setEvents)
     }
 
-    async function cancelInput() {
-        history.goBack()
-    }
+    async function leaveAudit(event: FormEvent) {
+        event.preventDefault()
 
-    async function productSelected(option: Option) {
-
-        setVersions(await VersionAPI.findVersions(null, option.value))
-
-        setProductInput(option.value)
-    }
-
-    async function versionSelected(option: Option) {
-        setVersionInput(option.value)
+        history.push('/audits')
     }
 
     return (
-        <div className='view audit'>
+        <div className='view memo'>
             <Header/>
             <Navigation/>
             <main>
-                { auditId == 'new' || audit ? (
-                    <Fragment>
-                        <nav>
-                            { audit ? <AuditLink audit={audit}/> : <AuditLink/> }                            
-                        </nav>
-                        <h1>{ auditId == 'new' ? 'Add new audit' : 'View existing audit'}</h1>
-                        { auditId == 'new' ? (
-                        <form onSubmit={saveAudit} onReset={cancelInput} className='user-input'>
-                            <TextInput  
-                                label='Audit name:' 
-                                placeholder={auditId == 'new' ? 'Add new audit' : audit.name} 
-                                change={value => setAuditName(value)}/>
-                            <DateInput  
-                                label='Start time:'
-                                change={date => setStartDate(date)}
-                                selected={startDate}/>
-                            <DateInput
-                                label='End time:'
-                                change={date => setEndDate(date)}
-                                selected={endDate}/>
-                            <div>
-                                { products ? (                                  
-                                <><div>
-                                    <label>Choose product</label>
-                                </div><div>
-                                    <Dropdown options={products.map(product => { return {value: product.id, label: product.name} })} placeholder='Select product' onChange={productSelected} />
-                                </div></>
-                                ) : ( <label>No existing products available</label> )}
-                            </div>
-                            <div>
-                                { productInput && (
-                                <><div>
-                                    <label>Choose version</label>
-                                </div><div>
-                                    <Dropdown options={versions.map(version => { return {value: version.id, label: version.name} })} placeholder='Select version' onChange={versionSelected} />
-                                </div></>)}
-                            </div>
-                            <div>
-                                <div/>
-                                <div>
-                                    <input type='reset' value='Cancel'/>
-                                    <input type='submit' value='Save'/>
-                                </div>
-                            </div>
-                            <div>
-                                <div/>
-                                <div>
-                                    { audit && productInput && versionInput &&
-                                    <Link to={`/audits/${auditId}/event`}>
-                                        <input type="button" className='enter-audit' value="Enter audit"/>
-                                    </Link>
-                                    }
-                                </div>
-                            </div>
-                        </form>
-                        ) : (
-                        <form className='user-input'>
-                            <TextInput  
-                                label="Audit name:" 
-                                value={audit.name} />
-                            <TextInput
-                                label='Start time:'
-                                value={startDate.getDate().toString() + '/' + startDate.getMonth().toString() + '/' + startDate.getFullYear().toString()}/>
-                            <TextInput
-                                label='End time:'
-                                value={endDate.getDate().toString() + '/' + endDate.getMonth().toString() + '/' + endDate.getFullYear().toString()}/>
-                            <TextInput
-                                label='Product:'
-                                value={products.find(product => product.id == audit.productId).name}/>
-                            <TextInput
-                                label='Version:'
-                                value={versions.find(version => version.id == audit.versionId).name}/>
-                            <div>
-                                <div/>
-                                <div>
-                                    <Link to={`/audits/${auditId}/event`}>
-                                        <input type="button" className='enter-audit' value="Enter audit"/>
-                                    </Link>
-                                </div>
-                            </div>
-                        </form>
-                        )}
-                    </Fragment>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
+                { auditId == 'new' || (audit && events) ? (
+                <Fragment>
+                    <nav>
+                        <AuditLink audit={audit}/>
+                        <span>
+                            <Link to={`/audits/${audit.id}/event`}>Comments</Link>
+                        </span>
+                    </nav>
+                <h1>{ 'Available comments' }</h1>
+                <form onSubmit={submitAudit} onReset={leaveAudit} className='user-input'>
+                    {events ? 
+                    <div className="widget memo_list">
+                        <ul>
+                            { events.map(event =>
+                            <li key={event.auditId}>
+                                <a><img src={AuditIcon}/><em>{event.text}</em></a>
+                            </li>)}
+                        </ul>
+                    </div> : <p>Loading...</p>}
+                    <TextInput  
+                            label='Comment'
+                            placeholder={'Add here new comment'}
+                            change={value => setComment(value)}/>
+                    <div>
+                        <div/>
+                        <div>
+                            <input type='reset' value='Leave audit'/>
+                            <input type='submit' value='Submit audit' className='saveItem'/>
+                        </div>
+                    </div>
+                </form>
+                </Fragment>
+                ) : (
+                    <p>Loading...</p>
+                )}
             </main>
         </div>
     )

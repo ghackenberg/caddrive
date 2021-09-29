@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import * as UserIcon from '/src/images/user.png'
 import * as ProductIcon from '/src/images/product.png'
 import * as AuditIcon from '/src/images/audit.png'
+import * as EventIcon from '/src/images/click.png'
 import * as VersionIcon from '/src/images/version.png'
 import * as DemoIcon from '/src/images/demo.png'
 import * as TwoCylinderEngine from '/src/models/2CylinderEngine.glb'
@@ -23,10 +24,13 @@ export const Navigation = () => {
     return (
         <nav>
             <ul>
-                <li><Link to="/users"><img src={UserIcon}/>Users</Link></li>
-                <li><Link to="/products"><img src={ProductIcon}/>Products</Link></li>
-                <li><Link to="/versions"><img src={VersionIcon}/>Versions</Link></li>
                 <li><Link to="/audits"><img src={AuditIcon}/>Audits</Link></li>
+                <li><Link to="/events"><img src={EventIcon}/>Events</Link></li>
+                <li><Link to="/products"><img src={ProductIcon}/>Products</Link></li>
+                <li><Link to="/users"><img src={UserIcon}/>Users</Link></li>
+                <li><Link to="/versions"><img src={VersionIcon}/>Versions</Link></li>
+                
+
             </ul>
             <ul>
                 <li><Link to={toUrl(TwoCylinderEngine)}><img src={DemoIcon}/>2CylinderEngine</Link></li>

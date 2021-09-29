@@ -6,9 +6,9 @@ import { Product, Version} from 'fhooe-audit-platform-common'
 import { ProductAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { DateInput, TextInput } from './forms/InputForms'
-import { VersionLink } from './forms/VersionLink'
-import Dropdown, { Option } from 'react-dropdown'
+import { DateInput, DropdownInput, TextInput } from '../snippets/InputForms'
+import { VersionLink } from '../snippets/LinkSource'
+import { Option } from 'react-dropdown'
 
 export const VersionView = (props: RouteComponentProps<{ version: string}>) => {
 
@@ -17,26 +17,35 @@ export const VersionView = (props: RouteComponentProps<{ version: string}>) => {
     const history = useHistory()
 
     const [version, setVersion] = useState<Version>(null)
+    const [product, setProduct] = useState<Product>(null)
     const [products, setProducts] = useState<Product[]>(null)
     const [versionName, setVersionName] = useState<string>(null)
-    const [currentDate, setCurrentDate] = useState<Date>(new Date())
+    const [currentDate, setCurrentDate] = useState<Date>()
     const [productInput, setProductInput] = useState<string>(null)
 
     useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
 
     if (versionId != 'new') {
-        useEffect(() => { VersionAPI.getVersion(versionId).then(setVersion) }, [])
+        useEffect(() => { VersionAPI.getVersion(versionId).then(version => {
+            setVersion(version)
+            ProductAPI.getProduct(version.productId).then(setProduct)
+        }) }, [])
     }
 
     async function addVersion(event: FormEvent){
         event.preventDefault()
 
         if(versionId == 'new') {
-            if (versionName != '') {
-                await VersionAPI.addVersion({ product: productInput, name: versionName, date: currentDate })
+            if (versionName && currentDate && productInput) {
+                await VersionAPI.addVersion({ productId: productInput, name: versionName, date: currentDate })
 
                 history.goBack()
             }
+        }
+        else {
+            await VersionAPI.deleteVersion(version)
+
+            history.goBack()
         }          
     }
 
@@ -53,58 +62,44 @@ export const VersionView = (props: RouteComponentProps<{ version: string}>) => {
             <Header/>
             <Navigation/>
             <main>
-                { version || versionId == 'new' ? (
+                { (version) || (versionId == 'new' && products) ? (
                     <Fragment>
                         <nav>
                             { version ? <VersionLink version={version}/> : <VersionLink/> }
                         </nav>
                         <h1>{ versionId == 'new' ? 'Add new version' : `View existing version` }</h1>
-                        { versionId == 'new' ? (
                         <form onSubmit={addVersion} onReset={cancelInput} className='user-input'>                     
                             <TextInput 
-                                label='Version name:'
-                                placeholder={versionId == 'new' ? 'Add here new version' : version.name}
-                                change={value => setVersionName(value)}/>
+                                label='Version name'
+                                placeholder='Add here new version'
+                                value={version ? version.name : undefined}
+                                change={value => setVersionName(value)}
+                                disabled={versionId != 'new'}/>
+                            {versionId == 'new' || (versionId != 'new' && version) ?
                             <DateInput
-                                label='Version date:'
+                                label='Version date'
+                                placeholder='Select version date'
                                 change={date => setCurrentDate(date)}
-                                selected ={currentDate}/>
-                            <div>
-                                { products ? (                                  
-                                <><div>
-                                    <label>Choose product</label>
-                                </div><div>
-                                    <Dropdown options={products.map(product => { return {value: product.id, label: product.name} })} placeholder='Select product' onChange={productSelected} />
-                                </div></>
-                                ) : ( <label>No existing products available</label> )}
-                            </div>
+                                selected ={versionId != 'new' ? new Date(version.date) : currentDate}
+                                disabled={versionId != 'new'}/> : <p>Loading...</p> }
+                            {(versionId == 'new' && products) || (versionId != 'new' && product && products) ?
+                            <DropdownInput
+                                label='Choose product'
+                                placeholder='Select product'
+                                options={products.map(product => { return {value: product.id, label: product.name} })}
+                                value={versionId != 'new' ? {value: product.id, label: product.name} : undefined}
+                                change={productSelected}
+                                disabled={versionId != 'new'}/> : <p>Loading...</p> }
                             <div>
                                 <div/>
                                 <div>
                                     <input type="reset" value={ versionId == 'new' ? 'Cancel' : 'Return'}/>
-                                    { versionId == 'new' && versionName!='' && productInput!=null && <input type="submit" value="Save"/> }
-                                </div>
+                                    <input  type="submit" 
+                                            value={versionId == 'new' ? 'Save' : 'Delete'}
+                                            className={versionId == 'new' ? 'saveItem' : 'deleteItem'}/>
+                                    </div>
                             </div>
                         </form>
-                        ) : (
-                        <form onReset={cancelInput} className='user-input'>
-                            <TextInput
-                                label='Version name:'
-                                value={version.name}/>
-                            <TextInput
-                                label='Version date:'
-                                value={currentDate.getDate().toString() + '/' + currentDate.getMonth().toString() + '/' + currentDate.getFullYear().toString()}/>
-                            <TextInput
-                                label='Product'
-                                value={products.find(product => product.id == version.product).name}/>
-                            <div>
-                                <div/>
-                                <div>
-                                    <input type='reset' value='Return'/>
-                                </div>
-                            </div>
-                        </form>
-                        )}
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

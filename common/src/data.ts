@@ -22,7 +22,7 @@ export class EventData {
     @ApiProperty()
     time: Date
     @ApiProperty()
-    audit: string
+    auditId: string
     @ApiProperty()
     user: string
     @ApiProperty()
@@ -30,7 +30,7 @@ export class EventData {
 }
 
 export class CommentEventData extends EventData {
-    override readonly type = 'comment'
+    //override readonly type = 'comment'
     @ApiProperty()
     text: string
 }
@@ -68,7 +68,7 @@ export class VersionData {
     @ApiProperty()
     date: Date
     @ApiProperty()
-    product: string
+    productId: string
 }
 
 export class Version extends VersionData {

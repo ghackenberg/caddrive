@@ -20,8 +20,8 @@ class AuditClient implements AuditREST {
 }
 
 class EventClient implements EventREST {
-    async findComments(audit: string, user?: string) {
-        return (await axios.get<CommentEventData[]>('/rest/events', {params: {audit, user}})).data
+    async findEvents(audit?: string, type?: string) {
+        return (await axios.get<CommentEventData[]>('/rest/events', {params: {audit, type}})).data
     }
     
     async enterEvent(enterEvent: EventData) {
@@ -84,6 +84,10 @@ class VersionClient implements VersionREST {
 
     async addVersion(version: VersionData) {
         return (await axios.post<Version>('/rest/versions', version)).data
+    }
+
+    async deleteVersion(version: Version) {
+        return (await axios.put<Version>('/rest/versions', version)).data
     }
 }
 
