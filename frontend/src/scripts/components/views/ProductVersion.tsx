@@ -78,7 +78,7 @@ export const ProductVersionView = (props: RouteComponentProps<{ version: string,
                                 <div/>
                                 <div>
                                     <input type="reset" value={ versionId == 'new' ? 'Cancel' : 'Return'}/>
-                                    { versionId == 'new' && <input type="submit" value="Save"/> }
+                                    { versionId == 'new' && <input type="submit" value="Save" className='saveItem'/> }
                                 </div>
                             </div>
                         </form>

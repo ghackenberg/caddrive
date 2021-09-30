@@ -5,14 +5,22 @@ import { Link } from 'react-router-dom'
 import { ProductAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { ProductList } from '../widgets/ProductList'
 import { ProductSearchBar } from '../widgets/SearchBar'
+import { Column, Table } from '../widgets/Table'
+import * as ProductIcon from '/src/images/product.png'
 
 export const ProductsView = () => {
     
     const [products, setProducts] = useState<Product[]>()
 
     useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
+
+    const columns: Column<Product>[] = [
+        {label: 'Icon', content: _product => <img src={ProductIcon} style={{width: '1em'}}/>},
+        {label: 'Product', content: product => <b>{product.name}</b>},
+        {label: 'Link', content: product => <Link to={`/products/${product.id}`}>Details</Link>},
+        {label: 'Link', content: product => <Link to={`/versions/?product=${product.id}`}>Versions</Link>}
+    ]
 
     return (
         <div className="view products">
@@ -31,7 +39,7 @@ export const ProductsView = () => {
                 </Fragment>
                 <h2>Available products</h2>
                 <ProductSearchBar change={setProducts}/>
-                {products ? <ProductList list={products}/> : <p>Loading...</p>}
+                {products && <Table columns={columns} items={products} create='Product'/>}
             </main>
         </div>
     )

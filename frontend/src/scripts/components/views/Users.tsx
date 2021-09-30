@@ -10,7 +10,7 @@ import { User } from 'fhooe-audit-platform-common'
 import * as UserIcon from '/src/images/user.png'
 
 export const UsersView = () => {
-    const [users, setUsers] = useState<User[]>(null)
+    const [users, setUsers] = useState<User[]>()
 
     useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 

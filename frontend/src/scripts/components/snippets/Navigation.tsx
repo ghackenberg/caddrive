@@ -24,13 +24,11 @@ export const Navigation = () => {
     return (
         <nav>
             <ul>
+                <li><Link to="/users"><img src={UserIcon}/>Users</Link></li>
+                <li><Link to="/products"><img src={ProductIcon}/>Products</Link></li>
+                <li><Link to="/versions"><img src={VersionIcon}/>Versions</Link></li>
                 <li><Link to="/audits"><img src={AuditIcon}/>Audits</Link></li>
                 <li><Link to="/events"><img src={EventIcon}/>Events</Link></li>
-                <li><Link to="/products"><img src={ProductIcon}/>Products</Link></li>
-                <li><Link to="/users"><img src={UserIcon}/>Users</Link></li>
-                <li><Link to="/versions"><img src={VersionIcon}/>Versions</Link></li>
-                
-
             </ul>
             <ul>
                 <li><Link to={toUrl(TwoCylinderEngine)}><img src={DemoIcon}/>2CylinderEngine</Link></li>

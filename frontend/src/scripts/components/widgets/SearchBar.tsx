@@ -83,18 +83,23 @@ export const UserSearchBar = (props: {change: (value: User[]) => void, addUser?:
     async function searchBar(event: FormEvent) {
         event.preventDefault()
 
-        await UserAPI.findUsers(query.current.value).then(setUsers)
+        if (query) {
+            await UserAPI.findUsers(query.current.value).then(setUsers)
+        }
 
-        props.change(users)
+        if (users) {
+            props.change(users)
+        }
     }
 
     return (
         <Fragment>
-            <form onChange={searchBar}>
+            <form>
                 <span>
                     <input
                         type="text"
                         ref={query}
+                        onChange={searchBar}
                         className="header-search"
                         placeholder={`Search User`}/>
                     {props.addUser && 
