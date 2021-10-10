@@ -1,16 +1,32 @@
 import * as React from 'react'
 import { FormEvent, Fragment } from 'react'
+import { useHistory } from 'react-router'
 import { Audit, Product, User, Version, CommentEventData } from 'fhooe-audit-platform-common/src/data'
 import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../rest'
 import { Link } from 'react-router-dom'
 
 
-export const AuditSearchBar = (props: {change: (value: Audit[]) => void, addAudit?: boolean}) => {
+export const AuditSearchBar = (props: {change: (value: Audit[]) => void, versionSearch: string, addAudit?: boolean}) => {
+
+    const history = useHistory()
+    var filterActive : Boolean = props.versionSearch.includes('?version')
 
     async function searchBar(event: FormEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        props.change(await AuditAPI.findAudits(event.currentTarget.value))
+        if (!filterActive) {
+            props.change(await AuditAPI.findAudits(event.currentTarget.value))
+        }
+        else {
+            const versionId = props.versionSearch.split('=')
+            props.change(await AuditAPI.findAudits(undefined, event.currentTarget.value, undefined, versionId[1]))
+        }
+    }
+
+    async function unsetFilter(event: FormEvent<HTMLInputElement>) {
+        event.preventDefault()
+        props.change(await AuditAPI.findAudits())
+        history.push('/audits')
     }
 
     return (
@@ -30,17 +46,44 @@ export const AuditSearchBar = (props: {change: (value: Audit[]) => void, addAudi
                         value="Add new audit"/>
                     </Link>}
                 </span>
+                <div>
+                    { filterActive && (
+                    <span className='filter-search'>
+                        <label>Filter:</label>
+                        <input
+                            type="button"
+                            className="filter-search"
+                            value="Version"
+                            onClick={unsetFilter}/> 
+                    </span> 
+                    )}
+                </div>
             </form>
         </Fragment>
         )
 }
 
-export const EventSearchBar = (props: {change: (value: CommentEventData[]) => void}) => {
+export const EventSearchBar = (props: {change: (value: CommentEventData[]) => void, auditSearch: string}) => {
+
+    const history = useHistory()
+    var filterActive : Boolean = props.auditSearch.includes('?audit')
 
     async function searchBar(event: FormEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        props.change(await EventAPI.findEvents(event.currentTarget.value))
+        if (!filterActive) {
+            props.change(await EventAPI.findEvents(event.currentTarget.value))
+        }
+        else {
+            const auditId = props.auditSearch.split('=')
+            props.change(await EventAPI.findEvents(undefined, auditId[1], event.currentTarget.value))
+        }
+    }
+
+    async function unsetFilter(event: FormEvent<HTMLInputElement>) {
+        event.preventDefault()
+        props.change(await EventAPI.findEvents())
+        history.push('/events')
     }
 
     return (
@@ -53,6 +96,18 @@ export const EventSearchBar = (props: {change: (value: CommentEventData[]) => vo
                         className="header-search"
                         placeholder={`Search Event`}/>
                 </span>
+                <div>
+                    { filterActive && (
+                    <span className='filter-search'>
+                        <label>Filter:</label>
+                        <input
+                            type="button"
+                            className="filter-search"
+                            value="Audit"
+                            onClick={unsetFilter}/> 
+                    </span> 
+                    )}
+                </div>
             </form>
         </Fragment>
         )
@@ -118,12 +173,27 @@ export const UserSearchBar = (props: {change: (value: User[]) => void, addUser?:
         )
 }
 
-export const VersionSearchBar = (props: {change: (value: Version[]) => void, addVersion?: boolean}) => {
+export const VersionSearchBar = (props: {change: (value: Version[]) => void, productSearch: string, addVersion?: boolean}) => {
+
+    const history = useHistory()
+    var filterActive : Boolean = props.productSearch.includes('?product')
     
     async function searchBar(event: FormEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        props.change(await VersionAPI.findVersions(event.currentTarget.value))
+        if (!filterActive) {
+            props.change(await VersionAPI.findVersions(event.currentTarget.value))
+        }
+        else {
+            const productId = props.productSearch.split('=')
+            props.change(await VersionAPI.findVersions(undefined, event.currentTarget.value, productId[1]))
+        }
+    }
+    
+    async function unsetFilter(event: FormEvent<HTMLInputElement>) {
+        event.preventDefault()
+        props.change(await VersionAPI.findVersions())
+        history.push('/versions')
     }
 
     return (
@@ -143,6 +213,18 @@ export const VersionSearchBar = (props: {change: (value: Version[]) => void, add
                         value="Add new version"/>
                     </Link>}
                 </span>
+                <div>
+                    { filterActive && (
+                    <span className='filter-search'>
+                        <label>Filter:</label>
+                        <input
+                            type="button"
+                            className="filter-search"
+                            value="Product"
+                            onClick={unsetFilter}/> 
+                    </span> 
+                    )}
+                </div>
             </form>
         </Fragment>
         )

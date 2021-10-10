@@ -71,7 +71,7 @@ export const AuditsView = () =>  {
                     </nav>
                 </Fragment>
                 <h2>Available audits</h2>
-                <AuditSearchBar change={setAudits}/>
+                <AuditSearchBar change={setAudits} versionSearch={window.location.href}/>
                 {audits && <Table columns={columns} items={audits} create='Audit'/>}
             </main>
         </div>

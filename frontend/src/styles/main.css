@@ -240,7 +240,21 @@ div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > di
 div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > div.Dropdown-placeholder.is-selected  {
     color: black
 }
+div.view > main form > div > span.filter-search {
+    font-family: inherit;
+    font-size: inherit;
 
+    line-height: inherit;
+    
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem);
+}
+
+div.view > main > table {
+    padding-top: calc(0.75em);
+}
 div.view > main > table > thead  {
     background-color: steelblue;
     color: white;
@@ -318,4 +332,20 @@ input.header-search[type="button"] {
     margin-left: 0.5em;
     color: white;
     background-color: steelblue;
+}
+input.filter-search[type="button"] {
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+
+    margin-left: 0.5em;
+
+    padding-top: calc(0.5rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.5rem - 0.25em);
+
+    color: black;
+    background-color: rgba(0,0,0,0.1);
 }

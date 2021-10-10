@@ -28,7 +28,9 @@ export const VersionsView = () => {
             }
             setProducts(newProducts)
         })
-    }, [])
+    },[])
+
+    console.log(products)
 
     const columns: Column<Version>[] = [
         {label: 'Icon', content: _version => <img src={VersionIcon} style={{width: '1em'}}/>},
@@ -37,6 +39,8 @@ export const VersionsView = () => {
         {label: 'Link', content: version => <Link to={`/versions/${version.id}`}>Details</Link>},
         {label: 'Link', content: version => <Link to={`/audits/?version=${version.id}`}>Audits</Link>}
     ]
+
+    console.log(window.location.href)
 
     return (
         <div className="view versions">
@@ -54,7 +58,7 @@ export const VersionsView = () => {
                     </nav>
                 </Fragment>
                 <h2>Available versions</h2>
-                <VersionSearchBar change={setVersions}/>
+                <VersionSearchBar change={setVersions} productSearch={window.location.href}/>
                 {versions && <Table columns={columns} items={versions} create='Version'/>}
             </main>
         </div>

@@ -81,6 +81,7 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                     <TextInput  
                             label='Comment'
                             placeholder={'Add here new comment'}
+                            value={''}
                             change={value => setComment(value)}/>
                     <div>
                         <div/>

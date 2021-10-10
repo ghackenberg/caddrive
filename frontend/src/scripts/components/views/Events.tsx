@@ -82,7 +82,7 @@ export const EventsView = () => {
                 </nav>
             </Fragment>
             <h2>Available events</h2>
-            <EventSearchBar change={setEvents}/>
+            <EventSearchBar change={setEvents} auditSearch={window.location.href}/>
             {events && <Table columns={columns} items={events}/>}
         </main>
     </div> 
