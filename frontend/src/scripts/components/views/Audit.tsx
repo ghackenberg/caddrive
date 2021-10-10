@@ -31,7 +31,7 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
         }, [])
     }
 
-    useEffect(() => { EventAPI.findEvents(auditId, "comment").then(setEvents) }, [])
+    useEffect(() => { EventAPI.findEvents(undefined, auditId, 'comment').then(setEvents) }, [])
 
     async function submitAudit(event: FormEvent) {
         event.preventDefault()
@@ -45,7 +45,7 @@ export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
                 text: comment})
         }
 
-        await EventAPI.findEvents(auditId, "comment").then(setEvents)
+        await EventAPI.findEvents(undefined, auditId, 'comment').then(setEvents)
     }
 
     async function leaveAudit(event: FormEvent) {

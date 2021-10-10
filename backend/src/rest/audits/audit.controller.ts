@@ -10,10 +10,13 @@ export class AuditController implements AuditREST {
     }
 
     @Get()
+    @ApiQuery({ name: 'quick' })
     @ApiQuery({ name: 'name' })
+    @ApiQuery({ name: 'product' })
+    @ApiQuery({ name: 'version' })
     @ApiResponse({ type: [Audit] })
-    async findAudits(@Query('name') name?: string): Promise<Audit[]> {
-        return this.auditService.findAudits(name)
+    async findAudits(@Query('quick') quick?:string, @Query('name') name?: string, @Query('product') product?: string, @Query('version') version?: string): Promise<Audit[]> {
+        return this.auditService.findAudits(quick, name, product, version)
     }
 
     @Get(':id')

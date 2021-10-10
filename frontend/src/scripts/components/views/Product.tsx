@@ -63,7 +63,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                                 <TextInput
                                     label='Product name'
                                     placeholder='Add here new product'
-                                    value={product ? product.name : undefined}
+                                    value={product ? product.name : ''}
                                     change={value => setProductName(value)}/>
                                 <div>
                                     <div/>

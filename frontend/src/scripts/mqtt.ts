@@ -8,12 +8,14 @@ const url =`${protocol}//${host}/${path}`
 
 const client = mqtt.connect(url)
 
+console.log(client)
+
 class TestClient implements TestMQTT {
-    async a(data: string) {
-        client.publish('a', data)
+    async a(_data: string) {
+        //client.publish('a', data)
     }
-    async b(data: string) {
-        client.publish('b', data)
+    async b(_data: string) {
+        //client.publish('b', data)
     }
 }
 

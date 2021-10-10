@@ -1,30 +1,25 @@
 import * as React from 'react'
-import { FormEvent, Fragment, useRef, useState } from 'react'
-import { Audit, Product, User, Version } from 'fhooe-audit-platform-common/src/data'
-import { AuditAPI, ProductAPI, UserAPI, VersionAPI } from '../../rest'
+import { FormEvent, Fragment } from 'react'
+import { Audit, Product, User, Version, CommentEventData } from 'fhooe-audit-platform-common/src/data'
+import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../rest'
 import { Link } from 'react-router-dom'
 
 
 export const AuditSearchBar = (props: {change: (value: Audit[]) => void, addAudit?: boolean}) => {
-    
-    const query = useRef<HTMLInputElement>(null)
-    const [audits, setAudits] = useState<Audit[]>(null)
 
-    async function searchBar(event: FormEvent) {
+    async function searchBar(event: FormEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        await AuditAPI.findAudits(query.current.value).then(setAudits)
-
-        props.change(audits)
+        props.change(await AuditAPI.findAudits(event.currentTarget.value))
     }
 
     return (
         <Fragment>
-            <form onChange={searchBar}>
+            <form>
                 <span>
                     <input
                         type="text"
-                        ref={query}
+                        onChange={searchBar}
                         className="header-search"
                         placeholder={`Search Product`}/>
                     {props.addAudit &&
@@ -40,26 +35,44 @@ export const AuditSearchBar = (props: {change: (value: Audit[]) => void, addAudi
         )
 }
 
-export const ProductSearchBar = (props: {change: (value: Product[]) => void, addProduct?: boolean}) => {
-    
-    const query = useRef<HTMLInputElement>(null)
-    const [products, setProducts] = useState<Product[]>(null)
+export const EventSearchBar = (props: {change: (value: CommentEventData[]) => void}) => {
 
-    async function searchBar(event: FormEvent) {
+    async function searchBar(event: FormEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        await ProductAPI.findProducts(query.current.value).then(setProducts)
-
-        props.change(products)
+        props.change(await EventAPI.findEvents(event.currentTarget.value))
     }
 
     return (
         <Fragment>
-            <form onChange={searchBar}>
+            <form>
                 <span>
                     <input
                         type="text"
-                        ref={query}
+                        onChange={searchBar}
+                        className="header-search"
+                        placeholder={`Search Event`}/>
+                </span>
+            </form>
+        </Fragment>
+        )
+}
+
+export const ProductSearchBar = (props: {change: (value: Product[]) => void, addProduct?: boolean}) => {
+    
+    async function searchBar(event: FormEvent<HTMLInputElement>) {
+        event.preventDefault()
+
+        props.change(await ProductAPI.findProducts(event.currentTarget.value))
+    }
+
+    return (
+        <Fragment>
+            <form>
+                <span>
+                    <input
+                        type="text"
+                        onChange={searchBar}
                         className="header-search"
                         placeholder={`Search Product`}/>
                     {props.addProduct &&
@@ -76,20 +89,11 @@ export const ProductSearchBar = (props: {change: (value: Product[]) => void, add
 }
 
 export const UserSearchBar = (props: {change: (value: User[]) => void, addUser?: boolean}) => {
-    
-    const query = useRef<HTMLInputElement>(null)
-    const [users, setUsers] = useState<User[]>(null)
 
-    async function searchBar(event: FormEvent) {
+    async function searchBar(event: FormEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        if (query) {
-            await UserAPI.findUsers(query.current.value).then(setUsers)
-        }
-
-        if (users) {
-            props.change(users)
-        }
+        props.change(await UserAPI.findUsers(event.currentTarget.value))
     }
 
     return (
@@ -98,7 +102,6 @@ export const UserSearchBar = (props: {change: (value: User[]) => void, addUser?:
                 <span>
                     <input
                         type="text"
-                        ref={query}
                         onChange={searchBar}
                         className="header-search"
                         placeholder={`Search User`}/>
@@ -117,26 +120,21 @@ export const UserSearchBar = (props: {change: (value: User[]) => void, addUser?:
 
 export const VersionSearchBar = (props: {change: (value: Version[]) => void, addVersion?: boolean}) => {
     
-    const query = useRef<HTMLInputElement>(null)
-    const [versions, setVersions] = useState<Version[]>(null)
-
-    async function searchBar(event: FormEvent) {
+    async function searchBar(event: FormEvent<HTMLInputElement>) {
         event.preventDefault()
 
-        await VersionAPI.findVersions(query.current.value).then(setVersions)
-
-        props.change(versions)
+        props.change(await VersionAPI.findVersions(event.currentTarget.value))
     }
 
     return (
         <Fragment>
-            <form onChange={searchBar}>
+            <form>
                 <span>
                     <input
                         type="text"
-                        ref={query}
                         className="header-search"
-                        placeholder={`Search User`}/>
+                        placeholder={`Search Version`}
+                        onInput={searchBar}/>
                     {props.addVersion && 
                     <Link to='/versions/new'>
                     <input 

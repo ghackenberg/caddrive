@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common'
-import { ApiBody, ApiResponse } from '@nestjs/swagger'
+import { ApiBody, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { CommentEventData, EventData, EventREST } from 'fhooe-audit-platform-common'
 import { EventService } from './event.service'
 
@@ -10,9 +10,14 @@ export class EventController implements EventREST {
     }
 
     @Get()
+    @ApiQuery({ name: 'quick' })
+    @ApiQuery({ name: 'audit' })
+    @ApiQuery({ name: 'type' })
+    @ApiQuery({ name: 'product' })
+    @ApiQuery({ name: 'version' })
     @ApiResponse({ type: [CommentEventData] })
-    async findEvents(@Query('audit') audit?: string, @Query('type') type?: string): Promise<CommentEventData[]> {
-        return this.eventService.findEvents(audit, type)
+    async findEvents(@Query('quick') quick?: string, @Query('audit') audit?: string,  @Query('type') type?: string, @Query('user') user?: string, @Query('product') product?: string, @Query('version') version?: string, @Query('comment') comment?: string): Promise<CommentEventData[]> {
+        return this.eventService.findEvents(quick, audit, type, user, product, version, comment)
     }
 
     @Post('enters')

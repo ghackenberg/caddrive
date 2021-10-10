@@ -10,10 +10,12 @@ export class UserController implements UserREST {
     }
 
     @Get()
+    @ApiQuery({ name: 'quick' })
     @ApiQuery({ name: 'name' })
+    @ApiQuery({ name: 'email' })
     @ApiResponse({ type: [User] })
-    async findUsers(@Query('name') name?: string): Promise<User[]> {
-        return this.userService.findUsers(name)
+    async findUsers(@Query('quick') quick?: string, @Query('name') name?: string, @Query('email') email?: string): Promise<User[]> {
+        return this.userService.findUsers(quick, name, email)
     }
 
     @Get(':id')

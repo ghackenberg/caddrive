@@ -61,12 +61,12 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                                 <TextInput 
                                     label='Username'
                                     placeholder='Type in username'
-                                    value={user ? user.name : undefined}
+                                    value={user ? user.name : ''}
                                     change={value => setUserName(value)}/>
                                 <EmailInput
                                     label='Email'
                                     placeholder='Type in email'
-                                    value={user ? user.email : undefined}
+                                    value={user ? user.email : ''}
                                     change={value => setUserEmail(value)}/>
                                 <div>
                                     <div/>

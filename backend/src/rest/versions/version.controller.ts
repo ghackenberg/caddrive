@@ -10,11 +10,12 @@ export class VersionController implements VersionREST {
     }
 
     @Get()
+    @ApiQuery({ name: 'quick' })
     @ApiQuery({ name: 'name' })
     @ApiQuery({ name: 'product' })
     @ApiResponse({ type: [Version] }) 
-    async findVersions(@Query('name') name?: string, @Query('product') product?: string): Promise<Version[]> {
-        return this.versionService.findVersions(name, product)
+    async findVersions(@Query('quick') quick?: string, @Query('name') name?: string, @Query('product') product?: string): Promise<Version[]> {
+        return this.versionService.findVersions(quick, name, product)
     }
 
     @Get(':id')

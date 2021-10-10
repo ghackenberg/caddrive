@@ -35,8 +35,10 @@ export const AuditDetailView = (props: RouteComponentProps<{audit: string}>) => 
     if (auditId != 'new') {
         useEffect(() => { AuditAPI.getAudit(auditId).then(audit => {
             setAudit(audit)
-            ProductAPI.getProduct(audit.productId).then(setProduct)
-            VersionAPI.getVersion(audit.versionId).then(setVersion)
+            VersionAPI.getVersion(audit.versionId).then(version => {
+                setVersion(version)
+                ProductAPI.getProduct(version.productId).then(setProduct)
+            })
         }) }, [])
     }
 
@@ -45,8 +47,7 @@ export const AuditDetailView = (props: RouteComponentProps<{audit: string}>) => 
 
         if (auditId == 'new') {
             if (auditName && startDate.getDate() != null && endDate.getDate() != null) {
-                await AuditAPI.addAudit({   productId: productInput,
-                                            versionId: versionInput,
+                await AuditAPI.addAudit({   versionId: versionInput,
                                             name: auditName,
                                             start: startDate,
                                             end: endDate})
@@ -67,7 +68,7 @@ export const AuditDetailView = (props: RouteComponentProps<{audit: string}>) => 
 
     async function productSelected(option: Option) {
 
-        setVersions(await VersionAPI.findVersions(null, option.value))
+        setVersions(await VersionAPI.findVersions(undefined, undefined, option.value))
 
         setProductInput(option.value)
     }
@@ -91,7 +92,7 @@ export const AuditDetailView = (props: RouteComponentProps<{audit: string}>) => 
                         <TextInput  
                             label='Audit name' 
                             placeholder='Add new audit'
-                            value={auditId != 'new' ? audit.name : undefined} 
+                            value={auditId != 'new' ? audit.name : ''} 
                             change={value => setAuditName(value)}
                             disabled={auditId != 'new'}/> : <p>Loading...</p> }
                         {auditId == 'new' || (auditId != 'new' && audit) ? 

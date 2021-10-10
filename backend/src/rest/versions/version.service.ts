@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+import { ProductService } from '../products/product.service'
 
 @Injectable()
 export class VersionService implements VersionREST {
-    private versions: Version[] = []
+    private versions: Version[] = [{name: 'Test', id: 'TestVersion', productId: 'TestProduct', date: new Date()}]
+
+    public constructor(private productService: ProductService) {
+
+    }
 
     /*
     constructor() {
@@ -22,29 +27,34 @@ export class VersionService implements VersionREST {
     }
     */
 
-    async findVersions(name?: string, product?: string) : Promise<Version[]> {
-        
-        if (name != null) {
-            const versionsQuery: Version[] = []
+    async findVersions(quick?: string, name?: string, product?: string) : Promise<Version[]> {
+        const result: Version[] = []
 
-            const versionsNameLower = this.versions.map(version => version.name.toLowerCase())
-    
-            for (var i = 0; i < versionsNameLower.length; i++) {
-    
-                if (!name || versionsNameLower[i].includes(name.toLowerCase())) {
-                    versionsQuery.push(this.versions[i])
+        quick = quick ? quick.toLowerCase() : undefined
+        name = name ? name.toLowerCase() : undefined
+
+        for (var index = 0; index < this.versions.length; index++) {
+
+            const version = this.versions[index]
+
+            if (quick) {
+                const conditionA = version.name.toLowerCase().includes(quick)
+                const conditionB = (await this.productService.getProduct(version.productId)).name.toLowerCase().includes(quick)
+                
+                if (!(conditionA || conditionB)) {
+                    continue
                 }
             }
-    
-            return versionsQuery
-        }
-        else if (product && name == null) {
-            return this.versions.filter(version => version.productId == product)
-        }
-        else {
-            return this.versions
+            if (name && !version.name.toLowerCase().includes(name)) {
+                continue
+            }
+            if (product && version.productId != product) {
+                continue
+            }
+            result.push(version)
         }
 
+        return result
     }
 
     async getVersion(id: string): Promise<Version> {

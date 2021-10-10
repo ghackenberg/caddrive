@@ -1,14 +1,14 @@
 import { Audit, AuditData, CommentEventData, EventData, Product, ProductData, User, UserData, Version, VersionData } from './data'
 
 export interface AuditREST {
-    findAudits(name?: string): Promise<Audit[]>
+    findAudits(quick?: string, name?: string, product?: string, version?: string): Promise<Audit[]>
     getAudit(id: string): Promise<Audit>
     addAudit(audit: AuditData): Promise<Audit>
     updateAudit(audit: Audit): Promise<Audit>
 }
 
 export interface EventREST {
-    findEvents(audit?: string, type?: string): Promise<CommentEventData[]>
+    findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string): Promise<CommentEventData[]>
     enterEvent(enterEvent: EventData): Promise<EventData>
     leaveEvent(leaveEvent: EventData): Promise<EventData>
     submitEvent(submitEvent: CommentEventData): Promise<CommentEventData>
@@ -22,14 +22,14 @@ export interface ProductREST {
 }
 
 export interface UserREST {
-    findUsers(name?: string): Promise<User[]>
+    findUsers(quick?: string, name?: string, email?: string): Promise<User[]>
     getUser(id: string): Promise<User>
     addUser(user: UserData): Promise<User>
     updateUser(user: User): Promise<User>
 }
 
 export interface VersionREST {
-    findVersions(name?: string, product?: string): Promise<Version[]>
+    findVersions(quick?: string, name?: string, product?: string): Promise<Version[]>
     getVersion(id: string): Promise<Version>
     addVersion(version: VersionData): Promise<Version>
     deleteVersion(version: Version): Promise<Version>

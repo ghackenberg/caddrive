@@ -21,20 +21,36 @@ export class UserService implements UserREST {
                             email: '1234.1234@1234.com'})
     }
 
-    async findUsers(name?: string) : Promise<User[]> {
+    async findUsers(quick?: string, name?: string, email?: string) : Promise<User[]> {
         
-        const usersQuery: User[] = []
+        const results: User[] = []
 
-        const usersNameLower = this.users.map(user => user.name.toLowerCase())
+        quick = quick ? quick.toLowerCase() : undefined
+        name = name ? name.toLowerCase() : undefined
+        email = email ? email.toLowerCase() : undefined
 
-        for (var i = 0; i < usersNameLower.length; i++) {
+        for (var index = 0; index < this.users.length; index++) {
 
-            if (!name || usersNameLower[i].includes(name.toLowerCase())) {
-                usersQuery.push(this.users[i])
+            const user = this.users[index]
+
+            if (quick) {
+                const conditionA = user.name.toLowerCase().includes(quick)
+                const conditionB = user.email.toLowerCase().includes(quick)
+
+                if (!(conditionA || conditionB)) {
+                    continue
+                }
             }
+            if (name && !user.name.toLowerCase().includes(name)) {
+                continue
+            }
+            if (email && !user.email.toLowerCase().includes(email)) {
+                continue
+            }
+            results.push(user)
         }
 
-        return usersQuery
+        return results
     }
 
     async getUser(id: string): Promise<User> {

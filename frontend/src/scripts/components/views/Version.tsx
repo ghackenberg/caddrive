@@ -72,7 +72,7 @@ export const VersionView = (props: RouteComponentProps<{ version: string}>) => {
                             <TextInput 
                                 label='Version name'
                                 placeholder='Add here new version'
-                                value={version ? version.name : undefined}
+                                value={version ? version.name : ''}
                                 change={value => setVersionName(value)}
                                 disabled={versionId != 'new'}/>
                             {versionId == 'new' || (versionId != 'new' && version) ?

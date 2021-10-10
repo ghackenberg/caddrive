@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Fragment, useState, useEffect } from 'react'
 import { Product, Version } from 'fhooe-audit-platform-common'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 import { VersionSearchBar } from '../widgets/SearchBar'
@@ -11,11 +11,13 @@ import * as VersionIcon from '/src/images/version.png'
 
 export const VersionsView = () => {
 
+    const search = new URLSearchParams(useLocation().search)
+
     const [versions, setVersions] = useState<Version[]>()
     const [products, setProducts] = useState<{[id: string]: Product}>({})
 
     useEffect(() => {
-        VersionAPI.findVersions().then(async versions => {
+        VersionAPI.findVersions(undefined, undefined, search.get('product')).then(async versions => {
             setVersions(versions)
             const newProducts = {...products}
             for (var index = 0; index < versions.length; index++) {

@@ -8,8 +8,6 @@ export class AuditData {
     @ApiProperty()
     end: Date
     @ApiProperty()
-    productId: string
-    @ApiProperty()
     versionId: string
 }
 

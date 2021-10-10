@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
+import { VersionService } from '../versions/version.service'
+import { ProductService } from '../products/product.service'
 
 @Injectable()
 export class AuditService implements AuditREST {
-    private audits: Audit[] = []
+    private audits: Audit[] = [{name: 'Test', id: 'TestAudit', versionId: 'TestVersion', start: new Date(), end: new Date()}]
+
+    constructor(private productService: ProductService, private versionService: VersionService) {
+        
+    }
 
     /*
     constructor() {
@@ -27,21 +33,55 @@ export class AuditService implements AuditREST {
     }
     */
 
-    async findAudits(name?: string) : Promise<Audit[]> {
+    async findAudits(quick?: string, name?: string, product?: string, version?: string) : Promise<Audit[]> {
         
-        const auditsQuery: Audit[] = []
+        const result: Audit[] = []
 
+        quick = quick ? quick.toLowerCase() : undefined
+        name = name ? name.toLowerCase() : undefined
 
+        for (var index = 0; index < this.audits.length; index++) {
+
+            const audit = this.audits[index]
+            const versionProductId = (await this.versionService.getVersion(audit.versionId)).productId
+
+            if (quick) {
+                const conditionA = audit.name.toLowerCase().includes(quick)
+                const conditionB = (await this.productService.getProduct(versionProductId)).name.toLowerCase().includes(quick)
+                const conditionC = (await this.versionService.getVersion(audit.versionId)).name.toLowerCase().includes(quick)
+
+                if (!(conditionA || conditionB || conditionC)) {
+                    continue
+                }
+            }
+            if (name && !audit.name.toLowerCase().includes(name)) {
+                continue
+            }
+            if (product && versionProductId != product) {
+                continue
+            }
+            if (version && audit.versionId != version) {
+                continue
+            }
+            result.push(audit)
+        }
+        return result
+
+        /*
         const auditsNameLower = this.audits.map(audit => audit.name.toLowerCase())
 
         for (var i = 0; i < auditsNameLower.length; i++) {
 
             if (!name || name != null && auditsNameLower[i].includes(name.toLowerCase())) {
-                auditsQuery.push(this.audits[i])
+                if (!version || this.audits[i].versionId == version) {
+                    if (!product || (await this.versionService.getVersion(this.audits[i].versionId)).productId == product) {
+                        auditsQuery.push(this.audits[i])
+                    }
+                }
             }
         }
 
-        return auditsQuery
+        return auditsQuery */
     }
 
     async getAudit(id: string): Promise<Audit> {
@@ -65,7 +105,6 @@ export class AuditService implements AuditREST {
         for (var i = 0; i < this.audits.length; i++) {
             if (this.audits[i].id == audit.id &&
                 this.audits[i].name == audit.name &&
-                this.audits[i].productId == audit.productId &&
                 this.audits[i].versionId == audit.versionId &&
                 this.audits[i].start == audit.start &&
                 this.audits[i].end == audit.end) {

@@ -4,7 +4,7 @@ import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class ProductService implements ProductREST {
-    private products: Product[] = []
+    private products: Product[] = [{name: 'Test', id: 'TestProduct'}]
 
     constructor() {
         for (var i = 0; i < Math.random() * 20; i++) {
@@ -17,18 +17,21 @@ export class ProductService implements ProductREST {
 
     async findProducts(name?: string) : Promise<Product[]> {
         
-        const productsQuery: Product[] = []
+        const result: Product[] = []
 
-        const productsNameLower = this.products.map(product => product.name.toLowerCase())
+        name = name ? name.toLowerCase() : undefined
 
-        for (var i = 0; i < productsNameLower.length; i++) {
+        for (var index = 0; index < this.products.length; index++) {
+            const product = this.products[index]
 
-            if (!name || productsNameLower[i].includes(name.toLowerCase())) {
-                productsQuery.push(this.products[i])
+            if (name && !product.name.toLowerCase().includes(name)) {
+                continue
             }
+
+            result.push(product)
         }
 
-        return productsQuery
+        return result
     }
 
     async getProduct(id: string): Promise<Product> {
