@@ -41,11 +41,12 @@ export const AuditEditView = (props: RouteComponentProps<{product: string, versi
                 load.push(event.user)
             }
         })
+        console.log(load)
         load.forEach(userId => {
             UserAPI.getUser(userId).then(user => {
                 const dict = {...users}
                 dict[userId] = user
-                setUsers(users)
+                setUsers(dict)
             })
         })
     }, [props, events])
@@ -71,7 +72,7 @@ export const AuditEditView = (props: RouteComponentProps<{product: string, versi
 
     const columns: Column<EventData & {id: string}>[] = [
         {label: 'Icon', content: _event => <img src={EventIcon} style={{width: '1em'}}/>},
-        {label: 'User', content: event => event.user in users ? users[event.user].name : <p>Loading...</p>},
+        {label: 'User', content: event => event.user in users ? <span>{users[event.user].name} &lt;{users[event.user].email}&gt;</span> : <p>Loading...</p>},
         {label: 'Type', content: event => event.type},
         {label: 'Time', content: event => event.time.toString()},
         {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
