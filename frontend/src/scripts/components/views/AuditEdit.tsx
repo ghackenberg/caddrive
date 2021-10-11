@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { Audit, Product, Version, EventData, CommentEvent, User } from 'fhooe-audit-platform-common/src/data'
 import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../rest'
 import { Header } from '../snippets/Header'
@@ -118,7 +118,7 @@ export const AuditEditView = (props: RouteComponentProps<{product: string, versi
                         </form>
                         {auditId != 'new' && (
                             <Fragment>
-                                <h2>Event list</h2>
+                                <h2>Event list (<Link to={`/products/${productId}/versions/${versionId}/audits/${auditId}/join`}>Join</Link>)</h2>
                                 { events && <Table columns={columns} items={events}/> }
                             </Fragment>
                         )}
