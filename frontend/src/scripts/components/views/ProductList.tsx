@@ -8,8 +8,9 @@ import { Navigation } from '../snippets/Navigation'
 import { ProductSearchBar } from '../widgets/SearchBar'
 import { Column, Table } from '../widgets/Table'
 import * as ProductIcon from '/src/images/product.png'
+import * as DeleteIcon from '/src/images/delete.png'
 
-export const ProductsView = () => {
+export const ProductListView = () => {
     
     const [products, setProducts] = useState<Product[]>()
 
@@ -17,9 +18,8 @@ export const ProductsView = () => {
 
     const columns: Column<Product>[] = [
         {label: 'Icon', content: _product => <img src={ProductIcon} style={{width: '1em'}}/>},
-        {label: 'Product', content: product => <b>{product.name}</b>},
-        {label: 'Link', content: product => <Link to={`/products/${product.id}`}>Details</Link>},
-        {label: 'Link', content: product => <Link to={`/versions/?product=${product.id}`}>Versions</Link>}
+        {label: 'Product', content: product => <Link to={`/products/${product.id}`}>{product.name}</Link>},
+        {label: 'Delete', content: _product => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
     return (
@@ -30,16 +30,16 @@ export const ProductsView = () => {
                 <Fragment>
                     <nav>
                         <span>
-                            <Link to="/">Welcome Page</Link>
+                            <Link to="/">Home</Link>
                         </span>
                         <span>
                             <a>Products</a>
                         </span>
                     </nav>
                 </Fragment>
-                <h2>Available products</h2>
+                <h1>Product list (<Link to={`/products/new`}>+</Link>)</h1>
                 <ProductSearchBar change={setProducts}/>
-                {products && <Table columns={columns} items={products} create='Product'/>}
+                {products && <Table columns={columns} items={products}/>}
             </main>
         </div>
     )

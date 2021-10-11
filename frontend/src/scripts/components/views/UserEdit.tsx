@@ -6,39 +6,33 @@ import { User } from 'fhooe-audit-platform-common'
 import { UserAPI } from '../../rest'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { EmailInput, TextInput } from '../snippets/InputForms'
-import { UserLink } from '../snippets/LinkSource'
+import { EmailInput, TextInput } from '../snippets/Inputs'
+import { UserLink } from '../snippets/Links'
 
-export const UserView = (props: RouteComponentProps<{ user: string }>) => {
+export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
 
     const userId = props.match.params.user
     
     const history = useHistory()
 
     const [user, setUser] = useState<User>(null)
-    const [userName, setUserName] = useState<string>(null)
-    const [userEmail, setUserEmail] = useState<string>(null)
 
-    if (userId != 'new') {
-        useEffect(() => { UserAPI.getUser(userId).then(setUser) }, [])
-    }
+    const [name, setName] = useState<string>(null)
+    const [email, setEmail] = useState<string>(null)
+
+    useEffect(() => { userId == 'new' || UserAPI.getUser(userId).then(setUser) }, [props])
 
     async function saveUser(event: FormEvent){
         event.preventDefault()
-
         if(userId == 'new') {
-            if (userName && userEmail) {
-                await UserAPI.addUser({ name: userName, email: userEmail})
-
-                history.goBack()
+            if (name && email) {
+                const user = await UserAPI.addUser({ name, email })
+                history.replace(`/users/${user.id}`)
             }
-        }       
-        else {
-            await UserAPI.updateUser({  id: user.id, 
-                                        name: userName ? userName : user.name,
-                                        email: userEmail ? userEmail : user.email})
-
-            history.goBack()   
+        } else {
+            if (name && email) {
+                setUser(await UserAPI.updateUser({ id: user.id, name, email}))
+            }
         }       
     }
 
@@ -56,27 +50,23 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                             <nav>
                                 <UserLink user={user}/>
                             </nav>
-                            <h1>{ userId == 'new' ? 'Add new user' : 'Change existing user' }</h1>
+                            <h1>User editor</h1>
                             <form onSubmit={saveUser} onReset={cancelInput} className='user-input'>
                                 <TextInput 
                                     label='Username'
                                     placeholder='Type in username'
                                     value={user ? user.name : ''}
-                                    change={value => setUserName(value)}/>
+                                    change={value => setName(value)}/>
                                 <EmailInput
                                     label='Email'
                                     placeholder='Type in email'
                                     value={user ? user.email : ''}
-                                    change={value => setUserEmail(value)}/>
+                                    change={value => setEmail(value)}/>
                                 <div>
                                     <div/>
                                     <div>
-                                        <Fragment>
-                                            <input type="reset" value='Cancel'/>
-                                            <input  type="submit" 
-                                                    value={userName || userEmail ? "Save" : "Delete"} 
-                                                    className={userName || userEmail ? 'saveItem' : 'deleteItem'}/>                                            
-                                        </Fragment>
+                                        <input type="reset" value='Cancel'/>
+                                        <input type="submit" value="Save" className='saveItem'/>
                                     </div>
                                 </div>
                             </form>

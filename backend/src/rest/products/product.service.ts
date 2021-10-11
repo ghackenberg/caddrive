@@ -4,16 +4,7 @@ import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class ProductService implements ProductREST {
-    private products: Product[] = [{name: 'Test', id: 'TestProduct'}]
-
-    constructor() {
-        for (var i = 0; i < Math.random() * 20; i++) {
-            this.products.push({
-                id: shortid(),
-                name: shortid()
-            })
-        }
-    }
+    private products: Product[] = [{name: 'Maschine A', id: 'TestProduct'}]
 
     async findProducts(name?: string) : Promise<Product[]> {
         

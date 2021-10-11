@@ -5,7 +5,7 @@ import { ProductService } from '../products/product.service'
 
 @Injectable()
 export class VersionService implements VersionREST {
-    private versions: Version[] = [{name: 'Test', id: 'TestVersion', productId: 'TestProduct', date: new Date()}]
+    private versions: Version[] = [{name: 'Version 1', id: 'TestVersion', productId: 'TestProduct', date: new Date()}]
 
     public constructor(private productService: ProductService) {
 

@@ -4,22 +4,7 @@ import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class UserService implements UserREST {
-    private users: User[] = []
-
-    constructor() {
-        for (var i = 0; i < Math.random() * 20; i++) {
-            this.users.push({
-                id: shortid(),
-                name : shortid(),
-                email: shortid()
-            })
-        }
-
-        // default user
-        this.users.push({   id: 'default',
-                            name: 'test',
-                            email: '1234.1234@1234.com'})
-    }
+    private users: User[] = [{ id: 'default', name: 'test', email: '1234.1234@1234.com' }]
 
     async checkUser(): Promise<User> {
         return null

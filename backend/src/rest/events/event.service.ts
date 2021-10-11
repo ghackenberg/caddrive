@@ -7,7 +7,7 @@ import { VersionService } from '../versions/version.service'
 
 @Injectable()
 export class EventService implements EventREST {
-    private readonly events: (EventData & {id: string})[] = []// [{time: new Date(), auditId: 'TestAudit', user: 'Test', type: 'comment', text: 'Test'}]
+    private readonly events: (EventData & {id: string})[] = []
 
     public constructor (private auditService: AuditService, private versionService: VersionService, private productService: ProductService) {
 

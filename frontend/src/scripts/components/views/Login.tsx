@@ -4,7 +4,7 @@ import { Fragment } from 'react'
 import { auth } from '../../auth'
 import { UserAPI } from '../../rest'
 import { Header } from '../snippets/Header'
-import { EmailInput, TextInput } from '../snippets/InputForms'
+import { EmailInput, TextInput } from '../snippets/Inputs'
 
 export const LoginView = (props: {callback: (user: User) => void}) => {
     const [load, setLoad] = React.useState<boolean>(false)
