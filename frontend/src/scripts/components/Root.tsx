@@ -20,7 +20,7 @@ import { ProductVersionsView } from './views/ProductVersions'
 import { EventsView } from './views/Events'
 import { LoginView } from './views/UserLogin'
 import { User } from 'fhooe-audit-platform-common'
-import { UserContext } from './context'
+import { UserContext } from '../context'
 import { auth } from '../auth'
 
 export const Root = () => {

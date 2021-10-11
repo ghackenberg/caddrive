@@ -8,7 +8,7 @@ import { Navigation } from '../snippets/Navigation'
 import * as AuditIcon from '/src/images/audit.png'
 import { TextInput } from '../snippets/InputForms'
 import { AuditLink } from '../snippets/LinkSource'
-import { UserContext } from '../context'
+import { UserContext } from '../../context'
 
 export const AuditView = (props: RouteComponentProps<{audit: string}>) => {
 
