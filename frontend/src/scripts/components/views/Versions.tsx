@@ -13,24 +13,30 @@ export const VersionsView = () => {
 
     const search = new URLSearchParams(useLocation().search)
 
-    const [versions, setVersions] = useState<Version[]>()
+    const [versions, setVersions] = useState<Version[]>([])
     const [products, setProducts] = useState<{[id: string]: Product}>({})
 
     useEffect(() => {
-        VersionAPI.findVersions(undefined, undefined, search.get('product')).then(async versions => {
-            setVersions(versions)
-            const newProducts = {...products}
-            for (var index = 0; index < versions.length; index++) {
-                const version = versions[index]
-                if (!(version.productId in newProducts)) {
-                    newProducts[version.productId] = await ProductAPI.getProduct(version.productId)
-                }
-            }
-            setProducts(newProducts)
-        })
+        VersionAPI.findVersions(undefined, undefined, search.get('product')).then(setVersions)
     },[])
 
-    console.log(products)
+    useEffect(() => {
+        const productIds: string[] = []
+        for (var index = 0; index < versions.length; index++) {
+            const version = versions[index]
+            if (!(version.productId in products || productIds.indexOf(version.productId) != -1)) {
+                productIds.push(version.productId)
+            }
+        }
+        for (var index = 0; index < productIds.length; index++) {
+            const productId = productIds[index]
+            ProductAPI.getProduct(productId).then(product => {
+                const newProducts = {...products}
+                newProducts[productId] = product
+                setProducts(newProducts)
+            })
+        }
+    }, [versions])
 
     const columns: Column<Version>[] = [
         {label: 'Icon', content: _version => <img src={VersionIcon} style={{width: '1em'}}/>},

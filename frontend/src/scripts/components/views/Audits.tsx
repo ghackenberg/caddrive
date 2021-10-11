@@ -52,7 +52,8 @@ export const AuditsView = () =>  {
         {label: 'Product', content: audit => audit.versionId in versions && versions[audit.versionId].productId in products ? products[versions[audit.versionId].productId].name : 'Loading...'},
         {label: 'Version', content: audit => audit.versionId in versions ? versions[audit.versionId].name : 'Loading...'},
         {label: 'Link', content: audit => <Link to={`/audits/${audit.id}`}>Details</Link>},
-        {label: 'Link', content: audit => <Link to={`/events/?audit=${audit.id}`}>Events</Link>}
+        {label: 'Link', content: audit => <Link to={`/events/?audit=${audit.id}`}>Events</Link>},
+        {label: 'Link', content: audit => <Link to={`/audits/${audit.id}/event`}>Enter Audit {audit.name}</Link>}
     ]
 
     return (

@@ -28,7 +28,7 @@ export class EventData {
 }
 
 export class CommentEventData extends EventData {
-    //override readonly type = 'comment'
+    override readonly type = 'comment'
     @ApiProperty()
     text: string
 }

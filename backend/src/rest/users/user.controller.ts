@@ -1,14 +1,23 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, Inject, Param, Post, Put, Query, Scope, UseGuards } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
+import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 import { UserService } from './user.service'
 
-@Controller('rest/users')
+@Controller({path: 'rest/users', scope: Scope.REQUEST})
 export class UserController implements UserREST {
-    constructor(private userService: UserService) {
+    constructor(private readonly userService: UserService, @Inject(REQUEST) private readonly request: Express.Request) {
 
     }
 
+    @UseGuards(AuthGuard('basic'))
+    @Get('check')
+    async checkUser(): Promise<User> {
+        return <User> this.request.user
+    }
+
+    @UseGuards(AuthGuard('basic'))
     @Get()
     @ApiQuery({ name: 'quick' })
     @ApiQuery({ name: 'name' })

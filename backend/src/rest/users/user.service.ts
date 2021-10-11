@@ -21,6 +21,10 @@ export class UserService implements UserREST {
                             email: '1234.1234@1234.com'})
     }
 
+    async checkUser(): Promise<User> {
+        return null
+    }
+
     async findUsers(quick?: string, name?: string, email?: string) : Promise<User[]> {
         
         const results: User[] = []

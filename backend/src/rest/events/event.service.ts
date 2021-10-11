@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { EventREST, CommentEventData, EventData } from 'fhooe-audit-platform-common'
+import { EventREST, CommentEventData, EventData, CommentEvent } from 'fhooe-audit-platform-common'
+import * as shortid from 'shortid'
 import { AuditService } from '../audits/audit.service'
 import { ProductService } from '../products/product.service'
 import { VersionService } from '../versions/version.service'
 
 @Injectable()
 export class EventService implements EventREST {
-    private readonly events: CommentEventData[] = [{time: new Date(), auditId: 'TestAudit', user: 'Test', type: 'comment', text: 'Test'}]
+    private readonly events: (EventData & {id: string})[] = []// [{time: new Date(), auditId: 'TestAudit', user: 'Test', type: 'comment', text: 'Test'}]
 
     public constructor (private auditService: AuditService, private versionService: VersionService, private productService: ProductService) {
 
@@ -14,7 +15,7 @@ export class EventService implements EventREST {
  
     async findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string) {
 
-        const result: CommentEventData[] = []
+        const result: (EventData & {id: string})[] = []
 
         quick = quick ? quick.toLowerCase() : undefined
         type = type ? type.toLowerCase() : undefined
@@ -32,7 +33,7 @@ export class EventService implements EventREST {
                 const conditionC = event.user.toLowerCase().includes(quick)
                 const conditionD = (await this.productService.getProduct(versionProductId)).name.toLowerCase().includes(quick)
                 const conditionE = (await this.versionService.getVersion(auditVersionId)).name.toLowerCase().includes(quick) 
-                const conditionF = event.type.toLowerCase() == 'comment' && event.text.toLowerCase().includes(quick)
+                const conditionF = event.type.toLowerCase() == 'comment' && (event as CommentEvent).text.toLowerCase().includes(quick)
 
                 if (!(conditionA || conditionB || conditionC || conditionD || conditionE || conditionF)) {
                     continue
@@ -53,7 +54,7 @@ export class EventService implements EventREST {
             if (version && auditVersionId != version) {
                 continue
             }
-            if (comment && !event.text.toLowerCase().includes(comment)) {
+            if (comment && (event.type != 'comment' || !(event as CommentEvent).text.toLowerCase().includes(comment))) {
                 continue
             }
             result.push(event)   
@@ -64,23 +65,25 @@ export class EventService implements EventREST {
 
     async enterEvent(enterEvent: EventData) {
 
-        const event: CommentEventData = {time: enterEvent.time, auditId: enterEvent.auditId, user: enterEvent.user, type: enterEvent.type, text: undefined}
+        const event: EventData & {id: string} = {id: shortid(), ...enterEvent}
 
         this.events.push(event)
 
-        return enterEvent
+        return event
     }
 
     async leaveEvent(leaveEvent: EventData) {
 
-        const event: CommentEventData = {time: leaveEvent.time, auditId: leaveEvent.auditId, user: leaveEvent.user, type: leaveEvent.type, text: undefined}
+        const event: EventData & {id: string} = {id: shortid(), ...leaveEvent}
 
         this.events.push(event)
 
-        return leaveEvent
+        return event
     }
 
-    async submitEvent(event: CommentEventData) {
+    async submitEvent(eventData: CommentEventData) {
+
+        const event: CommentEvent = {id: shortid(), ...eventData}
 
         this.events.push(event)
 

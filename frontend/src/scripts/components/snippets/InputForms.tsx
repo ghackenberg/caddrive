@@ -5,7 +5,13 @@ import Dropdown, { Option } from 'react-dropdown'
 export const DateInput = (props: {label: string, change: (value: Date) => void, placeholder?: string, selected?: Date, disabled?: boolean}) => {
     return (
         <GenericInput label={props.label}>
-            <Datepicker placeholderText={props.placeholder} selected={props.selected} onChange={(date) => props.change(date)} disabled={props.disabled} required/>
+            <Datepicker 
+                placeholderText={props.placeholder} 
+                selected={props.selected} 
+                onChange={(date) => props.change(Array.isArray(date) ? date[0] : date)} 
+                disabled={props.disabled} 
+                required
+                showTimeSelect/>
         </GenericInput>
     )
 }
@@ -13,7 +19,12 @@ export const DateInput = (props: {label: string, change: (value: Date) => void, 
 export const DropdownInput = (props: {label: string, options: Option[], change: (option: Option) => void, placeholder: string, value?: Option, disabled?: boolean}) => {
     return (
         <GenericInput label={props.label}>
-            <Dropdown options={props.options} placeholder={props.placeholder} onChange={props.change} value={props.value} disabled={props.disabled} />
+            <Dropdown 
+                options={props.options} 
+                placeholder={props.placeholder} 
+                onChange={props.change} 
+                value={props.value} 
+                disabled={props.disabled}/>
         </GenericInput>
     )
 }
@@ -24,7 +35,13 @@ export const TextInput = (props: {label: string, change?: (value: string) => voi
 
     return (
         <GenericInput label={props.label}>
-            <input type='text' placeholder={props.placeholder} value={input} disabled={props.disabled} onChange={event => {setInput(event.currentTarget.value), props.change(event.currentTarget.value)}} required/>
+            <input 
+                type='text' 
+                placeholder={props.placeholder} 
+                value={input} 
+                disabled={props.disabled} 
+                onChange={event => {setInput(event.currentTarget.value), props.change(event.currentTarget.value)}} 
+                required/>
         </GenericInput>
     )
 }
@@ -36,7 +53,13 @@ export const EmailInput = (props: {label: string, change?: (value: string) => vo
 
     return (
         <GenericInput label={props.label}>
-            <input type='email' placeholder={props.placeholder} value={input} disabled={props.disabled} onChange={event => {setInput(event.currentTarget.value), props.change(event.currentTarget.value)}} required/>
+            <input 
+                type='email' 
+                placeholder={props.placeholder} 
+                value={input} 
+                disabled={props.disabled} 
+                onChange={event => {setInput(event.currentTarget.value), props.change(event.currentTarget.value)}} 
+                required/>
         </GenericInput>
     )
 }

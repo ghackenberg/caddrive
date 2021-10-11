@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
-import { Audit, CommentEventData, Product, Version } from 'fhooe-audit-platform-common'
+import { Audit, CommentEvent, EventData, Product, Version } from 'fhooe-audit-platform-common'
 import * as EventIcon from '/src/images/click.png'
 import { Link, useLocation } from 'react-router-dom'
 import { AuditAPI, EventAPI, ProductAPI, VersionAPI } from '../../rest'
@@ -13,7 +13,7 @@ export const EventsView = () => {
 
     const search = new URLSearchParams(useLocation().search)
 
-    const [events, setEvents] = useState<CommentEventData[]>()
+    const [events, setEvents] = useState<(EventData & { id: string })[]>()
     const [audits, setAudits] = useState<{[id: string]: Audit}>({})
     const [products, setProducts] = useState<{[id: string]: Product}>({})
     const [versions, setVersions] = useState<{[id: string]: Version}>({})
@@ -55,14 +55,14 @@ export const EventsView = () => {
         }) 
     }, [])
 
-    const columns: Column<CommentEventData>[] = [
+    const columns: Column<(EventData & { id: string })>[] = [
         {label: 'Icon', content: _event => <img src={EventIcon} style={{width: '1em'}}/>},
         {label: 'Event type', content: event => <b>{event.type}</b>},
         {label: 'Audit', content: event => event.auditId in audits ? audits[event.auditId].name : 'Loading...'},
         {label: 'User', content: event => event.user},
         {label: 'Product', content: event => event.auditId in audits && audits[event.auditId].versionId in versions && versions[audits[event.auditId].versionId].productId in products ? products[versions[audits[event.auditId].versionId].productId].name : 'Loading...'},
         {label: 'Version', content: event => event.auditId in audits && audits[event.auditId].versionId in versions ? versions[audits[event.auditId].versionId].name : 'Loading...'},
-        {label: 'Comment', content: event => event.text},
+        {label: 'Comment', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
         {label: 'Time', content: event => event.time}
     ]
 

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
-import { Audit, Product, User, Version, CommentEventData } from 'fhooe-audit-platform-common/src/data'
+import { Audit, Product, User, Version, EventData } from 'fhooe-audit-platform-common/src/data'
 import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../rest'
 import { Link } from 'react-router-dom'
 
@@ -63,7 +63,7 @@ export const AuditSearchBar = (props: {change: (value: Audit[]) => void, version
         )
 }
 
-export const EventSearchBar = (props: {change: (value: CommentEventData[]) => void, auditSearch: string}) => {
+export const EventSearchBar = (props: {change: (value: (EventData & {id: string})[]) => void, auditSearch: string}) => {
 
     const history = useHistory()
     var filterActive : Boolean = props.auditSearch.includes('?audit')

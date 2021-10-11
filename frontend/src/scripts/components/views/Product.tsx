@@ -20,7 +20,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     const [versions, setVersions] = useState<Version[]>(null)
     const [productName, setProductName] = useState<string>(null)
 
-    useEffect(() => { VersionAPI.findVersions(null, productId).then(setVersions) }, [])
+    useEffect(() => { VersionAPI.findVersions(undefined, undefined, productId).then(setVersions) }, [])
 
     if (productId != 'new') {
         useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])

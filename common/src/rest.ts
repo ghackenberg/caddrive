@@ -1,4 +1,4 @@
-import { Audit, AuditData, CommentEventData, EventData, Product, ProductData, User, UserData, Version, VersionData } from './data'
+import { Audit, AuditData, CommentEvent, CommentEventData, EventData, Product, ProductData, User, UserData, Version, VersionData } from './data'
 
 export interface AuditREST {
     findAudits(quick?: string, name?: string, product?: string, version?: string): Promise<Audit[]>
@@ -8,10 +8,10 @@ export interface AuditREST {
 }
 
 export interface EventREST {
-    findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string): Promise<CommentEventData[]>
-    enterEvent(enterEvent: EventData): Promise<EventData>
-    leaveEvent(leaveEvent: EventData): Promise<EventData>
-    submitEvent(submitEvent: CommentEventData): Promise<CommentEventData>
+    findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string): Promise<(EventData  & { id: string })[]>
+    enterEvent(enterEvent: EventData): Promise<EventData & { id: string }>
+    leaveEvent(leaveEvent: EventData): Promise<EventData & { id: string }>
+    submitEvent(submitEvent: CommentEventData): Promise<CommentEvent>
 }
 
 export interface ProductREST {
@@ -22,6 +22,7 @@ export interface ProductREST {
 }
 
 export interface UserREST {
+    checkUser(): Promise<User>
     findUsers(quick?: string, name?: string, email?: string): Promise<User[]>
     getUser(id: string): Promise<User>
     addUser(user: UserData): Promise<User>
