@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
-import { RouteComponentProps, useHistory } from 'react-router-dom'
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
 // Commons
 import { Audit, Version, Product, CommentEvent, EventData, User } from 'fhooe-audit-platform-common'
 // Clients
@@ -105,7 +105,11 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
                             <AuditLink product={product} version={version} audit={audit}/>
                         </nav>
                         <h1>Audit editor</h1>
-                        <h2>Property form</h2>
+                        <h2>Audit action</h2>
+                        <p>
+                            <Link to={`/audits/${auditId}`}>Leave</Link>
+                        </p>
+                        <h2>Comment form</h2>
                         <form onSubmit={submit} onReset={reset}>
                             <TextInput label='Text' placeholder={'Type text'} value={text} change={setText}/>
                             <div>
