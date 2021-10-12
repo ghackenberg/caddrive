@@ -5,21 +5,22 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Audit, Product, Version, EventData, CommentEvent, User } from 'fhooe-audit-platform-common'
 // Clients
-import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
+import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../../clients/rest'
 // Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+import { Header } from '../../snippets/Header'
+import { Navigation } from '../../snippets/Navigation'
 // Links
-import { AuditLink } from '../links/AuditLink'
+import { AuditLink } from '../../links/AuditLink'
+// Searches
+import { EventSearch } from '../../searches/EventSearch'
 // Inputs
-import { TextInput } from '../inputs/TextInput'
-import { DateInput } from '../inputs/DateInput'
+import { TextInput } from '../../inputs/TextInput'
+import { DateInput } from '../../inputs/DateInput'
 // Widgets
-import { Column, Table } from '../widgets/Table'
+import { Column, Table } from '../../widgets/Table'
 // Images
-import * as EventIcon from '../../../images/event.png'
-import * as DeleteIcon from '../../../images/delete.png'
-import { EventSearch } from '../searches/EventSearch'
+import * as EventIcon from '/src/images/event.png'
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
 

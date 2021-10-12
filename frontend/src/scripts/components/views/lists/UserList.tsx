@@ -4,19 +4,19 @@ import { Link } from 'react-router-dom'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
-import { UserAPI } from '../../clients/rest'
+import { UserAPI } from '../../../clients/rest'
 // Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+import { Header } from '../../snippets/Header'
+import { Navigation } from '../../snippets/Navigation'
 // Links
-import { UsersLink } from '../links/UsersLink'
+import { UsersLink } from '../../links/UsersLink'
 // Searches
-import { UserSearch } from '../searches/UserSearch'
+import { UserSearch } from '../../searches/UserSearch'
 // Widgets
-import { Column, Table } from '../widgets/Table'
+import { Column, Table } from '../../widgets/Table'
 // Images
 import * as UserIcon from '/src/images/user.png'
-import * as DeleteIcon from '../../../images/delete.png'
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const UserListView = () => {
 

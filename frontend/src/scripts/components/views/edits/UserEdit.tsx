@@ -5,15 +5,15 @@ import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
-import { UserAPI } from '../../clients/rest'
+import { UserAPI } from '../../../clients/rest'
 // Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+import { Header } from '../../snippets/Header'
+import { Navigation } from '../../snippets/Navigation'
 // Links
-import { UserLink } from '../links/UserLink'
+import { UserLink } from '../../links/UserLink'
 // Inputs
-import { TextInput } from '../inputs/TextInput'
-import { EmailInput } from '../inputs/EmailInput'
+import { TextInput } from '../../inputs/TextInput'
+import { EmailInput } from '../../inputs/EmailInput'
 
 export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
 

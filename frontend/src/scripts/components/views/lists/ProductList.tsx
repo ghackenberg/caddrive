@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
-import { ProductAPI } from '../../clients/rest'
+import { ProductAPI } from '../../../clients/rest'
 // Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+import { Header } from '../../snippets/Header'
+import { Navigation } from '../../snippets/Navigation'
 // Links
-import { ProductsLink } from '../links/ProductsLink'
+import { ProductsLink } from '../../links/ProductsLink'
 // Searches
-import { ProductSearch } from '../searches/ProductSearch'
+import { ProductSearch } from '../../searches/ProductSearch'
 // Widgets
-import { Column, Table } from '../widgets/Table'
+import { Column, Table } from '../../widgets/Table'
 // Images
 import * as ProductIcon from '/src/images/product.png'
 import * as DeleteIcon from '/src/images/delete.png'

@@ -5,20 +5,21 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product, Version } from 'fhooe-audit-platform-common'
 // Clients
-import { ProductAPI, VersionAPI } from '../../clients/rest'
+import { ProductAPI, VersionAPI } from '../../../clients/rest'
 // Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+import { Header } from '../../snippets/Header'
+import { Navigation } from '../../snippets/Navigation'
 // Links
-import { ProductLink } from '../links/ProductLink'
+import { ProductLink } from '../../links/ProductLink'
+// Searches
+import { VersionSearch } from '../../searches/VersionSearch'
 // Inputs
-import { TextInput } from '../inputs/TextInput'
+import { TextInput } from '../../inputs/TextInput'
 // Widgets
-import { Column, Table } from '../widgets/Table'
+import { Column, Table } from '../../widgets/Table'
 // Images
-import * as VersionIcon from '../../../images/version.png'
-import * as DeleteIcon from '../../../images/delete.png'
-import { VersionSearch } from '../searches/VersionSearch'
+import * as VersionIcon from '/src/images/version.png'
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const ProductEditView = (props: RouteComponentProps<{product: string}>) => {
 

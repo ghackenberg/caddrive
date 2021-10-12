@@ -4,18 +4,18 @@ import { RouteComponentProps, useHistory } from 'react-router-dom'
 // Commons
 import { Audit, Version, Product, CommentEvent, EventData, User } from 'fhooe-audit-platform-common'
 // Clients
-import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
+import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../../clients/rest'
 // Contexts
-import { UserContext } from '../../contexts/User'
+import { UserContext } from '../../../contexts/User'
 // Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+import { Header } from '../../snippets/Header'
+import { Navigation } from '../../snippets/Navigation'
 // Links
-import { AuditLink } from '../links/AuditLink'
+import { AuditLink } from '../../links/AuditLink'
 // Inputs
-import { TextInput } from '../inputs/TextInput'
+import { TextInput } from '../../inputs/TextInput'
 // Widgets
-import { Column, Table } from '../widgets/Table'
+import { Column, Table } from '../../widgets/Table'
 // Images
 import * as EventIcon from '/src/images/event.png'
 import * as DeleteIcon from '/src/images/delete.png'

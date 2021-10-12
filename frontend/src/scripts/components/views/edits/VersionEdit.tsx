@@ -5,21 +5,22 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Audit, Product, Version} from 'fhooe-audit-platform-common'
 // Clients
-import { AuditAPI, ProductAPI, VersionAPI } from '../../clients/rest'
+import { AuditAPI, ProductAPI, VersionAPI } from '../../../clients/rest'
 // Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+import { Header } from '../../snippets/Header'
+import { Navigation } from '../../snippets/Navigation'
 // Links
-import { VersionLink } from '../links/VersionLink'
+import { VersionLink } from '../../links/VersionLink'
+// Searches
+import { AuditSearch } from '../../searches/AuditSearch'
 // Inputs
-import { TextInput } from '../inputs/TextInput'
-import { DateInput } from '../inputs/DateInput'
+import { TextInput } from '../../inputs/TextInput'
+import { DateInput } from '../../inputs/DateInput'
 // Widgets
-import { Column, Table } from '../widgets/Table'
+import { Column, Table } from '../../widgets/Table'
 // Images
-import * as AuditIcon from '../../../images/audit.png'
-import * as DeleteIcon from '../../../images/delete.png'
-import { AuditSearch } from '../searches/AuditSearch'
+import * as AuditIcon from '/src/images/audit.png'
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const VersionEditView = (props: RouteComponentProps<{ version: string }>) => {
 
