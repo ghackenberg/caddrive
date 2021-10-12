@@ -14,7 +14,7 @@ export const EventSearch = (props: {audit: string, change: (value: (EventData & 
 
     return (
         <form>
-            <TextInput label="Query" placeholder="Search events" change={change}/>
+            <TextInput label="Quick search" placeholder="Type query here" change={change}/>
         </form>
     )
 

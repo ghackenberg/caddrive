@@ -14,7 +14,7 @@ export const ProductSearch = (props: {change: (value: Product[]) => void}) => {
 
     return (
         <form>
-            <TextInput label="Query" placeholder="Search products" change={change}/>
+            <TextInput label="Quick search" placeholder="Type query here" change={change}/>
         </form>
     )
 

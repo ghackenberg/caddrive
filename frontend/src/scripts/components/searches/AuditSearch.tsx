@@ -14,7 +14,7 @@ export const AuditSearch = (props: {version: string, change: (value: Audit[]) =>
 
     return (
         <form>
-            <TextInput label="Query" placeholder="Search audits" change={change}/>
+            <TextInput label="Quick search" placeholder="Type query here" change={change}/>
         </form>
     )
 

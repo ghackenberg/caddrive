@@ -14,7 +14,7 @@ export const UserSearch = (props: {change: (value: User[]) => void}) => {
 
     return (
         <form>
-            <TextInput label="Query" placeholder="Search users" change={change}/> 
+            <TextInput label="Quick search" placeholder="Type query here" change={change}/> 
         </form>
     )
 

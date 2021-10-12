@@ -14,7 +14,7 @@ export const VersionSearch = (props: {product: string, change: (value: Version[]
 
     return (
         <form>
-            <TextInput label="Query" placeholder="Search versions" change={change}/>
+            <TextInput label="Quick search" placeholder="Type query here" change={change}/>
         </form>
     )
 
