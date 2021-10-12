@@ -125,8 +125,8 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                             <div>
                                 <div/>
                                 <div>
-                                    <input type='reset' value='Cancel'/>
-                                    <input type='submit' value="Save" className='saveItem'/>
+                                    { auditId != 'new' && <input type='reset' value='Cancel'/> }
+                                    <input type='submit' value='Save'/>
                                 </div>
                             </div>
                         </form>

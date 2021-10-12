@@ -74,8 +74,8 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                                 <div>
                                     <div/>
                                     <div>
-                                        <input type="reset" value='Cancel'/>
-                                        <input type="submit" value="Save" className='saveItem'/>
+                                        { userId != 'new' && <input type='reset' value='Cancel'/> } 
+                                        <input type='submit' value='Save'/>
                                     </div>
                                 </div>
                             </form>

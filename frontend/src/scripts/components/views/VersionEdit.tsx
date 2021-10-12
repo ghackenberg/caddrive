@@ -94,8 +94,8 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                             <div>
                                 <div/>
                                 <div>
-                                    { versionId == 'new' && <input type="reset" value="Cancel"/> }
-                                    <input type="submit" value="Save"/>
+                                    { versionId == 'new' && <input type='reset' value='Cancel'/> }
+                                    <input type='submit' value='Save'/>
                                 </div>
                             </div>
                         </form>

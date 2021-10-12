@@ -72,8 +72,8 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                                     <div>
                                         <div/>
                                         <div>
-                                            <input type="reset" value='Cancel'/>
-                                            <input  type="submit" value="Login"/>
+                                            <input  type='reset' value='Cancel'/>
+                                            <input  type='submit' value='Login'/>
                                         </div>
                                     </div>
                                 </form>
