@@ -58,6 +58,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
         } else {
             if (name && date) {
                 // TODO update version
+                alert('Not implemented yet!')
             }
         }
     }
