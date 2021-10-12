@@ -46,7 +46,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             publicPath: '/',
-            title: 'FHOOE Virtual Engineering Platform',
+            title: 'FHO&Ouml; Virtual Engineering Platform',
             filename: '404.html'
         })
     ],
