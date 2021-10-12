@@ -80,7 +80,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                                 <div>
                                     <div/>
                                     <div>
-                                        { productId != 'new' && <input type='reset' value='Cancel'/> }
+                                        { productId == 'new' && <input type='reset' value='Cancel'/> }
                                         <input type='submit' value='Save'/>
                                     </div>
                                 </div>

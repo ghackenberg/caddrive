@@ -74,7 +74,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                                 <div>
                                     <div/>
                                     <div>
-                                        { userId != 'new' && <input type='reset' value='Cancel'/> } 
+                                        { userId == 'new' && <input type='reset' value='Cancel'/> } 
                                         <input type='submit' value='Save'/>
                                     </div>
                                 </div>

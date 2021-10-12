@@ -125,7 +125,7 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                             <div>
                                 <div/>
                                 <div>
-                                    { auditId != 'new' && <input type='reset' value='Cancel'/> }
+                                    { auditId == 'new' && <input type='reset' value='Cancel'/> }
                                     <input type='submit' value='Save'/>
                                 </div>
                             </div>
