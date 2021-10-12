@@ -100,7 +100,9 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                         {versionId != 'new' && (
                             <Fragment>
                                 <h2>Audit list (<Link to={`/audits/new?version=${versionId}`}>+</Link>)</h2>
+                                <h3>Search from</h3>
                                 <AuditSearch version={versionId} change={setAudits}/>
+                                <h3>Search list</h3>
                                 { audits && <Table columns={columns} items={audits}/> }
                             </Fragment>
                         )}

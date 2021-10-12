@@ -125,7 +125,9 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                         {auditId != 'new' && (
                             <Fragment>
                                 <h2>Event list (<Link to={`/audits/${auditId}/join`}>Join</Link>)</h2>
+                                <h3>Search from</h3>
                                 <EventSearch audit={auditId} change={setEvents}/>
+                                <h3>Search list</h3>
                                 { events && <Table columns={columns} items={events}/> }
                             </Fragment>
                         )}

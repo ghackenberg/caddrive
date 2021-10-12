@@ -90,7 +90,9 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                         {productId != 'new' && (
                             <Fragment>
                                 <h2>Version list (<Link to={`/versions/new?product=${productId}`}>+</Link>)</h2>
+                                <h3>Search from</h3>
                                 <VersionSearch product={productId} change={setVersions}/>
+                                <h3>Search list</h3>
                                 { versions && <Table columns={columns} items={versions}/> }
                             </Fragment>
                         )}

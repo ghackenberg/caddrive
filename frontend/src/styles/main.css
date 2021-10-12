@@ -64,6 +64,10 @@ div.view > main p {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
+div.view > main a {
+    color: blue;
+}
+
 div.view > main h1 {
     font-size: 200%;
     line-height: 150%;
@@ -73,6 +77,13 @@ div.view > main h1 {
 }
 div.view > main h2 {
     font-size: 175%;
+    line-height: 150%;
+    margin: 0;
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+div.view > main h3 {
+    font-size: 150%;
     line-height: 150%;
     margin: 0;
     padding-top: calc(0.75rem - 0.25em);
@@ -139,10 +150,13 @@ div.view > main form > div > div > input[type="text"] {
 }
 
 div.view > main > table {
-    padding-top: calc(0.75em);
+    min-width: 100%;
+    margin-top: calc(0.75em);
+    margin-bottom: calc(0.75em);
+    border-collapse: collapse;
 }
 div.view > main > table > thead  {
-    background-color: steelblue;
+    background-color: rgba(0,0,0,0.5);
     color: white;
     text-align: center;
 }
@@ -166,7 +180,12 @@ div.view > main > table > tbody > tr > td {
     padding-right: 0.5em;
     padding-bottom: calc(0.75rem - 0.25em);
 
-    border-bottom: 1px solid #ddd;
+    background-color: rgba(0,0,0,0.1);
+
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+div.view > main > table > tbody > tr:first-child > td {
+    border-top: 0;
 }
 
 div.view.demo > main {

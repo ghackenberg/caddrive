@@ -41,7 +41,9 @@ export const ProductListView = () => {
                     <ProductsLink/>
                 </nav>
                 <h1>Product list (<Link to={`/products/new`}>+</Link>)</h1>
+                <h2>Search from</h2>
                 <ProductSearch change={setProducts}/>
+                <h2>Search list</h2>
                 { products && <Table columns={columns} items={products}/> }
             </main>
         </div>

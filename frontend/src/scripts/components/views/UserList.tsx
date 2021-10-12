@@ -42,7 +42,9 @@ export const UserListView = () => {
                     <UsersLink/>
                 </nav>
                 <h1>User list (<Link to={`/users/new`}>+</Link>)</h1>
+                <h2>Search from</h2>
                 <UserSearch change={setUsers}/>
+                <h2>Search list</h2>
                 { users && <Table columns={columns} items={users}/> }
             </main>
         </div>
