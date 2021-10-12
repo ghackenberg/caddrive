@@ -48,7 +48,7 @@ div.view > main nav > span > a {
     padding-right: 0.25em;
     color: gray;
 }
-div.view > main nav > span > a:not([href]) {
+div.view > main nav > span:last-child > a {
     font-style: italic;
 }
 div.view > main nav > span > a[href]:hover {
@@ -107,7 +107,7 @@ div.view > main h2 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-div.view > main form.user-input{
+div.view > main form.user-input {
     display: table;
     margin: 0;
     margin-top: 0.75em;

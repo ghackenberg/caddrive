@@ -75,11 +75,11 @@ export const VersionLink = (props: {product: Product, version?: Version}) => {
             <ProductLink product={props.product}/>
             { props.version ? (
             <span>
-                <Link to={`/products/${props.product.id}/versions/${props.version.id}`}>{props.version.name}</Link>
+                <Link to={`/versions/${props.version.id}`}>{props.version.name}</Link>
             </span>
             ) : (
             <span>
-                <Link to={`/products/${props.product.id}/versions/new`}>New</Link>
+                <Link to={`/versions/new?product=${props.product.id}`}>New</Link>
             </span>
             )}
         </Fragment>  
@@ -92,11 +92,11 @@ export const AuditLink = (props: {product: Product, version: Version, audit?: Au
             <VersionLink product={props.product} version={props.version}/>
             { props.audit ? (
                 <span>
-                    <Link to={`/products/${props.product.id}/versions/${props.version.id}/audits/${props.audit.id}`}>{props.audit.name}</Link>
+                    <Link to={`/audits/${props.audit.id}`}>{props.audit.name}</Link>
                 </span>
             ) : (
                 <span>
-                    <Link to={`/products/${props.product.id}/versions/${props.version.id}/audits/new`}>New</Link>
+                    <Link to={`/audits/new?version=${props.version.id}`}>New</Link>
                 </span>
             )}
         </Fragment>  

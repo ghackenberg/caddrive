@@ -37,14 +37,20 @@ export const Root = () => {
             {user ? (
                 <UserContext.Provider value={{callback, ...user}}>
                     <Switch>
+                        {/* User views */}
                         <Route path="/users/:user" component={UserEditView}/>
                         <Route path="/users" component={UserListView}/>
-                        <Route path="/products/:product/versions/:version/audits/:audit/join" component={AuditJoinView}/>
-                        <Route path="/products/:product/versions/:version/audits/:audit" component={AuditEditView}/>
-                        <Route path="/products/:product/versions/:version" component={VersionEditView}/>
+                        {/* Product views */}
                         <Route path="/products/:product" component={ProductEditView}/>
                         <Route path="/products" component={ProductListView}/>
+                        {/* Version views */}
+                        <Route path="/versions/:version" component={VersionEditView}/>
+                        {/* Audit views */}
+                        <Route path="/audits/:audit/join" component={AuditJoinView}/>
+                        <Route path="/audits/:audit" component={AuditEditView}/>
+                        {/* Model views */}
                         <Route path="/models/:model" component={ModelView}/>
+                        {/* Home view */}
                         <Route component={HomeView}/>
                     </Switch>
                 </UserContext.Provider>

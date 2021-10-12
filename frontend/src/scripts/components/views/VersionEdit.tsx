@@ -12,21 +12,26 @@ import { Column, Table } from '../widgets/Table'
 import * as AuditIcon from '../../../images/audit.png'
 import * as DeleteIcon from '../../../images/delete.png'
 
-export const VersionEditView = (props: RouteComponentProps<{ product: string, version: string }>) => {
+export const VersionEditView = (props: RouteComponentProps<{ version: string }>) => {
 
-    const productId = props.match.params.product
+    const query = new URLSearchParams(props.location.search)
+
+    const productId = query.get('product')
     const versionId = props.match.params.version
         
     const history = useHistory()
 
-    const [product, setProduct] = useState<Product>(null)
-    const [version, setVersion] = useState<Version>(null)
-    const [audits, setAudits] = useState<Audit[]>([])
+    // Define entities
+    const [product, setProduct] = useState<Product>()
+    const [version, setVersion] = useState<Version>()
+    const [audits, setAudits] = useState<Audit[]>()
 
-    const [name, setName] = useState<string>(null)
+    // Define values
+    const [name, setName] = useState<string>()
     const [date, setDate] = useState<Date>()
 
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
+    // Load entities
+    useEffect(() => { (productId || version) && ProductAPI.getProduct(productId || version.productId).then(setProduct) }, [props, version])
     useEffect(() => { versionId == 'new' || VersionAPI.getVersion(versionId).then(setVersion) }, [props])
     useEffect(() => { versionId == 'new' || AuditAPI.findAudits(undefined, undefined, undefined, versionId).then(setAudits) }, [props])
 
@@ -34,8 +39,8 @@ export const VersionEditView = (props: RouteComponentProps<{ product: string, ve
         event.preventDefault()
         if (versionId == 'new') {
             if (name && date) {
-                const version = await VersionAPI.addVersion({ productId: product.id, name, date })
-                history.replace(`/products/${productId}/versions/${version.id}`)
+                const version = await VersionAPI.addVersion({ productId, name, date })
+                history.replace(`/versions/${version.id}`)
             }
         } else {
             if (name && date) {
@@ -50,7 +55,7 @@ export const VersionEditView = (props: RouteComponentProps<{ product: string, ve
 
     const columns: Column<Audit>[] = [
         {label: 'Icon', content: _audit => <img src={AuditIcon} style={{width: '1em'}}/>},
-        {label: 'Name', content: audit => <Link to={`/products/${productId}/versions/${versionId}/audits/${audit.id}`}>{audit.name}</Link>},
+        {label: 'Name', content: audit => <Link to={`/audits/${audit.id}`}>{audit.name}</Link>},
         {label: 'Delete', content: _audit => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
         
@@ -81,14 +86,14 @@ export const VersionEditView = (props: RouteComponentProps<{ product: string, ve
                             <div>
                                 <div/>
                                 <div>
-                                    <input type="reset" value={ versionId == 'new' ? 'Cancel' : 'Return'}/>
-                                    <input type="submit" value="Save" className="saveItem"/>
+                                    { versionId == 'new' && <input type="reset" value="Cancel"/> }
+                                    <input type="submit" value="Save"/>
                                 </div>
                             </div>
                         </form>
                         {versionId != 'new' && (
                             <Fragment>
-                                <h2>Audit list (<Link to={`/products/${productId}/versions/${versionId}/audits/new`}>+</Link>)</h2>
+                                <h2>Audit list (<Link to={`/audits/new?version=${versionId}`}>+</Link>)</h2>
                                 { audits && <Table columns={columns} items={audits}/> }
                             </Fragment>
                         )}
@@ -99,4 +104,5 @@ export const VersionEditView = (props: RouteComponentProps<{ product: string, ve
             </main>
         </div>
     )
+
 }

@@ -7,6 +7,7 @@ import { Header } from '../snippets/Header'
 import { EmailInput, TextInput } from '../snippets/Inputs'
 
 export const LoginView = (props: {callback: (user: User) => void}) => {
+
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
     const [email, setEmail] = React.useState<string>(localStorage.getItem('username') || '')
@@ -77,4 +78,5 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                 </main>
         </div>
     )
+    
 }

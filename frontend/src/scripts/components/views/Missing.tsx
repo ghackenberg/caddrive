@@ -4,6 +4,7 @@ import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 
 export const MissingView = () => (
+    
     <div className="view missing">
         <Header/>
         <Navigation/>
@@ -12,4 +13,5 @@ export const MissingView = () => (
             <p>Please fix this error.</p>
         </main>
     </div>
+
 )

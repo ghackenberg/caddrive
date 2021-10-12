@@ -18,15 +18,18 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
 
     const history = useHistory()
 
-    const [product, setProduct] = useState<Product>(null)
-    const [versions, setVersions] = useState<Version[]>([])
+    // Define entities
+    const [product, setProduct] = useState<Product>()
+    const [versions, setVersions] = useState<Version[]>()
 
-    const [name, setName] = useState<string>(null)
+    // Define values
+    const [name, setName] = useState<string>()
 
+    // Load entities
     useEffect(() => { productId == 'new' || ProductAPI.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { productId == 'new' || VersionAPI.findVersions(undefined, undefined, productId).then(setVersions) }, [props])
     
-    async function saveProduct(event: FormEvent){
+    async function submit(event: FormEvent){
         event.preventDefault()
         if(productId == 'new') {
             if (name) {
@@ -40,13 +43,13 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
         }
     }
 
-    async function cancelInput() {
+    async function reset() {
         history.goBack()
     }
 
     const columns: Column<Version>[] = [
         {label: 'Icon', content: _version => <img src={VersionIcon} style={{width: '1em'}}/>},
-        {label: 'Name', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.name}</Link>},
+        {label: 'Name', content: version => <Link to={`/versions/${version.id}`}>{version.name}</Link>},
         {label: 'Delete', content: _version => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
@@ -61,7 +64,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                                 <ProductLink product={product}/>
                             </nav>
                             <h1>Product editor</h1>
-                            <form onSubmit={saveProduct} onReset={cancelInput} className='user-input'>
+                            <form onSubmit={submit} onReset={reset} className='user-input'>
                                 <TextInput
                                     label='Product name'
                                     placeholder='Add here new product'
@@ -77,7 +80,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                             </form>
                             {productId != 'new' && (
                                 <Fragment>
-                                    <h2>Version list (<Link to={`/products/${productId}/versions/new`}>+</Link>)</h2>
+                                    <h2>Version list (<Link to={`/versions/new?product=${productId}`}>+</Link>)</h2>
                                     { versions && <Table columns={columns} items={versions}/> }
                                 </Fragment>
                             )}

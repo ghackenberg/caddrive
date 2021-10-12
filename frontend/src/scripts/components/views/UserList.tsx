@@ -1,8 +1,9 @@
 import * as React from 'react'
-import { Fragment, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
+import { UsersLink } from '../snippets/Links'
 import { UserSearchBar } from '../widgets/SearchBar'
 import { Column, Table } from '../widgets/Table'
 import { UserAPI } from '../../rest'
@@ -11,8 +12,11 @@ import * as UserIcon from '/src/images/user.png'
 import * as DeleteIcon from '../../../images/delete.png'
 
 export const UserListView = () => {
+
+    // Define entities
     const [users, setUsers] = useState<User[]>()
 
+    // Load entities
     useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 
     const columns: Column<User>[] = [
@@ -27,20 +31,14 @@ export const UserListView = () => {
             <Header/>
             <Navigation/>
             <main>
-                <Fragment>
-                    <nav>
-                        <span>
-                            <Link to="/">Home</Link> 
-                        </span>
-                        <span>
-                            <a>Users</a>
-                        </span>
-                    </nav>
-                </Fragment>
+                <nav>
+                    <UsersLink/>
+                </nav>
                 <h1>User list (<Link to={`/users/new`}>+</Link>)</h1>
                 <UserSearchBar change={setUsers}/>
-                {users && <Table columns={columns} items={users}/>}
+                { users && <Table columns={columns} items={users}/> }
             </main>
         </div>
     )
+
 }

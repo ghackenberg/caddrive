@@ -5,6 +5,7 @@ import { Navigation } from '../snippets/Navigation'
 import { ModelViewer } from '../widgets/ModelViewer'
 
 export const ModelView = (props: RouteComponentProps<{ model: string }>) => {
+    
     return (
         <div className="view demo">
             <Header/>
@@ -14,4 +15,5 @@ export const ModelView = (props: RouteComponentProps<{ model: string }>) => {
             </main>
         </div>
     )
+
 }

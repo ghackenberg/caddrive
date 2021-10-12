@@ -12,61 +12,66 @@ import { Column, Table } from '../widgets/Table'
 import * as EventIcon from '../../../images/event.png'
 import * as DeleteIcon from '../../../images/delete.png'
 
-export const AuditEditView = (props: RouteComponentProps<{product: string, version: string, audit: string}>) => {
+export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
 
-    const productId = props.match.params.product
-    const versionId = props.match.params.version
+    const query = new URLSearchParams(props.location.search)
+
+    const versionId = query.get('version')
     const auditId = props.match.params.audit
-
-    const [product, setProduct] = useState<Product>(null)
-    const [version, setVersion] = useState<Version>(null)
-    const [audit, setAudit] = useState<Audit>(null)
-    const [events, setEvents] = useState<(EventData & {id: string})[]>([])
-    const [users, setUsers] = useState<{[id: string]: User}>({})
-
-    const [name, setName] = useState<string>(null)
-    const [start, setStart] = useState<Date>()
-    const [end, setEnd] = useState<Date>()
 
     const history = useHistory()
 
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { VersionAPI.getVersion(versionId).then(setVersion) }, [props])
+    // Define entities
+    const [product, setProduct] = useState<Product>()
+    const [version, setVersion] = useState<Version>()
+    const [audit, setAudit] = useState<Audit>()
+    const [events, setEvents] = useState<(EventData & {id: string})[]>()
+    const [users, setUsers] = useState<{[id: string]: User}>({})
+
+    // Define values
+    const [name, setName] = useState<string>()
+    const [start, setStart] = useState<Date>()
+    const [end, setEnd] = useState<Date>()
+
+    // Load entities
+    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
+    useEffect(() => { (versionId || audit) && VersionAPI.getVersion(versionId || audit.versionId).then(setVersion) }, [props, audit])
     useEffect(() => { auditId == 'new' || AuditAPI.getAudit(auditId).then(setAudit) }, [props])
     useEffect(() => { auditId == 'new' || EventAPI.findEvents(undefined, auditId).then(setEvents) }, [props])
     useEffect(() => {
-        const load: string[] = []
-        events.forEach(event => {
-            if (!(event.user in users)) {
-                load.push(event.user)
-            }
-        })
-        console.log(load)
-        load.forEach(userId => {
-            UserAPI.getUser(userId).then(user => {
-                const dict = {...users}
-                dict[userId] = user
-                setUsers(dict)
+        if (events) {
+            const load: string[] = []
+            events.forEach(event => {
+                if (!(event.user in users)) {
+                    load.push(event.user)
+                }
             })
-        })
+            load.forEach(userId => {
+                UserAPI.getUser(userId).then(user => {
+                    const dict = {...users}
+                    dict[userId] = user
+                    setUsers(dict)
+                })
+            })
+        }
     }, [props, events])
 
-    async function saveAudit(event: FormEvent){
+    async function submit(event: FormEvent){
         event.preventDefault()
         if (auditId == 'new') {
             if (name && start.getDate() != null && end.getDate() != null) {
                 const audit = await AuditAPI.addAudit({ versionId, name, start, end})
-                history.replace(`/products/${productId}/versions/${versionId}/audits/${audit.id}`)
+                history.replace(`/audits/${audit.id}`)
             }
         }
         else {
             if (name && start.getDate() != null && end.getDate() != null) {
-                setAudit(await AuditAPI.updateAudit({id: audit.id, versionId, name, start, end}))
+                setAudit(await AuditAPI.updateAudit({id: audit.id, versionId: audit.versionId, name, start, end}))
             }
         }
     }
 
-    async function cancelInput() {
+    async function reset() {
         history.goBack()
     }
 
@@ -90,7 +95,7 @@ export const AuditEditView = (props: RouteComponentProps<{product: string, versi
                             <AuditLink audit={audit} version={version} product={product}/>                           
                         </nav>
                         <h1>Audit editor</h1>
-                        <form onSubmit={saveAudit} onReset={cancelInput} className='user-input'>
+                        <form onSubmit={submit} onReset={reset} className='user-input'>
                             <TextInput  
                                 label='Audit name' 
                                 placeholder='Add new audit'
@@ -119,7 +124,7 @@ export const AuditEditView = (props: RouteComponentProps<{product: string, versi
                         </form>
                         {auditId != 'new' && (
                             <Fragment>
-                                <h2>Event list (<Link to={`/products/${productId}/versions/${versionId}/audits/${auditId}/join`}>Join</Link>)</h2>
+                                <h2>Event list (<Link to={`/audits/${auditId}/join`}>Join</Link>)</h2>
                                 { events && <Table columns={columns} items={events}/> }
                             </Fragment>
                         )}

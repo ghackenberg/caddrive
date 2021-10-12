@@ -15,14 +15,17 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
     
     const history = useHistory()
 
-    const [user, setUser] = useState<User>(null)
+    // Define entities
+    const [user, setUser] = useState<User>()
 
-    const [name, setName] = useState<string>(null)
-    const [email, setEmail] = useState<string>(null)
+    // Define values
+    const [name, setName] = useState<string>()
+    const [email, setEmail] = useState<string>()
 
+    // Load entities
     useEffect(() => { userId == 'new' || UserAPI.getUser(userId).then(setUser) }, [props])
 
-    async function saveUser(event: FormEvent){
+    async function submit(event: FormEvent){
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
@@ -36,7 +39,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
         }       
     }
 
-    async function cancelInput() {
+    async function reset() {
         history.goBack()
     }
 
@@ -51,7 +54,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                                 <UserLink user={user}/>
                             </nav>
                             <h1>User editor</h1>
-                            <form onSubmit={saveUser} onReset={cancelInput} className='user-input'>
+                            <form onSubmit={submit} onReset={reset} className='user-input'>
                                 <TextInput 
                                     label='Username'
                                     placeholder='Type in username'
@@ -77,4 +80,5 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                 </main>
         </div>
     )
+    
 }
