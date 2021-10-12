@@ -1,0 +1,30 @@
+div.view > main nav {
+    padding-top: calc(0.75rem);
+    padding-bottom: calc(0.75rem);
+}
+div.view > main nav::before {
+    content: "You are here: "
+}
+div.view > main nav > span:first-child::before {
+    content: "";
+}
+div.view > main nav > span::before {
+    content: " / ";
+}
+div.view > main nav > span > a {
+    display: inline-block;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 0.25em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    color: gray;
+}
+div.view > main nav > span:last-child > a {
+    font-style: italic;
+}
+div.view > main nav > span > a[href]:hover {
+    color: black;
+}
+div.view > main nav > span:last-child > a {
+    color: black;
+}

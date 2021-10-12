@@ -1,0 +1,38 @@
+div.view > main table {
+    min-width: 100%;
+    margin-top: calc(0.75em);
+    margin-bottom: calc(0.75em);
+    border-collapse: collapse;
+}
+div.view > main table > thead  {
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    text-align: center;
+}
+div.view > main table > thead > tr > th {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+div.view > main table > tbody {
+    text-align: left;
+}
+div.view > main table > tbody > tr > td:first-child {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+    text-align: center;
+}
+div.view > main table > tbody > tr > td {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+
+    background-color: rgba(0,0,0,0.1);
+
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+div.view > main table > tbody > tr:first-child > td {
+    border-top: 0;
+}

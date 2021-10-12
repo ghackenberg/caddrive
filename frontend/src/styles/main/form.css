@@ -1,0 +1,58 @@
+div.view > main form {
+    display: table;
+    margin: 0;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+    padding: 0;
+    border-spacing: 1.5em;
+    border-collapse: separate;
+    background-color: rgba(0,0,0,0.1);
+}
+div.view > main form > div {
+    display: table-row;
+}
+div.view > main form > div > div {
+    display: table-cell;
+}
+div.view > main form > div > div:last-child {
+    text-align: right;
+}
+div.view > main form > div > div > label::after {
+    content: ":";
+}
+div.view > main form > div > div > input {
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: calc(0.75rem - 0.25em);
+
+    border: 0;
+    outline: 0;
+
+    background-color: rgba(0,0,0,0.1);
+    color: black
+}
+div.view > main form > div > div > input[type="reset"] {
+    margin-left: 1.5em;
+    color: white;
+    background-color: gray;
+}
+div.view > main form > div > div > input[type="reset"]:hover {
+    background-color: darkgray;
+}
+div.view > main form > div > div > input[type="submit"] {
+    margin-left: 1.5em;
+    color: white;
+    background-color: steelblue;
+}
+div.view > main form > div > div > input[type="submit"]:hover {
+    background-color: skyblue
+}
+div.view > main form > div > div > input[type="text"] {
+    width: 90%
+}

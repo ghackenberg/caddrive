@@ -1,0 +1,21 @@
+div.view > main h1 {
+    font-size: 200%;
+    line-height: 150%;
+    margin: 0;
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+div.view > main h2 {
+    font-size: 175%;
+    line-height: 150%;
+    margin: 0;
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+div.view > main h3 {
+    font-size: 150%;
+    line-height: 150%;
+    margin: 0;
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+}
