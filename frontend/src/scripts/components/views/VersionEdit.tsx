@@ -19,6 +19,7 @@ import { Column, Table } from '../widgets/Table'
 // Images
 import * as AuditIcon from '../../../images/audit.png'
 import * as DeleteIcon from '../../../images/delete.png'
+import { AuditSearch } from '../searches/AuditSearch'
 
 export const VersionEditView = (props: RouteComponentProps<{ version: string }>) => {
 
@@ -102,6 +103,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                         {versionId != 'new' && (
                             <Fragment>
                                 <h2>Audit list (<Link to={`/audits/new?version=${versionId}`}>+</Link>)</h2>
+                                <AuditSearch version={versionId} change={setAudits}/>
                                 { audits && <Table columns={columns} items={audits}/> }
                             </Fragment>
                         )}

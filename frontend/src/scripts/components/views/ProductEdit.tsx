@@ -18,6 +18,7 @@ import { Column, Table } from '../widgets/Table'
 // Images
 import * as VersionIcon from '../../../images/version.png'
 import * as DeleteIcon from '../../../images/delete.png'
+import { VersionSearch } from '../searches/VersionSearch'
 
 export const ProductEditView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -88,6 +89,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                             {productId != 'new' && (
                                 <Fragment>
                                     <h2>Version list (<Link to={`/versions/new?product=${productId}`}>+</Link>)</h2>
+                                    <VersionSearch product={productId} change={setVersions}/>
                                     { versions && <Table columns={columns} items={versions}/> }
                                 </Fragment>
                             )}

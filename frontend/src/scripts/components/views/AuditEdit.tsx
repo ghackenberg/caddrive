@@ -19,6 +19,7 @@ import { Column, Table } from '../widgets/Table'
 // Images
 import * as EventIcon from '../../../images/event.png'
 import * as DeleteIcon from '../../../images/delete.png'
+import { EventSearch } from '../searches/EventSearch'
 
 export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -133,6 +134,7 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                         {auditId != 'new' && (
                             <Fragment>
                                 <h2>Event list (<Link to={`/audits/${auditId}/join`}>Join</Link>)</h2>
+                                <EventSearch audit={auditId} change={setEvents}/>
                                 { events && <Table columns={columns} items={events}/> }
                             </Fragment>
                         )}

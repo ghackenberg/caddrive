@@ -10,8 +10,9 @@ import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 // Links
 import { ProductsLink } from '../links/ProductsLink'
+// Searches
+import { ProductSearch } from '../searches/ProductSearch'
 // Widgets
-import { ProductSearchBar } from '../widgets/SearchBar'
 import { Column, Table } from '../widgets/Table'
 // Images
 import * as ProductIcon from '/src/images/product.png'
@@ -40,7 +41,7 @@ export const ProductListView = () => {
                     <ProductsLink/>
                 </nav>
                 <h1>Product list (<Link to={`/products/new`}>+</Link>)</h1>
-                <ProductSearchBar change={setProducts}/>
+                <ProductSearch change={setProducts}/>
                 { products && <Table columns={columns} items={products}/> }
             </main>
         </div>

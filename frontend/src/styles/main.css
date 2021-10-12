@@ -138,18 +138,6 @@ div.view > main form > div > div > input[type="text"] {
     width: 90%
 }
 
-div.view > main form > div > span.filter-search {
-    font-family: inherit;
-    font-size: inherit;
-
-    line-height: inherit;
-    
-    padding-top: calc(0.75rem - 0.25em);
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-bottom: calc(0.75rem);
-}
-
 div.view > main > table {
     padding-top: calc(0.75em);
 }
@@ -202,43 +190,4 @@ div.view.demo > main div.widget.scene_view {
     right: 0;
     bottom: 0;
     overflow: hidden;
-}
-
-input.header-search {
-    border-spacing: 0.5em;
-    background-color: white;
-    margin-top: 0.75em;
-    margin-bottom: 1.5em;
-
-    font-family: inherit;
-    font-size: inherit;
-
-    padding-top: calc(0.75rem - 0.25em);
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-bottom: calc(0.75rem - 0.25em);
-}
-input.header-search[type="text"] {
-    width: 17em;
-}
-input.header-search[type="button"] {
-    margin-left: 0.5em;
-    color: white;
-    background-color: steelblue;
-}
-input.filter-search[type="button"] {
-    font-family: inherit;
-    font-size: inherit;
-
-    line-height: inherit;
-
-    margin-left: 0.5em;
-
-    padding-top: calc(0.5rem - 0.25em);
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-bottom: calc(0.5rem - 0.25em);
-
-    color: black;
-    background-color: rgba(0,0,0,0.1);
 }

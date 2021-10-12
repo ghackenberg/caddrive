@@ -10,8 +10,9 @@ import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 // Links
 import { UsersLink } from '../links/UsersLink'
+// Searches
+import { UserSearch } from '../searches/UserSearch'
 // Widgets
-import { UserSearchBar } from '../widgets/SearchBar'
 import { Column, Table } from '../widgets/Table'
 // Images
 import * as UserIcon from '/src/images/user.png'
@@ -41,7 +42,7 @@ export const UserListView = () => {
                     <UsersLink/>
                 </nav>
                 <h1>User list (<Link to={`/users/new`}>+</Link>)</h1>
-                <UserSearchBar change={setUsers}/>
+                <UserSearch change={setUsers}/>
                 { users && <Table columns={columns} items={users}/> }
             </main>
         </div>
