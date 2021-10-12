@@ -5,27 +5,11 @@ import { ProductService } from '../products/product.service'
 
 @Injectable()
 export class VersionService implements VersionREST {
-    private versions: Version[] = [{name: 'Version 1', id: 'TestVersion', productId: 'TestProduct', date: new Date()}]
+    private versions: Version[] = [{name: 'Version 1', id: 'TestVersion', productId: 'TestProduct', date: new Date().toString()}]
 
     public constructor(private productService: ProductService) {
 
     }
-
-    /*
-    constructor() {
-         
-        var date = new Date()
-
-        for (var i = 0; i < Math.random() * 20; i++) {
-            this.versions.push({
-                id: shortid(),
-                name : shortid(),
-                date : date.getUTCFullYear() + '-' + date.getMonth() + '-' + date.getDate()
-            })
-        }
-        
-    }
-    */
 
     async findVersions(quick?: string, name?: string, product?: string) : Promise<Version[]> {
         const result: Version[] = []

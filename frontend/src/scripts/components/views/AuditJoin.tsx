@@ -36,7 +36,7 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Define values
-    const [text, setText] = useState<string>()
+    const [text, setText] = useState<string>('')
 
     // Load entities
     useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
@@ -63,20 +63,21 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
 
     // Post events
     useEffect(() => {
-        EventAPI.enterEvent({ auditId: auditId, user: user.id, time: new Date(), type: 'enter' })
+        EventAPI.enterEvent({ auditId: auditId, user: user.id, time: new Date().toString(), type: 'enter' })
         return () => {
             // TODO: enter & leave event fired 2 times!!
-            EventAPI.leaveEvent({ auditId: auditId, user: user.id, time: new Date(), type: 'leave' }) 
+            EventAPI.leaveEvent({ auditId: auditId, user: user.id, time: new Date().toString(), type: 'leave' }) 
         }
     }, [props])
 
     async function submit(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await EventAPI.submitEvent({ time: new Date(), auditId: auditId, user: user.id, type: 'comment', text: text})
+            const comment = await EventAPI.submitEvent({ time: new Date().toString(), auditId: auditId, user: user.id, type: 'comment', text: text})
             const array = [...events]
             array.push(comment)
             setEvents(array)
+            setText('')
         }
     }
 
@@ -104,16 +105,13 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
                             <AuditLink product={product} version={version} audit={audit}/>
                         </nav>
                         <h1>Audit editor</h1>
+                        <h2>Property form</h2>
                         <form onSubmit={submit} onReset={reset}>
-                            <TextInput  
-                                    label='Comment'
-                                    placeholder={'Add here new comment'}
-                                    value={''}
-                                    change={setText}/>
+                            <TextInput label='Text' placeholder={'Type text'} value={text} change={setText}/>
                             <div>
                                 <div/>
                                 <div>
-                                    <input type='submit' value='Submit audit'/>
+                                    <input type='submit' value='Submit'/>
                                 </div>
                             </div>
                         </form>

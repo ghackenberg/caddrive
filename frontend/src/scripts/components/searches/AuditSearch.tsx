@@ -8,13 +8,15 @@ import { TextInput } from '../inputs/TextInput'
 
 export const AuditSearch = (props: {version: string, change: (value: Audit[]) => void}) => {
 
+    const [value, setValue] = React.useState<string>('')
+
     async function change(value: string) {
         props.change(await AuditAPI.findAudits(undefined, value, undefined, props.version))
     }
 
     return (
         <form>
-            <TextInput label="Quick search" placeholder="Type query here" change={change}/>
+            <TextInput label="Quick search" placeholder="Type query" value={value} change={value => {setValue(value), change(value)}}/>
         </form>
     )
 

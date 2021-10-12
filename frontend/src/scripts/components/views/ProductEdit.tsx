@@ -31,11 +31,14 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
     const [versions, setVersions] = useState<Version[]>()
 
     // Define values
-    const [name, setName] = useState<string>()
+    const [name, setName] = useState<string>('')
 
     // Load entities
     useEffect(() => { productId == 'new' || ProductAPI.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { productId == 'new' || VersionAPI.findVersions(undefined, undefined, productId).then(setVersions) }, [props])
+
+    // Load values
+    useEffect(() => { product && setName(product.name) }, [product])
     
     async function submit(event: FormEvent){
         event.preventDefault()
@@ -58,6 +61,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
     const columns: Column<Version>[] = [
         {label: 'Icon', content: _version => <img src={VersionIcon} style={{width: '1em'}}/>},
         {label: 'Name', content: version => <Link to={`/versions/${version.id}`}>{version.name}</Link>},
+        {label: 'Date', content: version => <Link to={`/versions/${version.id}`}>{version.date}</Link>},
         {label: 'Delete', content: _version => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
@@ -65,39 +69,36 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
         <div className="view product">
             <Header/>
             <Navigation/>
-                <main>
-                    { productId == 'new' || product ? (
-                        <Fragment>
-                            <nav>
-                                <ProductLink product={product}/>
-                            </nav>
-                            <h1>Product editor</h1>
-                            <form onSubmit={submit} onReset={reset}>
-                                <TextInput
-                                    label='Product name'
-                                    placeholder='Add here new product'
-                                    value={product ? product.name : ''}
-                                    change={value => setName(value)}/>
+            <main>
+                { productId == 'new' || product ? (
+                    <Fragment>
+                        <nav>
+                            <ProductLink product={product}/>
+                        </nav>
+                        <h1>Product editor</h1>
+                        <h2>Property form</h2>
+                        <form onSubmit={submit} onReset={reset}>
+                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                            <div>
+                                <div/>
                                 <div>
-                                    <div/>
-                                    <div>
-                                        { productId == 'new' && <input type='reset' value='Cancel'/> }
-                                        <input type='submit' value='Save'/>
-                                    </div>
+                                    { productId == 'new' && <input type='reset' value='Cancel'/> }
+                                    <input type='submit' value='Save'/>
                                 </div>
-                            </form>
-                            {productId != 'new' && (
-                                <Fragment>
-                                    <h2>Version list (<Link to={`/versions/new?product=${productId}`}>+</Link>)</h2>
-                                    <VersionSearch product={productId} change={setVersions}/>
-                                    { versions && <Table columns={columns} items={versions}/> }
-                                </Fragment>
-                            )}
-                        </Fragment>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
-                </main>
+                            </div>
+                        </form>
+                        {productId != 'new' && (
+                            <Fragment>
+                                <h2>Version list (<Link to={`/versions/new?product=${productId}`}>+</Link>)</h2>
+                                <VersionSearch product={productId} change={setVersions}/>
+                                { versions && <Table columns={columns} items={versions}/> }
+                            </Fragment>
+                        )}
+                    </Fragment>
+                ) : (
+                    <p>Loading...</p>
+                )}
+            </main>
         </div>
     )
 }

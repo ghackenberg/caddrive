@@ -7,6 +7,8 @@ import { VersionAPI } from '../../clients/rest'
 import { TextInput } from '../inputs/TextInput'
 
 export const VersionSearch = (props: {product: string, change: (value: Version[]) => void}) => {
+
+    const [value, setValue] = React.useState<string>('')
     
     async function change(value: string) {
         props.change(await VersionAPI.findVersions(undefined, value, props.product))
@@ -14,7 +16,7 @@ export const VersionSearch = (props: {product: string, change: (value: Version[]
 
     return (
         <form>
-            <TextInput label="Quick search" placeholder="Type query here" change={change}/>
+            <TextInput label="Quick search" placeholder="Type query" value={value} change={value => {setValue(value), change(value)}}/>
         </form>
     )
 

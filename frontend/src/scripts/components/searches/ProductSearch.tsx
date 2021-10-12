@@ -7,6 +7,8 @@ import { ProductAPI } from '../../clients/rest'
 import { TextInput } from '../inputs/TextInput'
 
 export const ProductSearch = (props: {change: (value: Product[]) => void}) => {
+
+    const [value, setValue] = React.useState<string>('')
     
     async function change(value: string) {
         props.change(await ProductAPI.findProducts(value))
@@ -14,7 +16,7 @@ export const ProductSearch = (props: {change: (value: Product[]) => void}) => {
 
     return (
         <form>
-            <TextInput label="Quick search" placeholder="Type query here" change={change}/>
+            <TextInput label="Quick search" placeholder="Type query" value={value} change={value => {setValue(value), change(value)}}/>
         </form>
     )
 

@@ -50,37 +50,29 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
     return (
         <div className="view login">
             <Header/>
-                <main>
-                    <Fragment>
-                        <h1>Login to Virtual Engineering Platform</h1>
-                        {load ? (
-                            <p>Loading...</p>
-                        ) : (
-                            <Fragment>
-                                {error && <p style={{color: 'red'}}>{error}</p>}
-                                <form onSubmit={submit} onReset={reset}>
-                                    <EmailInput
-                                        label='Email'
-                                        placeholder='Type in email'
-                                        value={email}
-                                        change={setEmail}/>
-                                    <PasswordInput 
-                                        label='Password'
-                                        placeholder='Type in password'
-                                        value={password}
-                                        change={setPassword}/>
+            <main>
+                <Fragment>
+                    <h1>Login to Virtual Engineering Platform</h1>
+                    {load ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <Fragment>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
+                            <form onSubmit={submit} onReset={reset}>
+                                <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
+                                <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
+                                <div>
+                                    <div/>
                                     <div>
-                                        <div/>
-                                        <div>
-                                            <input  type='reset' value='Cancel'/>
-                                            <input  type='submit' value='Login'/>
-                                        </div>
+                                        <input  type='reset' value='Cancel'/>
+                                        <input  type='submit' value='Login'/>
                                     </div>
-                                </form>
-                            </Fragment>
-                        )}
-                    </Fragment>
-                </main>
+                                </div>
+                            </form>
+                        </Fragment>
+                    )}
+                </Fragment>
+            </main>
         </div>
     )
     

@@ -36,19 +36,23 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     const [audits, setAudits] = useState<Audit[]>()
 
     // Define values
-    const [name, setName] = useState<string>()
-    const [date, setDate] = useState<Date>()
+    const [name, setName] = useState<string>('')
+    const [date, setDate] = useState<Date>(new Date())
 
     // Load entities
     useEffect(() => { (productId || version) && ProductAPI.getProduct(productId || version.productId).then(setProduct) }, [props, version])
     useEffect(() => { versionId == 'new' || VersionAPI.getVersion(versionId).then(setVersion) }, [props])
     useEffect(() => { versionId == 'new' || AuditAPI.findAudits(undefined, undefined, undefined, versionId).then(setAudits) }, [props])
 
+    // Load values
+    useEffect(() => { version && setName(version.name) }, [version])
+    useEffect(() => { version && setDate(new Date(version.date)) }, [version])
+
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
             if (name && date) {
-                const version = await VersionAPI.addVersion({ productId, name, date })
+                const version = await VersionAPI.addVersion({ productId, name, date: date.toString() })
                 history.replace(`/versions/${version.id}`)
             }
         } else {
@@ -65,6 +69,8 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     const columns: Column<Audit>[] = [
         {label: 'Icon', content: _audit => <img src={AuditIcon} style={{width: '1em'}}/>},
         {label: 'Name', content: audit => <Link to={`/audits/${audit.id}`}>{audit.name}</Link>},
+        {label: 'Start', content: audit => <Link to={`/audits/${audit.id}`}>{audit.start}</Link>},
+        {label: 'End', content: audit => <Link to={`/audits/${audit.id}`}>{audit.end}</Link>},
         {label: 'Delete', content: _audit => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
         
@@ -79,19 +85,10 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                             <VersionLink version={version} product={product}/>
                         </nav>
                         <h1>Version editor</h1>
+                        <h2>Property form</h2>
                         <form onSubmit={submit} onReset={reset}>                     
-                            <TextInput
-                                label='Version name'
-                                placeholder='Add here new version'
-                                value={version ? version.name : ''}
-                                change={setName}
-                                disabled={versionId != 'new'}/>
-                            <DateInput
-                                label='Version date'
-                                placeholder='Select version date'
-                                change={setDate}
-                                value ={versionId != 'new' ? new Date(version.date) : date}
-                                disabled={versionId != 'new'}/>
+                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                            <DateInput label='Date' placeholder='Select date' value={date} change={setDate}/>
                             <div>
                                 <div/>
                                 <div>

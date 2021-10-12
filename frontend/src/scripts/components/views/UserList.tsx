@@ -28,8 +28,8 @@ export const UserListView = () => {
 
     const columns: Column<User>[] = [
         {label: 'Icon', content: _user => <img src={UserIcon} style={{width: '1em'}}/>},
-        {label: 'Name', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
         {label: 'Email', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
+        {label: 'Name', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
         {label: 'Delete', content: _audit => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 

@@ -8,13 +8,15 @@ import { TextInput } from '../inputs/TextInput'
 
 export const UserSearch = (props: {change: (value: User[]) => void}) => {
 
+    const [value, setValue] = React.useState<string>('')
+
     async function change(value: string) {
         props.change(await UserAPI.findUsers(value))
     }
 
     return (
         <form>
-            <TextInput label="Quick search" placeholder="Type query here" change={change}/> 
+            <TextInput label="Quick search" placeholder="Type query" value={value} change={value => {setValue(value), change(value)}}/> 
         </form>
     )
 

@@ -38,9 +38,9 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Define values
-    const [name, setName] = useState<string>()
-    const [start, setStart] = useState<Date>()
-    const [end, setEnd] = useState<Date>()
+    const [name, setName] = useState<string>('')
+    const [start, setStart] = useState<Date>(new Date())
+    const [end, setEnd] = useState<Date>(new Date())
 
     // Load entities
     useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
@@ -65,17 +65,22 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
         }
     }, [props, events])
 
+    // Load values
+    useEffect(() => { audit && setName(audit.name) }, [audit])
+    useEffect(() => { audit && setStart(new Date(audit.start)) }, [audit])
+    useEffect(() => { audit && setEnd(new Date(audit.end)) }, [audit])
+
     async function submit(event: FormEvent){
         event.preventDefault()
         if (auditId == 'new') {
             if (name && start.getDate() != null && end.getDate() != null) {
-                const audit = await AuditAPI.addAudit({ versionId, name, start, end})
+                const audit = await AuditAPI.addAudit({ versionId, name, start: start.toString(), end: end.toString()})
                 history.replace(`/audits/${audit.id}`)
             }
         }
         else {
             if (name && start.getDate() != null && end.getDate() != null) {
-                setAudit(await AuditAPI.updateAudit({id: audit.id, versionId: audit.versionId, name, start, end}))
+                setAudit(await AuditAPI.updateAudit({id: audit.id, versionId: audit.versionId, name, start: start.toString(), end: end.toString()}))
             }
         }
     }
@@ -104,25 +109,11 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                             <AuditLink audit={audit} version={version} product={product}/>                           
                         </nav>
                         <h1>Audit editor</h1>
+                        <h2>Property form</h2>
                         <form onSubmit={submit} onReset={reset}>
-                            <TextInput
-                                label='Audit name'
-                                placeholder='Add new audit'
-                                value={auditId != 'new' ? audit.name : ''}
-                                change={setName}
-                                disabled={auditId != 'new'}/>
-                            <DateInput
-                                label='Start time'
-                                placeholder='Select start date'
-                                change={setStart}
-                                value={auditId != 'new' ? new Date(audit.start) : start}
-                                disabled={auditId != 'new'}/>
-                            <DateInput
-                                label='End time'
-                                placeholder='Select end date'
-                                change={setEnd}
-                                value={auditId != 'new' ? new Date(audit.end) : end}
-                                disabled={auditId != 'new'}/>
+                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                            <DateInput label='Start' placeholder='Select start' value={start} change={setStart}/>
+                            <DateInput label='End' placeholder='Select end' value={end} change={setEnd}/>
                             <div>
                                 <div/>
                                 <div>

@@ -25,11 +25,15 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
     const [user, setUser] = useState<User>()
 
     // Define values
-    const [name, setName] = useState<string>()
-    const [email, setEmail] = useState<string>()
+    const [email, setEmail] = useState<string>('')
+    const [name, setName] = useState<string>('')
 
     // Load entities
     useEffect(() => { userId == 'new' || UserAPI.getUser(userId).then(setUser) }, [props])
+
+    // Load values
+    useEffect(() => { user && setEmail(user.email) }, [user])
+    useEffect(() => { user && setName(user.name) }, [user])
 
     async function submit(event: FormEvent){
         event.preventDefault()
@@ -53,37 +57,30 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
         <div className="view user">
             <Header/>
             <Navigation/>
-                <main>
-                    { userId == 'new' || user ? (
-                        <Fragment>
-                            <nav>
-                                <UserLink user={user}/>
-                            </nav>
-                            <h1>User editor</h1>
-                            <form onSubmit={submit} onReset={reset}>
-                                <TextInput
-                                    label='Username'
-                                    placeholder='Type in username'
-                                    value={user ? user.name : ''}
-                                    change={setName}/>
-                                <EmailInput
-                                    label='Email'
-                                    placeholder='Type in email'
-                                    value={user ? user.email : ''}
-                                    change={setEmail}/>
+            <main>
+                { userId == 'new' || user ? (
+                    <Fragment>
+                        <nav>
+                            <UserLink user={user}/>
+                        </nav>
+                        <h1>User editor</h1>
+                        <h2>Property form</h2>
+                        <form onSubmit={submit} onReset={reset}>
+                            <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
+                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                            <div>
+                                <div/>
                                 <div>
-                                    <div/>
-                                    <div>
-                                        { userId == 'new' && <input type='reset' value='Cancel'/> } 
-                                        <input type='submit' value='Save'/>
-                                    </div>
+                                    { userId == 'new' && <input type='reset' value='Cancel'/> } 
+                                    <input type='submit' value='Save'/>
                                 </div>
-                            </form>
-                        </Fragment>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
-                </main>
+                            </div>
+                        </form>
+                    </Fragment>
+                ) : (
+                    <p>Loading...</p>
+                )}
+            </main>
         </div>
     )
     

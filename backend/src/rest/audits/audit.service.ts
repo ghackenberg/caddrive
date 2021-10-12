@@ -6,7 +6,7 @@ import { ProductService } from '../products/product.service'
 
 @Injectable()
 export class AuditService implements AuditREST {
-    private audits: Audit[] = [{name: 'Audit 1', id: 'TestAudit', versionId: 'TestVersion', start: new Date(), end: new Date()}]
+    private audits: Audit[] = [{name: 'Audit 1', id: 'TestAudit', versionId: 'TestVersion', start: new Date().toString(), end: new Date().toString()}]
 
     constructor(private productService: ProductService, private versionService: VersionService) {
         

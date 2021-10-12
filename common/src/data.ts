@@ -4,9 +4,9 @@ export class AuditData {
     @ApiProperty()
     name: string
     @ApiProperty()
-    start: Date
+    start: string
     @ApiProperty()
-    end: Date
+    end: string
     @ApiProperty()
     versionId: string
 }
@@ -18,7 +18,7 @@ export class Audit extends AuditData {
 
 export class EventData {
     @ApiProperty()
-    time: Date
+    time: string
     @ApiProperty()
     auditId: string
     @ApiProperty()
@@ -64,7 +64,7 @@ export class VersionData {
     @ApiProperty()
     name: string
     @ApiProperty()
-    date: Date
+    date: string
     @ApiProperty()
     productId: string
 }
