@@ -60,7 +60,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                                 <UserLink user={user}/>
                             </nav>
                             <h1>User editor</h1>
-                            <form onSubmit={submit} onReset={reset} className='user-input'>
+                            <form onSubmit={submit} onReset={reset}>
                                 <TextInput
                                     label='Username'
                                     placeholder='Type in username'

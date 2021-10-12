@@ -103,7 +103,7 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                             <AuditLink audit={audit} version={version} product={product}/>                           
                         </nav>
                         <h1>Audit editor</h1>
-                        <form onSubmit={submit} onReset={reset} className='user-input'>
+                        <form onSubmit={submit} onReset={reset}>
                             <TextInput
                                 label='Audit name'
                                 placeholder='Add new audit'

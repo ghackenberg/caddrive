@@ -78,7 +78,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                             <VersionLink version={version} product={product}/>
                         </nav>
                         <h1>Version editor</h1>
-                        <form onSubmit={submit} onReset={reset} className='user-input'>                     
+                        <form onSubmit={submit} onReset={reset}>                     
                             <TextInput
                                 label='Version name'
                                 placeholder='Add here new version'
