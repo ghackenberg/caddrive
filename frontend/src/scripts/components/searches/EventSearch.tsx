@@ -9,7 +9,7 @@ import { TextInput } from '../inputs/TextInput'
 export const EventSearch = (props: {audit: string, change: (value: (EventData & {id: string})[]) => void}) => {
 
     async function change(value: string) {
-        props.change(await EventAPI.findEvents(undefined, props.audit, value))
+        props.change(await EventAPI.findEvents(value, props.audit))
     }
 
     return (
