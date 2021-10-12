@@ -1,13 +1,19 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+// Commons
+import { User } from 'fhooe-audit-platform-common'
+// Clients
+import { UserAPI } from '../../clients/rest'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { UsersLink } from '../snippets/Links'
+// Links
+import { UsersLink } from '../links/UsersLink'
+// Widgets
 import { UserSearchBar } from '../widgets/SearchBar'
 import { Column, Table } from '../widgets/Table'
-import { UserAPI } from '../../rest'
-import { User } from 'fhooe-audit-platform-common'
+// Images
 import * as UserIcon from '/src/images/user.png'
 import * as DeleteIcon from '../../../images/delete.png'
 

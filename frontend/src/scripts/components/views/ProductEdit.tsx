@@ -2,13 +2,20 @@ import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { Product, Version } from '../../data'
-import { ProductAPI, VersionAPI } from '../../rest'
+// Commons
+import { Product, Version } from 'fhooe-audit-platform-common'
+// Clients
+import { ProductAPI, VersionAPI } from '../../clients/rest'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { TextInput } from '../snippets/Inputs'
-import { ProductLink } from '../snippets/Links'
+// Links
+import { ProductLink } from '../links/ProductLink'
+// Inputs
+import { TextInput } from '../inputs/TextInput'
+// Widgets
 import { Column, Table } from '../widgets/Table'
+// Images
 import * as VersionIcon from '../../../images/version.png'
 import * as DeleteIcon from '../../../images/delete.png'
 

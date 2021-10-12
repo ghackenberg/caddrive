@@ -58,34 +58,6 @@ div.view > main nav > span:last-child > a {
     color: black;
 }
 
-div.view > main ul {
-    list-style: none;
-    margin: 0;
-    margin-left: calc(0.75em - 0.5px);
-    padding: 0;
-    white-space: nowrap;
-}
-div.view > main li {
-    padding-left: calc(1.25em - 0.5px);
-    border-left: 1px dashed black;
-}
-div.view > main li:last-child {
-    border-left: 0;
-}
-div.view > main li::before {
-    content: "";
-    display: block;
-    float: left;
-    width: calc(0.75em - 0.5px);
-    height: calc(0.75em - 0.5px);
-    margin-left: calc(-1.25em + 0.5px);
-    margin-right: 0.5em;
-    border-bottom: 1px dashed black;
-}
-div.view > main li:last-child::before {
-    border-left: 1px dashed black;
-}
-
 div.view > main p {
     margin: 0;
     padding-top: calc(0.75rem - 0.25em);
@@ -107,7 +79,7 @@ div.view > main h2 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-div.view > main form.user-input {
+div.view > main form {
     display: table;
     margin: 0;
     margin-top: 0.75em;
@@ -154,92 +126,18 @@ div.view > main form > div > div > input[type="reset"] {
 div.view > main form > div > div > input[type="reset"]:hover {
     background-color: darkgray;
 }
-div.view > main form > div > div > input.deleteItem[type="submit"] {
-    margin-left: 1.5em;
-    color: white;
-    background-color: brown;
-}
-div.view > main form > div > div > input.deleteItem[type="submit"]:hover {
-    background-color: lightcoral
-}
-div.view > main form > div > div > input.saveItem[type="submit"] {
+div.view > main form > div > div > input[type="submit"] {
     margin-left: 1.5em;
     color: white;
     background-color: steelblue;
 }
-div.view > main form > div > div > input.saveItem[type="submit"]:hover {
+div.view > main form > div > div > input[type="submit"]:hover {
     background-color: skyblue
 }
 div.view > main form > div > div > input[type="text"] {
     width: 90%
 }
-div.view > main form > div > div > a > input.enter-audit {
-    font-family: inherit;
-    font-size: inherit;
 
-    margin-left: 1em;
-
-    line-height: inherit;
-    
-    padding-top: calc(0.75rem - 0.25em);
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-bottom: calc(0.75rem - 0.25em);
-    
-    color: white;
-    background-color: darkseagreen;
-}
-div.view > main form > div > div > a > input.leave-audit {
-    font-family: inherit;
-    font-size: inherit;
-
-    line-height: inherit;
-    
-    padding-top: calc(0.75rem - 0.25em);
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-bottom: calc(0.75rem - 0.25em);
-    
-    color: white;
-    background-color: gray;
-}
-div.view > main form > div > div > a > input.enter-audit:hover {
-    background-color: greenyellow;
-}
-div.view > main form > div > div > a > input.enter-audit:hover {
-    background-color: yellowgreen;
-}
-
-div.view > main form > div > div > div.react-datepicker-wrapper > div.react-datepicker__input-container > input[type="text"] {
-    font-family: inherit;
-    font-size: inherit;
-
-    line-height: inherit;
-
-    padding-top: calc(0.75rem - 0.25em);
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-bottom: calc(0.75rem - 0.25em);
-
-    border: 0;
-    outline: 0;
-    width: 90%;
-
-    background-color: rgba(0,0,0,0.1);
-    color: black
-}
-div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control {
-    background-color: rgba(0,0,0,0.1);
-    color: black;
-    text-align: left;
-    position: inherit;
-}
-div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > div.Dropdown-placeholder {
-    color: grey
-}
-div.view > main form > div > div > div.Dropdown-root > div.Dropdown-control > div.Dropdown-placeholder.is-selected  {
-    color: black
-}
 div.view > main form > div > span.filter-search {
     font-family: inherit;
     font-size: inherit;
@@ -281,11 +179,6 @@ div.view > main > table > tbody > tr > td {
     padding-bottom: calc(0.75rem - 0.25em);
 
     border-bottom: 1px solid #ddd;
-}
-div.view > main > table > tbody > tr.create-icon > td > a:link > img {
-    padding-left: 0;
-    width: 2em;
-    height: auto;
 }
 
 div.view.demo > main {

@@ -1,10 +1,15 @@
-import { User } from 'fhooe-audit-platform-common'
 import * as React from 'react'
 import { Fragment } from 'react'
-import { auth } from '../../auth'
-import { UserAPI } from '../../rest'
+// Commons
+import { User } from 'fhooe-audit-platform-common'
+// Clients
+import { auth } from '../../clients/auth'
+import { UserAPI } from '../../clients/rest'
+// Snippets
 import { Header } from '../snippets/Header'
-import { EmailInput, TextInput } from '../snippets/Inputs'
+// Inputs
+import { EmailInput } from '../inputs/EmailInput'
+import { PasswordInput } from '../inputs/PasswordInput'
 
 export const LoginView = (props: {callback: (user: User) => void}) => {
 
@@ -58,12 +63,12 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                                         label='Email'
                                         placeholder='Type in email'
                                         value={email}
-                                        change={value => setEmail(value)}/>
-                                    <TextInput 
+                                        change={setEmail}/>
+                                    <PasswordInput 
                                         label='Password'
                                         placeholder='Type in password'
                                         value={password}
-                                        change={value => setPassword(value)}/>
+                                        change={setPassword}/>
                                     <div>
                                         <div/>
                                         <div>

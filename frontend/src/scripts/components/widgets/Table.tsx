@@ -6,6 +6,7 @@ export interface Column <T,> {
 }
 
 export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
+
     return (
         <table>
             <thead>
@@ -28,4 +29,5 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
             </tbody>
         </table>
     )
+    
 }

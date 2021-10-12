@@ -1,13 +1,20 @@
 import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
-import { Audit, Version, Product, CommentEvent, EventData } from 'fhooe-audit-platform-common/src/data'
-import { AuditAPI, EventAPI, ProductAPI, VersionAPI } from '../../rest'
+// Commons
+import { Audit, Version, Product, CommentEvent, EventData } from 'fhooe-audit-platform-common'
+// Clients
+import { AuditAPI, EventAPI, ProductAPI, VersionAPI } from '../../clients/rest'
+// Contexts
+import { UserContext } from '../../contexts/User'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { TextInput } from '../snippets/Inputs'
-import { AuditLink } from '../snippets/Links'
-import { UserContext } from '../../context'
+// Links
+import { AuditLink } from '../links/AuditLink'
+// Inputs
+import { TextInput } from '../inputs/TextInput'
+// Images
 import * as AuditIcon from '/src/images/audit.png'
 
 export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
@@ -79,7 +86,7 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
                                     label='Comment'
                                     placeholder={'Add here new comment'}
                                     value={''}
-                                    change={value => setComment(value)}/>
+                                    change={setComment}/>
                             <div>
                                 <div/>
                                 <div>

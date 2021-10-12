@@ -1,15 +1,21 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+// Commons
 import { Product } from 'fhooe-audit-platform-common'
-import { ProductAPI } from '../../rest'
+// Clients
+import { ProductAPI } from '../../clients/rest'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
+// Links
+import { ProductsLink } from '../links/ProductsLink'
+// Widgets
 import { ProductSearchBar } from '../widgets/SearchBar'
 import { Column, Table } from '../widgets/Table'
+// Images
 import * as ProductIcon from '/src/images/product.png'
 import * as DeleteIcon from '/src/images/delete.png'
-import { ProductsLink } from '../snippets/Links'
 
 export const ProductListView = () => {
     

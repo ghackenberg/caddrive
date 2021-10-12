@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
-import { Audit, Product, User, Version, EventData } from 'fhooe-audit-platform-common/src/data'
-import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../rest'
 import { Link } from 'react-router-dom'
-
+// Commons
+import { Audit, Product, User, Version, EventData } from 'fhooe-audit-platform-common'
+// Clients
+import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
 
 export const AuditSearchBar = (props: {change: (value: Audit[]) => void, versionSearch: string, addAudit?: boolean}) => {
 

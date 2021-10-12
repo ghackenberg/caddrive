@@ -5,6 +5,7 @@ import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 export class SceneView extends React.Component<{ model: GLTF }> {
+
     private div: React.RefObject<HTMLDivElement>
 
     private factory = new XRControllerModelFactory()
@@ -139,4 +140,5 @@ export class SceneView extends React.Component<{ model: GLTF }> {
     override render() {
         return <div className="widget scene_view" ref={this.div}/>
     }
+    
 }

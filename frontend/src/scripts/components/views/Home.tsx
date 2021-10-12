@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
 

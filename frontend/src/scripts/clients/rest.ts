@@ -1,5 +1,7 @@
 import axios from 'axios'
+// Commons
 import { Audit, AuditData, AuditREST, CommentEvent, CommentEventData, EventData, EventREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+// Globals
 import { auth } from './auth'
 
 class AuditClient implements AuditREST {  

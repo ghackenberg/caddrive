@@ -2,12 +2,18 @@ import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
+// Commons
 import { User } from 'fhooe-audit-platform-common'
-import { UserAPI } from '../../rest'
+// Clients
+import { UserAPI } from '../../clients/rest'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { EmailInput, TextInput } from '../snippets/Inputs'
-import { UserLink } from '../snippets/Links'
+// Links
+import { UserLink } from '../links/UserLink'
+// Inputs
+import { TextInput } from '../inputs/TextInput'
+import { EmailInput } from '../inputs/EmailInput'
 
 export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
 
@@ -55,16 +61,16 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                             </nav>
                             <h1>User editor</h1>
                             <form onSubmit={submit} onReset={reset} className='user-input'>
-                                <TextInput 
+                                <TextInput
                                     label='Username'
                                     placeholder='Type in username'
                                     value={user ? user.name : ''}
-                                    change={value => setName(value)}/>
+                                    change={setName}/>
                                 <EmailInput
                                     label='Email'
                                     placeholder='Type in email'
                                     value={user ? user.email : ''}
-                                    change={value => setEmail(value)}/>
+                                    change={setEmail}/>
                                 <div>
                                     <div/>
                                     <div>

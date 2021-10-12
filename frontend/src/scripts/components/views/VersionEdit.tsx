@@ -2,13 +2,21 @@ import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
+// Commons
 import { Audit, Product, Version} from 'fhooe-audit-platform-common'
-import { AuditAPI, ProductAPI, VersionAPI } from '../../rest'
+// Clients
+import { AuditAPI, ProductAPI, VersionAPI } from '../../clients/rest'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { DateInput, TextInput } from '../snippets/Inputs'
-import { VersionLink } from '../snippets/Links'
+// Links
+import { VersionLink } from '../links/VersionLink'
+// Inputs
+import { TextInput } from '../inputs/TextInput'
+import { DateInput } from '../inputs/DateInput'
+// Widgets
 import { Column, Table } from '../widgets/Table'
+// Images
 import * as AuditIcon from '../../../images/audit.png'
 import * as DeleteIcon from '../../../images/delete.png'
 
@@ -71,17 +79,17 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                         </nav>
                         <h1>Version editor</h1>
                         <form onSubmit={submit} onReset={reset} className='user-input'>                     
-                            <TextInput 
+                            <TextInput
                                 label='Version name'
                                 placeholder='Add here new version'
                                 value={version ? version.name : ''}
-                                change={value => setName(value)}
+                                change={setName}
                                 disabled={versionId != 'new'}/>
                             <DateInput
                                 label='Version date'
                                 placeholder='Select version date'
-                                change={date => setDate(date)}
-                                selected ={versionId != 'new' ? new Date(version.date) : date}
+                                change={setDate}
+                                value ={versionId != 'new' ? new Date(version.date) : date}
                                 disabled={versionId != 'new'}/>
                             <div>
                                 <div/>

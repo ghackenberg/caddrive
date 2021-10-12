@@ -2,13 +2,21 @@ import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { Audit, Product, Version, EventData, CommentEvent, User } from 'fhooe-audit-platform-common/src/data'
-import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../rest'
+// Commons
+import { Audit, Product, Version, EventData, CommentEvent, User } from 'fhooe-audit-platform-common'
+// Clients
+import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
+// Snippets
 import { Header } from '../snippets/Header'
 import { Navigation } from '../snippets/Navigation'
-import { DateInput, TextInput } from '../snippets/Inputs'
-import { AuditLink } from '../snippets/Links'
+// Links
+import { AuditLink } from '../links/AuditLink'
+// Inputs
+import { TextInput } from '../inputs/TextInput'
+import { DateInput } from '../inputs/DateInput'
+// Widgets
 import { Column, Table } from '../widgets/Table'
+// Images
 import * as EventIcon from '../../../images/event.png'
 import * as DeleteIcon from '../../../images/delete.png'
 
@@ -96,23 +104,23 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                         </nav>
                         <h1>Audit editor</h1>
                         <form onSubmit={submit} onReset={reset} className='user-input'>
-                            <TextInput  
-                                label='Audit name' 
+                            <TextInput
+                                label='Audit name'
                                 placeholder='Add new audit'
-                                value={auditId != 'new' ? audit.name : ''} 
-                                change={value => setName(value)}
+                                value={auditId != 'new' ? audit.name : ''}
+                                change={setName}
                                 disabled={auditId != 'new'}/>
-                            <DateInput  
+                            <DateInput
                                 label='Start time'
                                 placeholder='Select start date'
-                                change={date => setStart(date)}
-                                selected={auditId != 'new' ? new Date(audit.start) : start}
+                                change={setStart}
+                                value={auditId != 'new' ? new Date(audit.start) : start}
                                 disabled={auditId != 'new'}/>
                             <DateInput
                                 label='End time'
                                 placeholder='Select end date'
-                                change={date => setEnd(date)}
-                                selected={auditId != 'new' ? new Date(audit.end) : end}
+                                change={setEnd}
+                                value={auditId != 'new' ? new Date(audit.end) : end}
                                 disabled={auditId != 'new'}/>
                             <div>
                                 <div/>
