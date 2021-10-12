@@ -61,7 +61,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
     const columns: Column<Version>[] = [
         {label: 'Icon', content: _version => <img src={VersionIcon} style={{width: '1em'}}/>},
         {label: 'Name', content: version => <Link to={`/versions/${version.id}`}>{version.name}</Link>},
-        {label: 'Date', content: version => <Link to={`/versions/${version.id}`}>{version.date}</Link>},
+        {label: 'Date', content: version => <Link to={`/versions/${version.id}`}>{new Date(version.date).toISOString().slice(0, 10)}</Link>},
         {label: 'Delete', content: _version => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 

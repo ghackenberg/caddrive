@@ -69,8 +69,8 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     const columns: Column<Audit>[] = [
         {label: 'Icon', content: _audit => <img src={AuditIcon} style={{width: '1em'}}/>},
         {label: 'Name', content: audit => <Link to={`/audits/${audit.id}`}>{audit.name}</Link>},
-        {label: 'Start', content: audit => <Link to={`/audits/${audit.id}`}>{audit.start}</Link>},
-        {label: 'End', content: audit => <Link to={`/audits/${audit.id}`}>{audit.end}</Link>},
+        {label: 'Start', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.start).toISOString().slice(0, 10)}</Link>},
+        {label: 'End', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.end).toISOString().slice(0, 10)}</Link>},
         {label: 'Delete', content: _audit => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
         

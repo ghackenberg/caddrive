@@ -93,7 +93,7 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
         {label: 'Icon', content: _event => <img src={EventIcon} style={{width: '1em'}}/>},
         {label: 'User', content: event => event.user in users ? <span>{users[event.user].name} &lt;{users[event.user].email}&gt;</span> : <p>Loading...</p>},
         {label: 'Type', content: event => event.type},
-        {label: 'Time', content: event => event.time.toString()},
+        {label: 'Time', content: event => new Date(event.time).toISOString()},
         {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
         {label: 'Delete', content: _event => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
