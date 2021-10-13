@@ -7,13 +7,18 @@ import { VersionService } from '../versions/version.service'
 
 @Injectable()
 export class EventService implements EventREST {
-    private readonly events: (EventData & {id: string})[] = []
+    private events: (EventData & {id: string})[] = []
 
     public constructor (private auditService: AuditService, private versionService: VersionService, private productService: ProductService) {
 
     }
+
+    async deleteEvent(event: EventData & {id: string}): Promise<(EventData & {id: string})[]> {
+        this.events = this.events.filter(events => events.id != event.id)
+        return this.events
+    }
  
-    async findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string) {
+    async findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string): Promise<(EventData & {id: string})[]> {
 
         const result: (EventData & {id: string})[] = []
 
@@ -63,7 +68,7 @@ export class EventService implements EventREST {
         return result
     }
 
-    async enterEvent(enterEvent: EventData) {
+    async enterEvent(enterEvent: EventData): Promise<EventData & {id: string}> {
 
         const event: EventData & {id: string} = {id: shortid(), ...enterEvent}
 
@@ -72,7 +77,7 @@ export class EventService implements EventREST {
         return event
     }
 
-    async leaveEvent(leaveEvent: EventData) {
+    async leaveEvent(leaveEvent: EventData): Promise<EventData & {id: string}> {
 
         const event: EventData & {id: string} = {id: shortid(), ...leaveEvent}
 
@@ -81,7 +86,7 @@ export class EventService implements EventREST {
         return event
     }
 
-    async submitEvent(eventData: CommentEventData) {
+    async submitEvent(eventData: CommentEventData): Promise<CommentEvent> {
 
         const event: CommentEvent = {id: shortid(), ...eventData}
 

@@ -10,6 +10,21 @@ export class VersionService implements VersionREST {
     public constructor(private productService: ProductService) {
 
     }
+ 
+    async addVersion(data: VersionData): Promise<Version> {
+        const version = { id: shortid(), ...data }
+
+        this.versions.push(version)
+        
+        return version
+    }
+
+    async deleteVersion(version: Version): Promise<Version[]> {
+
+        this.versions = this.versions.filter(versions => versions.id != version.id);
+
+        return this.versions
+    }
 
     async findVersions(quick?: string, name?: string, product?: string) : Promise<Version[]> {
         const result: Version[] = []
@@ -49,22 +64,16 @@ export class VersionService implements VersionREST {
         return null
     }
 
-    async addVersion(data: VersionData): Promise<Version> {
-        const version = { id: shortid(), ...data }
-
-        this.versions.push(version)
+    async updateVersion(version: Version): Promise<Version> {
         
-        return version
-    }
+        for (var i = 0; i < this.versions.length; i++) {
+            if (this.versions[i].id == version.id && (
+                    this.versions[i].name != version.name ||
+                    this.versions[i].date != version.date)) {
 
-    async deleteVersion(version: Version): Promise<Version> {
-
-        for(var i = 0; i < this.versions.length; i++) {
-            if(this.versions[i].id == version.id) {
-                this.versions = this.versions.filter(versions => versions.id != version.id);
+                this.versions.splice(i,1,version)
             }
         }
-
         return version
     }
 }

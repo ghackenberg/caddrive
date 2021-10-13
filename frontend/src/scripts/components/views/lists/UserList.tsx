@@ -26,11 +26,15 @@ export const UserListView = () => {
     // Load entities
     useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 
+    async function deleteUser(user: User) {
+        setUsers(await UserAPI.deleteUser(user))
+    }
+
     const columns: Column<User>[] = [
         {label: 'Icon', content: _user => <img src={UserIcon} style={{width: '1em'}}/>},
         {label: 'Email', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
         {label: 'Name', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
-        {label: 'Delete', content: _audit => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: user => <a href="#" onClick={_event => deleteUser(user)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
     return (

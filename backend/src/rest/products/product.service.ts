@@ -6,6 +6,19 @@ import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
 export class ProductService implements ProductREST {
     private products: Product[] = [{name: 'Maschine A', id: 'TestProduct'}]
 
+    async addProduct(data: ProductData) {
+        const product = { id: shortid(), ...data }
+
+        this.products.push(product)
+        
+        return product
+    }
+
+    async deleteProduct(product: Product): Promise<Product[]> {
+        this.products = this.products.filter(products => products.id != product.id)
+        return this.products
+    }
+
     async findProducts(name?: string) : Promise<Product[]> {
         
         const result: Product[] = []
@@ -33,23 +46,11 @@ export class ProductService implements ProductREST {
         return null
     }
 
-    async addProduct(data: ProductData) {
-        const product = { id: shortid(), ...data }
-
-        this.products.push(product)
-        
-        return product
-    }
-
-    async updateProduct(product: Product) {
+    async updateProduct(product: Product): Promise<Product> {
         
         for (var i = 0; i < this.products.length; i++) {
-            if (this.products[i].id == product.id &&
-                this.products[i].name == product.name) {
 
-                this.products = this.products.filter(products => products.id != product.id)
-            }
-            else if (this.products[i].id == product.id &&
+            if (this.products[i].id == product.id &&
                     this.products[i].name != product.name) {
                         
                 this.products.splice(i,1,product)

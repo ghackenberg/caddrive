@@ -49,6 +49,10 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     useEffect(() => { version && setName(version.name) }, [version])
     useEffect(() => { version && setDate(new Date(version.date)) }, [version])
 
+    async function deleteAudit(audit: Audit) {
+        setAudits(await AuditAPI.deleteAudit(audit))
+    }
+
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
@@ -58,8 +62,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
             }
         } else {
             if (name && date) {
-                // TODO update version
-                alert('Not implemented yet!')
+                setVersion(await VersionAPI.updateVersion({ id: version.id, name, productId: version.productId, date: date.toString() }))
             }
         }
     }
@@ -73,7 +76,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
         {label: 'Name', content: audit => <Link to={`/audits/${audit.id}`}>{audit.name}</Link>},
         {label: 'Start', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.start).toISOString().slice(0, 10)}</Link>},
         {label: 'End', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.end).toISOString().slice(0, 10)}</Link>},
-        {label: 'Delete', content: _audit => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: audit => <a href="#" onClick={_event => deleteAudit(audit)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
         
     return (

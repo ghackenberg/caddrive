@@ -33,9 +33,16 @@ export class VersionController implements VersionREST {
     }
 
     @Put()
-    @ApiBody({ type: String })
-    @ApiResponse({ type: String })
-    async deleteVersion(@Body() version: Version): Promise<Version> {
+    @ApiBody({ type: Version })
+    @ApiResponse({ type: [Version] })
+    async deleteVersion(@Body() version: Version): Promise<Version[]> {
         return this.versionService.deleteVersion(version)
+    }
+
+    @Put(':id')
+    @ApiBody({ type: Version })
+    @ApiResponse({ type: Version })
+    async updateVersion(@Body() version: Version): Promise<Version> {
+        return this.versionService.updateVersion(version)
     }
 }

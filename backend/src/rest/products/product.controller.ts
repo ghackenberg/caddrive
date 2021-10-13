@@ -32,6 +32,13 @@ export class ProductController implements ProductREST {
 
     @Put()
     @ApiBody({ type: Product })
+    @ApiResponse({ type: [Product] })
+    async deleteProduct(@Body() product: Product): Promise<Product[]> {
+        return this.productService.deleteProduct(product)
+    }
+
+    @Put(':id')
+    @ApiBody({ type: Product })
     @ApiResponse({ type: Product })
     async updateProduct(@Body() product: Product): Promise<Product> {
         return this.productService.updateProduct(product)

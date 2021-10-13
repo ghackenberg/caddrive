@@ -41,6 +41,10 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
     // Load values
     useEffect(() => { product && setName(product.name) }, [product])
     
+    async function deleteVersion(version: Version) {
+        setVersions(await VersionAPI.deleteVersion(version))
+    }
+
     async function submit(event: FormEvent){
         event.preventDefault()
         if(productId == 'new') {
@@ -63,7 +67,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
         {label: 'Icon', content: _version => <img src={VersionIcon} style={{width: '1em'}}/>},
         {label: 'Name', content: version => <Link to={`/versions/${version.id}`}>{version.name}</Link>},
         {label: 'Date', content: version => <Link to={`/versions/${version.id}`}>{new Date(version.date).toISOString().slice(0, 10)}</Link>},
-        {label: 'Delete', content: _version => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: version => <a href="#" onClick={_event => deleteVersion(version)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
     return (

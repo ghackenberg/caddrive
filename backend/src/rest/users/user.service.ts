@@ -6,8 +6,21 @@ import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 export class UserService implements UserREST {
     private users: User[] = [{ id: 'default', name: 'test', email: '1234.1234@1234.com' }]
 
+    async addUser(data: UserData) {
+        const user = { id: shortid(), ...data }
+
+        this.users.push(user)
+        
+        return user
+    }
+
     async checkUser(): Promise<User> {
         return null
+    }
+
+    async deleteUser(user: User): Promise<User[]> {
+        this.users = this.users.filter(users => users.id != user.id)
+        return this.users
     }
 
     async findUsers(quick?: string, name?: string, email?: string) : Promise<User[]> {
@@ -50,31 +63,16 @@ export class UserService implements UserREST {
         return null
     }
 
-    async addUser(data: UserData) {
-        const user = { id: shortid(), ...data }
-
-        this.users.push(user)
-        
-        return user
-    }
-
-    async updateUser(user: User) {
+    async updateUser(user: User): Promise<User> {
         
         for (var i = 0; i < this.users.length; i++) {
-            if (this.users[i].id == user.id &&
-                this.users[i].name == user.name &&
-                this.users[i].email == user.email) {
-                
-                this.users = this.users.filter(users => users.id != user.id);
-            }
-            else if (this.users[i].id == user.id && (
-                    this.users[i].name == user.name ||
-                    this.users[i].email == user.email)) {
+            if (this.users[i].id == user.id && (
+                    this.users[i].name != user.name ||
+                    this.users[i].email != user.email)) {
 
                 this.users.splice(i,1,user)
             }
         }
-
         return user
     }
 }

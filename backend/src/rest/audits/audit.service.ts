@@ -12,26 +12,18 @@ export class AuditService implements AuditREST {
         
     }
 
-    /*
-    constructor() {
-        /*
-        var date = new Date()
+    async addAudit(data: AuditData): Promise<Audit> {
+        const audit = { id: shortid(), ...data }
 
-        for (var i = 0; i < Math.random() * 20; i++) {
-            this.audits.push({
-                id: shortid(),
-                name: shortid(),
-                start: date.getUTCFullYear() + '-' + date.getMonth() + '-' + date.getDate(),
-                end: date.getUTCFullYear() + '-' + (date.getMonth() + randomInteger(1,6)) + '-' + randomInteger(1,30),
-                version:
-            })
-        }
-
-        function randomInteger(min: number, max: number) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+        this.audits.push(audit)
+        
+        return audit
     }
-    */
+
+    async deleteAudit(audit: Audit): Promise<Audit[]> {
+        this.audits = this.audits.filter(audits => audits.id != audit.id)
+        return this.audits
+    }
 
     async findAudits(quick?: string, name?: string, product?: string, version?: string) : Promise<Audit[]> {
         
@@ -66,22 +58,6 @@ export class AuditService implements AuditREST {
             result.push(audit)
         }
         return result
-
-        /*
-        const auditsNameLower = this.audits.map(audit => audit.name.toLowerCase())
-
-        for (var i = 0; i < auditsNameLower.length; i++) {
-
-            if (!name || name != null && auditsNameLower[i].includes(name.toLowerCase())) {
-                if (!version || this.audits[i].versionId == version) {
-                    if (!product || (await this.versionService.getVersion(this.audits[i].versionId)).productId == product) {
-                        auditsQuery.push(this.audits[i])
-                    }
-                }
-            }
-        }
-
-        return auditsQuery */
     }
 
     async getAudit(id: string): Promise<Audit> {
@@ -91,28 +67,15 @@ export class AuditService implements AuditREST {
         }
         return null
     }
-    
-    async addAudit(data: AuditData) {
-        const audit = { id: shortid(), ...data }
 
-        this.audits.push(audit)
-        
-        return audit
-    }
-
-    async updateAudit(audit: Audit) {
+    async updateAudit(audit: Audit): Promise<Audit> {
         
         for (var i = 0; i < this.audits.length; i++) {
-            if (this.audits[i].id == audit.id &&
-                this.audits[i].name == audit.name &&
-                this.audits[i].versionId == audit.versionId &&
-                this.audits[i].start == audit.start &&
-                this.audits[i].end == audit.end) {
-
-                this.audits = this.audits.filter(audits => audits.id != audit.id)
-
-            }
-            else if (this.audits[i].id == audit.id){
+            if (this.audits[i].id == audit.id && (
+                this.audits[i].name != audit.name ||
+                this.audits[i].versionId != audit.versionId ||
+                this.audits[i].start != audit.start ||
+                this.audits[i].end != audit.end)){
 
                     this.audits.splice(i,1,audit)
             }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
 import { ApiBody, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { CommentEvent, CommentEventData, EventData, EventREST } from 'fhooe-audit-platform-common'
 import { EventService } from './event.service'
@@ -39,5 +39,12 @@ export class EventController implements EventREST {
     @ApiResponse({ type: CommentEventData })
     async submitEvent(@Body() submitEvent: CommentEventData): Promise<CommentEvent> {
         return this.eventService.submitEvent(submitEvent)
+    }
+
+    @Put()
+    @ApiBody({ type: EventData })
+    @ApiResponse({ type: [EventData] })
+    async deleteEvent(@Body() deleteEvent: EventData & {id: string}): Promise<(EventData & {id: string})[]> {
+        return this.eventService.deleteEvent(deleteEvent)
     }
 }

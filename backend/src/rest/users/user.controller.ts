@@ -26,6 +26,13 @@ export class UserController implements UserREST {
     async findUsers(@Query('quick') quick?: string, @Query('name') name?: string, @Query('email') email?: string): Promise<User[]> {
         return this.userService.findUsers(quick, name, email)
     }
+  
+    @Post()
+    @ApiBody({ type: UserData })
+    @ApiResponse({ type: User })
+    async addUser(@Body() user: UserData): Promise<User> {
+        return this.userService.addUser(user)
+    }
 
     @Get(':id')
     @ApiParam({ name: 'id' })
@@ -34,14 +41,14 @@ export class UserController implements UserREST {
         return this.userService.getUser(id)
     }
 
-    @Post()
-    @ApiBody({ type: UserData })
-    @ApiResponse({ type: User })
-    async addUser(@Body() user: UserData): Promise<User> {
-        return this.userService.addUser(user)
+    @Put()
+    @ApiBody({ type: User })
+    @ApiResponse({ type: [User] })
+    async deleteUser(@Body() user: User): Promise<User[]> {
+        return this.userService.deleteUser(user)
     }
 
-    @Put()
+    @Put(':id')
     @ApiBody({ type: User })
     @ApiResponse({ type: User })
     async updateUser(@Body() user: User): Promise<User> {

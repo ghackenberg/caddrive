@@ -71,6 +71,10 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
     useEffect(() => { audit && setStart(new Date(audit.start)) }, [audit])
     useEffect(() => { audit && setEnd(new Date(audit.end)) }, [audit])
 
+    async function deleteEvent(event: EventData & {id: string}) {
+        setEvents(await EventAPI.deleteEvent(event))
+    }
+
     async function submit(event: FormEvent){
         event.preventDefault()
         if (auditId == 'new') {
@@ -96,7 +100,7 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
         {label: 'Type', content: event => event.type},
         {label: 'Time', content: event => new Date(event.time).toISOString()},
         {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
-        {label: 'Delete', content: _event => <a href="#" onClick={_event => {}}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: event => <a href="#" onClick={_event => deleteEvent(event)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
     return (

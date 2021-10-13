@@ -35,6 +35,13 @@ export class AuditController implements AuditREST {
 
     @Put()
     @ApiBody({ type: Audit })
+    @ApiResponse({ type: [Audit] })
+    async deleteAudit(@Body() audit: Audit): Promise<Audit[]> {
+        return this.auditService.deleteAudit(audit)
+    }    
+
+    @Put(':id')
+    @ApiBody({ type: Audit })
     @ApiResponse({ type: Audit })
     async updateAudit(@Body() audit: Audit): Promise<Audit> {
         return this.auditService.updateAudit(audit)
