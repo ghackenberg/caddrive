@@ -16,6 +16,7 @@ import { AuditSearch } from '../../searches/AuditSearch'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
 import { DateInput } from '../../inputs/DateInput'
+import { FileInput } from '../../inputs/FileInput'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 // Images
@@ -35,6 +36,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     const [product, setProduct] = useState<Product>()
     const [version, setVersion] = useState<Version>()
     const [audits, setAudits] = useState<Audit[]>()
+    const [file, SetFileInput] = useState()
 
     // Define values
     const [name, setName] = useState<string>('')
@@ -65,6 +67,11 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                 setVersion(await VersionAPI.updateVersion({ id: version.id, name: name, productId: version.productId, date: date.toString() }))
             }
         }
+
+        if (file) {
+            //TODO:Add to backend
+            
+        }
     }
 
     async function reset(_event: React.FormEvent) {
@@ -93,6 +100,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                         <h2>Property form</h2>
                         <form onSubmit={submit} onReset={reset}>                     
                             <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                            <FileInput label='File' placeholder='Upload version' accept='.txt,.glb' change={SetFileInput}/>
                             <DateInput label='Date' placeholder='Select date' value={date} change={setDate}/>
                             <div>
                                 <div/>

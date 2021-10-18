@@ -114,10 +114,6 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                             <AuditLink audit={audit} version={version} product={product}/>                           
                         </nav>
                         <h1>Audit editor</h1>
-                        <h2>Audit action</h2>
-                        <p>
-                            <Link to={`/audits/${auditId}/join`}>Enter</Link>
-                        </p>
                         <h2>Property form</h2>
                         <form onSubmit={submit} onReset={reset}>
                             <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
@@ -133,11 +129,15 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                         </form>
                         {auditId != 'new' && (
                             <Fragment>
+                                <h2>Audit action</h2>
+                                <p>
+                                    <Link to={`/audits/${auditId}/join`}>Enter</Link>
+                                </p>
                                 <h2>Event list</h2>
                                 <h3>Search from</h3>
                                 <EventSearch audit={auditId} change={setEvents}/>
                                 <h3>Search list</h3>
-                                { events && <Table columns={columns} items={events}/> }
+                                <Table columns={columns} items={events}/> 
                             </Fragment>
                         )}
                     </Fragment>

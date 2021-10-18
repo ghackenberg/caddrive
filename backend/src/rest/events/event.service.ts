@@ -13,9 +13,15 @@ export class EventService implements EventREST {
 
     }
 
-    async deleteEvent(event: EventData & {id: string}): Promise<(EventData & {id: string})[]> {
+    async deleteEvent(event: EventData & {id: string} & { typeReq?: string }): Promise<(EventData & {id: string})[]> {
         this.events = this.events.filter(events => events.id != event.id)
-        return this.events
+
+        if (event.typeReq) {
+            return this.events.filter(events => events.type == event.typeReq)
+        }
+        else {
+            return this.events
+        }
     }
  
     async findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string): Promise<(EventData & {id: string})[]> {
@@ -29,10 +35,10 @@ export class EventService implements EventREST {
         
         for (var index = 0; index < this.events.length; index++) {
             const event = this.events[index]
-            const auditVersionId = (await this.auditService.getAudit(event.auditId)).versionId
-            const versionProductId = (await this.versionService.getVersion(auditVersionId)).productId
 
             if (quick) {
+                const auditVersionId = (await this.auditService.getAudit(event.auditId)).versionId
+                const versionProductId = (await this.versionService.getVersion(auditVersionId)).productId
                 const conditionA = (await this.auditService.getAudit(event.auditId)).name.toLowerCase().includes(quick)
                 const conditionB = event.type.toLowerCase().includes(quick)
                 const conditionC = event.user.toLowerCase().includes(quick)
@@ -53,10 +59,10 @@ export class EventService implements EventREST {
             if (user && event.user.toLowerCase().includes(user)) {
                 continue
             }
-            if (product && versionProductId != product) {
+            if (product && (await this.auditService.getAudit(event.auditId)).versionId != product) {
                 continue
             }
-            if (version && auditVersionId != version) {
+            if (version && (await this.versionService.getVersion((await this.auditService.getAudit(event.auditId)).versionId)).productId != version) {
                 continue
             }
             if (comment && (event.type != 'comment' || !(event as CommentEvent).text.toLowerCase().includes(comment))) {

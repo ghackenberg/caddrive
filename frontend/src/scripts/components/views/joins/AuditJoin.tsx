@@ -42,7 +42,7 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
     useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
     useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [audit])
     useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [props])
-    useEffect(() => { EventAPI.findEvents(undefined, auditId).then(setEvents) }, [props])
+    useEffect(() => { EventAPI.findEvents(undefined, auditId, 'comment').then(setEvents) }, [props])
     useEffect(() => {
         if (events) {
             const load: string[] = []
@@ -70,7 +70,9 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
     }, [props])
 
     async function deleteEvent(event: EventData & {id: string}) {
-        setEvents(await EventAPI.deleteEvent(event))
+        const eventType: EventData & {id: string} & {typeReq: string} = {typeReq: event.type, ...event}
+
+        setEvents(await EventAPI.deleteEvent(eventType))
     }
 
     async function submit(event: FormEvent) {

@@ -56,3 +56,6 @@ div.view > main form > div > div > input[type="submit"]:hover {
 div.view > main form > div > div > input[type="text"] {
     width: 90%
 }
+div.view > main form > div > div > input[type="file"] {
+    width: 90%
+}

@@ -29,7 +29,7 @@ class AuditClient implements AuditREST {
 
 class EventClient implements EventREST {
 
-    async deleteEvent(event: EventData & {id: string}): Promise<(EventData & { id: string })[]> {
+    async deleteEvent(event: EventData & {id: string} & {typeReq?: string}): Promise<(EventData & { id: string })[]> {
         return (await axios.put<(EventData & { id: string })[]>('/rest/events', event, { auth })).data
     }
 
