@@ -12,6 +12,7 @@ import { LoginView } from './views/Login'
 import { HomeView } from './views/Home'
 import { UserListView } from './views/lists/UserList'
 import { ProductListView } from './views/lists/ProductList'
+import { VersionListView } from './views/lists/VersionList'
 import { UserEditView } from './views/edits/UserEdit'
 import { ProductEditView } from './views/edits/ProductEdit'
 import { VersionEditView } from './views/edits/VersionEdit'
@@ -52,6 +53,7 @@ export const Root = () => {
                             <Route path="/products" component={ProductListView}/>
                             {/* Version views */}
                             <Route path="/versions/:version" component={VersionEditView}/>
+                            <Route path="/versions" component={VersionListView}/>
                             {/* Audit views */}
                             <Route path="/audits/:audit/join" component={AuditJoinView}/>
                             <Route path="/audits/:audit" component={AuditEditView}/>

@@ -13,11 +13,11 @@ export const ProductLink = (props: {product?: Product}) => {
             <ProductsLink/>
             { props.product ? (
                 <span>
-                    <Link to={`/products/${props.product.id}`}>{props.product.name}</Link>
+                    <Link to={`/versions?product=${props.product.id}`}>{props.product.name}</Link>
                 </span>
             ) : (
                 <span>
-                    <Link to={`/products/new`}>New</Link>
+                    <Link to={`/products/new`}>New product</Link>
                 </span>
             )}
         </Fragment>  

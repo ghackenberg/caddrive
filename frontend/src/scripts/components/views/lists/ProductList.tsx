@@ -16,6 +16,7 @@ import { ProductSearch } from '../../searches/ProductSearch'
 import { Column, Table } from '../../widgets/Table'
 // Images
 import * as ProductIcon from '/src/images/product.png'
+import * as EditIcon from '/src/images/edit.png'
 import * as DeleteIcon from '/src/images/delete.png'
 
 export const ProductListView = () => {
@@ -32,7 +33,8 @@ export const ProductListView = () => {
 
     const columns: Column<Product>[] = [
         {label: 'Icon', content: _product => <img src={ProductIcon} style={{width: '1em'}}/>},
-        {label: 'Product', content: product => <Link to={`/products/${product.id}`}>{product.name}</Link>},
+        {label: 'Product', content: product => <Link to={`/versions?product=${product.id}`}>{product.name}</Link>},
+        {label: 'Edit', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon} style={{width: '1em', height: '1em'}}/></Link>},
         {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
@@ -44,7 +46,7 @@ export const ProductListView = () => {
                 <nav>
                     <ProductsLink/>
                 </nav>
-                <h1>Product list (<Link to={`/products/new`}>+</Link>)</h1>
+                <h1>Products (<Link to={`/products/new`}>+</Link>)</h1>
                 <h2>Search from</h2>
                 <ProductSearch change={setProducts}/>
                 <h2>Search list</h2>
