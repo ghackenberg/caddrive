@@ -11,7 +11,7 @@ class AuditClient implements AuditREST {
     }
 
     async deleteAudit(audit: Audit): Promise<Audit[]> {
-        return (await axios.put<Audit[]>('rest/audits', audit, { auth })).data
+        return (await axios.put<Audit[]>('/rest/audits', audit, { auth })).data
     }
 
     async findAudits(quick?: string, name?: string, product?: string, version?: string): Promise<Audit[]> {
@@ -30,7 +30,7 @@ class AuditClient implements AuditREST {
 class EventClient implements EventREST {
 
     async deleteEvent(event: EventData & {id: string}): Promise<(EventData & { id: string })[]> {
-        return (await axios.put<(EventData & { id: string })[]>('rest/events', event, { auth })).data
+        return (await axios.put<(EventData & { id: string })[]>('/rest/events', event, { auth })).data
     }
 
     async enterEvent(enterEvent: EventData): Promise<EventData & { id: string }> {
