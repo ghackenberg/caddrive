@@ -99,10 +99,15 @@ class UserClient implements UserREST {
     }
 }
 
-class VersionClient implements VersionREST {
+class VersionClient implements VersionREST<File> {
     
-    async addVersion(version: VersionData): Promise<Version> {
-        return (await axios.post<Version>('/rest/versions', version, { auth })).data
+    async addVersion(version: VersionData, file: File): Promise<Version> {
+        const data = new FormData()
+        data.append('productId', version.productId)
+        data.append('name', version.name)
+        data.append('date', version.date)
+        data.append('file', file)
+        return (await axios.post<Version>('/rest/versions', data, { auth })).data
     }
 
     async deleteVersion(version: Version): Promise<Version[]> {
@@ -117,8 +122,14 @@ class VersionClient implements VersionREST {
         return (await axios.get<Version>(`/rest/versions/${id}`, { auth })).data
     }
 
-    async updateVersion(version: Version): Promise<Version> {
-        return (await axios.put<Version>(`/rest/versions/${version.id}`, version, { auth })).data
+    async updateVersion(version: Version, file?: File): Promise<Version> {
+        const data = new FormData()
+        data.append('id', version.id)
+        data.append('productId', version.productId)
+        data.append('name', version.name)
+        data.append('date', version.date)
+        data.append('file', file)
+        return (await axios.put<Version>(`/rest/versions/${version.id}`, data, { auth })).data
     }
 }
 

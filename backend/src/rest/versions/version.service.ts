@@ -1,17 +1,18 @@
+import 'multer'
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 import { ProductService } from '../products/product.service'
 
 @Injectable()
-export class VersionService implements VersionREST {
-    private versions: Version[] = [{name: 'Version 1', id: 'TestVersion', productId: 'TestProduct', date: new Date().toString()}]
+export class VersionService implements VersionREST<Express.Multer.File> {
+    private versions: Version[] = [{name: 'Version 1', id: 'TestVersion', productId: 'TestProduct', date: new Date().toISOString()}]
 
     public constructor(private productService: ProductService) {
 
     }
  
-    async addVersion(data: VersionData): Promise<Version> {
+    async addVersion(data: VersionData, _file: Express.Multer.File): Promise<Version> {
         const version = { id: shortid(), ...data }
 
         this.versions.push(version)
@@ -64,7 +65,7 @@ export class VersionService implements VersionREST {
         return null
     }
 
-    async updateVersion(version: Version): Promise<Version> {
+    async updateVersion(version: Version, _file?: Express.Multer.File): Promise<Version> {
         
         for (var i = 0; i < this.versions.length; i++) {
             if (this.versions[i].id == version.id && (

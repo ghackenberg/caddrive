@@ -36,11 +36,11 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     const [product, setProduct] = useState<Product>()
     const [version, setVersion] = useState<Version>()
     const [audits, setAudits] = useState<Audit[]>()
-    const [file, SetFileInput] = useState()
 
     // Define values
     const [name, setName] = useState<string>('')
     const [date, setDate] = useState<Date>(new Date())
+    const [file, setFile] = useState<File>()
 
     // Load entities
     useEffect(() => { (productId || version) && ProductAPI.getProduct(productId || version.productId).then(setProduct) }, [props, version])
@@ -59,18 +59,13 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
         event.preventDefault()
         if (versionId == 'new') {
             if (name && date) {
-                const version = await VersionAPI.addVersion({ productId: product.id, name: name, date: date.toString() })
+                const version = await VersionAPI.addVersion({ productId: product.id, name: name, date: date.toISOString() }, file)
                 history.replace(`/versions/${version.id}`)
             }
         } else {
             if (name && date) {
-                setVersion(await VersionAPI.updateVersion({ id: version.id, name: name, productId: version.productId, date: date.toString() }))
+                setVersion(await VersionAPI.updateVersion({ id: version.id, name: name, productId: version.productId, date: date.toISOString() }, file))
             }
-        }
-
-        if (file) {
-            //TODO:Add to backend
-            
         }
     }
 
@@ -100,7 +95,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                         <h2>Property form</h2>
                         <form onSubmit={submit} onReset={reset}>                     
                             <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                            <FileInput label='File' placeholder='Upload version' accept='.txt,.glb' change={SetFileInput}/>
+                            <FileInput label='File' placeholder='Select file' accept='.txt,.glb' change={setFile}/>
                             <DateInput label='Date' placeholder='Select date' value={date} change={setDate}/>
                             <div>
                                 <div/>

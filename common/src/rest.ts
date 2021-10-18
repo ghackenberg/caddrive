@@ -33,10 +33,10 @@ export interface UserREST {
     updateUser(user: User): Promise<User>
 }
 
-export interface VersionREST {
-    addVersion(version: VersionData): Promise<Version>
+export interface VersionREST<T> {
+    addVersion(version: VersionData, file: T): Promise<Version>
     deleteVersion(version: Version): Promise<Version[]>
     findVersions(quick?: string, name?: string, product?: string): Promise<Version[]>
     getVersion(id: string): Promise<Version>
-    updateVersion(version: Version): Promise<Version>
+    updateVersion(version: Version, file?: T): Promise<Version>
 }

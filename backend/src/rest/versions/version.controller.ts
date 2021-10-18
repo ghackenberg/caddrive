@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import 'multer'
+import { Body, Controller, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger'
 import { Version, VersionREST } from 'fhooe-audit-platform-common'
 import { VersionService } from './version.service'
 
 @Controller('rest/versions')
-export class VersionController implements VersionREST {
+export class VersionController implements VersionREST<Express.Multer.File> {
     constructor(private versionService: VersionService) {
 
     }
@@ -26,10 +28,11 @@ export class VersionController implements VersionREST {
     }
 
     @Post()
+    @UseInterceptors(FileInterceptor('file'))
     @ApiBody({ type: Version })
     @ApiResponse({ type: Version })
-    async addVersion(@Body() version: Version): Promise<Version> {
-        return this.versionService.addVersion(version)
+    async addVersion(@Body() version: Version, @UploadedFile() file: Express.Multer.File): Promise<Version> {
+        return this.versionService.addVersion(version, file)
     }
 
     @Put()
@@ -40,9 +43,10 @@ export class VersionController implements VersionREST {
     }
 
     @Put(':id')
+    @UseInterceptors(FileInterceptor('file'))
     @ApiBody({ type: Version })
     @ApiResponse({ type: Version })
-    async updateVersion(@Body() version: Version): Promise<Version> {
-        return this.versionService.updateVersion(version)
+    async updateVersion(@Body() version: Version, @UploadedFile() file?: Express.Multer.File): Promise<Version> {
+        return this.versionService.updateVersion(version, file)
     }
 }
