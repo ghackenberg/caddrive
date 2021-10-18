@@ -35,9 +35,10 @@ export class AuditService implements AuditREST {
         for (var index = 0; index < this.audits.length; index++) {
 
             const audit = this.audits[index]
-            const versionProductId = (await this.versionService.getVersion(audit.versionId)).productId
+            //const versionProductId = (await this.versionService.getVersion(audit.versionId)).productId
 
             if (quick) {
+                const versionProductId = (await this.versionService.getVersion(audit.versionId)).productId
                 const conditionA = audit.name.toLowerCase().includes(quick)
                 const conditionB = (await this.productService.getProduct(versionProductId)).name.toLowerCase().includes(quick)
                 const conditionC = (await this.versionService.getVersion(audit.versionId)).name.toLowerCase().includes(quick)
@@ -49,7 +50,7 @@ export class AuditService implements AuditREST {
             if (name && !audit.name.toLowerCase().includes(name)) {
                 continue
             }
-            if (product && versionProductId != product) {
+            if (product && (await this.versionService.getVersion(audit.versionId)).productId != product) {
                 continue
             }
             if (version && audit.versionId != version) {

@@ -57,12 +57,12 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
         event.preventDefault()
         if (versionId == 'new') {
             if (name && date) {
-                const version = await VersionAPI.addVersion({ productId, name, date: date.toString() })
+                const version = await VersionAPI.addVersion({ productId: product.id, name: name, date: date.toString() })
                 history.replace(`/versions/${version.id}`)
             }
         } else {
             if (name && date) {
-                setVersion(await VersionAPI.updateVersion({ id: version.id, name, productId: version.productId, date: date.toString() }))
+                setVersion(await VersionAPI.updateVersion({ id: version.id, name: name, productId: version.productId, date: date.toString() }))
             }
         }
     }
