@@ -4,12 +4,19 @@ import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class UserService implements UserREST {
-    private users: User[] = [{ id: 'default', name: 'test', email: '1234.1234@1234.com' }]
+
+    private static users: User[] = [{ id: 'default', name: 'test', email: '1234.1234@1234.com', password: 'RRQ+kDaceIlmBEUtCk667DZj9EwXXFgUkt+jVsF6ghk=' }]
 
     async addUser(data: UserData) {
         const user = { id: shortid(), ...data }
 
-        this.users.push(user)
+        //var crypto = require('crypto-js');
+        //const salt = data.email
+
+        //var algo = crypto.algo.SHA256.create()
+        //algo.encrypt(crypto.enc.Base64)
+
+        UserService.users.push(user)
         
         return user
     }
@@ -19,8 +26,9 @@ export class UserService implements UserREST {
     }
 
     async deleteUser(user: User): Promise<User[]> {
-        this.users = this.users.filter(users => users.id != user.id)
-        return this.users
+        
+        UserService.users = UserService.users.filter(users => users.id != user.id)
+        return UserService.users
     }
 
     async findUsers(quick?: string, name?: string, email?: string) : Promise<User[]> {
@@ -31,9 +39,9 @@ export class UserService implements UserREST {
         name = name ? name.toLowerCase() : undefined
         email = email ? email.toLowerCase() : undefined
 
-        for (var index = 0; index < this.users.length; index++) {
+        for (var index = 0; index < UserService.users.length; index++) {
 
-            const user = this.users[index]
+            const user = UserService.users[index]
 
             if (quick) {
                 const conditionA = user.name.toLowerCase().includes(quick)
@@ -56,21 +64,21 @@ export class UserService implements UserREST {
     }
 
     async getUser(id: string): Promise<User> {
-        for (var j = 0; j < this.users.length; j++) {
-            if (this.users[j].id == id)
-                return this.users[j]
+        for (var j = 0; j < UserService.users.length; j++) {
+            if (UserService.users[j].id == id)
+                return UserService.users[j]
         }
         return null
     }
 
     async updateUser(user: User): Promise<User> {
         
-        for (var i = 0; i < this.users.length; i++) {
-            if (this.users[i].id == user.id && (
-                    this.users[i].name != user.name ||
-                    this.users[i].email != user.email)) {
+        for (var i = 0; i < UserService.users.length; i++) {
+            if (UserService.users[i].id == user.id && (
+                UserService.users[i].name != user.name ||
+                UserService.users[i].email != user.email)) {
 
-                this.users.splice(i,1,user)
+                    UserService.users.splice(i,1,user)
             }
         }
         return user

@@ -53,6 +53,8 @@ export class UserData {
     name: string
     @ApiProperty()
     email: string
+    @ApiProperty()
+    password: string
 }
 
 export class User extends UserData {

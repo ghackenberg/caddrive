@@ -2,7 +2,7 @@ import * as React from 'react'
 // Inputs
 import { GenericInput } from './GenericInput'
 
-export const PasswordInput = (props: {label: string, change?: (value: string) => void, value: string, placeholder?: string, disabled?: boolean}) => {
+export const PasswordInput = (props: {label: string, change?: (value: string) => void, value?: string, placeholder?: string, disabled?: boolean}) => {
     return (
         <GenericInput label={props.label}>
             <input

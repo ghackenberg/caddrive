@@ -14,6 +14,7 @@ import { UserLink } from '../../links/UserLink'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
 import { EmailInput } from '../../inputs/EmailInput'
+import { PasswordInput } from '../../inputs/PasswordInput'
 
 export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
 
@@ -27,6 +28,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
     // Define values
     const [email, setEmail] = useState<string>('')
     const [name, setName] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
 
     // Load entities
     useEffect(() => { userId == 'new' || UserAPI.getUser(userId).then(setUser) }, [props])
@@ -39,14 +41,25 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                const user = await UserAPI.addUser({ name, email })
+                const user = await UserAPI.addUser({ name: name, email: email, password: encrypt(email, password) })
                 history.replace(`/users/${user.id}`)
             }
         } else {
             if (name && email) {
-                setUser(await UserAPI.updateUser({ id: user.id, name, email}))
+                setUser(await UserAPI.updateUser({ id: user.id, name: name, email: email, password: encrypt(email, password)}))
             }
         }       
+    }
+
+    function encrypt(email: string, password: string) {
+        var crypto = require('crypto-js');
+
+        var algo = crypto.algo.SHA256.create()
+        algo.update(password, 'utf-8')
+        algo.update(crypto.SHA256(email), 'utf-8')
+        var hash = algo.finalize().toString(crypto.enc.Base64)
+
+        return hash
     }
 
     async function reset() {
@@ -66,8 +79,9 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                         <h1>User editor</h1>
                         <h2>Property form</h2>
                         <form onSubmit={submit} onReset={reset}>
-                            <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                             <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                            <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
+                            <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
                             <div>
                                 <div/>
                                 <div>

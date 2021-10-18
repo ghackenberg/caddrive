@@ -21,6 +21,7 @@
     "dependencies": {
         "axios": "^0.21.1",
         "buffer": "^5.7.1",
+        "crypto-js": "^4.1.1",
         "fhooe-audit-platform-common": "^1.0.0",
         "http-server": "^0.12.3",
         "mqtt": "^4.2.6",

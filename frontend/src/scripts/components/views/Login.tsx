@@ -22,7 +22,10 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
         setLoad(true)
 
         auth.username = email
-        auth.password = password
+        auth.password = password.endsWith('=') ? password : encrypt(email, password)
+
+        console.log(email, password)
+        console.log(auth.username, auth.password)
         
         try {
             props.callback(await UserAPI.checkUser())
@@ -36,13 +39,24 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
         event.preventDefault()
 
         localStorage.setItem('username', email)
-        localStorage.setItem('password', password)
+        localStorage.setItem('password', encrypt(email, password))
 
         await check()
     }
     async function reset() {
         setEmail('')
         setPassword('')
+    }
+
+    function encrypt(email: string, password: string) {
+        var crypto = require('crypto-js');
+
+        var algo = crypto.algo.SHA256.create()
+        algo.update(password, 'utf-8')
+        algo.update(crypto.SHA256(email), 'utf-8')
+        var hash = algo.finalize().toString(crypto.enc.Base64)
+
+        return hash
     }
 
     React.useEffect(() => { check() }, [])
@@ -60,7 +74,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                             {error && <p style={{color: 'red'}}>{error}</p>}
                             <form onSubmit={submit} onReset={reset}>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
+                                <PasswordInput label='Password' placeholder='Type password' change={setPassword}/>
                                 <div>
                                     <div/>
                                     <div>
