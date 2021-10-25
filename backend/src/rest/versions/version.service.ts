@@ -1,16 +1,20 @@
 import 'multer'
-import { Injectable } from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 import { ProductService } from '../products/product.service'
+import { AuditService } from '../audits/audit.service'
 
 @Injectable()
 export class VersionService implements VersionREST<Express.Multer.File> {
     private versions: Version[] = [{name: 'Version 1', id: 'TestVersion', productId: 'TestProduct', date: new Date().toISOString()}]
 
-    public constructor(private productService: ProductService) {
-
-    }
+    public constructor(
+        @Inject(forwardRef(() => ProductService))
+        private productService: ProductService,
+        @Inject(forwardRef(() => AuditService))
+        private auditService: AuditService
+    ) {}
  
     async addVersion(data: VersionData, _file: Express.Multer.File): Promise<Version> {
         const version = { id: shortid(), ...data }
@@ -20,9 +24,17 @@ export class VersionService implements VersionREST<Express.Multer.File> {
         return version
     }
 
-    async deleteVersion(version: Version): Promise<Version[]> {
+    async deleteVersion(id: string, productId?: string): Promise<Version[]> {
 
-        this.versions = this.versions.filter(versions => versions.id != version.id);
+        if (id) {
+            this.versions = this.versions.filter(versions => versions.id != id)
+            this.auditService.deleteAudit(undefined, id)
+        }
+
+        if (productId) {
+            this.versions = this.versions.filter(versions => versions.productId != productId)
+            this.auditService.deleteAudit(undefined, id)
+        }
 
         return this.versions
     }
