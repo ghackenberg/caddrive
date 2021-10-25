@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Post, Put, Query, Scope, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
@@ -41,11 +41,11 @@ export class UserController implements UserREST {
         return this.userService.getUser(id)
     }
 
-    @Put()
-    @ApiBody({ type: User })
+    @Delete(':id')
+    @ApiParam({ name: 'id' })
     @ApiResponse({ type: [User] })
-    async deleteUser(@Body() user: User): Promise<User[]> {
-        return this.userService.deleteUser(user)
+    async deleteUser(@Param('id') id: string): Promise<User[]> {
+        return this.userService.deleteUser(id)
     }
 
     @Put(':id')

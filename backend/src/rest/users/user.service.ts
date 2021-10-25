@@ -25,9 +25,9 @@ export class UserService implements UserREST {
         return null
     }
 
-    async deleteUser(user: User): Promise<User[]> {
+    async deleteUser(id: string): Promise<User[]> {
         
-        UserService.users = UserService.users.filter(users => users.id != user.id)
+        UserService.users = UserService.users.filter(users => users.id != id)
         return UserService.users
     }
 

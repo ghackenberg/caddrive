@@ -27,15 +27,15 @@ export const ProductListView = () => {
     // Load entities
     useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
 
-    async function deleteProduct(product: Product) {
-        setProducts(await ProductAPI.deleteProduct(product))
+    async function deleteProduct(productId: string) {
+        setProducts(await ProductAPI.deleteProduct(productId))
     }
 
     const columns: Column<Product>[] = [
         {label: 'Icon', content: _product => <img src={ProductIcon} style={{width: '1em'}}/>},
         {label: 'Product', content: product => <Link to={`/versions?product=${product.id}`}>{product.name}</Link>},
         {label: 'Edit', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon} style={{width: '1em', height: '1em'}}/></Link>},
-        {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
     return (

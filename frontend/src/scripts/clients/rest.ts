@@ -10,8 +10,8 @@ class AuditClient implements AuditREST {
         return (await axios.post<Audit>('/rest/audits', audit, { auth })).data
     }
 
-    async deleteAudit(audit: Audit): Promise<Audit[]> {
-        return (await axios.put<Audit[]>('/rest/audits', audit, { auth })).data
+    async deleteAudit(id: string): Promise<Audit[]> {
+        return (await axios.delete<Audit[]>(`/rest/audits/${id}`, { params: { id }, auth })).data
     }
 
     async findAudits(quick?: string, name?: string, product?: string, version?: string): Promise<Audit[]> {
@@ -30,7 +30,7 @@ class AuditClient implements AuditREST {
 class EventClient implements EventREST {
 
     async deleteEvent(event: EventData & {id: string} & {typeReq?: string}): Promise<(EventData & { id: string })[]> {
-        return (await axios.put<(EventData & { id: string })[]>('/rest/events', event, { auth })).data
+        return (await axios.put<(EventData & { id: string })[]>(`/rest/events`, event , { auth })).data
     }
 
     async enterEvent(enterEvent: EventData): Promise<EventData & { id: string }> {
@@ -56,12 +56,12 @@ class ProductClient implements ProductREST {
         return (await axios.post<Product>('/rest/products', product, { auth })).data
     }
 
-    async deleteProduct(product: Product): Promise<Product[]> {
-        return (await axios.put<Product[]>('rest/products', product, { auth })).data
+    async deleteProduct(id: string): Promise<Product[]> {
+        return (await axios.delete<Product[]>(`rest/products/${id}`, { params: { id } , auth })).data
     }
 
     async findProducts(name?: string): Promise<Product[]> {
-        return (await axios.get<Product[]>(`/rest/products`, { params: {name}, auth })).data
+        return (await axios.get<Product[]>(`/rest/products`, { params: { name }, auth })).data
     }
 
     async getProduct(id: string): Promise<Product> {
@@ -82,8 +82,8 @@ class UserClient implements UserREST {
         return (await axios.get<User>('/rest/users/check', { auth })).data
     }
 
-    async deleteUser(user: User): Promise<User[]> {
-        return (await axios.put<User[]>('rest/users', user, { auth })).data
+    async deleteUser(id: string): Promise<User[]> {
+        return (await axios.delete<User[]>(`rest/users/${id}`, { params: { id }, auth })).data
     }
 
     async findUsers(quick?: string, name?: string, email?: string): Promise<User[]> {
@@ -110,8 +110,8 @@ class VersionClient implements VersionREST<File> {
         return (await axios.post<Version>('/rest/versions', data, { auth })).data
     }
 
-    async deleteVersion(version: Version): Promise<Version[]> {
-        return (await axios.put<Version[]>('/rest/versions', version, { auth })).data
+    async deleteVersion(id: string): Promise<Version[]> {
+        return (await axios.delete<Version[]>(`/rest/versions/${id}`, { params: { id }, auth })).data
     }
 
     async findVersions(quick?: string, name?: string, product?: string): Promise<Version[]> {

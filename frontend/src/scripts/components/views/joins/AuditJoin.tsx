@@ -42,7 +42,7 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
     useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
     useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [audit])
     useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [props])
-    useEffect(() => { EventAPI.findEvents(undefined, auditId, 'comment').then(setEvents) }, [props])
+    useEffect(() => { EventAPI.findEvents(undefined, auditId).then(setEvents) }, [props])
     useEffect(() => {
         if (events) {
             const load: string[] = []

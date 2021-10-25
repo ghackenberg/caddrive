@@ -1,10 +1,16 @@
-import { Injectable } from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
+import { VersionService } from '../versions/version.service'
 
 @Injectable()
 export class ProductService implements ProductREST {
     private products: Product[] = [{name: 'Maschine A', id: 'TestProduct'}]
+
+    public constructor(
+        @Inject(forwardRef(() => VersionService))
+        private versionService: VersionService,
+    ) {}
 
     async addProduct(data: ProductData) {
         const product = { id: shortid(), ...data }
@@ -14,8 +20,11 @@ export class ProductService implements ProductREST {
         return product
     }
 
-    async deleteProduct(product: Product): Promise<Product[]> {
-        this.products = this.products.filter(products => products.id != product.id)
+    async deleteProduct(id: string): Promise<Product[]> {
+        this.products = this.products.filter(products => products.id != id)
+
+        this.versionService.deleteVersion(undefined, id)
+
         return this.products
     }
 

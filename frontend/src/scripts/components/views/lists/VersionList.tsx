@@ -33,15 +33,15 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
     useEffect(() => { VersionAPI.findVersions(undefined, undefined, productId).then(setVersions) }, [])
 
-    async function deleteVersion(version: Version) {
-        setVersions(await VersionAPI.deleteVersion(version))
+    async function deleteVersion(versionId: string) {
+        setVersions(await VersionAPI.deleteVersion(versionId))
     }
 
     const columns: Column<Version>[] = [
         {label: 'Icon', content: _version => <img src={VersionIcon} style={{width: '1em'}}/>},
         {label: 'Name', content: version => <Link to={`/versions/${version.id}`}>{version.name}</Link>},
         {label: 'Date', content: version => <Link to={`/versions/${version.id}`}>{new Date(version.date).toISOString().slice(0, 10)}</Link>},
-        {label: 'Delete', content: version => <a href="#" onClick={_event => deleteVersion(version)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: version => <a href="#" onClick={_event => deleteVersion(version.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
     return (

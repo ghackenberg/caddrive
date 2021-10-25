@@ -51,8 +51,8 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     useEffect(() => { version && setName(version.name) }, [version])
     useEffect(() => { version && setDate(new Date(version.date)) }, [version])
 
-    async function deleteAudit(audit: Audit) {
-        setAudits(await AuditAPI.deleteAudit(audit))
+    async function deleteAudit(auditId: string) {
+        setAudits(await AuditAPI.deleteAudit(auditId))
     }
 
     async function submit(event: FormEvent){
@@ -78,7 +78,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
         {label: 'Name', content: audit => <Link to={`/audits/${audit.id}`}>{audit.name}</Link>},
         {label: 'Start', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.start).toISOString().slice(0, 10)}</Link>},
         {label: 'End', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.end).toISOString().slice(0, 10)}</Link>},
-        {label: 'Delete', content: audit => <a href="#" onClick={_event => deleteAudit(audit)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: audit => <a href="#" onClick={_event => deleteAudit(audit.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
         
     return (

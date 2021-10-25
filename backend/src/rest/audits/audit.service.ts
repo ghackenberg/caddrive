@@ -1,16 +1,24 @@
-import { Injectable } from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
 import { VersionService } from '../versions/version.service'
 import { ProductService } from '../products/product.service'
+import { EventService } from '../events/event.service'
 
 @Injectable()
 export class AuditService implements AuditREST {
     private audits: Audit[] = [{name: 'Audit 1', id: 'TestAudit', versionId: 'TestVersion', start: new Date().toString(), end: new Date().toString()}]
 
-    constructor(private productService: ProductService, private versionService: VersionService) {
-        
-    }
+    public constructor(
+        @Inject(forwardRef(() => VersionService))
+        private versionService: VersionService,
+
+        @Inject(forwardRef(() => EventService))
+        private eventService: EventService,
+
+        @Inject(forwardRef(() => ProductService))
+        private productService: ProductService
+    ) {}
 
     async addAudit(data: AuditData): Promise<Audit> {
         const audit = { id: shortid(), ...data }
@@ -20,8 +28,17 @@ export class AuditService implements AuditREST {
         return audit
     }
 
-    async deleteAudit(audit: Audit): Promise<Audit[]> {
-        this.audits = this.audits.filter(audits => audits.id != audit.id)
+    async deleteAudit(id: string, versionId?: string,): Promise<Audit[]> {
+
+        if (id) {
+            this.audits = this.audits.filter(audits => audits.id != id)
+        }
+        if (versionId) {
+            this.audits = this.audits.filter(audits => audits.versionId != versionId)
+            this.eventService.deleteEvent(undefined, id)
+        }
+
+
         return this.audits
     }
 
@@ -35,7 +52,6 @@ export class AuditService implements AuditREST {
         for (var index = 0; index < this.audits.length; index++) {
 
             const audit = this.audits[index]
-            //const versionProductId = (await this.versionService.getVersion(audit.versionId)).productId
 
             if (quick) {
                 const versionProductId = (await this.versionService.getVersion(audit.versionId)).productId

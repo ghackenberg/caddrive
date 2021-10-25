@@ -2,7 +2,7 @@ import { Audit, AuditData, CommentEvent, CommentEventData, EventData, Product, P
 
 export interface AuditREST {
     addAudit(audit: AuditData): Promise<Audit>
-    deleteAudit(audit: Audit): Promise<Audit[]>
+    deleteAudit(id: string): Promise<Audit[]>
     findAudits(quick?: string, name?: string, product?: string, version?: string): Promise<Audit[]>
     getAudit(id: string): Promise<Audit>
     updateAudit(audit: Audit): Promise<Audit>
@@ -18,7 +18,7 @@ export interface EventREST {
 
 export interface ProductREST {
     addProduct(product: ProductData): Promise<Product>
-    deleteProduct(product: Product): Promise<Product[]>
+    deleteProduct(id: string): Promise<Product[]>
     findProducts(name?: string): Promise<Product[]>
     getProduct(id: string): Promise<Product>
     updateProduct(product: Product): Promise<Product>
@@ -27,7 +27,7 @@ export interface ProductREST {
 export interface UserREST {
     addUser(user: UserData): Promise<User>
     checkUser(): Promise<User>
-    deleteUser(user: User): Promise<User[]>
+    deleteUser(id: string): Promise<User[]>
     findUsers(quick?: string, name?: string, email?: string): Promise<User[]>
     getUser(id: string): Promise<User>
     updateUser(user: User): Promise<User>
@@ -35,7 +35,7 @@ export interface UserREST {
 
 export interface VersionREST<T> {
     addVersion(version: VersionData, file: T): Promise<Version>
-    deleteVersion(version: Version): Promise<Version[]>
+    deleteVersion(id: string): Promise<Version[]>
     findVersions(quick?: string, name?: string, product?: string): Promise<Version[]>
     getVersion(id: string): Promise<Version>
     updateVersion(version: Version, file?: T): Promise<Version>

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { EventREST, CommentEventData, EventData, CommentEvent } from 'fhooe-audit-platform-common'
 import * as shortid from 'shortid'
 import { AuditService } from '../audits/audit.service'
@@ -9,17 +9,29 @@ import { VersionService } from '../versions/version.service'
 export class EventService implements EventREST {
     private events: (EventData & {id: string})[] = []
 
-    public constructor (private auditService: AuditService, private versionService: VersionService, private productService: ProductService) {
+    public constructor (
+        @Inject(forwardRef(() => AuditService))
+        private auditService: AuditService, 
 
-    }
+        @Inject(forwardRef(() => VersionService))
+        private versionService: VersionService,
 
-    async deleteEvent(event: EventData & {id: string} & { typeReq?: string }): Promise<(EventData & {id: string})[]> {
+        @Inject(forwardRef(() => ProductService)) 
+        private productService: ProductService
+    ) { }
+
+    async deleteEvent(event: EventData & {id: string} & { typeReq?: string }, auditId?: string): Promise<(EventData & {id: string})[]> {
         this.events = this.events.filter(events => events.id != event.id)
 
         if (event.typeReq) {
             return this.events.filter(events => events.type == event.typeReq)
         }
         else {
+
+            if (auditId) {
+                this.events = this.events.filter(events => events.auditId != auditId)
+            }
+
             return this.events
         }
     }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common'
 import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
 import { AuditService } from './audit.service'
@@ -33,11 +33,11 @@ export class AuditController implements AuditREST {
         return this.auditService.addAudit(audit)
     }
 
-    @Put()
-    @ApiBody({ type: Audit })
+    @Delete(':id')
+    @ApiParam({ name: 'id' })
     @ApiResponse({ type: [Audit] })
-    async deleteAudit(@Body() audit: Audit): Promise<Audit[]> {
-        return this.auditService.deleteAudit(audit)
+    async deleteAudit(@Param('id') id: string): Promise<Audit[]> {
+        return this.auditService.deleteAudit(id)
     }    
 
     @Put(':id')

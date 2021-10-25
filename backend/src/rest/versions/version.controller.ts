@@ -1,5 +1,5 @@
 import 'multer'
-import { Body, Controller, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger'
 import { Version, VersionREST } from 'fhooe-audit-platform-common'
@@ -35,12 +35,14 @@ export class VersionController implements VersionREST<Express.Multer.File> {
         return this.versionService.addVersion(version, file)
     }
 
-    @Put()
-    @ApiBody({ type: Version })
+    @Delete(':id')
+    @ApiParam({ name: 'id' })
     @ApiResponse({ type: [Version] })
-    async deleteVersion(@Body() version: Version): Promise<Version[]> {
-        return this.versionService.deleteVersion(version)
+    async deleteVersion(@Param('id') id: string): Promise<Version[]> {
+        return this.versionService.deleteVersion(id)
     }
+
+
 
     @Put(':id')
     @UseInterceptors(FileInterceptor('file'))
