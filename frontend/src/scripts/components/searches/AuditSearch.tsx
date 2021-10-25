@@ -4,7 +4,7 @@ import { Audit } from 'fhooe-audit-platform-common'
 // Clients
 import { AuditAPI } from '../../clients/rest'
 // Inputs
-import { TextInput } from '../inputs/TextInput'
+import { SearchInput } from '../inputs/SearchInput'
 
 export const AuditSearch = (props: {version: string, change: (value: Audit[]) => void}) => {
 
@@ -15,9 +15,7 @@ export const AuditSearch = (props: {version: string, change: (value: Audit[]) =>
     }
 
     return (
-        <form>
-            <TextInput label="Quick search" placeholder="Type query" value={value} change={value => {setValue(value), change(value)}}/>
-        </form>
+        <SearchInput placeholder="Type query" value={value} change={value => {setValue(value), change(value)}}/>
     )
 
 }

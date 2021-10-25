@@ -93,7 +93,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                         </nav>
                         <h1>Version editor</h1>
                         <h2>Property form</h2>
-                        <form onSubmit={submit} onReset={reset}>                     
+                        <form onSubmit={submit} onReset={reset} className='data-input'>                     
                             <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                             <FileInput label='File' placeholder='Select file' accept='.txt,.glb' change={setFile}/>
                             <DateInput label='Date' placeholder='Select date' value={date} change={setDate}/>

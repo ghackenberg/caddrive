@@ -62,7 +62,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                             <ProductLink product={product}/>
                         </nav>
                         <h1>{product ? product.name : 'New product'}</h1>
-                        <form onSubmit={submit} onReset={reset}>
+                        <form onSubmit={submit} onReset={reset} className='data-input'>
                             <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                             <div>
                                 <div/>

@@ -5,6 +5,7 @@
 @import url(./main/form.css);
 @import url(./main/table.css);
 @import url(./main/list.css);
+@import url(./main/search.css);
 
 div.view > main {
     position: absolute;

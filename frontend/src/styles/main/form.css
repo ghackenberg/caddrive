@@ -1,4 +1,4 @@
-div.view > main form {
+div.view > main form.data-input {
     display: table;
     margin: 0;
     margin-top: 0.75em;
@@ -8,19 +8,19 @@ div.view > main form {
     border-collapse: separate;
     background-color: rgba(0,0,0,0.1);
 }
-div.view > main form > div {
+div.view > main form.data-input > div {
     display: table-row;
 }
-div.view > main form > div > div {
+div.view > main form.data-input > div > div {
     display: table-cell;
 }
-div.view > main form > div > div:last-child {
+div.view > main form.data-input > div > div:last-child {
     text-align: right;
 }
-div.view > main form > div > div > label::after {
+div.view > main form.data-input > div > div > label::after {
     content: ":";
 }
-div.view > main form > div > div > input {
+div.view > main form.data-input > div > div > input {
     font-family: inherit;
     font-size: inherit;
 
@@ -37,25 +37,25 @@ div.view > main form > div > div > input {
     background-color: rgba(0,0,0,0.1);
     color: black
 }
-div.view > main form > div > div > input[type="reset"] {
+div.view > main form.data-input > div > div > input[type="reset"] {
     margin-left: 1.5em;
     color: white;
     background-color: gray;
 }
-div.view > main form > div > div > input[type="reset"]:hover {
+div.view > main form.data-input > div > div > input[type="reset"]:hover {
     background-color: darkgray;
 }
-div.view > main form > div > div > input[type="submit"] {
+div.view > main form.data-input > div > div > input[type="submit"] {
     margin-left: 1.5em;
     color: white;
     background-color: steelblue;
 }
-div.view > main form > div > div > input[type="submit"]:hover {
+div.view > main form.data-input > div > div > input[type="submit"]:hover {
     background-color: skyblue
 }
-div.view > main form > div > div > input[type="text"] {
+div.view > main form.data-input > div > div > input[type="text"] {
     width: 90%
 }
-div.view > main form > div > div > input[type="file"] {
+div.view > main form.data-input > div > div > input[type="file"] {
     width: 90%
 }

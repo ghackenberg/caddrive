@@ -72,7 +72,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                     ) : (
                         <Fragment>
                             {error && <p style={{color: 'red'}}>{error}</p>}
-                            <form onSubmit={submit} onReset={reset}>
+                            <form onSubmit={submit} onReset={reset} className='data-input'>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                 <PasswordInput label='Password' placeholder='Type password' change={setPassword}/>
                                 <div>

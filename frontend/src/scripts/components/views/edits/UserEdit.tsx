@@ -78,7 +78,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                         </nav>
                         <h1>User editor</h1>
                         <h2>Property form</h2>
-                        <form onSubmit={submit} onReset={reset}>
+                        <form onSubmit={submit} onReset={reset} className='data-input'>
                             <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                             <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                             <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
