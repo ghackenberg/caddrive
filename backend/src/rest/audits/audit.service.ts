@@ -35,7 +35,7 @@ export class AuditService implements AuditREST {
         }
         if (versionId) {
             this.audits = this.audits.filter(audits => audits.versionId != versionId)
-            this.eventService.deleteEvent(undefined, id)
+            this.eventService.deleteEvent(null, id)
         }
 
 

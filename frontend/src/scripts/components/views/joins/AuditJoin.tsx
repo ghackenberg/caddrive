@@ -112,7 +112,7 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
                         <h1>Audit editor</h1>
                         <h2>Audit action</h2>
                         <p>
-                            <Link to={`/audits/${auditId}`}>Leave</Link>
+                            <Link to={`/events?audit=${auditId}`}>Leave</Link>
                         </p>
                         <h2>Comment form</h2>
                         <form onSubmit={submit} onReset={reset} className='data-input'>

@@ -21,6 +21,8 @@ import { AuditJoinView } from './views/joins/AuditJoin'
 import { ModelView } from './views/Model'
 // Images
 import * as PlatformIcon from '/src/images/platform.png'
+import { AuditListView } from './views/lists/AuditList'
+import { EventListView } from './views/lists/EventList'
 
 export const Root = () => {
 
@@ -57,6 +59,9 @@ export const Root = () => {
                             {/* Audit views */}
                             <Route path="/audits/:audit/join" component={AuditJoinView}/>
                             <Route path="/audits/:audit" component={AuditEditView}/>
+                            <Route path="/audits" component={AuditListView}/>
+                            {/* Event views */}
+                            <Route path="/events" component={EventListView}/>
                             {/* Model views */}
                             <Route path="/models/:model" component={ModelView}/>
                             {/* Home view */}

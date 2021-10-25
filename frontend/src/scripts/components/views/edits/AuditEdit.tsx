@@ -1,26 +1,19 @@
 import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { useHistory } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 // Commons
-import { Audit, Product, Version, EventData, CommentEvent, User } from 'fhooe-audit-platform-common'
+import { Audit, Product, Version } from 'fhooe-audit-platform-common'
 // Clients
-import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../../clients/rest'
+import { AuditAPI, ProductAPI, VersionAPI } from '../../../clients/rest'
 // Snippets
 import { Header } from '../../snippets/Header'
 import { Navigation } from '../../snippets/Navigation'
 // Links
 import { AuditLink } from '../../links/AuditLink'
-// Searches
-import { EventSearch } from '../../searches/EventSearch'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
 import { DateInput } from '../../inputs/DateInput'
-// Widgets
-import { Column, Table } from '../../widgets/Table'
-// Images
-import * as EventIcon from '/src/images/event.png'
-import * as DeleteIcon from '/src/images/delete.png'
 
 export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -35,8 +28,6 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
     const [product, setProduct] = useState<Product>()
     const [version, setVersion] = useState<Version>()
     const [audit, setAudit] = useState<Audit>()
-    const [events, setEvents] = useState<(EventData & {id: string})[]>()
-    const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Define values
     const [name, setName] = useState<string>('')
@@ -44,48 +35,29 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
     const [end, setEnd] = useState<Date>(new Date())
 
     // Load entities
-    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
-    useEffect(() => { (versionId || audit) && VersionAPI.getVersion(versionId || audit.versionId).then(setVersion) }, [props, audit])
+    useEffect(() => { auditId == 'new' && VersionAPI.getVersion(versionId).then(setVersion) }, [props])
+    useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [props, audit])
+    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [props, version])
     useEffect(() => { auditId == 'new' || AuditAPI.getAudit(auditId).then(setAudit) }, [props])
-    useEffect(() => { auditId == 'new' || EventAPI.findEvents(undefined, auditId).then(setEvents) }, [props])
-    useEffect(() => {
-        if (events) {
-            const load: string[] = []
-            events.forEach(event => {
-                if (!(event.user in users)) {
-                    load.push(event.user)
-                }
-            })
-            load.forEach(userId => {
-                UserAPI.getUser(userId).then(user => {
-                    const dict = {...users}
-                    dict[userId] = user
-                    setUsers(dict)
-                })
-            })
-        }
-    }, [props, events])
 
     // Load values
     useEffect(() => { audit && setName(audit.name) }, [audit])
     useEffect(() => { audit && setStart(new Date(audit.start)) }, [audit])
     useEffect(() => { audit && setEnd(new Date(audit.end)) }, [audit])
 
-    async function deleteEvent(event: EventData & {id: string}) {
-        setEvents(await EventAPI.deleteEvent(event))
-    }
 
     async function submit(event: FormEvent){
         event.preventDefault()
         if (auditId == 'new') {
             if (name && start.getDate() != null && end.getDate() != null) {
-                const audit = await AuditAPI.addAudit({ versionId, name, start: start.toISOString(), end: end.toISOString()})
-                history.replace(`/audits/${audit.id}`)
+                const audit = await AuditAPI.addAudit({ versionId: version.id, name: name, start: start.toISOString(), end: end.toISOString()})
+                history.replace(`/events?audit=${audit.id}`)
             }
         }
         else {
             if (name && start.getDate() != null && end.getDate() != null) {
-                setAudit(await AuditAPI.updateAudit({id: audit.id, versionId: audit.versionId, name, start: start.toISOString(), end: end.toISOString()}))
+                setAudit(await AuditAPI.updateAudit({id: audit.id, versionId: audit.versionId, name: name, start: start.toISOString(), end: end.toISOString()}))
+                history.replace(`/events?audit=${audit.id}`)
             }
         }
     }
@@ -93,15 +65,6 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
     async function reset() {
         history.goBack()
     }
-
-    const columns: Column<EventData & {id: string}>[] = [
-        {label: 'Icon', content: _event => <img src={EventIcon} style={{width: '1em'}}/>},
-        {label: 'User', content: event => event.user in users ? <span>{users[event.user].name} &lt;{users[event.user].email}&gt;</span> : <p>Loading...</p>},
-        {label: 'Type', content: event => event.type},
-        {label: 'Time', content: event => new Date(event.time).toISOString()},
-        {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
-        {label: 'Delete', content: event => <a href="#" onClick={_event => deleteEvent(event)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
-    ]
 
     return (
         <div className='view audit'>
@@ -127,19 +90,6 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                                 </div>
                             </div>
                         </form>
-                        {auditId != 'new' && (
-                            <Fragment>
-                                <h2>Audit action</h2>
-                                <p>
-                                    <Link to={`/audits/${auditId}/join`}>Enter</Link>
-                                </p>
-                                <h2>Event list</h2>
-                                <h3>Search from</h3>
-                                <EventSearch audit={auditId} change={setEvents}/>
-                                <h3>Search list</h3>
-                                <Table columns={columns} items={events}/> 
-                            </Fragment>
-                        )}
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

@@ -44,7 +44,7 @@ export class EventController implements EventREST {
     @Put()
     @ApiBody({ type: EventData })
     @ApiResponse({ type: [EventData] })
-    async deleteEvent(@Body() deleteEvent: EventData & {id: string} & { typeReq?: string }): Promise<(EventData & {id: string})[]> {
+    async deleteEvent(@Body() deleteEvent?: EventData & {id: string} & { typeReq?: string }): Promise<(EventData & {id: string})[]> {
         return this.eventService.deleteEvent(deleteEvent)
     }
 }

@@ -13,11 +13,11 @@ export const AuditLink = (props: {product: Product, version: Version, audit?: Au
             <VersionLink product={props.product} version={props.version}/>
             { props.audit ? (
                 <span>
-                    <Link to={`/audits/${props.audit.id}`}>{props.audit.name}</Link>
+                    <Link to={`/events?audit=${props.audit.id}`}>{props.audit.name}</Link>
                 </span>
             ) : (
                 <span>
-                    <Link to={`/audits/new?version=${props.version.id}`}>New</Link>
+                    <Link to={`/audit/new?version=${props.version.id}`}>New</Link>
                 </span>
             )}
         </Fragment>  

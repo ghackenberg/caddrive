@@ -9,7 +9,7 @@ export interface AuditREST {
 }
 
 export interface EventREST {
-    deleteEvent(event: EventData & { id: string } & { typeReq?: string }): Promise<(EventData & {id: string})[]>
+    deleteEvent(event?: EventData & { id: string } & { typeReq?: string }): Promise<(EventData & {id: string})[]>
     findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string): Promise<(EventData  & { id: string })[]>
     enterEvent(enterEvent: EventData): Promise<EventData & { id: string }>
     leaveEvent(leaveEvent: EventData): Promise<EventData & { id: string }>
