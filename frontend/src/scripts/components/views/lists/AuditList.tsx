@@ -16,6 +16,7 @@ import { AuditSearch } from '../../searches/AuditSearch'
 import { Column, Table } from '../../widgets/Table'
 // Images
 import * as AuditIcon from '/src/images/audit.png'
+import * as AddIcon from '/src/images/add.png'
 import * as EditIcon from '/src/images/edit.png'
 import * as DeleteIcon from '/src/images/delete.png'
 
@@ -58,11 +59,10 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
                         <nav>
                             <VersionLink version={version} product={product}/>
                         </nav>
-                        <h1>{version.name} (<Link to={`/versions/${versionId}`}>edit</Link>)</h1>
-                        <h2>Audits (<Link to={`/audits/new?version=${versionId}`}>+</Link>)</h2>
-                        <h3>Search from</h3>
-                        <AuditSearch version={versionId} change={setAudits}/>
+                        <h1>{version.name} <Link to={`/versions/${versionId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
+                        <h2>Audits <Link to={`/audits/new?version=${versionId}`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h2>
                         <h3>Search list</h3>
+                        <AuditSearch version={versionId} change={setAudits}/>
                         <Table columns={columns} items={audits}/>
                     </Fragment>
                 ) : (

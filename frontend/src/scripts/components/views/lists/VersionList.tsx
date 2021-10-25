@@ -16,6 +16,7 @@ import { VersionSearch } from '../../searches/VersionSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 // Images
+import * as AddIcon from '/src/images/add.png'
 import * as VersionIcon from '/src/images/version.png'
 import * as EditIcon from '/src/images/edit.png'
 import * as DeleteIcon from '/src/images/delete.png'
@@ -56,11 +57,10 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
                         <nav>
                             <ProductLink product={product}/>
                         </nav>
-                        <h1>{product.name} (<Link to={`/products/${productId}`}>edit</Link>)</h1>
-                        <h2>Versions (<Link to={`/versions/new?product=${productId}`}>+</Link>)</h2>
-                        <h3>Search from</h3>
-                        <VersionSearch product={productId} change={setVersions}/>
+                        <h1>{product.name} <Link to={`/products/${productId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
+                        <h2>Versions <Link to={`/versions/new?product=${productId}`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h2>
                         <h3>Search list</h3>
+                        <VersionSearch product={productId} change={setVersions}/>
                         <Table columns={columns} items={versions}/>
                     </React.Fragment>
                 ) : (

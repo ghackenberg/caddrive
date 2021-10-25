@@ -15,6 +15,7 @@ import { UserSearch } from '../../searches/UserSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 // Images
+import * as AddIcon from '/src/images/add.png'
 import * as UserIcon from '/src/images/user.png'
 import * as DeleteIcon from '/src/images/delete.png'
 
@@ -45,10 +46,9 @@ export const UserListView = () => {
                 <nav>
                     <UsersLink/>
                 </nav>
-                <h1>User list (<Link to={`/users/new`}>+</Link>)</h1>
-                <h2>Search from</h2>
-                <UserSearch change={setUsers}/>
+                <h1>User list <Link to={`/users/new`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h1>
                 <h2>Search list</h2>
+                <UserSearch change={setUsers}/>
                 { users && <Table columns={columns} items={users}/> }
             </main>
         </div>

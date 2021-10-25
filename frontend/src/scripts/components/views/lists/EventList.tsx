@@ -15,6 +15,7 @@ import { EventSearch } from '../../searches/EventSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 // Images
+import * as EditIcon from '/src/images/edit.png'
 import * as EventIcon from '/src/images/event.png'
 import * as DeleteIcon from '/src/images/delete.png'
 
@@ -78,11 +79,10 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
                         <nav>
                             <AuditLink audit={audit} version={version} product={product}/>                           
                         </nav>
-                        <h1>{audit.name} (<Link to={`/audits/${auditId}`}>edit</Link>)</h1>
+                        <h1>{audit.name} <Link to={`/audits/${auditId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
                         <p><Link to={`/audits/${auditId}/join`}>Enter</Link></p>
-                        <h3>Search from</h3>
-                        <EventSearch audit={auditId} change={setEvents}/>
                         <h3>Search list</h3>
+                        <EventSearch audit={auditId} change={setEvents}/>
                         <Table columns={columns} items={events}/> 
                     </Fragment>
                 ) : (

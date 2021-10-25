@@ -15,6 +15,7 @@ import { ProductSearch } from '../../searches/ProductSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 // Images
+import * as AddIcon from '/src/images/add.png'
 import * as ProductIcon from '/src/images/product.png'
 import * as EditIcon from '/src/images/edit.png'
 import * as DeleteIcon from '/src/images/delete.png'
@@ -46,10 +47,9 @@ export const ProductListView = () => {
                 <nav>
                     <ProductsLink/>
                 </nav>
-                <h1>Products (<Link to={`/products/new`}>+</Link>)</h1>
-                <h2>Search from</h2>
-                <ProductSearch change={setProducts}/>
+                <h1>Products <Link to={`/products/new`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h1>                
                 <h2>Search list</h2>
+                <ProductSearch change={setProducts}/>
                 { products && <Table columns={columns} items={products}/> }
             </main>
         </div>

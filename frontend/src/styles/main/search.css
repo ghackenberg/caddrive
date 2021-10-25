@@ -2,7 +2,7 @@ div.view > main form.search-input > span > input.header-search {
     border-spacing: 0.5em;
     background-color: white;
     margin-top: 0.75em;
-    margin-bottom: 1.5em;
+    margin-bottom: 0.75em;
 
     font-family: inherit;
     font-size: inherit;
