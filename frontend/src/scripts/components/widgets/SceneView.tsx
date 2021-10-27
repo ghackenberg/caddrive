@@ -4,7 +4,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class SceneView extends React.Component<{ model: GLTF }> {
+export class SceneView extends React.Component<{ model: GLTF, vr: boolean }> {
 
     private div: React.RefObject<HTMLDivElement>
 
@@ -22,7 +22,7 @@ export class SceneView extends React.Component<{ model: GLTF }> {
 
     private fullscreen = false
 
-    constructor(props: { model: GLTF }) {
+    constructor(props: { model: GLTF, vr: boolean }) {
         super(props)
         // Create
         this.div = React.createRef()
@@ -80,14 +80,18 @@ export class SceneView extends React.Component<{ model: GLTF }> {
         this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
         this.camera.position.z = 5
         // Button
-        this.button = VRButton.createButton(this.renderer)
-        this.button.addEventListener('click', () => {
-            this.fullscreen = !this.fullscreen
-            this.resize()
-        })
+        if (this.props.vr) {
+            this.button = VRButton.createButton(this.renderer)
+            this.button.addEventListener('click', () => {
+                this.fullscreen = !this.fullscreen
+                this.resize()
+            })
+        }
         // Append
         this.div.current.appendChild(this.renderer.domElement)
-        this.div.current.appendChild(this.button)
+        if (this.props.vr) {
+            this.div.current.appendChild(this.button)
+        }
         // Listen
         window.addEventListener('resize', this.resize)
         // Resize

@@ -17,7 +17,7 @@ export const UserLink = (props: {user?: User}) => {
                 </span>
             ) : (
                 <span>
-                    <Link to={`/users/new`}>New</Link>
+                    <Link to={`/users/new`}>New user</Link>
                 </span>
             )}
         </Fragment>  

@@ -19,6 +19,7 @@ import { Column, Table } from '../../widgets/Table'
 // Images
 import * as EventIcon from '/src/images/event.png'
 import * as DeleteIcon from '/src/images/delete.png'
+import { ModelView } from '../../widgets/ModelView'
 
 export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -106,26 +107,31 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
             <main>
                 { product && version && audit && events ? (
                     <Fragment>
-                        <nav>
-                            <AuditLink product={product} version={version} audit={audit}/>
-                        </nav>
-                        <h1>Audit editor</h1>
-                        <h2>Audit action</h2>
-                        <p>
-                            <Link to={`/events?audit=${auditId}`}>Leave</Link>
-                        </p>
-                        <h2>Comment form</h2>
-                        <form onSubmit={submit} onReset={reset} className='data-input'>
-                            <TextInput label='Text' placeholder={'Type text'} value={text} change={setText}/>
-                            <div>
-                                <div/>
+                        <div>
+                            <nav>
+                                <AuditLink product={product} version={version} audit={audit}/>
+                            </nav>
+                            <h1>Audit editor</h1>
+                            <h2>Audit action</h2>
+                            <p>
+                                <Link to={`/events?audit=${auditId}`}>Leave</Link>
+                            </p>
+                            <h2>Comment form</h2>
+                            <form onSubmit={submit} onReset={reset} className='data-input'>
+                                <TextInput label='Text' placeholder={'Type text'} value={text} change={setText}/>
                                 <div>
-                                    <input type='submit' value='Submit'/>
+                                    <div/>
+                                    <div>
+                                        <input type='submit' value='Submit'/>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                        <h2>Event list</h2>
-                        <Table columns={columns} items={events}/>
+                            </form>
+                            <h2>Event list</h2>
+                            <Table columns={columns} items={events}/>
+                        </div>
+                        <div>
+                            <ModelView url={`/rest/models/${version.id}`}/>
+                        </div>
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

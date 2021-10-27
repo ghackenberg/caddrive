@@ -21,17 +21,16 @@ export class EventService implements EventREST {
     ) { }
 
     async deleteEvent(event?: EventData & {id: string} & { typeReq?: string }, auditId?: string): Promise<(EventData & {id: string})[]> {
-        this.events = this.events.filter(events => events.id != event.id)
-
+        
         if (auditId) {
             this.events = this.events.filter(events => events.auditId != auditId)
         }
-        if (event.typeReq) {
+        if (event.typeReq && !auditId) {
             return this.events.filter(events => events.type == event.typeReq)
         }
         else {
 
-            return this.events
+            return this.events = this.events.filter(events => events.id != event.id)
         }
     }
  

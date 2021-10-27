@@ -65,6 +65,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
         <div className="view login">
             <Header/>
             <main>
+                <div>
                 <Fragment>
                     <h1>Login to Virtual Engineering Platform</h1>
                     {load ? (
@@ -86,6 +87,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                         </Fragment>
                     )}
                 </Fragment>
+                </div>
             </main>
         </div>
     )

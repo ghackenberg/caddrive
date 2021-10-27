@@ -14,6 +14,7 @@ import { ProductsLink } from '../../links/ProductsLink'
 import { ProductSearch } from '../../searches/ProductSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
+import { ProductView } from '../../widgets/ProductView'
 // Images
 import * as AddIcon from '/src/images/add.png'
 import * as ProductIcon from '/src/images/product.png'
@@ -34,6 +35,7 @@ export const ProductListView = () => {
 
     const columns: Column<Product>[] = [
         {label: 'Icon', content: _product => <img src={ProductIcon} style={{width: '1em'}}/>},
+        {label: 'Model', content: product => <ProductView id={product.id}/>},
         {label: 'Product', content: product => <Link to={`/versions?product=${product.id}`}>{product.name}</Link>},
         {label: 'Edit', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon} style={{width: '1em', height: '1em'}}/></Link>},
         {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
@@ -44,13 +46,15 @@ export const ProductListView = () => {
             <Header/>
             <Navigation/>
             <main>
-                <nav>
-                    <ProductsLink/>
-                </nav>
-                <h1>Products <Link to={`/products/new`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h1>                
-                <h2>Search list</h2>
-                <ProductSearch change={setProducts}/>
-                { products && <Table columns={columns} items={products}/> }
+                <div>
+                    <nav>
+                        <ProductsLink/>
+                    </nav>
+                    <h1>Products <Link to={`/products/new`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h1>                
+                    <h2>Search list</h2>
+                    <ProductSearch change={setProducts}/>
+                    { products && <Table columns={columns} items={products}/> }
+                </div>
             </main>
         </div>
     )

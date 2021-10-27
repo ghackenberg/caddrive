@@ -18,6 +18,7 @@ import { Column, Table } from '../../widgets/Table'
 import * as EditIcon from '/src/images/edit.png'
 import * as EventIcon from '/src/images/event.png'
 import * as DeleteIcon from '/src/images/delete.png'
+import { ModelView } from '../../widgets/ModelView'
 
 export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -70,20 +71,25 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
     ]
 
     return (
-        <div className='view audit'>
+        <div className='view sidebar audit'>
             <Header/>
             <Navigation/>
             <main>
                 { events && audit && version && product ? (
                     <Fragment>
-                        <nav>
-                            <AuditLink audit={audit} version={version} product={product}/>                           
-                        </nav>
-                        <h1>{audit.name} <Link to={`/audits/${auditId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
-                        <p><Link to={`/audits/${auditId}/join`}>Enter</Link></p>
-                        <h3>Search list</h3>
-                        <EventSearch audit={auditId} change={setEvents}/>
-                        <Table columns={columns} items={events}/> 
+                        <div>
+                            <nav>
+                                <AuditLink audit={audit} version={version} product={product}/>                           
+                            </nav>
+                            <h1>{audit.name} <Link to={`/audits/${auditId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
+                            <p><Link to={`/audits/${auditId}/join`}>Enter</Link></p>
+                            <h3>Search list</h3>
+                            <EventSearch audit={auditId} change={setEvents}/>
+                            <Table columns={columns} items={events}/> 
+                        </div>
+                        <div>
+                            <ModelView url={`/rest/models/${version.id}`}/>
+                        </div>
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

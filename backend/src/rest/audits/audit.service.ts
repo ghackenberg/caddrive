@@ -34,8 +34,9 @@ export class AuditService implements AuditREST {
             this.audits = this.audits.filter(audits => audits.id != id)
         }
         if (versionId) {
+            const audit = this.audits.find(audit => audit.versionId == versionId)
+            this.eventService.deleteEvent(undefined, audit.id)
             this.audits = this.audits.filter(audits => audits.versionId != versionId)
-            this.eventService.deleteEvent(null, id)
         }
 
 

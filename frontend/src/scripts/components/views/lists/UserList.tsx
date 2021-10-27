@@ -43,13 +43,15 @@ export const UserListView = () => {
             <Header/>
             <Navigation/>
             <main>
-                <nav>
-                    <UsersLink/>
-                </nav>
-                <h1>User list <Link to={`/users/new`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h1>
-                <h2>Search list</h2>
-                <UserSearch change={setUsers}/>
-                { users && <Table columns={columns} items={users}/> }
+                <div>
+                    <nav>
+                        <UsersLink/>
+                    </nav>
+                    <h1>User list <Link to={`/users/new`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h1>
+                    <h2>Search list</h2>
+                    <UserSearch change={setUsers}/>
+                    { users && <Table columns={columns} items={users}/> }
+                </div>
             </main>
         </div>
     )

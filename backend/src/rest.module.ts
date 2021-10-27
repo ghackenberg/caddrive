@@ -4,9 +4,10 @@ import { ProductModule } from './rest/products/product.module'
 import { UserModule } from './rest/users/user.module'
 import { VersionModule } from './rest/versions/version.module'
 import { EventModule } from './rest/events/event.module'
+import { ModelModule } from './rest/models/model.module'
 
 @Module({
-    imports: [AuditModule, EventModule, ProductModule, UserModule, VersionModule]
+    imports: [AuditModule, EventModule, ProductModule, UserModule, VersionModule, ModelModule]
 })
 export class RESTModule {
 

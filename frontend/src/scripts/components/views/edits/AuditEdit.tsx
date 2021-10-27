@@ -73,23 +73,25 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
             <main>
                 { (auditId == 'new' || audit) && version && product ? (
                     <Fragment>
-                        <nav>
-                            <AuditLink audit={audit} version={version} product={product}/>                           
-                        </nav>
-                        <h1>Audit editor</h1>
-                        <h2>Property form</h2>
-                        <form onSubmit={submit} onReset={reset} className='data-input'>
-                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                            <DateInput label='Start' placeholder='Select start' value={start} change={setStart}/>
-                            <DateInput label='End' placeholder='Select end' value={end} change={setEnd}/>
-                            <div>
-                                <div/>
+                        <div>
+                            <nav>
+                                <AuditLink audit={audit} version={version} product={product}/>                           
+                            </nav>
+                            <h1>Audit editor</h1>
+                            <h2>Property form</h2>
+                            <form onSubmit={submit} onReset={reset} className='data-input'>
+                                <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                                <DateInput label='Start' placeholder='Select start' value={start} change={setStart}/>
+                                <DateInput label='End' placeholder='Select end' value={end} change={setEnd}/>
                                 <div>
-                                    { auditId == 'new' && <input type='reset' value='Cancel'/> }
-                                    <input type='submit' value='Save'/>
+                                    <div/>
+                                    <div>
+                                        { auditId == 'new' && <input type='reset' value='Cancel'/> }
+                                        <input type='submit' value='Save'/>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

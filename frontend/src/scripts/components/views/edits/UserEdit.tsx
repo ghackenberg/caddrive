@@ -73,23 +73,25 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
             <main>
                 { userId == 'new' || user ? (
                     <Fragment>
-                        <nav>
-                            <UserLink user={user}/>
-                        </nav>
-                        <h1>User editor</h1>
-                        <h2>Property form</h2>
-                        <form onSubmit={submit} onReset={reset} className='data-input'>
-                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                            <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                            <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
-                            <div>
-                                <div/>
+                        <div>
+                            <nav>
+                                <UserLink user={user}/>
+                            </nav>
+                            <h1>User editor</h1>
+                            <h2>Property form</h2>
+                            <form onSubmit={submit} onReset={reset} className='data-input'>
+                                <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                                <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
+                                <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
                                 <div>
-                                    { userId == 'new' && <input type='reset' value='Cancel'/> } 
-                                    <input type='submit' value='Save'/>
+                                    <div/>
+                                    <div>
+                                        { userId == 'new' && <input type='reset' value='Cancel'/> } 
+                                        <input type='submit' value='Save'/>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

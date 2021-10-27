@@ -58,20 +58,22 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
             <main>
                 { productId == 'new' || product ? (
                     <Fragment>
-                        <nav>
-                            <ProductLink product={product}/>
-                        </nav>
-                        <h1>{product ? product.name : 'New product'}</h1>
-                        <form onSubmit={submit} onReset={reset} className='data-input'>
-                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                            <div>
-                                <div/>
+                        <div>
+                            <nav>
+                                <ProductLink product={product}/>
+                            </nav>
+                            <h1>{product ? product.name : 'New product'}</h1>
+                            <form onSubmit={submit} onReset={reset} className='data-input'>
+                                <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <div>
-                                    { productId == 'new' && <input type='reset' value='Cancel'/> }
-                                    <input type='submit' value='Save'/>
+                                    <div/>
+                                    <div>
+                                        { productId == 'new' && <input type='reset' value='Cancel'/> }
+                                        <input type='submit' value='Save'/>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

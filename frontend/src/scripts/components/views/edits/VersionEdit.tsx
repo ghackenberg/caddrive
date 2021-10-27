@@ -69,23 +69,25 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
             <main>
                 { (versionId == 'new' || version) && product ? (
                     <Fragment>
-                        <nav>
-                            <VersionLink version={version} product={product}/>
-                        </nav>
-                        <h1>Version editor</h1>
-                        <h2>Property form</h2>
-                        <form onSubmit={submit} onReset={reset} className='data-input'>                     
-                            <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                            <FileInput label='File' placeholder='Select file' accept='.txt,.glb' change={setFile}/>
-                            <DateInput label='Date' placeholder='Select date' value={date} change={setDate}/>
-                            <div>
-                                <div/>
+                        <div>
+                            <nav>
+                                <VersionLink version={version} product={product}/>
+                            </nav>
+                            <h1>Version editor</h1>
+                            <h2>Property form</h2>
+                            <form onSubmit={submit} onReset={reset} className='data-input'>                     
+                                <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                                <FileInput label='File' placeholder='Select file' accept='.txt,.glb' change={setFile}/>
+                                <DateInput label='Date' placeholder='Select date' value={date} change={setDate}/>
                                 <div>
-                                    { versionId == 'new' && <input type='reset' value='Cancel'/> }
-                                    <input type='submit' value='Save'/>
+                                    <div/>
+                                    <div>
+                                        { versionId == 'new' && <input type='reset' value='Cancel'/> }
+                                        <input type='submit' value='Save'/>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </Fragment>
                 ) : (
                     <p>Loading...</p>

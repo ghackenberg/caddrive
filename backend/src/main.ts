@@ -24,7 +24,7 @@ async function bootstrap() {
     SwaggerModule.setup('rest-doc', rest, document)
 
     rest.listen(3001, () => console.log('REST service listening'))
-    mqtt.listen(() => console.log('MQTT service listening'))
+    mqtt.listen()
 }
 
 bootstrap()

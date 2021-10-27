@@ -19,6 +19,7 @@ import * as AuditIcon from '/src/images/audit.png'
 import * as AddIcon from '/src/images/add.png'
 import * as EditIcon from '/src/images/edit.png'
 import * as DeleteIcon from '/src/images/delete.png'
+import { ModelView } from '../../widgets/ModelView'
 
 export const AuditListView = (props: RouteComponentProps<{version: string}>) => {
 
@@ -50,23 +51,30 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
     ]
 
     return (
-        <div className="view version">
+        <div className="view sidebar version">
             <Header/>
             <Navigation/>
             <main>
                 { audits && version && product? (
                     <Fragment>
-                        <nav>
-                            <VersionLink version={version} product={product}/>
-                        </nav>
-                        <h1>{version.name} <Link to={`/versions/${versionId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
-                        <h2>Audits <Link to={`/audits/new?version=${versionId}`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h2>
-                        <h3>Search list</h3>
-                        <AuditSearch version={versionId} change={setAudits}/>
-                        <Table columns={columns} items={audits}/>
+                        <div>
+                            <nav>
+                                <VersionLink version={version} product={product}/>
+                            </nav>
+                            <h1>{version.name} <Link to={`/versions/${versionId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
+                            <h2>Audits <Link to={`/audits/new?version=${versionId}`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h2>
+                            <h3>Search list</h3>
+                            <AuditSearch version={versionId} change={setAudits}/>
+                            <Table columns={columns} items={audits}/>
+                        </div>
+                        <div>
+                            <ModelView url={`/rest/models/${versionId}`}/>
+                        </div>
                     </Fragment>
                 ) : (
-                    <p>Loading...</p>
+                    <div>
+                        <p>Loading...</p>
+                    </div>
                 )}
             </main>
         </div>

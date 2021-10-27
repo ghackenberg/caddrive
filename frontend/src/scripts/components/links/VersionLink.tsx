@@ -16,7 +16,7 @@ export const VersionLink = (props: {product: Product, version?: Version}) => {
             </span>
             ) : (
             <span>
-                <Link to={`/versions/new?product=${props.product.id}`}>New</Link>
+                <Link to={`/versions/new?product=${props.product.id}`}>New version</Link>
             </span>
             )}
         </Fragment>  
