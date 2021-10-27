@@ -1,6 +1,7 @@
 import 'multer'
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import * as fs from 'fs'
 import * as shortid from 'shortid'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 import { ProductService } from '../products/product.service'
 import { AuditService } from '../audits/audit.service'
@@ -16,8 +17,26 @@ export class VersionService implements VersionREST<Express.Multer.File> {
         private auditService: AuditService
     ) {}
  
-    async addVersion(data: VersionData, _file: Express.Multer.File): Promise<Version> {
+    async addVersion(data: VersionData, file: Express.Multer.File): Promise<Version> {
         const version = { id: shortid(), ...data }
+
+        if (file && file.originalname.endsWith('.glb')) {
+            console.log(file)
+
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+
+            fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
+        }
+
+        /*
+        var FileSaver = require('file-saver')
+
+        console.log(file)
+
+        FileSaver.saveAs(file, file.originalname)
+        */
 
         this.versions.push(version)
         
@@ -32,8 +51,9 @@ export class VersionService implements VersionREST<Express.Multer.File> {
         }
 
         if (productId) {
+            const version = this.versions.find(version => version.productId == productId)
+            this.auditService.deleteAudit(undefined, version.id)
             this.versions = this.versions.filter(versions => versions.productId != productId)
-            this.auditService.deleteAudit(undefined, id)
         }
 
         return this.versions
