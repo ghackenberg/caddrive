@@ -33,8 +33,8 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
     const [versions, setVersions] = useState<Version[]>()
 
     // Load entities
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [])
-    useEffect(() => { VersionAPI.findVersions(undefined, undefined, productId).then(setVersions) }, [])
+    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { VersionAPI.findVersions(null, null, productId).then(setVersions) }, [props])
 
     async function deleteVersion(id: string) {
         await VersionAPI.deleteVersion(id)

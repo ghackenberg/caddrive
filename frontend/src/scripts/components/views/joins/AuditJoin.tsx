@@ -40,10 +40,10 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
     const [text, setText] = useState<string>('')
 
     // Load entities
-    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
-    useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [audit])
     useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [props])
-    useEffect(() => { EventAPI.findEvents(undefined, auditId).then(setEvents) }, [props])
+    useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [audit])
+    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
+    useEffect(() => { EventAPI.findEvents(null, null, null, null, null, null, auditId).then(setEvents) }, [props])
     useEffect(() => {
         if (events) {
             const load: string[] = []

@@ -34,8 +34,8 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
 
     // Load entities
     useEffect(() => { VersionAPI.getVersion(versionId).then(setVersion) }, [props])
-    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [props, version])
-    useEffect(() => { version && AuditAPI.findAudits(undefined, undefined, undefined, version.id).then(setAudits)}, [props,version])
+    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
+    useEffect(() => { AuditAPI.findAudits(null, null, null, versionId).then(setAudits)}, [props])
 
     async function deleteAudit(id: string) {
         await AuditAPI.deleteAudit(id)

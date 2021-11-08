@@ -35,9 +35,9 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
 
     // Load entities
     useEffect(() => { AuditAPI.getAudit(auditId).then(setAudit) }, [props])
-    useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [props, audit])
+    useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [audit])
     useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
-    useEffect(() => { EventAPI.findEvents(undefined, auditId).then(setEvents) }, [props])
+    useEffect(() => { EventAPI.findEvents(null, null, null, null, null, null, auditId).then(setEvents) }, [props])
     useEffect(() => {
         if (events) {
             const load: string[] = []
