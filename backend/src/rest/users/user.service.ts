@@ -1,48 +1,25 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class UserService implements UserREST {
-
-    private static users: User[] = [{ id: 'default', name: 'test', email: '1234.1234@1234.com', password: 'RRQ+kDaceIlmBEUtCk667DZj9EwXXFgUkt+jVsF6ghk=' }]
-
-    async addUser(data: UserData) {
-        const user = { id: shortid(), ...data }
-
-        //var crypto = require('crypto-js');
-        //const salt = data.email
-
-        //var algo = crypto.algo.SHA256.create()
-        //algo.encrypt(crypto.enc.Base64)
-
-        UserService.users.push(user)
-        
-        return user
-    }
+    private static readonly users: User[] = [
+        { id: 'demo', name: 'Demo User', email: 'test@test.com', password: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08' }
+    ]
 
     async checkUser(): Promise<User> {
         return null
     }
 
-    async deleteUser(id: string): Promise<User[]> {
-        
-        UserService.users = UserService.users.filter(users => users.id != id)
-        return UserService.users
-    }
-
     async findUsers(quick?: string, name?: string, email?: string) : Promise<User[]> {
-        
         const results: User[] = []
 
         quick = quick ? quick.toLowerCase() : undefined
         name = name ? name.toLowerCase() : undefined
         email = email ? email.toLowerCase() : undefined
 
-        for (var index = 0; index < UserService.users.length; index++) {
-
-            const user = UserService.users[index]
-
+        for (const user of UserService.users) {
             if (quick) {
                 const conditionA = user.name.toLowerCase().includes(quick)
                 const conditionB = user.email.toLowerCase().includes(quick)
@@ -57,30 +34,48 @@ export class UserService implements UserREST {
             if (email && !user.email.toLowerCase().includes(email)) {
                 continue
             }
+
             results.push(user)
         }
 
         return results
     }
 
-    async getUser(id: string): Promise<User> {
-        for (var j = 0; j < UserService.users.length; j++) {
-            if (UserService.users[j].id == id)
-                return UserService.users[j]
-        }
-        return null
+    async addUser(data: UserData) {
+        const user = { id: shortid(), ...data }
+        UserService.users.push(user)
+        return user
     }
 
-    async updateUser(user: User): Promise<User> {
-        
-        for (var i = 0; i < UserService.users.length; i++) {
-            if (UserService.users[i].id == user.id && (
-                UserService.users[i].name != user.name ||
-                UserService.users[i].email != user.email)) {
-
-                    UserService.users.splice(i,1,user)
+    async getUser(id: string): Promise<User> {
+        for (const user of UserService.users) {
+            if (user.id == id) {
+                return user
             }
         }
-        return user
+        throw new NotFoundException()
+    }
+
+    async updateUser(id: string, data: UserData): Promise<User> {
+        for (var index = 0; index < UserService.users.length; index++) {
+            const user = UserService.users[index]
+            if (user.id == id) {
+                UserService.users.splice(index, 1, { id, ...data })
+                return UserService.users[index]
+            }
+        }
+        throw new NotFoundException()
+    }
+
+    async deleteUser(id: string): Promise<User> {
+        for (var index = 0; index < UserService.users.length; index++) {
+            const user = UserService.users[index]
+            if (user.id == id) {
+                // TODO delete events!
+                UserService.users.splice(index, 1)
+                return user
+            }
+        }
+        throw new NotFoundException()
     }
 }

@@ -27,8 +27,9 @@ export const UserListView = () => {
     // Load entities
     useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 
-    async function deleteUser(userId: string) {
-        setUsers(await UserAPI.deleteUser(userId))
+    async function deleteUser(id: string) {
+        await UserAPI.deleteUser(id)
+        setUsers(users.filter(user => user.id != id))
     }
 
     const columns: Column<User>[] = [

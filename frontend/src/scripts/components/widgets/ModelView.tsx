@@ -8,6 +8,7 @@ export const ModelView = (props: { url: string }) => {
 
     const [model, setModel] = useState<GLTF>(null)
     
+    // TODO: use auth!
     useEffect(() => { new GLTFLoader().loadAsync(props.url).then(setModel) }, [props.url])
 
     return (

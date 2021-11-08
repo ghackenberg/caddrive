@@ -8,10 +8,12 @@ import { SearchInput } from '../inputs/SearchInput'
 
 export const AuditSearch = (props: {version: string, change: (value: Audit[]) => void}) => {
 
+    const versionId = props.version
+
     const [value, setValue] = React.useState<string>('')
 
-    async function change(value: string) {
-        props.change(await AuditAPI.findAudits(undefined, value, undefined, props.version))
+    async function change(quick: string) {
+        props.change(await AuditAPI.findAudits(quick, null, null, versionId))
     }
 
     return (

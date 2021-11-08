@@ -50,13 +50,13 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
         event.preventDefault()
         if (auditId == 'new') {
             if (name && start.getDate() != null && end.getDate() != null) {
-                const audit = await AuditAPI.addAudit({ versionId: version.id, name: name, start: start.toISOString(), end: end.toISOString()})
+                const audit = await AuditAPI.addAudit({ versionId: version.id, name: name, start: start.toISOString(), end: end.toISOString() })
                 history.replace(`/events?audit=${audit.id}`)
             }
         }
         else {
             if (name && start.getDate() != null && end.getDate() != null) {
-                setAudit(await AuditAPI.updateAudit({id: audit.id, versionId: audit.versionId, name: name, start: start.toISOString(), end: end.toISOString()}))
+                setAudit(await AuditAPI.updateAudit(audit.id, { versionId: audit.versionId, name: name, start: start.toISOString(), end: end.toISOString() }))
                 history.replace(`/events?audit=${audit.id}`)
             }
         }

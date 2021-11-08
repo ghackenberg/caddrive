@@ -37,8 +37,9 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
     useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [props, version])
     useEffect(() => { version && AuditAPI.findAudits(undefined, undefined, undefined, version.id).then(setAudits)}, [props,version])
 
-    async function deleteAudit(auditId: string) {
-        setAudits(await AuditAPI.deleteAudit(auditId))
+    async function deleteAudit(id: string) {
+        await AuditAPI.deleteAudit(id)
+        setAudits(audits.filter(audit => audit.id != id))
     }
 
     const columns: Column<Audit>[] = [

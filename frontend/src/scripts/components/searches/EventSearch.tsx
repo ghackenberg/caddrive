@@ -8,10 +8,12 @@ import { SearchInput } from '../inputs/SearchInput'
 
 export const EventSearch = (props: {audit: string, change: (value: (EventData & {id: string})[]) => void}) => {
 
+    const auditId = props.audit
+
     const [value, setValue] = React.useState<string>('')
 
-    async function change(value: string) {
-        props.change(await EventAPI.findEvents(value, props.audit))
+    async function change(quick: string) {
+        props.change(await EventAPI.findEvents(quick, null, null, null, null, null, auditId))
     }
 
     return (

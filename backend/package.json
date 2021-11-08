@@ -25,7 +25,6 @@
         "@nestjs/passport": "^8.0.1",
         "@nestjs/platform-express": "^8.1.2",
         "@nestjs/swagger": "^5.1.4",
-        "crypto-js": "^4.1.1",
         "fhooe-audit-platform-common": "^1.0.0",
         "mqtt": "^4.2.6",
         "passport": "^0.4.0",

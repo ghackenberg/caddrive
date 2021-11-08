@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Audit, AuditData, AuditREST } from 'fhooe-audit-platform-common'
 import { VersionService } from '../versions/version.service'
@@ -7,59 +7,34 @@ import { EventService } from '../events/event.service'
 
 @Injectable()
 export class AuditService implements AuditREST {
-    private audits: Audit[] = [{name: 'Audit 1', id: 'TestAudit', versionId: 'TestVersion', start: new Date().toString(), end: new Date().toString()}]
+    private static readonly audits: Audit[] = [
+        { id: 'demo', versionId: 'demo', name: 'Demo Audit', start: new Date().toString(), end: new Date().toString() }
+    ]
 
     public constructor(
-        @Inject(forwardRef(() => VersionService))
-        private versionService: VersionService,
-
-        @Inject(forwardRef(() => EventService))
-        private eventService: EventService,
-
         @Inject(forwardRef(() => ProductService))
-        private productService: ProductService
+        private readonly productService: ProductService,
+        @Inject(forwardRef(() => VersionService))
+        private readonly versionService: VersionService,
+        @Inject(forwardRef(() => EventService))
+        private readonly eventService: EventService
     ) {}
 
-    async addAudit(data: AuditData): Promise<Audit> {
-        const audit = { id: shortid(), ...data }
-
-        this.audits.push(audit)
-        
-        return audit
-    }
-
-    async deleteAudit(id: string, versionId?: string,): Promise<Audit[]> {
-
-        if (id) {
-            this.audits = this.audits.filter(audits => audits.id != id)
-        }
-        if (versionId) {
-            const audit = this.audits.find(audit => audit.versionId == versionId)
-            this.eventService.deleteEvent(undefined, audit.id)
-            this.audits = this.audits.filter(audits => audits.versionId != versionId)
-        }
-
-
-        return this.audits
-    }
-
-    async findAudits(quick?: string, name?: string, product?: string, version?: string) : Promise<Audit[]> {
-        
+    async findAudits(quick?: string, name?: string, productId?: string, versionId?: string) : Promise<Audit[]> {
         const result: Audit[] = []
 
         quick = quick ? quick.toLowerCase() : undefined
         name = name ? name.toLowerCase() : undefined
 
-        for (var index = 0; index < this.audits.length; index++) {
-
-            const audit = this.audits[index]
+        for (const audit of AuditService.audits) {
+            const version = await this.versionService.getVersion(audit.versionId)
+            const product = await this.productService.getProduct(version.productId)
 
             if (quick) {
-                const versionProductId = (await this.versionService.getVersion(audit.versionId)).productId
                 const conditionA = audit.name.toLowerCase().includes(quick)
-                const conditionB = (await this.productService.getProduct(versionProductId)).name.toLowerCase().includes(quick)
-                const conditionC = (await this.versionService.getVersion(audit.versionId)).name.toLowerCase().includes(quick)
-
+                const conditionB = version.name.toLowerCase().includes(quick)
+                const conditionC = product.name.toLowerCase().includes(quick)
+                
                 if (!(conditionA || conditionB || conditionC)) {
                     continue
                 }
@@ -67,38 +42,56 @@ export class AuditService implements AuditREST {
             if (name && !audit.name.toLowerCase().includes(name)) {
                 continue
             }
-            if (product && (await this.versionService.getVersion(audit.versionId)).productId != product) {
+            if (productId && product.id != productId) {
                 continue
             }
-            if (version && audit.versionId != version) {
+            if (versionId && version.id != versionId) {
                 continue
             }
+
             result.push(audit)
         }
+
         return result
     }
 
-    async getAudit(id: string): Promise<Audit> {
-        for (var i = 0; i < this.audits.length; i++) {
-            if (this.audits[i].id == id)
-                return this.audits[i]
-        }
-        return null
+    async addAudit(data: AuditData): Promise<Audit> {
+        const audit = { id: shortid(), ...data }
+        AuditService.audits.push(audit)
+        return audit
     }
 
-    async updateAudit(audit: Audit): Promise<Audit> {
-        
-        for (var i = 0; i < this.audits.length; i++) {
-            if (this.audits[i].id == audit.id && (
-                this.audits[i].name != audit.name ||
-                this.audits[i].versionId != audit.versionId ||
-                this.audits[i].start != audit.start ||
-                this.audits[i].end != audit.end)){
-
-                    this.audits.splice(i,1,audit)
+    async getAudit(id: string): Promise<Audit> {
+        for (const audit of AuditService.audits) {
+            if (audit.id == id) {
+                return audit
             }
         }
+        throw new NotFoundException()
+    }
 
-        return audit
+    async updateAudit(id: string, data: AuditData): Promise<Audit> {
+        for (var index = 0; index < AuditService.audits.length; index++) {
+            const audit = AuditService.audits[index]
+            if (audit.id == id) {
+                AuditService.audits.splice(index, 1, { id, ...data })
+                return AuditService.audits[index]
+            }
+        }
+        throw new NotFoundException()
+    }
+
+    async deleteAudit(id: string): Promise<Audit> {
+        for (var index = 0; index < AuditService.audits.length; index++) {
+            const audit = AuditService.audits[index]
+            if (audit.id == id) {
+                for (const event of await this.eventService.findEvents(null, null, null, null, null, null, id)) {
+                    await this.eventService.deleteEvent(event.id)
+                }
+                AuditService.audits.splice(index, 1)
+                return audit
+            }
+        }
+        throw new NotFoundException()
     }
 }

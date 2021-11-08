@@ -10,8 +10,8 @@ export const UserSearch = (props: {change: (value: User[]) => void}) => {
 
     const [value, setValue] = React.useState<string>('')
 
-    async function change(value: string) {
-        props.change(await UserAPI.findUsers(value))
+    async function change(quick: string) {
+        props.change(await UserAPI.findUsers(quick))
     }
 
     return (

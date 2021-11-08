@@ -10,8 +10,8 @@ export const ProductSearch = (props: {change: (value: Product[]) => void}) => {
 
     const [value, setValue] = React.useState<string>('')
     
-    async function change(value: string) {
-        props.change(await ProductAPI.findProducts(value))
+    async function change(quick: string) {
+        props.change(await ProductAPI.findProducts(quick))
     }
 
     return (

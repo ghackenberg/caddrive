@@ -7,8 +7,6 @@ import { EventModule } from './rest/events/event.module'
 import { ModelModule } from './rest/models/model.module'
 
 @Module({
-    imports: [AuditModule, EventModule, ProductModule, UserModule, VersionModule, ModelModule]
+    imports: [UserModule, ProductModule, VersionModule, AuditModule, EventModule, ModelModule]
 })
-export class RESTModule {
-
-}
+export class RESTModule {}

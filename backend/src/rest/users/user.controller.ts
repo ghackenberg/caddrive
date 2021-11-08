@@ -1,57 +1,74 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
+@UseGuards(AuthGuard('basic'))
+@ApiBasicAuth()
 export class UserController implements UserREST {
-    constructor(private readonly userService: UserService, @Inject(REQUEST) private readonly request: Express.Request) {
+    constructor(
+        private readonly userService: UserService,
+        @Inject(REQUEST)
+        private readonly request: Express.Request
+    ) {}
 
-    }
-
-    @UseGuards(AuthGuard('basic'))
     @Get('check')
+    @ApiResponse({ type: User })
     async checkUser(): Promise<User> {
         return <User> this.request.user
     }
 
-    @UseGuards(AuthGuard('basic'))
     @Get()
-    @ApiQuery({ name: 'quick' })
-    @ApiQuery({ name: 'name' })
-    @ApiQuery({ name: 'email' })
+    @ApiQuery({ name: 'quick', type: 'string', required: false })
+    @ApiQuery({ name: 'name', type: 'string', required: false })
+    @ApiQuery({ name: 'email', type: 'string', required: false })
     @ApiResponse({ type: [User] })
-    async findUsers(@Query('quick') quick?: string, @Query('name') name?: string, @Query('email') email?: string): Promise<User[]> {
+    async findUsers(
+        @Query('quick') quick?: string,
+        @Query('name') name?: string,
+        @Query('email') email?: string
+    ): Promise<User[]> {
         return this.userService.findUsers(quick, name, email)
     }
   
     @Post()
-    @ApiBody({ type: UserData })
+    @ApiBody({ type: UserData, required: true })
     @ApiResponse({ type: User })
-    async addUser(@Body() user: UserData): Promise<User> {
-        return this.userService.addUser(user)
+    async addUser(
+        @Body() data: UserData
+    ): Promise<User> {
+        return this.userService.addUser(data)
     }
 
     @Get(':id')
-    @ApiParam({ name: 'id' })
+    @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: User })
-    async getUser(@Param('id') id: string): Promise<User> {
+    async getUser(
+        @Param('id') id: string
+    ): Promise<User> {
         return this.userService.getUser(id)
     }
 
-    @Delete(':id')
-    @ApiParam({ name: 'id' })
-    @ApiResponse({ type: [User] })
-    async deleteUser(@Param('id') id: string): Promise<User[]> {
-        return this.userService.deleteUser(id)
+    @Put(':id')
+    @ApiParam({ name: 'id', type: 'string', required: true })
+    @ApiBody({ type: UserData, required: true })
+    @ApiResponse({ type: User })
+    async updateUser(
+        @Param('id') id: string,
+        @Body() data: UserData
+    ): Promise<User> {
+        return this.userService.updateUser(id, data)
     }
 
-    @Put(':id')
-    @ApiBody({ type: User })
+    @Delete(':id')
+    @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: User })
-    async updateUser(@Body() user: User): Promise<User> {
-        return this.userService.updateUser(user)
+    async deleteUser(
+        @Param('id') id: string
+    ): Promise<User> {
+        return this.userService.deleteUser(id)
     }
 }

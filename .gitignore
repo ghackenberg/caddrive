@@ -1,6 +1,8 @@
-node_modules
-public
-bin
 .vscode
-*.js
-uploads
+
+node_modules
+
+uploads/*
+!uploads/demo.glb
+
+public

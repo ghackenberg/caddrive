@@ -52,7 +52,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
             }
         } else {
             if (name && date) {
-                setVersion(await VersionAPI.updateVersion({ id: version.id, name: name, productId: version.productId, date: date.toISOString() }, file))
+                setVersion(await VersionAPI.updateVersion(version.id, { name: name, productId: version.productId, date: date.toISOString() }, file))
                 history.replace(`/audits?version=${version.id}`)
             }
         }

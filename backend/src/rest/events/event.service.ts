@@ -1,114 +1,102 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
-import { EventREST, CommentEventData, EventData, CommentEvent } from 'fhooe-audit-platform-common'
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { EventREST, CommentEventData, CommentEvent, Event, EnterEventData, EnterEvent, LeaveEventData, LeaveEvent } from 'fhooe-audit-platform-common'
 import * as shortid from 'shortid'
 import { AuditService } from '../audits/audit.service'
 import { ProductService } from '../products/product.service'
+import { UserService } from '../users/user.service'
 import { VersionService } from '../versions/version.service'
 
 @Injectable()
 export class EventService implements EventREST {
-    private events: (EventData & {id: string})[] = []
+    private static readonly events: Event[] = []
 
-    public constructor (
-        @Inject(forwardRef(() => AuditService))
-        private auditService: AuditService, 
-
+    public constructor(
+        @Inject(forwardRef(() => UserService))
+        private userService: UserService,
+        @Inject(forwardRef(() => ProductService))
+        private productService: ProductService,
         @Inject(forwardRef(() => VersionService))
         private versionService: VersionService,
-
-        @Inject(forwardRef(() => ProductService)) 
-        private productService: ProductService
-    ) { }
-
-    async deleteEvent(event?: EventData & {id: string} & { typeReq?: string }, auditId?: string): Promise<(EventData & {id: string})[]> {
-        
-        if (auditId) {
-            this.events = this.events.filter(events => events.auditId != auditId)
-        }
-        if (event.typeReq && !auditId) {
-            return this.events.filter(events => events.type == event.typeReq)
-        }
-        else {
-
-            return this.events = this.events.filter(events => events.id != event.id)
-        }
-    }
+        @Inject(forwardRef(() => AuditService))
+        private auditService: AuditService
+    ) {}
  
-    async findEvents(quick?: string, audit?: string, type?: string, user?: string, product?: string, version?: string, comment?: string): Promise<(EventData & {id: string})[]> {
-
-        const result: (EventData & {id: string})[] = []
+    async findEvents(quick?: string, type?: string, comment?: string, userId?: string, productId?: string, versionId?: string, auditId?: string): Promise<Event[]> {
+        const result: Event[] = []
 
         quick = quick ? quick.toLowerCase() : undefined
         type = type ? type.toLowerCase() : undefined
-        user = user ? user.toLowerCase() : undefined
         comment = comment ? comment.toLowerCase() : undefined
         
-        for (var index = 0; index < this.events.length; index++) {
-            const event = this.events[index]
+        for (const event of EventService.events) {
+            const audit = await this.auditService.getAudit(event.auditId)
+            const version = await this.versionService.getVersion(audit.versionId)
+            const product = await this.productService.getProduct(version.productId)
+            const user = await this.userService.getUser(event.userId)
 
             if (quick) {
-                const auditVersionId = (await this.auditService.getAudit(event.auditId)).versionId
-                const versionProductId = (await this.versionService.getVersion(auditVersionId)).productId
-                const conditionA = (await this.auditService.getAudit(event.auditId)).name.toLowerCase().includes(quick)
-                const conditionB = event.type.toLowerCase().includes(quick)
-                const conditionC = event.user.toLowerCase().includes(quick)
-                const conditionD = (await this.productService.getProduct(versionProductId)).name.toLowerCase().includes(quick)
-                const conditionE = (await this.versionService.getVersion(auditVersionId)).name.toLowerCase().includes(quick) 
-                const conditionF = event.type.toLowerCase() == 'comment' && (event as CommentEvent).text.toLowerCase().includes(quick)
+                const conditionA = audit.name.toLowerCase().includes(quick)
+                const conditionB = version.name.toLowerCase().includes(quick)
+                const conditionC = product.name.toLowerCase().includes(quick)
+                const conditionD = user.name.toLowerCase().includes(quick)
+                const conditionE = event.type.toLowerCase().includes(quick)
+                const conditionF = event.type == 'comment' && (event as CommentEvent).text.toLowerCase().includes(quick)
 
                 if (!(conditionA || conditionB || conditionC || conditionD || conditionE || conditionF)) {
                     continue
                 }
             }
-            if (audit && event.auditId != audit) {
-                continue
-            }
             if (type && !event.type.toLowerCase().includes(type)) {
-                continue
-            }
-            if (user && event.user.toLowerCase().includes(user)) {
-                continue
-            }
-            if (product && (await this.auditService.getAudit(event.auditId)).versionId != product) {
-                continue
-            }
-            if (version && (await this.versionService.getVersion((await this.auditService.getAudit(event.auditId)).versionId)).productId != version) {
                 continue
             }
             if (comment && (event.type != 'comment' || !(event as CommentEvent).text.toLowerCase().includes(comment))) {
                 continue
             }
+            if (userId && user.id != userId) {
+                continue
+            }
+            if (productId && product.id != productId) {
+                continue
+            }
+            if (versionId && version.id != versionId) {
+                continue
+            }
+            if (auditId && audit.id != auditId) {
+                continue
+            }
+
             result.push(event)   
         }
 
         return result
     }
 
-    async enterEvent(enterEvent: EventData): Promise<EventData & {id: string}> {
-
-        const event: EventData & {id: string} = {id: shortid(), ...enterEvent}
-
-        this.events.push(event)
-
+    async addEnterEvent(data: EnterEventData): Promise<EnterEvent> {
+        const event = { id: shortid(), ...data }
+        EventService.events.push(event)
         return event
     }
 
-    async leaveEvent(leaveEvent: EventData): Promise<EventData & {id: string}> {
-
-        const event: EventData & {id: string} = {id: shortid(), ...leaveEvent}
-
-        this.events.push(event)
-
+    async addLeaveEvent(data: LeaveEventData): Promise<LeaveEvent> {
+        const event = { id: shortid(), ...data }
+        EventService.events.push(event)
         return event
     }
 
-    async submitEvent(eventData: CommentEventData): Promise<CommentEvent> {
-
-        const event: CommentEvent = {id: shortid(), ...eventData}
-
-        this.events.push(event)
-
+    async addCommentEvent(data: CommentEventData): Promise<CommentEvent> {
+        const event = { id: shortid(), ...data }
+        EventService.events.push(event)
         return event
     }
 
+    async deleteEvent(id: string): Promise<Event> {
+        for (var index = 0; index < EventService.events.length; index++) {
+            const event = EventService.events[index]
+            if (event.id == id) {
+                EventService.events.splice(index, 1)
+                return event
+            }
+        }
+        throw new NotFoundException()
+    }
 }

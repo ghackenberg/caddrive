@@ -36,12 +36,12 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
         event.preventDefault()
         if(productId == 'new') {
             if (name) {
-                const product = await ProductAPI.addProduct({name})
+                const product = await ProductAPI.addProduct({ name })
                 history.replace(`/versions?product=${product.id}`)
             }
         } else {
             if (name) {
-                await ProductAPI.updateProduct({id: product.id, name})
+                await ProductAPI.updateProduct(product.id, { name })
                 history.replace(`/versions?product=${product.id}`)
             }
         }

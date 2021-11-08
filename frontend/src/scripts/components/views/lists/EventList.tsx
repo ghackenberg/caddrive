@@ -2,7 +2,7 @@ import  * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
-import { Audit, CommentEvent, EventData, Product, User, Version} from 'fhooe-audit-platform-common'
+import { Audit, CommentEvent, Event, Product, User, Version} from 'fhooe-audit-platform-common'
 // Clients
 import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../../clients/rest'
 // Snippets
@@ -30,7 +30,7 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
     const [product, setProduct] = useState<Product>()
     const [version, setVersion] = useState<Version>()
     const [audit, setAudit] = useState<Audit>()
-    const [events, setEvents] = useState<(EventData & {id: string})[]>()
+    const [events, setEvents] = useState<Event[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Load entities
@@ -42,8 +42,8 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
         if (events) {
             const load: string[] = []
             events.forEach(event => {
-                if (!(event.user in users)) {
-                    load.push(event.user)
+                if (!(event.userId in users)) {
+                    load.push(event.userId)
                 }
             })
             load.forEach(userId => {
@@ -57,17 +57,18 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
     }, [props, events])
 
 
-    async function deleteEvent(event: EventData & {id: string}) {
-        setEvents(await EventAPI.deleteEvent(event))
+    async function deleteEvent(id: string) {
+        await EventAPI.deleteEvent(id)
+        setEvents(events.filter(event => event.id != id))
     }
 
-    const columns: Column<EventData & {id: string}>[] = [
+    const columns: Column<Event>[] = [
         {label: 'Icon', content: _event => <img src={EventIcon} style={{width: '1em'}}/>},
-        {label: 'User', content: event => event.user in users ? <span>{users[event.user].name} &lt;{users[event.user].email}&gt;</span> : <p>Loading...</p>},
+        {label: 'User', content: event => event.userId in users ? <span>{users[event.userId].name} &lt;{users[event.userId].email}&gt;</span> : <p>Loading...</p>},
         {label: 'Type', content: event => event.type},
         {label: 'Time', content: event => new Date(event.time).toISOString()},
         {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
-        {label: 'Delete', content: event => <a href="#" onClick={_event => deleteEvent(event)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Delete', content: event => <a href="#" onClick={_event => deleteEvent(event.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
     ]
 
     return (

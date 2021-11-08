@@ -6,6 +6,4 @@ import { ModelService } from './model.service'
     controllers: [ModelController],
     providers: [ModelService]
 })
-export class ModelModule {
-
-}
+export class ModelModule {}

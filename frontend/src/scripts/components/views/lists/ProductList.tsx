@@ -29,8 +29,9 @@ export const ProductListView = () => {
     // Load entities
     useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
 
-    async function deleteProduct(productId: string) {
-        setProducts(await ProductAPI.deleteProduct(productId))
+    async function deleteProduct(id: string) {
+        await ProductAPI.deleteProduct(id)
+        setProducts(products.filter(product => product.id != id))
     }
 
     const columns: Column<Product>[] = [

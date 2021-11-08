@@ -6,18 +6,19 @@ import { User } from 'fhooe-audit-platform-common'
 
 @Injectable()
 export class AuthStrategy extends PassportStrategy(BasicStrategy) {
-
-    constructor(private readonly userService: UserService) {
+    constructor(
+        private readonly userService: UserService
+    ) {
         super({
             passReqToCallback: false
         })
     }
 
-    public async validate(username: string, password: string): Promise<User> {
-        const users = await this.userService.findUsers(undefined, undefined, username)
-        for (var i = 0; i < users.length; i++) {
-            if (users[i].email == username && users[i].password == password) {
-                return users[i]
+    public async validate(email: string, password: string): Promise<User> {
+        const users = await this.userService.findUsers(undefined, undefined, email)
+        for (const user of users) {
+            if (user.email == email && user.password == password) {
+                return user
             }
         }
         throw new UnauthorizedException()

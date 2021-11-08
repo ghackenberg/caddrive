@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Fragment } from 'react'
+import * as hash from 'hash.js'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
@@ -21,11 +22,10 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
     async function check() {
         setLoad(true)
 
-        auth.username = email
-        auth.password = password.endsWith('=') ? password : encrypt(email, password)
+        console.log(password)
 
-        console.log(email, password)
-        console.log(auth.username, auth.password)
+        auth.username = email
+        auth.password = password
         
         try {
             props.callback(await UserAPI.checkUser())
@@ -39,24 +39,18 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
         event.preventDefault()
 
         localStorage.setItem('username', email)
-        localStorage.setItem('password', encrypt(email, password))
+        localStorage.setItem('password', password)
 
         await check()
     }
+
     async function reset() {
         setEmail('')
         setPassword('')
     }
 
-    function encrypt(email: string, password: string) {
-        var crypto = require('crypto-js');
-
-        var algo = crypto.algo.SHA256.create()
-        algo.update(password, 'utf-8')
-        algo.update(crypto.SHA256(email), 'utf-8')
-        var hash = algo.finalize().toString(crypto.enc.Base64)
-
-        return hash
+    function encrypt(password: string): string {
+        return hash.sha256().update(password).digest('hex')
     }
 
     React.useEffect(() => { check() }, [])
@@ -75,7 +69,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                             {error && <p style={{color: 'red'}}>{error}</p>}
                             <form onSubmit={submit} onReset={reset} className='data-input'>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                <PasswordInput label='Password' placeholder='Type password' change={setPassword}/>
+                                <PasswordInput label='Password' placeholder='Type password' change={password => setPassword(encrypt(password))}/>
                                 <div>
                                     <div/>
                                     <div>

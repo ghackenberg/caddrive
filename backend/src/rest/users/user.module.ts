@@ -7,8 +7,7 @@ import { UserService } from './user.service'
 @Module({
     imports: [PassportModule],
     controllers: [UserController],
-    providers: [UserService, AuthStrategy]
+    providers: [UserService, AuthStrategy],
+    exports: [UserService]
 })
-export class UserModule {
-
-}
+export class UserModule {}

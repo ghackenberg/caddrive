@@ -8,10 +8,12 @@ import { SearchInput } from '../inputs/SearchInput'
 
 export const VersionSearch = (props: {product: string, change: (value: Version[]) => void}) => {
 
+    const productId = props.product
+
     const [value, setValue] = React.useState<string>('')
     
-    async function change(value: string) {
-        props.change(await VersionAPI.findVersions(undefined, value, props.product))
+    async function change(quick: string) {
+        props.change(await VersionAPI.findVersions(quick, null, productId))
     }
 
     return (

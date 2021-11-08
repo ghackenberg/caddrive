@@ -11,6 +11,4 @@ import { AuditService } from './audit.service'
     exports: [AuditService],
     imports: [forwardRef(() => ProductModule), forwardRef(() => VersionModule), forwardRef(() => EventModule)]
 })
-export class AuditModule {
-
-}
+export class AuditModule {}

@@ -10,6 +10,4 @@ import { VersionService } from './version.service'
     imports: [forwardRef(() => ProductModule), forwardRef(() => AuditModule)],
     exports: [VersionService]
 })
-export class VersionModule {
-
-}
+export class VersionModule {}
