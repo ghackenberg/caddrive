@@ -1,14 +1,11 @@
 import * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Audit, Product, Version } from 'fhooe-audit-platform-common'
 // Clients
 import { AuditAPI, ProductAPI, VersionAPI } from '../../../clients/rest'
-// Snippets
-import { Header } from '../../snippets/Header'
-import { Navigation } from '../../snippets/Navigation'
 // Links
 import { AuditLink } from '../../links/AuditLink'
 // Inputs
@@ -68,15 +65,15 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
 
     return (
         <div className='view audit'>
-            <Header/>
-            <Navigation/>
-            <main>
-                { (auditId == 'new' || audit) && version && product ? (
-                    <Fragment>
+            { (auditId == 'new' || audit) && version && product && (
+                <React.Fragment>
+                    <header>
+                        <nav>
+                            <AuditLink audit={audit} version={version} product={product}/>                           
+                        </nav>
+                    </header>
+                    <main>
                         <div>
-                            <nav>
-                                <AuditLink audit={audit} version={version} product={product}/>                           
-                            </nav>
                             <h1>Audit editor</h1>
                             <h2>Property form</h2>
                             <form onSubmit={submit} onReset={reset} className='data-input'>
@@ -92,11 +89,9 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                                 </div>
                             </form>
                         </div>
-                    </Fragment>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </main>
+                    </main>
+                </React.Fragment>
+            )}
         </div>
     )
 }

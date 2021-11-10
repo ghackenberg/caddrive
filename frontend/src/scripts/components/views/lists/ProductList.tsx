@@ -5,9 +5,6 @@ import { Link } from 'react-router-dom'
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI } from '../../../clients/rest'
-// Snippets
-import { Header } from '../../snippets/Header'
-import { Navigation } from '../../snippets/Navigation'
 // Links
 import { ProductsLink } from '../../links/ProductsLink'
 // Searches
@@ -35,24 +32,28 @@ export const ProductListView = () => {
     }
 
     const columns: Column<Product>[] = [
-        {label: 'Icon', content: _product => <img src={ProductIcon} style={{width: '1em'}}/>},
-        {label: 'Model', content: product => <ProductView id={product.id}/>},
+        {label: 'Icon', content: product => <Link to={`/versions?product=${product.id}`}><img src={ProductIcon}/></Link>},
+        {label: 'Model', content: product => <Link to={`/versions?product=${product.id}`}><ProductView id={product.id}/></Link>},
         {label: 'Product', content: product => <Link to={`/versions?product=${product.id}`}>{product.name}</Link>},
-        {label: 'Edit', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon} style={{width: '1em', height: '1em'}}/></Link>},
-        {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Edit', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon}/></Link>},
+        {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon}/></a>}
     ]
 
     return (
         <div className="view products">
-            <Header/>
-            <Navigation/>
+            <header>
+                <nav>
+                    <ProductsLink/>
+                </nav>
+            </header>
             <main>
                 <div>
-                    <nav>
-                        <ProductsLink/>
-                    </nav>
-                    <h1>Products <Link to={`/products/new`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h1>                
-                    <h2>Search list</h2>
+                    <h1>
+                        Products
+                        <Link to={`/products/new`}>
+                            <img src={AddIcon}/>
+                        </Link>
+                    </h1>
                     <ProductSearch change={setProducts}/>
                     { products && <Table columns={columns} items={products}/> }
                 </div>

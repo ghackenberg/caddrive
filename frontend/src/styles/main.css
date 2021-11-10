@@ -1,5 +1,4 @@
 @import url(./main/anchor.css);
-@import url(./main/nav.css);
 @import url(./main/heading.css);
 @import url(./main/paragraph.css);
 @import url(./main/form.css);
@@ -8,63 +7,37 @@
 @import url(./main/search.css);
 
 div.view > main {
-    display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: calc(100vh - 4em);
-    position: absolute;
-    z-index: 0;
-    top: 4em;
-    left: 15em;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(99, 38, 38, 0);
+    padding-top: 4em;
 }
-div.view.sidebar > main {
-    grid-template-columns: auto calc((100vw - 15em) / 2);
-}
-div.view > main > div {
-    overflow: auto;
-}
+
 div.view > main > div:nth-child(1) {
     padding-top: 0.25em;
     padding-left: 1em;
     padding-right: 1em;
     padding-bottom: 0.25em;
 }
+div.view.sidebar > main > div:nth-child(1) {
+    width: calc(50% - 2em);
+}
+
+div.view.sidebar > main > div:nth-child(2) {
+    position: fixed;
+    z-index: 0;
+    top: 4em;
+    left: 50%;
+    right: 0;
+    bottom: 0;
+}
+div.view.sidebar > main > div:nth-child(2) > div.widget.model_view {
+    width: 100%;
+    height: 100%;
+}
 
 div.view > main div.widget.model_view {
     width: 10em;
     height: 7.5em;
 }
-div.view > main > div:nth-child(2) > div.widget.model_view {
+div.view > main div.widget.model_view > div.widget.scene_view {
     width: 100%;
     height: 100%;
-}
-
-div.view > main div.widget.model_view div.widget.scene_view {
-    width: 100%;
-    height: 100%;
-}
-
-div.view.demo > main {
-    overflow: hidden;
-}
-div.view.demo > main div.widget.scene_graph {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 23rem;
-    padding: 1rem;
-    font-size: 0.75em;
-    overflow: auto;
-    border-left: 1px solid rgba(0,0,0,0.1);
-}
-div.view.demo > main div.widget.scene_view {
-    position: absolute;
-    top: 0;
-    left: calc(25em + 1px);
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
 }

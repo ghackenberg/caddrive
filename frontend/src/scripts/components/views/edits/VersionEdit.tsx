@@ -1,14 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product, Version} from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI, VersionAPI } from '../../../clients/rest'
-// Snippets
-import { Header } from '../../snippets/Header'
-import { Navigation } from '../../snippets/Navigation'
 // Links
 import { VersionLink } from '../../links/VersionLink'
 // Inputs
@@ -64,15 +61,15 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
         
     return (
         <div className="view version">
-            <Header/>
-            <Navigation/>
-            <main>
-                { (versionId == 'new' || version) && product ? (
-                    <Fragment>
+            { (versionId == 'new' || version) && product && (
+                <React.Fragment>
+                    <header>
+                        <nav>
+                            <VersionLink version={version} product={product}/>
+                        </nav>
+                    </header>
+                    <main>
                         <div>
-                            <nav>
-                                <VersionLink version={version} product={product}/>
-                            </nav>
                             <h1>Version editor</h1>
                             <h2>Property form</h2>
                             <form onSubmit={submit} onReset={reset} className='data-input'>                     
@@ -88,11 +85,9 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                                 </div>
                             </form>
                         </div>
-                    </Fragment>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </main>
+                    </main>
+                </React.Fragment>
+            )}
         </div>
     )
 

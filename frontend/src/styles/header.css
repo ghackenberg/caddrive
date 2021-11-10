@@ -1,5 +1,5 @@
 div.view > header {
-    position: absolute;
+    position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
@@ -8,21 +8,32 @@ div.view > header {
     line-height: 2em;
     font-weight: bold;
     font-family: 'Arial Black';
-    text-transform: uppercase;
     background-color: steelblue;
     background-image: linear-gradient(rgba(255,255,255,0.1),rgba(0,0,0,0.1));
     box-shadow: 0 0 1em rgba(0,0,0,0.5);
     color: white;
 }
-div.view > header a {
+div.view > header > nav > span > a {
     text-decoration: none;
     color: inherit;
+    opacity: 0.5;
 }
-div.view > header img {
-    display: block;
-    float: left;
-    width: 2em;
-    height: 2em;
-    margin-right: 1em;
-    filter: invert();
+div.view > header > nav > span > a:hover {
+    opacity: 0.75;
+}
+div.view > header > nav > span::after {
+    content: " / ";
+}
+div.view > header > nav > span:first-child > a {
+    padding-left: 2em;
+    background-image: url(../images/platform.png);
+    background-size: 1.5em 1.5em;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+div.view > header > nav > span:last-child > a {
+    opacity: 1;
+}
+div.view > header > nav > span:last-child::after {
+    content: "";
 }

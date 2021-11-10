@@ -1,24 +1,20 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Audit, CommentEvent, Event, Product, User, Version} from 'fhooe-audit-platform-common'
 // Clients
 import { AuditAPI, EventAPI, ProductAPI, UserAPI, VersionAPI } from '../../../clients/rest'
-// Snippets
-import { Header } from '../../snippets/Header'
-import { Navigation } from '../../snippets/Navigation'
 // Links
 import { AuditLink } from '../../links/AuditLink'
 // Searches
 import { EventSearch } from '../../searches/EventSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
-// Images
-import * as EditIcon from '/src/images/edit.png'
-import * as EventIcon from '/src/images/event.png'
-import * as DeleteIcon from '/src/images/delete.png'
 import { ModelView } from '../../widgets/ModelView'
+// Images
+import * as EnterIcon from '/src/images/enter.png'
+import * as EventIcon from '/src/images/event.png'
 
 export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -56,46 +52,40 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
         }
     }, [props, events])
 
-
-    async function deleteEvent(id: string) {
-        await EventAPI.deleteEvent(id)
-        setEvents(events.filter(event => event.id != id))
-    }
-
     const columns: Column<Event>[] = [
-        {label: 'Icon', content: _event => <img src={EventIcon} style={{width: '1em'}}/>},
+        {label: 'Icon', content: _event => <a><img src={EventIcon}/></a>},
         {label: 'User', content: event => event.userId in users ? <span>{users[event.userId].name} &lt;{users[event.userId].email}&gt;</span> : <p>Loading...</p>},
         {label: 'Type', content: event => event.type},
         {label: 'Time', content: event => new Date(event.time).toISOString()},
-        {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
-        {label: 'Delete', content: event => <a href="#" onClick={_event => deleteEvent(event.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''}
     ]
 
     return (
         <div className='view sidebar audit'>
-            <Header/>
-            <Navigation/>
-            <main>
-                { events && audit && version && product ? (
-                    <Fragment>
+            { events && audit && version && product && (
+                <React.Fragment>
+                    <header>
+                        <nav>
+                            <AuditLink audit={audit} version={version} product={product}/>                      
+                        </nav>
+                    </header>
+                    <main>
                         <div>
-                            <nav>
-                                <AuditLink audit={audit} version={version} product={product}/>                           
-                            </nav>
-                            <h1>{audit.name} <Link to={`/audits/${auditId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
-                            <p><Link to={`/audits/${auditId}/join`}>Enter</Link></p>
-                            <h3>Search list</h3>
+                            <h1>
+                                Events
+                                <Link to={`/audits/${auditId}/join`}>
+                                    <img src={EnterIcon}/>
+                                </Link>
+                            </h1>
                             <EventSearch audit={auditId} change={setEvents}/>
-                            <Table columns={columns} items={events}/> 
+                            <Table columns={columns} items={events.map(event => event).reverse()}/> 
                         </div>
                         <div>
                             <ModelView url={`/rest/models/${version.id}`}/>
                         </div>
-                    </Fragment>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </main>
+                    </main>
+                </React.Fragment>
+            )}
         </div>
     )
 }

@@ -1,14 +1,11 @@
 import * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI } from '../../../clients/rest'
-// Snippets
-import { Header } from '../../snippets/Header'
-import { Navigation } from '../../snippets/Navigation'
 // Links
 import { ProductLink } from '../../links/ProductLink'
 // Inputs
@@ -53,15 +50,15 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
 
     return (
         <div className="view product">
-            <Header/>
-            <Navigation/>
-            <main>
-                { productId == 'new' || product ? (
-                    <Fragment>
+            { (productId == 'new' || product) && (
+                <React.Fragment>
+                    <header>
+                        <nav>
+                            <ProductLink product={product}/>
+                        </nav>
+                    </header>
+                    <main>
                         <div>
-                            <nav>
-                                <ProductLink product={product}/>
-                            </nav>
                             <h1>{product ? product.name : 'New product'}</h1>
                             <form onSubmit={submit} onReset={reset} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
@@ -74,11 +71,9 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                                 </div>
                             </form>
                         </div>
-                    </Fragment>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </main>
+                    </main>
+                </React.Fragment>
+            )}
         </div>
     )
 }

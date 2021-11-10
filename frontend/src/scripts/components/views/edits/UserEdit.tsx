@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import * as hash from 'hash.js'
@@ -7,9 +7,6 @@ import * as hash from 'hash.js'
 import { User } from 'fhooe-audit-platform-common'
 // Clients
 import { UserAPI } from '../../../clients/rest'
-// Snippets
-import { Header } from '../../snippets/Header'
-import { Navigation } from '../../snippets/Navigation'
 // Links
 import { UserLink } from '../../links/UserLink'
 // Inputs
@@ -62,15 +59,15 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
 
     return (
         <div className="view user">
-            <Header/>
-            <Navigation/>
-            <main>
-                { userId == 'new' || user ? (
-                    <Fragment>
+            { (userId == 'new' || user) && (
+                <React.Fragment>
+                    <header>
+                        <nav>
+                            <UserLink user={user}/>
+                        </nav>
+                    </header>
+                    <main>
                         <div>
-                            <nav>
-                                <UserLink user={user}/>
-                            </nav>
                             <h1>User editor</h1>
                             <h2>Property form</h2>
                             <form onSubmit={submit} onReset={reset} className='data-input'>
@@ -86,11 +83,9 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                                 </div>
                             </form>
                         </div>
-                    </Fragment>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </main>
+                    </main>
+                </React.Fragment>
+            )}
         </div>
     )
     

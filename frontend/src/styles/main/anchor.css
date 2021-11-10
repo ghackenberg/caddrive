@@ -2,7 +2,7 @@ div.view > main a {
     text-decoration: none;
     color: blue;
 }
-div.view > main a img {
+div.view > main a > img {
     display: inline-block;
     vertical-align: top;
     width: 1.5em;

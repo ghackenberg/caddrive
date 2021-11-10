@@ -1,17 +1,20 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
-// Snippets
-import { Header } from '../snippets/Header'
-import { Navigation } from '../snippets/Navigation'
+// Links
+import { HomeLink } from '../links/HomeLink'
 
 export const MissingView = () => (
     
     <div className="view missing">
-        <Header/>
-        <Navigation/>
+        <header>
+            <nav>
+                <HomeLink/>
+            </nav>
+        </header>
         <main>
-            <h1><Link to="/">Home</Link> &rsaquo; Missing</h1>
-            <p>Please fix this error.</p>
+            <div>
+                <h1>Missing</h1>
+                <p>Please fix this error.</p>
+            </div>
         </main>
     </div>
 

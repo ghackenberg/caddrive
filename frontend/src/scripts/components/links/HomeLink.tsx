@@ -5,7 +5,7 @@ export const HomeLink = () => {
 
     return (
         <span>
-            <Link to="/">Home</Link>
+            <Link to="/">WebCAD</Link>
         </span>
     )
 

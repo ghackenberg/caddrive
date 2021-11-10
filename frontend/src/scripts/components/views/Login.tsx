@@ -1,16 +1,14 @@
 import * as React from 'react'
-import { Fragment } from 'react'
 import * as hash from 'hash.js'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
 import { auth } from '../../clients/auth'
 import { UserAPI } from '../../clients/rest'
-// Snippets
-import { Header } from '../snippets/Header'
 // Inputs
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
+import { HomeLink } from '../links/HomeLink'
 
 export const LoginView = (props: {callback: (user: User) => void}) => {
 
@@ -21,8 +19,6 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
 
     async function check() {
         setLoad(true)
-
-        console.log(password)
 
         auth.username = email
         auth.password = password
@@ -57,30 +53,26 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
 
     return (
         <div className="view login">
-            <Header/>
+            <header>
+                <nav>
+                    <HomeLink/>
+                </nav>
+            </header>
             <main>
                 <div>
-                <Fragment>
                     <h1>Login to Virtual Engineering Platform</h1>
-                    {load ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <Fragment>
-                            {error && <p style={{color: 'red'}}>{error}</p>}
-                            <form onSubmit={submit} onReset={reset} className='data-input'>
-                                <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                <PasswordInput label='Password' placeholder='Type password' change={password => setPassword(encrypt(password))}/>
-                                <div>
-                                    <div/>
-                                    <div>
-                                        <input  type='reset' value='Cancel'/>
-                                        <input  type='submit' value='Login'/>
-                                    </div>
-                                </div>
-                            </form>
-                        </Fragment>
-                    )}
-                </Fragment>
+                    {error && <p style={{color: 'red'}}>{error}</p>}
+                    <form onSubmit={submit} onReset={reset} className='data-input'>
+                        <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
+                        <PasswordInput label='Password' placeholder='Type password' change={password => setPassword(encrypt(password))}/>
+                        <div>
+                            <div/>
+                            <div>
+                                <input  type='reset' value='Cancel' disabled={load}/>
+                                <input  type='submit' value='Login' disabled={load}/>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </main>
         </div>

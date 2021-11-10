@@ -31,8 +31,5 @@ div.view > main table > tbody > tr > td {
 
     background-color: rgba(0,0,0,0.1);
 
-    border-top: 1px solid rgba(0,0,0,0.1);
-}
-div.view > main table > tbody > tr:first-child > td {
-    border-top: 0;
+    border-top: 1px solid white;
 }

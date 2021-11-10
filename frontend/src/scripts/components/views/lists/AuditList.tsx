@@ -1,13 +1,10 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Audit, Product, Version} from 'fhooe-audit-platform-common'
 // Clients
 import { AuditAPI, ProductAPI, VersionAPI } from '../../../clients/rest'
-// Snippets
-import { Header } from '../../snippets/Header'
-import { Navigation } from '../../snippets/Navigation'
 // Links
 import { VersionLink } from '../../links/VersionLink'
 // Searches
@@ -43,41 +40,40 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
     }
 
     const columns: Column<Audit>[] = [
-        {label: 'Icon', content: _audit => <img src={AuditIcon} style={{width: '1em'}}/>},
+        {label: 'Icon', content: audit => <Link to={`/events?audit=${audit.id}`}><img src={AuditIcon}/></Link>},
         {label: 'Name', content: audit => <Link to={`/events?audit=${audit.id}`}>{audit.name}</Link>},
-        {label: 'Start', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.start).toISOString().slice(0, 10)}</Link>},
-        {label: 'End', content: audit => <Link to={`/audits/${audit.id}`}>{new Date(audit.end).toISOString().slice(0, 10)}</Link>},
-        {label: 'Edit', content: audit => <Link to={`/audits/${audit.id}`}><img src={EditIcon} style={{width: '1em', height: '1em'}}/></Link>},
-        {label: 'Delete', content: audit => <a href="#" onClick={_event => deleteAudit(audit.id)}><img src={DeleteIcon} style={{width: '1em', height: '1em'}}/></a>}
+        {label: 'Start', content: audit => <Link to={`/events?audit=${audit.id}`}>{new Date(audit.start).toISOString().slice(0, 10)}</Link>},
+        {label: 'End', content: audit => <Link to={`/events?audit=${audit.id}`}>{new Date(audit.end).toISOString().slice(0, 10)}</Link>},
+        {label: 'Edit', content: audit => <Link to={`/audits/${audit.id}`}><img src={EditIcon}/></Link>},
+        {label: 'Delete', content: audit => <a href="#" onClick={_event => deleteAudit(audit.id)}><img src={DeleteIcon}/></a>}
     ]
 
     return (
         <div className="view sidebar version">
-            <Header/>
-            <Navigation/>
-            <main>
-                { audits && version && product? (
-                    <Fragment>
+            { audits && version && product && (
+                <React.Fragment>
+                    <header>
+                        <nav>
+                            <VersionLink version={version} product={product}/>
+                        </nav>
+                    </header>
+                    <main>
                         <div>
-                            <nav>
-                                <VersionLink version={version} product={product}/>
-                            </nav>
-                            <h1>{version.name} <Link to={`/versions/${versionId}`}><img src={EditIcon} style={{width: '1em', height: '1em', margin: '0.2em'}}/></Link></h1>
-                            <h2>Audits <Link to={`/audits/new?version=${versionId}`}><img src={AddIcon} style={{width: '1em', height: '1em', margin: '0.25em'}}/></Link></h2>
-                            <h3>Search list</h3>
+                            <h1>
+                                Audits
+                                <Link to={`/audits/new?version=${versionId}`}>
+                                    <img src={AddIcon}/>
+                                </Link>
+                            </h1>
                             <AuditSearch version={versionId} change={setAudits}/>
                             <Table columns={columns} items={audits}/>
                         </div>
                         <div>
                             <ModelView url={`/rest/models/${versionId}`}/>
                         </div>
-                    </Fragment>
-                ) : (
-                    <div>
-                        <p>Loading...</p>
-                    </div>
-                )}
-            </main>
+                    </main>
+                </React.Fragment>
+            )}
         </div>
     )
 }
