@@ -6,7 +6,6 @@ div.view > header {
     right: 0;
     padding: 1em;
     line-height: 2em;
-    font-weight: bold;
     font-family: 'Arial Black';
     background-color: steelblue;
     background-image: linear-gradient(rgba(255,255,255,0.1),rgba(0,0,0,0.1));
@@ -24,12 +23,12 @@ div.view > header > nav > span > a:hover {
 div.view > header > nav > span::after {
     content: " / ";
 }
-div.view > header > nav > span:first-child > a {
-    padding-left: 2em;
-    background-image: url(../images/platform.png);
-    background-size: 1.5em 1.5em;
-    background-position: 0 0;
-    background-repeat: no-repeat;
+div.view > header > nav > span:first-child > a > img {
+    filter: invert();
+    width: 2em;
+    height: 2em;
+    margin-right: 0.5em;
+    vertical-align: top;
 }
 div.view > header > nav > span:last-child > a {
     opacity: 1;
