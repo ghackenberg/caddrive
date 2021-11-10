@@ -42,8 +42,6 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
     const columns: Column<Audit>[] = [
         {label: 'Icon', content: audit => <Link to={`/events?audit=${audit.id}`}><img src={AuditIcon}/></Link>},
         {label: 'Name', content: audit => <Link to={`/events?audit=${audit.id}`}>{audit.name}</Link>},
-        {label: 'Start', content: audit => <Link to={`/events?audit=${audit.id}`}>{new Date(audit.start).toISOString().slice(0, 10)}</Link>},
-        {label: 'End', content: audit => <Link to={`/events?audit=${audit.id}`}>{new Date(audit.end).toISOString().slice(0, 10)}</Link>},
         {label: 'Edit', content: audit => <Link to={`/audits/${audit.id}`}><img src={EditIcon}/></Link>},
         {label: 'Delete', content: audit => <a href="#" onClick={_event => deleteAudit(audit.id)}><img src={DeleteIcon}/></a>},
         {label: '', content: () => '', class: 'fill'}
@@ -61,7 +59,7 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
                     <main>
                         <div>
                             <h1>
-                                Audits
+                                Issues
                                 <Link to={`/audits/new?version=${versionId}`}>
                                     <img src={AddIcon}/>
                                 </Link>

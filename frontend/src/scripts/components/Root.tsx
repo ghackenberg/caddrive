@@ -19,7 +19,7 @@ import { UserEditView } from './views/edits/UserEdit'
 import { ProductEditView } from './views/edits/ProductEdit'
 import { VersionEditView } from './views/edits/VersionEdit'
 import { AuditEditView } from './views/edits/AuditEdit'
-import { AuditJoinView } from './views/joins/AuditJoin'
+import { EventEditView } from './views/edits/EventEdit'
 // Images
 import * as ProductIcon from '/src/images/product.png'
 
@@ -56,10 +56,10 @@ export const Root = () => {
                             <Route path="/versions/:version" component={VersionEditView}/>
                             <Route path="/versions" component={VersionListView}/>
                             {/* Audit views */}
-                            <Route path="/audits/:audit/join" component={AuditJoinView}/>
                             <Route path="/audits/:audit" component={AuditEditView}/>
                             <Route path="/audits" component={AuditListView}/>
                             {/* Event views */}
+                            <Route path="/events/:event" component={EventEditView}/>
                             <Route path="/events" component={EventListView}/>
                             {/* Home view */}
                             <Route component={HomeView}/>

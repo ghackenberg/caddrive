@@ -8,7 +8,7 @@ import { EventService } from '../events/event.service'
 @Injectable()
 export class AuditService implements AuditREST {
     private static readonly audits: Audit[] = [
-        { id: 'demo', versionId: 'demo', name: 'Demo Audit', start: new Date().toString(), end: new Date().toString() }
+        { id: 'demo', versionId: 'demo', name: 'Demo Issue', start: new Date().toString(), end: new Date().toString() }
     ]
 
     public constructor(

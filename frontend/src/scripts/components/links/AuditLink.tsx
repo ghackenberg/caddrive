@@ -17,7 +17,7 @@ export const AuditLink = (props: {product: Product, version: Version, audit?: Au
                 </span>
             ) : (
                 <span>
-                    <Link to={`/audit/new?version=${props.version.id}`}>New audit</Link>
+                    <Link to={`/audits/new?version=${props.version.id}`}>New issue</Link>
                 </span>
             )}
         </Fragment>  

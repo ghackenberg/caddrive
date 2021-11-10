@@ -10,7 +10,6 @@ import { ProductAPI, VersionAPI } from '../../../clients/rest'
 import { VersionLink } from '../../links/VersionLink'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
-import { DateInput } from '../../inputs/DateInput'
 import { FileInput } from '../../inputs/FileInput'
 
 export const VersionEditView = (props: RouteComponentProps<{ version: string }>) => {
@@ -74,7 +73,6 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                             <form onSubmit={submit} onReset={reset} className='data-input'>                     
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <FileInput label='File' placeholder='Select file' accept='.txt,.glb' change={setFile}/>
-                                <DateInput label='Date' placeholder='Select date' value={date} change={setDate}/>
                                 <div>
                                     <div/>
                                     <div>

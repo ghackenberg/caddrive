@@ -8,7 +8,9 @@ import { VersionService } from '../versions/version.service'
 
 @Injectable()
 export class EventService implements EventREST {
-    private static readonly events: Event[] = []
+    private static readonly events: Event[] = [
+        <CommentEvent> { id: 'demo', userId: 'demo', auditId: 'demo', type: 'comment', time: new Date().toISOString(), text: 'Demo Comment' }
+    ]
 
     public constructor(
         @Inject(forwardRef(() => UserService))
@@ -87,6 +89,15 @@ export class EventService implements EventREST {
         const event = { id: shortid(), ...data }
         EventService.events.push(event)
         return event
+    }
+
+    async getEvent(id: string): Promise<Event> {
+        for (const event of EventService.events) {
+            if (event.id == id) {
+                return event
+            }
+        }
+        throw new NotFoundException()
     }
 
     async deleteEvent(id: string): Promise<Event> {

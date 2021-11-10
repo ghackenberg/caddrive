@@ -38,5 +38,6 @@ export interface EventREST {
     addEnterEvent(enterEvent: EnterEventData): Promise<EnterEvent>
     addLeaveEvent(leaveEvent: LeaveEventData): Promise<LeaveEvent>
     addCommentEvent(submitEvent: CommentEventData): Promise<CommentEvent>
+    getEvent(id: string): Promise<Event>
     deleteEvent(id: string): Promise<Event>
 }

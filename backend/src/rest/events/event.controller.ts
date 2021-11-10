@@ -60,11 +60,20 @@ export class EventController implements EventREST {
         return this.eventService.addCommentEvent(data)
     }
 
-    @Delete()
+    @Get(':id')
+    @ApiParam({ name: 'id', type: 'string', required: true})
+    @ApiResponse({ type: Event })
+    async getEvent(
+        @Param('id') id: string
+    ): Promise<Event> {
+        return this.eventService.getEvent(id)
+    }
+
+    @Delete(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: Event })
     async deleteEvent(
-        @Param('id') id: string
+        @Param('id') id: string 
     ): Promise<Event> {
         return this.eventService.deleteEvent(id)
     }

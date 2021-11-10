@@ -10,7 +10,6 @@ import { AuditAPI, ProductAPI, VersionAPI } from '../../../clients/rest'
 import { AuditLink } from '../../links/AuditLink'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
-import { DateInput } from '../../inputs/DateInput'
 
 export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -41,7 +40,6 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
     useEffect(() => { audit && setName(audit.name) }, [audit])
     useEffect(() => { audit && setStart(new Date(audit.start)) }, [audit])
     useEffect(() => { audit && setEnd(new Date(audit.end)) }, [audit])
-
 
     async function submit(event: FormEvent){
         event.preventDefault()
@@ -74,11 +72,9 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                     </header>
                     <main>
                         <div>
-                            <h1>Audit editor</h1>
+                            <h1>Issue editor</h1>
                             <form onSubmit={submit} onReset={reset} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                <DateInput label='Start' placeholder='Select start' value={start} change={setStart}/>
-                                <DateInput label='End' placeholder='Select end' value={end} change={setEnd}/>
                                 <div>
                                     <div/>
                                     <div>

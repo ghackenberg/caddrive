@@ -103,6 +103,9 @@ class EventClient implements EventREST {
     async addCommentEvent(data: CommentEventData): Promise<CommentEvent> {
         return (await axios.post<CommentEvent>('/rest/events/comments', data, { auth })).data
     }
+    async getEvent(id: string): Promise<Event> {
+        return (await axios.get<Event>(`/rest/events/${id}`, { auth })).data
+    }
     async deleteEvent(id: string): Promise<Event> {
         return (await axios.delete<Event>(`/rest/events/${id}`, { auth })).data
     }

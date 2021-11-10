@@ -13,8 +13,10 @@ import { EventSearch } from '../../searches/EventSearch'
 import { Column, Table } from '../../widgets/Table'
 import { ModelView } from '../../widgets/ModelView'
 // Images
-import * as EnterIcon from '/src/images/enter.png'
+import * as AddIcon from '/src/images/add.png'
+import * as EditIcon from '/src/images/edit.png'
 import * as EventIcon from '/src/images/event.png'
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -52,12 +54,18 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
         }
     }, [props, events])
 
+    async function deleteEvent(_id: string) {
+
+    }
+
     const columns: Column<Event>[] = [
         {label: 'Icon', content: _event => <a><img src={EventIcon}/></a>},
         {label: 'User', content: event => event.userId in users ? <span>{users[event.userId].name} &lt;{users[event.userId].email}&gt;</span> : <p>Loading...</p>},
-        {label: 'Type', content: event => event.type},
         {label: 'Time', content: event => new Date(event.time).toISOString()},
-        {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : '', class: 'fill'}
+        {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
+        {label: 'Edit', content: event => <Link to={`/events/${event.id}`}><img src={EditIcon}/></Link>},
+        {label: 'Delete', content: event => <a href="#" onClick={_event => deleteEvent(event.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: _event => '', class: 'fill'}
     ]
 
     return (
@@ -72,13 +80,13 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
                     <main>
                         <div>
                             <h1>
-                                Events
-                                <Link to={`/audits/${auditId}/join`}>
-                                    <img src={EnterIcon}/>
+                                Comments
+                                <Link to={`/events/new?audit=${audit.id}`}>
+                                    <img src={AddIcon}/>
                                 </Link>
                             </h1>
                             <EventSearch audit={auditId} change={setEvents}/>
-                            <Table columns={columns} items={events.map(event => event).reverse()}/> 
+                            <Table columns={columns} items={events}/> 
                         </div>
                         <div>
                             <ModelView url={`/rest/models/${version.id}`}/>
