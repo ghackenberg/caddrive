@@ -39,12 +39,13 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                const user = await UserAPI.addUser({ name, email, password })
-                history.replace(`/users/${user.id}`)
+                await UserAPI.addUser({ name, email, password })
+                history.replace(`/users`)
             }
         } else {
             if (name && email) {
-                setUser(await UserAPI.updateUser(user.id, { name, email, password }))
+                await UserAPI.updateUser(user.id, { name, email, password })
+                history.replace(`/users`)
             }
         }       
     }

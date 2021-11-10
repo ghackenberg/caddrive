@@ -2,7 +2,7 @@
 
 node_modules
 
-uploads/*
-!uploads/demo.glb
+backend/uploads/*.glb
+!backend/uploads/demo.glb
 
 public

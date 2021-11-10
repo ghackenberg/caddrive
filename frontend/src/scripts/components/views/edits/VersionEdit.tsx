@@ -44,13 +44,13 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
         event.preventDefault()
         if (versionId == 'new') {
             if (name && date) {
-                const version = await VersionAPI.addVersion({ productId: product.id, name: name, date: date.toISOString() }, file)
-                history.replace(`/audits?version=${version.id}`)
+                await VersionAPI.addVersion({ productId: product.id, name, date: date.toISOString() }, file)
+                history.replace(`/versions?product=${product.id}`)
             }
         } else {
             if (name && date) {
-                setVersion(await VersionAPI.updateVersion(version.id, { name: name, productId: version.productId, date: date.toISOString() }, file))
-                history.replace(`/audits?version=${version.id}`)
+                await VersionAPI.updateVersion(version.id, { productId: product.id, name, date: date.toISOString() }, file)
+                history.replace(`/versions?product=${product.id}`)
             }
         }
     }
