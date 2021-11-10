@@ -12,7 +12,7 @@ export const HomeView = () => (
         </header>
         <main>
             <div>
-                <h1>WebCAD</h1>
+                <h1>ProductHub</h1>
                 <ul>
                     <li>
                         <Link to="/users">Users</Link>
