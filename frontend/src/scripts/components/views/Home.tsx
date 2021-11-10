@@ -12,7 +12,7 @@ export const HomeView = () => (
         </header>
         <main>
             <div>
-                <h1>ProductHub</h1>
+                <h1>ProductBoard</h1>
                 <ul>
                     <li>
                         <Link to="/users">Users</Link>

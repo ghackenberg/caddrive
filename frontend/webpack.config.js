@@ -46,7 +46,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             publicPath: '/',
-            title: 'ProductHub',
+            title: 'ProductBoard',
             filename: '404.html'
         })
     ],

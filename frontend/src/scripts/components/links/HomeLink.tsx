@@ -9,7 +9,7 @@ export const HomeLink = () => {
         <span>
             <Link to="/">
                 <img src={ProductIcon}/>
-                ProductHub
+                ProductBoard
             </Link>
         </span>
     )
