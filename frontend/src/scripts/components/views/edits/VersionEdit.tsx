@@ -11,6 +11,8 @@ import { VersionLink } from '../../links/VersionLink'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
 import { FileInput } from '../../inputs/FileInput'
+// Widgets
+import { ModelView } from '../../widgets/ModelView'
 
 export const VersionEditView = (props: RouteComponentProps<{ version: string }>) => {
 
@@ -59,7 +61,7 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     }
         
     return (
-        <div className="view version">
+        <div className="view sidebar version">
             { (versionId == 'new' || version) && product && (
                 <React.Fragment>
                     <header>
@@ -81,6 +83,9 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div>
+                            { version && <ModelView url={`/rest/models/${version.id}`} mouse={true}/> }
                         </div>
                     </main>
                 </React.Fragment>

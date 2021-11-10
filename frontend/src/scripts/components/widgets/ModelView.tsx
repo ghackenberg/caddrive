@@ -4,7 +4,7 @@ import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // Widgets
 import { SceneView } from './SceneView'
 
-export const ModelView = (props: { url: string }) => {
+export const ModelView = (props: { url: string, mouse: boolean }) => {
 
     const [model, setModel] = useState<GLTF>(null)
     
@@ -13,7 +13,7 @@ export const ModelView = (props: { url: string }) => {
 
     return (
         <div className="widget model_view">
-            {model && <SceneView model={model} vr={false}/> }
+            {model && <SceneView model={model} mouse={props.mouse} vr={false}/> }
         </div>
     )
     

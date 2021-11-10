@@ -90,7 +90,7 @@ export const EventEditView = (props: RouteComponentProps<{event: string}>) => {
                             </form>
                         </div>
                         <div>
-                            <ModelView url={`/rest/models/${version.id}`}/>
+                            <ModelView url={`/rest/models/${version.id}`} mouse={true}/>
                         </div>
                     </main>
                 </React.Fragment>

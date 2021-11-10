@@ -89,7 +89,7 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
                             <Table columns={columns} items={events}/> 
                         </div>
                         <div>
-                            <ModelView url={`/rest/models/${version.id}`}/>
+                            <ModelView url={`/rest/models/${version.id}`} mouse={true}/>
                         </div>
                     </main>
                 </React.Fragment>

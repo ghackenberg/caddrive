@@ -17,7 +17,7 @@ export const ModelViewer = (props: { url: string }) => {
             {model && (
                 <React.Fragment>
                     <SceneGraph model={model}/>
-                    <SceneView model={model} vr={true}/>
+                    <SceneView model={model} mouse={true} vr={true}/>
                 </React.Fragment>
             )}
         </div>

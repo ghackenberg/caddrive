@@ -33,7 +33,7 @@ export const ProductListView = () => {
 
     const columns: Column<Product>[] = [
         {label: 'Icon', content: product => <Link to={`/versions?product=${product.id}`}><img src={ProductIcon}/></Link>},
-        {label: 'Model', content: product => <Link to={`/versions?product=${product.id}`}><ProductView id={product.id}/></Link>},
+        {label: 'Model', content: product => <Link to={`/versions?product=${product.id}`}><ProductView id={product.id} mouse={false}/></Link>},
         {label: 'Product', content: product => <Link to={`/versions?product=${product.id}`}>{product.name}</Link>},
         {label: 'Edit', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon}/></Link>},
         {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon}/></a>},

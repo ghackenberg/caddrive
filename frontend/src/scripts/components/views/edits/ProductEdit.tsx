@@ -10,6 +10,8 @@ import { ProductAPI } from '../../../clients/rest'
 import { ProductLink } from '../../links/ProductLink'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
+// Widgets
+import { ProductView } from '../../widgets/ProductView'
 
 export const ProductEditView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -49,7 +51,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
     }
 
     return (
-        <div className="view product">
+        <div className="view sidebar product">
             { (productId == 'new' || product) && (
                 <React.Fragment>
                     <header>
@@ -70,6 +72,9 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div>
+                            { product && <ProductView id={product.id} mouse={true}/> }
                         </div>
                     </main>
                 </React.Fragment>

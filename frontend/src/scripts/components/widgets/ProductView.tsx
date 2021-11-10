@@ -7,7 +7,7 @@ import { VersionAPI } from '../../clients/rest'
 // Widgets
 import { ModelView } from './ModelView'
 
-export const ProductView = (props: { id: string }) => {
+export const ProductView = (props: { id: string, mouse: boolean }) => {
 
     const [versions, setVersions] = useState<Version[]>(null)
     
@@ -15,7 +15,7 @@ export const ProductView = (props: { id: string }) => {
 
     return (
         <div className="widget product_view">
-            {versions && versions.length > 0 && <ModelView url={`/rest/models/${versions[versions.length - 1].id}`}/> }
+            { versions && versions.length > 0 && <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse}/> }
         </div>
     )
     

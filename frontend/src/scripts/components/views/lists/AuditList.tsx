@@ -68,7 +68,7 @@ export const AuditListView = (props: RouteComponentProps<{version: string}>) => 
                             <Table columns={columns} items={audits}/>
                         </div>
                         <div>
-                            <ModelView url={`/rest/models/${versionId}`}/>
+                            <ModelView url={`/rest/models/${versionId}`} mouse={true}/>
                         </div>
                     </main>
                 </React.Fragment>

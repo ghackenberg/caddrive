@@ -10,6 +10,8 @@ import { AuditAPI, ProductAPI, VersionAPI } from '../../../clients/rest'
 import { AuditLink } from '../../links/AuditLink'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
+// Widgets
+import { ModelView } from '../../widgets/ModelView'
 
 export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
 
@@ -62,7 +64,7 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
     }
 
     return (
-        <div className='view audit'>
+        <div className='view sidebar audit'>
             { (auditId == 'new' || audit) && version && product && (
                 <React.Fragment>
                     <header>
@@ -83,6 +85,9 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div>
+                            <ModelView url={`/rest/models/${version.id}`} mouse={true}/>
                         </div>
                     </main>
                 </React.Fragment>
