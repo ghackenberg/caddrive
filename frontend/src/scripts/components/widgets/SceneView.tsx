@@ -15,8 +15,6 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     private renderer: WebGLRenderer
     private orbit: OrbitControls
     private raycaster: Raycaster
-    private hovered: Object3D
-    private selected: Object3D
     private controller1: Group
     private controller2: Group
     private grip1: Group
@@ -24,6 +22,9 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     private scene: Scene
     private camera: PerspectiveCamera
     private button: HTMLElement
+    
+    private hovered: Object3D
+    private selected: Object3D
 
     private fullscreen = false
 
