@@ -35,7 +35,8 @@ export const UserListView = () => {
         {label: 'Email', content: user => user.email},
         {label: 'Name', content: user => user.name},
         {label: 'Edit', content: user => <Link to={`/users/${user.id}`}><img src={EditIcon}/></Link>},
-        {label: 'Delete', content: user => <a href="#" onClick={_event => deleteUser(user.id)}><img src={DeleteIcon}/></a>}
+        {label: 'Delete', content: user => <a href="#" onClick={_event => deleteUser(user.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: () => '', class: 'fill'}
     ]
 
     return (

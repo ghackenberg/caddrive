@@ -44,7 +44,8 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
         {label: 'Name', content: version => <Link to={`/audits?version=${version.id}`}>{version.name}</Link>},
         {label: 'Date', content: version => <Link to={`/audits?version=${version.id}`}>{new Date(version.date).toISOString().slice(0, 10)}</Link>},
         {label: 'Edit', content: version => <Link to={`/versions/${version.id}`}><img src={EditIcon}/></Link>},
-        {label: 'Delete', content: version => <a href="#" onClick={_event => deleteVersion(version.id)}><img src={DeleteIcon}/></a>}
+        {label: 'Delete', content: version => <a href="#" onClick={_event => deleteVersion(version.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: () => '', class: 'fill'}
     ] 
 
     return (

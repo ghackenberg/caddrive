@@ -36,7 +36,8 @@ export const ProductListView = () => {
         {label: 'Model', content: product => <Link to={`/versions?product=${product.id}`}><ProductView id={product.id}/></Link>},
         {label: 'Product', content: product => <Link to={`/versions?product=${product.id}`}>{product.name}</Link>},
         {label: 'Edit', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon}/></Link>},
-        {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon}/></a>}
+        {label: 'Delete', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: () => '', class: 'fill'}
     ]
 
     return (

@@ -59,7 +59,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                     </header>
                     <main>
                         <div>
-                            <h1>{product ? product.name : 'New product'}</h1>
+                            <h1>Product editor</h1>
                             <form onSubmit={submit} onReset={reset} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <div>

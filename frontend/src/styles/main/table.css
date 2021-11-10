@@ -24,6 +24,8 @@ div.view > main table > tbody > tr > td:first-child {
     text-align: center;
 }
 div.view > main table > tbody > tr > td {
+    white-space: nowrap;
+    
     padding-top: calc(0.75rem - 0.25em);
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -32,4 +34,7 @@ div.view > main table > tbody > tr > td {
     background-color: rgba(0,0,0,0.1);
 
     border-top: 1px solid white;
+}
+div.view > main table > tbody > tr > td.fill {
+    width: 100%;
 }

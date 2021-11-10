@@ -75,7 +75,6 @@ export const AuditEditView = (props: RouteComponentProps<{audit: string}>) => {
                     <main>
                         <div>
                             <h1>Audit editor</h1>
-                            <h2>Property form</h2>
                             <form onSubmit={submit} onReset={reset} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <DateInput label='Start' placeholder='Select start' value={start} change={setStart}/>

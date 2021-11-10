@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 export interface Column <T,> {
+    class?: string
     label: React.ReactNode
     content: (item: T) => React.ReactNode
 }
@@ -13,7 +14,7 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
                 <tr>
                     <th>#</th>
                     {props.columns.map((column, index) =>
-                        <th key={index}>{column.label}</th>
+                        <th key={index} className={column.class}>{column.label}</th>
                     )}
                 </tr>
             </thead>
@@ -22,7 +23,7 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
                     <tr key={index}>
                         <td>{index}</td>
                         {props.columns.map((column, index) =>
-                            <td key={index}>{column.content(item)}</td>
+                            <td key={index} className={column.class}>{column.content(item)}</td>
                         )}
                     </tr>
                 )}

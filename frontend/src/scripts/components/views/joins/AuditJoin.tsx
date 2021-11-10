@@ -89,7 +89,7 @@ export const AuditJoinView = (props: RouteComponentProps<{audit: string}>) => {
         {label: 'User', content: event => event.userId in users ? <span>{users[event.userId].name} &lt;{users[event.userId].email}&gt;</span> : <p>Loading...</p>},
         {label: 'Type', content: event => event.type},
         {label: 'Time', content: event => new Date(event.time).toISOString()},
-        {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''}
+        {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : '', class: 'fill'}
     ]
 
     return (
