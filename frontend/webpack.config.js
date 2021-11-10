@@ -46,7 +46,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             publicPath: '/',
-            title: 'FHO&Ouml; Virtual Engineering Platform',
+            title: 'ProductHub',
             filename: '404.html'
         })
     ],
