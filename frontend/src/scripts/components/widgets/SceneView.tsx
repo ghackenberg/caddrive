@@ -51,7 +51,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         this.point_light = new PointLight(0xffffff, 1, 100)
         this.point_light.position.set(50,50,50)
         // Renderer
-        this.renderer = new WebGLRenderer({ antialias: true })
+        this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true })
         this.renderer.xr.enabled = true
         this.renderer.outputEncoding = sRGBEncoding
         this.renderer.setPixelRatio(window.devicePixelRatio)
