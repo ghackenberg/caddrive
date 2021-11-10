@@ -22,6 +22,9 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     private scene: Scene
     private camera: PerspectiveCamera
     private button: HTMLElement
+
+    private position_start: {clientX: number, clientY: number}
+    private position_end: {clientX: number, clientY: number}
     
     private hovered: Object3D
     private selected: Object3D
@@ -34,10 +37,15 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         this.div = React.createRef()
         // Bind
         this.resize = this.resize.bind(this)
-        this.handleMouseEnter = this.handleMouseEnter.bind(this)
+
+        this.handleMouseDown = this.handleMouseDown.bind(this)
         this.handleMouseMove = this.handleMouseMove.bind(this)
-        this.handleClick = this.handleClick.bind(this)
-        this.handleMouseLeave = this.handleMouseLeave.bind(this)
+        this.handleMouseUp = this.handleMouseUp.bind(this)
+
+        this.handleTouchStart = this.handleTouchStart.bind(this)
+        this.handleTouchMove = this.handleTouchMove.bind(this)
+        this.handleTouchEnd = this.handleTouchEnd.bind(this)
+
         this.paint = this.paint.bind(this)
     }
 
@@ -150,9 +158,9 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         this.renderer.setSize(width, height)
     }
 
-    normalizeMousePosition(event: React.MouseEvent) {
-        var x = event.clientX
-        var y = event.clientY
+    normalizeMousePosition(position: { clientX: number, clientY: number }) {
+        var x = position.clientX
+        var y = position.clientY
 
         var i: HTMLElement = this.div.current
 
@@ -188,13 +196,13 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         }
     }
 
-    updateIntersection(event: React.MouseEvent) {
+    updateHovered(position: { clientX: number, clientY: number }) {
         if (this.props.mouse) {
             if (this.hovered && this.hovered != this.selected) {
                 this.updateMaterial(this.hovered, 0)
             }
             
-            this.raycaster.setFromCamera(this.normalizeMousePosition(event), this.camera)
+            this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
             const intersections = this.raycaster.intersectObjects(this.scene.children, true)
 
             if (intersections.length > 0) {
@@ -209,27 +217,66 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         }
     }
 
-    handleMouseEnter(event: React.MouseEvent) {
-        this.updateIntersection(event)
-    }
-
-    handleMouseMove(event: React.MouseEvent) {
-        this.updateIntersection(event)
-    }
-    
-    handleClick(event: React.MouseEvent) {
-        this.updateIntersection(event)
+    updateSelected(position: { clientX: number, clientY: number }) {
+        this.updateHovered(position)
+        if (this.selected && this.selected != this.hovered) {
+            this.updateMaterial(this.selected, 0)
+            this.selected = null
+        }
         if (this.hovered) {
-            if (this.selected && this.selected != this.hovered) {
-                this.updateMaterial(this.selected, 0)
-            }
             this.selected = this.hovered
             this.updateMaterial(this.selected, 0.2)
         }
     }
 
-    handleMouseLeave(event: React.MouseEvent) {
-        this.updateIntersection(event)
+    calculateDistance() {
+        if (this.position_start && this.position_end) {
+            const dx = this.position_start.clientX - this.position_end.clientX
+            const dy = this.position_start.clientY - this.position_end.clientY
+            return Math.sqrt(dx * dx + dy * dy)
+        } else {
+            return 0
+        }
+    }
+
+    handleMouseDown(event: React.MouseEvent) {
+        this.position_start = event
+        this.position_end = event
+    }
+
+    handleMouseMove(event: React.MouseEvent) {
+        if (this.position_start && this.position_end) {
+            this.position_end = event
+        } else {
+            this.updateHovered(event)
+        }
+    }
+
+    handleMouseUp(_event: React.MouseEvent) {
+        if (this.position_start && this.position_end) {
+            if (this.calculateDistance() <= 1) {
+                this.updateSelected(this.position_end)
+            }
+            this.position_start = null
+            this.position_end = null
+        }
+    }
+
+    handleTouchStart(event: React.TouchEvent) {
+        this.position_start = event.touches[0]
+        this.position_end = event.touches[0]
+    }
+
+    handleTouchMove(event: React.TouchEvent) {
+        this.position_end = event.touches[0]
+    }
+
+    handleTouchEnd(_event: React.TouchEvent) {
+        if (this.calculateDistance() <= 1) {
+            this.updateSelected(this.position_end)
+        }
+        this.position_start = null
+        this.position_end = null
     }
 
     paint() {
@@ -240,7 +287,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     }
     
     override render() {
-        return <div className="widget scene_view" onMouseEnter={this.handleMouseEnter} onMouseMove={this.handleMouseMove} onMouseLeave={this.handleMouseLeave} onClick={this.handleClick} ref={this.div}/>
+        return <div className="widget scene_view" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
     }
     
 }
