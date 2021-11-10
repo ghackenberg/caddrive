@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Scene, PerspectiveCamera, WebGLRenderer, PointLight, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
@@ -12,7 +13,9 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     private ambient_light: AmbientLight
     private point_light: PointLight
     private renderer: WebGLRenderer
+    private orbit: OrbitControls
     private raycaster: Raycaster
+    private hovered: Object3D
     private selected: Object3D
     private controller1: Group
     private controller2: Group
@@ -85,8 +88,6 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         // Camera
         this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
         this.camera.position.z = 5
-        // Raycaster
-        this.raycaster = new Raycaster()
         // Button
         if (this.props.vr) {
             this.button = VRButton.createButton(this.renderer)
@@ -100,6 +101,10 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         if (this.props.vr) {
             this.div.current.appendChild(this.button)
         }
+        // Raycaster
+        this.raycaster = new Raycaster()
+        // Orbit
+        this.orbit = new OrbitControls(this.camera, this.renderer.domElement)
         // Listen
         window.addEventListener('resize', this.resize)
         // Resize
@@ -126,6 +131,8 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
             this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
             this.camera.position.z = 5
         }
+        // Orbit
+        this.orbit.object = this.camera
         // Resize
         this.resize()
     }
@@ -161,50 +168,38 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         return new Vector2(x / w * 2 - 1, - y / h * 2 + 1)
     }
 
+    updateMaterial(object: Object3D, scalar: number) {
+        if (object.type == 'Mesh') {
+            const mesh = object as Mesh
+            if (typeof mesh.material == 'object') {
+                const material = mesh.material as Material
+                if (material.type == 'MeshStandardMaterial') {
+                    const msm = material as MeshStandardMaterial
+                    msm.emissive.setScalar(scalar)
+                } else {
+                    console.error('Material type not supported', material.type)
+                }
+            } else {
+                console.error('Material type not supported', typeof mesh.material)
+            }
+        } else {
+            console.error('Object type not supported', object.type)
+        }
+    }
+
     updateIntersection(event: React.MouseEvent) {
         if (this.props.mouse) {
-            if (this.selected) {
-                if (this.selected.type == 'Mesh') {
-                    const mesh = this.selected as Mesh
-                    if (typeof mesh.material == 'object') {
-                        const material = mesh.material as Material
-                        if (material.type == 'MeshStandardMaterial') {
-                            const msm = material as MeshStandardMaterial
-                            msm.emissive.setScalar(0)
-                        } else {
-                            console.error('Material type not supported', material.type)
-                        }
-                    } else {
-                        console.error('Material type not supported', typeof mesh.material)
-                    }
-                } else {
-                    console.error('Object type not supported', this.selected.type)
-                }
+            if (this.hovered && this.hovered != this.selected) {
+                this.updateMaterial(this.hovered, 0)
             }
             
             this.raycaster.setFromCamera(this.normalizeMousePosition(event), this.camera)
-            
             const intersections = this.raycaster.intersectObjects(this.scene.children, true)
 
             if (intersections.length > 0) {
-                this.selected = intersections[0].object
-                if (this.selected.type == 'Mesh') {
-                    const mesh = this.selected as Mesh
-                    if (typeof mesh.material == 'object') {
-                        const material = mesh.material as Material
-                        if (material.type == 'MeshStandardMaterial') {
-                            const msm = material as MeshStandardMaterial
-                            msm.emissive.setScalar(0.1)
-                        } else {
-                            console.error('Material type not supported', material.type)
-                        }
-                    } else {
-                        console.error('Material type not supported', typeof mesh.material)
-                    }
-                } else {
-                    console.error('Object type not supported', this.selected.type)
-                }
-                this.div.current.title = this.selected.name
+                this.hovered = intersections[0].object
+                this.updateMaterial(this.hovered, 0.1)
+                this.div.current.title = this.hovered.name
                 this.div.current.style.cursor = 'pointer'
             } else {
                 this.div.current.title = ''
@@ -223,14 +218,12 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     
     handleClick(event: React.MouseEvent) {
         this.updateIntersection(event)
-        if (this.selected) {
-            var path = this.selected.name
-            var iterator = this.selected.parent
-            while (iterator) {
-                path = `${iterator.name || iterator.type} / ${path}`
-                iterator = iterator.parent
+        if (this.hovered) {
+            if (this.selected && this.selected != this.hovered) {
+                this.updateMaterial(this.selected, 0)
             }
-            alert(path)
+            this.selected = this.hovered
+            this.updateMaterial(this.selected, 0.2)
         }
     }
 
