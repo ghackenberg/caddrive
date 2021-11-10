@@ -113,7 +113,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         // Raycaster
         this.raycaster = new Raycaster()
         // Orbit
-        this.orbit = new OrbitControls(this.camera, this.renderer.domElement)
+        this.orbit = this.props.mouse && new OrbitControls(this.camera, this.renderer.domElement)
         // Listen
         window.addEventListener('resize', this.resize)
         // Resize
@@ -141,7 +141,9 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
             this.camera.position.z = 5
         }
         // Orbit
-        this.orbit.object = this.camera
+        if (this.props.mouse) {
+            this.orbit.object = this.camera
+        }
         // Resize
         this.resize()
     }

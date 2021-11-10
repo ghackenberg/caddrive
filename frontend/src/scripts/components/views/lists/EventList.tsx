@@ -59,12 +59,13 @@ export const EventListView = (props: RouteComponentProps<{audit: string}>) => {
     }
 
     const columns: Column<Event>[] = [
-        {label: 'Icon', content: _event => <a><img src={EventIcon}/></a>},
-        {label: 'User', content: event => event.userId in users ? <span>{users[event.userId].name} &lt;{users[event.userId].email}&gt;</span> : <p>Loading...</p>},
-        {label: 'Time', content: event => new Date(event.time).toISOString()},
+        {label: '', content: _event => <a><img src={EventIcon}/></a>},
+        {label: 'User', content: event => event.userId in users ? <Link to={`/users/${event.userId}`}>{users[event.userId].name}</Link> : 'Loading'},
+        {label: 'Date', content: event => new Date(event.time).toISOString().substring(0, 10)},
+        {label: 'Time', content: event => new Date(event.time).toISOString().substring(11, 16)},
         {label: 'Text', content: event => event.type == 'comment' ? (event as CommentEvent).text : ''},
-        {label: 'Edit', content: event => <Link to={`/events/${event.id}`}><img src={EditIcon}/></Link>},
-        {label: 'Delete', content: event => <a href="#" onClick={_event => deleteEvent(event.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: event => <Link to={`/events/${event.id}`}><img src={EditIcon}/></Link>},
+        {label: '', content: event => <a href="#" onClick={_event => deleteEvent(event.id)}><img src={DeleteIcon}/></a>},
         {label: '', content: _event => '', class: 'fill'}
     ]
 

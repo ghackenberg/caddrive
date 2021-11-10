@@ -31,11 +31,11 @@ export const UserListView = () => {
     }
 
     const columns: Column<User>[] = [
-        {label: 'Icon', content: _user => <a><img src={UserIcon}/></a>},
+        {label: '', content: _user => <a><img src={UserIcon}/></a>},
         {label: 'Email', content: user => user.email},
         {label: 'Name', content: user => user.name},
-        {label: 'Edit', content: user => <Link to={`/users/${user.id}`}><img src={EditIcon}/></Link>},
-        {label: 'Delete', content: user => <a href="#" onClick={_event => deleteUser(user.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: user => <Link to={`/users/${user.id}`}><img src={EditIcon}/></Link>},
+        {label: '', content: user => <a href="#" onClick={_event => deleteUser(user.id)}><img src={DeleteIcon}/></a>},
         {label: '', content: () => '', class: 'fill'}
     ]
 
