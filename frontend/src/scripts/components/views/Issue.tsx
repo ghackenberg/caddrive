@@ -9,7 +9,7 @@ import { CommentAPI, IssueAPI, ProductAPI, UserAPI } from '../../clients/rest'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Links
-import { IssueLink } from '../links/IssueLink'
+import { HomeLink } from '../links/HomeLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ProductView } from '../widgets/ProductView'
@@ -103,12 +103,20 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                 <React.Fragment>
                     <header>
                         <nav>
-                            <IssueLink product={product} issue={issue}/>
+                            <HomeLink/>
                         </nav>
                     </header>
                     <main>
                         <div>
-                            <h1>Issue</h1>
+                            <h1>
+                                <Link to={`/products`}>Products</Link>
+                                <Link to={`/products/${productId}`}>{product.name}</Link>
+                            </h1>
+                            <h2>
+                                <Link to={`/products/${productId}`}>Settings</Link>
+                                <Link to={`/products/${productId}/versions`}>Versions</Link>
+                                <Link to={`/products/${productId}/issues`}>Issues</Link>
+                            </h2>
                             <form onSubmit={submitIssue} onReset={() => history.goBack()} className='data-input'>
                                 <TextInput label='Label' placeholder='Type label' value={issueLabel} change={setIssueLabel}/>
                                 <TextInput label='Text' placeholder='Type text' value={issueText} change={setIssueText}/>

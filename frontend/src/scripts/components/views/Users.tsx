@@ -6,7 +6,7 @@ import { User } from 'fhooe-audit-platform-common'
 // Clients
 import { UserAPI } from '../../clients/rest'
 // Links
-import { UsersLink } from '../links/UsersLink'
+import { HomeLink } from '../links/HomeLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 // Images
@@ -32,17 +32,17 @@ export const UsersView = () => {
         <div className="view users">
             <header>
                 <nav>
-                    <UsersLink/>
+                    <HomeLink/>
                 </nav>
             </header>
             <main>
                 <div>
                     <h1>
-                        Users
-                        <Link to={`/users/new`}>
-                            <img src={AddIcon}/>
-                        </Link>
+                        <Link to={`/users`}>Users</Link>
                     </h1>
+                    <Link to={`/users/new`}>
+                        <img src={AddIcon}/>
+                    </Link>
                     { users && <Table columns={columns} items={users}/> }
                 </div>
             </main>

@@ -1,14 +1,14 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
 import { useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import * as hash from 'hash.js'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
 import { UserAPI } from '../../clients/rest'
 // Links
-import { UserLink } from '../links/UserLink'
+import { HomeLink } from '../links/HomeLink'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { EmailInput } from '../inputs/EmailInput'
@@ -59,12 +59,15 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                 <React.Fragment>
                     <header>
                         <nav>
-                            <UserLink user={user}/>
+                            <HomeLink/>
                         </nav>
                     </header>
                     <main>
                         <div>
-                            <h1>User</h1>
+                            <h1>
+                                <Link to={`/users`}>Users</Link>
+                                <Link to={`/users/${userId}`}>{user ? user.name : 'New user'}</Link>
+                            </h1>
                             <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>

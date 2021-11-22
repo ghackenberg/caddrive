@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, FormEvent } from 'react'
+import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
@@ -9,7 +9,7 @@ import { ProductAPI } from '../../clients/rest'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Links
-import { ProductLink } from '../links/ProductLink'
+import { HomeLink } from '../links/HomeLink'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 // Widgets
@@ -55,12 +55,29 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                 <React.Fragment>
                     <header>
                         <nav>
-                            <ProductLink product={product}/>
+                            <HomeLink/>
                         </nav>
                     </header>
                     <main>
                         <div>
-                            <h1>Product</h1>
+                            <h1>
+                                <Link to={`/products`}>Products</Link>
+                                <Link to={`/products/${productId}`}>{product ? product.name : 'New product'}</Link>
+                            </h1>
+                            <h2>
+                                <Link to={`/products/${productId}`}>Settings</Link>
+                                { productId != 'new' ? (
+                                    <Fragment>
+                                        <Link to={`/products/${productId}/versions`}>Versions</Link>
+                                        <Link to={`/products/${productId}/issues`}>Issues</Link>
+                                    </Fragment>
+                                ) : (
+                                    <Fragment>
+                                        <a>Versions</a>
+                                        <a>Issues</a>
+                                    </Fragment>
+                                )}
+                            </h2>
                             <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <div>

@@ -6,7 +6,7 @@ import { Product } from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI } from '../../clients/rest'
 // Links
-import { ProductsLink } from '../links/ProductsLink'
+import { HomeLink } from '../links/HomeLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ProductView } from '../widgets/ProductView'
@@ -33,17 +33,17 @@ export const ProductsView = () => {
         <div className="view products">
             <header>
                 <nav>
-                    <ProductsLink/>
+                    <HomeLink/>
                 </nav>
             </header>
             <main>
                 <div>
                     <h1>
-                        Products
-                        <Link to={`/products/new`}>
-                            <img src={AddIcon}/>
-                        </Link>
+                        <Link to={`/products`}>Products</Link>
                     </h1>
+                    <Link to={`/products/new`}>
+                        <img src={AddIcon}/>
+                    </Link>
                     { products && <Table columns={columns} items={products}/> }
                 </div>
             </main>

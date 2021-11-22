@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, FormEvent } from 'react'
 import { useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product, Version} from 'fhooe-audit-platform-common'
 // Clients
@@ -9,12 +9,12 @@ import { ProductAPI, VersionAPI } from '../../clients/rest'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Links
-import { VersionLink } from '../links/VersionLink'
+import { HomeLink } from '../links/HomeLink'
 // Inputs
 import { FileInput } from '../inputs/FileInput'
+import { NumberInput } from '../inputs/NumberInput'
 // Widgets
 import { ModelView } from '../widgets/ModelView'
-import { NumberInput } from '../inputs/NumberInput'
 
 export const VersionView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
@@ -60,12 +60,21 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                 <React.Fragment>
                     <header>
                         <nav>
-                            <VersionLink version={version} product={product}/>
+                            <HomeLink/>
                         </nav>
                     </header>
                     <main>
                         <div>
-                            <h1>Version</h1>
+                            <h1>
+                                <Link to={`/products`}>Products</Link>
+                                <Link to={`/products/${productId}`}>{product.name}</Link>
+                            </h1>
+                            <h2>
+                                <Link to={`/products/${productId}`}>Settings</Link>
+                                <Link to={`/products/${productId}/versions`}>Versions</Link>
+                                <Link to={`/products/${productId}/issues`}>Issues</Link>
+                            </h2>
+                            <h3>Version</h3>
                             <form onSubmit={submit} className='data-input'>                     
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>

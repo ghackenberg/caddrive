@@ -22,6 +22,16 @@ div.view > main h3 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-div.view > main h1 > a {
-    margin-left: 0.5em;
+div.view > main h1 > a::after {
+    content: " / ";
+}
+div.view > main h1 > a:last-child::after {
+    content: "";
+}
+
+div.view > main h2 > a::after {
+    content: " | ";
+}
+div.view > main h2 > a:last-child::after {
+    content: "";
 }

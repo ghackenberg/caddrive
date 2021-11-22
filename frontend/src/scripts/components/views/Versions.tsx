@@ -7,7 +7,7 @@ import { Product, Version } from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI, VersionAPI } from '../../clients/rest'
 // Links
-import { VersionsLink } from '../links/VersionsLink'
+import { HomeLink } from '../links/HomeLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ModelView } from '../widgets/ModelView'
@@ -41,17 +41,23 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                 <React.Fragment>
                     <header>
                         <nav>
-                            <VersionsLink product={product}/>
+                            <HomeLink/>
                         </nav>
                     </header>
                     <main>
                         <div>
                             <h1>
-                                Versions
-                                <Link to={`/products/${productId}/versions/new`}>
-                                    <img src={AddIcon}/>
-                                </Link>
+                                <Link to={`/products`}>Products</Link>
+                                <Link to={`/products/${productId}`}>{product.name}</Link>
                             </h1>
+                            <h2>
+                                <Link to={`/products/${productId}`}>Settings</Link>
+                                <Link to={`/products/${productId}/versions`}>Versions</Link>
+                                <Link to={`/products/${productId}/issues`}>Issues</Link>
+                            </h2>
+                            <Link to={`/products/${productId}/versions/new`}>
+                                <img src={AddIcon}/>
+                            </Link>
                             <Table columns={columns} items={versions}/>
                         </div>
                         <div>
