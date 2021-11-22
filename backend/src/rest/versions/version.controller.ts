@@ -15,16 +15,12 @@ export class VersionController implements VersionREST<Express.Multer.File> {
     ) {}
 
     @Get()
-    @ApiQuery({ name: 'quick', type: 'string', required: false })
-    @ApiQuery({ name: 'name', type: 'string', required: false })
-    @ApiQuery({ name: 'product', type: 'string', required: false })
+    @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiResponse({ type: [Version] }) 
     async findVersions(
-        @Query('quick') quick?: string,
-        @Query('name') name?: string,
-        @Query('product') product?: string
+        @Query('product') product: string
     ): Promise<Version[]> {
-        return this.versionService.findVersions(quick, name, product)
+        return this.versionService.findVersions(product)
     }
 
     @Post()

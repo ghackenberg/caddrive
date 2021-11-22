@@ -15,8 +15,7 @@ export class AuthStrategy extends PassportStrategy(BasicStrategy) {
     }
 
     public async validate(email: string, password: string): Promise<User> {
-        const users = await this.userService.findUsers(undefined, undefined, email)
-        for (const user of users) {
+        for (const user of await this.userService.findUsers()) {
             if (user.email == email && user.password == password) {
                 return user
             }

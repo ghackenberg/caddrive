@@ -1,11 +1,13 @@
 import * as React from 'react'
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, useContext, FormEvent } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI } from '../../../clients/rest'
+// Contexts
+import { UserContext } from '../../../contexts/User'
 // Links
 import { ProductLink } from '../../links/ProductLink'
 // Inputs
@@ -19,6 +21,8 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
 
     const history = useHistory()
 
+    const user = useContext(UserContext)
+
     // Define entities
     const [product, setProduct] = useState<Product>()
 
@@ -26,7 +30,7 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
     const [name, setName] = useState<string>('')
 
     // Load entities
-    useEffect(() => { productId == 'new' || ProductAPI.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { productId != 'new' && ProductAPI.getProduct(productId).then(setProduct) }, [props])
 
     // Load values
     useEffect(() => { product && setName(product.name) }, [product])
@@ -35,12 +39,12 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
         event.preventDefault()
         if(productId == 'new') {
             if (name) {
-                await ProductAPI.addProduct({ name })
+                await ProductAPI.addProduct({ userId: user.id, name })
                 history.replace(`/products`)
             }
         } else {
             if (name) {
-                await ProductAPI.updateProduct(product.id, { name })
+                await ProductAPI.updateProduct(product.id, { ...product, name })
                 history.replace(`/products`)
             }
         }

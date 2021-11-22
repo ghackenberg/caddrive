@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { ApiBasicAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
 import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
 import { UserService } from './user.service'
 
@@ -22,16 +22,9 @@ export class UserController implements UserREST {
     }
 
     @Get()
-    @ApiQuery({ name: 'quick', type: 'string', required: false })
-    @ApiQuery({ name: 'name', type: 'string', required: false })
-    @ApiQuery({ name: 'email', type: 'string', required: false })
     @ApiResponse({ type: [User] })
-    async findUsers(
-        @Query('quick') quick?: string,
-        @Query('name') name?: string,
-        @Query('email') email?: string
-    ): Promise<User[]> {
-        return this.userService.findUsers(quick, name, email)
+    async findUsers(): Promise<User[]> {
+        return this.userService.findUsers()
     }
   
     @Post()

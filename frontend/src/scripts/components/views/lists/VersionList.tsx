@@ -8,11 +8,10 @@ import { Product, Version } from 'fhooe-audit-platform-common'
 import { ProductAPI, VersionAPI } from '../../../clients/rest'
 // Links
 import { ProductLink } from '../../links/ProductLink'
-// Searches
-import { VersionSearch } from '../../searches/VersionSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 import { ModelView } from '../../widgets/ModelView'
+import { ProductView } from '../../widgets/ProductView'
 // Images
 import * as AddIcon from '/src/images/add.png'
 import * as VersionIcon from '/src/images/version.png'
@@ -31,7 +30,7 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
 
     // Load entities
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { VersionAPI.findVersions(null, null, productId).then(setVersions) }, [props])
+    useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [props])
 
     async function deleteVersion(id: string) {
         await VersionAPI.deleteVersion(id)
@@ -39,16 +38,16 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
     }
 
     const columns: Column<Version>[] = [
-        {label: '', content: version => <Link to={`/audits?version=${version.id}`}><img src={VersionIcon}/></Link>},
-        {label: 'Model', content: version => <Link to={`/audits?version=${version.id}`}><ModelView url={`/rest/models/${version.id}`} mouse={false}/></Link>},
-        {label: 'Name', content: version => <Link to={`/audits?version=${version.id}`}>{version.name}</Link>},
+        {label: '', content: _version => <a><img src={VersionIcon}/></a>},
+        {label: 'Model', content: version => <a><ModelView url={`/rest/models/${version.id}`} mouse={false}/></a>},
+        {label: 'Number', content: version => <a>{version.major}.{version.minor}.{version.patch}</a>},
         {label: '', content: version => <Link to={`/versions/${version.id}`}><img src={EditIcon}/></Link>},
         {label: '', content: version => <a href="#" onClick={_event => deleteVersion(version.id)}><img src={DeleteIcon}/></a>},
         {label: '', content: () => '', class: 'fill'}
     ] 
 
     return (
-        <div className="view products">
+        <div className="view sidebar products">
             { product && versions && (
                 <React.Fragment>
                     <header>
@@ -64,8 +63,10 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
                                     <img src={AddIcon}/>
                                 </Link>
                             </h1>
-                            <VersionSearch product={productId} change={setVersions}/>
                             <Table columns={columns} items={versions}/>
+                        </div>
+                        <div>
+                            <ProductView id={productId} mouse={true}/>
                         </div>
                     </main>
                 </React.Fragment>

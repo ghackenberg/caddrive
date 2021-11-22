@@ -1,45 +1,20 @@
 import 'multer'
 import * as fs from 'fs'
 import * as shortid from 'shortid'
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
-import { ProductService } from '../products/product.service'
-import { AuditService } from '../audits/audit.service'
 
 @Injectable()
 export class VersionService implements VersionREST<Express.Multer.File> {
     private static readonly versions: Version[] = [
-        { id: 'demo', productId: 'demo', name: 'Demo Version', date: new Date().toISOString() }
+        { id: 'demo', userId: 'demo', productId: 'demo', time: new Date().toISOString(), major: 1, minor: 0, patch: 0 }
     ]
 
-    public constructor(
-        @Inject(forwardRef(() => ProductService))
-        private productService: ProductService,
-        @Inject(forwardRef(() => AuditService))
-        private auditService: AuditService
-    ) {}
-
-    async findVersions(quick?: string, name?: string, productId?: string) : Promise<Version[]> {
+    async findVersions(productId: string) : Promise<Version[]> {
         const result: Version[] = []
 
-        quick = quick ? quick.toLowerCase() : undefined
-        name = name ? name.toLowerCase() : undefined
-
         for (const version of VersionService.versions) {
-            const product = await this.productService.getProduct(version.productId)
-
-            if (quick) {
-                const conditionA = version.name.toLowerCase().includes(quick)
-                const conditionB = product.name.toLowerCase().includes(quick)
-
-                if (!(conditionA || conditionB)) {
-                    continue
-                }
-            }
-            if (name && !version.name.toLowerCase().includes(name)) {
-                continue
-            }
-            if (productId && product.id != productId) {
+            if (version.productId != productId) {
                 continue
             }
             result.push(version)
@@ -84,9 +59,6 @@ export class VersionService implements VersionREST<Express.Multer.File> {
         for (var index = 0; index < VersionService.versions.length; index++) {
             const version = VersionService.versions[index]
             if (version.id == id) {
-                for (const audit of await this.auditService.findAudits(null, null, null, id)) {
-                    await this.auditService.deleteAudit(audit.id)
-                }
                 VersionService.versions.splice(index, 1)
                 return version
             }

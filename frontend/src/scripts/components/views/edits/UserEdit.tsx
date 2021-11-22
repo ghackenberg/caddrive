@@ -29,7 +29,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
     const [password, setPassword] = useState<string>('')
 
     // Load entities
-    useEffect(() => { userId == 'new' || UserAPI.getUser(userId).then(setUser) }, [props])
+    useEffect(() => { userId != 'new' && UserAPI.getUser(userId).then(setUser) }, [props])
 
     // Load values
     useEffect(() => { user && setEmail(user.email) }, [user])
@@ -39,12 +39,12 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                await UserAPI.addUser({ name, email, password })
+                await UserAPI.addUser({ name, email, password: encrypt(password) })
                 history.replace(`/users`)
             }
         } else {
             if (name && email) {
-                await UserAPI.updateUser(user.id, { name, email, password })
+                await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) })
                 history.replace(`/users`)
             }
         }       
@@ -73,7 +73,7 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                             <form onSubmit={submit} onReset={reset} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                <PasswordInput label='Password' placeholder='Type password' value={password} change={password => setPassword(encrypt(password))}/>
+                                <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
                                 <div>
                                     <div/>
                                     <div>

@@ -1,6 +1,6 @@
 import axios from 'axios'
 // Commons
-import { Audit, AuditData, AuditREST, CommentEvent, CommentEventData, EnterEvent, EnterEventData, Event, EventREST, LeaveEvent, LeaveEventData, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+import { Comment, CommentData, CommentREST, Issue, IssueData, IssueREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 // Globals
 import { auth } from './auth'
 
@@ -8,8 +8,8 @@ class UserClient implements UserREST {
     async checkUser(): Promise<User> {
         return (await axios.get<User>('/rest/users/check', { auth })).data
     }
-    async findUsers(quick?: string, name?: string, email?: string): Promise<User[]> {
-        return (await axios.get<User[]>(`/rest/users`, { params: { quick, name, email }, auth } )).data
+    async findUsers(): Promise<User[]> {
+        return (await axios.get<User[]>(`/rest/users`, { auth } )).data
     }
     async addUser(data: UserData): Promise<User> {
         return (await axios.post<User>('/rest/users', data, { auth })).data
@@ -26,8 +26,8 @@ class UserClient implements UserREST {
 }
 
 class ProductClient implements ProductREST {
-    async findProducts(quick?: string, name?: string): Promise<Product[]> {
-        return (await axios.get<Product[]>(`/rest/products`, { params: { quick, name }, auth })).data
+    async findProducts(): Promise<Product[]> {
+        return (await axios.get<Product[]>(`/rest/products`, { auth })).data
     }
     async addProduct(data: ProductData): Promise<Product> {
         return (await axios.post<Product>('/rest/products', data, { auth })).data
@@ -44,14 +44,17 @@ class ProductClient implements ProductREST {
 }
 
 class VersionClient implements VersionREST<File> {
-    async findVersions(quick?: string, name?: string, product?: string): Promise<Version[]> {
-        return (await axios.get<Version[]>('/rest/versions', { params: { quick, name, product }, auth } )).data
+    async findVersions(product: string): Promise<Version[]> {
+        return (await axios.get<Version[]>('/rest/versions', { params: { product }, auth } )).data
     }
     async addVersion(data: VersionData, file: File): Promise<Version> {
         const body = new FormData()
+        body.append('userId', data.userId)
         body.append('productId', data.productId)
-        body.append('name', data.name)
-        body.append('date', data.date)
+        body.append('time', data.time)
+        body.append('major', `${data.major}`)
+        body.append('minor', `${data.minor}`)
+        body.append('patch', `${data.patch}`)
         body.append('file', file)
         return (await axios.post<Version>('/rest/versions', body, { auth })).data
     }
@@ -60,10 +63,12 @@ class VersionClient implements VersionREST<File> {
     }
     async updateVersion(id: string, data: VersionData, file?: File): Promise<Version> {
         const body = new FormData()
-        body.append('id', id)
+        body.append('userId', data.userId)
         body.append('productId', data.productId)
-        body.append('name', data.name)
-        body.append('date', data.date)
+        body.append('time', data.time)
+        body.append('major', `${data.major}`)
+        body.append('minor', `${data.minor}`)
+        body.append('patch', `${data.patch}`)
         body.append('file', file)
         return (await axios.put<Version>(`/rest/versions/${id}`, body, { auth })).data
     }
@@ -72,47 +77,44 @@ class VersionClient implements VersionREST<File> {
     }
 }
 
-class AuditClient implements AuditREST {
-    async findAudits(quick?: string, name?: string, product?: string, version?: string): Promise<Audit[]> {
-        return (await axios.get<Audit[]>(`/rest/audits`, { params: { quick, name, product, version }, auth })).data
+class IssueClient implements IssueREST {
+    async findIssues(product: string): Promise<Issue[]> {
+        return (await axios.get<Issue[]>(`/rest/issues`, { params: { product }, auth })).data
     }
-    async addAudit(data: AuditData): Promise<Audit> {
-        return (await axios.post<Audit>('/rest/audits', data, { auth })).data
+    async addIssue(data: IssueData): Promise<Issue> {
+        return (await axios.post<Issue>('/rest/issues', data, { auth })).data
     }
-    async getAudit(id: string): Promise<Audit> {
-        return (await axios.get<Audit>(`/rest/audits/${id}`, { auth })).data
+    async getIssue(id: string): Promise<Issue> {
+        return (await axios.get<Issue>(`/rest/issues/${id}`, { auth })).data
     }
-    async updateAudit(id: string, data: AuditData): Promise<Audit> {
-        return (await axios.put<Audit>(`/rest/audits/${id}`, data, { auth })).data
+    async updateIssue(id: string, data: IssueData): Promise<Issue> {
+        return (await axios.put<Issue>(`/rest/issues/${id}`, data, { auth })).data
     }
-    async deleteAudit(id: string): Promise<Audit> {
-        return (await axios.delete<Audit>(`/rest/audits/${id}`, { auth })).data
+    async deleteIssue(id: string): Promise<Issue> {
+        return (await axios.delete<Issue>(`/rest/issues/${id}`, { auth })).data
     }
 }
 
-class EventClient implements EventREST {
-    async findEvents(quick?: string, type?: string, comment?: string, user?: string, product?: string, version?: string, audit?: string): Promise<Event[]> {
-        return (await axios.get<Event[]>('/rest/events', { params: { quick, type, comment, user, product, version, audit }, auth })).data
+class CommentClient implements CommentREST {
+    async findComments(issue: string): Promise<Comment[]> {
+        return (await axios.get<Comment[]>('/rest/comments', { params: { issue }, auth })).data
     }
-    async addEnterEvent(data: EnterEventData): Promise<EnterEvent> {
-        return (await axios.post<EnterEvent>('/rest/events/enters', data, { auth })).data
+    async addComment(data: CommentData): Promise<Comment> {
+        return (await axios.post<Comment>('/rest/comments', data, { auth })).data
     }
-    async addLeaveEvent(data: LeaveEventData): Promise<LeaveEvent> {
-        return (await axios.post<LeaveEvent>('/rest/events/leaves', data, { auth })).data
+    async getComment(id: string): Promise<Comment> {
+        return (await axios.get<Comment>(`/rest/comments/${id}`, { auth })).data
     }
-    async addCommentEvent(data: CommentEventData): Promise<CommentEvent> {
-        return (await axios.post<CommentEvent>('/rest/events/comments', data, { auth })).data
+    async updateComment(id: string, data: CommentData): Promise<Comment> {
+        return (await axios.put<Comment>(`/rest/comments/${id}`, data, { auth })).data
     }
-    async getEvent(id: string): Promise<Event> {
-        return (await axios.get<Event>(`/rest/events/${id}`, { auth })).data
-    }
-    async deleteEvent(id: string): Promise<Event> {
-        return (await axios.delete<Event>(`/rest/events/${id}`, { auth })).data
+    async deleteComment(id: string): Promise<Comment> {
+        return (await axios.delete<Comment>(`/rest/comments/${id}`, { auth })).data
     }
 }
 
 export const UserAPI = new UserClient()
 export const ProductAPI = new ProductClient()
 export const VersionAPI = new VersionClient()
-export const AuditAPI = new AuditClient()
-export const EventAPI = new EventClient()
+export const IssueAPI = new IssueClient()
+export const CommentAPI = new CommentClient()

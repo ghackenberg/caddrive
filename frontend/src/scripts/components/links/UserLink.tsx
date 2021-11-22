@@ -7,7 +7,6 @@ import { User } from 'fhooe-audit-platform-common'
 import { UsersLink } from './UsersLink'
 
 export const UserLink = (props: {user?: User}) => {
-
     return (
         <Fragment>
             <UsersLink/>
@@ -22,5 +21,4 @@ export const UserLink = (props: {user?: User}) => {
             )}
         </Fragment>  
     )
-
 }

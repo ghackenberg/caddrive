@@ -7,8 +7,6 @@ import { Product } from 'fhooe-audit-platform-common'
 import { ProductAPI } from '../../../clients/rest'
 // Links
 import { ProductsLink } from '../../links/ProductsLink'
-// Searches
-import { ProductSearch } from '../../searches/ProductSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 import { ProductView } from '../../widgets/ProductView'
@@ -35,6 +33,8 @@ export const ProductListView = () => {
         {label: '', content: product => <Link to={`/versions?product=${product.id}`}><img src={ProductIcon}/></Link>},
         {label: 'Model', content: product => <Link to={`/versions?product=${product.id}`}><ProductView id={product.id} mouse={false}/></Link>},
         {label: 'Product', content: product => <Link to={`/versions?product=${product.id}`}>{product.name}</Link>},
+        {label: 'Issues', content: product => <Link to={`/issues?product=${product.id}`}>Issues</Link>},
+        {label: 'Versions', content: product => <Link to={`/versions?product=${product.id}`}>Versions</Link>},
         {label: '', content: product => <Link to={`/products/${product.id}`}><img src={EditIcon}/></Link>},
         {label: '', content: product => <a href="#" onClick={_event => deleteProduct(product.id)}><img src={DeleteIcon}/></a>},
         {label: '', content: () => '', class: 'fill'}
@@ -55,7 +55,6 @@ export const ProductListView = () => {
                             <img src={AddIcon}/>
                         </Link>
                     </h1>
-                    <ProductSearch change={setProducts}/>
                     { products && <Table columns={columns} items={products}/> }
                 </div>
             </main>

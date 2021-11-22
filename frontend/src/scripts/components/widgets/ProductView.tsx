@@ -11,7 +11,7 @@ export const ProductView = (props: { id: string, mouse: boolean }) => {
 
     const [versions, setVersions] = useState<Version[]>(null)
     
-    useEffect(() => { VersionAPI.findVersions(undefined, undefined, props.id).then(setVersions) }, [props.id])
+    useEffect(() => { VersionAPI.findVersions(props.id).then(setVersions) }, [props.id])
 
     return (
         <div className="widget product_view">

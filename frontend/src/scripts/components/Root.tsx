@@ -13,13 +13,13 @@ import { HomeView } from './views/Home'
 import { UserListView } from './views/lists/UserList'
 import { ProductListView } from './views/lists/ProductList'
 import { VersionListView } from './views/lists/VersionList'
-import { AuditListView } from './views/lists/AuditList'
-import { EventListView } from './views/lists/EventList'
 import { UserEditView } from './views/edits/UserEdit'
 import { ProductEditView } from './views/edits/ProductEdit'
 import { VersionEditView } from './views/edits/VersionEdit'
-import { AuditEditView } from './views/edits/AuditEdit'
-import { EventEditView } from './views/edits/EventEdit'
+import { IssueEditView } from './views/edits/IssueEdit'
+import { IssueListView } from './views/lists/IssueList'
+import { CommentEditView } from './views/edits/CommentEdit'
+import { CommentListView } from './views/lists/CommentList'
 // Images
 import * as ProductIcon from '/src/images/product.png'
 
@@ -56,11 +56,11 @@ export const Root = () => {
                             <Route path="/versions/:version" component={VersionEditView}/>
                             <Route path="/versions" component={VersionListView}/>
                             {/* Audit views */}
-                            <Route path="/audits/:audit" component={AuditEditView}/>
-                            <Route path="/audits" component={AuditListView}/>
+                            <Route path="/issues/:issue" component={IssueEditView}/>
+                            <Route path="/issues" component={IssueListView}/>
                             {/* Event views */}
-                            <Route path="/events/:event" component={EventEditView}/>
-                            <Route path="/events" component={EventListView}/>
+                            <Route path="/comments/:comment" component={CommentEditView}/>
+                            <Route path="/comments" component={CommentListView}/>
                             {/* Home view */}
                             <Route component={HomeView}/>
                         </Switch>

@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import { HomeLink } from './HomeLink'
 
 export const UsersLink = () => {
-
     return (
         <Fragment>
             <HomeLink/>
@@ -14,5 +13,4 @@ export const UsersLink = () => {
             </span>
         </Fragment>
     )
-
 }

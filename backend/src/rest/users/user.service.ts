@@ -12,29 +12,10 @@ export class UserService implements UserREST {
         return null
     }
 
-    async findUsers(quick?: string, name?: string, email?: string) : Promise<User[]> {
+    async findUsers() : Promise<User[]> {
         const results: User[] = []
 
-        quick = quick ? quick.toLowerCase() : undefined
-        name = name ? name.toLowerCase() : undefined
-        email = email ? email.toLowerCase() : undefined
-
         for (const user of UserService.users) {
-            if (quick) {
-                const conditionA = user.name.toLowerCase().includes(quick)
-                const conditionB = user.email.toLowerCase().includes(quick)
-
-                if (!(conditionA || conditionB)) {
-                    continue
-                }
-            }
-            if (name && !user.name.toLowerCase().includes(name)) {
-                continue
-            }
-            if (email && !user.email.toLowerCase().includes(email)) {
-                continue
-            }
-
             results.push(user)
         }
 
@@ -71,7 +52,6 @@ export class UserService implements UserREST {
         for (var index = 0; index < UserService.users.length; index++) {
             const user = UserService.users[index]
             if (user.id == id) {
-                // TODO delete events!
                 UserService.users.splice(index, 1)
                 return user
             }

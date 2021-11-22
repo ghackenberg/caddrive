@@ -20,6 +20,8 @@ export class User extends UserData {
 
 export class ProductData {
     @ApiProperty()
+    userId: string
+    @ApiProperty()
     name: string
 }
 
@@ -32,11 +34,17 @@ export class Product extends ProductData {
 
 export class VersionData {
     @ApiProperty()
-    name: string
-    @ApiProperty()
-    date: string
+    userId: string
     @ApiProperty()
     productId: string
+    @ApiProperty()
+    time: string
+    @ApiProperty()
+    major: number
+    @ApiProperty()
+    minor: number
+    @ApiProperty()
+    patch: number
 }
 
 export class Version extends VersionData {
@@ -44,76 +52,42 @@ export class Version extends VersionData {
     id: string
 }
 
-// Audit
+// Issue
 
-export class AuditData {
-    @ApiProperty()
-    name: string
-    @ApiProperty()
-    start: string
-    @ApiProperty()
-    end: string
-    @ApiProperty()
-    versionId: string
-}
-
-export class Audit extends AuditData {
-    @ApiProperty()
-    id: string
-}
-
-// Event
-
-export class EventData {
+export class IssueData {
     @ApiProperty()
     userId: string
     @ApiProperty()
-    auditId: string
+    productId: string
     @ApiProperty()
     time: string
     @ApiProperty()
-    type: string
+    label: string
+    @ApiProperty()
+    text: string
+    @ApiProperty()
+    state: 'open' | 'closed'
 }
 
-export class Event extends EventData {
+export class Issue extends IssueData {
     @ApiProperty()
     id: string
 }
 
-// EnterEvent
+// Comment
 
-export class EnterEventData extends EventData {
+export class CommentData {
     @ApiProperty()
-    override readonly type = 'enter'
-}
-
-export class EnterEvent extends EventData {
+    userId: string
     @ApiProperty()
-    id: string
-}
-
-// LeaveEvent
-
-export class LeaveEventData extends EventData {
+    issueId: string
     @ApiProperty()
-    override readonly type = 'leave'
-}
-
-export class LeaveEvent extends EventData {
-    @ApiProperty()
-    id: string
-}
-
-// CommentEvent
-
-export class CommentEventData extends EventData {
-    @ApiProperty()
-    override readonly type = 'comment'
+    time: string
     @ApiProperty()
     text: string
 }
 
-export class CommentEvent extends CommentEventData {
+export class Comment extends CommentData {
     @ApiProperty()
     id: string
 }

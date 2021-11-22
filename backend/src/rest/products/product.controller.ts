@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
 import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
 import { ProductService } from './product.service'
 
@@ -13,14 +13,9 @@ export class ProductController implements ProductREST {
     ) {}
 
     @Get()
-    @ApiQuery({ name: 'quick', type: 'string', required: false })
-    @ApiQuery({ name: 'name', type: 'string', required: false })
     @ApiResponse({ type: [Product] })
-    async findProducts(
-        @Query('quick') quick?: string,
-        @Query('name') name?: string
-    ): Promise<Product[]> {
-        return this.productService.findProducts(quick, name)
+    async findProducts(): Promise<Product[]> {
+        return this.productService.findProducts()
     }
 
     @Post()

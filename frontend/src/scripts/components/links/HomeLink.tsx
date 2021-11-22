@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import * as ProductIcon from '../../../images/product.png'
 
 export const HomeLink = () => {
-
     return (
         <span>
             <Link to="/">
@@ -13,5 +12,4 @@ export const HomeLink = () => {
             </Link>
         </span>
     )
-
 }

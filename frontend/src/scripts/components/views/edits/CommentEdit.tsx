@@ -2,61 +2,59 @@ import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent } from 'react'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 // Commons
-import { Audit, Version, Product, Event, CommentEvent } from 'fhooe-audit-platform-common'
+import { Product, Issue, Comment } from 'fhooe-audit-platform-common'
 // Clients
-import { AuditAPI, EventAPI, ProductAPI, VersionAPI } from '../../../clients/rest'
+import { CommentAPI, IssueAPI, ProductAPI } from '../../../clients/rest'
 // Contexts
 import { UserContext } from '../../../contexts/User'
 // Links
-import { EventLink } from '../../links/EventLink'
+import { CommentLink } from '../../links/CommentLink'
 // Inputs
 import { TextInput } from '../../inputs/TextInput'
 // Widgets
-import { ModelView } from '../../widgets/ModelView'
+import { ProductView } from '../../widgets/ProductView'
 
-export const EventEditView = (props: RouteComponentProps<{event: string}>) => {
+export const CommentEditView = (props: RouteComponentProps<{comment: string}>) => {
 
     const query = new URLSearchParams(props.location.search)
 
-    const auditId = query.get('audit')
-    const eventId = props.match.params.event
+    const issueId = query.get('issue')
+    const commentId = props.match.params.comment
 
     const history = useHistory()
 
     const user = useContext(UserContext)
 
     // Define entities
-    const [event, setEvent] = useState<Event>()
-    const [audit, setAudit] = useState<Audit>()
-    const [version, setVersion] = useState<Version>()
+    const [issue, setIssue] = useState<Issue>()
+    const [comment, setComment] = useState<Comment>()
     const [product, setProduct] = useState<Product>()
 
     // Define values
     const [text, setText] = useState<string>('')
 
     // Load entities
-    useEffect(() => { eventId != 'new' && EventAPI.getEvent(eventId).then(setEvent) }, [props])
-    useEffect(() => { eventId == 'new' && AuditAPI.getAudit(auditId).then(setAudit) }, [props])
-    useEffect(() => { event && AuditAPI.getAudit(event.auditId).then(setAudit) }, [event])
-    useEffect(() => { audit && VersionAPI.getVersion(audit.versionId).then(setVersion) }, [audit])
-    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) }, [version])
+    useEffect(() => { commentId == 'new' && IssueAPI.getIssue(issueId).then(setIssue) }, [props])
+    useEffect(() => { commentId != 'new' && CommentAPI.getComment(commentId).then(setComment) }, [props])
+    useEffect(() => { comment && IssueAPI.getIssue(comment.issueId).then(setIssue) }, [comment])
+    useEffect(() => { issue && ProductAPI.getProduct(issue.productId).then(setProduct) }, [issue])
 
     // Load values
-    useEffect(() => { event && event.type == 'comment' && setText((event as CommentEvent).text) }, [event])
+    useEffect(() => { comment && setText(comment.text) }, [comment])
 
     // Post events
     async function submit(event: FormEvent) {
         event.preventDefault()
-        if (eventId == 'new') {
+        if (commentId == 'new') {
             if (text) {
-                await EventAPI.addCommentEvent({ auditId: audit.id, userId: user.id, time: new Date().toISOString(), type: 'comment', text })
-                history.replace(`/events?audit=${audit.id}`)
+                await CommentAPI.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text })
+                history.replace(`/comments?issue=${issue.id}`)
             }
         }
         else {
             if (text) {
-                // TODO: await EventAPI.updateEvent(event.id, { auditId: audit.id, userId: user.id, time: new Date().toISOString(), type: 'comment', text })
-                history.replace(`/events?audit=${audit.id}`)
+                await CommentAPI.updateComment(comment.id, { ...comment, text })
+                history.replace(`/comments?issue=${issue.id}`)
             }
         }
     }
@@ -67,11 +65,11 @@ export const EventEditView = (props: RouteComponentProps<{event: string}>) => {
 
     return (
         <div className='view sidebar audit'>
-            { product && version && audit && (
+            { (commentId == 'new' || comment) && issue && product && (
                 <React.Fragment>
                     <header>
                         <nav>
-                            <EventLink product={product} version={version} audit={audit} event={event}/>
+                            <CommentLink product={product} issue={issue} comment={comment}/>
                         </nav>
                     </header>
                     <main>
@@ -90,7 +88,7 @@ export const EventEditView = (props: RouteComponentProps<{event: string}>) => {
                             </form>
                         </div>
                         <div>
-                            <ModelView url={`/rest/models/${version.id}`} mouse={true}/>
+                            <ProductView id={product.id} mouse={true}/>
                         </div>
                     </main>
                 </React.Fragment>

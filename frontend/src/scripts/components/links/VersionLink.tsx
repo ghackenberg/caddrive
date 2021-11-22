@@ -12,7 +12,7 @@ export const VersionLink = (props: {product: Product, version?: Version}) => {
             <ProductLink product={props.product}/>
             { props.version ? (
             <span>
-                <Link to={`/audits?version=${props.version.id}`}>{props.version.name}</Link>
+                <Link to={`/audits?version=${props.version.id}`}>{props.version.major}.{props.version.minor}.{props.version.patch}</Link>
             </span>
             ) : (
             <span>

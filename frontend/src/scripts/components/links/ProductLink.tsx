@@ -7,7 +7,6 @@ import { Product } from 'fhooe-audit-platform-common'
 import { ProductsLink } from './ProductsLink'
 
 export const ProductLink = (props: {product?: Product}) => {
-
     return (
         <Fragment>
             <ProductsLink/>
@@ -22,5 +21,4 @@ export const ProductLink = (props: {product?: Product}) => {
             )}
         </Fragment>  
     )
-
 }

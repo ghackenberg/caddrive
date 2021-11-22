@@ -7,8 +7,6 @@ import { User } from 'fhooe-audit-platform-common'
 import { UserAPI } from '../../../clients/rest'
 // Links
 import { UsersLink } from '../../links/UsersLink'
-// Searches
-import { UserSearch } from '../../searches/UserSearch'
 // Widgets
 import { Column, Table } from '../../widgets/Table'
 // Images
@@ -54,7 +52,6 @@ export const UserListView = () => {
                             <img src={AddIcon}/>
                         </Link>
                     </h1>
-                    <UserSearch change={setUsers}/>
                     { users && <Table columns={columns} items={users}/> }
                 </div>
             </main>
