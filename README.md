@@ -1,6 +1,6 @@
-# FHOOE Virtual Engineering Platform
+# ProductBoard
 
-The FHOOE Virtual Engineering Platform provides a free and open source solution to collaborative product audits over the Web and in virtual reality (VR).
+ProductBoard provides a free and open source solution to collaborative product audits over the Web and in virtual reality (VR).
 
 ## Screenshots
 
