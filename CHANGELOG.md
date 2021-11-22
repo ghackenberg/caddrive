@@ -1,6 +1,4 @@
-[→ ProductBoard](README.md)
-
-# Changelog
+# [ProductBoard](README.md) / Changelog
 
 ## Version 1.0.0
 Upgrade notes (e.g. database migration).

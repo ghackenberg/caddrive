@@ -1,5 +1,3 @@
-[→ ProductBoard](../README.md)
-
-# Frontend
+# [ProductBoard](README.md) / Frontend
 
 TODO

@@ -1,5 +1,3 @@
-[→ ProductBoard](../README.md)
-
-# Common
+# [ProductBoard](README.md) / Common
 
 TODO

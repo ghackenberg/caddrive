@@ -1,5 +1,3 @@
-[→ ProductBoard](README.md)
-
-# License
+# [ProductBoard](README.md) / License
 
 Free and open source 😉
