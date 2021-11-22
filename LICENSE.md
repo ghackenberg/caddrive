@@ -1,4 +1,4 @@
-[→ FHOOE Virtual Engineering Platform](README.md)
+[→ ProductBoard](README.md)
 
 # License
 
