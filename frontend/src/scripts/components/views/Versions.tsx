@@ -5,24 +5,20 @@ import { Link } from 'react-router-dom'
 // Commons
 import { Product, Version } from 'fhooe-audit-platform-common'
 // Clients
-import { ProductAPI, VersionAPI } from '../../../clients/rest'
+import { ProductAPI, VersionAPI } from '../../clients/rest'
 // Links
-import { ProductLink } from '../../links/ProductLink'
+import { VersionsLink } from '../links/VersionsLink'
 // Widgets
-import { Column, Table } from '../../widgets/Table'
-import { ModelView } from '../../widgets/ModelView'
-import { ProductView } from '../../widgets/ProductView'
+import { Column, Table } from '../widgets/Table'
+import { ModelView } from '../widgets/ModelView'
+import { ProductView } from '../widgets/ProductView'
 // Images
 import * as AddIcon from '/src/images/add.png'
 import * as VersionIcon from '/src/images/version.png'
-import * as EditIcon from '/src/images/edit.png'
-import * as DeleteIcon from '/src/images/delete.png'
 
-export const VersionListView = (props: RouteComponentProps<{product: string}>) => {
+export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
 
-    const query = new URLSearchParams(props.location.search)
-
-    const productId = query.get('product')
+    const productId = props.match.params.product
     
     // Define entities
     const [product, setProduct] = useState<Product>()
@@ -32,17 +28,10 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [props])
 
-    async function deleteVersion(id: string) {
-        await VersionAPI.deleteVersion(id)
-        setVersions(versions.filter(version => version.id != id))
-    }
-
     const columns: Column<Version>[] = [
-        {label: '', content: _version => <a><img src={VersionIcon}/></a>},
-        {label: 'Model', content: version => <a><ModelView url={`/rest/models/${version.id}`} mouse={false}/></a>},
-        {label: 'Number', content: version => <a>{version.major}.{version.minor}.{version.patch}</a>},
-        {label: '', content: version => <Link to={`/versions/${version.id}`}><img src={EditIcon}/></Link>},
-        {label: '', content: version => <a href="#" onClick={_event => deleteVersion(version.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: version => <Link to={`/products/${productId}/versions/${version.id}`}><img src={VersionIcon}/></Link>},
+        {label: 'Model', content: version => <Link to={`/products/${productId}/versions/${version.id}`}><ModelView url={`/rest/models/${version.id}`} mouse={false}/></Link>},
+        {label: 'Number', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.major}.{version.minor}.{version.patch}</Link>},
         {label: '', content: () => '', class: 'fill'}
     ] 
 
@@ -52,14 +41,14 @@ export const VersionListView = (props: RouteComponentProps<{product: string}>) =
                 <React.Fragment>
                     <header>
                         <nav>
-                            <ProductLink product={product}/>
+                            <VersionsLink product={product}/>
                         </nav>
                     </header>
                     <main>
                         <div>
                             <h1>
                                 Versions
-                                <Link to={`/versions/new?product=${productId}`}>
+                                <Link to={`/products/${productId}/versions/new`}>
                                     <img src={AddIcon}/>
                                 </Link>
                             </h1>

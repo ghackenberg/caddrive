@@ -4,23 +4,19 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Issue, Product } from 'fhooe-audit-platform-common'
 // Clients
-import { IssueAPI, ProductAPI } from '../../../clients/rest'
+import { IssueAPI, ProductAPI } from '../../clients/rest'
 // Links
-import { ProductLink } from '../../links/ProductLink'
+import { IssuesLink } from '../links/IssuesLink'
 // Widgets
-import { Column, Table } from '../../widgets/Table'
-import { ProductView } from '../../widgets/ProductView'
+import { Column, Table } from '../widgets/Table'
+import { ProductView } from '../widgets/ProductView'
 // Images
 import * as AuditIcon from '/src/images/audit.png'
 import * as AddIcon from '/src/images/add.png'
-import * as EditIcon from '/src/images/edit.png'
-import * as DeleteIcon from '/src/images/delete.png'
 
-export const IssueListView = (props: RouteComponentProps<{product: string}>) => {
+export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
 
-    const query = new URLSearchParams(props.location.search)
-
-    const productId = query.get('product')
+    const productId = props.match.params.product
 
     // Define entities
     const [product, setProduct] = useState<Product>()
@@ -30,17 +26,10 @@ export const IssueListView = (props: RouteComponentProps<{product: string}>) => 
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { IssueAPI.findIssues(productId).then(setIssues)}, [props])
 
-    async function deleteIssue(id: string) {
-        await IssueAPI.deleteIssue(id)
-        setIssues(issues.filter(issue => issue.id != id))
-    }
-
     const columns: Column<Issue>[] = [
-        {label: '', content: issue => <Link to={`/comments?issue=${issue.id}`}><img src={AuditIcon}/></Link>},
-        {label: 'Label', content: issue => <Link to={`/comments?issue=${issue.id}`}>{issue.label}</Link>},
-        {label: 'Text', content: issue => <Link to={`/comments?issue=${issue.id}`}>{issue.text}</Link>},
-        {label: '', content: issue => <Link to={`/issues/${issue.id}`}><img src={EditIcon}/></Link>},
-        {label: '', content: issue => <a href="#" onClick={_event => deleteIssue(issue.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}><img src={AuditIcon}/></Link>},
+        {label: 'Label', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
+        {label: 'Text', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.text}</Link>},
         {label: '', content: () => '', class: 'fill'}
     ]
 
@@ -50,14 +39,14 @@ export const IssueListView = (props: RouteComponentProps<{product: string}>) => 
                 <React.Fragment>
                     <header>
                         <nav>
-                            <ProductLink product={product}/>
+                            <IssuesLink product={product}/>
                         </nav>
                     </header>
                     <main>
                         <div>
                             <h1>
                                 Issues
-                                <Link to={`/issues/new?product=${productId}`}>
+                                <Link to={`/products/${productId}/issues/new`}>
                                     <img src={AddIcon}/>
                                 </Link>
                             </h1>

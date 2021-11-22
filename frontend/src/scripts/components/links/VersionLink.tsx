@@ -4,20 +4,20 @@ import { Link } from 'react-router-dom'
 // Commons
 import { Product, Version } from 'fhooe-audit-platform-common'
 // Links
-import { ProductLink } from './ProductLink'
+import { VersionsLink } from './VersionsLink'
 
 export const VersionLink = (props: {product: Product, version?: Version}) => {
     return (
         <Fragment>
-            <ProductLink product={props.product}/>
+            <VersionsLink product={props.product}/>
             { props.version ? (
-            <span>
-                <Link to={`/audits?version=${props.version.id}`}>{props.version.major}.{props.version.minor}.{props.version.patch}</Link>
-            </span>
+                <span>
+                    <Link to={`/products/${props.product.id}/versions/${props.version.id}`}>{props.version.major}.{props.version.minor}.{props.version.patch}</Link>
+                </span>
             ) : (
-            <span>
-                <Link to={`/versions/new?product=${props.product.id}`}>New version</Link>
-            </span>
+                <span>
+                    <Link to={`/products/${props.product.id}/versions/new`}>New version</Link>
+                </span>
             )}
         </Fragment>  
     )

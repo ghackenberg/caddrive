@@ -4,18 +4,16 @@ import { Link } from 'react-router-dom'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
-import { UserAPI } from '../../../clients/rest'
+import { UserAPI } from '../../clients/rest'
 // Links
-import { UsersLink } from '../../links/UsersLink'
+import { UsersLink } from '../links/UsersLink'
 // Widgets
-import { Column, Table } from '../../widgets/Table'
+import { Column, Table } from '../widgets/Table'
 // Images
 import * as AddIcon from '/src/images/add.png'
 import * as UserIcon from '/src/images/user.png'
-import * as EditIcon from '/src/images/edit.png'
-import * as DeleteIcon from '/src/images/delete.png'
 
-export const UserListView = () => {
+export const UsersView = () => {
 
     // Define entities
     const [users, setUsers] = useState<User[]>()
@@ -23,17 +21,10 @@ export const UserListView = () => {
     // Load entities
     useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 
-    async function deleteUser(id: string) {
-        await UserAPI.deleteUser(id)
-        setUsers(users.filter(user => user.id != id))
-    }
-
     const columns: Column<User>[] = [
-        {label: '', content: _user => <a><img src={UserIcon}/></a>},
-        {label: 'Email', content: user => user.email},
-        {label: 'Name', content: user => user.name},
-        {label: '', content: user => <Link to={`/users/${user.id}`}><img src={EditIcon}/></Link>},
-        {label: '', content: user => <a href="#" onClick={_event => deleteUser(user.id)}><img src={DeleteIcon}/></a>},
+        {label: '', content: user => <Link to={`/users/${user.id}`}><img src={UserIcon}/></Link>},
+        {label: 'Email', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
+        {label: 'Name', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
         {label: '', content: () => '', class: 'fill'}
     ]
 

@@ -6,15 +6,15 @@ import * as hash from 'hash.js'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
-import { UserAPI } from '../../../clients/rest'
+import { UserAPI } from '../../clients/rest'
 // Links
-import { UserLink } from '../../links/UserLink'
+import { UserLink } from '../links/UserLink'
 // Inputs
-import { TextInput } from '../../inputs/TextInput'
-import { EmailInput } from '../../inputs/EmailInput'
-import { PasswordInput } from '../../inputs/PasswordInput'
+import { TextInput } from '../inputs/TextInput'
+import { EmailInput } from '../inputs/EmailInput'
+import { PasswordInput } from '../inputs/PasswordInput'
 
-export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
+export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
     const userId = props.match.params.user
     
@@ -39,23 +39,18 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                await UserAPI.addUser({ name, email, password: encrypt(password) })
-                history.replace(`/users`)
+                const user = await UserAPI.addUser({ name, email, password: encrypt(password) })
+                history.replace(`/users/${user.id}`)
             }
         } else {
             if (name && email) {
-                await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) })
-                history.replace(`/users`)
+                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) }))
             }
         }       
     }
 
     function encrypt(password: string): string {
         return hash.sha256().update(password).digest('hex')
-    }
-
-    async function reset() {
-        history.goBack()
     }
 
     return (
@@ -69,15 +64,14 @@ export const UserEditView = (props: RouteComponentProps<{ user: string }>) => {
                     </header>
                     <main>
                         <div>
-                            <h1>User editor</h1>
-                            <form onSubmit={submit} onReset={reset} className='data-input'>
+                            <h1>User</h1>
+                            <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                 <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
                                 <div>
                                     <div/>
                                     <div>
-                                        { userId == 'new' && <input type='reset' value='Cancel'/> } 
                                         <input type='submit' value='Save'/>
                                     </div>
                                 </div>

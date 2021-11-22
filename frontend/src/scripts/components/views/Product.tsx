@@ -5,17 +5,17 @@ import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
-import { ProductAPI } from '../../../clients/rest'
+import { ProductAPI } from '../../clients/rest'
 // Contexts
-import { UserContext } from '../../../contexts/User'
+import { UserContext } from '../../contexts/User'
 // Links
-import { ProductLink } from '../../links/ProductLink'
+import { ProductLink } from '../links/ProductLink'
 // Inputs
-import { TextInput } from '../../inputs/TextInput'
+import { TextInput } from '../inputs/TextInput'
 // Widgets
-import { ProductView } from '../../widgets/ProductView'
+import { ProductView as ProductView3D } from '../widgets/ProductView'
 
-export const ProductEditView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
     const productId = props.match.params.product
 
@@ -39,19 +39,14 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
         event.preventDefault()
         if(productId == 'new') {
             if (name) {
-                await ProductAPI.addProduct({ userId: user.id, name })
-                history.replace(`/products`)
+                const product = await ProductAPI.addProduct({ userId: user.id, name })
+                history.replace(`/products/${product.id}`)
             }
         } else {
             if (name) {
-                await ProductAPI.updateProduct(product.id, { ...product, name })
-                history.replace(`/products`)
+                setProduct(await ProductAPI.updateProduct(product.id, { ...product, name }))
             }
         }
-    }
-
-    async function reset() {
-        history.goBack()
     }
 
     return (
@@ -65,20 +60,19 @@ export const ProductEditView = (props: RouteComponentProps<{product: string}>) =
                     </header>
                     <main>
                         <div>
-                            <h1>Product editor</h1>
-                            <form onSubmit={submit} onReset={reset} className='data-input'>
+                            <h1>Product</h1>
+                            <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <div>
                                     <div/>
                                     <div>
-                                        { productId == 'new' && <input type='reset' value='Cancel'/> }
                                         <input type='submit' value='Save'/>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div>
-                            { product && <ProductView id={product.id} mouse={true}/> }
+                            { product && <ProductView3D id={product.id} mouse={true}/> }
                         </div>
                     </main>
                 </React.Fragment>

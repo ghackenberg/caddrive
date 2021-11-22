@@ -5,22 +5,20 @@ import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product, Version} from 'fhooe-audit-platform-common'
 // Clients
-import { ProductAPI, VersionAPI } from '../../../clients/rest'
+import { ProductAPI, VersionAPI } from '../../clients/rest'
 // Contexts
-import { UserContext } from '../../../contexts/User'
+import { UserContext } from '../../contexts/User'
 // Links
-import { VersionLink } from '../../links/VersionLink'
+import { VersionLink } from '../links/VersionLink'
 // Inputs
-import { FileInput } from '../../inputs/FileInput'
+import { FileInput } from '../inputs/FileInput'
 // Widgets
-import { ModelView } from '../../widgets/ModelView'
-import { NumberInput } from '../../inputs/NumberInput'
+import { ModelView } from '../widgets/ModelView'
+import { NumberInput } from '../inputs/NumberInput'
 
-export const VersionEditView = (props: RouteComponentProps<{ version: string }>) => {
+export const VersionView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
-    const query = new URLSearchParams(props.location.search)
-
-    const productId = query.get('product')
+    const productId = props.match.params.product
     const versionId = props.match.params.version
 
     const history = useHistory()
@@ -38,9 +36,8 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     const [file, setFile] = useState<File>()
 
     // Load entities
-    useEffect(() => { versionId == 'new' && ProductAPI.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { versionId != 'new' && VersionAPI.getVersion(versionId).then(setVersion) }, [props])
-    useEffect(() => { version && ProductAPI.getProduct(version.productId).then(setProduct) } , [version])
 
     // Load values
     useEffect(() => { version && setMajor(version.major) }, [version])
@@ -50,16 +47,11 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
-            await VersionAPI.addVersion({ userId: user.id, productId: product.id, time: new Date().toISOString(), major, minor, patch }, file)
-            history.replace(`/versions?product=${product.id}`)
+            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, time: new Date().toISOString(), major, minor, patch }, file)
+            history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
-            await VersionAPI.updateVersion(version.id, { ...version, major, minor, patch }, file)
-            history.replace(`/versions?product=${product.id}`)
+            setVersion(await VersionAPI.updateVersion(version.id, { ...version, major, minor, patch }, file))
         }
-    }
-
-    async function reset(_event: React.FormEvent) {
-        history.goBack()
     }
         
     return (
@@ -73,8 +65,8 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                     </header>
                     <main>
                         <div>
-                            <h1>Version editor</h1>
-                            <form onSubmit={submit} onReset={reset} className='data-input'>                     
+                            <h1>Version</h1>
+                            <form onSubmit={submit} className='data-input'>                     
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
                                 <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
@@ -82,7 +74,6 @@ export const VersionEditView = (props: RouteComponentProps<{ version: string }>)
                                 <div>
                                     <div/>
                                     <div>
-                                        { versionId == 'new' && <input type='reset' value='Cancel'/> }
                                         <input type='submit' value='Save'/>
                                     </div>
                                 </div>

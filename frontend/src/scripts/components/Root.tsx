@@ -10,16 +10,14 @@ import { UserContext } from '../contexts/User'
 // Views
 import { LoginView } from './views/Login'
 import { HomeView } from './views/Home'
-import { UserListView } from './views/lists/UserList'
-import { ProductListView } from './views/lists/ProductList'
-import { VersionListView } from './views/lists/VersionList'
-import { UserEditView } from './views/edits/UserEdit'
-import { ProductEditView } from './views/edits/ProductEdit'
-import { VersionEditView } from './views/edits/VersionEdit'
-import { IssueEditView } from './views/edits/IssueEdit'
-import { IssueListView } from './views/lists/IssueList'
-import { CommentEditView } from './views/edits/CommentEdit'
-import { CommentListView } from './views/lists/CommentList'
+import { UserView } from './views/User'
+import { UsersView } from './views/Users'
+import { IssueView } from './views/Issue'
+import { IssuesView } from './views/Issues'
+import { VersionView } from './views/Version'
+import { VersionsView } from './views/Versions'
+import { ProductView } from './views/Product'
+import { ProductsView } from './views/Products'
 // Images
 import * as ProductIcon from '/src/images/product.png'
 
@@ -47,20 +45,17 @@ export const Root = () => {
                     <UserContext.Provider value={{callback, ...user}}>
                         <Switch>
                             {/* User views */}
-                            <Route path="/users/:user" component={UserEditView}/>
-                            <Route path="/users" component={UserListView}/>
-                            {/* Product views */}
-                            <Route path="/products/:product" component={ProductEditView}/>
-                            <Route path="/products" component={ProductListView}/>
+                            <Route path="/users/:user" component={UserView}/>
+                            <Route path="/users" component={UsersView}/>
+                            {/* Issue views */}
+                            <Route path="/products/:product/issues/:issue" component={IssueView}/>
+                            <Route path="/products/:product/issues" component={IssuesView}/>
                             {/* Version views */}
-                            <Route path="/versions/:version" component={VersionEditView}/>
-                            <Route path="/versions" component={VersionListView}/>
-                            {/* Audit views */}
-                            <Route path="/issues/:issue" component={IssueEditView}/>
-                            <Route path="/issues" component={IssueListView}/>
-                            {/* Event views */}
-                            <Route path="/comments/:comment" component={CommentEditView}/>
-                            <Route path="/comments" component={CommentListView}/>
+                            <Route path="/products/:product/versions/:version" component={VersionView}/>
+                            <Route path="/products/:product/versions" component={VersionsView}/>
+                            {/* Product views */}
+                            <Route path="/products/:product" component={ProductView}/>
+                            <Route path="/products" component={ProductsView}/>
                             {/* Home view */}
                             <Route component={HomeView}/>
                         </Switch>
