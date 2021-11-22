@@ -1,3 +1,3 @@
-# [ProductBoard](README.md) / Gateway
+# [ProductBoard](../README.md) / Gateway
 
 TODO
