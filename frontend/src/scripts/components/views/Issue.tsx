@@ -63,11 +63,10 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     useEffect(() => { issue && setIssueText(issue.text) }, [issue])
 
     const columns: Column<Comment>[] = [
-        {label: 'User', content: comment => comment.userId in users ? <Link to={`/users/${comment.userId}`}>{users[comment.userId].name}</Link> : 'Loading'},
-        {label: 'Date', content: comment => new Date(comment.time).toISOString().substring(0, 10)},
-        {label: 'Time', content: comment => new Date(comment.time).toISOString().substring(11, 16)},
-        {label: 'Text', content: comment => comment.text},
-        {label: '', content: _comment => '', class: 'fill'}
+        {label: 'User', class: 'left nowrap', content: comment => comment.userId in users ? <Link to={`/users/${comment.userId}`}>{users[comment.userId].name}</Link> : 'Loading'},
+        {label: 'Date', class: 'center nowrap', content: comment => new Date(comment.time).toISOString().substring(0, 10)},
+        {label: 'Time', class: 'center nowrap', content: comment => new Date(comment.time).toISOString().substring(11, 16)},
+        {label: 'Text', class: 'left fill', content: comment => comment.text}
     ]
 
     async function submitIssue(event: FormEvent){

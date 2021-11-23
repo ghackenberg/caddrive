@@ -8,15 +8,13 @@ body > div > main table {
     border-radius: 1em;
     border-spacing: 0;
 }
-body > div > main table > thead  {
-    text-align: center;
-}
 body > div > main table > thead > tr > th {
     padding-top: calc(0.75rem - 0.25em);
     padding-left: 0.5em;
     padding-right: 0.5em;
     padding-bottom: calc(0.75rem - 0.25em);
     background-color: rgb(245,245,245);
+    white-space: nowrap;
 }
 body > div > main table > thead > tr > th:first-child {
     border-top-left-radius: 1em;
@@ -24,17 +22,11 @@ body > div > main table > thead > tr > th:first-child {
 body > div > main table > thead > tr > th:last-child {
     border-top-right-radius: 1em;
 }
-body > div > main table > tbody {
-    text-align: left;
-}
 body > div > main table > tbody > tr > td:first-child {
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
-    text-align: center;
 }
 body > div > main table > tbody > tr > td {
-    white-space: nowrap;
-    
     padding-top: calc(0.75rem - 0.25em);
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -42,8 +34,20 @@ body > div > main table > tbody > tr > td {
 
     border-top: 1px solid rgb(215,215,215);
 }
-body > div > main table > tbody > tr > td.fill {
+body > div > main table *.fill {
     width: 100%;
+}
+body > div > main table *.left {
+    text-align: left;
+}
+body > div > main table *.center {
+    text-align: center;
+}
+body > div > main table *.right {
+    text-align: right;
+}
+body > div > main table *.nowrap {
+    white-space: nowrap;
 }
 body > div > main table a {
     color: black;

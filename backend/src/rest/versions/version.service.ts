@@ -7,7 +7,7 @@ import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 @Injectable()
 export class VersionService implements VersionREST<Express.Multer.File> {
     private static readonly versions: Version[] = [
-        { id: 'demo', userId: 'demo', productId: 'demo', time: new Date().toISOString(), major: 1, minor: 0, patch: 0 }
+        { id: 'demo', userId: 'demo', productId: 'demo', time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' }
     ]
 
     async findVersions(productId: string) : Promise<Version[]> {

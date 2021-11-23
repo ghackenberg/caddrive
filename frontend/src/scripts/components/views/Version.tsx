@@ -13,6 +13,7 @@ import { ProductHeader } from '../snippets/ProductHeader'
 // Inputs
 import { FileInput } from '../inputs/FileInput'
 import { NumberInput } from '../inputs/NumberInput'
+import { TextInput } from '../inputs/TextInput'
 // Widgets
 import { ModelView } from '../widgets/ModelView'
 
@@ -33,6 +34,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     const [major, setMajor] = useState<number>(0)
     const [minor, setMinor] = useState<number>(0)
     const [patch, setPatch] = useState<number>(0)
+    const [description, setDescription] = useState<string>('')
     const [file, setFile] = useState<File>()
 
     // Load entities
@@ -43,14 +45,15 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     useEffect(() => { version && setMajor(version.major) }, [version])
     useEffect(() => { version && setMinor(version.minor) }, [version])
     useEffect(() => { version && setPatch(version.patch) }, [version])
+    useEffect(() => { version && setDescription(version.description) }, [version])
 
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, time: new Date().toISOString(), major, minor, patch }, file)
+            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, time: new Date().toISOString(), major, minor, patch, description }, file)
             history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
-            setVersion(await VersionAPI.updateVersion(version.id, { ...version, major, minor, patch }, file))
+            setVersion(await VersionAPI.updateVersion(version.id, { ...version, major, minor, patch, description }, file))
         }
     }
         
@@ -65,6 +68,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
                                 <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
+                                <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                 <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile}/>
                                 <div>
                                     <div/>

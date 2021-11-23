@@ -24,9 +24,8 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     useEffect(() => { IssueAPI.findIssues(productId).then(setIssues)}, [props])
 
     const columns: Column<Issue>[] = [
-        {label: 'Label', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
-        {label: 'Text', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.text}</Link>},
-        {label: '', content: () => '', class: 'fill'}
+        {label: 'Label', class: 'left nowrap', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
+        {label: 'Text', class: 'left fill', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.text}</Link>}
     ]
 
     return (

@@ -23,6 +23,8 @@ export class ProductData {
     userId: string
     @ApiProperty()
     name: string
+    @ApiProperty()
+    description: string
 }
 
 export class Product extends ProductData {
@@ -45,6 +47,8 @@ export class VersionData {
     minor: number
     @ApiProperty()
     patch: number
+    @ApiProperty()
+    description: string
 }
 
 export class Version extends VersionData {

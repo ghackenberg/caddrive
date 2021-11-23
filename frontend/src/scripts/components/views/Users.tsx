@@ -19,9 +19,8 @@ export const UsersView = () => {
     useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 
     const columns: Column<User>[] = [
-        {label: 'Email', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
-        {label: 'Name', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
-        {label: '', content: () => '', class: 'fill'}
+        {label: 'Email', class: 'left', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
+        {label: 'Name', class: 'left fill', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
     ]
 
     return (

@@ -25,9 +25,9 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
     useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [props])
 
     const columns: Column<Version>[] = [
-        {label: 'Preview', content: version => <Link to={`/products/${productId}/versions/${version.id}`}><ModelView url={`/rest/models/${version.id}`} mouse={false}/></Link>},
-        {label: 'Number', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.major}.{version.minor}.{version.patch}</Link>},
-        {label: '', content: () => '', class: 'fill'}
+        {label: 'Preview', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}><ModelView url={`/rest/models/${version.id}`} mouse={false}/></Link>},
+        {label: 'Number', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.major}.{version.minor}.{version.patch}</Link>},
+        {label: 'Description', class: 'left fill', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.description}</Link>}
     ] 
 
     return (

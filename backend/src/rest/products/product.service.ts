@@ -6,7 +6,7 @@ import { VersionService } from '../versions/version.service'
 @Injectable()
 export class ProductService implements ProductREST {
     private static readonly products: Product[] = [
-        { id: 'demo', userId: 'demo', name: 'Demo Product' }
+        { id: 'demo', userId: 'demo', name: 'Demo Product', description: 'This product demonstrates the capabilities of ProductBoard.' }
     ]
 
     public constructor(

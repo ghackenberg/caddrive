@@ -28,23 +28,25 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
     // Define values
     const [name, setName] = useState<string>('')
+    const [description, setDescription] = useState<string>('')
 
     // Load entities
     useEffect(() => { productId != 'new' && ProductAPI.getProduct(productId).then(setProduct) }, [props])
 
     // Load values
     useEffect(() => { product && setName(product.name) }, [product])
+    useEffect(() => { product && setDescription(product.description) }, [product])
 
     async function submit(event: FormEvent){
         event.preventDefault()
         if(productId == 'new') {
-            if (name) {
-                const product = await ProductAPI.addProduct({ userId: user.id, name })
+            if (name && description) {
+                const product = await ProductAPI.addProduct({ userId: user.id, name, description })
                 history.replace(`/products/${product.id}`)
             }
         } else {
-            if (name) {
-                setProduct(await ProductAPI.updateProduct(product.id, { ...product, name }))
+            if (name && description) {
+                setProduct(await ProductAPI.updateProduct(product.id, { ...product, name, description }))
             }
         }
     }
@@ -58,6 +60,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                         <div>
                             <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                                <TextInput label='Description' placeholder='Type description' value={name} change={setDescription}/>
                                 <div>
                                     <div/>
                                     <div>
