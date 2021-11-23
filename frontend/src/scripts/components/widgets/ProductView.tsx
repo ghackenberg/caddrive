@@ -8,7 +8,7 @@ import { VersionAPI } from '../../clients/rest'
 import { ModelView } from './ModelView'
 
 export const ProductView = (props: { id: string, mouse: boolean }) => {
-
+    
     const [versions, setVersions] = useState<Version[]>(null)
     
     useEffect(() => { VersionAPI.findVersions(props.id).then(setVersions) }, [props.id])
