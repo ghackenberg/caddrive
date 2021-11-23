@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
+import { Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // Widgets
 import { SceneGraph } from './SceneGraph'
 import { SceneView } from './SceneView'
 
-export const ModelViewer = (props: { url: string }) => {
+export const ModelViewer = (props: { url: string, click?: (object: Object3D) => void }) => {
 
     const [model, setModel] = useState<GLTF>(null)
     
@@ -16,8 +17,8 @@ export const ModelViewer = (props: { url: string }) => {
         <div className="widget model_viewer">
             {model && (
                 <React.Fragment>
-                    <SceneGraph model={model}/>
-                    <SceneView model={model} mouse={true} vr={true}/>
+                    <SceneGraph model={model} click={props.click}/>
+                    <SceneView model={model} mouse={true} vr={true} click={props.click}/>
                 </React.Fragment>
             )}
         </div>

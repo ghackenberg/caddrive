@@ -5,7 +5,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr: boolean }> {
+export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
 
@@ -31,7 +31,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
 
     private fullscreen = false
 
-    constructor(props: { model: GLTF, mouse: boolean, vr: boolean }) {
+    constructor(props: { model: GLTF, mouse: boolean, vr: boolean, click?: (object: Object3D) => void }) {
         super(props)
         // Create
         this.div = React.createRef()
@@ -41,6 +41,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         this.handleMouseDown = this.handleMouseDown.bind(this)
         this.handleMouseMove = this.handleMouseMove.bind(this)
         this.handleMouseUp = this.handleMouseUp.bind(this)
+        this.handleClick = this.handleClick.bind(this)
 
         this.handleTouchStart = this.handleTouchStart.bind(this)
         this.handleTouchMove = this.handleTouchMove.bind(this)
@@ -228,6 +229,9 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         if (this.hovered) {
             this.selected = this.hovered
             this.updateMaterial(this.selected, 0.2)
+            if (this.props.click) {
+                this.props.click(this.selected)
+            }
         }
     }
 
@@ -264,6 +268,10 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         }
     }
 
+    handleClick(event: React.MouseEvent) {
+        this.updateSelected(event)
+    }
+
     handleTouchStart(event: React.TouchEvent) {
         this.position_start = event.touches[0]
         this.position_end = event.touches[0]
@@ -289,7 +297,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     }
     
     override render() {
-        return <div className="widget scene_view" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
+        return <div className="widget scene_view" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onClick={this.handleClick} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
     }
     
 }

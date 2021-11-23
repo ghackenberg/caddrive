@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { useEffect, useState, Fragment } from 'react'
+import { Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // Widgets
 import { SceneView } from './SceneView'
 // Images
 import * as LoadIcon from '/src/images/load.png'
 
-export const ModelView = (props: { url: string, mouse: boolean }) => {
+export const ModelView = (props: { url: string, mouse: boolean, click?: (object: Object3D) => void }) => {
 
     const [load, setLoad] = useState<boolean>(true)
     const [model, setModel] = useState<GLTF>(null)
@@ -20,7 +21,7 @@ export const ModelView = (props: { url: string, mouse: boolean }) => {
                 <img src={LoadIcon}/>
             ) : (
                 <Fragment>
-                    {model && <SceneView model={model} mouse={props.mouse} vr={false}/> }
+                    {model && <SceneView model={model} mouse={props.mouse} vr={false} click={props.click}/> }
                 </Fragment>
             )}
         </div>

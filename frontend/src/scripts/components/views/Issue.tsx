@@ -3,7 +3,7 @@ import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
-import { Comment, Issue, Product, User } from 'fhooe-audit-platform-common'
+import { Comment, Issue, Product, User, Version } from 'fhooe-audit-platform-common'
 // Clients
 import { CommentAPI, IssueAPI, ProductAPI, UserAPI } from '../../clients/rest'
 // Contexts
@@ -17,6 +17,7 @@ import { ProductView } from '../widgets/ProductView'
 import { TextInput } from '../inputs/TextInput'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import { Object3D } from 'three'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -72,6 +73,14 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
     ]
 
+    async function selectObject(version: Version, object: Object3D) {
+        if (issueId == 'new') {
+            setIssueText(`${issueText}[${object.name || object.uuid}](/products/${productId}/versions/${version.id}/objects/${object.uuid})`)
+        } else {
+            setCommentText(`${commentText}[${object.name || object.uuid}](/products/${productId}/versions/${version.id}/objects/${object.uuid})`)
+        }
+    }
+
     async function submitIssue(event: FormEvent){
         event.preventDefault()
         if (issueId == 'new') {
@@ -86,7 +95,6 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         }
     }
 
-    // Post events
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (commentText) {
@@ -142,7 +150,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                             )}
                         </div>
                         <div>
-                            <ProductView id={product.id} mouse={true}/>
+                            <ProductView id={product.id} mouse={true} click={selectObject}/>
                         </div>
                     </main>
                 </Fragment>

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
 import { Object3D } from 'three'
 // Widgets
 import { NodeList } from './NodeList'
@@ -20,15 +19,15 @@ const icons: {[key: string]: string} = {
     SkinnedMesh: SkinnedMeshIcon
 }
 
-export const NodeItem = (props: { object: Object3D }) => {
+export const NodeItem = (props: { object: Object3D, click?: (object: Object3D) => void }) => {
 
     return (
         <div className="widget node_item">
-            <Link to="#">
+            <a onClick={() => props.click && props.click(props.object)}>
                 <img src={icons[props.object.type]}/>
                 {props.object.name || 'Anonymous'}
-            </Link>
-            <NodeList list={props.object.children}/>
+            </a>
+            <NodeList list={props.object.children} click={props.click}/>
         </div>
     )
 }
