@@ -55,6 +55,7 @@ class VersionClient implements VersionREST<File> {
         body.append('major', `${data.major}`)
         body.append('minor', `${data.minor}`)
         body.append('patch', `${data.patch}`)
+        body.append('description', `${data.description}`)
         body.append('file', file)
         return (await axios.post<Version>('/rest/versions', body, { auth })).data
     }
@@ -69,6 +70,7 @@ class VersionClient implements VersionREST<File> {
         body.append('major', `${data.major}`)
         body.append('minor', `${data.minor}`)
         body.append('patch', `${data.patch}`)
+        body.append('description', `${data.description}`)
         body.append('file', file)
         return (await axios.put<Version>(`/rest/versions/${id}`, body, { auth })).data
     }

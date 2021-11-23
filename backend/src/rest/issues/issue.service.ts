@@ -6,7 +6,9 @@ import { CommentService } from '../comments/comment.service'
 @Injectable()
 export class IssueService implements IssueREST {
     private static readonly issues: Issue[] = [
-        { id: 'demo', userId: 'demo', productId: 'demo', time: new Date().toString(), label: 'Demo Issue', text: 'Test', state: 'open' }
+        { id: 'demo-1', userId: 'demo', productId: 'demo', time: new Date().toString(), label: 'Closed Demo Issue', text: 'This issue demonstrates the capabilities of ProductBoard.', state: 'closed' },
+        { id: 'demo-2', userId: 'demo', productId: 'demo', time: new Date().toString(), label: 'Open Demo Issue 1', text: 'This issue demonstrates the capabilities of ProductBoard.', state: 'open' },
+        { id: 'demo-3', userId: 'demo', productId: 'demo', time: new Date().toString(), label: 'Open Demo Issue 2', text: 'This issue demonstrates the capabilities of ProductBoard.', state: 'open' }
     ]
 
     public constructor(

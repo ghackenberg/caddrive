@@ -53,6 +53,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
             const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, time: new Date().toISOString(), major, minor, patch, description }, file)
             history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
+            console.log(description)
             setVersion(await VersionAPI.updateVersion(version.id, { ...version, major, minor, patch, description }, file))
         }
     }
@@ -64,12 +65,17 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                     <ProductHeader product={product}/>
                     <main className="sidebar">
                         <div>
+                            {version ? (
+                                <h1>{version.major}.{version.minor}.{version.patch}</h1>
+                            ) : (
+                                <h1>New version</h1>
+                            )}
                             <form onSubmit={submit} className='data-input'>                     
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
                                 <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
                                 <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile}/>
+                                {versionId == 'new' && <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile}/>}
                                 <div>
                                     <div/>
                                     <div>

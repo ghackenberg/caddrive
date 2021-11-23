@@ -54,6 +54,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
         <main className="view login">
             <main>
                 <div>
+                    <h1>Login</h1>
                     {error && <p style={{color: 'red'}}>{error}</p>}
                     <form onSubmit={submit} onReset={reset} className='data-input'>
                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>

@@ -9,6 +9,8 @@ import { UserAPI } from '../../clients/rest'
 import { UsersLink } from '../links/UsersLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
+// Images
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const UsersView = () => {
 
@@ -21,6 +23,7 @@ export const UsersView = () => {
     const columns: Column<User>[] = [
         {label: 'Email', class: 'left', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
         {label: 'Name', class: 'left fill', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
+        {label: '', content: () => <img src={DeleteIcon}/>}
     ]
 
     return (

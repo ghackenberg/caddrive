@@ -37,6 +37,15 @@ body > div > main table > tbody > tr > td {
 body > div > main table *.fill {
     width: 100%;
 }
+body > div > main table *.top {
+    vertical-align: top;
+}
+body > div > main table *.middle {
+    vertical-align: middle;
+}
+body > div > main table *.bottom {
+    vertical-align: bottom;
+}
 body > div > main table *.left {
     text-align: left;
 }
@@ -52,6 +61,18 @@ body > div > main table *.nowrap {
 body > div > main table a {
     color: black;
 }
+body > div > main table a.open {
+    color: red;
+}
+body > div > main table a.closed {
+    color: green;
+}
 body > div > main table a:hover {
     color: blue;
+}
+body > div > main table img {
+    display: block;
+    width: 1em;
+    height: 1em;
+    padding: 0.25em;
 }

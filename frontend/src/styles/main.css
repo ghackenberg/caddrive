@@ -54,14 +54,14 @@ body > div > main > header > div:nth-child(2) > span > a.active {
 /* Main */
 
 body > div > main > main > div:nth-child(1) {
-    padding-top: 0.25em;
+    padding-top: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
-    padding-bottom: 0.25em;
+    padding-bottom: 0.5em;
 }
 body > div > main > main > div:nth-child(1) > a:first-child {
     display: inline-block;
-    margin-top: 0.75em;
+    margin-top: 0.5em;
     margin-bottom: 0.5em;
     border-width: 1px;
     border-style: solid;

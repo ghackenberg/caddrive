@@ -10,6 +10,8 @@ import { ProductsLink } from '../links/ProductsLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ProductView } from '../widgets/ProductView'
+// Images
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const ProductsView = () => {
     
@@ -22,7 +24,8 @@ export const ProductsView = () => {
     const columns: Column<Product>[] = [
         {label: 'Preview', class: 'center', content: product => <Link to={`/products/${product.id}`}><ProductView id={product.id} mouse={false}/></Link>},
         {label: 'Name', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.name}</Link>},
-        {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>}
+        {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>},
+        {label: '', content: () => <img src={DeleteIcon}/>}
     ]
 
     return (

@@ -11,6 +11,8 @@ import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ModelView } from '../widgets/ModelView'
+// Images
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -27,7 +29,8 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
     const columns: Column<Version>[] = [
         {label: 'Preview', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}><ModelView url={`/rest/models/${version.id}`} mouse={false}/></Link>},
         {label: 'Number', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.major}.{version.minor}.{version.patch}</Link>},
-        {label: 'Description', class: 'left fill', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.description}</Link>}
+        {label: 'Description', class: 'left fill', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.description}</Link>},
+        {label: '', content: () => <img src={DeleteIcon}/>}
     ] 
 
     return (

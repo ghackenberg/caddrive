@@ -60,6 +60,11 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                     <UserHeader user={user}/>
                     <main>
                         <div>
+                            {user ? (
+                                <h1>{user.name}</h1>
+                            ) : (
+                                <h1>New user</h1>
+                            )}
                             <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>

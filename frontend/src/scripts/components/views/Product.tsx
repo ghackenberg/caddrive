@@ -58,9 +58,14 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                     <ProductHeader product={product}/>
                     <main className="sidebar">
                         <div>
+                            {product ? (
+                                <h1>{product.name}</h1>
+                            ) : (
+                                <h1>New product</h1>
+                            )}
                             <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                <TextInput label='Description' placeholder='Type description' value={name} change={setDescription}/>
+                                <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                 <div>
                                     <div/>
                                     <div>

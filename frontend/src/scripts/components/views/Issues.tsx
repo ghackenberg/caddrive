@@ -10,6 +10,8 @@ import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ProductView } from '../widgets/ProductView'
+// Images
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -24,8 +26,10 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     useEffect(() => { IssueAPI.findIssues(productId).then(setIssues)}, [props])
 
     const columns: Column<Issue>[] = [
-        {label: 'Label', class: 'left nowrap', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
-        {label: 'Text', class: 'left fill', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.text}</Link>}
+        {label: 'State', class: 'top center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`} className={issue.state}>{issue.state}</Link>},
+        {label: 'Label', class: 'top left nowrap', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
+        {label: 'Text', class: 'top left fill', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.text}</Link>},
+        {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
     ]
 
     return (
