@@ -3,9 +3,9 @@ import { useState, useEffect, Fragment } from 'react'
 import { RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 // Commons
-import { Product, Version } from 'fhooe-audit-platform-common'
+import { Product, User, Version } from 'fhooe-audit-platform-common'
 // Clients
-import { ProductAPI, VersionAPI } from '../../clients/rest'
+import { ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
@@ -21,13 +21,26 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
     // Define entities
     const [product, setProduct] = useState<Product>()
     const [versions, setVersions] = useState<Version[]>()
+    const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Load entities
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [props])
+    useEffect(() => {
+        if (versions) {
+            Promise.all(versions.map(version => UserAPI.getUser(version.userId))).then(versionUsers => {
+                const newUsers = {...users}
+                for (var index = 0; index < versions.length; index++) {
+                    newUsers[versions[index].id] = versionUsers[index]
+                }
+                setUsers(newUsers)
+            })
+        }
+    }, [versions])
 
     const columns: Column<Version>[] = [
         {label: 'Preview', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}><ModelView url={`/rest/models/${version.id}`} mouse={false}/></Link>},
+        {label: 'User', class: 'left nowrap', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.id in users ? users[version.id].name : '?'}</Link>},
         {label: 'Number', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.major}.{version.minor}.{version.patch}</Link>},
         {label: 'Description', class: 'left fill', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.description}</Link>},
         {label: '', content: () => <img src={DeleteIcon}/>}
