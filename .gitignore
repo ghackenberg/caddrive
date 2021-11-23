@@ -3,6 +3,6 @@
 node_modules
 
 backend/uploads/*.glb
-!backend/uploads/demo.glb
+!backend/uploads/demo-*.glb
 
 public
