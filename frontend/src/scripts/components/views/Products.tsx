@@ -2,9 +2,9 @@ import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 // Commons
-import { Product } from 'fhooe-audit-platform-common'
+import { Product, User } from 'fhooe-audit-platform-common'
 // Clients
-import { IssueAPI, ProductAPI, VersionAPI } from '../../clients/rest'
+import { IssueAPI, ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
 // Links
 import { ProductsLink } from '../links/ProductsLink'
 // Widgets
@@ -17,11 +17,23 @@ export const ProductsView = () => {
     
     // Define entities
     const [products, setProducts] = useState<Product[]>()
+    const [users, setUsers] = useState<{[id: string]: User}>({})
     const [versions, setVersions] = useState<{[id: string]: number}>({})
     const [issues, setIssues] = useState<{[id: string]: number}>({})
 
     // Load entities
     useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
+    useEffect(() => {
+        if (products) {
+            Promise.all(products.map(product => UserAPI.getUser(product.userId))).then(productUsers => {
+                const newUsers = {...users}
+                for (var index = 0; index < products.length; index++) {
+                    newUsers[products[index].id] = productUsers[index]
+                }
+                setUsers(newUsers)
+            })
+        }
+    }, [products])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => VersionAPI.findVersions(product.id))).then(productVersions => {
@@ -47,6 +59,7 @@ export const ProductsView = () => {
 
     const columns: Column<Product>[] = [
         {label: 'Preview', class: 'center', content: product => <Link to={`/products/${product.id}`}><ProductView id={product.id} mouse={false}/></Link>},
+        {label: 'User', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.id in users ? users[product.id].name : '?'}</Link>},
         {label: 'Name', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.name}</Link>},
         {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>},
         {label: 'Versions', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in versions ? versions[product.id] : '?'}</Link>},
