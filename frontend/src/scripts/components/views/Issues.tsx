@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Issue, Product } from 'fhooe-audit-platform-common'
 // Clients
-import { IssueAPI, ProductAPI } from '../../clients/rest'
+import { CommentAPI, IssueAPI, ProductAPI } from '../../clients/rest'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
@@ -20,15 +20,27 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     // Define entities
     const [product, setProduct] = useState<Product>()
     const [issues, setIssues] = useState<Issue[]>()
+    const [comments, setComments] = useState<{[id: string]: number}>({})
 
     // Load entities
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { IssueAPI.findIssues(productId).then(setIssues)}, [props])
+    useEffect(() => {
+        if (issues) {
+            Promise.all(issues.map(issue => CommentAPI.findComments(issue.id))).then(issueComments => {
+                const newComments = {...comments}
+                for (var index = 0; index < issues.length; index++) {
+                    newComments[issues[index].id] = issueComments[index].length
+                }
+                setComments(newComments)
+            })
+        }
+    }, [issues])
 
     const columns: Column<Issue>[] = [
         {label: 'State', class: 'top center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`} className={issue.state}>{issue.state}</Link>},
-        {label: 'Label', class: 'top left nowrap', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
-        {label: 'Text', class: 'top left fill', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.text}</Link>},
+        {label: 'Label', class: 'top left fill', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
+        {label: 'Comments', class: 'center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.id in comments ? comments[issue.id] : '?'}</Link>},
         {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
     ]
 
