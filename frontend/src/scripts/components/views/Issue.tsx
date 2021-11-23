@@ -71,7 +71,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         {label: 'User', class: 'top left nowrap', content: comment => comment.userId in users ? <Link to={`/users/${comment.userId}`}>{users[comment.userId].name}</Link> : 'Loading'},
         {label: 'Date', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(0, 10)},
         {label: 'Time', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(11, 16)},
-        {label: 'Text', class: 'top left fill', content: comment => <p>{comment.text}</p>},
+        {label: 'Text', class: 'top left fill', content: comment => comment.text},
         {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
     ]
 
