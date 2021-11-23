@@ -70,11 +70,11 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                             ) : (
                                 <h1>New version</h1>
                             )}
-                            <form onSubmit={submit} className='data-input'>                     
+                            <form onSubmit={submit}>                     
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
                                 <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
-                                <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                 {versionId == 'new' && <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile}/>}
                                 <div>
                                     <div/>

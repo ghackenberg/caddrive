@@ -65,7 +65,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                             ) : (
                                 <h1>New user</h1>
                             )}
-                            <form onSubmit={submit} className='data-input'>
+                            <form onSubmit={submit}>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                 <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>

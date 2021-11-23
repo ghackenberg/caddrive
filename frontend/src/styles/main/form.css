@@ -3,6 +3,7 @@ body > div > main form {
     margin: 0;
     margin-top: 0.75em;
     margin-bottom: 0.75em;
+    width: 100%;
     padding: 0;
     border-width: 1px;
     border-style: solid;
@@ -17,14 +18,24 @@ body > div > main form > div {
 }
 body > div > main form > div > div {
     display: table-cell;
+    vertical-align: middle;
+}
+body > div > main form > div > div:first-child {
+    width: 0;
+    white-space: nowrap;
 }
 body > div > main form > div > div:last-child {
-    text-align: right;
+    width: 100%;
 }
 body > div > main form > div > div > label::after {
     content: ":";
 }
-body > div > main form > div > div > input {
+body > div > main form > div > div > input,
+body > div > main form > div > div > textarea {
+    box-sizing: border-box;
+
+    max-width: 100%;
+
     font-family: inherit;
     font-size: inherit;
 
@@ -42,31 +53,27 @@ body > div > main form > div > div > input {
     background-color: rgb(215,215,215);
     color: black
 }
-body > div > main form > div > div > input[type="reset"] {
-    margin-left: 1.5em;
-    color: white;
-    background-color: gray;
+body > div > main form > div > div > input[type="text"] {
+    width: 25em;
 }
-body > div > main form > div > div > input[type="reset"]:hover {
-    background-color: darkgray;
+body > div > main form > div > div > input[type="email"],
+body > div > main form > div > div > input[type="password"] {
+    width: 20em;
+}
+body > div > main form > div > div > input[type="number"] {
+    width: 5em;
 }
 body > div > main form > div > div > input[type="submit"] {
-    margin-left: 1.5em;
     color: white;
-    background-color: steelblue;
-}
-body > div > main form > div > div > input[type="submit"]:hover {
-    background-color: skyblue
+    background-color: blue;
 }
 body > div > main form > div > div > input[type="button"] {
-    text-align: right;
-    margin-left: 1.5em;
     color: white;
     background-color: gray;
 }
-body > div > main form > div > div > input[type="button"]:hover {
-    background-color: darkgray
+body > div > main form > div > div > textarea {
+    height: 10em;
 }
-body > div > main form > div > div > input[type="file"] {
-    width: 90%
+body > div > main form > div > div > *.fill {
+    width: 100% !important;
 }

@@ -18,6 +18,7 @@ import { TextInput } from '../inputs/TextInput'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 import { Object3D } from 'three'
+import { TextareaInput } from '../inputs/TextareaInput'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -75,9 +76,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
     async function selectObject(version: Version, object: Object3D) {
         if (issueId == 'new') {
-            setIssueText(`${issueText}[${object.name || object.uuid}](/products/${productId}/versions/${version.id}/objects/${object.uuid})`)
+            setIssueText(`${issueText}[${object.name || object.uuid}](/versions/${version.id}/objects/${object.uuid})`)
         } else {
-            setCommentText(`${commentText}[${object.name || object.uuid}](/products/${productId}/versions/${version.id}/objects/${object.uuid})`)
+            setCommentText(`${commentText}[${object.name || object.uuid}](/versions/${version.id}/objects/${object.uuid})`)
         }
     }
 
@@ -120,12 +121,12 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                     {comments && (
                                         <Fragment>
                                             <Table columns={columns} items={comments}/>
-                                            <form onSubmit={submitComment} className='data-input'>
-                                                <TextInput label='Text' placeholder={'Type text'} value={commentText} change={setCommentText}/>
+                                            <form onSubmit={submitComment}>
+                                                <TextareaInput class='fill' label='Text' placeholder={'Type text'} value={commentText} change={setCommentText}/>
                                                 <div>
                                                     <div/>
                                                     <div>
-                                                        <input type='submit' value='Submit'/>
+                                                        <input type='submit' value='Save'/>
                                                     </div>
                                                 </div>
                                             </form>
@@ -135,13 +136,12 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                             ) : (
                                 <Fragment>
                                     <h1>New issue</h1>
-                                    <form onSubmit={submitIssue} onReset={() => history.goBack()} className='data-input'>
-                                        <TextInput label='Label' placeholder='Type label' value={issueLabel} change={setIssueLabel}/>
-                                        <TextInput label='Text' placeholder='Type text' value={issueText} change={setIssueText}/>
+                                    <form onSubmit={submitIssue} onReset={() => history.goBack()}>
+                                        <TextInput class='fill' label='Label' placeholder='Type label' value={issueLabel} change={setIssueLabel}/>
+                                        <TextareaInput class='fill' label='Text' placeholder='Type text' value={issueText} change={setIssueText}/>
                                         <div>
                                             <div/>
                                             <div>
-                                                { issueId == 'new' && <input type='reset' value='Cancel'/> }
                                                 <input type='submit' value='Save'/>
                                             </div>
                                         </div>

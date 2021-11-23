@@ -63,9 +63,9 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                             ) : (
                                 <h1>New product</h1>
                             )}
-                            <form onSubmit={submit} className='data-input'>
+                            <form onSubmit={submit}>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                 <div>
                                     <div/>
                                     <div>
