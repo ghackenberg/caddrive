@@ -34,7 +34,7 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
     ] 
 
     return (
-        <main className="view products">
+        <main className="view extended products">
             { product && versions && (
                 <Fragment>
                     <ProductHeader product={product}/>

@@ -59,7 +59,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     }
         
     return (
-        <main className="view version">
+        <main className="view extended version">
             { (versionId == 'new' || version) && product && (
                 <Fragment>
                     <ProductHeader product={product}/>

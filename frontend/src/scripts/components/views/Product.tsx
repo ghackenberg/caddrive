@@ -52,7 +52,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     }
 
     return (
-        <main className="view product">
+        <main className="view extended product">
             { (productId == 'new' || product) && (
                 <Fragment>
                     <ProductHeader product={product}/>

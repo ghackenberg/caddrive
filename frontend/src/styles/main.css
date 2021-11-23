@@ -7,7 +7,11 @@
 @import url(./main/search.css);
 
 body > div > main {
-    padding-top: 4em;
+    position: fixed;
+    top: 4em;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 /* Header */
@@ -53,7 +57,28 @@ body > div > main > header > div:nth-child(2) > span > a.active {
 
 /* Main */
 
+body > div > main > main {
+    position: absolute;
+    top: calc(5em + 1px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+body > div > main.extended > main {
+    top: calc(7.25em + 1px);
+}
+
+body > div > main > main > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
 body > div > main > main > div:nth-child(1) {
+    overflow: auto;
     padding-top: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
@@ -75,16 +100,13 @@ body > div > main > main > div:nth-child(1) > a:first-child {
     color: white;
 }
 body > div > main > main.sidebar > div:nth-child(1) {
-    width: calc(50% - 2em);
+    left: 0;
+    right: 50%;
 }
 
 body > div > main > main.sidebar > div:nth-child(2) {
-    position: fixed;
-    z-index: 0;
-    top: calc(11.25em + 1px);
     left: 50%;
     right: 0;
-    bottom: 0;
 }
 
 body > div > main > main div.widget.product_view {

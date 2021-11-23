@@ -107,7 +107,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     }
 
     return (
-        <main className='view audit'>
+        <main className='view extended audit'>
             { (issueId == 'new' || issue) && product && (
                 <Fragment>
                     <ProductHeader product={product}/>

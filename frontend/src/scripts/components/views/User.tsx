@@ -54,7 +54,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     }
 
     return (
-        <main className="view user">
+        <main className="view extended user">
             { (userId == 'new' || user) && (
                 <Fragment>
                     <UserHeader user={user}/>

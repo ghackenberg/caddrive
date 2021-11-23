@@ -33,7 +33,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     ]
 
     return (
-        <main className="view product">
+        <main className="view extended product">
             { issues && product && (
                 <Fragment>
                     <ProductHeader product={product}/>
