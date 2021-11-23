@@ -1,4 +1,4 @@
-div.view > main h1 {
+body > div > main h1 {
     font-size: 200%;
     line-height: 150%;
     margin: 0;
@@ -6,7 +6,7 @@ div.view > main h1 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-div.view > main h2 {
+body > div > main h2 {
     font-size: 175%;
     line-height: 150%;
     margin: 0;
@@ -14,7 +14,7 @@ div.view > main h2 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-div.view > main h3 {
+body > div > main h3 {
     font-size: 150%;
     line-height: 150%;
     margin: 0;
@@ -22,16 +22,16 @@ div.view > main h3 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-div.view > main h1 > a::after {
+body > div > main h1 > a::after {
     content: " / ";
 }
-div.view > main h1 > a:last-child::after {
+body > div > main h1 > a:last-child::after {
     content: "";
 }
 
-div.view > main h2 > a::after {
+body > div > main h2 > a::after {
     content: " | ";
 }
-div.view > main h2 > a:last-child::after {
+body > div > main h2 > a:last-child::after {
     content: "";
 }

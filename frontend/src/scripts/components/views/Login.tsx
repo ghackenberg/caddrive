@@ -8,7 +8,6 @@ import { UserAPI } from '../../clients/rest'
 // Inputs
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
-import { HomeLink } from '../links/HomeLink'
 
 export const LoginView = (props: {callback: (user: User) => void}) => {
 
@@ -52,15 +51,9 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
     React.useEffect(() => { check() }, [])
 
     return (
-        <div className="view login">
-            <header>
-                <nav>
-                    <HomeLink/>
-                </nav>
-            </header>
+        <main className="view login">
             <main>
                 <div>
-                    <h1>Login to Virtual Engineering Platform</h1>
                     {error && <p style={{color: 'red'}}>{error}</p>}
                     <form onSubmit={submit} onReset={reset} className='data-input'>
                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
@@ -75,7 +68,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                     </form>
                 </div>
             </main>
-        </div>
+        </main>
     )
     
 }

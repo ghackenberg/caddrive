@@ -1,4 +1,4 @@
-div.view > main form.search-input > span > input.header-search {
+body > div > main form.search-input > span > input.header-search {
     border-spacing: 0.5em;
     background-color: white;
     margin-top: 0.75em;
@@ -12,6 +12,6 @@ div.view > main form.search-input > span > input.header-search {
     padding-right: 0.5em;
     padding-bottom: calc(0.75rem - 0.25em);
 }
-div.view > main form.search-input > span > input.header-search[type="text"] {
+body > div > main form.search-input > span > input.header-search[type="text"] {
     width: 17em;
 }

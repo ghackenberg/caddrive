@@ -1,15 +1,16 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
 import { auth } from '../clients/auth'
 // Contexts
 import { UserContext } from '../contexts/User'
+// Snippets
+import { PageHeader } from './snippets/PageHeader'
 // Views
 import { LoginView } from './views/Login'
-import { HomeView } from './views/Home'
 import { UserView } from './views/User'
 import { UsersView } from './views/Users'
 import { IssueView } from './views/Issue'
@@ -41,23 +42,24 @@ export const Root = () => {
                 <link rel="icon" href={ProductIcon}/>
             </Helmet>
             <BrowserRouter>
+                <PageHeader/>
                 {user ? (
                     <UserContext.Provider value={{callback, ...user}}>
                         <Switch>
                             {/* User views */}
-                            <Route path="/users/:user" component={UserView}/>
+                            <Route path="/users/:user/settings" component={UserView}/>
+                            <Route path="/users/:user" render={(props: RouteComponentProps<{user: string}>) => <Redirect to={`/users/${props.match.params.user}/settings`}/>}/>
                             <Route path="/users" component={UsersView}/>
-                            {/* Issue views */}
-                            <Route path="/products/:product/issues/:issue" component={IssueView}/>
-                            <Route path="/products/:product/issues" component={IssuesView}/>
-                            {/* Version views */}
+                            {/* Product views */}
                             <Route path="/products/:product/versions/:version" component={VersionView}/>
                             <Route path="/products/:product/versions" component={VersionsView}/>
-                            {/* Product views */}
-                            <Route path="/products/:product" component={ProductView}/>
+                            <Route path="/products/:product/issues/:issue" component={IssueView}/>
+                            <Route path="/products/:product/issues" component={IssuesView}/>
+                            <Route path="/products/:product/settings" component={ProductView}/>
+                            <Route path="/products/:product" render={(props: RouteComponentProps<{product: string}>) => <Redirect to={`/products/${props.match.params.product}/versions`}/>}/>
                             <Route path="/products" component={ProductsView}/>
                             {/* Home view */}
-                            <Route component={HomeView}/>
+                            <Redirect to="/products"/>
                         </Switch>
                     </UserContext.Provider>
                 ) : (

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Fragment } from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Links
@@ -12,11 +12,11 @@ export const ProductLink = (props: {product?: Product}) => {
             <ProductsLink/>
             { props.product ? (
                 <span>
-                    <Link to={`/products/${props.product.id}`}>{props.product.name}</Link>
+                    <NavLink to={`/products/${props.product.id}`}>{props.product.name}</NavLink>
                 </span>
             ) : (
                 <span>
-                    <Link to={`/products/new`}>New product</Link>
+                    <NavLink to={`/products/new`}>New product</NavLink>
                 </span>
             )}
         </Fragment>  

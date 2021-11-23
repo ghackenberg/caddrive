@@ -6,42 +6,108 @@
 @import url(./main/list.css);
 @import url(./main/search.css);
 
-div.view > main {
+body > div > main {
     padding-top: 4em;
 }
 
-div.view > main > div:nth-child(1) {
+/* Header */
+
+body > div > main > header {
+    background-color: rgb(245,245,245);
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: rgb(215,215,215);
+}
+body > div > main > header > div:nth-child(1) {
+    padding: 1rem;
+    font-size: 200%;
+    line-height: 150%;
+}
+body > div > main > header > div:nth-child(1) > span::after {
+    content: "/";
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
+body > div > main > header > div:nth-child(1) > span:last-child::after {
+    content: "";
+}
+body > div > main > header > div:nth-child(2) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+body > div > main > header > div:nth-child(2) > span > a {
+    display: inline-block;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.75em;
+    color: black;
+}
+body > div > main > header > div:nth-child(2) > span > a.active {
+    font-weight: bold;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: orange;
+    padding-bottom: calc(0.75em - 1px);
+    margin-bottom: -1px;
+}
+
+/* Main */
+
+body > div > main > main > div:nth-child(1) {
     padding-top: 0.25em;
     padding-left: 1em;
     padding-right: 1em;
     padding-bottom: 0.25em;
 }
-div.view.sidebar > main > div:nth-child(1) {
+body > div > main > main > div:nth-child(1) > a:first-child {
+    display: inline-block;
+    margin-top: 0.75em;
+    margin-bottom: 0.5em;
+    border-width: 1px;
+    border-style: solid;
+    border-color: green;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    background-color: green;
+    background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.1));
+    color: white;
+}
+body > div > main > main.sidebar > div:nth-child(1) {
     width: calc(50% - 2em);
 }
 
-div.view.sidebar > main > div:nth-child(2) {
+body > div > main > main.sidebar > div:nth-child(2) {
     position: fixed;
     z-index: 0;
-    top: 4em;
+    top: calc(11.25em + 1px);
     left: 50%;
     right: 0;
     bottom: 0;
 }
-div.view.sidebar > main > div:nth-child(2) div.widget.product_view {
-    width: 100%;
-    height: 100%;
+
+body > div > main > main div.widget.product_view {
+    width: 10em;
+    height: 7.5em;
+    background-color: rgb(215,215,215);
 }
-div.view.sidebar > main > div:nth-child(2) div.widget.model_view {
+body > div > main > main.sidebar > div:nth-child(2) div.widget.product_view {
     width: 100%;
     height: 100%;
 }
 
-div.view > main div.widget.model_view {
+body > div > main > main div.widget.model_view {
     width: 10em;
     height: 7.5em;
+    background-color: rgb(215,215,215);
 }
-div.view > main div.widget.model_view > div.widget.scene_view {
+body > div > main > main.sidebar > div:nth-child(2) div.widget.model_view {
+    width: 100%;
+    height: 100%;
+}
+
+body > div > main > main div.widget.scene_view {
     width: 100%;
     height: 100%;
 }

@@ -8,15 +8,13 @@ import { Comment, Issue, Product, User } from 'fhooe-audit-platform-common'
 import { CommentAPI, IssueAPI, ProductAPI, UserAPI } from '../../clients/rest'
 // Contexts
 import { UserContext } from '../../contexts/User'
-// Links
-import { HomeLink } from '../links/HomeLink'
+// Snippets
+import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ProductView } from '../widgets/ProductView'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
-// Images
-import * as EventIcon from '/src/images/event.png'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -65,7 +63,6 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     useEffect(() => { issue && setIssueText(issue.text) }, [issue])
 
     const columns: Column<Comment>[] = [
-        {label: '', content: _comment => <a><img src={EventIcon}/></a>},
         {label: 'User', content: comment => comment.userId in users ? <Link to={`/users/${comment.userId}`}>{users[comment.userId].name}</Link> : 'Loading'},
         {label: 'Date', content: comment => new Date(comment.time).toISOString().substring(0, 10)},
         {label: 'Time', content: comment => new Date(comment.time).toISOString().substring(11, 16)},
@@ -98,25 +95,12 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     }
 
     return (
-        <div className='view sidebar audit'>
+        <main className='view audit'>
             { (issueId == 'new' || issue) && product && (
-                <React.Fragment>
-                    <header>
-                        <nav>
-                            <HomeLink/>
-                        </nav>
-                    </header>
-                    <main>
+                <Fragment>
+                    <ProductHeader product={product}/>
+                    <main className="sidebar">
                         <div>
-                            <h1>
-                                <Link to={`/products`}>Products</Link>
-                                <Link to={`/products/${productId}`}>{product.name}</Link>
-                            </h1>
-                            <h2>
-                                <Link to={`/products/${productId}`}>Settings</Link>
-                                <Link to={`/products/${productId}/versions`}>Versions</Link>
-                                <Link to={`/products/${productId}/issues`}>Issues</Link>
-                            </h2>
                             <form onSubmit={submitIssue} onReset={() => history.goBack()} className='data-input'>
                                 <TextInput label='Label' placeholder='Type label' value={issueLabel} change={setIssueLabel}/>
                                 <TextInput label='Text' placeholder='Type text' value={issueText} change={setIssueText}/>
@@ -147,8 +131,8 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                             <ProductView id={product.id} mouse={true}/>
                         </div>
                     </main>
-                </React.Fragment>
+                </Fragment>
             )}
-        </div>
+        </main>
     )
 }

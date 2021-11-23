@@ -1,14 +1,14 @@
 import  * as React from 'react'
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import * as hash from 'hash.js'
 // Commons
 import { User } from 'fhooe-audit-platform-common'
 // Clients
 import { UserAPI } from '../../clients/rest'
-// Links
-import { HomeLink } from '../links/HomeLink'
+// Snippets
+import { UserHeader } from '../snippets/UserHeader'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { EmailInput } from '../inputs/EmailInput'
@@ -54,20 +54,12 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     }
 
     return (
-        <div className="view user">
+        <main className="view user">
             { (userId == 'new' || user) && (
-                <React.Fragment>
-                    <header>
-                        <nav>
-                            <HomeLink/>
-                        </nav>
-                    </header>
+                <Fragment>
+                    <UserHeader user={user}/>
                     <main>
                         <div>
-                            <h1>
-                                <Link to={`/users`}>Users</Link>
-                                <Link to={`/users/${userId}`}>{user ? user.name : 'New user'}</Link>
-                            </h1>
                             <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
@@ -81,9 +73,9 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                             </form>
                         </div>
                     </main>
-                </React.Fragment>
+                </Fragment>
             )}
-        </div>
+        </main>
     )
     
 }

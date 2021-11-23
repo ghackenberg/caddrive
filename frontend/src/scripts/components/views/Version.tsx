@@ -1,15 +1,15 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, FormEvent } from 'react'
+import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product, Version} from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI, VersionAPI } from '../../clients/rest'
 // Contexts
 import { UserContext } from '../../contexts/User'
-// Links
-import { HomeLink } from '../links/HomeLink'
+// Snippets
+import { ProductHeader } from '../snippets/ProductHeader'
 // Inputs
 import { FileInput } from '../inputs/FileInput'
 import { NumberInput } from '../inputs/NumberInput'
@@ -55,26 +55,12 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     }
         
     return (
-        <div className="view sidebar version">
+        <main className="view version">
             { (versionId == 'new' || version) && product && (
-                <React.Fragment>
-                    <header>
-                        <nav>
-                            <HomeLink/>
-                        </nav>
-                    </header>
-                    <main>
+                <Fragment>
+                    <ProductHeader product={product}/>
+                    <main className="sidebar">
                         <div>
-                            <h1>
-                                <Link to={`/products`}>Products</Link>
-                                <Link to={`/products/${productId}`}>{product.name}</Link>
-                            </h1>
-                            <h2>
-                                <Link to={`/products/${productId}`}>Settings</Link>
-                                <Link to={`/products/${productId}/versions`}>Versions</Link>
-                                <Link to={`/products/${productId}/issues`}>Issues</Link>
-                            </h2>
-                            <h3>Version</h3>
                             <form onSubmit={submit} className='data-input'>                     
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
@@ -92,9 +78,9 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                             { version && <ModelView url={`/rest/models/${version.id}`} mouse={true}/> }
                         </div>
                     </main>
-                </React.Fragment>
+                </Fragment>
             )}
-        </div>
+        </main>
     )
 
 }

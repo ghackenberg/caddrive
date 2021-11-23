@@ -1,16 +1,15 @@
 import * as React from 'react'
-import { Fragment } from 'react'
-import { Link } from 'react-router-dom'
-// Links
-import { HomeLink } from './HomeLink'
+import { NavLink } from 'react-router-dom'
+// Images
+import * as UserIcon from '/src/images/user.png'
 
 export const UsersLink = () => {
     return (
-        <Fragment>
-            <HomeLink/>
-            <span>
-                <Link to="/users">Users</Link>
-            </span>
-        </Fragment>
+        <span>
+            <NavLink to="/users">
+                <img src={UserIcon}/>
+                Users
+            </NavLink>
+        </span>
     )
 }

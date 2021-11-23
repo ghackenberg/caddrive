@@ -1,29 +1,38 @@
-div.view > main table {
+body > div > main table {
     min-width: 100%;
     margin-top: calc(0.75em);
     margin-bottom: calc(0.75em);
-    border-collapse: collapse;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+    border-radius: 1em;
+    border-spacing: 0;
 }
-div.view > main table > thead  {
-    background-color: rgba(0,0,0,0.5);
-    color: white;
+body > div > main table > thead  {
     text-align: center;
 }
-div.view > main table > thead > tr > th {
+body > div > main table > thead > tr > th {
     padding-top: calc(0.75rem - 0.25em);
     padding-left: 0.5em;
     padding-right: 0.5em;
     padding-bottom: calc(0.75rem - 0.25em);
+    background-color: rgb(245,245,245);
 }
-div.view > main table > tbody {
+body > div > main table > thead > tr > th:first-child {
+    border-top-left-radius: 1em;
+}
+body > div > main table > thead > tr > th:last-child {
+    border-top-right-radius: 1em;
+}
+body > div > main table > tbody {
     text-align: left;
 }
-div.view > main table > tbody > tr > td:first-child {
+body > div > main table > tbody > tr > td:first-child {
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
     text-align: center;
 }
-div.view > main table > tbody > tr > td {
+body > div > main table > tbody > tr > td {
     white-space: nowrap;
     
     padding-top: calc(0.75rem - 0.25em);
@@ -31,10 +40,14 @@ div.view > main table > tbody > tr > td {
     padding-right: 0.5em;
     padding-bottom: calc(0.75rem - 0.25em);
 
-    background-color: rgba(0,0,0,0.1);
-
-    border-top: 1px solid white;
+    border-top: 1px solid rgb(215,215,215);
 }
-div.view > main table > tbody > tr > td.fill {
+body > div > main table > tbody > tr > td.fill {
     width: 100%;
+}
+body > div > main table a {
+    color: black;
+}
+body > div > main table a:hover {
+    color: blue;
 }

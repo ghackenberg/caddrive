@@ -12,7 +12,6 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
         <table>
             <thead>
                 <tr>
-                    <th>#</th>
                     {props.columns.map((column, index) =>
                         <th key={index} className={column.class}>{column.label}</th>
                     )}
@@ -21,10 +20,16 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
             <tbody>
                 {props.items.map((item, index) =>
                     <tr key={index}>
-                        <td>{index}</td>
                         {props.columns.map((column, index) =>
                             <td key={index} className={column.class}>{column.content(item)}</td>
                         )}
+                    </tr>
+                )}
+                {props.items.length == 0 && (
+                    <tr>
+                        <td colSpan={props.columns.length}>
+                            <em>Empty</em>
+                        </td>
                     </tr>
                 )}
             </tbody>

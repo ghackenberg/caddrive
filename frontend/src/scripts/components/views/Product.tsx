@@ -1,15 +1,15 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
 import { ProductAPI } from '../../clients/rest'
 // Contexts
 import { UserContext } from '../../contexts/User'
-// Links
-import { HomeLink } from '../links/HomeLink'
+// Snippets
+import { ProductHeader } from '../snippets/ProductHeader'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 // Widgets
@@ -50,34 +50,12 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     }
 
     return (
-        <div className="view sidebar product">
+        <main className="view product">
             { (productId == 'new' || product) && (
-                <React.Fragment>
-                    <header>
-                        <nav>
-                            <HomeLink/>
-                        </nav>
-                    </header>
-                    <main>
+                <Fragment>
+                    <ProductHeader product={product}/>
+                    <main className="sidebar">
                         <div>
-                            <h1>
-                                <Link to={`/products`}>Products</Link>
-                                <Link to={`/products/${productId}`}>{product ? product.name : 'New product'}</Link>
-                            </h1>
-                            <h2>
-                                <Link to={`/products/${productId}`}>Settings</Link>
-                                { productId != 'new' ? (
-                                    <Fragment>
-                                        <Link to={`/products/${productId}/versions`}>Versions</Link>
-                                        <Link to={`/products/${productId}/issues`}>Issues</Link>
-                                    </Fragment>
-                                ) : (
-                                    <Fragment>
-                                        <a>Versions</a>
-                                        <a>Issues</a>
-                                    </Fragment>
-                                )}
-                            </h2>
                             <form onSubmit={submit} className='data-input'>
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <div>
@@ -92,8 +70,8 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                             { product && <ProductView3D id={product.id} mouse={true}/> }
                         </div>
                     </main>
-                </React.Fragment>
+                </Fragment>
             )}
-        </div>
+        </main>
     )
 }

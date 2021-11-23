@@ -1,38 +1,38 @@
-div.view > header {
+body > div > header {
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
     right: 0;
-    padding: 1em;
-    line-height: 2em;
-    font-family: 'Arial Black';
-    background-color: steelblue;
-    background-image: linear-gradient(rgba(255,255,255,0.1),rgba(0,0,0,0.1));
-    box-shadow: 0 0 1em rgba(0,0,0,0.5);
+    height: 4em;
+    background-color: black;
     color: white;
 }
-div.view > header > nav > span > a {
+body > div > header > div {
+    position: absolute;
+    top: 0;
+    padding: 1em;
+    line-height: 2em;
+}
+body > div > header > div:first-child {
+    left: 0;
+    font-family: 'Arial Black';
+}
+body > div > header > div:last-child {
+    right: 0;
+}
+body > div > header > div > span > a {
     text-decoration: none;
     color: inherit;
-    opacity: 0.5;
 }
-div.view > header > nav > span > a:hover {
-    opacity: 0.75;
-}
-div.view > header > nav > span::after {
-    content: " / ";
-}
-div.view > header > nav > span:first-child > a > img {
+body > div > header > div > span > a > img {
     filter: invert();
+    padding: 0.25em;
+    margin-right: 0;
+}
+body > div > header > div:first-child > span > a > img {
     width: 2em;
     height: 2em;
     margin-right: 0.5em;
-    vertical-align: top;
-}
-div.view > header > nav > span:last-child > a {
-    opacity: 1;
-}
-div.view > header > nav > span:last-child::after {
-    content: "";
+    padding: 0;
 }

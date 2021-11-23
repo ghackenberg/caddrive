@@ -1,10 +1,4 @@
-div.view > main a {
+body > div > main a {
     text-decoration: none;
     color: blue;
-}
-div.view > main a > img {
-    display: inline-block;
-    vertical-align: top;
-    width: 1.5em;
-    height: 1.5em;
 }

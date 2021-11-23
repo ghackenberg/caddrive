@@ -6,3 +6,10 @@ body {
     font-family: Arial;
     line-height: 150%;
 }
+body a > img {
+    display: inline-block;
+    vertical-align: top;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.25em;
+}
