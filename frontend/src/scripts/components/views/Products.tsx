@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 // Commons
 import { Product } from 'fhooe-audit-platform-common'
 // Clients
-import { ProductAPI } from '../../clients/rest'
+import { IssueAPI, ProductAPI, VersionAPI } from '../../clients/rest'
 // Links
 import { ProductsLink } from '../links/ProductsLink'
 // Widgets
@@ -17,14 +17,40 @@ export const ProductsView = () => {
     
     // Define entities
     const [products, setProducts] = useState<Product[]>()
+    const [versions, setVersions] = useState<{[id: string]: number}>({})
+    const [issues, setIssues] = useState<{[id: string]: number}>({})
 
     // Load entities
     useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
+    useEffect(() => {
+        if (products) {
+            Promise.all(products.map(product => VersionAPI.findVersions(product.id))).then(productVersions => {
+                const newVersions = {...versions}
+                for (var index = 0; index < products.length; index++) {
+                    newVersions[products[index].id] = productVersions[index].length
+                }
+                setVersions(newVersions)
+            })
+        }
+    }, [products])
+    useEffect(() => {
+        if (products) {
+            Promise.all(products.map(product => IssueAPI.findIssues(product.id))).then(productIssues => {
+                const newIssues = {...issues}
+                for (var index = 0; index < products.length; index++) {
+                    newIssues[products[index].id] = productIssues[index].length
+                }
+                setIssues(newIssues)
+            })
+        }
+    }, [products])
 
     const columns: Column<Product>[] = [
         {label: 'Preview', class: 'center', content: product => <Link to={`/products/${product.id}`}><ProductView id={product.id} mouse={false}/></Link>},
         {label: 'Name', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.name}</Link>},
         {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>},
+        {label: 'Versions', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in versions ? versions[product.id] : '?'}</Link>},
+        {label: 'Issues', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in issues ? issues[product.id] : '?'}</Link>},
         {label: '', content: () => <img src={DeleteIcon}/>}
     ]
 
