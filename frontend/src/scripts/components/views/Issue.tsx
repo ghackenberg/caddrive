@@ -136,7 +136,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                 </Fragment>
                             ) : (
                                 <Fragment>
-                                    <h1>New issue</h1>
+                                    <h1>Settings</h1>
                                     <form onSubmit={submitIssue} onReset={() => history.goBack()}>
                                         <TextInput class='fill' label='Label' placeholder='Type label' value={issueLabel} change={setIssueLabel}/>
                                         <TextareaInput class='fill' label='Text' placeholder='Type text' value={issueText} change={setIssueText}/>

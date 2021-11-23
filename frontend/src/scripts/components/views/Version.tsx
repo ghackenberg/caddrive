@@ -65,11 +65,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                     <ProductHeader product={product}/>
                     <main className="sidebar">
                         <div>
-                            {version ? (
-                                <h1>{version.major}.{version.minor}.{version.patch}</h1>
-                            ) : (
-                                <h1>New version</h1>
-                            )}
+                            <h1>Settings</h1>
                             <form onSubmit={submit}>                     
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
