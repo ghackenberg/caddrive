@@ -20,7 +20,7 @@ import { VersionsView } from './views/Versions'
 import { ProductView } from './views/Product'
 import { ProductsView } from './views/Products'
 // Images
-import * as ProductIcon from '/src/images/product.png'
+import * as AppIcon from '/src/images/app.png'
 
 export const Root = () => {
 
@@ -39,7 +39,7 @@ export const Root = () => {
     return (
         <React.Fragment>
             <Helmet>
-                <link rel="icon" href={ProductIcon}/>
+                <link rel="icon" href={AppIcon}/>
             </Helmet>
             <BrowserRouter>
                 <PageHeader/>
