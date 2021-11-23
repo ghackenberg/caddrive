@@ -27,7 +27,7 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
                 )}
                 {props.items.length == 0 && (
                     <tr>
-                        <td colSpan={props.columns.length}>
+                        <td colSpan={props.columns.length} className='center'>
                             <em>Empty</em>
                         </td>
                     </tr>
