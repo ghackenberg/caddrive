@@ -42,7 +42,7 @@ module.exports = {
     plugins: [
         new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
-            process: 'process/browser'
+            process: 'process/browser.js'
         }),
         new HtmlWebpackPlugin({
             publicPath: '/',

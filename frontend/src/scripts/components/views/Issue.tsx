@@ -2,6 +2,8 @@ import  * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import { Object3D } from 'three'
 // Commons
 import { Comment, Issue, Product, User, Version } from 'fhooe-audit-platform-common'
 // Clients
@@ -15,10 +17,9 @@ import { Column, Table } from '../widgets/Table'
 import { ProductView } from '../widgets/ProductView'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
+import { TextareaInput } from '../inputs/TextareaInput'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
-import { Object3D } from 'three'
-import { TextareaInput } from '../inputs/TextareaInput'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -70,7 +71,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         {label: 'User', class: 'top left nowrap', content: comment => comment.userId in users ? <Link to={`/users/${comment.userId}`}>{users[comment.userId].name}</Link> : 'Loading'},
         {label: 'Date', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(0, 10)},
         {label: 'Time', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(11, 16)},
-        {label: 'Text', class: 'top left fill', content: comment => comment.text},
+        {label: 'Text', class: 'top left fill', content: comment => <p>{comment.text}</p>},
         {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
     ]
 
@@ -116,7 +117,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                 <Fragment>
                                     <h1>{issue.label}</h1>
                                     <p className={issue.state}>{issue.state}</p>
-                                    <p>{issue.text}</p>
+                                    <ReactMarkdown children={issue.text}/>
                                     <h2>Comments</h2>
                                     {comments && (
                                         <Fragment>

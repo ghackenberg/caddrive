@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import 'process/browser'
 // Components
 import { Root } from './components/Root'
 // Styles
