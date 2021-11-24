@@ -25,7 +25,7 @@ export const ProductView = (props: { product?: Product, mouse: boolean, click?: 
             ) : (
                 <Fragment>
                     { versions && versions.length > 0 ? (
-                        <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse} click={object => props.click && props.click(versions[versions.length - 1], object)}/>
+                        <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
                     ) : (
                         <img className='empty' src={EmptyIcon}/>
                     )}

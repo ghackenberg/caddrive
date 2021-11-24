@@ -227,9 +227,9 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
             this.selected = null
         }
         if (this.hovered) {
-            this.selected = this.hovered
-            this.updateMaterial(this.selected, 0.2)
             if (this.props.click) {
+                this.selected = this.hovered
+                this.updateMaterial(this.selected, 0.2)
                 this.props.click(this.selected)
             }
         }
