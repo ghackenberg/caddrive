@@ -19,6 +19,9 @@
         "devel": "webpack serve --mode=development"
     },
     "dependencies": {
+        "@gitgraph/core": "^1.5.0",
+        "@gitgraph/js": "^1.4.0",
+        "@gitgraph/react": "^1.6.0",
         "axios": "^0.21.1",
         "buffer": "^5.7.1",
         "fhooe-audit-platform-common": "^1.0.0",

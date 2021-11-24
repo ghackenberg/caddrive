@@ -25,6 +25,10 @@ body img.empty {
     opacity: 0.25;
 }
 
+body svg text {
+    cursor: pointer;
+}
+
 @keyframes spin { 
     from { 
         transform: rotate(0deg); 

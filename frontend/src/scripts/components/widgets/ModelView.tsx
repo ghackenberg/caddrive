@@ -13,7 +13,8 @@ export const ModelView = (props: { url: string, mouse: boolean, click?: (object:
     const [model, setModel] = useState<GLTF>(null)
     
     // TODO: use auth!
-    useEffect(() => { new GLTFLoader().loadAsync(props.url).then(setModel).then(() => setLoad(false)) }, [props])
+    useEffect(() => { setLoad(true) }, [props.url])
+    useEffect(() => { new GLTFLoader().loadAsync(props.url).then(setModel).then(() => setLoad(false)) }, [props.url])
 
     return (
         <div className="widget model_view">
