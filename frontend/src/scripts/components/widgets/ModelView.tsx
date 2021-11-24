@@ -18,7 +18,7 @@ export const ModelView = (props: { url: string, mouse: boolean, click?: (object:
     return (
         <div className="widget model_view">
             {load ? (
-                <img src={LoadIcon}/>
+                <img className='load' src={LoadIcon}/>
             ) : (
                 <Fragment>
                     {model && <SceneView model={model} mouse={props.mouse} vr={false} click={props.click}/> }

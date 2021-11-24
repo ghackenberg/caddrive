@@ -11,6 +11,7 @@ import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ModelView } from '../widgets/ModelView'
+import { ProductView } from '../widgets/ProductView'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 
@@ -51,12 +52,15 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
             { product && versions && (
                 <Fragment>
                     <ProductHeader product={product}/>
-                    <main>
+                    <main className='sidebar'>
                         <div>
                             <Link to={`/products/${productId}/versions/new`}>
                                 New version
                             </Link>
                             <Table columns={columns} items={versions}/>
+                        </div>
+                        <div>
+                            <ProductView product={product} mouse={true}/>
                         </div>
                     </main>
                 </Fragment>

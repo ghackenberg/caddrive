@@ -71,7 +71,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                             </form>
                         </div>
                         <div>
-                            { product && <ProductView3D id={product.id} mouse={true}/> }
+                            <ProductView3D product={product} mouse={true}/>
                         </div>
                     </main>
                 </Fragment>

@@ -16,6 +16,8 @@ import { NumberInput } from '../inputs/NumberInput'
 import { TextInput } from '../inputs/TextInput'
 // Widgets
 import { ModelView } from '../widgets/ModelView'
+// Images
+import * as EmptyIcon from '/src/images/empty.png'
 
 export const VersionView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
@@ -81,7 +83,13 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                             </form>
                         </div>
                         <div>
-                            { version && <ModelView url={`/rest/models/${version.id}`} mouse={true}/> }
+                            { version ? (
+                                <ModelView url={`/rest/models/${version.id}`} mouse={true}/>
+                            ) : (
+                                <div className="widget model_view">
+                                    <img className='empty' src={EmptyIcon}/>
+                                </div>
+                            )}
                         </div>
                     </main>
                 </Fragment>

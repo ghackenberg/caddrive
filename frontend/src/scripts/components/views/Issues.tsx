@@ -70,7 +70,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
                             <Table columns={columns} items={issues}/>
                         </div>
                         <div>
-                            <ProductView id={productId} mouse={true}/>
+                            <ProductView product={product} mouse={true}/>
                         </div>
                     </main>
                 </Fragment>

@@ -151,7 +151,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                             )}
                         </div>
                         <div>
-                            <ProductView id={product.id} mouse={true} click={selectObject}/>
+                            <ProductView product={product} mouse={true} click={selectObject}/>
                         </div>
                     </main>
                 </Fragment>
