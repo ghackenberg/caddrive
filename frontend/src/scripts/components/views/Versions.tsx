@@ -152,17 +152,9 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                                                     {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                         <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                     ))}
-                                                    {vers.id in childrenMin && vers.id in childrenMax && (
-                                                        <span className='line horizontal parent' style={{top: 'calc(0.75em - 2px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
-                                                    )}
-                                                    {vers.id in children && children[vers.id].length > 0 && (
-                                                        <Fragment>
-                                                            {children[vers.id].map(child => (
-                                                                <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 'calc(0.75em - 1px)'}}/>
-                                                            ))}
-                                                            <span className='line vertical parent' style={{top: 'calc(0.75em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
-                                                        </Fragment>  
-                                                    )}
+                                                    {vers.id in children && children[vers.id].map(child => (
+                                                        <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                    ))}
                                                 </div>
                                                 <div className="text" style={{color: 'orange'}}>
                                                     {/* empty */}
@@ -174,11 +166,17 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                                                 {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                     <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                 ))}
+                                                {vers.id in childrenMin && vers.id in childrenMax && (
+                                                    <span className='line horizontal parent' style={{top: 'calc(1.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
+                                                )}
+                                                {vers.id in children && children[vers.id].map(child => (
+                                                    <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(1.5em + 1px)'}}/>
+                                                ))}
                                                 {vers.id in indents && (
-                                                    <span className='line vertical parent' style={{top: 0, left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                    <span className='line vertical parent' style={{top: 'calc(1.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                 )}
                                                 {vers.id in indents && (
-                                                    <span className='dot parent' style={{top: '1.25em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
+                                                    <span className='dot parent' style={{top: '0.75em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
                                                 )}
                                             </div>
                                             <div className="text">

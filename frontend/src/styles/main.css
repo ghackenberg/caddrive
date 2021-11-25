@@ -176,7 +176,7 @@ body > div > main > main div.widget.version_tree > div {
     display: table-row;
 }
 body > div > main > main div.widget.version_tree > div.between {
-    height: 1.5em;
+    height: 1px;
 }
 body > div > main > main div.widget.version_tree > div.version {
     cursor: pointer;
@@ -191,6 +191,18 @@ body > div > main > main div.widget.version_tree > div > div {
     position: relative;
     vertical-align: top;
 }
+body > div > main > main div.widget.version_tree > div:first-child > div.tree {
+    border-top-left-radius: 1em;
+}
+body > div > main > main div.widget.version_tree > div:first-child > div.model {
+    border-top-right-radius: 1em;
+}
+body > div > main > main div.widget.version_tree > div:last-child > div.tree {
+    border-bottom-left-radius: 1em;
+}
+body > div > main > main div.widget.version_tree > div:last-child > div.model {
+    border-bottom-right-radius: 1em;
+}
 body > div > main > main div.widget.version_tree > div > div.tree span {
     display: block;
     position: absolute;
@@ -203,8 +215,13 @@ body > div > main > main div.widget.version_tree > div > div.tree span.line.vert
 }
 body > div > main > main div.widget.version_tree > div > div.tree span.line.horizontal {
     height: 2px;
-    border-top: 1px solid white;
-    border-bottom: 1px solid white;
+    border-top: 2px solid rgb(245,245,245);
+    border-bottom: 2px solid rgb(245,245,245);
+}
+body > div > main > main div.widget.version_tree > div.selected > div.tree span.line.horizontal,
+body > div > main > main div.widget.version_tree > div:hover > div.tree span.line.horizontal {
+    border-top-color: rgb(230,230,230);
+    border-bottom-color: rgb(230,230,230);
 }
 body > div > main > main div.widget.version_tree > div > div.tree span.dot {
     width: 1em;
@@ -214,14 +231,14 @@ body > div > main > main div.widget.version_tree > div > div.tree span.dot {
     background-color: black;
 }
 body > div > main > main div.widget.version_tree > div > div.text {
-    padding-right: 1.5em;
+    padding-right: 0.5em;
 }
 body > div > main > main div.widget.version_tree > div > div.text > div:first-child {
-    margin-top: 1.25em;
+    margin-top: 0.75em;
     font-weight: bold;
 }
 body > div > main > main div.widget.version_tree > div > div.text > div:last-child {
-    margin-bottom: 1.25em;
+    margin-bottom: 0.75em;
 }
 body > div > main > main div.widget.version_tree > div > div.text > div > span.label {
     display: inline-block;
@@ -235,4 +252,10 @@ body > div > main > main div.widget.version_tree > div > div.text > div > span.l
 }
 body > div > main > main div.widget.version_tree > div > div.model {
     width: 10em;
+}
+body > div > main > main div.widget.version_tree > div:first-child > div.model * {
+    border-top-right-radius: 1em;
+}
+body > div > main > main div.widget.version_tree > div:last-child > div.model * {
+    border-bottom-right-radius: 1em;
 }
