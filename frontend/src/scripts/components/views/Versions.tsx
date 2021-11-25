@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { useState, useEffect, useRef, Fragment } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
-import { createGitgraph } from '@gitgraph/js'
 // Commons
 import { Product, User, Version } from 'fhooe-audit-platform-common'
 // Clients
@@ -10,15 +9,10 @@ import { ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { Column, Table } from '../widgets/Table'
 import { ModelView } from '../widgets/ModelView'
 import { ProductView } from '../widgets/ProductView'
-// Images
-import * as DeleteIcon from '/src/images/delete.png'
 
 export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
-
-    const div = useRef<HTMLDivElement>()
 
     const productId = props.match.params.product
     
@@ -26,6 +20,14 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
     const [product, setProduct] = useState<Product>()
     const [versions, setVersions] = useState<Version[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
+    
+    const [children, setChildren] = useState<{[id: string]: Version[]}>({})
+    const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>({})
+    const [childrenMax, setChildrenMax] = useState<{[id: string]: number}>({})
+    const [siblings, setSiblings] = useState<{[id: string]: Version[]}>({})
+    const [indents, setIndents] = useState<{[id: string]: number}>({})
+    const [indent, setIndent] = useState<number>(0)
+
     const [version, setVersion] = useState<Version>()
 
     // Load entities
@@ -44,41 +46,92 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
         }
     }, [versions])
     useEffect(() => {
-        if (div.current) {
-            while (div.current.childNodes.length > 0) {
-                div.current.removeChild(div.current.firstChild)
+        if (versions && versions.length > 0) {
+            // Calculate children
+            const children: {[id: string]: Version[]} = {}
+    
+            for (const version of versions) {
+                children[version.id] = []
+                for (const baseVersionId of version.baseVersionIds) {
+                    children[baseVersionId].push(version)
+                }
             }
 
-            const gitgraph = createGitgraph(div.current)
-    
-            const master = gitgraph.branch({ name: 'master' })
-    
-            for (var index = 0; index < versions.length; index++) {
-                const vers = versions[index]
-    
-                const hash = vers.id
-                const user = vers.id in users && users[vers.id]
-                const author = user && `${user.name} <${user.email}>`
-                const tag = `${vers.major}.${vers.minor}.${vers.patch}`
-                const subject = vers.description
-                const color = vers == version ? 'black' : undefined
-    
-                master.commit({ hash, author, subject, tag, style: { color, dot: { color }, message: { color, displayHash: false } }, onClick: () => {
-                    setVersion(vers)
-                }, onMessageClick: () => {
-                    setVersion(vers)
-                }})
+            setChildren(children)
+
+            // Calculate siblings
+
+            const siblings: {[id: string]: Version[]} = {}
+
+            for (const version of versions) {
+                siblings[version.id] = []
             }
+
+            for (var outerIndex = versions.length - 1; outerIndex >= 0; outerIndex--) {
+                const outerVersion = versions[outerIndex]
+                const baseVersionIds = [...outerVersion.baseVersionIds]
+                for (var innerIndex = outerIndex - 1; innerIndex >= 0; innerIndex--) {
+                    const innerVersion = versions[innerIndex]
+                    const baseIndex = baseVersionIds.indexOf(innerVersion.id)
+                    if (baseIndex != -1) {
+                        baseVersionIds.splice(baseIndex, 1)
+                    }
+                    if (baseVersionIds.length > 0) {
+                        siblings[innerVersion.id].push(outerVersion)
+                    }
+                }
+            }
+
+            setSiblings(siblings)
+
+            // Calculate indents
+            const indents: {[id: string]: number} = {}
+
+            var next = 0
+
+            for (const version of versions) {
+                if (!(version.id in indents)) {
+                    var indent = version.baseVersionIds.length > 0 ? indents[version.baseVersionIds[0]] : next
+                
+                    indents[version.id] = indent
+                }
+
+                for (var index = 0; index < children[version.id].length; index++) {
+                    const child = children[version.id][index]
+                    if (!(child.id in indents)) {
+                        if (index == 0) {
+                            indents[child.id] = indents[version.id]
+                        } else {
+                            indents[child.id] = ++next
+                        }
+                    }
+                }
+            }
+
+            setIndents(indents)
+            setIndent(next + 1)
+
+            // Calculate min/max
+            const childrenMin: {[id: string]: number} = {}
+            const childrenMax: {[id: string]: number} = {}
+
+            for (const version of versions) {
+                var min = indents[version.id]
+                var max = 0
+
+                for (const child of children[version.id]) {
+                    min = Math.min(min, indents[child.id])
+                    max = Math.max(max, indents[child.id])
+                }
+
+                childrenMin[version.id] = min
+                childrenMax[version.id] = max
+            }
+
+            setChildrenMin(childrenMin)
+            setChildrenMax(childrenMax)
         }
-    }, [users, version])
-
-    const columns: Column<Version>[] = [
-        {label: 'Preview', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}><ModelView url={`/rest/models/${version.id}`} mouse={false}/></Link>},
-        {label: 'User', class: 'left nowrap', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.id in users ? users[version.id].name : '?'}</Link>},
-        {label: 'Number', class: 'center', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.major}.{version.minor}.{version.patch}</Link>},
-        {label: 'Description', class: 'left fill', content: version => <Link to={`/products/${productId}/versions/${version.id}`}>{version.description}</Link>},
-        {label: '', content: () => <img src={DeleteIcon}/>}
-    ] 
+    }, [versions])
 
     return (
         <main className="view extended products">
@@ -90,10 +143,60 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                             <Link to={`/products/${productId}/versions/new`}>
                                 New version
                             </Link>
-                            <h2>Table</h2>
-                            <Table columns={columns} items={versions}/>
-                            <h2>Graph</h2>
-                            <div ref={div}/>
+                            <div className="widget version_tree">
+                                {versions.map(version => version).reverse().map((vers, index) => (
+                                    <Fragment key={vers.id}>
+                                        {index > 0 && (
+                                            <div className="between">
+                                                <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
+                                                    {vers.id in siblings && siblings[vers.id].map(sibling => (
+                                                        <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                    ))}
+                                                    {vers.id in childrenMin && vers.id in childrenMax && (
+                                                        <span className='line horizontal parent' style={{top: 'calc(0.75em - 2px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
+                                                    )}
+                                                    {vers.id in children && children[vers.id].length > 0 && (
+                                                        <Fragment>
+                                                            {children[vers.id].map(child => (
+                                                                <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 'calc(0.75em - 1px)'}}/>
+                                                            ))}
+                                                            <span className='line vertical parent' style={{top: 'calc(0.75em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        </Fragment>  
+                                                    )}
+                                                </div>
+                                                <div className="text" style={{color: 'orange'}}>
+                                                    {/* empty */}
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className={`version${version == vers ? ' selected' : ''}`} onClick={() => setVersion(vers)}>
+                                            <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
+                                                {vers.id in siblings && siblings[vers.id].map(sibling => (
+                                                    <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                ))}
+                                                {vers.id in indents && (
+                                                    <span className='line vertical parent' style={{top: 0, left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                )}
+                                                {vers.id in indents && (
+                                                    <span className='dot parent' style={{top: '1.25em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
+                                                )}
+                                            </div>
+                                            <div className="text">
+                                                <div>
+                                                    <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
+                                                    <span className="user">{vers.id in users ? `${users[vers.id].name} <${users[vers.id].email}>` : '?'}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="description">{vers.description}</span>
+                                                </div>
+                                            </div>
+                                            <div className="model">
+                                                <ModelView url={`/rest/models/${vers.id}`} mouse={false}/>
+                                            </div>
+                                        </div>
+                                    </Fragment>
+                                ))}
+                            </div>
                         </div>
                         <div>
                             {version ? (

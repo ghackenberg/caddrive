@@ -52,7 +52,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, time: new Date().toISOString(), major, minor, patch, description }, file)
+            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, baseVersionIds: [], time: new Date().toISOString(), major, minor, patch, description }, file)
             history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
             console.log(description)

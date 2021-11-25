@@ -7,10 +7,14 @@ import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
 @Injectable()
 export class VersionService implements VersionREST<Express.Multer.File> {
     private static readonly versions: Version[] = [
-        { id: 'demo-1', userId: 'demo', productId: 'demo-1', time: new Date().toISOString(), major: 0, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
-        { id: 'demo-2', userId: 'demo', productId: 'demo-1', time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
-        { id: 'demo-3', userId: 'demo', productId: 'demo-1', time: new Date().toISOString(), major: 2, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
-        { id: 'demo-4', userId: 'demo', productId: 'demo-2', time: new Date().toISOString(), major: 2, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' }
+        { id: 'demo-1', userId: 'demo', productId: 'demo-1', baseVersionIds: [], time: new Date().toISOString(), major: 0, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
+        { id: 'demo-2', userId: 'demo', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
+        { id: 'demo-3', userId: 'demo', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 2, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
+        { id: 'demo-4', userId: 'demo', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 3, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
+        { id: 'demo-5', userId: 'demo', productId: 'demo-1', baseVersionIds: ['demo-2'], time: new Date().toISOString(), major: 4, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
+        { id: 'demo-6', userId: 'demo', productId: 'demo-1', baseVersionIds: ['demo-2', 'demo-3'], time: new Date().toISOString(), major: 5, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
+        { id: 'demo-7', userId: 'demo', productId: 'demo-1', baseVersionIds: ['demo-1', 'demo-4', 'demo-6'], time: new Date().toISOString(), major: 6, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
+        { id: 'demo-9', userId: 'demo', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 0, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' }
     ]
 
     async findVersions(productId: string) : Promise<Version[]> {

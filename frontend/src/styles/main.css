@@ -163,3 +163,76 @@ body > div > main > main div.widget.scene_view {
     width: 100%;
     height: 100%;
 }
+
+body > div > main > main div.widget.version_tree {
+    display: table;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+body > div > main > main div.widget.version_tree > div {
+    display: table-row;
+}
+body > div > main > main div.widget.version_tree > div.between {
+    height: 1.5em;
+}
+body > div > main > main div.widget.version_tree > div.version {
+    cursor: pointer;
+    background-color: rgb(245, 245, 245);
+}
+body > div > main > main div.widget.version_tree > div.version.selected,
+body > div > main > main div.widget.version_tree > div.version:hover {
+    background-color: rgb(230, 230, 230);
+}
+body > div > main > main div.widget.version_tree > div > div {
+    display: table-cell;
+    position: relative;
+    vertical-align: top;
+}
+body > div > main > main div.widget.version_tree > div > div.tree span {
+    display: block;
+    position: absolute;
+}
+body > div > main > main div.widget.version_tree > div > div.tree span.line {
+    background-color: gray;
+}
+body > div > main > main div.widget.version_tree > div > div.tree span.line.vertical {
+    width: 2px;
+}
+body > div > main > main div.widget.version_tree > div > div.tree span.line.horizontal {
+    height: 2px;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+}
+body > div > main > main div.widget.version_tree > div > div.tree span.dot {
+    width: 1em;
+    height: 1em;
+    margin: 0.25em;
+    border-radius: 0.5em;
+    background-color: black;
+}
+body > div > main > main div.widget.version_tree > div > div.text {
+    padding-right: 1.5em;
+}
+body > div > main > main div.widget.version_tree > div > div.text > div:first-child {
+    margin-top: 1.25em;
+    font-weight: bold;
+}
+body > div > main > main div.widget.version_tree > div > div.text > div:last-child {
+    margin-bottom: 1.25em;
+}
+body > div > main > main div.widget.version_tree > div > div.text > div > span.label {
+    display: inline-block;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border-radius: 0.25em;
+    background-color: black;
+    color: white;
+}
+body > div > main > main div.widget.version_tree > div > div.model {
+    width: 10em;
+}

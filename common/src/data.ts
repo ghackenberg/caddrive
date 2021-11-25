@@ -40,6 +40,8 @@ export class VersionData {
     @ApiProperty()
     productId: string
     @ApiProperty()
+    baseVersionIds: string[]
+    @ApiProperty()
     time: string
     @ApiProperty()
     major: number
