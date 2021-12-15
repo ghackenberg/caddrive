@@ -33,21 +33,30 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
     const user = useContext(UserContext)
 
-    function handleMouseOver(event: MouseEvent<HTMLAnchorElement>) {
-        console.log(event)
+    function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, productId: string, versionId: string, objectName: string) {
+        event.preventDefault()
+        console.log('mouseOver', productId, versionId, objectName)
     }
-    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>) {
-        console.log(event)
+    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, productId: string, versionId: string, objectName: string) {
+        event.preventDefault()
+        console.log('mouseOut', productId, versionId, objectName)
     }
-    function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-        console.log(event)
+    function handleClick(event: MouseEvent<HTMLAnchorElement>, productId: string, versionId: string, objectName: string) {
+        event.preventDefault()
+        console.log('click', productId, versionId, objectName)
     }
+
+    const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
     const processor = unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
         createElement, components: {
             a: (props: any) => {
-                if (props.href && props.href.startsWith('#')) {
-                    return <a {...props} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={handleClick}/>
+                const match = regex.exec(props.href || '')
+                if (match) {
+                    const productId = match[1]
+                    const versionId = match[2]
+                    const objectName = match[3]
+                    return <a {...props} onMouseOver={event => handleMouseOver(event, productId, versionId, objectName)} onMouseOut={event => handleMouseOut(event, productId, versionId, objectName)} onClick={event => handleClick(event, productId, versionId, objectName)}/>
                 } else {
                     return <a {...props}/>
                 }
@@ -100,11 +109,11 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
     ]
 
-    async function selectObject(_version: Version, object: Object3D) {
+    async function selectObject(version: Version, object: Object3D) {
         if (issueId == 'new') {
-            setIssueText(`${issueText}${issueText ? '\n\n' : ''}[${object.name}](#${object.name})`)
+            setIssueText(`${issueText}${issueText ? '\n\n' : ''}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
         } else {
-            setCommentText(`${commentText}${commentText ? '\n\n' : ''}[${object.name}](#${object.name})`)
+            setCommentText(`${commentText}${commentText ? '\n\n' : ''}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
         }
     }
 
