@@ -1,6 +1,6 @@
 import axios from 'axios'
 // Commons
-import { Comment, CommentData, CommentREST, Issue, IssueData, IssueREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+import { Comment, CommentData, CommentREST, Issue, IssueData, IssueREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'productboard-common'
 // Globals
 import { auth } from './auth'
 

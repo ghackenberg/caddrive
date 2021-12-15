@@ -2,7 +2,7 @@ import 'multer'
 import * as fs from 'fs'
 import * as shortid from 'shortid'
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+import { Version, VersionData, VersionREST } from 'productboard-common'
 
 @Injectable()
 export class VersionService implements VersionREST<Express.Multer.File> {

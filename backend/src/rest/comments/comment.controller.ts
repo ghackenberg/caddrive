@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
-import { Comment, CommentData, CommentREST } from 'fhooe-audit-platform-common'
+import { Comment, CommentData, CommentREST } from 'productboard-common'
 import { CommentService } from './comment.service'
 
 @Controller('rest/comments')

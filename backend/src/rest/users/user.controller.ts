@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, UseGuar
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
-import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
+import { User, UserData, UserREST } from 'productboard-common'
 import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})

@@ -3,7 +3,7 @@ import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
-import { Product, Version} from 'fhooe-audit-platform-common'
+import { Product, Version} from 'productboard-common'
 // Clients
 import { ProductAPI, VersionAPI } from '../../clients/rest'
 // Contexts

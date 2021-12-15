@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 // Commons
-import { User } from 'fhooe-audit-platform-common'
+import { User } from 'productboard-common'
 // Links
 import { UserLink } from '../links/UserLink'
 // Images

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { CommentREST, Comment, CommentData, } from 'fhooe-audit-platform-common'
+import { CommentREST, Comment, CommentData, } from 'productboard-common'
 import * as shortid from 'shortid'
 
 @Injectable()

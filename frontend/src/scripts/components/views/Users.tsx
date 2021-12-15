@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 // Commons
-import { User } from 'fhooe-audit-platform-common'
+import { User } from 'productboard-common'
 // Clients
 import { UserAPI } from '../../clients/rest'
 // Links

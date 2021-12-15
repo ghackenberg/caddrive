@@ -4,7 +4,7 @@ import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import * as hash from 'hash.js'
 // Commons
-import { User } from 'fhooe-audit-platform-common'
+import { User } from 'productboard-common'
 // Clients
 import { UserAPI } from '../../clients/rest'
 // Snippets

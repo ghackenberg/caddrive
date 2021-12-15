@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 // Commons
-import { Product, Version } from 'fhooe-audit-platform-common'
+import { Product, Version } from 'productboard-common'
 // Links
 import { VersionsLink } from './VersionsLink'
 

@@ -1,6 +1,6 @@
 import * as mqtt from 'mqtt'
 // Commons
-import { TestMQTT } from 'fhooe-audit-platform-common'
+import { TestMQTT } from 'productboard-common'
 
 const protocol = window.location.protocol == 'http:' ? 'ws:' : 'wss:'
 const host = window.location.host

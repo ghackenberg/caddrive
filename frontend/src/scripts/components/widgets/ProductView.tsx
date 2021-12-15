@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useState, Fragment } from 'react'
 import { Object3D } from 'three'
 // Types
-import { Product, Version } from 'fhooe-audit-platform-common'
+import { Product, Version } from 'productboard-common'
 // Clients
 import { VersionAPI } from '../../clients/rest'
 // Widgets

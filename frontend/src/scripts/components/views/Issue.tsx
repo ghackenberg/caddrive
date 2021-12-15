@@ -5,7 +5,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import { Object3D } from 'three'
 // Commons
-import { Comment, Issue, Product, User, Version } from 'fhooe-audit-platform-common'
+import { Comment, Issue, Product, User, Version } from 'productboard-common'
 // Clients
 import { CommentAPI, IssueAPI, ProductAPI, UserAPI } from '../../clients/rest'
 // Contexts

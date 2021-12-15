@@ -2,7 +2,7 @@ import 'multer'
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/swagger'
-import { Version, VersionData, VersionREST } from 'fhooe-audit-platform-common'
+import { Version, VersionData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
 import { AuthGuard } from '@nestjs/passport'
 

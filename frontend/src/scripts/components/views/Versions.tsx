@@ -3,7 +3,7 @@ import { useState, useEffect, Fragment } from 'react'
 import { RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 // Commons
-import { Product, User, Version } from 'fhooe-audit-platform-common'
+import { Product, User, Version } from 'productboard-common'
 // Clients
 import { ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
 // Snippets

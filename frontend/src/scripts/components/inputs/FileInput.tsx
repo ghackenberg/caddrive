@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { Fragment } from 'react'
-import { GenericInput } from './GenericInput'
 // Inputs
-//import { GenericInput } from './GenericInput'
+import { GenericInput } from './GenericInput'
 import { TextInput } from './TextInput'
 
 export const FileInput = (props: {class?: string, label: string, change?: (value: File) => void, accept?: string, placeholder?: string, disabled?: boolean}) => {

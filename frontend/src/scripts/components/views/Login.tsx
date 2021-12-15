@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as hash from 'hash.js'
 // Commons
-import { User } from 'fhooe-audit-platform-common'
+import { User } from 'productboard-common'
 // Clients
 import { auth } from '../../clients/auth'
 import { UserAPI } from '../../clients/rest'

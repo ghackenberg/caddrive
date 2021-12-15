@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
-import { Product, ProductData, ProductREST } from 'fhooe-audit-platform-common'
+import { Product, ProductData, ProductREST } from 'productboard-common'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')

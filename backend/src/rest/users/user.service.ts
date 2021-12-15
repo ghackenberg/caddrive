@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { User, UserData, UserREST } from 'fhooe-audit-platform-common'
+import { User, UserData, UserREST } from 'productboard-common'
 
 @Injectable()
 export class UserService implements UserREST {

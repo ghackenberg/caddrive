@@ -1,5 +1,5 @@
 {
-    "name": "fhooe-audit-platform-common",
+    "name": "productboard-common",
     "version": "1.0.0",
     "description": "TODO",
     "private": "true",
@@ -11,7 +11,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@gitlab.com:georg-hackenberg/fhooe/audit-platform.git",
+        "url": "https://github.com/ghackenberg/productboard.git",
         "directory": "common"
     },
     "scripts": {

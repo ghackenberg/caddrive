@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
 // Commons
-import { User } from 'fhooe-audit-platform-common'
+import { User } from 'productboard-common'
 // Clients
 import { auth } from '../clients/auth'
 // Contexts
