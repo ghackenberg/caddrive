@@ -259,3 +259,120 @@ body > div > main > main div.widget.version_tree > div:first-child > div.model *
 body > div > main > main div.widget.version_tree > div:last-child > div.model * {
     border-bottom-right-radius: 1em;
 }
+
+body > div > main span.state {
+    display: inline-block;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border-radius: 1em;
+    color: white;
+}
+body > div > main span.state.open {
+    background-color: red;
+}
+body > div > main span.state.closed {
+    background-color: green;
+}
+
+body > div > main > main div.widget.thread {
+    position: relative;
+    margin-top: 0.5em;
+    border-top: 1px solid rgb(215,215,215);
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+}
+body > div > main > main div.widget.thread::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 1em;
+    left: 4.5em;
+    bottom: 1em;
+    border-left: 2px solid rgb(215,215,215);
+}
+body > div > main > main div.widget.thread > div {
+    display: table;
+    position: relative;
+    width: 100%;
+}
+body > div > main > main div.widget.thread > div.comment {
+    margin-top: 1em;
+}
+body > div > main > main div.widget.thread > div > div {
+    display: table-row;
+}
+body > div > main > main div.widget.thread > div > div > div {
+    display: table-cell;
+    border-width: 0;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+}
+body > div > main > main div.widget.thread > div > div > div.icon {
+    vertical-align: middle;
+    padding-right: 1em;
+}
+body > div > main > main div.widget.thread > div > div > div.icon > a  {
+    display: block;
+    box-sizing: border-box;
+    width: 2.5em;
+    height: 2.5em;
+    background-color: orange;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+    border-radius: 50%;
+}
+body > div > main > main div.widget.thread > div > div > div.text {
+    width: 100%;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-left-width: 1px;
+    border-right-width: 1px;
+}
+body > div > main > main div.widget.thread > div > div.head > div.text {
+    background-color: rgb(245,245,245);
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+}
+body > div > main > main div.widget.thread > div > div.body > div.text {
+    background-color: white;
+    border-bottom-width: 1px;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+}
+body > div > main > main div.widget.thread > div > div.body > div.text > textarea {
+    display: block;
+    
+    outline: none;
+    border: none;
+
+    font-size: inherit;
+
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    width: 100%;
+    height: 10em;
+}
+body > div > main > main div.widget.thread > div > div.body > div.text > button {
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+
+    margin-bottom: 1em;
+
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    padding-bottom: calc(0.75rem - 0.25em);
+
+    border: 0;
+    border-radius: 0.5em;
+    outline: 0;
+
+    background-color: blue;
+    color: white;
+}

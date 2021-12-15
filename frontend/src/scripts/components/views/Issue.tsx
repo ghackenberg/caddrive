@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, createElement, FormEvent, MouseEvent, Fragment } from 'react'
 import { useHistory } from 'react-router' 
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
@@ -16,13 +16,10 @@ import { UserContext } from '../../contexts/User'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { Column, Table } from '../widgets/Table'
 import { ProductView } from '../widgets/ProductView'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { TextareaInput } from '../inputs/TextareaInput'
-// Images
-import * as DeleteIcon from '/src/images/delete.png'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -101,14 +98,6 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     useEffect(() => { issue && setIssueLabel(issue.label) }, [issue])
     useEffect(() => { issue && setIssueText(issue.text) }, [issue])
 
-    const columns: Column<Comment>[] = [
-        {label: 'User', class: 'top left nowrap', content: comment => comment.userId in users ? <Link to={`/users/${comment.userId}`}>{users[comment.userId].name}</Link> : 'Loading'},
-        {label: 'Date', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(0, 10)},
-        {label: 'Time', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(11, 16)},
-        {label: 'Text', class: 'top left fill', content: comment => processor.processSync(comment.text).result},
-        {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
-    ]
-
     async function selectObject(version: Version, object: Object3D) {
         if (issueId == 'new') {
             setIssueText(`${issueText}${issueText ? '\n\n' : ''}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
@@ -149,24 +138,77 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                         <div>
                             {issue ? (
                                 <Fragment>
-                                    <h1>{issue.label}</h1>
-                                    <p className={issue.state}>{issue.state}</p>
-                                    {processor.processSync(issue.text).result}
-                                    <h2>Comments</h2>
-                                    {comments && (
-                                        <Fragment>
-                                            <Table columns={columns} items={comments}/>
-                                            <form onSubmit={submitComment}>
-                                                <TextareaInput class='fill' label='Text' placeholder={'Type text'} value={commentText} change={setCommentText}/>
-                                                <div>
-                                                    <div/>
-                                                    <div>
-                                                        <input type='submit' value='Save'/>
+                                    <h1>
+                                        {issue.label}
+                                    </h1>
+                                    <p>
+                                        <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened on {issue.time.substring(0, 10)}
+                                    </p>
+                                    <div className="widget thread">
+                                        <div className="issue">
+                                            <div className="head">
+                                                <div className="icon">
+                                                    <a href={`/users/${issue.userId}`}></a>
+                                                </div>
+                                                <div className="text">
+                                                    <p>
+                                                        <strong>{issue.userId in users && users[issue.userId].name}</strong> commented on {issue.time.substring(0, 10)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="body">
+                                                <div className="free">
+
+                                                </div>
+                                                <div className="text">
+                                                    {processor.processSync(issue.text).result}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {comments && comments.map(comment => (
+                                            <div key={comment.id} className="comment">
+                                                <div className="head">
+                                                    <div className="icon">
+                                                        <a href={`/users/${comment.userId}`}></a>
+                                                    </div>
+                                                    <div className="text">
+                                                        <p>
+                                                            <strong>{comment.userId in users && users[comment.userId].name}</strong> commented on {comment.time.substring(0, 10)}
+                                                        </p>
                                                     </div>
                                                 </div>
-                                            </form>
-                                        </Fragment>
-                                    )}
+                                                <div className="body">
+                                                    <div className="free">
+
+                                                    </div>
+                                                    <div className="text">
+                                                        {processor.processSync(comment.text).result}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <div className="comment">
+                                            <div className="head">
+                                                <div className="icon">
+                                                    <a href={`/users/${user.id}`}></a>
+                                                </div>
+                                                <div className="text">
+                                                    <p>
+                                                        <strong>You</strong> commented today
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="body">
+                                                <div className="free">
+
+                                                </div>
+                                                <div className="text">
+                                                    <textarea placeholder={'Type text'} value={commentText} onChange={event => setCommentText(event.currentTarget.value)}/>
+                                                    <button onClick={submitComment}>Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </Fragment>
                             ) : (
                                 <Fragment>

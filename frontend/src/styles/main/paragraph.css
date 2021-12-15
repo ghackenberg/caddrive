@@ -3,9 +3,3 @@ body > div > main p {
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
 }
-body > div > main p.open {
-    color: red;
-}
-body > div > main p.closed {
-    color: green;
-}
