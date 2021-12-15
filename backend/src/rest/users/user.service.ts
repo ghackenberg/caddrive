@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
+import * as hash from 'hash.js'
 import { User, UserData, UserREST } from 'productboard-common'
 
 @Injectable()
 export class UserService implements UserREST {
     private static readonly users: User[] = [
-        { id: 'demo', name: 'Demo User', email: 'test@test.com', password: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08' }
+        { id: 'demo', name: 'Demo User', email: 'test@test.com', password: hash.sha256().update('test').digest('hex') }
     ]
 
     async checkUser(): Promise<User> {
