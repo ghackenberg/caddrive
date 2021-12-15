@@ -6,7 +6,9 @@ import { User, UserData, UserREST } from 'productboard-common'
 @Injectable()
 export class UserService implements UserREST {
     private static readonly users: User[] = [
-        { id: 'demo', name: 'Demo User', email: 'test@test.com', password: hash.sha256().update('test').digest('hex') }
+        { id: 'demo-1', name: 'Demo User 1', email: 'test@test.de', password: hash.sha256().update('test').digest('hex') },
+        { id: 'demo-2', name: 'Demo User 2', email: 'test@test.at', password: hash.sha256().update('test').digest('hex') },
+        { id: 'demo-3', name: 'Demo User 3', email: 'test@test.us', password: hash.sha256().update('test').digest('hex') }
     ]
 
     async checkUser(): Promise<User> {

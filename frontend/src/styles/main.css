@@ -336,6 +336,9 @@ body > div > main > main div.widget.thread > div > div.head > div.text {
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
 }
+body > div > main > main div.widget.thread > div.self > div.head > div.text {
+    background-color: rgb(215,215,255);
+}
 body > div > main > main div.widget.thread > div > div.body > div.text {
     background-color: white;
     border-bottom-width: 1px;

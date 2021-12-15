@@ -77,22 +77,27 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     useEffect(() => { issueId != 'new' && IssueAPI.getIssue(issueId).then(setIssue) }, [props])
     useEffect(() => { issueId != 'new' && CommentAPI.findComments(issueId).then(setComments) }, [props])
     useEffect(() => {
-        if (comments) {
-            const load: string[] = []
-            comments.forEach(event => {
-                if (!(event.userId in users)) {
-                    load.push(event.userId)
-                }
-            })
-            load.forEach(userId => {
-                UserAPI.getUser(userId).then(user => {
-                    const dict = {...users}
-                    dict[userId] = user
-                    setUsers(dict)
-                })
-            })
+        const userIds: string[] = []
+        if (issue) {
+            if (!(issue.userId in users) && userIds.indexOf(issue.userId) == -1) {
+                userIds.push(issue.userId)
+            }
         }
-    }, [comments])
+        if (comments) {
+            for (const comment of comments) {
+                if (!(comment.userId in users) && userIds.indexOf(comment.userId) == -1) {
+                    userIds.push(comment.userId)
+                }
+            }
+        }
+        Promise.all(userIds.map(userId => UserAPI.getUser(userId))).then(userList => {
+            const dict = {...users}
+            for (const user of userList) {
+                dict[user.id] = user
+            }
+            setUsers(dict)
+        })
+    }, [issue, comments])
 
     // Load values
     useEffect(() => { issue && setIssueLabel(issue.label) }, [issue])
@@ -145,14 +150,14 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                         <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened on {issue.time.substring(0, 10)}
                                     </p>
                                     <div className="widget thread">
-                                        <div className="issue">
+                                        <div className={`issue${issue.userId == user.id ? ' self' : ''}`}>
                                             <div className="head">
                                                 <div className="icon">
                                                     <a href={`/users/${issue.userId}`}></a>
                                                 </div>
                                                 <div className="text">
                                                     <p>
-                                                        <strong>{issue.userId in users && users[issue.userId].name}</strong> commented on {issue.time.substring(0, 10)}
+                                                        <strong>{issue.userId == user.id ? 'You' : issue.userId in users && users[issue.userId].name}</strong> commented on {issue.time.substring(0, 10)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -166,14 +171,14 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                             </div>
                                         </div>
                                         {comments && comments.map(comment => (
-                                            <div key={comment.id} className="comment">
+                                            <div key={comment.id} className={`comment${comment.userId == user.id ? ' self' : ''}`}>
                                                 <div className="head">
                                                     <div className="icon">
                                                         <a href={`/users/${comment.userId}`}></a>
                                                     </div>
                                                     <div className="text">
                                                         <p>
-                                                            <strong>{comment.userId in users && users[comment.userId].name}</strong> commented on {comment.time.substring(0, 10)}
+                                                            <strong>{comment.userId == user.id ? 'You' : comment.userId in users && users[comment.userId].name}</strong> commented on {comment.time.substring(0, 10)}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -187,14 +192,14 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                 </div>
                                             </div>
                                         ))}
-                                        <div className="comment">
+                                        <div className="comment self">
                                             <div className="head">
                                                 <div className="icon">
                                                     <a href={`/users/${user.id}`}></a>
                                                 </div>
                                                 <div className="text">
                                                     <p>
-                                                        <strong>You</strong> commented today
+                                                        <strong>New comment</strong>
                                                     </p>
                                                 </div>
                                             </div>
