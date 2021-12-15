@@ -5,7 +5,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { Version, VersionData, VersionREST } from 'productboard-common'
 
 @Injectable()
-export class VersionService implements VersionREST<Express.Multer.File> {
+export class VersionService implements VersionREST<VersionData, Express.Multer.File> {
     private static readonly versions: Version[] = [
         { id: 'demo-1', userId: 'demo', productId: 'demo-1', baseVersionIds: [], time: new Date().toISOString(), major: 0, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },
         { id: 'demo-2', userId: 'demo', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'This version demonstrates the capabilities of ProductBoard.' },

@@ -9,7 +9,7 @@ import { AuthGuard } from '@nestjs/passport'
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
 @ApiBasicAuth()
-export class VersionController implements VersionREST<Express.Multer.File> {
+export class VersionController implements VersionREST<string, Express.Multer.File> {
     constructor(
         private versionService: VersionService
     ) {}
@@ -28,10 +28,10 @@ export class VersionController implements VersionREST<Express.Multer.File> {
     @ApiBody({ type: VersionData, required: true })
     @ApiResponse({ type: Version })
     async addVersion(
-        @Body() data: VersionData,
+        @Body('data') data: string,
         @UploadedFile() file: Express.Multer.File
     ): Promise<Version> {
-        return this.versionService.addVersion(data, file)
+        return this.versionService.addVersion(JSON.parse(data), file)
     }
 
     @Get(':id')
@@ -50,10 +50,11 @@ export class VersionController implements VersionREST<Express.Multer.File> {
     @ApiResponse({ type: Version })
     async updateVersion(
         @Param('id') id: string,
-        @Body() data: VersionData,
+        @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<Version> {
-        return this.versionService.updateVersion(id, data, file)
+        console.log(typeof data)
+        return this.versionService.updateVersion(id, JSON.parse(data), file)
     }
 
     @Delete(':id')

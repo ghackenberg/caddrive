@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
+import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } from 'react'
 import { useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
@@ -18,6 +18,7 @@ import { TextInput } from '../inputs/TextInput'
 import { ModelView } from '../widgets/ModelView'
 // Images
 import * as EmptyIcon from '/src/images/empty.png'
+import { GenericInput } from '../inputs/GenericInput'
 
 export const VersionView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
@@ -30,17 +31,20 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
 
     // Define entities
     const [product, setProduct] = useState<Product>()
+    const [versions, setVersions] = useState<Version[]>()
     const [version, setVersion] = useState<Version>()
 
     // Define values
     const [major, setMajor] = useState<number>(0)
     const [minor, setMinor] = useState<number>(0)
     const [patch, setPatch] = useState<number>(0)
+    const [baseVersionIds, setBaseVersionIds] = useState<string[]>([])
     const [description, setDescription] = useState<string>('')
     const [file, setFile] = useState<File>()
 
     // Load entities
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => { versionId != 'new' && VersionAPI.getVersion(versionId).then(setVersion) }, [props])
 
     // Load values
@@ -49,10 +53,18 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     useEffect(() => { version && setPatch(version.patch) }, [version])
     useEffect(() => { version && setDescription(version.description) }, [version])
 
+    async function update(event: ChangeEvent<HTMLInputElement>) {
+        if (event.currentTarget.checked) {
+            setBaseVersionIds([...baseVersionIds, event.currentTarget.value])
+        } else {
+            setBaseVersionIds(baseVersionIds.filter(versionId => versionId != event.currentTarget.value))
+        }
+    }
+
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, baseVersionIds: [], time: new Date().toISOString(), major, minor, patch, description }, file)
+            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
             history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
             console.log(description)
@@ -62,16 +74,26 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
         
     return (
         <main className="view extended version">
-            { (versionId == 'new' || version) && product && (
+            { (versionId == 'new' || version) && product && versions && (
                 <Fragment>
                     <ProductHeader product={product}/>
                     <main className="sidebar">
                         <div>
                             <h1>Settings</h1>
-                            <form onSubmit={submit}>                     
+                            <form onSubmit={submit}>
                                 <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                 <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
                                 <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
+                                <GenericInput label="Base">
+                                    <Fragment>
+                                        {versions.map(version => version).reverse().map(version => (
+                                            <div key={version.id}>
+                                                <input type="checkbox" value={version.id} onChange={update}/>
+                                                <label>{version.major}.{version.minor}.{version.patch}</label>
+                                            </div>
+                                        ))}
+                                    </Fragment>
+                                </GenericInput>
                                 <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                 {versionId == 'new' && <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile}/>}
                                 <div>

@@ -43,19 +43,13 @@ class ProductClient implements ProductREST {
     }
 }
 
-class VersionClient implements VersionREST<File> {
+class VersionClient implements VersionREST<VersionData, File> {
     async findVersions(product: string): Promise<Version[]> {
         return (await axios.get<Version[]>('/rest/versions', { params: { product }, auth } )).data
     }
     async addVersion(data: VersionData, file: File): Promise<Version> {
         const body = new FormData()
-        body.append('userId', data.userId)
-        body.append('productId', data.productId)
-        body.append('time', data.time)
-        body.append('major', `${data.major}`)
-        body.append('minor', `${data.minor}`)
-        body.append('patch', `${data.patch}`)
-        body.append('description', `${data.description}`)
+        body.append('data', JSON.stringify(data))
         body.append('file', file)
         return (await axios.post<Version>('/rest/versions', body, { auth })).data
     }
@@ -64,13 +58,7 @@ class VersionClient implements VersionREST<File> {
     }
     async updateVersion(id: string, data: VersionData, file?: File): Promise<Version> {
         const body = new FormData()
-        body.append('userId', data.userId)
-        body.append('productId', data.productId)
-        body.append('time', data.time)
-        body.append('major', `${data.major}`)
-        body.append('minor', `${data.minor}`)
-        body.append('patch', `${data.patch}`)
-        body.append('description', `${data.description}`)
+        body.append('data', JSON.stringify(data))
         body.append('file', file)
         return (await axios.put<Version>(`/rest/versions/${id}`, body, { auth })).data
     }

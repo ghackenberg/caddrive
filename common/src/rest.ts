@@ -1,4 +1,4 @@
-import { Issue, IssueData, Comment, Product, ProductData, User, UserData, Version, VersionData, CommentData } from './data'
+import { Issue, IssueData, Comment, Product, ProductData, User, UserData, Version, CommentData } from './data'
 
 export interface UserREST {
     checkUser(): Promise<User>
@@ -17,11 +17,11 @@ export interface ProductREST {
     deleteProduct(id: string): Promise<Product>
 }
 
-export interface VersionREST<T> {
+export interface VersionREST<D, F> {
     findVersions(productId: string): Promise<Version[]>
-    addVersion(data: VersionData, file: T): Promise<Version>
+    addVersion(data: D, file: F): Promise<Version>
     getVersion(id: string): Promise<Version>
-    updateVersion(id: string, data: VersionData, file?: T): Promise<Version>
+    updateVersion(id: string, data: D, file?: F): Promise<Version>
     deleteVersion(id: string): Promise<Version>
 }
 
