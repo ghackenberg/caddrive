@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "moduleResolution": "node",
         "rootDirs": ["src/scripts", "../common/src"],
         "outDir": "bin/scripts",
         "lib": ["ES2015", "DOM"],

@@ -1,8 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
-import { useHistory } from 'react-router'
+import { useState, useEffect, useContext, createElement, FormEvent, MouseEvent, Fragment } from 'react'
+import { useHistory } from 'react-router' 
 import { Link, RouteComponentProps } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeReact from 'rehype-react'
 import { Object3D } from 'three'
 // Commons
 import { Comment, Issue, Product, User, Version } from 'productboard-common'
@@ -29,6 +32,28 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const history = useHistory()
 
     const user = useContext(UserContext)
+
+    function handleMouseOver(event: MouseEvent<HTMLAnchorElement>) {
+        console.log(event)
+    }
+    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>) {
+        console.log(event)
+    }
+    function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+        console.log(event)
+    }
+
+    const processor = unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
+        createElement, components: {
+            a: (props: any) => {
+                if (props.href && props.href.startsWith('#')) {
+                    return <a {...props} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={handleClick}/>
+                } else {
+                    return <a {...props}/>
+                }
+            }
+        }
+    })
 
     // Define entities
     const [product, setProduct] = useState<Product>()
@@ -71,15 +96,15 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         {label: 'User', class: 'top left nowrap', content: comment => comment.userId in users ? <Link to={`/users/${comment.userId}`}>{users[comment.userId].name}</Link> : 'Loading'},
         {label: 'Date', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(0, 10)},
         {label: 'Time', class: 'top center nowrap', content: comment => new Date(comment.time).toISOString().substring(11, 16)},
-        {label: 'Text', class: 'top left fill', content: comment => comment.text},
+        {label: 'Text', class: 'top left fill', content: comment => processor.processSync(comment.text).result},
         {label: '', class: 'top', content: () => <img src={DeleteIcon}/>}
     ]
 
-    async function selectObject(version: Version, object: Object3D) {
+    async function selectObject(_version: Version, object: Object3D) {
         if (issueId == 'new') {
-            setIssueText(`${issueText}${issueText ? '\n\n' : ''}#${version.major}.${version.minor}.${version.patch}/${object.name || object.uuid}`)
+            setIssueText(`${issueText}${issueText ? '\n\n' : ''}[${object.name}](#${object.name})`)
         } else {
-            setCommentText(`${commentText}${commentText ? '\n\n' : ''}#${version.major}.${version.minor}.${version.patch}/${object.name || object.uuid}`)
+            setCommentText(`${commentText}${commentText ? '\n\n' : ''}[${object.name}](#${object.name})`)
         }
     }
 
@@ -117,7 +142,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                 <Fragment>
                                     <h1>{issue.label}</h1>
                                     <p className={issue.state}>{issue.state}</p>
-                                    <ReactMarkdown children={issue.text}/>
+                                    {processor.processSync(issue.text).result}
                                     <h2>Comments</h2>
                                     {comments && (
                                         <Fragment>
