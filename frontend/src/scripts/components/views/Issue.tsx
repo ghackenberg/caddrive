@@ -147,7 +147,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                         {issue.label}
                                     </h1>
                                     <p>
-                                        <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened on {issue.time.substring(0, 10)}
+                                        <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened issue on {issue.time.substring(0, 10)}
                                     </p>
                                     <div className="widget thread">
                                         <div className={`issue${issue.userId == user.id ? ' self' : ''}`}>
@@ -157,7 +157,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                 </div>
                                                 <div className="text">
                                                     <p>
-                                                        <strong>{issue.userId == user.id ? 'You' : issue.userId in users && users[issue.userId].name}</strong> commented on {issue.time.substring(0, 10)}
+                                                        <strong>{issue.userId in users && users[issue.userId].name}</strong> commented on {issue.time.substring(0, 10)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -178,7 +178,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                     </div>
                                                     <div className="text">
                                                         <p>
-                                                            <strong>{comment.userId == user.id ? 'You' : comment.userId in users && users[comment.userId].name}</strong> commented on {comment.time.substring(0, 10)}
+                                                            <strong>{comment.userId in users && users[comment.userId].name}</strong> commented on {comment.time.substring(0, 10)}
                                                         </p>
                                                     </div>
                                                 </div>
