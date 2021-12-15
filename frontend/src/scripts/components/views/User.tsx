@@ -13,6 +13,7 @@ import { UserHeader } from '../snippets/UserHeader'
 import { TextInput } from '../inputs/TextInput'
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
+import { auth } from '../../clients/auth'
 
 export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
@@ -45,6 +46,9 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         } else {
             if (name && email) {
                 setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) }))
+                if (auth.username == name) {
+                    auth.password = encrypt(password)
+                }
             }
         }       
     }
