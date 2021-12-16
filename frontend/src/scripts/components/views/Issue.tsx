@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, createElement, FormEvent, MouseEvent, Fragment } from 'react'
+import { useState, useEffect, useContext, createElement, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
 import { useHistory } from 'react-router' 
 import { RouteComponentProps } from 'react-router-dom'
 import { unified } from 'unified'
@@ -66,9 +66,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // Define entities
     const [product, setProduct] = useState<Product>()
     const [issue, setIssue] = useState<Issue>()
-    const [issueHtml, setIssueHtml] = useState<any>()
+    const [issueHtml, setIssueHtml] = useState<ReactElement>()
     const [comments, setComments] = useState<Comment[]>()
-    const [commentsHtml, setCommentsHtml] = useState<{[id: string]: any}>({})
+    const [commentsHtml, setCommentsHtml] = useState<{[id: string]: ReactElement}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Define values
