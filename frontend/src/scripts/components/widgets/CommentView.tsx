@@ -6,6 +6,7 @@ import { Comment, Issue, User } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 // Icons
 import * as UserIcon from '/src/images/user.png'
+import * as PartIcon from '/src/images/part.png'
 
 interface Part {
     productId: string
@@ -41,9 +42,14 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
                     {props.html}
                 </div>
             </div>
-            {props.parts && props.parts.map((_part, index) => (
+            {props.parts && props.parts.map((part, index) => (
                 <div key={index} className="part">
+                    <div className="free">
 
+                    </div>
+                    <div className="text">
+                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectName}`}><img src={PartIcon}/>{part.objectName}</a> was mentioned
+                    </div>
                 </div>
             ))}
         </div>

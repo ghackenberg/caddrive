@@ -141,9 +141,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
     async function selectObject(version: Version, object: Object3D) {
         if (issueId == 'new') {
-            setIssueText(`${issueText}${issueText ? '\n\n' : ''}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
+            setIssueText(`${issueText}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
         } else {
-            setCommentText(`${commentText}${commentText ? '\n\n' : ''}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
+            setCommentText(`${commentText}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
         }
     }
 

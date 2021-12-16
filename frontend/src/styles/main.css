@@ -286,7 +286,7 @@ body > div > main > main div.widget.thread::before {
     display: block;
     position: absolute;
     top: 1em;
-    left: calc(4.5em - 1px);
+    left: calc(5.5em - 1px);
     bottom: 1em;
     border-left: 2px solid rgb(215,215,215);
 }
@@ -333,7 +333,8 @@ body > div > main > main div.widget.thread > div > div > div.icon > a > img {
 
     padding: calc(0.75em - 1px);
 }
-body > div > main > main div.widget.thread > div > div > div.text {
+body > div > main > main div.widget.thread > div > div.head > div.text,
+body > div > main > main div.widget.thread > div > div.body > div.text {
     width: 100%;
     padding-left: 1em;
     padding-right: 1em;
@@ -406,4 +407,32 @@ body > div > main > main div.widget.thread > div > div.body > div.text > button 
 
     background-color: blue;
     color: white;
+}
+body > div > main > main div.widget.thread > div > div.part > div.text {
+    padding-top: 1em;
+    padding-left: 1em;
+}
+body > div > main > main div.widget.thread > div > div.part > div.text > a > img {
+    display: inline-block;
+
+    vertical-align: middle;
+
+    box-sizing: border-box;
+
+    width: 2em;
+    height: 2em;
+
+    margin-right: 0.5em;
+
+    padding: calc(0.5em - 1px);
+
+    background-color: rgb(245,245,245);
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+    border-radius: 1em;
+}
+body > div > main > main div.widget.thread > div.self > div.part > div.text > a > img {
+    background-color: rgb(225,235,245);
 }
