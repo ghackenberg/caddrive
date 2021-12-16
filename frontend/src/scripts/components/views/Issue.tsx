@@ -20,6 +20,8 @@ import { ProductView } from '../widgets/ProductView'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { TextareaInput } from '../inputs/TextareaInput'
+// Icons
+import * as UserIcon from '/src/images/user.png'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -153,7 +155,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                         <div className={`issue${issue.userId == user.id ? ' self' : ''}`}>
                                             <div className="head">
                                                 <div className="icon">
-                                                    <a href={`/users/${issue.userId}`}></a>
+                                                    <a href={`/users/${issue.userId}`}>
+                                                        <img src={UserIcon}/>
+                                                    </a>
                                                 </div>
                                                 <div className="text">
                                                     <p>
@@ -174,7 +178,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                             <div key={comment.id} className={`comment${comment.userId == user.id ? ' self' : ''}`}>
                                                 <div className="head">
                                                     <div className="icon">
-                                                        <a href={`/users/${comment.userId}`}></a>
+                                                        <a href={`/users/${comment.userId}`}>
+                                                            <img src={UserIcon}/>
+                                                        </a>
                                                     </div>
                                                     <div className="text">
                                                         <p>
@@ -195,7 +201,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                         <div className="comment self">
                                             <div className="head">
                                                 <div className="icon">
-                                                    <a href={`/users/${user.id}`}></a>
+                                                    <a href={`/users/${user.id}`}>
+                                                        <img src={UserIcon}/>
+                                                    </a>
                                                 </div>
                                                 <div className="text">
                                                     <p>

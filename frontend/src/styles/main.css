@@ -311,16 +311,27 @@ body > div > main > main div.widget.thread > div > div > div.icon {
     vertical-align: middle;
     padding-right: 1em;
 }
-body > div > main > main div.widget.thread > div > div > div.icon > a  {
+body > div > main > main div.widget.thread > div > div > div.icon > a {
     display: block;
     box-sizing: border-box;
     width: 2.5em;
     height: 2.5em;
-    background-color: orange;
+    background-color: rgb(245,245,245);
     border-width: 1px;
     border-style: solid;
     border-color: rgb(215,215,215);
     border-radius: 50%;
+}
+body > div > main > main div.widget.thread > div.self > div > div.icon > a {
+    background-color: rgb(225,235,245);
+}
+body > div > main > main div.widget.thread > div > div > div.icon > a > img {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+
+    padding: calc(0.75em - 1px);
 }
 body > div > main > main div.widget.thread > div > div > div.text {
     width: 100%;
