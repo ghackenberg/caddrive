@@ -286,7 +286,7 @@ body > div > main > main div.widget.thread::before {
     display: block;
     position: absolute;
     top: 1em;
-    left: 4.5em;
+    left: calc(4.5em - 1px);
     bottom: 1em;
     border-left: 2px solid rgb(215,215,215);
 }
