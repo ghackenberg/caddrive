@@ -6,8 +6,8 @@ import { VersionService } from '../versions/version.service'
 @Injectable()
 export class ProductService implements ProductREST {
     private static readonly products: Product[] = [
-        { id: 'demo-1', userId: 'demo-1', name: 'Demo Product 1', description: 'This product demonstrates the capabilities of ProductBoard.' },
-        { id: 'demo-2', userId: 'demo-2', name: 'Demo Product 2', description: 'This product demonstrates the capabilities of ProductBoard.' }
+        { id: 'demo-1', userId: 'demo-1', name: 'Lego Buggy', description: 'The Lego Buggy is a toy for children and adults of all sizes.' },
+        { id: 'demo-2', userId: 'demo-2', name: '2 Cylinder Engine', description: 'The 2 Cylinder Engine is a motor for applications of all sizes.' }
     ]
 
     public constructor(
