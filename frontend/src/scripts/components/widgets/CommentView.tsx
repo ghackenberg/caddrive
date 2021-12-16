@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useContext, ReactElement } from 'react'
+import { useContext, ReactElement, MouseEvent } from 'react'
 // Commons
 import { Comment, Issue, User } from 'productboard-common'
 // Contexts
@@ -14,7 +14,7 @@ interface Part {
     objectName: string
 }
 
-export const CommentView = (props: { class: string, comment: Issue | Comment, user?: User, html: ReactElement, parts: Part[] }) => {
+export const CommentView = (props: { class: string, comment: Issue | Comment, user?: User, html: ReactElement, parts: Part[], mouseover: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
 
     const user = useContext(UserContext)
 
@@ -48,7 +48,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
 
                     </div>
                     <div className="text">
-                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectName}`}><img src={PartIcon}/>{part.objectName}</a> was mentioned
+                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectName}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}><img src={PartIcon}/>{part.objectName}</a> was mentioned
                     </div>
                 </div>
             ))}

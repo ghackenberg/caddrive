@@ -39,17 +39,17 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
     const user = useContext(UserContext)
 
-    function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, productId: string, versionId: string, objectName: string) {
+    function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
-        console.log('mouseOver', productId, versionId, objectName)
+        console.log('mouseOver', part)
     }
-    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, productId: string, versionId: string, objectName: string) {
+    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
-        console.log('mouseOut', productId, versionId, objectName)
+        console.log('mouseOut', part)
     }
-    function handleClick(event: MouseEvent<HTMLAnchorElement>, productId: string, versionId: string, objectName: string) {
+    function handleClick(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
-        console.log('click', productId, versionId, objectName)
+        console.log('click', part)
     }
 
     const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
@@ -63,8 +63,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                         const productId = match[1]
                         const versionId = match[2]
                         const objectName = match[3]
-                        parts.push({ productId, versionId, objectName })
-                        return <a {...props} onMouseOver={event => handleMouseOver(event, productId, versionId, objectName)} onMouseOut={event => handleMouseOut(event, productId, versionId, objectName)} onClick={event => handleClick(event, productId, versionId, objectName)}/>
+                        const part = { productId, versionId, objectName }
+                        parts.push(part)
+                        return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
                     } else {
                         return <a {...props}/>
                     }
@@ -186,9 +187,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                         <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened issue on {issue.time.substring(0, 10)}
                                     </p>
                                     <div className="widget thread">
-                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts}/>
+                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                         {comments && comments.map(comment => (
-                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]}/>
+                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                         ))}
                                         <div className="comment self">
                                             <div className="head">
