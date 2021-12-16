@@ -142,7 +142,7 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
                 })
             } else {
                 mesh.material = new MeshStandardMaterial({
-                    color: 0xffffff
+                    color: 0xffffff, transparent: true, opacity: 0.5
                 })
             }
         }
