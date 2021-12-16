@@ -66,7 +66,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // Define entities
     const [product, setProduct] = useState<Product>()
     const [issue, setIssue] = useState<Issue>()
+    const [issueHtml, setIssueHtml] = useState<any>()
     const [comments, setComments] = useState<Comment[]>()
+    const [commentsHtml, setCommentsHtml] = useState<{[id: string]: any}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Define values
@@ -100,6 +102,20 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
             setUsers(dict)
         })
     }, [issue, comments])
+    useEffect(() => {
+        if (issue) {
+            setIssueHtml(processor.processSync(issue.text).result)
+        }
+    }, [issue])
+    useEffect(() => {
+        if (comments) {
+            const commentsHtml: {[id: string]: any} = {} 
+            for (const comment of comments) {
+                commentsHtml[comment.id] = processor.processSync(comment.text).result
+            }
+            setCommentsHtml(commentsHtml)
+        }
+    }, [comments])
 
     // Load values
     useEffect(() => { issue && setIssueLabel(issue.label) }, [issue])
@@ -170,7 +186,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
                                                 </div>
                                                 <div className="text">
-                                                    {processor.processSync(issue.text).result}
+                                                    {issueHtml}
                                                 </div>
                                             </div>
                                         </div>
@@ -193,7 +209,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
                                                     </div>
                                                     <div className="text">
-                                                        {processor.processSync(comment.text).result}
+                                                        {comment.id in commentsHtml && commentsHtml[comment.id]}
                                                     </div>
                                                 </div>
                                             </div>
