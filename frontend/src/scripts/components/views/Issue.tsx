@@ -23,6 +23,12 @@ import { TextareaInput } from '../inputs/TextareaInput'
 // Icons
 import * as UserIcon from '/src/images/user.png'
 
+interface Part {
+    productId: string
+    versionId: string
+    objectName: string
+}
+
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     const productId = props.match.params.product
@@ -47,28 +53,33 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
     const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
-    const processor = unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
-        createElement, components: {
-            a: (props: any) => {
-                const match = regex.exec(props.href || '')
-                if (match) {
-                    const productId = match[1]
-                    const versionId = match[2]
-                    const objectName = match[3]
-                    return <a {...props} onMouseOver={event => handleMouseOver(event, productId, versionId, objectName)} onMouseOut={event => handleMouseOut(event, productId, versionId, objectName)} onClick={event => handleClick(event, productId, versionId, objectName)}/>
-                } else {
-                    return <a {...props}/>
+    function createProcessor(parts: Part[]) {
+        return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
+            createElement, components: {
+                a: (props: any) => {
+                    const match = regex.exec(props.href || '')
+                    if (match) {
+                        const productId = match[1]
+                        const versionId = match[2]
+                        const objectName = match[3]
+                        parts.push({ productId, versionId, objectName })
+                        return <a {...props} onMouseOver={event => handleMouseOver(event, productId, versionId, objectName)} onMouseOut={event => handleMouseOut(event, productId, versionId, objectName)} onClick={event => handleClick(event, productId, versionId, objectName)}/>
+                    } else {
+                        return <a {...props}/>
+                    }
                 }
             }
-        }
-    })
+        })
+    }
 
     // Define entities
     const [product, setProduct] = useState<Product>()
     const [issue, setIssue] = useState<Issue>()
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
+    const [issueParts, setIssueParts] = useState<Part[]>([])
     const [comments, setComments] = useState<Comment[]>()
     const [commentsHtml, setCommentsHtml] = useState<{[id: string]: ReactElement}>({})
+    const [commentsParts, setCommentsParts] = useState<{[id: string]: Part[]}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Define values
@@ -104,16 +115,22 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     }, [issue, comments])
     useEffect(() => {
         if (issue) {
-            setIssueHtml(processor.processSync(issue.text).result)
+            const parts: Part[] = []
+            setIssueHtml(createProcessor(parts).processSync(issue.text).result)
+            setIssueParts(parts)
         }
     }, [issue])
     useEffect(() => {
         if (comments) {
-            const commentsHtml: {[id: string]: any} = {} 
+            const commentsHtml: {[id: string]: ReactElement} = {}
+            const commentsParts: {[id: string]: Part[]} = {}
             for (const comment of comments) {
-                commentsHtml[comment.id] = processor.processSync(comment.text).result
+                const parts: Part[] = []
+                commentsHtml[comment.id] = createProcessor(parts).processSync(comment.text).result
+                commentsParts[comment.id] = parts
             }
             setCommentsHtml(commentsHtml)
+            setCommentsParts(commentsParts)
         }
     }, [comments])
 
@@ -189,6 +206,11 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                     {issueHtml}
                                                 </div>
                                             </div>
+                                            {issueParts.map((_part, index) => (
+                                                <div key={index} className="part">
+
+                                                </div>
+                                            ))}
                                         </div>
                                         {comments && comments.map(comment => (
                                             <div key={comment.id} className={`comment${comment.userId == user.id ? ' self' : ''}`}>
@@ -212,6 +234,11 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                         {comment.id in commentsHtml && commentsHtml[comment.id]}
                                                     </div>
                                                 </div>
+                                                {comment.id in commentsParts && commentsParts[comment.id].map((_part, index) => (
+                                                    <div key={index} className="part">
+
+                                                    </div>
+                                                ))}
                                             </div>
                                         ))}
                                         <div className="comment self">
