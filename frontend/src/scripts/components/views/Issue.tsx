@@ -32,47 +32,14 @@ interface Part {
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
+    const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
+
     const productId = props.match.params.product
     const issueId = props.match.params.issue
 
     const history = useHistory()
 
     const user = useContext(UserContext)
-
-    function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
-        event.preventDefault()
-        console.log('mouseOver', part)
-    }
-    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, part: Part) {
-        event.preventDefault()
-        console.log('mouseOut', part)
-    }
-    function handleClick(event: MouseEvent<HTMLAnchorElement>, part: Part) {
-        event.preventDefault()
-        console.log('click', part)
-    }
-
-    const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
-
-    function createProcessor(parts: Part[]) {
-        return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
-            createElement, components: {
-                a: (props: any) => {
-                    const match = regex.exec(props.href || '')
-                    if (match) {
-                        const productId = match[1]
-                        const versionId = match[2]
-                        const objectName = match[3]
-                        const part = { productId, versionId, objectName }
-                        parts.push(part)
-                        return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
-                    } else {
-                        return <a {...props}/>
-                    }
-                }
-            }
-        })
-    }
 
     // Define entities
     const [product, setProduct] = useState<Product>()
@@ -88,6 +55,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const [issueLabel, setIssueLabel] = useState<string>('')
     const [issueText, setIssueText] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
+    const [highlighted, setHighlighted] = useState<Part[]>()
 
     // Load entities
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
@@ -139,6 +107,39 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // Load values
     useEffect(() => { issue && setIssueLabel(issue.label) }, [issue])
     useEffect(() => { issue && setIssueText(issue.text) }, [issue])
+
+    function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
+        event.preventDefault()
+        setHighlighted([part])
+    }
+    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, _part: Part) {
+        event.preventDefault()
+        setHighlighted(undefined)
+    }
+    function handleClick(event: MouseEvent<HTMLAnchorElement>, part: Part) {
+        event.preventDefault()
+        console.log('click', part)
+    }
+
+    function createProcessor(parts: Part[]) {
+        return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
+            createElement, components: {
+                a: (props: any) => {
+                    const match = regex.exec(props.href || '')
+                    if (match) {
+                        const productId = match[1]
+                        const versionId = match[2]
+                        const objectName = match[3]
+                        const part = { productId, versionId, objectName }
+                        parts.push(part)
+                        return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
+                    } else {
+                        return <a {...props}/>
+                    }
+                }
+            }
+        })
+    }
 
     async function selectObject(version: Version, object: Object3D) {
         if (issueId == 'new') {
@@ -233,7 +234,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                             )}
                         </div>
                         <div>
-                            <ProductView product={product} mouse={true} click={selectObject}/>
+                            <ProductView product={product} mouse={true} highlighted={highlighted} click={selectObject}/>
                         </div>
                     </main>
                 </Fragment>

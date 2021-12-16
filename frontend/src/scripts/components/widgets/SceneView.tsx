@@ -5,7 +5,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
+export class SceneView extends React.Component<{ model: GLTF, highlighted?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
 
@@ -129,20 +129,65 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         window.removeEventListener('resize', this.resize)
     }
 
-    async reload() {
-        // Scene
-        this.scene.remove(this.scene.children[this.scene.children.length - 1])
-        this.scene.add(this.props.model.scene)
-        // Camera
-        if (this.props.model.cameras.length > 0 && this.props.model.cameras[0] instanceof PerspectiveCamera) {
-            this.camera = this.props.model.cameras[0] as PerspectiveCamera
-        } else {
-            this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
-            this.camera.position.z = 5
+    private material_cache: {[uuid: string]: Material | Material[]}
+
+    setHighlight(object: Object3D) {
+        // Process object
+        if (object.type == 'Mesh') {
+            const mesh = object as Mesh
+            this.material_cache[mesh.uuid] = mesh.material
+            if (this.props.highlighted.indexOf(object.name) != -1) {
+                mesh.material = new MeshStandardMaterial({
+                    color: 0xff0000
+                })
+            } else {
+                mesh.material = new MeshStandardMaterial({
+                    color: 0xffffff
+                })
+            }
         }
-        // Orbit
-        if (this.props.mouse) {
-            this.orbit.object = this.camera
+        // Process children
+        for (const child of object.children) {
+            this.setHighlight(child)
+        }
+    }
+
+    revertHighlight(object: Object3D) {
+        // Process object
+        if (object.type == 'Mesh') {
+            const mesh = object as Mesh
+            mesh.material = this.material_cache[mesh.uuid]
+        }
+        // Process children
+        for (const child of object.children) {
+            this.revertHighlight(child)
+        }
+    }
+
+    async reload() {
+        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model.scene) {
+            this.material_cache = undefined
+            // Scene
+            this.scene.remove(this.scene.children[this.scene.children.length - 1])
+            this.scene.add(this.props.model.scene)
+            // Camera
+            if (this.props.model.cameras.length > 0 && this.props.model.cameras[0] instanceof PerspectiveCamera) {
+                this.camera = this.props.model.cameras[0] as PerspectiveCamera
+            } else {
+                this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
+                this.camera.position.z = 5
+            }
+            // Orbit
+            if (this.props.mouse) {
+                this.orbit.object = this.camera
+            }
+        }
+        if (this.props.highlighted && this.props.highlighted.length > 0 && !this.material_cache) {
+            this.material_cache = {}
+            this.setHighlight(this.scene)
+        } else if ((!this.props.highlighted || this.props.highlighted.length == 0) && this.material_cache) {
+            this.revertHighlight(this.scene)
+            this.material_cache = undefined
         }
         // Resize
         this.resize()

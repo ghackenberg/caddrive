@@ -11,7 +11,13 @@ import { ModelView } from './ModelView'
 import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
 
-export const ProductView = (props: { product?: Product, mouse: boolean, click?: (version: Version, object: Object3D) => void }) => {
+interface Part {
+    productId: string
+    versionId: string
+    objectName: string
+}
+
+export const ProductView = (props: { product?: Product, mouse: boolean, highlighted?: Part[], click?: (version: Version, object: Object3D) => void }) => {
 
     const [load, setLoad] = useState<boolean>(props.product !== undefined)
     const [versions, setVersions] = useState<Version[]>(null)
@@ -25,7 +31,7 @@ export const ProductView = (props: { product?: Product, mouse: boolean, click?: 
             ) : (
                 <Fragment>
                     { versions && versions.length > 0 ? (
-                        <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
+                        <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse} highlighted={props.highlighted ? props.highlighted.map(part => part.objectName) : undefined} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
                     ) : (
                         <img className='empty' src={EmptyIcon}/>
                     )}
