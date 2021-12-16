@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Scene, PerspectiveCamera, WebGLRenderer, PointLight, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Color } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Color, DirectionalLight } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
@@ -11,7 +11,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
 
     private factory = new XRControllerModelFactory()
     private ambient_light: AmbientLight
-    private point_light: PointLight
+    private directional_light: DirectionalLight
     private renderer: WebGLRenderer
     private orbit: OrbitControls
     private raycaster: Raycaster
@@ -57,9 +57,8 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
     override async componentDidMount() {
         // Ambient light
         this.ambient_light = new AmbientLight(0xffffff, 0.5)
-        // Point light
-        this.point_light = new PointLight(0xffffff, 1, 100)
-        this.point_light.position.set(50,50,50)
+        // Directional light
+        this.directional_light = new DirectionalLight(0xffffff, 1)
         // Renderer
         this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true })
         this.renderer.xr.enabled = true
@@ -89,7 +88,7 @@ export class SceneView extends React.Component<{ model: GLTF, mouse: boolean, vr
         // Scene
         this.scene = new Scene()
         this.scene.add(this.ambient_light)
-        this.scene.add(this.point_light)
+        this.scene.add(this.directional_light)
         this.scene.add(this.controller1)
         this.scene.add(this.controller2)
         this.scene.add(this.grip1)
