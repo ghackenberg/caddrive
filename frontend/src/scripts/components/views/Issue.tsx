@@ -16,6 +16,7 @@ import { UserContext } from '../../contexts/User'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
+import { CommentView } from '../widgets/CommentView'
 import { ProductView } from '../widgets/ProductView'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
@@ -185,61 +186,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                         <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened issue on {issue.time.substring(0, 10)}
                                     </p>
                                     <div className="widget thread">
-                                        <div className={`issue${issue.userId == user.id ? ' self' : ''}`}>
-                                            <div className="head">
-                                                <div className="icon">
-                                                    <a href={`/users/${issue.userId}`}>
-                                                        <img src={UserIcon}/>
-                                                    </a>
-                                                </div>
-                                                <div className="text">
-                                                    <p>
-                                                        <strong>{issue.userId in users && users[issue.userId].name}</strong> commented on {issue.time.substring(0, 10)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="body">
-                                                <div className="free">
-
-                                                </div>
-                                                <div className="text">
-                                                    {issueHtml}
-                                                </div>
-                                            </div>
-                                            {issueParts.map((_part, index) => (
-                                                <div key={index} className="part">
-
-                                                </div>
-                                            ))}
-                                        </div>
+                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts}/>
                                         {comments && comments.map(comment => (
-                                            <div key={comment.id} className={`comment${comment.userId == user.id ? ' self' : ''}`}>
-                                                <div className="head">
-                                                    <div className="icon">
-                                                        <a href={`/users/${comment.userId}`}>
-                                                            <img src={UserIcon}/>
-                                                        </a>
-                                                    </div>
-                                                    <div className="text">
-                                                        <p>
-                                                            <strong>{comment.userId in users && users[comment.userId].name}</strong> commented on {comment.time.substring(0, 10)}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="body">
-                                                    <div className="free">
-
-                                                    </div>
-                                                    <div className="text">
-                                                        {comment.id in commentsHtml && commentsHtml[comment.id]}
-                                                    </div>
-                                                </div>
-                                                {comment.id in commentsParts && commentsParts[comment.id].map((_part, index) => (
-                                                    <div key={index} className="part">
-
-                                                    </div>
-                                                ))}
-                                            </div>
+                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]}/>
                                         ))}
                                         <div className="comment self">
                                             <div className="head">
