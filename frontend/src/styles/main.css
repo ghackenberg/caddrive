@@ -336,8 +336,25 @@ body > div > main > main div.widget.thread > div > div.head > div.text {
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
 }
+body > div > main > main div.widget.thread > div > div.head > div.text::before {
+    content: "";
+    display: block;
+    position: absolute;
+    box-sizing: border-box;
+    width: 0.5em;
+    height: 0.5em;
+    top: 1em;
+    left: 3.25em;
+    background-color: rgb(245,245,245);
+    border-top: 1px solid rgb(215,215,215);
+    border-left: 1px solid rgb(215,215,215);
+    transform: rotate(-45deg);
+}
 body > div > main > main div.widget.thread > div.self > div.head > div.text {
-    background-color: rgb(215,215,255);
+    background-color: rgb(225,235,245);
+}
+body > div > main > main div.widget.thread > div.self > div.head > div.text::before {
+    background-color: rgb(225,235,245);
 }
 body > div > main > main div.widget.thread > div > div.body > div.text {
     background-color: white;
