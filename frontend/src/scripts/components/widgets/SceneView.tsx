@@ -306,6 +306,7 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         if (this.props.mouse) {
             if (this.hovered && this.hovered != this.selected) {
                 this.updateMaterial(this.hovered, 0)
+                this.hovered = null
             }
             
             this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
