@@ -228,6 +228,7 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
             // Orbit
             if (this.props.mouse) {
                 this.orbit.object = this.camera
+                this.orbit.update()
             }
         }
         // Highlight and select
