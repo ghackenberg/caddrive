@@ -215,13 +215,13 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
             this.scene.add(this.props.model.scene)
-            // BB
+            // Camera parameters
             const bound = new Box3().setFromObject(this.props.model.scene)
             const center = bound.getCenter(new Vector3())
             const size = bound.getSize(new Vector3())
             const position = center.clone().add(size.clone().multiplyScalar(20))
             const max = Math.max(size.x, size.y, size.z)
-            // Camera
+            // Camera object
             this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, max * 100)
             this.camera.position.set(position.x, position.y, position.z)
             this.camera.lookAt(center)
