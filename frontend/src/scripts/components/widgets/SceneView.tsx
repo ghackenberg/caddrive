@@ -223,7 +223,7 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
             const max = Math.max(size.x, size.y, size.z)
             // Camera object
             this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, max * 100)
-            this.camera.position.set(position.x, position.y, position.z)
+            this.camera.position.set(position.z, position.y, position.x)
             this.camera.lookAt(center)
             // Orbit
             if (this.props.mouse) {
