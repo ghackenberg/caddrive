@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Color, DirectionalLight } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Color, DirectionalLight, Box3, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
@@ -215,13 +215,16 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
             this.scene.add(this.props.model.scene)
+            // BB
+            const bound = new Box3().setFromObject(this.props.model.scene)
+            const center = bound.getCenter(new Vector3())
+            const size = bound.getSize(new Vector3())
+            const position = center.clone().add(size.clone().multiplyScalar(20))
+            const max = Math.max(size.x, size.y, size.z)
             // Camera
-            if (this.props.model.cameras.length > 0 && this.props.model.cameras[0] instanceof PerspectiveCamera) {
-                this.camera = this.props.model.cameras[0] as PerspectiveCamera
-            } else {
-                this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
-                this.camera.position.z = 5
-            }
+            this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, max * 100)
+            this.camera.position.set(position.x, position.y, position.z)
+            this.camera.lookAt(center)
             // Orbit
             if (this.props.mouse) {
                 this.orbit.object = this.camera
