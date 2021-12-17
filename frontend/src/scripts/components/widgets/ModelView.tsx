@@ -7,7 +7,7 @@ import { SceneView } from './SceneView'
 // Images
 import * as LoadIcon from '/src/images/load.png'
 
-export const ModelView = (props: { url: string, mouse: boolean, highlighted?: string[], click?: (object: Object3D) => void }) => {
+export const ModelView = (props: { url: string, mouse: boolean, highlighted?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
 
     const [load, setLoad] = useState<boolean>(true)
     const [model, setModel] = useState<GLTF>(null)
@@ -22,7 +22,7 @@ export const ModelView = (props: { url: string, mouse: boolean, highlighted?: st
                 <img className='load' src={LoadIcon}/>
             ) : (
                 <Fragment>
-                    {model && <SceneView model={model} mouse={props.mouse} vr={false} highlighted={props.highlighted} click={props.click}/> }
+                    {model && <SceneView model={model} mouse={props.mouse} vr={false} highlighted={props.highlighted} selected={props.selected} click={props.click}/> }
                 </Fragment>
             )}
         </div>

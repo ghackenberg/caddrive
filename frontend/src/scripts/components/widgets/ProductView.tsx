@@ -17,7 +17,7 @@ interface Part {
     objectName: string
 }
 
-export const ProductView = (props: { product?: Product, mouse: boolean, highlighted?: Part[], click?: (version: Version, object: Object3D) => void }) => {
+export const ProductView = (props: { product?: Product, mouse: boolean, highlighted?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void }) => {
 
     const [load, setLoad] = useState<boolean>(props.product !== undefined)
     const [versions, setVersions] = useState<Version[]>(null)
@@ -31,7 +31,7 @@ export const ProductView = (props: { product?: Product, mouse: boolean, highligh
             ) : (
                 <Fragment>
                     { versions && versions.length > 0 ? (
-                        <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse} highlighted={props.highlighted ? props.highlighted.map(part => part.objectName) : undefined} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
+                        <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse} highlighted={(props.highlighted || []).map(part => part.objectName)} selected={(props.selected || []).map(part => part.objectName)} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
                     ) : (
                         <img className='empty' src={EmptyIcon}/>
                     )}

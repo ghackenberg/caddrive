@@ -5,7 +5,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class SceneView extends React.Component<{ model: GLTF, highlighted?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
+export class SceneView extends React.Component<{ model: GLTF, highlighted?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
 
@@ -129,20 +129,20 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         window.removeEventListener('resize', this.resize)
     }
 
-    private material_cache: {[uuid: string]: Material | Material[]}
+    private highlight_cache: {[uuid: string]: Material | Material[]}
 
     setHighlight(object: Object3D) {
         // Process object
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
-            this.material_cache[mesh.uuid] = mesh.material
+            this.highlight_cache[mesh.uuid] = mesh.material
             if (this.props.highlighted.indexOf(object.name) != -1) {
                 mesh.material = new MeshStandardMaterial({
                     color: 0xff0000
                 })
             } else {
                 mesh.material = new MeshStandardMaterial({
-                    color: 0xffffff, transparent: true, opacity: 0.5
+                    color: 0xffffff, transparent: true, opacity: 0.25
                 })
             }
         }
@@ -156,7 +156,7 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         // Process object
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
-            mesh.material = this.material_cache[mesh.uuid]
+            mesh.material = this.highlight_cache[mesh.uuid]
         }
         // Process children
         for (const child of object.children) {
@@ -164,9 +164,54 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         }
     }
 
+    private select_cache: {[uuid: string]: Material | Material[]}
+
+    setSelect(object: Object3D) {
+        if (object.type == 'Mesh') {
+            const mesh = object as Mesh
+            this.select_cache[mesh.uuid] = mesh.material
+            if (this.props.selected.indexOf(mesh.name) != -1) {
+                if (Array.isArray(mesh.material)) {
+                    const array: Material[] = []
+                    for (const material of mesh.material) {
+                        const copy = material.clone()
+                        if (copy instanceof MeshStandardMaterial) {
+                            const standard = copy as MeshStandardMaterial
+                            standard.emissive.setScalar(0.1)
+                        }
+                        array.push(copy)
+                    }
+                    mesh.material = array
+                } else {
+                    const copy = mesh.material.clone()
+                    if (copy instanceof MeshStandardMaterial) {
+                        const standard = copy as MeshStandardMaterial
+                        standard.emissive.setScalar(0.1)
+                    }
+                    mesh.material = copy
+                }
+            }
+        }
+        for (const child of object.children) {
+            this.setSelect(child)
+        }
+    }
+
+    revertSelect(object: Object3D) {
+        if (object.type == 'Mesh') {
+            const mesh = object as Mesh
+            mesh.material = this.select_cache[mesh.uuid]
+        }
+        for (const child of object.children) {
+            this.revertSelect(child)
+        }
+    }
+
     async reload() {
         if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model.scene) {
-            this.material_cache = undefined
+            // Cache
+            this.highlight_cache = undefined
+            this.select_cache = undefined
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
             this.scene.add(this.props.model.scene)
@@ -182,12 +227,22 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
                 this.orbit.object = this.camera
             }
         }
-        if (this.props.highlighted && this.props.highlighted.length > 0 && !this.material_cache) {
-            this.material_cache = {}
-            this.setHighlight(this.scene)
-        } else if ((!this.props.highlighted || this.props.highlighted.length == 0) && this.material_cache) {
+        // Highlight and select
+        if (this.select_cache) {
+            this.revertSelect(this.scene)
+            this.select_cache = undefined
+        }
+        if (this.highlight_cache) {
             this.revertHighlight(this.scene)
-            this.material_cache = undefined
+            this.highlight_cache = undefined
+        }
+        if (this.props.highlighted && this.props.highlighted.length > 0) {
+            this.highlight_cache = {}
+            this.setHighlight(this.scene)
+        }
+        if (this.props.selected && this.props.selected.length > 0) {
+            this.select_cache = {}
+            this.setSelect(this.scene)
         }
         // Resize
         this.resize()

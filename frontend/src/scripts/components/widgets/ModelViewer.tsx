@@ -6,7 +6,7 @@ import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { SceneGraph } from './SceneGraph'
 import { SceneView } from './SceneView'
 
-export const ModelViewer = (props: { url: string, highlighted?: string[], click?: (object: Object3D) => void }) => {
+export const ModelViewer = (props: { url: string, highlighted?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
 
     const [model, setModel] = useState<GLTF>(null)
     
@@ -18,7 +18,7 @@ export const ModelViewer = (props: { url: string, highlighted?: string[], click?
             {model && (
                 <React.Fragment>
                     <SceneGraph model={model} click={props.click}/>
-                    <SceneView model={model} mouse={true} vr={true} highlighted={props.highlighted} click={props.click}/>
+                    <SceneView model={model} mouse={true} vr={true} highlighted={props.highlighted} selected={props.selected} click={props.click}/>
                 </React.Fragment>
             )}
         </div>

@@ -44,18 +44,21 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // Define entities
     const [product, setProduct] = useState<Product>()
     const [issue, setIssue] = useState<Issue>()
-    const [issueHtml, setIssueHtml] = useState<ReactElement>()
-    const [issueParts, setIssueParts] = useState<Part[]>([])
     const [comments, setComments] = useState<Comment[]>()
-    const [commentsHtml, setCommentsHtml] = useState<{[id: string]: ReactElement}>({})
-    const [commentsParts, setCommentsParts] = useState<{[id: string]: Part[]}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // Define values
     const [issueLabel, setIssueLabel] = useState<string>('')
     const [issueText, setIssueText] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
+
+    // Define aggregates
+    const [issueHtml, setIssueHtml] = useState<ReactElement>()
+    const [issueParts, setIssueParts] = useState<Part[]>([])
+    const [commentsHtml, setCommentsHtml] = useState<{[id: string]: ReactElement}>({})
+    const [commentsParts, setCommentsParts] = useState<{[id: string]: Part[]}>({})
     const [highlighted, setHighlighted] = useState<Part[]>()
+    const [selected, setSelected] = useState<Part[]>()
 
     // Load entities
     useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
@@ -103,6 +106,24 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
             setCommentsParts(commentsParts)
         }
     }, [comments])
+    useEffect(() => {
+        const highlighted: Part[] = []
+        if (issueParts) {
+            for (const part of issueParts) {
+                highlighted.push(part)
+            }
+        }
+        if (comments && commentsParts) {
+            for (const comment of comments) {
+                if (comment.id in commentsParts) {
+                    for (const part of commentsParts[comment.id]) {
+                        highlighted.push(part)
+                    }
+                }
+            }
+        }
+        setHighlighted(highlighted)
+    }, [issueParts, commentsParts])
 
     // Load values
     useEffect(() => { issue && setIssueLabel(issue.label) }, [issue])
@@ -110,11 +131,11 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
     function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
-        setHighlighted([part])
+        setSelected([part])
     }
     function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, _part: Part) {
         event.preventDefault()
-        setHighlighted(undefined)
+        setSelected(undefined)
     }
     function handleClick(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
@@ -234,7 +255,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                             )}
                         </div>
                         <div>
-                            <ProductView product={product} mouse={true} highlighted={highlighted} click={selectObject}/>
+                            <ProductView product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject}/>
                         </div>
                     </main>
                 </Fragment>
