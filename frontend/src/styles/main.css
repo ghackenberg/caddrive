@@ -426,13 +426,10 @@ body > div > main > main div.widget.thread > div > div.part > div.text > a > img
 
     padding: calc(0.5em - 1px);
 
-    background-color: rgb(245,245,245);
+    background-color: white;
 
     border-width: 1px;
     border-style: solid;
     border-color: rgb(215,215,215);
     border-radius: 1em;
-}
-body > div > main > main div.widget.thread > div.self > div.part > div.text > a > img {
-    background-color: rgb(225,235,245);
 }
