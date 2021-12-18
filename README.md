@@ -16,6 +16,13 @@ The issue view shows open and closed design tasks.
 
 ![Issue](screenshots/issue.png)
 
+## Tools
+
+ProductBoard requires the following tools:
+
+- node@^14.15.0
+- npm@^7.20.0
+
 ## Scripts
 
 The software provides the following scripts:
