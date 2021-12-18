@@ -25,12 +25,12 @@
         "url": "https://github.com/ghackenberg/productboard.git"
     },
     "workspaces": [
-        "backend",
-        "broker",
-        "common",
-        "frontend",
-        "gateway",
-        "worker"
+        "packages/backend",
+        "packages/broker",
+        "packages/common",
+        "packages/frontend",
+        "packages/gateway",
+        "packages/worker"
     ],
     "scripts": {
         "clean": "workspaces-run -- npm run clean",
