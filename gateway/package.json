@@ -1,12 +1,24 @@
 {
     "name": "productboard-gateway",
-    "version": "1.0.0",
-    "description": "TODO",
+    "version": "0.0.1",
+    "description": "Gateway intercepting and dispatching network messages",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "contributors": [
+        {
+            "name": "Georg Hackenberg",
+            "email": "georg.hackenberg@fh-wels.at"
+        },{
+            "name": "Christian Zehetner",
+            "email": "christian.zehetner@fh-wels.at"
+        },{
+            "name": "Jürgen Humenberger",
+            "email": "juergen.humenberger@fh-wels.at"
+        }
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/ghackenberg/productboard.git",

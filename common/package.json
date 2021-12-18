@@ -1,7 +1,7 @@
 {
     "name": "productboard-common",
     "version": "1.0.0",
-    "description": "TODO",
+    "description": "Common data structures shared between different services",
     "private": "true",
     "main": "src/main",
     "types": "src/main",
@@ -9,6 +9,18 @@
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "contributors": [
+        {
+            "name": "Georg Hackenberg",
+            "email": "georg.hackenberg@fh-wels.at"
+        },{
+            "name": "Christian Zehetner",
+            "email": "christian.zehetner@fh-wels.at"
+        },{
+            "name": "Jürgen Humenberger",
+            "email": "juergen.humenberger@fh-wels.at"
+        }
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/ghackenberg/productboard.git",

@@ -1,12 +1,24 @@
 {
     "name": "productboard-frontend",
-    "version": "1.0.0",
-    "description": "TODO",
+    "version": "0.0.1",
+    "description": "Web browser frontend for the collaborative design platform",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
     },
+    "contributors": [
+        {
+            "name": "Georg Hackenberg",
+            "email": "georg.hackenberg@fh-wels.at"
+        },{
+            "name": "Christian Zehetner",
+            "email": "christian.zehetner@fh-wels.at"
+        },{
+            "name": "Jürgen Humenberger",
+            "email": "juergen.humenberger@fh-wels.at"
+        }
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/ghackenberg/productboard.git",
@@ -25,7 +37,7 @@
         "http-server": "^0.12.3",
         "mqtt": "^4.2.6",
         "process": "^0.11.10",
-        "productboard-common": "^1.0.0",
+        "productboard-common": "^0.0.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-helmet": "^6.1.0",
