@@ -44,104 +44,13 @@ npm start
 
 The software exhibits the following module structure:
 
-```mermaid
-classDiagram
-    class Common
-    class Backend {
-        port = 3001
-    }
-    class Worker {
-        port = 3002
-    }
-    class Frontend {
-        port = 3003
-    }
-    class Broker {
-
-    }
-    class Gateway {
-        port = 3000
-    }
-    
-    <<Service>> Broker
-    <<Service>> Backend
-    <<Service>> Worker
-    <<Service>> Frontend
-    <<Service>> Gateway
-
-    Gateway -- Backend: /api
-    Gateway -- Worker: /worker.js
-    Gateway -- Frontend: /
-    Backend -- Common
-    Worker -- Common
-    Frontend -- Common
-```
+![Modules](diagrams/modules.png "Modules")
 
 ### Data structure
 
 The software implements the following data structure:
 
-```mermaid
-classDiagram
-    class User {
-        id: string
-    }
-    class UserData {
-        name: string
-        email: string
-    }
-    class Product {
-        id: string
-    }
-    class ProductData {
-        name: string
-    }
-    class Version {
-        id: string
-        name: string
-        date: number
-    }
-    class Model {
-        data: binary
-    }
-    class Node {
-        name: string
-    }
-    class Audit {
-        id: string
-    }
-    class AuditData {
-        name: string
-        start: string
-        end: string
-    }
-    class Event {
-        time: number
-    }
-    class CommentEvent {
-        text: string
-    }
-    class EnterEvent {
-
-    }
-    class LeaveEvent {
-
-    }
-    Product *-- Version
-    Product <|-- ProductData
-    Version *-- Model
-    Version *-- Audit
-    Model *-- Node
-    Node *-- Node
-    Audit *-- Event
-    Audit <|-- AuditData
-    Event <|-- EnterEvent
-    Event <|-- LeaveEvent
-    Event <|-- CommentEvent
-    Event ..> User
-    User <|-- UserData
-    CommentEvent ..> Node
-```
+![Entities](diagrams/entities.png "Entities")
 
 ## Modules
 
