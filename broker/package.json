@@ -32,7 +32,7 @@
     },
     "dependencies": {
         "aedes": "^0.46.0",
-        "productboard-common": "^1.0.0",
+        "productboard-common": "^0.0.1",
         "ts-node": "^10.0.0",
         "websocket-stream": "^5.5.2"
     },

@@ -41,7 +41,7 @@
         "mqtt": "^4.2.6",
         "passport": "^0.4.0",
         "passport-http": "^0.3.0",
-        "productboard-common": "^1.0.0",
+        "productboard-common": "^0.0.1",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.1.0",
         "shortid": "^2.2.16",
