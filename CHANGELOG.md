@@ -1,10 +1,5 @@
 # [ProductBoard](README.md) / Changelog
 
-## Version 1.0.0
-Upgrade notes (e.g. database migration).
-### Added
-* Feature A
-### Changed
-* Feature B
-### Fixed
-* Feature C
+## Version 0.0.1
+
+Initial version with support for user, product, version, issue and comment management.
