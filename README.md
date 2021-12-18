@@ -1,6 +1,6 @@
 # ProductBoard
 
-ProductBoard provides a free and open source solution to collaborative product audits over the Web and in virtual reality (VR).
+ProductBoard provides a free and open source solution for collaborative product design.
 
 ## Screenshots
 
