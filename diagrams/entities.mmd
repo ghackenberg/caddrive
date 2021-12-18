@@ -1,0 +1,59 @@
+classDiagram
+    class User {
+        id: string
+    }
+    class UserData {
+        name: string
+        email: string
+    }
+    class Product {
+        id: string
+    }
+    class ProductData {
+        name: string
+    }
+    class Version {
+        id: string
+        name: string
+        date: number
+    }
+    class Model {
+        data: binary
+    }
+    class Node {
+        name: string
+    }
+    class Audit {
+        id: string
+    }
+    class AuditData {
+        name: string
+        start: string
+        end: string
+    }
+    class Event {
+        time: number
+    }
+    class CommentEvent {
+        text: string
+    }
+    class EnterEvent {
+
+    }
+    class LeaveEvent {
+
+    }
+    Product *-- Version
+    Product <|-- ProductData
+    Version *-- Model
+    Version *-- Audit
+    Model *-- Node
+    Node *-- Node
+    Audit *-- Event
+    Audit <|-- AuditData
+    Event <|-- EnterEvent
+    Event <|-- LeaveEvent
+    Event <|-- CommentEvent
+    Event ..> User
+    User <|-- UserData
+    CommentEvent ..> Node
