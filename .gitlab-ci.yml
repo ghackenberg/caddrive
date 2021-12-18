@@ -1,6 +1,0 @@
-build:
-  image: node:14.17
-  script:
-    - npm install npm -g
-    - npm install
-    - npm run build
