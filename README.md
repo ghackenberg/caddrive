@@ -4,15 +4,13 @@ ProductBoard provides a free and open source solution for collaborative product 
 
 ## Screenshots
 
-This is what ProductBoard looks like in action.
-
-### Versions view
+### 📷 Versions view
 
 The versions view shows the history of the product design.
 
 ![Versions](screenshots/versions.png)
 
-### Issue view
+### 📷 Issue view
 
 The issue view shows open and closed design tasks.
 
@@ -22,7 +20,7 @@ The issue view shows open and closed design tasks.
 
 The software provides the following scripts:
 
-### Install dependencies
+### 📄 Install dependencies
 
 Install third party dependencies as follows:
 
@@ -30,7 +28,7 @@ Install third party dependencies as follows:
 npm install
 ```
 
-### Start development
+### 📄 Start development
 
 Start the software in development mode as follows:
 
@@ -38,7 +36,7 @@ Start the software in development mode as follows:
 npm run devel
 ```
 
-### Start production
+### 📄 Start production
 
 Start the software in production mode as follows:
 
@@ -50,21 +48,21 @@ npm start
 
 ## Diagrams
 
-### Module structure
+### 📊 Package structure
 
-The software exhibits the following module structure:
+The software exhibits the following package structure:
 
-![Modules](diagrams/modules.png)
+![Modules](diagrams/packages.png)
 
-### Data structure
+### 📊 Entity structure
 
-The software implements the following data structure:
+The software implements the following entity structure:
 
 ![Entities](diagrams/entities.png)
 
-## Modules
+## Packages
 
-The software comprises the following modules:
+The software comprises the following packages:
 
 * [Common](packages/common/README.md)
 * [Broker](packages/broker/README.md)
