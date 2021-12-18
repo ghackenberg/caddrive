@@ -1,7 +1,8 @@
 {
     "name": "productboard-common",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "Common data structures shared between different services",
+    "license": "MIT",
     "private": "true",
     "main": "src/main",
     "types": "src/main",

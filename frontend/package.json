@@ -2,6 +2,7 @@
     "name": "productboard-frontend",
     "version": "0.0.1",
     "description": "Web browser frontend for the collaborative design platform",
+    "license": "MIT",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",

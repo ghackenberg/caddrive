@@ -2,6 +2,7 @@
     "name": "productboard-gateway",
     "version": "0.0.1",
     "description": "Gateway intercepting and dispatching network messages",
+    "license": "MIT",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",

@@ -2,6 +2,7 @@
     "name": "productboard-broker",
     "version": "0.0.1",
     "description": "Broker routing messages between different services",
+    "license": "MIT",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",

@@ -2,6 +2,7 @@
     "name": "productboard",
     "version": "0.0.1",
     "description": "Web platform for collaborative product design",
+    "license": "MIT",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",

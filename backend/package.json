@@ -2,6 +2,7 @@
     "name": "productboard-backend",
     "version": "0.0.1",
     "description": "Backend managing and providing product design data",
+    "license": "MIT",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",

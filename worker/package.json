@@ -2,6 +2,7 @@
     "name": "productboard-worker",
     "version": "0.0.1",
     "description": "Service worker running in the background",
+    "license": "MIT",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",
