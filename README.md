@@ -4,13 +4,17 @@ ProductBoard provides a free and open source solution for collaborative product 
 
 ## Screenshots
 
-Here is a recent screenshot of the software in action.
+This is what ProductBoard looks like in action.
 
 ### Versions view
+
+The versions view shows the history of the product design.
 
 ![Versions](screenshots/versions.png)
 
 ### Issue view
+
+The issue view shows open and closed design tasks.
 
 ![Issue](screenshots/issue.png)
 
