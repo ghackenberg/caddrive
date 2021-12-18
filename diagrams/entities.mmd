@@ -1,59 +1,49 @@
 classDiagram
     class User {
         id: string
-    }
-    class UserData {
         name: string
         email: string
     }
-    class Product {
-        id: string
+    class Common {
+        id: string        
     }
-    class ProductData {
+    class Product {
         name: string
+        description: string
     }
     class Version {
-        id: string
-        name: string
-        date: number
+        time: string
+        major: number
+        minor: number
+        patch: number
+        description: string
     }
     class Model {
         data: binary
     }
     class Node {
         name: string
+        type: string
     }
-    class Audit {
-        id: string
+    class Issue {
+        time: string
+        label: string
+        text: string
+        state: string
     }
-    class AuditData {
-        name: string
-        start: string
-        end: string
-    }
-    class Event {
-        time: number
-    }
-    class CommentEvent {
+    class Comment {
+        time: string
         text: string
     }
-    class EnterEvent {
-
-    }
-    class LeaveEvent {
-
-    }
-    Product *-- Version
-    Product <|-- ProductData
-    Version *-- Model
-    Version *-- Audit
-    Model *-- Node
-    Node *-- Node
-    Audit *-- Event
-    Audit <|-- AuditData
-    Event <|-- EnterEvent
-    Event <|-- LeaveEvent
-    Event <|-- CommentEvent
-    Event ..> User
-    User <|-- UserData
-    CommentEvent ..> Node
+    Product "1" *-- "*" Version : contains
+    Version "1" *-- "1" Model : contains
+    Model  "1" *-- "1" Node : contains
+    Node "1" *-- "*" Node : children
+    Issue "1" *-- "*" Comment : contains
+    Common "1" ..> "1" User : created by
+    Issue "*" ..> "*" Node : references
+    Comment "*" ..> "*" Node : references
+    Common <|-- Product : inherits
+    Common <|-- Version : inherits
+    Common <|-- Issue : inherits
+    Common <|-- Comment : inherits
