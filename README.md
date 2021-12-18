@@ -4,9 +4,15 @@ ProductBoard provides a free and open source solution to collaborative product a
 
 ## Screenshots
 
-Here is a recent screenshot of the software in action:
+Here is a recent screenshot of the software in action.
 
-![Screenshot](screenshot.png)
+### Versions view
+
+![Versions](screenshots/versions.png)
+
+### Issue view
+
+![Issue](screenshots/issue.png)
 
 ## Scripts
 
@@ -44,13 +50,13 @@ npm start
 
 The software exhibits the following module structure:
 
-![Modules](diagrams/modules.png "Modules")
+![Modules](diagrams/modules.png)
 
 ### Data structure
 
 The software implements the following data structure:
 
-![Entities](diagrams/entities.png "Entities")
+![Entities](diagrams/entities.png)
 
 ## Modules
 
