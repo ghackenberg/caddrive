@@ -6,15 +6,21 @@ ProductBoard provides a free and open source solution for collaborative product 
 
 ### 📷 Versions view
 
-The versions view shows the history of the product design.
+The versions view shows the history of the CAD models that have been developed for the product.
 
 ![Versions](screenshots/versions.png)
 
-### 📷 Issue view
+### 📷 Issues view
 
-The issue view shows open and closed design tasks.
+The issues view provides an overview of open and closed issues for the product design team.
 
-![Issue](screenshots/issue.png)
+![Issue](screenshots/issues.png)
+
+### 📷 Comments view
+
+The comments view enables discussion between stakeholders and engineers around issues.
+
+![Issue](screenshots/comments.png)
 
 ## Tools
 
@@ -59,13 +65,13 @@ npm start
 
 The software exhibits the following package structure:
 
-![Modules](diagrams/packages.png)
+![Modules](diagrams/packages-v1.png)
 
 ### 📊 Entity structure
 
 The software implements the following entity structure:
 
-![Entities](diagrams/entities.png)
+![Entities](diagrams/entities-v1.png)
 
 ## Packages
 

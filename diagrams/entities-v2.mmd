@@ -1,0 +1,69 @@
+classDiagram
+
+    class User {
+        id: string
+        name: string
+        email: string
+    }
+    class Product {
+        id: string
+        name: string
+        description: string
+    }
+    class Version {
+        id: string
+        time: string
+        major: number
+        minor: number
+        patch: number
+        description: string
+    }
+    class Model {
+        data: binary
+    }
+    class Node {
+        name: string
+        type: string
+    }
+    class Issue {
+        id: string
+        time: date
+        label: string
+        description: string
+        state: string
+    }
+    class Comment {
+        id: string
+        time: string
+        text: string
+    }
+    class Sprint {
+        id: string
+        start: date
+        ende: date
+        label: string
+        description: string
+    }
+
+    Issue "1" *-- "*" Comment : contains
+    Product "1" *-- "*" Issue : contains
+
+    User "1" <.. "*" Product : created by
+    User "1" <.. "*" Version : created by
+    User "1" <.. "*" Issue : created by
+    User "1" <.. "*" Comment : created by
+    User "1" <.. "*" Sprint : created by
+    
+    Product "1" *-- "*" Version : contains
+    Product "1" *-- "*" Sprint : contains
+    
+    Version "1" *-- "1" Model : contains
+    Version "1" ..> "*" Version : references
+    Version "*" ..> "*" Node : references
+    Model  "1" *-- "1" Node : contains
+    Node "1" *-- "*" Node : contains
+    
+    Issue "*" ..> "0..1" Sprint : assigned to
+    Issue "*" ..> "0..1" User : assigned to
+    Issue "*" ..> "*" Node : references
+    Comment "*" ..> "*" Node : references
