@@ -1,4 +1,5 @@
 import 'multer'
+import * as fs from 'fs'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import * as hash from 'hash.js'
@@ -27,8 +28,14 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
         return results
     }
 
-    async addUser(data: UserData, _file?: Express.Multer.File) {
+    async addUser(data: UserData, file?: Express.Multer.File) {
         const user = { id: shortid(), ...data }
+        if (file && file.originalname.endsWith('.jpg')) {
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${file.originalname}`, file.buffer)
+        }
         UserService.users.push(user)
         return user
     }
@@ -42,11 +49,17 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
         throw new NotFoundException()
     }
 
-    async updateUser(id: string, data: UserData, _file?: Express.Multer.File): Promise<User> {
+    async updateUser(id: string, data: UserData, file?: Express.Multer.File): Promise<User> {
         for (var index = 0; index < UserService.users.length; index++) {
             const user = UserService.users[index]
             if (user.id == id) {
                 UserService.users.splice(index, 1, { id, ...data })
+                if (file && file.originalname.endsWith('.jpg')) {
+                    if (!fs.existsSync('./uploads')) {
+                        fs.mkdirSync('./uploads')
+                    }
+                    fs.writeFileSync(`./uploads/${file.originalname}`, file.buffer)
+                }
                 return UserService.users[index]
             }
         }

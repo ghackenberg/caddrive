@@ -14,6 +14,7 @@ import { TextInput } from '../inputs/TextInput'
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
 import { auth } from '../../clients/auth'
+import { FileInput } from '../inputs/FileInput'
 
 export const UserView = (props: RouteComponentProps<{ user: string }>) => {
 
@@ -28,6 +29,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     const [email, setEmail] = useState<string>('')
     const [name, setName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [file, setFile] = useState<File>()
 
     // Load entities
     useEffect(() => { userId != 'new' && UserAPI.getUser(userId).then(setUser) }, [props])
@@ -40,12 +42,12 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                const user = await UserAPI.addUser({ name, email, password: encrypt(password) })
+                const user = await UserAPI.addUser({ name, email, password: encrypt(password) },file)
                 history.replace(`/users/${user.id}`)
             }
         } else {
             if (name && email) {
-                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) }))
+                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) },file))
                 if (auth.username == name) {
                     auth.password = encrypt(password)
                 }
@@ -69,6 +71,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                 <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
+                                <FileInput label='File' placeholder='Select file' accept='.jpg' change={setFile}/>
                                 <div>
                                     <div/>
                                     <div>
