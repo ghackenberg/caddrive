@@ -1,10 +1,11 @@
 import 'multer'
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, UploadedFile, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
 import { User, UserData, UserREST } from 'productboard-common'
 import { UserService } from './user.service'
+import { FileInterceptor } from '@nestjs/platform-express'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(AuthGuard('basic'))
@@ -29,6 +30,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     }
   
     @Post()
+    @UseInterceptors(FileInterceptor('file'))
     @ApiBody({ type: UserData, required: true })
     @ApiResponse({ type: User })
     async addUser(
@@ -48,6 +50,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     }
 
     @Put(':id')
+    @UseInterceptors(FileInterceptor('file'))
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiBody({ type: UserData, required: true })
     @ApiResponse({ type: User })
