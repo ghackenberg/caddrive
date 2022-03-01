@@ -71,7 +71,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                                 <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                 <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                 <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
-                                <FileInput label='File' placeholder='Select file' accept='.jpg' change={setFile}/>
+                                <FileInput label='Profile Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile}/>
                                 <div>
                                     <div/>
                                     <div>
