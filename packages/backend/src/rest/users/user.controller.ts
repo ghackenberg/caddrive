@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, UseGuards } from '@nestjs/common'
+import 'multer'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, UploadedFile, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
@@ -8,7 +9,7 @@ import { UserService } from './user.service'
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(AuthGuard('basic'))
 @ApiBasicAuth()
-export class UserController implements UserREST {
+export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
         @Inject(REQUEST)
@@ -31,9 +32,10 @@ export class UserController implements UserREST {
     @ApiBody({ type: UserData, required: true })
     @ApiResponse({ type: User })
     async addUser(
-        @Body() data: UserData
+        @Body('data') data: string,
+        @UploadedFile() file?: Express.Multer.File
     ): Promise<User> {
-        return this.userService.addUser(data)
+        return this.userService.addUser(JSON.parse(data), file)
     }
 
     @Get(':id')
@@ -51,9 +53,10 @@ export class UserController implements UserREST {
     @ApiResponse({ type: User })
     async updateUser(
         @Param('id') id: string,
-        @Body() data: UserData
+        @Body('data') data: string,
+        @UploadedFile() file?: Express.Multer.File
     ): Promise<User> {
-        return this.userService.updateUser(id, data)
+        return this.userService.updateUser(id, JSON.parse(data), file)
     }
 
     @Delete(':id')

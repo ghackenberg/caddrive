@@ -1,11 +1,11 @@
-import { Issue, IssueData, Comment, Product, ProductData, User, UserData, Version, CommentData } from './data'
+import { Issue, IssueData, Comment, Product, ProductData, User, Version, CommentData } from './data'
 
-export interface UserREST {
+export interface UserREST<D, F> {
     checkUser(): Promise<User>
     findUsers(): Promise<User[]>
-    addUser(data: UserData): Promise<User>
+    addUser(data: D, file?: F): Promise<User>
     getUser(id: string): Promise<User>
-    updateUser(id: string, data: UserData): Promise<User>
+    updateUser(id: string, data: D, file?: F): Promise<User>
     deleteUser(id: string): Promise<User>
 }
 

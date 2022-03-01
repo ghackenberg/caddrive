@@ -1,10 +1,11 @@
+import 'multer'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import * as hash from 'hash.js'
 import { User, UserData, UserREST } from 'productboard-common'
 
 @Injectable()
-export class UserService implements UserREST {
+export class UserService implements UserREST<UserData, Express.Multer.File> {
     private static readonly users: User[] = [
         { id: 'demo-1', name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', password: hash.sha256().update('test').digest('hex') },
         { id: 'demo-2', name: 'Christian Zehetner', email: 'christian.zehetner@fh-wels.at', password: hash.sha256().update('test').digest('hex') },
@@ -26,7 +27,7 @@ export class UserService implements UserREST {
         return results
     }
 
-    async addUser(data: UserData) {
+    async addUser(data: UserData, _file?: Express.Multer.File) {
         const user = { id: shortid(), ...data }
         UserService.users.push(user)
         return user
@@ -41,7 +42,7 @@ export class UserService implements UserREST {
         throw new NotFoundException()
     }
 
-    async updateUser(id: string, data: UserData): Promise<User> {
+    async updateUser(id: string, data: UserData, _file?: Express.Multer.File): Promise<User> {
         for (var index = 0; index < UserService.users.length; index++) {
             const user = UserService.users[index]
             if (user.id == id) {
