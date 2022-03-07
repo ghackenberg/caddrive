@@ -5,4 +5,13 @@ node_modules
 packages/backend/uploads/*.glb
 !packages/backend/uploads/demo-*.glb
 
+packages/backend/uploads/*.gif
+!packages/backend/uploads/demo-*.gif
+
+packages/backend/uploads/*.jpg
+!packages/backend/uploads/demo-*.jpg
+
+packages/backend/uploads/*.png
+!packages/backend/uploads/demo-*.png
+
 public
