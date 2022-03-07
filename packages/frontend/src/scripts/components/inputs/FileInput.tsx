@@ -17,7 +17,7 @@ export const FileInput = (props: {class?: string, label: string, change?: (value
 
     return (
         <React.Fragment>
-            <TextInput class={props.class} label={props.label} value={fileName} placeholder={'No file selected yet'}/>
+            <TextInput class={props.class} label={props.label} value={fileName} placeholder={'No file selected yet'} required = {false}/>
             <GenericInput>
                 <Fragment>
                     <input 
