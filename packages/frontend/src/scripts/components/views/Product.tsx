@@ -29,6 +29,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     // Define values
     const [name, setName] = useState<string>('')
     const [description, setDescription] = useState<string>('')
+    const [deleted, setDeleted] = useState<boolean>()
 
     // Load entities
     useEffect(() => { productId != 'new' && ProductAPI.getProduct(productId).then(setProduct) }, [props])
@@ -36,12 +37,13 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     // Load values
     useEffect(() => { product && setName(product.name) }, [product])
     useEffect(() => { product && setDescription(product.description) }, [product])
+    useEffect(() => { product && setDeleted(product.deleted) }, [product])
 
     async function submit(event: FormEvent){
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductAPI.addProduct({ userId: user.id, name, description })
+                const product = await ProductAPI.addProduct({userId: user.id, name, description, deleted})
                 history.replace(`/products/${product.id}`)
             }
         } else {
