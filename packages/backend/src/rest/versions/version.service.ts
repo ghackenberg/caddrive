@@ -17,6 +17,7 @@ export class VersionService implements VersionREST<VersionData, Express.Multer.F
         const result: Version[] = []
 
         for (const version of VersionService.versions) {
+            // Todo
             if (version.productId != productId) {
                 continue
             }
@@ -62,6 +63,7 @@ export class VersionService implements VersionREST<VersionData, Express.Multer.F
         for (var index = 0; index < VersionService.versions.length; index++) {
             const version = VersionService.versions[index]
             if (version.id == id) {
+                // Todo
                 VersionService.versions.splice(index, 1)
                 return version
             }

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Product, ProductData, ProductREST } from 'productboard-common'
 import { VersionService } from '../versions/version.service'
+import { IssueService } from '../issues/issue.service'
 
 @Injectable()
 export class ProductService implements ProductREST {
@@ -12,12 +13,14 @@ export class ProductService implements ProductREST {
 
     public constructor(
         private readonly versionService: VersionService,
+        private readonly issueService: IssueService
     ) {}
 
     async findProducts() : Promise<Product[]> {
         const result: Product[] = []
 
         for (const product of ProductService.products) {
+            // Todo
             result.push(product)
         }
 
@@ -57,6 +60,10 @@ export class ProductService implements ProductREST {
                 for (const version of await this.versionService.findVersions(id)) {
                     await this.versionService.deleteVersion(version.id)
                 }
+                for (const issue of await this.issueService.findIssues(id)) {
+                    await this.issueService.deleteIssue(issue.id)
+                }
+                // todo
                 ProductService.products.splice(index, 1)
                 return product
             }

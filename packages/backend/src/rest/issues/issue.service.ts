@@ -19,6 +19,7 @@ export class IssueService implements IssueREST {
         const result: Issue[] = []
 
         for (const issue of IssueService.issues) {
+            // Todo
             if (issue.productId != productId) {
                 continue
             }
@@ -61,6 +62,7 @@ export class IssueService implements IssueREST {
                 for (const comment of await this.commentService.findComments(id)) {
                     await this.commentService.deleteComment(comment.id)
                 }
+                // Todo
                 IssueService.issues.splice(index, 1)
                 return issue
             }

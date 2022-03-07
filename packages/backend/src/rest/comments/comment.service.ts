@@ -13,6 +13,7 @@ export class CommentService implements CommentREST {
         const result: Comment[] = []
         
         for (const comment of CommentService.comments) {
+            // Todo
             if (comment.issueId != issueId) {
                 continue
             }
@@ -52,6 +53,7 @@ export class CommentService implements CommentREST {
         for (var index = 0; index < CommentService.comments.length; index++) {
             const comment = CommentService.comments[index]
             if (comment.id == id) {
+                // todo
                 CommentService.comments.splice(index, 1)
                 return comment
             }
