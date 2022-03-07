@@ -328,10 +328,10 @@ body > div > main > main div.widget.thread > div.self > div > div.icon > a {
 body > div > main > main div.widget.thread > div > div > div.icon > a > img {
     display: block;
 
-    width: 1em;
-    height: 1em;
+    width: calc(2.5em - 2px);
+    height: calc(2.5em - 2px);
 
-    padding: calc(0.75em - 1px);
+    border-radius: 50%;
 }
 body > div > main > main div.widget.thread > div > div.head > div.text,
 body > div > main > main div.widget.thread > div > div.body > div.text {

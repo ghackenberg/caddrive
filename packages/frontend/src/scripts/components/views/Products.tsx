@@ -64,7 +64,7 @@ export const ProductsView = () => {
         {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>},
         {label: 'Versions', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in versions ? versions[product.id] : '?'}</Link>},
         {label: 'Issues', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in issues ? issues[product.id] : '?'}</Link>},
-        {label: '', content: () => <img src={DeleteIcon}/>}
+        {label: '', content: () => <img src={DeleteIcon} className='small'/>}
     ]
 
     return (

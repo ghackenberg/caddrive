@@ -189,7 +189,7 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                                                 </div>
                                             </div>
                                             <div className="model">
-                                                <ModelView url={`/rest/models/${vers.id}`} mouse={false}/>
+                                                <ModelView url={`/rest/files/${vers.id}.glb`} mouse={false}/>
                                             </div>
                                         </div>
                                     </Fragment>

@@ -72,7 +72,17 @@ body > div > main table a:hover {
 }
 body > div > main table img {
     display: block;
+    /* width: 1em;
+    height: 1em; */
+    padding: 0.25em;
+}
+.small {
     width: 1em;
     height: 1em;
-    padding: 0.25em;
+}
+
+.big {
+    width: 3em;
+    height: 3em;
+    border-radius: 50%;
 }
