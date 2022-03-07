@@ -76,12 +76,12 @@ body > div > main table img {
     height: 1em; */
     padding: 0.25em;
 }
-.small {
+body > div > main table img.small {
     width: 1em;
     height: 1em;
 }
 
-.big {
+body > div > main table img.big {
     width: 3em;
     height: 3em;
     border-radius: 50%;
