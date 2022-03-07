@@ -31,7 +31,7 @@ export const ProductView = (props: { product?: Product, mouse: boolean, highligh
             ) : (
                 <Fragment>
                     { versions && versions.length > 0 ? (
-                        <ModelView url={`/rest/models/${versions[versions.length - 1].id}`} mouse={props.mouse} highlighted={(props.highlighted || []).map(part => part.objectName)} selected={(props.selected || []).map(part => part.objectName)} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
+                        <ModelView url={`/rest/files/${versions[versions.length - 1].id}.glb`} mouse={props.mouse} highlighted={(props.highlighted || []).map(part => part.objectName)} selected={(props.selected || []).map(part => part.objectName)} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
                     ) : (
                         <img className='empty' src={EmptyIcon}/>
                     )}

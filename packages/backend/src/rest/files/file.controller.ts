@@ -1,22 +1,22 @@
 import { Controller, Get, Param, StreamableFile } from '@nestjs/common'
 import { ApiParam, ApiResponse } from '@nestjs/swagger'
-import { ModelService } from './model.service'
+import { FileService } from './file.service'
 
-@Controller('rest/models')
+@Controller('rest/files')
 // TODO: use auth!
 //@UseGuards(AuthGuard('basic'))
 //@ApiBasicAuth()
-export class ModelController {
+export class FileController {
     constructor(
-        private readonly modelService: ModelService
+        private readonly modelService: FileService
     ) {}
 
     @Get(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: StreamableFile })
-    async getModel(
+    async getFile(
         @Param('id') id: string
     ): Promise<StreamableFile> {
-        return new StreamableFile(await this.modelService.getModel(id))
+        return new StreamableFile(await this.modelService.getFile(id))
     }
 }
