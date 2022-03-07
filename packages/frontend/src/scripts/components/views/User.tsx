@@ -30,6 +30,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     const [name, setName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [file, setFile] = useState<File>()
+    const [deleted, setDeleted] = useState<boolean>()
 
     // Load entities
     useEffect(() => { userId != 'new' && UserAPI.getUser(userId).then(setUser) }, [props])
@@ -37,17 +38,18 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     // Load values
     useEffect(() => { user && setEmail(user.email) }, [user])
     useEffect(() => { user && setName(user.name) }, [user])
+    useEffect(() => { user && setDeleted(user.deleted) }, [user])
 
     async function submit(event: FormEvent){
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                const user = await UserAPI.addUser({ name, email, password: encrypt(password) },file)
+                const user = await UserAPI.addUser({ name, email, password: encrypt(password), deleted },file)
                 history.replace(`/users/${user.id}`)
             }
         } else {
             if (name && email) {
-                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) },file))
+                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password), deleted },file))
                 if (auth.username == name) {
                     auth.password = encrypt(password)
                 }

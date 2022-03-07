@@ -9,6 +9,8 @@ export class UserData {
     email: string
     @ApiProperty()
     password: string
+    @ApiProperty()
+    deleted: boolean
 }
 
 export class User extends UserData {
