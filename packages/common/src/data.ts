@@ -75,6 +75,8 @@ export class IssueData {
     text: string
     @ApiProperty()
     state: 'open' | 'closed'
+    @ApiProperty()
+    deleted: boolean
 }
 
 export class Issue extends IssueData {

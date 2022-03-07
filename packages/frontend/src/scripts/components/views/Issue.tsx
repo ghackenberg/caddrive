@@ -49,6 +49,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const [issueLabel, setIssueLabel] = useState<string>('')
     const [issueText, setIssueText] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
+    const [deleted, setDeleted] = useState<boolean>()
 
     // Define aggregates
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
@@ -126,6 +127,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // Load values
     useEffect(() => { issue && setIssueLabel(issue.label) }, [issue])
     useEffect(() => { issue && setIssueText(issue.text) }, [issue])
+    useEffect(() => { issue && setDeleted(issue.deleted) }, [issue])
 
     function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
@@ -172,12 +174,12 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         event.preventDefault()
         if (issueId == 'new') {
             if (issueLabel && issueText) {
-                const issue = await IssueAPI.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open' })
+                const issue = await IssueAPI.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open', deleted })
                 history.replace(`/products/${productId}/issues/${issue.id}`)
             }
         } else {
             if (issueLabel && issueText) {
-                setIssue(await IssueAPI.updateIssue(issue.id, { ...issue, label: issueLabel, text: issueText }))
+                setIssue(await IssueAPI.updateIssue(issue.id, { ...issue, label: issueLabel, text: issueText, deleted }))
             }
         }
     }
