@@ -21,8 +21,6 @@ import { ProductView } from '../widgets/ProductView'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { TextareaInput } from '../inputs/TextareaInput'
-// Icons
-import * as UserIcon from '/src/images/user.png'
 
 interface Part {
     productId: string
@@ -217,7 +215,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                             <div className="head">
                                                 <div className="icon">
                                                     <a href={`/users/${user.id}`}>
-                                                        <img src={UserIcon}/>
+                                                        <img src={`/rest/files/${user.id}.jpg`}/>
                                                     </a>
                                                 </div>
                                                 <div className="text">

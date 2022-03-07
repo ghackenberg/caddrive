@@ -21,6 +21,7 @@ export const UsersView = () => {
     useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
 
     const columns: Column<User>[] = [
+        {label: 'Picture', content: user => <img src={`/rest/files/${user.id}.jpg`}/>},
         {label: 'Name', class: 'left nowrap', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
         {label: 'Email', class: 'left nowrap fill', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
         {label: '', content: () => <img src={DeleteIcon}/>}

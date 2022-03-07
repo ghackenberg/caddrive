@@ -5,7 +5,6 @@ import { Comment, Issue, User } from 'productboard-common'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Icons
-import * as UserIcon from '/src/images/user.png'
 import * as PartIcon from '/src/images/part.png'
 
 interface Part {
@@ -25,7 +24,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
             <div className="head">
                 <div className="icon">
                     <a href={`/users/${comment.userId}`}>
-                        <img src={UserIcon}/>
+                        <img src={`/rest/files/${comment.userId}.jpg`}/>
                     </a>
                 </div>
                 <div className="text">

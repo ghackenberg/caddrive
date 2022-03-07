@@ -8,7 +8,7 @@ import { FileService } from './file.service'
 //@ApiBasicAuth()
 export class FileController {
     constructor(
-        private readonly modelService: FileService
+        private readonly fileService: FileService
     ) {}
 
     @Get(':id')
@@ -17,6 +17,6 @@ export class FileController {
     async getFile(
         @Param('id') id: string
     ): Promise<StreamableFile> {
-        return new StreamableFile(await this.modelService.getFile(id))
+        return new StreamableFile(await this.fileService.getFile(id))
     }
 }
