@@ -27,6 +27,9 @@ export class ProductData {
     name: string
     @ApiProperty()
     description: string
+    @ApiProperty()
+    deleted: boolean
+
 }
 
 export class Product extends ProductData {

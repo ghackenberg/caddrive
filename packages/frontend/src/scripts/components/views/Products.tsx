@@ -57,6 +57,13 @@ export const ProductsView = () => {
         }
     }, [products])
 
+    async function deleteProduct(product: Product) {
+        if (confirm('Do you really want to delete this Product?')) {
+            await ProductAPI.deleteProduct(product.id)
+            setProducts(products.filter(other => other.id != product.id))
+        }
+    }
+
     const columns: Column<Product>[] = [
         {label: 'Preview', class: 'center', content: product => <Link to={`/products/${product.id}`}><ProductView product={product} mouse={false}/></Link>},
         {label: 'User', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.id in users ? users[product.id].name : '?'}</Link>},
@@ -64,7 +71,8 @@ export const ProductsView = () => {
         {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>},
         {label: 'Versions', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in versions ? versions[product.id] : '?'}</Link>},
         {label: 'Issues', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in issues ? issues[product.id] : '?'}</Link>},
-        {label: '', content: () => <img src={DeleteIcon} className='small'/>}
+        {label: '', content: product => <a onClick={_event => deleteProduct(product)}> <img src={DeleteIcon} className='small'/> </a>}
+
     ]
 
     return (

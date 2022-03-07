@@ -7,8 +7,8 @@ import { IssueService } from '../issues/issue.service'
 @Injectable()
 export class ProductService implements ProductREST {
     private static readonly products: Product[] = [
-        { id: 'demo-1', userId: 'demo-1', name: 'Lego Buggy', description: 'The Lego Buggy is a toy for children and adults of all sizes.' },
-        { id: 'demo-2', userId: 'demo-2', name: '2 Cylinder Engine', description: 'The 2 Cylinder Engine is a motor for applications of all sizes.' }
+        { id: 'demo-1', userId: 'demo-1', name: 'Lego Buggy', description: 'The Lego Buggy is a toy for children and adults of all sizes.', deleted: false },
+        { id: 'demo-2', userId: 'demo-2', name: '2 Cylinder Engine', description: 'The 2 Cylinder Engine is a motor for applications of all sizes.', deleted: false }
     ]
 
     public constructor(
@@ -21,7 +21,9 @@ export class ProductService implements ProductREST {
 
         for (const product of ProductService.products) {
             // Todo
-            result.push(product)
+            if(!product.deleted){
+                result.push(product)
+            }
         }
 
         return result
@@ -64,7 +66,7 @@ export class ProductService implements ProductREST {
                     await this.issueService.deleteIssue(issue.id)
                 }
                 // todo
-                ProductService.products.splice(index, 1)
+                product.deleted = true
                 return product
             }
         }
