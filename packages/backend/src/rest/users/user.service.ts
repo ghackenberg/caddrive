@@ -34,7 +34,7 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
-            fs.writeFileSync(`./uploads/${file.originalname}`, file.buffer)
+            fs.writeFileSync(`./uploads/${user.id}.jpg`, file.buffer)
         }
         UserService.users.push(user)
         return user
@@ -58,7 +58,7 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
                     if (!fs.existsSync('./uploads')) {
                         fs.mkdirSync('./uploads')
                     }
-                    fs.writeFileSync(`./uploads/${file.originalname}`, file.buffer)
+                    fs.writeFileSync(`./uploads/${id}.jpg`, file.buffer)
                 }
                 return UserService.users[index]
             }
