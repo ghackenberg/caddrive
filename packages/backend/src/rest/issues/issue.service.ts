@@ -4,10 +4,11 @@ import { Issue, IssueData, IssueREST } from 'productboard-common'
 import { CommentService } from '../comments/comment.service'
 
 
+
 @Injectable()
 export class IssueService implements IssueREST {
     private static readonly issues: Issue[] = [
-        { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', time: new Date().toISOString(), label: 'Design vehicle that can be used in summer and winter.', text: '**Description**\n\n* In winter, the vehicle has to deal with cold temperatures and icy roads.\n* In summer, the vehicle has to deal with warm temperatures, rain, and mud.\n\n**Validation**\n\nWe plan to conduct test drives under winter and summer conditions to validate the product design.', state: 'closed',deleted: false },
+        { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', time: new Date().toISOString(), label: 'Design vehicle that can be used in summer and winter.', text: '**Description**\n\n* In winter, the vehicle has to deal with cold temperatures and icy roads.\n* In summer, the vehicle has to deal with warm temperatures, rain, and mud.\n\n**Validation**\n\nWe plan to conduct test drives under winter and summer conditions to validate the product design.', state: 'closed', deleted: false },
         { id: 'demo-2', userId: 'demo-2', productId: 'demo-1', time: new Date().toISOString(), label: 'Use different wheel profile in winter version.', text: 'Please change the wheel profile (see [body_115_instance_2](/products/demo-1/versions/demo-3/objects/body_115_instance_2)). We need a stronger profile to handle winter conditions properly.', state: 'open', deleted: false },
         { id: 'demo-3', userId: 'demo-3', productId: 'demo-1', time: new Date().toISOString(), label: 'Use blue helmet for driver.', text: 'Please change the helmet color (see [technic_driver_helmet_p_SOLIDS_1_1](/products/demo-1/versions/demo-3/objects/technic_driver_helmet_p_SOLIDS_1_1)). We want a blue helmet because it fits better to our corporate design standards.', state: 'open', deleted: false }
     ]
@@ -18,7 +19,6 @@ export class IssueService implements IssueREST {
 
     async findIssues(productId: string) : Promise<Issue[]> {
         const result: Issue[] = []
-
         for (const issue of IssueService.issues) {
             // Todo
             if (issue.productId != productId) {
@@ -31,6 +31,7 @@ export class IssueService implements IssueREST {
 
         return result
     }
+  
 
     async addIssue(data: IssueData): Promise<Issue> {
         const issue = { id: shortid(), ...data }
@@ -57,6 +58,8 @@ export class IssueService implements IssueREST {
         }
         throw new NotFoundException()
     }
+
+
 
     async deleteIssue(id: string): Promise<Issue> {
         for (var index = 0; index < IssueService.issues.length; index++) {

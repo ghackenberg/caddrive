@@ -98,6 +98,8 @@ export class CommentData {
     time: string
     @ApiProperty()
     text: string
+    @ApiProperty()
+    deleted: boolean
 }
 
 export class Comment extends CommentData {

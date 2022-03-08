@@ -52,8 +52,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     async function deleteIssue(issue: Issue) {
         if (confirm('Do you really want to delete this issue?')) {
             await IssueAPI.deleteIssue(issue.id)
-            setIssues(issues.filter(other => other.id != issue.id))
-            
+            setIssues(issues.filter(other => other.id != issue.id))       
         }
     }
  

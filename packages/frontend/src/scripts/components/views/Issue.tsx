@@ -187,7 +187,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (commentText) {
-            const comment = await CommentAPI.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText })
+            const comment = await CommentAPI.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, deleted })
             setComments([...comments, comment])
             setCommentText('')
         }
