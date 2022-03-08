@@ -3,6 +3,7 @@ import * as shortid from 'shortid'
 import { Product, ProductData, ProductREST } from 'productboard-common'
 import { VersionService } from '../versions/version.service'
 import { IssueService } from '../issues/issue.service'
+import { MemberService } from '../members/member.service'
 
 @Injectable()
 export class ProductService implements ProductREST {
@@ -13,23 +14,23 @@ export class ProductService implements ProductREST {
 
     public constructor(
         private readonly versionService: VersionService,
-        private readonly issueService: IssueService
+        private readonly issueService: IssueService,
+        private readonly memberService: MemberService
     ) {}
 
     async findProducts() : Promise<Product[]> {
         const result: Product[] = []
-
         for (const product of ProductService.products) {
-            if(!product.deleted){
-                result.push(product)
+            if(product.deleted) {
+                continue
             }
+            result.push(product)
         }
-
         return result
     }
 
     async addProduct(data: ProductData) {
-        const product = { id: shortid(), ...data }
+        const product = { id: shortid(), deleted: false, ...data }
         ProductService.products.push(product)
         return product
     }
@@ -47,7 +48,7 @@ export class ProductService implements ProductREST {
         for (var index = 0; index < ProductService.products.length; index++) {
             const product = ProductService.products[index]
             if (product.id == id) {
-                ProductService.products.splice(index, 1, { id, ...data })
+                ProductService.products.splice(index, 1, { id, deleted: product.deleted, ...data })
                 return ProductService.products[index]
             }
         }
@@ -55,14 +56,16 @@ export class ProductService implements ProductREST {
     }
 
     async deleteProduct(id: string): Promise<Product> {
-        for (var index = 0; index < ProductService.products.length; index++) {
-            const product = ProductService.products[index]
+        for (const product of ProductService.products) {
             if (product.id == id) {
                 for (const version of await this.versionService.findVersions(id)) {
                     await this.versionService.deleteVersion(version.id)
                 }
                 for (const issue of await this.issueService.findIssues(id)) {
                     await this.issueService.deleteIssue(issue.id)
+                }
+                for (const member of await this.memberService.findMembers(id)) {
+                    await this.memberService.deleteMember(member.id)
                 }
                 product.deleted = true
                 return product

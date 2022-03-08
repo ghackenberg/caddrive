@@ -20,22 +20,19 @@ export class IssueService implements IssueREST {
     async findIssues(productId: string) : Promise<Issue[]> {
         const result: Issue[] = []
         for (const issue of IssueService.issues) {
-            // Todo
-            if (issue.productId != productId) {
+            if(issue.deleted){
                 continue
             }
-            if(issue.deleted){
+            if (issue.productId != productId) {
                 continue
             }
             result.push(issue)
         }
-
         return result
     }
   
-
     async addIssue(data: IssueData): Promise<Issue> {
-        const issue = { id: shortid(), ...data }
+        const issue = { id: shortid(), deleted: false, ...data }
         IssueService.issues.push(issue)
         return issue
     }
@@ -53,18 +50,15 @@ export class IssueService implements IssueREST {
         for (var index = 0; index < IssueService.issues.length; index++) {
             const issue = IssueService.issues[index]
             if (issue.id == id) {
-                IssueService.issues.splice(index, 1, { id, ...data })
+                IssueService.issues.splice(index, 1, { id, deleted: issue.deleted, ...data })
                 return IssueService.issues[index]
             }
         }
         throw new NotFoundException()
     }
 
-
-
     async deleteIssue(id: string): Promise<Issue> {
-        for (var index = 0; index < IssueService.issues.length; index++) {
-            const issue = IssueService.issues[index]
+        for (const issue of IssueService.issues) {
             if (issue.id == id) {
                 for (const comment of await this.commentService.findComments(id)) {
                     await this.commentService.deleteComment(comment.id)

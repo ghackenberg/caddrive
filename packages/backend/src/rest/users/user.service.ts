@@ -20,18 +20,17 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
 
     async findUsers() : Promise<User[]> {
         const results: User[] = []
-
         for (const user of UserService.users) {
-            if (!user.deleted) {
-                results.push(user)
+            if (user.deleted) {
+                continue
             }
+            results.push(user)
         }
-
         return results
     }
 
     async addUser(data: UserData, file?: Express.Multer.File) {
-        const user = { id: shortid(), ...data }
+        const user = { id: shortid(), deleted: false, ...data }
         if (file && file.originalname.endsWith('.jpg')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
@@ -55,7 +54,7 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
         for (var index = 0; index < UserService.users.length; index++) {
             const user = UserService.users[index]
             if (user.id == id) {
-                UserService.users.splice(index, 1, { id, ...data })
+                UserService.users.splice(index, 1, { id, deleted: user.deleted, ...data })
                 if (file && file.originalname.endsWith('.jpg')) {
                     if (!fs.existsSync('./uploads')) {
                         fs.mkdirSync('./uploads')
@@ -69,8 +68,7 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
     }
 
     async deleteUser(id: string): Promise<User> {
-        for (var index = 0; index < UserService.users.length; index++) {
-            const user = UserService.users[index]
+        for (const user of UserService.users) {
             if (user.id == id) {
                 user.deleted = true
                 return user

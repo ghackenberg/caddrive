@@ -29,7 +29,6 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     // Define values
     const [name, setName] = useState<string>('')
     const [description, setDescription] = useState<string>('')
-    const [deleted, setDeleted] = useState<boolean>()
 
     // Load entities
     useEffect(() => { productId != 'new' && ProductAPI.getProduct(productId).then(setProduct) }, [props])
@@ -37,13 +36,12 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     // Load values
     useEffect(() => { product && setName(product.name) }, [product])
     useEffect(() => { product && setDescription(product.description) }, [product])
-    useEffect(() => { product && setDeleted(product.deleted) }, [product])
 
     async function submit(event: FormEvent){
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductAPI.addProduct({userId: user.id, name, description, deleted})
+                const product = await ProductAPI.addProduct({userId: user.id, name, description})
                 history.replace(`/products/${product.id}`)
             }
         } else {
@@ -57,36 +55,32 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
         <main className="view extended product">
             { (productId == 'new' || product) && (
                 <Fragment>
-                { product && product.deleted ? (
-                    <Redirect to='/'/>
-                ) : (
-                    
-                <Fragment>
-                    <ProductHeader product={product}/>
-                    <main className="sidebar">
-                        <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={submit}>
-                                <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                    { product && product.deleted ? (
+                        <Redirect to='/'/>
+                    ) : (
+                        <Fragment>
+                            <ProductHeader product={product}/>
+                            <main className="sidebar">
                                 <div>
-                                    <div/>
-                                    <div>
-                                        <input type='submit' value='Save'/>
-                                    </div>
+                                    <h1>Settings</h1>
+                                    <form onSubmit={submit}>
+                                        <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                                        <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                        <div>
+                                            <div/>
+                                            <div>
+                                                <input type='submit' value='Save'/>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
-                        </div>
-                        <div>
-                            <ProductView3D product={product} mouse={true}/>
-                        </div>
-                    </main>
-
+                                <div>
+                                    <ProductView3D product={product} mouse={true}/>
+                                </div>
+                            </main>
+                        </Fragment>
+                    )}
                 </Fragment>
-                )}
-                
-                </Fragment>
-
             )}
         </main>
     )

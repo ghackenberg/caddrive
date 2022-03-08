@@ -11,23 +11,24 @@ export class MemberController implements MemberREST {
     constructor(private readonly memberService: MemberService) {}
 
     @Get()
-    @ApiQuery({ name: 'member', type: 'string', required: true })
+    @ApiQuery({ name: 'product', type: 'string', required: true })
+    @ApiQuery({ name: 'user', type: 'string', required: false })
     @ApiResponse({ type: [Member] })
-    findMembers(@Query('product') productId: string): Promise<Member[]> {
-        return this.memberService.findMembers(productId)
+    async findMembers(@Query('product') productId: string, @Query('user') userId?: string): Promise<Member[]> {
+        return this.memberService.findMembers(productId, userId)
     }
 
     @Post()
     @ApiBody({ type: MemberData, required: true })
     @ApiResponse({ type: Member })
-    addMember(@Body() data: MemberData): Promise<Member> {
+    async addMember(@Body() data: MemberData): Promise<Member> {
         return this.memberService.addMember(data)
     }
 
     @Get(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: Member })
-    getMember(@Param('id') id: string): Promise<Member> {
+    async getMember(@Param('id') id: string): Promise<Member> {
         return this.memberService.getMember(id)
     }
 
@@ -35,14 +36,14 @@ export class MemberController implements MemberREST {
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiBody({ type: Member, required: true })
     @ApiResponse({ type: Member })
-    updateMember(@Param('id') id: string, @Body() data: MemberData): Promise<Member> {
+    async updateMember(@Param('id') id: string, @Body() data: MemberData): Promise<Member> {
         return this.memberService.updateMember(id,data)
     }
 
     @Delete(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: [Member] })
-    deleteMember(@Param('id') id: string): Promise<Member> {
+    async deleteMember(@Param('id') id: string): Promise<Member> {
         return this.memberService.deleteMember(id)
     }
 }

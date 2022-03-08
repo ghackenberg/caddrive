@@ -49,7 +49,6 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const [issueLabel, setIssueLabel] = useState<string>('')
     const [issueText, setIssueText] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
-    const [deleted, setDeleted] = useState<boolean>()
 
     // Define aggregates
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
@@ -127,7 +126,6 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // Load values
     useEffect(() => { issue && setIssueLabel(issue.label) }, [issue])
     useEffect(() => { issue && setIssueText(issue.text) }, [issue])
-    useEffect(() => { issue && setDeleted(issue.deleted) }, [issue])
 
     function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
@@ -174,12 +172,12 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         event.preventDefault()
         if (issueId == 'new') {
             if (issueLabel && issueText) {
-                const issue = await IssueAPI.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open', deleted })
+                const issue = await IssueAPI.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open' })
                 history.replace(`/products/${productId}/issues/${issue.id}`)
             }
         } else {
             if (issueLabel && issueText) {
-                setIssue(await IssueAPI.updateIssue(issue.id, { ...issue, label: issueLabel, text: issueText, deleted }))
+                setIssue(await IssueAPI.updateIssue(issue.id, { ...issue, label: issueLabel, text: issueText }))
             }
         }
     }
@@ -187,7 +185,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (commentText) {
-            const comment = await CommentAPI.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, deleted })
+            const comment = await CommentAPI.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText })
             setComments([...comments, comment])
             setCommentText('')
         }
@@ -202,69 +200,68 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                    <main className="sidebar">
-                        <div>
-                            {issue ? (
-                                <Fragment>
-                                    <h1>
-                                        {issue.label}
-                                    </h1>
-                                    <p>
-                                        <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened issue on {issue.time.substring(0, 10)}
-                                    </p>
-                                    <div className="widget thread">
-                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
-                                        {comments && comments.map(comment => (
-                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
-                                        ))}
-                                        <div className="comment self">
-                                            <div className="head">
-                                                <div className="icon">
-                                                    <a href={`/users/${user.id}`}>
-                                                        <img src={`/rest/files/${user.id}.jpg`}/>
-                                                    </a>
-                                                </div>
-                                                <div className="text">
-                                                    <p>
-                                                        <strong>New comment</strong>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="body">
-                                                <div className="free">
+                            <main className="sidebar">
+                                <div>
+                                    {issue ? (
+                                        <Fragment>
+                                            <h1>
+                                                {issue.label}
+                                            </h1>
+                                            <p>
+                                                <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened issue on {issue.time.substring(0, 10)}
+                                            </p>
+                                            <div className="widget thread">
+                                                <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                                {comments && comments.map(comment => (
+                                                    <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                                ))}
+                                                <div className="comment self">
+                                                    <div className="head">
+                                                        <div className="icon">
+                                                            <a href={`/users/${user.id}`}>
+                                                                <img src={`/rest/files/${user.id}.jpg`}/>
+                                                            </a>
+                                                        </div>
+                                                        <div className="text">
+                                                            <p>
+                                                                <strong>New comment</strong>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="body">
+                                                        <div className="free">
 
-                                                </div>
-                                                <div className="text">
-                                                    <textarea placeholder={'Type text'} value={commentText} onChange={event => setCommentText(event.currentTarget.value)}/>
-                                                    <button onClick={submitComment}>Save</button>
+                                                        </div>
+                                                        <div className="text">
+                                                            <textarea placeholder={'Type text'} value={commentText} onChange={event => setCommentText(event.currentTarget.value)}/>
+                                                            <button onClick={submitComment}>Save</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </Fragment>
-                            ) : (
-                                <Fragment>
-                                    <h1>Settings</h1>
-                                    <form onSubmit={submitIssue} onReset={() => history.goBack()}>
-                                        <TextInput class='fill' label='Label' placeholder='Type label' value={issueLabel} change={setIssueLabel}/>
-                                        <TextareaInput class='fill' label='Text' placeholder='Type text' value={issueText} change={setIssueText}/>
-                                        <div>
-                                            <div/>
-                                            <div>
-                                                <input type='submit' value='Save'/>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </Fragment>
-                            )}
-                        </div>
-                        <div>
-                            <ProductView product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject}/>
-                        </div>
-                    </main>
+                                        </Fragment>
+                                    ) : (
+                                        <Fragment>
+                                            <h1>Settings</h1>
+                                            <form onSubmit={submitIssue} onReset={() => history.goBack()}>
+                                                <TextInput class='fill' label='Label' placeholder='Type label' value={issueLabel} change={setIssueLabel}/>
+                                                <TextareaInput class='fill' label='Text' placeholder='Type text' value={issueText} change={setIssueText}/>
+                                                <div>
+                                                    <div/>
+                                                    <div>
+                                                        <input type='submit' value='Save'/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </Fragment>
+                                    )}
+                                </div>
+                                <div>
+                                    <ProductView product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject}/>
+                                </div>
+                            </main>
                         </Fragment>
                     ) }
-                    
                 </Fragment>
             )}
         </main>

@@ -9,13 +9,13 @@ export class UserData {
     email: string
     @ApiProperty()
     password: string
-    @ApiProperty()
-    deleted: boolean
 }
 
 export class User extends UserData {
     @ApiProperty()
-    id: string 
+    id: string
+    @ApiProperty()
+    deleted: boolean
 }
 
 // Product
@@ -27,14 +27,14 @@ export class ProductData {
     name: string
     @ApiProperty()
     description: string
-    @ApiProperty()
-    deleted: boolean
 
 }
 
 export class Product extends ProductData {
     @ApiProperty()
     id: string
+    @ApiProperty()
+    deleted: boolean
 }
 
 // Version
@@ -61,6 +61,8 @@ export class VersionData {
 export class Version extends VersionData {
     @ApiProperty()
     id: string
+    @ApiProperty()
+    deleted: boolean
 }
 
 // Issue
@@ -78,13 +80,13 @@ export class IssueData {
     text: string
     @ApiProperty()
     state: 'open' | 'closed'
-    @ApiProperty()
-    deleted: boolean
 }
 
 export class Issue extends IssueData {
     @ApiProperty()
     id: string
+    @ApiProperty()
+    deleted: boolean
 }
 
 // Comment
@@ -98,13 +100,13 @@ export class CommentData {
     time: string
     @ApiProperty()
     text: string
-    @ApiProperty()
-    deleted: boolean
 }
 
 export class Comment extends CommentData {
     @ApiProperty()
     id: string
+    @ApiProperty()
+    deleted: boolean
 }
 
 // Member
@@ -119,4 +121,6 @@ export class MemberData {
 export class Member extends MemberData {
     @ApiProperty()
     id: string
+    @ApiProperty()
+    deleted: boolean
 }

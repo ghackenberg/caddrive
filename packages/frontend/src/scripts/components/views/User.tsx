@@ -30,7 +30,6 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     const [name, setName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [file, setFile] = useState<File>()
-    const [deleted, setDeleted] = useState<boolean>()
 
     // Load entities
     useEffect(() => { userId != 'new' && UserAPI.getUser(userId).then(setUser) }, [props])
@@ -38,18 +37,17 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     // Load values
     useEffect(() => { user && setEmail(user.email) }, [user])
     useEffect(() => { user && setName(user.name) }, [user])
-    useEffect(() => { user && setDeleted(user.deleted) }, [user])
 
     async function submit(event: FormEvent){
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                const user = await UserAPI.addUser({ name, email, password: encrypt(password), deleted },file)
+                const user = await UserAPI.addUser({ name, email, password: encrypt(password) },file)
                 history.replace(`/users/${user.id}`)
             }
         } else {
             if (name && email) {
-                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password), deleted },file))
+                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) },file))
                 if (auth.username == name) {
                     auth.password = encrypt(password)
                 }
@@ -65,33 +63,32 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         <main className="view extended user">
             { (userId == 'new' || user) && (
                 <Fragment>
-                     { user && user.deleted ? (
+                    { user && user.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
                             <UserHeader user={user}/>
                             <main>
-                        <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={submit}>
-                                <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
-                                <FileInput label='Profile Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile}/>
                                 <div>
-                                    <div/>
-                                    <div>
-                                        <input type='submit' value='Save'/>
-                                    </div>
+                                    <h1>Settings</h1>
+                                    <form onSubmit={submit}>
+                                        <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
+                                        <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
+                                        <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
+                                        <FileInput label='Profile Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile}/>
+                                        <div>
+                                            <div/>
+                                            <div>
+                                                <input type='submit' value='Save'/>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
-                        </div>
-                    </main>
-
-                    </Fragment>
-            )}
+                            </main>
+                        </Fragment>
+                    )}
                 </Fragment>
-                )}
+            )}
         </main>
     )
 }

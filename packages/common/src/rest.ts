@@ -42,7 +42,7 @@ export interface CommentREST {
 }
 
 export interface MemberREST {
-    findMembers(productId: string): Promise<Member[]>
+    findMembers(productId: string, userId?: string): Promise<Member[]>
     addMember(data: MemberData): Promise<Member>
     getMember(id: string): Promise<Member>
     updateMember(id: string, data: MemberData): Promise<Member>

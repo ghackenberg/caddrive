@@ -11,22 +11,20 @@ export class CommentService implements CommentREST {
  
     async findComments(issueId: string): Promise<Comment[]> {
         const result: Comment[] = []
-        
         for (const comment of CommentService.comments) {
-            // Todo
+            if (comment.deleted) {
+                continue
+            }
             if (comment.issueId != issueId) {
                 continue
             }
-            if(!comment.deleted){
-                result.push(comment)   
-            }
+            result.push(comment)
         }
-
         return result
     }
 
     async addComment(data: CommentData): Promise<Comment> {
-        const comment = { id: shortid(), ...data }
+        const comment = { id: shortid(), deleted: false, ...data }
         CommentService.comments.push(comment)
         return comment
     }
@@ -44,7 +42,7 @@ export class CommentService implements CommentREST {
         for (var index = 0; index < CommentService.comments.length; index++) {
             const comment = CommentService.comments[index]
             if (comment.id == id) {
-                CommentService.comments.splice(index, 1, { id, ...data })
+                CommentService.comments.splice(index, 1, { id, deleted: comment.deleted, ...data })
                 return CommentService.comments[index]
             }
         }
@@ -52,10 +50,8 @@ export class CommentService implements CommentREST {
     }
 
     async deleteComment(id: string): Promise<Comment> {
-        for (var index = 0; index < CommentService.comments.length; index++) {
-            const comment = CommentService.comments[index]
+        for (const comment of CommentService.comments) {
             if (comment.id == id) {
-                // todo
                 comment.deleted = true
                 return comment
             }

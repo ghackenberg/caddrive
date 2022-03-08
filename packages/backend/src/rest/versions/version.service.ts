@@ -7,28 +7,28 @@ import { Version, VersionData, VersionREST } from 'productboard-common'
 @Injectable()
 export class VersionService implements VersionREST<VersionData, Express.Multer.File> {
     private static readonly versions: Version[] = [
-        { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Platform design completed.' },
-        { id: 'demo-2', userId: 'demo-1', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 1, patch: 0, description: 'Winter version of the vehicle.' },
-        { id: 'demo-3', userId: 'demo-2', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 2, patch: 0, description: 'Summer version of the vehicle.' },
-        { id: 'demo-4', userId: 'demo-2', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Initial commit.' }
+        { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Platform design completed.', deleted: false },
+        { id: 'demo-2', userId: 'demo-1', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 1, patch: 0, description: 'Winter version of the vehicle.', deleted: false },
+        { id: 'demo-3', userId: 'demo-2', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 2, patch: 0, description: 'Summer version of the vehicle.', deleted: false },
+        { id: 'demo-4', userId: 'demo-2', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Initial commit.', deleted: false }
     ]
 
     async findVersions(productId: string) : Promise<Version[]> {
         const result: Version[] = []
-
         for (const version of VersionService.versions) {
-            // Todo
+            if (version.deleted) {
+                continue
+            }
             if (version.productId != productId) {
                 continue
             }
             result.push(version)
         }
-
         return result
     }
  
     async addVersion(data: VersionData, file: Express.Multer.File): Promise<Version> {
-        const version = { id: shortid(), ...data }
+        const version = { id: shortid(), deleted: false, ...data }
         if (file && file.originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
@@ -52,7 +52,7 @@ export class VersionService implements VersionREST<VersionData, Express.Multer.F
         for (var index = 0; index < VersionService.versions.length; index++) {
             const version = VersionService.versions[index]
             if (version.id == id) {
-                VersionService.versions.splice(index, 1, { id, ...data })
+                VersionService.versions.splice(index, 1, { id, deleted: version.deleted, ...data })
                 return VersionService.versions[index]
             }
         }
@@ -60,11 +60,9 @@ export class VersionService implements VersionREST<VersionData, Express.Multer.F
     }
 
     async deleteVersion(id: string): Promise<Version> {
-        for (var index = 0; index < VersionService.versions.length; index++) {
-            const version = VersionService.versions[index]
+        for (const version of VersionService.versions) {
             if (version.id == id) {
-                // Todo
-                VersionService.versions.splice(index, 1)
+                version.deleted = true
                 return version
             }
         }

@@ -56,7 +56,6 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
             setIssues(issues.filter(other => other.id != issue.id))       
         }
     }
- 
 
     const columns: Column<Issue>[] = [
         {label: 'State', class: 'top center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`} className={issue.state}>{issue.state}</Link>},
@@ -66,30 +65,29 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
         {label: 'Comments', class: 'center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.id in comments ? comments[issue.id] : '?'}</Link>},
         {label: '', class: 'center', content: issue => <a onClick={_event => deleteIssue(issue)}><img src={DeleteIcon} className='small'/> </a>}
     ]
-    
 
     return (
         <main className="view extended product">
             { issues && product && (
                  <Fragment>
-                 { product && product.deleted ? (
-                     <Redirect to='/'/>
-                 ) : (
-                    <Fragment>
-                    <ProductHeader product={product}/>
-                    <main className="sidebar">
-                        <div>
-                            <Link to={`/products/${productId}/issues/new`}>
-                                New issue
-                            </Link>
-                            <Table columns={columns} items={issues}/>
-                        </div>
-                        <div>
-                            <ProductView product={product} mouse={true}/>
-                        </div>
-                    </main>
-                </Fragment>
-                 )}
+                    { product && product.deleted ? (
+                        <Redirect to='/'/>
+                    ) : (
+                        <Fragment>
+                            <ProductHeader product={product}/>
+                            <main className="sidebar">
+                                <div>
+                                    <Link to={`/products/${productId}/issues/new`}>
+                                        New issue
+                                    </Link>
+                                    <Table columns={columns} items={issues}/>
+                                </div>
+                                <div>
+                                    <ProductView product={product} mouse={true}/>
+                                </div>
+                            </main>
+                        </Fragment>
+                    )}
                  </Fragment>
                 
             )}

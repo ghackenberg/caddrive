@@ -72,7 +72,6 @@ export const ProductsView = () => {
         {label: 'Versions', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in versions ? versions[product.id] : '?'}</Link>},
         {label: 'Issues', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in issues ? issues[product.id] : '?'}</Link>},
         {label: '', content: product => <a onClick={_event => deleteProduct(product)}> <img src={DeleteIcon} className='small'/> </a>}
-
     ]
 
     return (
