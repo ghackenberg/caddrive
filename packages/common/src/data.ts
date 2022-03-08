@@ -107,3 +107,16 @@ export class Comment extends CommentData {
     id: string
 }
 
+// Member
+
+export class MemberData {
+    @ApiProperty()
+    productId: string
+    @ApiProperty()
+    userId: string
+}
+
+export class Member extends MemberData {
+    @ApiProperty()
+    id: string
+}

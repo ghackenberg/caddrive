@@ -1,4 +1,4 @@
-import { Issue, IssueData, Comment, Product, ProductData, User, Version, CommentData } from './data'
+import { Issue, IssueData, Comment, Product, ProductData, User, Version, CommentData, Member, MemberData } from './data'
 
 export interface UserREST<D, F> {
     checkUser(): Promise<User>
@@ -39,4 +39,12 @@ export interface CommentREST {
     getComment(id: string): Promise<Comment>
     updateComment(id: string, data: CommentData): Promise<Comment>
     deleteComment(id: string): Promise<Comment>
+}
+
+export interface MemberREST {
+    findMembers(productId: string): Promise<Member[]>
+    addMember(data: MemberData): Promise<Member>
+    getMember(id: string): Promise<Member>
+    updateMember(id: string, data: MemberData): Promise<Member>
+    deleteMember(id: string): Promise<Member>
 }

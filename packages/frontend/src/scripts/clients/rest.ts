@@ -1,6 +1,6 @@
 import axios from 'axios'
 // Commons
-import { Comment, CommentData, CommentREST, Issue, IssueData, IssueREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'productboard-common'
+import { Comment, CommentData, CommentREST, Issue, IssueData, IssueREST, Member, MemberData, MemberREST, Product, ProductData, ProductREST, User, UserData, UserREST, Version, VersionData, VersionREST } from 'productboard-common'
 // Globals
 import { auth } from './auth'
 
@@ -109,8 +109,28 @@ class CommentClient implements CommentREST {
     }
 }
 
+class MemberClient implements MemberREST {
+    async findMembers(product: string): Promise<Member[]> {
+        return (await axios.get<Member[]>('/rest/members', { params: { product }, auth })).data
+    }
+    async addMember(data: MemberData): Promise<Member> {
+        return (await axios.post<Member>('/rest/members', data, { auth })).data
+    }
+    async getMember(id: string): Promise<Member> {
+        return (await axios.get<Member>(`/rest/members/${id}`, { auth })).data
+    }
+    async updateMember(id: string, data: MemberData): Promise<Member> {
+        return (await axios.put<Member>(`/rest/members/${id}`, data, { auth })).data
+    }
+    async deleteMember(id: string): Promise<Member> {
+        return (await axios.delete<Member>(`/rest/members/${id}`, { auth })).data
+    }
+
+}
+
 export const UserAPI = new UserClient()
 export const ProductAPI = new ProductClient()
 export const VersionAPI = new VersionClient()
 export const IssueAPI = new IssueClient()
 export const CommentAPI = new CommentClient()
+export const MemberAPI = new MemberClient()

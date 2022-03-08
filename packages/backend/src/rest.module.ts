@@ -5,8 +5,9 @@ import { VersionModule } from './rest/versions/version.module'
 import { FileModule } from './rest/files/file.module'
 import { IssueModule } from './rest/issues/issue.module'
 import { CommentModule } from './rest/comments/comment.module'
+import { MemberModule } from './rest/members/member.module'
 
 @Module({
-    imports: [UserModule, ProductModule, VersionModule, IssueModule, CommentModule, FileModule]
+    imports: [UserModule, ProductModule, VersionModule, IssueModule, CommentModule, FileModule, MemberModule]
 })
 export class RESTModule {}
