@@ -110,8 +110,8 @@ class CommentClient implements CommentREST {
 }
 
 class MemberClient implements MemberREST {
-    async findMembers(product: string): Promise<Member[]> {
-        return (await axios.get<Member[]>('/rest/members', { params: { product }, auth })).data
+    async findMembers(product: string, user?: string): Promise<Member[]> {
+        return (await axios.get<Member[]>('/rest/members', { params: { product, user }, auth })).data
     }
     async addMember(data: MemberData): Promise<Member> {
         return (await axios.post<Member>('/rest/members', data, { auth })).data
