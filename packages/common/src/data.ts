@@ -106,3 +106,4 @@ export class Comment extends CommentData {
     @ApiProperty()
     id: string
 }
+

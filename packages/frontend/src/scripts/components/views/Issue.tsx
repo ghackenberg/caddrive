@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, createElement, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
-import { useHistory } from 'react-router' 
+import { Redirect, useHistory } from 'react-router' 
 import { RouteComponentProps } from 'react-router-dom'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
@@ -197,7 +197,11 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         <main className='view extended audit'>
             { (issueId == 'new' || issue) && product && (
                 <Fragment>
-                    <ProductHeader product={product}/>
+                    { issue && issue.deleted ? (
+                        <Redirect to='/'/>
+                    ) : (
+                        <Fragment>
+                            <ProductHeader product={product}/>
                     <main className="sidebar">
                         <div>
                             {issue ? (
@@ -258,6 +262,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                             <ProductView product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject}/>
                         </div>
                     </main>
+                        </Fragment>
+                    ) }
+                    
                 </Fragment>
             )}
         </main>

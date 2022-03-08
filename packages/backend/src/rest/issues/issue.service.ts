@@ -24,9 +24,10 @@ export class IssueService implements IssueREST {
             if (issue.productId != productId) {
                 continue
             }
-            if(!issue.deleted){
-                result.push(issue)
+            if(issue.deleted){
+                continue
             }
+            result.push(issue)
         }
 
         return result
