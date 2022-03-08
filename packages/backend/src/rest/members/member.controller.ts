@@ -2,27 +2,28 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/
 import { Member, MemberData, MemberREST } from 'productboard-common'
 import { MemberService } from './member.service'
 
+
 @Controller('rest/members')
 export class MemberController implements MemberREST {
     constructor(private readonly memberService: MemberService) {}
     @Get()
-    findMembers(@Query('product') _productId: string): Promise<Member[]> {
-        return this.memberService.findMembers(_productId)
+    findMembers(@Query('product') productId: string): Promise<Member[]> {
+        return this.memberService.findMembers(productId)
     }
     @Post()
-    addMember(@Body() _data: MemberData): Promise<Member> {
-        throw new Error('Method not implemented.');
+    addMember(@Body() data: MemberData): Promise<Member> {
+        return this.memberService.addMember(data)
     }
     @Get(':id')
-    getMember(@Param('id') _id: string): Promise<Member> {
-        throw new Error('Method not implemented.');
+    getMember(@Param('id') id: string): Promise<Member> {
+        return this.memberService.getMember(id)
     }
     @Put(':id')
-    updateMember(@Param('id') _id: string, @Body() _data: MemberData): Promise<Member> {
-        throw new Error('Method not implemented.');
+    updateMember(@Param('id') id: string, @Body() data: MemberData): Promise<Member> {
+        return this.memberService.updateMember(id,data)
     }
     @Delete(':id')
-    deleteMember(@Param('id') _id: string): Promise<Member> {
-        throw new Error('Method not implemented.');
+    deleteMember(@Param('id') id: string): Promise<Member> {
+        return this.memberService.deleteMember(id)
     }
 }
