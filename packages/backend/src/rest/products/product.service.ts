@@ -20,7 +20,6 @@ export class ProductService implements ProductREST {
         const result: Product[] = []
 
         for (const product of ProductService.products) {
-            // Todo
             if(!product.deleted){
                 result.push(product)
             }
@@ -65,7 +64,6 @@ export class ProductService implements ProductREST {
                 for (const issue of await this.issueService.findIssues(id)) {
                     await this.issueService.deleteIssue(issue.id)
                 }
-                // todo
                 product.deleted = true
                 return product
             }

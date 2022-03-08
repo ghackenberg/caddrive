@@ -1,6 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
+import { Redirect } from 'react-router'
 // Commons
 import { Issue, Product, User } from 'productboard-common'
 // Clients
@@ -70,7 +71,11 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     return (
         <main className="view extended product">
             { issues && product && (
-                <Fragment>
+                 <Fragment>
+                 { product && product.deleted ? (
+                     <Redirect to='/'/>
+                 ) : (
+                    <Fragment>
                     <ProductHeader product={product}/>
                     <main className="sidebar">
                         <div>
@@ -84,6 +89,9 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
                         </div>
                     </main>
                 </Fragment>
+                 )}
+                 </Fragment>
+                
             )}
         </main>
     )

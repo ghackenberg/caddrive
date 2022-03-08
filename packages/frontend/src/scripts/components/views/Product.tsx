@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
-import { useHistory } from 'react-router'
+import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product } from 'productboard-common'
@@ -57,6 +57,11 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
         <main className="view extended product">
             { (productId == 'new' || product) && (
                 <Fragment>
+                { product && product.deleted ? (
+                    <Redirect to='/'/>
+                ) : (
+                    
+                <Fragment>
                     <ProductHeader product={product}/>
                     <main className="sidebar">
                         <div>
@@ -76,7 +81,12 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
                             <ProductView3D product={product} mouse={true}/>
                         </div>
                     </main>
+
                 </Fragment>
+                )}
+                
+                </Fragment>
+
             )}
         </main>
     )

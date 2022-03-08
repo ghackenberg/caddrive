@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
-import { RouteComponentProps } from 'react-router'
+import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 // Commons
 import { Product, User, Version } from 'productboard-common'
@@ -137,6 +137,10 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
         <main className="view extended products">
             { product && versions && (
                 <Fragment>
+                { product && product.deleted ? (
+                    <Redirect to='/'/>
+                ) : (
+                    <Fragment>
                     <ProductHeader product={product}/>
                     <main className='sidebar'>
                         <div>
@@ -205,6 +209,11 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                         </div>
                     </main>
                 </Fragment>
+
+                )}
+                </Fragment>
+                    
+                
             )}
         </main>
     )

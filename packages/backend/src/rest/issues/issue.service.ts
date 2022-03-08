@@ -69,7 +69,6 @@ export class IssueService implements IssueREST {
                 for (const comment of await this.commentService.findComments(id)) {
                     await this.commentService.deleteComment(comment.id)
                 }
-                // Todo
                 issue.deleted = true
                 return issue
             }

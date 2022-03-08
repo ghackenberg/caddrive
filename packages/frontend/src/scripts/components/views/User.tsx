@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, Fragment } from 'react'
-import { useHistory } from 'react-router'
+import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import * as hash from 'hash.js'
 // Commons
@@ -65,8 +65,12 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         <main className="view extended user">
             { (userId == 'new' || user) && (
                 <Fragment>
-                    <UserHeader user={user}/>
-                    <main>
+                     { user && user.deleted ? (
+                        <Redirect to='/'/>
+                    ) : (
+                        <Fragment>
+                            <UserHeader user={user}/>
+                            <main>
                         <div>
                             <h1>Settings</h1>
                             <form onSubmit={submit}>
@@ -83,9 +87,11 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                             </form>
                         </div>
                     </main>
-                </Fragment>
+
+                    </Fragment>
             )}
+                </Fragment>
+                )}
         </main>
     )
-    
 }
