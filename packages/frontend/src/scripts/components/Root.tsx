@@ -17,6 +17,7 @@ import { IssueView } from './views/Issue'
 import { IssuesView } from './views/Issues'
 import { VersionView } from './views/Version'
 import { VersionsView } from './views/Versions'
+import { MembersView } from './views/Members'
 import { ProductView } from './views/Product'
 import { ProductsView } from './views/Products'
 // Images
@@ -55,6 +56,7 @@ export const Root = () => {
                             <Route path="/products/:product/versions" component={VersionsView}/>
                             <Route path="/products/:product/issues/:issue" component={IssueView}/>
                             <Route path="/products/:product/issues" component={IssuesView}/>
+                            <Route path="/products/:product/members" component={MembersView}/>
                             <Route path="/products/:product/settings" component={ProductView}/>
                             <Route path="/products/:product" render={(props: RouteComponentProps<{product: string}>) => <Redirect to={`/products/${props.match.params.product}/versions`}/>}/>
                             <Route path="/products" component={ProductsView}/>

@@ -7,6 +7,7 @@ import { Product } from 'productboard-common'
 import { ProductLink } from '../links/ProductLink'
 import { VersionsLink } from '../links/VersionsLink'
 import { IssuesLink } from '../links/IssuesLink'
+import { MembersLink } from '../links/MembersLink'
 // Images
 import * as SettingIcon from '/src/images/setting.png'
 
@@ -21,6 +22,7 @@ export const ProductHeader = (props: {product?: Product}) => {
                     <Fragment>
                         <VersionsLink product={props.product}/>
                         <IssuesLink product={props.product}/>
+                        <MembersLink product={props.product}/>
                     </Fragment>
                 )}
                 <span>
