@@ -4,7 +4,7 @@ import { Version, VersionData, VersionREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class VersionClient implements VersionREST<VersionData, File> {
+class VersionClientImpl implements VersionREST<VersionData, File> {
     async findVersions(product: string): Promise<Version[]> {
         return (await axios.get<Version[]>('/rest/versions', { params: { product }, auth } )).data
     }
@@ -28,4 +28,4 @@ class VersionClient implements VersionREST<VersionData, File> {
     }
 }
 
-export const VersionAPI = new VersionClient()
+export const VersionClient = new VersionClientImpl()

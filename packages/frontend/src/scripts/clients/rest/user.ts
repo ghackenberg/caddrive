@@ -4,7 +4,7 @@ import { User, UserData, UserREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class UserClient implements UserREST<UserData, File> {
+class UserClientImpl implements UserREST<UserData, File> {
     async checkUser(): Promise<User> {
         return (await axios.get<User>('/rest/users/check', { auth })).data
     }
@@ -31,4 +31,4 @@ class UserClient implements UserREST<UserData, File> {
     }
 }
 
-export const UserAPI = new UserClient()
+export const UserClient = new UserClientImpl()

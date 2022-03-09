@@ -4,7 +4,7 @@ import { Issue, IssueData, IssueREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class IssueClient implements IssueREST {
+class IssueClientImpl implements IssueREST {
     async findIssues(product: string): Promise<Issue[]> {
         return (await axios.get<Issue[]>(`/rest/issues`, { params: { product }, auth })).data
     }
@@ -22,4 +22,4 @@ class IssueClient implements IssueREST {
     }
 }
 
-export const IssueAPI = new IssueClient()
+export const IssueClient = new IssueClientImpl()

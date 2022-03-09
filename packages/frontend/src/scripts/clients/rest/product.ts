@@ -4,7 +4,7 @@ import { Product, ProductData, ProductREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class ProductClient implements ProductREST {
+class ProductClientImpl implements ProductREST {
     async findProducts(): Promise<Product[]> {
         return (await axios.get<Product[]>(`/rest/products`, { auth })).data
     }
@@ -22,4 +22,4 @@ class ProductClient implements ProductREST {
     }
 }
 
-export const ProductAPI = new ProductClient()
+export const ProductClient = new ProductClientImpl()

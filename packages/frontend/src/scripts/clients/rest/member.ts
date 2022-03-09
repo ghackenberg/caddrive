@@ -4,7 +4,7 @@ import { Member, MemberData, MemberREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class MemberClient implements MemberREST {
+class MemberClientImpl implements MemberREST {
     async findMembers(product: string, user?: string): Promise<Member[]> {
         return (await axios.get<Member[]>('/rest/members', { params: { product, user }, auth })).data
     }
@@ -23,4 +23,4 @@ class MemberClient implements MemberREST {
 
 }
 
-export const MemberAPI = new MemberClient()
+export const MemberClient = new MemberClientImpl()

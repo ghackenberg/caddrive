@@ -4,7 +4,7 @@ import { Comment, CommentData, CommentREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class CommentClient implements CommentREST {
+class CommentClientImpl implements CommentREST {
     async findComments(issue: string): Promise<Comment[]> {
         return (await axios.get<Comment[]>('/rest/comments', { params: { issue }, auth })).data
     }
@@ -22,4 +22,4 @@ class CommentClient implements CommentREST {
     }
 }
 
-export const CommentAPI = new CommentClient()
+export const CommentClient = new CommentClientImpl()
