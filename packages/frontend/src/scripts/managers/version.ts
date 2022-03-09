@@ -54,7 +54,11 @@ class VersionManagerImpl implements VersionREST<VersionData, File> {
     async updateVersion(id: string, data: VersionData, file?: File): Promise<Version> {
         // Update product index
         if (id in this.versionIndex) {
-            this.productIndex[this.versionIndex[id].productId] = undefined
+            const version = this.versionIndex[id]
+            // Update product index
+            if (version.productId in this.productIndex) {
+                delete this.productIndex[version.productId][id]
+            }
         }
         // Call backend
         const version = await VersionClient.updateVersion(id, data, file)

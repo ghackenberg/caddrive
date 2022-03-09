@@ -81,6 +81,17 @@ class MemberManagerImpl implements MemberREST {
     }
 
     async updateMember(id: string, data: MemberData): Promise<Member> {
+        if (id in this.memberIndex) {
+            const member = this.memberIndex[id]
+            // Update product index
+            if (member.productId in this.productIndex) {
+                delete this.productIndex[member.productId][id]
+            }
+            // Update user index
+            if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
+                delete this.userIndex[member.productId][member.userId][id]
+            }
+        }
         // Call backend
         const member = await MemberClient.updateMember(id, data)
         // Update member index
