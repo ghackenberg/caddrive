@@ -1,12 +1,12 @@
-import { Controller, Get, Param, StreamableFile } from '@nestjs/common'
-import { ApiParam, ApiResponse } from '@nestjs/swagger'
+import { Controller, Get, Param, StreamableFile, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { ApiBasicAuth, ApiParam, ApiResponse } from '@nestjs/swagger'
 import { FileREST } from 'productboard-common'
 import { FileService } from './file.service'
 
 @Controller('rest/files')
-// TODO: use auth!
-//@UseGuards(AuthGuard('basic'))
-//@ApiBasicAuth()
+@UseGuards(AuthGuard('basic'))
+@ApiBasicAuth()
 export class FileController implements FileREST<StreamableFile> {
     constructor(
         private readonly fileService: FileService

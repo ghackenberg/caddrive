@@ -20,7 +20,7 @@ import { UserContext } from '../../contexts/User'
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { CommentView } from '../widgets/CommentView'
-import { ProductView } from '../widgets/ProductView'
+import { ProductView3D } from '../widgets/ProductView3D'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { TextareaInput } from '../inputs/TextareaInput'
@@ -260,7 +260,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                     )}
                                 </div>
                                 <div>
-                                    <ProductView product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject}/>
+                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject}/>
                                 </div>
                             </main>
                         </Fragment>

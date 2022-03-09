@@ -11,8 +11,8 @@ import { VersionManager } from '../../managers/version'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { ModelView } from '../widgets/ModelView'
-import { ProductView } from '../widgets/ProductView'
+import { ProductView3D } from '../widgets/ProductView3D'
+import { VersionView3D } from '../widgets/VersionView3D'
 
 export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -195,7 +195,7 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                                                         </div>
                                                     </div>
                                                     <div className="model">
-                                                        <ModelView url={`/rest/files/${vers.id}.glb`} mouse={false}/>
+                                                        <VersionView3D version={vers} mouse={false}/>
                                                     </div>
                                                 </div>
                                             </Fragment>
@@ -204,9 +204,9 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                                 </div>
                                 <div>
                                     {version ? (
-                                        <ModelView url={`/rest/files/${version.id}.glb`} mouse={true}/>
+                                        <VersionView3D version={version} mouse={true}/>
                                     ) : (
-                                        <ProductView product={product} mouse={true}/>
+                                        <ProductView3D product={product} mouse={true}/>
                                     )}
                                 </div>
                             </main>

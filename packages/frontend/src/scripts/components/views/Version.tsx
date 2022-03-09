@@ -16,7 +16,7 @@ import { FileInput } from '../inputs/FileInput'
 import { NumberInput } from '../inputs/NumberInput'
 import { TextInput } from '../inputs/TextInput'
 // Widgets
-import { ModelView } from '../widgets/ModelView'
+import { VersionView3D } from '../widgets/VersionView3D'
 // Images
 import * as EmptyIcon from '/src/images/empty.png'
 import { GenericInput } from '../inputs/GenericInput'
@@ -111,7 +111,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                                 </div>
                                 <div>
                                     { version ? (
-                                        <ModelView url={`/rest/files/${version.id}.glb`} mouse={true}/>
+                                        <VersionView3D version={version} mouse={true}/>
                                     ) : (
                                         <div className="widget model_view">
                                             <img className='empty' src={EmptyIcon}/>

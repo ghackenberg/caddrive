@@ -13,7 +13,7 @@ import { ProductHeader } from '../snippets/ProductHeader'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 // Widgets
-import { ProductView as ProductView3D } from '../widgets/ProductView'
+import { ProductView3D } from '../widgets/ProductView3D'
 
 export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 

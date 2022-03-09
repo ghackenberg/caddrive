@@ -13,7 +13,7 @@ import { CommentManager } from '../../managers/comment'
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { Column, Table } from '../widgets/Table'
-import { ProductView } from '../widgets/ProductView'
+import { ProductView3D } from '../widgets/ProductView3D'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 
@@ -86,7 +86,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
                                     <Table columns={columns} items={issues}/>
                                 </div>
                                 <div>
-                                    <ProductView product={product} mouse={true}/>
+                                    <ProductView3D product={product} mouse={true}/>
                                 </div>
                             </main>
                         </Fragment>

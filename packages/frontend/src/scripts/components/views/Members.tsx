@@ -9,7 +9,7 @@ import { ProductManager } from '../../managers/product'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { ProductView } from '../widgets/ProductView'
+import { ProductView3D } from '../widgets/ProductView3D'
 
 export const MembersView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -35,7 +35,7 @@ export const MembersView = (props: RouteComponentProps<{product: string}>) => {
                                     TODO
                                 </div>
                                 <div>
-                                    <ProductView product={product} mouse={true}/>
+                                    <ProductView3D product={product} mouse={true}/>
                                 </div>
                             </main>
                         </Fragment>
