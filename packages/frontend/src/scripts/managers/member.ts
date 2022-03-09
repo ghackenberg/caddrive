@@ -66,14 +66,14 @@ class MemberManagerImpl implements MemberREST {
             // Call backend
             const member = await MemberClient.getMember(id)
             // Update member index
-            this.memberIndex[member.id] = member
+            this.memberIndex[id] = member
             // Update product index
             if (member.productId in this.productIndex) {
-                this.productIndex[member.productId][member.id] = true
+                this.productIndex[member.productId][id] = true
             }
             // Update user index
             if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-                this.userIndex[member.productId][member.userId][member.id] = true
+                this.userIndex[member.productId][member.userId][id] = true
             }
         }
         // Return member
@@ -98,11 +98,11 @@ class MemberManagerImpl implements MemberREST {
         this.memberIndex[member.id] = member
         // Update product index
         if (member.productId in this.productIndex) {
-            this.productIndex[member.productId][member.id] = true
+            this.productIndex[member.productId][id] = true
         }
         // Update user index
         if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-            this.userIndex[member.productId][member.userId][member.id] = true
+            this.userIndex[member.productId][member.userId][id] = true
         }
         // Return member
         return this.memberIndex[id]
@@ -115,11 +115,11 @@ class MemberManagerImpl implements MemberREST {
         this.memberIndex[member.id] = member
         // Update product index
         if (member.productId in this.productIndex) {
-            delete this.productIndex[member.productId][member.id]
+            delete this.productIndex[member.productId][id]
         }
         // Update user index
         if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-            delete this.userIndex[member.productId][member.userId][member.id]
+            delete this.userIndex[member.productId][member.userId][id]
         }
         // Return member
         return this.memberIndex[id]

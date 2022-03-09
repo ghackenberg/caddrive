@@ -41,10 +41,10 @@ class ProductManagerImpl implements ProductREST {
             // Call backend
             const product = await ProductClient.getProduct(id)
             // Update product index
-            this.productIndex[product.id] = product
+            this.productIndex[id] = product
             // Update product set
             if (this.productSet) {
-                this.productSet[product.id] = true
+                this.productSet[id] = true
             }
         }
         // Return product
@@ -55,10 +55,10 @@ class ProductManagerImpl implements ProductREST {
         // Call backend
         const product = await ProductClient.updateProduct(id, data)
         // Update product index
-        this.productIndex[product.id] = product
+        this.productIndex[id] = product
         // Update product set
         if (this.productSet) {
-            this.productSet[product.id] = true
+            this.productSet[id] = true
         }
         // Return product
         return product
@@ -68,10 +68,10 @@ class ProductManagerImpl implements ProductREST {
         // Call backend
         const product = await ProductClient.deleteProduct(id)
         // Update product index
-        this.productIndex[product.id] = product
+        this.productIndex[id] = product
         // Update product set
         if (this.productSet) {
-            delete this.productSet[product.id]
+            delete this.productSet[id]
         }
         // Return product
         return product
