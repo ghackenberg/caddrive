@@ -43,10 +43,9 @@ class VersionManagerImpl implements VersionREST<VersionData, File> {
             // Update version index
             this.versionIndex[id] = version
             // Update product index
-            if (!(version.productId in this.productIndex)) {
-                this.productIndex[version.productId] = {}
+            if (version.productId in this.productIndex) {
+                this.productIndex[version.productId][id] = true
             }
-            this.productIndex[version.productId][id] = true
         }
         // Return version
         return this.versionIndex[id]
@@ -62,10 +61,9 @@ class VersionManagerImpl implements VersionREST<VersionData, File> {
         // Update version index
         this.versionIndex[id] = version
         // Update product index
-        if (!(version.productId in this.productIndex)) {
-            this.productIndex[version.productId] = {}
+        if (version.productId in this.productIndex) {
+            this.productIndex[version.productId][id] = true
         }
-        this.productIndex[version.productId][id] = true
         // Return version
         return version
     }
