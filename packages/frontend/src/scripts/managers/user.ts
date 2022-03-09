@@ -72,7 +72,7 @@ class UserManagerImpl implements UserREST<UserData, File> {
         // Return user
         return user
     }
-    
+
     async deleteUser(id: string): Promise<User> {
         // Call backend
         const user = await UserClient.deleteUser(id)
@@ -80,7 +80,7 @@ class UserManagerImpl implements UserREST<UserData, File> {
         this.userIndex[id] = user
         // Update user set
         if (this.userSet) {
-            this.userSet[id] = undefined
+            delete this.userSet[id]
         }
         // Return user
         return user

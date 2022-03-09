@@ -75,7 +75,7 @@ class VersionManagerImpl implements VersionREST<VersionData, File> {
         this.versionIndex[id] = version
         // Update product index
         if (version.productId in this.productIndex) {
-            this.productIndex[version.productId][id] = undefined
+            delete this.productIndex[version.productId][id]
         }
         // Return version
         return version
