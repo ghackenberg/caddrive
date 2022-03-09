@@ -2,20 +2,116 @@ import { Member, MemberData, MemberREST } from 'productboard-common'
 import { MemberClient } from '../clients/rest/member'
 
 class MemberManagerImpl implements MemberREST {
+    private memberIndex: {[id: string]: Member} = {}
+    private productIndex: {[id: string]: {[id: string]: boolean}} = {}
+    private userIndex: {[id: string]: {[id: string]: {[id: string]: boolean}}} = {}
+
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
-        return MemberClient.findMembers(productId, userId)
+        if (userId) {
+            if (!(productId in this.userIndex && userId in this.userIndex[productId])) {
+                // Call backend
+                const members = await MemberClient.findMembers(productId, userId)
+                // Update member index
+                for (const member of members) {
+                    this.memberIndex[member.id] = member
+                }
+                // Update user index
+                if (!(productId in this.userIndex)) {
+                    this.userIndex[productId] = {}
+                }
+                for (const member of members) {
+                    this.userIndex[productId][userId][member.id] = true
+                }
+            }
+            // Return members
+            return Object.keys(this.userIndex[productId][userId]).map(id => this.memberIndex[id])
+        } else {
+            if (!(productId in this.productIndex)) {
+                // Call backend
+                const members = await MemberClient.findMembers(productId, userId)
+                // Update member index
+                for (const member of members) {
+                    this.memberIndex[member.id] = member
+                }
+                // Update product index
+                this.productIndex[productId] = {}
+                for (const member of members) {
+                    this.productIndex[productId][member.id] = true
+                }
+            }
+            // Return members
+            return Object.keys(this.productIndex[productId]).map(id => this.memberIndex[id])
+        }
     }
+
     async addMember(data: MemberData): Promise<Member> {
-        return MemberClient.addMember(data)
+        // Call backend
+        const member = await MemberClient.addMember(data)
+        // Update member index
+        this.memberIndex[member.id] = member
+        // Update product index
+        if (member.productId in this.productIndex) {
+            this.productIndex[member.productId][member.id] = true
+        }
+        // Update user index
+        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
+            this.userIndex[member.productId][member.userId][member.id] = true
+        }
+        // Return member
+        return member
     }
+
     async getMember(id: string): Promise<Member> {
-        return MemberClient.getMember(id)
+        if (!(id in this.memberIndex)) {
+            // Call backend
+            const member = await MemberClient.getMember(id)
+            // Update member index
+            this.memberIndex[member.id] = member
+            // Update product index
+            if (member.productId in this.productIndex) {
+                this.productIndex[member.productId][member.id] = true
+            }
+            // Update user index
+            if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
+                this.userIndex[member.productId][member.userId][member.id] = true
+            }
+        }
+        // Return member
+        return this.memberIndex[id]
     }
+
     async updateMember(id: string, data: MemberData): Promise<Member> {
-        return MemberClient.updateMember(id, data)
+        // Call backend
+        const member = await MemberClient.updateMember(id, data)
+        // Update member index
+        this.memberIndex[member.id] = member
+        // Update product index
+        if (member.productId in this.productIndex) {
+            this.productIndex[member.productId][member.id] = true
+        }
+        // Update user index
+        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
+            this.userIndex[member.productId][member.userId][member.id] = true
+        }
+        // Return member
+        return this.memberIndex[id]
     }
+
     async deleteMember(id: string): Promise<Member> {
-        return MemberClient.deleteMember(id)
+        // Call backend
+        const member = await MemberClient.deleteMember(id)
+        // Update member index
+        this.memberIndex[member.id] = member
+        // Update product index
+        if (member.productId in this.productIndex) {
+            delete this.productIndex[member.productId][member.id]
+        }
+        // Update user index
+        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
+            delete this.userIndex[member.productId][member.userId][member.id]
+        }
+        // Return member
+        return this.memberIndex[id]
     }
 }
 
