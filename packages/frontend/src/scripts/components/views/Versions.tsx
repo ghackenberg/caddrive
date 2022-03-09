@@ -4,8 +4,10 @@ import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 // Commons
 import { Product, User, Version } from 'productboard-common'
-// Clients
-import { ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
+// Managers
+import { UserManager } from '../../managers/user'
+import { ProductManager } from '../../managers/product'
+import { VersionManager } from '../../managers/version'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
@@ -31,12 +33,12 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
     const [version, setVersion] = useState<Version>()
 
     // Load entities
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [props])
+    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => { versions && versions.length > 0 && setVersion(versions[versions.length - 1])}, [versions])
     useEffect(() => {
         if (versions) {
-            Promise.all(versions.map(version => UserAPI.getUser(version.userId))).then(versionUsers => {
+            Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
                 const newUsers: {[id: string]: User} = {}
                 for (var index = 0; index < versions.length; index++) {
                     newUsers[versions[index].id] = versionUsers[index]

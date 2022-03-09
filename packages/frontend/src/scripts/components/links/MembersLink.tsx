@@ -3,15 +3,16 @@ import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 // Commons
 import { Product } from 'productboard-common'
+// Managers
+import { MemberManager } from '../../managers/member'
 // Images
 import * as MemberIcon from '/src/images/user.png'
-import { MemberAPI } from '../../clients/rest'
 
 export const MembersLink = (props: {product: Product}) => {
 
     const [count, setCount] = useState<number>()
 
-    useEffect(() => { MemberAPI.findMembers(props.product.id).then(members => setCount(members.length)) }, [props])
+    useEffect(() => { MemberManager.findMembers(props.product.id).then(members => setCount(members.length)) }, [props])
 
     return (
         <span>

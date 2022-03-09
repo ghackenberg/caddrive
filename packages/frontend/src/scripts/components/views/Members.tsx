@@ -4,8 +4,8 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
 // Commons
 import { Product } from 'productboard-common'
-// Clients
-import { ProductAPI } from '../../clients/rest'
+// Managers
+import { ProductManager } from '../../managers/product'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
@@ -19,7 +19,7 @@ export const MembersView = (props: RouteComponentProps<{product: string}>) => {
     const [product, setProduct] = useState<Product>()
 
     // Load entities
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
 
     return (
         <main className="view extended product">

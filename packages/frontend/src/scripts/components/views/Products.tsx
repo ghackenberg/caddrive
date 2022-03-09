@@ -3,8 +3,11 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 // Commons
 import { Product, User } from 'productboard-common'
-// Clients
-import { IssueAPI, ProductAPI, UserAPI, VersionAPI } from '../../clients/rest'
+// Managers
+import { UserManager } from '../../managers/user'
+import { ProductManager } from '../../managers/product'
+import { VersionManager } from '../../managers/version'
+import { IssueManager } from '../../managers/issue'
 // Links
 import { ProductsLink } from '../links/ProductsLink'
 // Widgets
@@ -22,10 +25,10 @@ export const ProductsView = () => {
     const [issues, setIssues] = useState<{[id: string]: number}>({})
 
     // Load entities
-    useEffect(() => { ProductAPI.findProducts().then(setProducts) }, [])
+    useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
     useEffect(() => {
         if (products) {
-            Promise.all(products.map(product => UserAPI.getUser(product.userId))).then(productUsers => {
+            Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {
                 const newUsers = {...users}
                 for (var index = 0; index < products.length; index++) {
                     newUsers[products[index].id] = productUsers[index]
@@ -36,7 +39,7 @@ export const ProductsView = () => {
     }, [products])
     useEffect(() => {
         if (products) {
-            Promise.all(products.map(product => VersionAPI.findVersions(product.id))).then(productVersions => {
+            Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
                 const newVersions = {...versions}
                 for (var index = 0; index < products.length; index++) {
                     newVersions[products[index].id] = productVersions[index].length
@@ -47,7 +50,7 @@ export const ProductsView = () => {
     }, [products])
     useEffect(() => {
         if (products) {
-            Promise.all(products.map(product => IssueAPI.findIssues(product.id))).then(productIssues => {
+            Promise.all(products.map(product => IssueManager.findIssues(product.id))).then(productIssues => {
                 const newIssues = {...issues}
                 for (var index = 0; index < products.length; index++) {
                     newIssues[products[index].id] = productIssues[index].length
@@ -59,7 +62,7 @@ export const ProductsView = () => {
 
     async function deleteProduct(product: Product) {
         if (confirm('Do you really want to delete this Product?')) {
-            await ProductAPI.deleteProduct(product.id)
+            await ProductManager.deleteProduct(product.id)
             setProducts(products.filter(other => other.id != product.id))
         }
     }

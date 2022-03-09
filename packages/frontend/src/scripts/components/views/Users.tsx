@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 // Commons
 import { User } from 'productboard-common'
-// Clients
-import { UserAPI } from '../../clients/rest'
+// Managers
+import { UserManager } from '../../managers/user'
 // Links
 import { UsersLink } from '../links/UsersLink'
 // Widgets
@@ -18,11 +18,11 @@ export const UsersView = () => {
     const [users, setUsers] = useState<User[]>()
 
     // Load entities
-    useEffect(() => { UserAPI.findUsers().then(setUsers) }, [])
+    useEffect(() => { UserManager.findUsers().then(setUsers) }, [])
 
     async function deleteUser(user: User) {
         if (confirm('Do you really want to delete this user?')) {
-            await UserAPI.deleteUser(user.id)
+            await UserManager.deleteUser(user.id)
             setUsers(users.filter(other => other.id != user.id))
         }
     }

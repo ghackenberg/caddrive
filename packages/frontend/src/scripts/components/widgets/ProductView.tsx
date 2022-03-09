@@ -3,8 +3,8 @@ import { useEffect, useState, Fragment } from 'react'
 import { Object3D } from 'three'
 // Types
 import { Product, Version } from 'productboard-common'
-// Clients
-import { VersionAPI } from '../../clients/rest'
+// Managers
+import { VersionManager } from '../../managers/version'
 // Widgets
 import { ModelView } from './ModelView'
 // Images
@@ -22,7 +22,7 @@ export const ProductView = (props: { product?: Product, mouse: boolean, highligh
     const [load, setLoad] = useState<boolean>(props.product !== undefined)
     const [versions, setVersions] = useState<Version[]>(null)
     
-    useEffect(() => { props.product && VersionAPI.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props])
+    useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props])
 
     return (
         <div className="widget product_view">

@@ -3,15 +3,16 @@ import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 // Commons
 import { Product } from 'productboard-common'
+// Managers
+import { IssueManager } from '../../managers/issue'
 // Images
 import * as IssueIcon from '/src/images/issue.png'
-import { IssueAPI } from '../../clients/rest'
 
 export const IssuesLink = (props: {product: Product}) => {
 
     const [count, setCount] = useState<number>()
 
-    useEffect(() => { IssueAPI.findIssues(props.product.id).then(issues => setCount(issues.length)) }, [props])
+    useEffect(() => { IssueManager.findIssues(props.product.id).then(issues => setCount(issues.length)) }, [props])
 
     return (
         <span>

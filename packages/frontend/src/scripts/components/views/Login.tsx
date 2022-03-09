@@ -4,7 +4,8 @@ import * as hash from 'hash.js'
 import { User } from 'productboard-common'
 // Clients
 import { auth } from '../../clients/auth'
-import { UserAPI } from '../../clients/rest'
+// Managers
+import { UserManager } from '../../managers/user'
 // Inputs
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
@@ -23,7 +24,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
         auth.password = password
         
         try {
-            props.callback(await UserAPI.checkUser())
+            props.callback(await UserManager.checkUser())
         } catch (error) {
             setError('Login failed!')
             setLoad(false)

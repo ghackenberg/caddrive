@@ -4,8 +4,11 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
 // Commons
 import { Issue, Product, User } from 'productboard-common'
-// Clients
-import { CommentAPI, IssueAPI, ProductAPI, UserAPI } from '../../clients/rest'
+// Managers
+import { UserManager } from '../../managers/user'
+import { ProductManager } from '../../managers/product'
+import { IssueManager } from '../../managers/issue'
+import { CommentManager } from '../../managers/comment'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
@@ -25,11 +28,11 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     const [comments, setComments] = useState<{[id: string]: number}>({})
 
     // Load entities
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { IssueAPI.findIssues(productId).then(setIssues)}, [props])
+    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props])
     useEffect(() => {
         if (issues) {
-            Promise.all(issues.map(issue => UserAPI.getUser(issue.userId))).then(issueUsers => {
+            Promise.all(issues.map(issue => UserManager.getUser(issue.userId))).then(issueUsers => {
                 const newUsers = {...users}
                 for (var index = 0; index < issues.length; index++) {
                     newUsers[issues[index].id] = issueUsers[index]
@@ -40,7 +43,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     }, [issues])
     useEffect(() => {
         if (issues) {
-            Promise.all(issues.map(issue => CommentAPI.findComments(issue.id))).then(issueComments => {
+            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
                 const newComments = {...comments}
                 for (var index = 0; index < issues.length; index++) {
                     newComments[issues[index].id] = issueComments[index].length
@@ -52,7 +55,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
 
     async function deleteIssue(issue: Issue) {
         if (confirm('Do you really want to delete this issue?')) {
-            await IssueAPI.deleteIssue(issue.id)
+            await IssueManager.deleteIssue(issue.id)
             setIssues(issues.filter(other => other.id != issue.id))       
         }
     }

@@ -9,8 +9,11 @@ import rehypeReact from 'rehype-react'
 import { Object3D } from 'three'
 // Commons
 import { Comment, Issue, Product, User, Version } from 'productboard-common'
-// Clients
-import { CommentAPI, IssueAPI, ProductAPI, UserAPI } from '../../clients/rest'
+// Managers
+import { UserManager } from '../../managers/user'
+import { ProductManager } from '../../managers/product'
+import { IssueManager } from '../../managers/issue'
+import { CommentManager } from '../../managers/comment'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Snippets
@@ -59,9 +62,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const [selected, setSelected] = useState<Part[]>()
 
     // Load entities
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { issueId != 'new' && IssueAPI.getIssue(issueId).then(setIssue) }, [props])
-    useEffect(() => { issueId != 'new' && CommentAPI.findComments(issueId).then(setComments) }, [props])
+    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
+    useEffect(() => { issueId != 'new' && CommentManager.findComments(issueId).then(setComments) }, [props])
     useEffect(() => {
         const userIds: string[] = []
         if (issue) {
@@ -76,7 +79,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                 }
             }
         }
-        Promise.all(userIds.map(userId => UserAPI.getUser(userId))).then(userList => {
+        Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userList => {
             const dict = {...users}
             for (const user of userList) {
                 dict[user.id] = user
@@ -172,12 +175,12 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         event.preventDefault()
         if (issueId == 'new') {
             if (issueLabel && issueText) {
-                const issue = await IssueAPI.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open' })
+                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open' })
                 history.replace(`/products/${productId}/issues/${issue.id}`)
             }
         } else {
             if (issueLabel && issueText) {
-                setIssue(await IssueAPI.updateIssue(issue.id, { ...issue, label: issueLabel, text: issueText }))
+                setIssue(await IssueManager.updateIssue(issue.id, { ...issue, label: issueLabel, text: issueText }))
             }
         }
     }
@@ -185,7 +188,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (commentText) {
-            const comment = await CommentAPI.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText })
+            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText })
             setComments([...comments, comment])
             setCommentText('')
         }

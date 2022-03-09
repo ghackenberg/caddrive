@@ -4,8 +4,9 @@ import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product, Version} from 'productboard-common'
-// Clients
-import { ProductAPI, VersionAPI } from '../../clients/rest'
+// Managers
+import { ProductManager } from '../../managers/product'
+import { VersionManager } from '../../managers/version'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Snippets
@@ -43,9 +44,9 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     const [file, setFile] = useState<File>()
 
     // Load entities
-    useEffect(() => { ProductAPI.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { VersionAPI.findVersions(productId).then(setVersions) }, [props])
-    useEffect(() => { versionId != 'new' && VersionAPI.getVersion(versionId).then(setVersion) }, [props])
+    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
+    useEffect(() => { versionId != 'new' && VersionManager.getVersion(versionId).then(setVersion) }, [props])
 
     // Load values
     useEffect(() => { version && setMajor(version.major) }, [version])
@@ -64,11 +65,11 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionAPI.addVersion({ userId: user.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
+            const version = await VersionManager.addVersion({ userId: user.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
             history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
             console.log(description)
-            setVersion(await VersionAPI.updateVersion(version.id, { ...version, major, minor, patch, description }, file))
+            setVersion(await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, file))
         }
     }
         

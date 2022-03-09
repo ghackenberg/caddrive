@@ -5,8 +5,8 @@ import { RouteComponentProps } from 'react-router-dom'
 import * as hash from 'hash.js'
 // Commons
 import { User } from 'productboard-common'
-// Clients
-import { UserAPI } from '../../clients/rest'
+// Managers
+import { UserManager } from '../../managers/user'
 // Snippets
 import { UserHeader } from '../snippets/UserHeader'
 // Inputs
@@ -32,7 +32,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
     const [file, setFile] = useState<File>()
 
     // Load entities
-    useEffect(() => { userId != 'new' && UserAPI.getUser(userId).then(setUser) }, [props])
+    useEffect(() => { userId != 'new' && UserManager.getUser(userId).then(setUser) }, [props])
 
     // Load values
     useEffect(() => { user && setEmail(user.email) }, [user])
@@ -42,12 +42,12 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                const user = await UserAPI.addUser({ name, email, password: encrypt(password) },file)
+                const user = await UserManager.addUser({ name, email, password: encrypt(password) },file)
                 history.replace(`/users/${user.id}`)
             }
         } else {
             if (name && email) {
-                setUser(await UserAPI.updateUser(user.id, { name, email, password: encrypt(password) },file))
+                setUser(await UserManager.updateUser(user.id, { name, email, password: encrypt(password) },file))
                 if (auth.username == name) {
                     auth.password = encrypt(password)
                 }

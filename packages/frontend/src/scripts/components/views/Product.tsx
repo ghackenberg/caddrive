@@ -4,8 +4,8 @@ import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 // Commons
 import { Product } from 'productboard-common'
-// Clients
-import { ProductAPI } from '../../clients/rest'
+// Managers
+import { ProductManager } from '../../managers/product'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Snippets
@@ -31,7 +31,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
     const [description, setDescription] = useState<string>('')
 
     // Load entities
-    useEffect(() => { productId != 'new' && ProductAPI.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
 
     // Load values
     useEffect(() => { product && setName(product.name) }, [product])
@@ -41,12 +41,12 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductAPI.addProduct({userId: user.id, name, description})
+                const product = await ProductManager.addProduct({userId: user.id, name, description})
                 history.replace(`/products/${product.id}`)
             }
         } else {
             if (name && description) {
-                setProduct(await ProductAPI.updateProduct(product.id, { ...product, name, description }))
+                setProduct(await ProductManager.updateProduct(product.id, { ...product, name, description }))
             }
         }
     }
