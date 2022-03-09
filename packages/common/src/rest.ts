@@ -48,3 +48,7 @@ export interface MemberREST {
     updateMember(id: string, data: MemberData): Promise<Member>
     deleteMember(id: string): Promise<Member>
 }
+
+export interface FileREST<D> {
+    getFile(id: string): Promise<D>
+}
