@@ -46,7 +46,7 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
             }
         } else {
             if (name && description) {
-                setProduct(await ProductManager.updateProduct(product.id, { ...product, name, description }))
+                setProduct(await ProductManager.updateProduct(product.id, { name, description }))
             }
         }
     }
