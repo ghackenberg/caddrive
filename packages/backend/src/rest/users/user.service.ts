@@ -3,10 +3,10 @@ import * as fs from 'fs'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import * as hash from 'hash.js'
-import { User, UserData, UserREST } from 'productboard-common'
+import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 
 @Injectable()
-export class UserService implements UserREST<UserData, Express.Multer.File> {
+export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     private static readonly users: User[] = [
         { id: 'demo-1', name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', password: hash.sha256().update('test').digest('hex'), deleted: false},
         { id: 'demo-2', name: 'Christian Zehetner', email: 'christian.zehetner@fh-wels.at', password: hash.sha256().update('test').digest('hex'), deleted: false },
@@ -29,7 +29,7 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
         return results
     }
 
-    async addUser(data: UserData, file?: Express.Multer.File) {
+    async addUser(data: UserAddData, file?: Express.Multer.File) {
         const user = { id: shortid(), deleted: false, ...data }
         if (file && file.originalname.endsWith('.jpg')) {
             if (!fs.existsSync('./uploads')) {
@@ -50,11 +50,11 @@ export class UserService implements UserREST<UserData, Express.Multer.File> {
         throw new NotFoundException()
     }
 
-    async updateUser(id: string, data: UserData, file?: Express.Multer.File): Promise<User> {
+    async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
         for (var index = 0; index < UserService.users.length; index++) {
             const user = UserService.users[index]
             if (user.id == id) {
-                UserService.users.splice(index, 1, { id, deleted: user.deleted, ...data })
+                UserService.users.splice(index, 1, { ...user,...data })
                 if (file && file.originalname.endsWith('.jpg')) {
                     if (!fs.existsSync('./uploads')) {
                         fs.mkdirSync('./uploads')

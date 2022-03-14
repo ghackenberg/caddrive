@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
-import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
+import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
+import { MemberService } from '../members/member.service'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')
@@ -9,7 +11,10 @@ import { ProductService } from './product.service'
 @ApiBasicAuth()
 export class ProductController implements ProductREST {
     constructor(
-        private readonly productService: ProductService
+        private readonly productService: ProductService,
+        private readonly memberService: MemberService,
+        @Inject(REQUEST)
+        private readonly request: Express.Request
     ) {}
 
     @Get()
@@ -33,6 +38,9 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('id') id: string
     ): Promise<Product> {
+        if ((await this.memberService.findMembers(id, (<User> this.request.user).id)).length == 0) {
+            throw new ForbiddenException()
+        }
         return this.productService.getProduct(id)
     }
 
@@ -44,6 +52,9 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
+        if ((await this.memberService.findMembers(id, (<User> this.request.user).id)).length == 0) {
+            throw new ForbiddenException()
+        }
         return this.productService.updateProduct(id, data)
     }
 
@@ -53,6 +64,9 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
+        if ((await this.memberService.findMembers(id, (<User> this.request.user).id)).length == 0) {
+            throw new ForbiddenException()
+        }
         return this.productService.deleteProduct(id)
     }
 }

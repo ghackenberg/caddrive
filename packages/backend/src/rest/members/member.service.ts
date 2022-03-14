@@ -1,5 +1,5 @@
-import { Member, MemberData, MemberREST } from 'productboard-common'
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common'
+import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 
 
@@ -30,7 +30,7 @@ export class MemberService implements MemberREST {
         return result
     }
 
-    async addMember(data: MemberData): Promise<Member> {
+    async addMember(data: MemberAddData): Promise<Member> {
         const members = await this.findMembers(data.productId, data.userId)
         if (members.length == 1) {
             return members[0]
@@ -50,17 +50,11 @@ export class MemberService implements MemberREST {
         throw new NotFoundException()
     }
 
-    async updateMember(id: string, data: MemberData): Promise<Member> {
+    async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
         for (var index = 0; index < MemberService.members.length; index++) {
             const member = MemberService.members[index]
             if (member.id == id) {
-                if (member.productId != data.productId) {
-                    throw new HttpException("You cannot change the product ID", 400)
-                }
-                if (member.userId != data.userId) {
-                    throw new HttpException("You cannot change the user ID", 400)
-                }
-                MemberService.members.splice(index, 1, { id, deleted: member.deleted, ...data })
+                MemberService.members.splice(index, 1, { ...member,...data })
                 return MemberService.members[index]
             }
         }

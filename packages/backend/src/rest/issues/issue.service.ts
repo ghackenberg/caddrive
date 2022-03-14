@@ -1,6 +1,6 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { Issue, IssueData, IssueREST } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { CommentService } from '../comments/comment.service'
 
 
@@ -31,7 +31,7 @@ export class IssueService implements IssueREST {
         return result
     }
   
-    async addIssue(data: IssueData): Promise<Issue> {
+    async addIssue(data: IssueAddData): Promise<Issue> {
         const issue = { id: shortid(), deleted: false, ...data }
         IssueService.issues.push(issue)
         return issue
@@ -46,17 +46,11 @@ export class IssueService implements IssueREST {
         throw new NotFoundException()
     }
 
-    async updateIssue(id: string, data: IssueData): Promise<Issue> {
+    async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
         for (var index = 0; index < IssueService.issues.length; index++) {
             const issue = IssueService.issues[index]
             if (issue.id == id) {
-                if (issue.productId != data.productId) {
-                    throw new HttpException("You cannot change the product ID", 400)
-                }
-                if (issue.userId != data.userId) {
-                    throw new HttpException("You cannot change the user ID", 400)
-                }
-                IssueService.issues.splice(index, 1, { id, deleted: issue.deleted, ...data })
+                IssueService.issues.splice(index, 1, { ...issue, ...data })
                 return IssueService.issues[index]
             }
         }

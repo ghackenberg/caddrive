@@ -3,7 +3,11 @@ import { ApiProperty } from '@nestjs/swagger'
 // User
 
 // TODO alles updatebar
-export class UserData {
+export class UserUpdateData {
+
+}
+
+export class UserAddData extends UserUpdateData {
     @ApiProperty()
     name: string
     @ApiProperty()
@@ -12,7 +16,7 @@ export class UserData {
     password: string
 }
 
-export class User extends UserData {
+export class User extends UserAddData {
     @ApiProperty()
     id: string
     @ApiProperty()
@@ -43,15 +47,7 @@ export class Product extends ProductAddData {
 // Version
 
 // TODO major, minor, patch, description updatebr
-export class VersionData {
-    @ApiProperty()
-    userId: string
-    @ApiProperty()
-    productId: string
-    @ApiProperty()
-    baseVersionIds: string[]
-    @ApiProperty()
-    time: string
+export class VersionUpdateData {
     @ApiProperty()
     major: number
     @ApiProperty()
@@ -61,8 +57,18 @@ export class VersionData {
     @ApiProperty()
     description: string
 }
+export class VersionAddData extends VersionUpdateData {
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    productId: string
+    @ApiProperty()
+    baseVersionIds: string[]
+    @ApiProperty()
+    time: string
+}
 
-export class Version extends VersionData {
+export class Version extends VersionAddData {
     @ApiProperty()
     id: string
     @ApiProperty()
@@ -72,13 +78,8 @@ export class Version extends VersionData {
 // Issue
 
 // TODO label text state updatebar
-export class IssueData {
-    @ApiProperty()
-    userId: string
-    @ApiProperty()
-    productId: string
-    @ApiProperty()
-    time: string
+
+export class IssueUpdateData {
     @ApiProperty()
     label: string
     @ApiProperty()
@@ -87,7 +88,16 @@ export class IssueData {
     state: 'open' | 'closed'
 }
 
-export class Issue extends IssueData {
+export class IssueAddData extends IssueUpdateData {
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    productId: string
+    @ApiProperty()
+    time: string
+}
+
+export class Issue extends IssueAddData {
     @ApiProperty()
     id: string
     @ApiProperty()
@@ -96,34 +106,43 @@ export class Issue extends IssueData {
 
 // Comment
 // TODO text updatebar
-export class CommentData {
+
+export class CommentUpdateData {
+    @ApiProperty()
+    text: string
+}
+
+export class CommentAddData extends CommentUpdateData {
     @ApiProperty()
     userId: string
     @ApiProperty()
     issueId: string
     @ApiProperty()
     time: string
-    @ApiProperty()
-    text: string
 }
 
-export class Comment extends CommentData {
+export class Comment extends CommentAddData {
     @ApiProperty()
     id: string
     @ApiProperty()
     deleted: boolean
 }
 
+
 // Member
 // TODO Nichts updatebar-> leere klasse für updatedata machen
-export class MemberData {
+export class MemberUpdateData {
+
+}
+
+export class MemberAddData extends MemberUpdateData {
     @ApiProperty()
     productId: string
     @ApiProperty()
     userId: string
 }
 
-export class Member extends MemberData {
+export class Member extends MemberAddData {
     @ApiProperty()
     id: string
     @ApiProperty()

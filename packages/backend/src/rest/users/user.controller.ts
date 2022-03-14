@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, Uploade
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
-import { User, UserData, UserREST } from 'productboard-common'
+import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { UserService } from './user.service'
 import { FileInterceptor } from '@nestjs/platform-express'
 
@@ -31,7 +31,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
   
     @Post()
     @UseInterceptors(FileInterceptor('file'))
-    @ApiBody({ type: UserData, required: true })
+    @ApiBody({ type: UserAddData, required: true })
     @ApiResponse({ type: User })
     async addUser(
         @Body('data') data: string,
@@ -52,7 +52,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     @Put(':id')
     @UseInterceptors(FileInterceptor('file'))
     @ApiParam({ name: 'id', type: 'string', required: true })
-    @ApiBody({ type: UserData, required: true })
+    @ApiBody({ type: UserUpdateData, required: true })
     @ApiResponse({ type: User })
     async updateUser(
         @Param('id') id: string,

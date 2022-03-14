@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
-import { Comment, CommentData, CommentREST } from 'productboard-common'
+import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 import { CommentService } from './comment.service'
 
 @Controller('rest/comments')
@@ -22,10 +22,10 @@ export class CommentController implements CommentREST {
     }
 
     @Post()
-    @ApiBody({ type: CommentData, required: true })
+    @ApiBody({ type: CommentAddData, required: true })
     @ApiResponse({ type: Comment })
     async addComment(
-        @Body() data: CommentData
+        @Body() data: CommentAddData
     ): Promise<Comment> {
         return this.commentService.addComment(data)
     }
@@ -41,10 +41,10 @@ export class CommentController implements CommentREST {
 
     @Put(':id')
     @ApiParam({ name: 'id', type: 'string', required: true})
-    @ApiBody({ type: CommentData, required: true })
+    @ApiBody({ type: CommentUpdateData, required: true })
     @ApiResponse({ type: Comment })
     async updateComment(
-        @Param('id') id: string, @Body() data: CommentData
+        @Param('id') id: string, @Body() data: CommentUpdateData
     ): Promise<Comment> {
         return this.commentService.updateComment(id, data)
     }

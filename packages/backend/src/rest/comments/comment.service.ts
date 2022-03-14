@@ -1,5 +1,5 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common'
-import { CommentREST, Comment, CommentData, } from 'productboard-common'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import * as shortid from 'shortid'
 
 @Injectable()
@@ -23,7 +23,7 @@ export class CommentService implements CommentREST {
         return result
     }
 
-    async addComment(data: CommentData): Promise<Comment> {
+    async addComment(data: CommentAddData): Promise<Comment> {
         const comment = { id: shortid(), deleted: false, ...data }
         CommentService.comments.push(comment)
         return comment
@@ -38,17 +38,11 @@ export class CommentService implements CommentREST {
         throw new NotFoundException()
     }
 
-    async updateComment(id: string, data: CommentData): Promise<Comment> {
+    async updateComment(id: string, data: CommentUpdateData): Promise<Comment> {
         for (var index = 0; index < CommentService.comments.length; index++) {
             const comment = CommentService.comments[index]
             if (comment.id == id) {
-                if (comment.issueId != data.issueId) {
-                    throw new HttpException("You cannot change the issue ID", 400)
-                }
-                if (comment.userId != data.userId) {
-                    throw new HttpException("You cannot change the user ID", 400)
-                }
-                CommentService.comments.splice(index, 1, { id, deleted: comment.deleted, ...data })
+                CommentService.comments.splice(index, 1, { ...comment,...data})
                 return CommentService.comments[index]
             }
         }

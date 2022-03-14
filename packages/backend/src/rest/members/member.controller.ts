@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
-import { Member, MemberData, MemberREST } from 'productboard-common'
+import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 import { MemberService } from './member.service'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 
@@ -19,9 +19,9 @@ export class MemberController implements MemberREST {
     }
 
     @Post()
-    @ApiBody({ type: MemberData, required: true })
+    @ApiBody({ type: MemberAddData, required: true })
     @ApiResponse({ type: Member })
-    async addMember(@Body() data: MemberData): Promise<Member> {
+    async addMember(@Body() data: MemberAddData): Promise<Member> {
         return this.memberService.addMember(data)
     }
 
@@ -36,7 +36,7 @@ export class MemberController implements MemberREST {
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiBody({ type: Member, required: true })
     @ApiResponse({ type: Member })
-    async updateMember(@Param('id') id: string, @Body() data: MemberData): Promise<Member> {
+    async updateMember(@Param('id') id: string, @Body() data: MemberUpdateData): Promise<Member> {
         return this.memberService.updateMember(id,data)
     }
 

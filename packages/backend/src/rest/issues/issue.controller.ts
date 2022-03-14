@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
-import { Issue, IssueData, IssueREST } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { IssueService } from './issue.service'
 
 @Controller('rest/issues')
@@ -22,10 +22,10 @@ export class IssueController implements IssueREST {
     }
 
     @Post()
-    @ApiBody({ type: IssueData, required: true })
+    @ApiBody({ type: IssueAddData, required: true })
     @ApiResponse({ type: Issue })
     async addIssue(
-        @Body() data: IssueData
+        @Body() data: IssueAddData
     ): Promise<Issue> {
         return this.IssueService.addIssue(data)
     }  
@@ -45,7 +45,7 @@ export class IssueController implements IssueREST {
     @ApiResponse({ type: Issue })
     async updateIssue(
         @Param('id') id: string,
-        @Body() data: IssueData
+        @Body() data: IssueUpdateData
     ): Promise<Issue> {
         return this.IssueService.updateIssue(id, data)
     }

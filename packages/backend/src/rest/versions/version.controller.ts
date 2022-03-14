@@ -2,7 +2,7 @@ import 'multer'
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/swagger'
-import { Version, VersionData, VersionREST } from 'productboard-common'
+import { Version, VersionAddData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
 import { AuthGuard } from '@nestjs/passport'
 
@@ -13,6 +13,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     constructor(
         private versionService: VersionService
     ) {}
+
 
     @Get()
     @ApiQuery({ name: 'product', type: 'string', required: true })
@@ -25,7 +26,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
 
     @Post()
     @UseInterceptors(FileInterceptor('file'))
-    @ApiBody({ type: VersionData, required: true })
+    @ApiBody({ type: VersionAddData, required: true })
     @ApiResponse({ type: Version })
     async addVersion(
         @Body('data') data: string,
