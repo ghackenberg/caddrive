@@ -31,6 +31,7 @@ export class MemberService implements MemberREST {
     }
 
     async addMember(data: MemberData): Promise<Member> {
+        // TODO Check if user is already a member hier findmembers benutzen um zu prüfen ob sie schon zugeordnet sind
         const member = { id: shortid(), deleted: false, ...data }
         MemberService.members.push(member)
         return member
