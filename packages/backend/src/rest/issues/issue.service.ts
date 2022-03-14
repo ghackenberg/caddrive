@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Issue, IssueData, IssueREST } from 'productboard-common'
 import { CommentService } from '../comments/comment.service'
@@ -50,6 +50,12 @@ export class IssueService implements IssueREST {
         for (var index = 0; index < IssueService.issues.length; index++) {
             const issue = IssueService.issues[index]
             if (issue.id == id) {
+                if (issue.productId != data.productId) {
+                    throw new HttpException("You cannot change the product ID", 400)
+                }
+                if (issue.userId != data.userId) {
+                    throw new HttpException("You cannot change the user ID", 400)
+                }
                 IssueService.issues.splice(index, 1, { id, deleted: issue.deleted, ...data })
                 return IssueService.issues[index]
             }

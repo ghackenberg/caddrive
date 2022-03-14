@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
-import { Product, ProductData, ProductREST } from 'productboard-common'
+import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')
@@ -19,10 +19,10 @@ export class ProductController implements ProductREST {
     }
 
     @Post()
-    @ApiBody({ type: ProductData, required: true })
+    @ApiBody({ type: ProductAddData, required: true })
     @ApiResponse({ type: Product })
     async addProduct(
-        @Body() data: ProductData
+        @Body() data: ProductAddData
     ): Promise<Product> {
         return this.productService.addProduct(data)
     }
@@ -42,7 +42,7 @@ export class ProductController implements ProductREST {
     @ApiResponse({ type: Product })
     async updateProduct(
         @Param('id') id: string,
-        @Body() data: ProductData
+        @Body() data: ProductUpdateData
     ): Promise<Product> {
         return this.productService.updateProduct(id, data)
     }

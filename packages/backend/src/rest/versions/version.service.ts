@@ -1,7 +1,7 @@
 import 'multer'
 import * as fs from 'fs'
 import * as shortid from 'shortid'
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common'
 import { Version, VersionData, VersionREST } from 'productboard-common'
 
 @Injectable()
@@ -52,6 +52,12 @@ export class VersionService implements VersionREST<VersionData, Express.Multer.F
         for (var index = 0; index < VersionService.versions.length; index++) {
             const version = VersionService.versions[index]
             if (version.id == id) {
+                if (version.productId != data.productId) {
+                    throw new HttpException("You cannot change the product ID", 400)
+                }
+                if (version.userId != data.userId) {
+                    throw new HttpException("You cannot change the user ID", 400)
+                }
                 VersionService.versions.splice(index, 1, { id, deleted: version.deleted, ...data })
                 return VersionService.versions[index]
             }

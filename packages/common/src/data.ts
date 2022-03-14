@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 // User
 
+// TODO alles updatebar
 export class UserData {
     @ApiProperty()
     name: string
@@ -20,17 +21,19 @@ export class User extends UserData {
 
 // Product
 
-export class ProductData {
-    @ApiProperty()
-    userId: string
+export class ProductUpdateData {
     @ApiProperty()
     name: string
     @ApiProperty()
     description: string
-
 }
 
-export class Product extends ProductData {
+export class ProductAddData extends ProductUpdateData {
+    @ApiProperty()
+    userId: string
+}
+
+export class Product extends ProductAddData {
     @ApiProperty()
     id: string
     @ApiProperty()
@@ -39,6 +42,7 @@ export class Product extends ProductData {
 
 // Version
 
+// TODO major, minor, patch, description updatebr
 export class VersionData {
     @ApiProperty()
     userId: string
@@ -67,6 +71,7 @@ export class Version extends VersionData {
 
 // Issue
 
+// TODO label text state updatebar
 export class IssueData {
     @ApiProperty()
     userId: string
@@ -90,7 +95,7 @@ export class Issue extends IssueData {
 }
 
 // Comment
-
+// TODO text updatebar
 export class CommentData {
     @ApiProperty()
     userId: string
@@ -110,7 +115,7 @@ export class Comment extends CommentData {
 }
 
 // Member
-
+// TODO Nichts updatebar-> leere klasse für updatedata machen
 export class MemberData {
     @ApiProperty()
     productId: string

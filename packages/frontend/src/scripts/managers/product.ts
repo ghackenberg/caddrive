@@ -1,4 +1,4 @@
-import { Product, ProductData, ProductREST } from 'productboard-common'
+import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 import { ProductClient } from '../clients/rest/product'
 
 class ProductManagerImpl implements ProductREST {
@@ -23,7 +23,7 @@ class ProductManagerImpl implements ProductREST {
         return Object.keys(this.productSet).map(id => this.productIndex[id])
     }
 
-    async addProduct(data: ProductData): Promise<Product> {
+    async addProduct(data: ProductAddData): Promise<Product> {
         // Call backend
         const product = await ProductClient.addProduct(data)
         // Update product index
@@ -51,7 +51,7 @@ class ProductManagerImpl implements ProductREST {
         return this.productIndex[id]
     }
 
-    async updateProduct(id: string, data: ProductData): Promise<Product> {
+    async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
         // Call backend
         const product = await ProductClient.updateProduct(id, data)
         // Update product index
