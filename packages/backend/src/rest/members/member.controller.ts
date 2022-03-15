@@ -1,14 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
-import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+import { Member, MemberAddData, MemberUpdateData, MemberREST, User } from 'productboard-common'
 import { MemberService } from './member.service'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { REQUEST } from '@nestjs/core'
 
 @Controller('rest/members')
 @UseGuards(AuthGuard('basic'))
 @ApiBasicAuth()
 export class MemberController implements MemberREST {
-    constructor(private readonly memberService: MemberService) {}
+    constructor(
+        private readonly memberService: MemberService,
+        @Inject(REQUEST)
+        private readonly request: Express.Request
+        ) {}
 
     @Get()
     @ApiQuery({ name: 'product', type: 'string', required: true })
@@ -22,6 +27,12 @@ export class MemberController implements MemberREST {
     @ApiBody({ type: MemberAddData, required: true })
     @ApiResponse({ type: Member })
     async addMember(@Body() data: MemberAddData): Promise<Member> {
+        if(!data){
+            throw new NotFoundException()
+        }
+        if ((await this.memberService.findMembers(data.productId, (<User> this.request.user).id)).length == 0) {
+            throw new ForbiddenException()
+        }
         return this.memberService.addMember(data)
     }
 
@@ -29,7 +40,14 @@ export class MemberController implements MemberREST {
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: Member })
     async getMember(@Param('id') id: string): Promise<Member> {
-        return this.memberService.getMember(id)
+        const member = await this.memberService.getMember(id)
+        if(!member){
+            throw new NotFoundException()
+        }
+        if ((await this.memberService.findMembers(member.productId, (<User> this.request.user).id)).length == 0) {
+            throw new ForbiddenException()
+        }
+        return member
     }
 
     @Put(':id')
@@ -37,6 +55,13 @@ export class MemberController implements MemberREST {
     @ApiBody({ type: Member, required: true })
     @ApiResponse({ type: Member })
     async updateMember(@Param('id') id: string, @Body() data: MemberUpdateData): Promise<Member> {
+        const member = await this.memberService.getMember(id)
+        if(!member){
+            throw new NotFoundException()
+        }
+        if ((await this.memberService.findMembers(member.productId, (<User> this.request.user).id)).length == 0) {
+            throw new ForbiddenException()
+        }
         return this.memberService.updateMember(id,data)
     }
 
@@ -44,6 +69,13 @@ export class MemberController implements MemberREST {
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: [Member] })
     async deleteMember(@Param('id') id: string): Promise<Member> {
+        const member = await this.memberService.getMember(id)
+        if(!member){
+            throw new NotFoundException()
+        }
+        if ((await this.memberService.findMembers(member.productId, (<User> this.request.user).id)).length == 0) {
+            throw new ForbiddenException()
+        }
         return this.memberService.deleteMember(id)
     }
 }

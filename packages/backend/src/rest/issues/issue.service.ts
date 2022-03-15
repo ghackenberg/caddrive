@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { CommentService } from '../comments/comment.service'
@@ -14,6 +14,7 @@ export class IssueService implements IssueREST {
     ]
 
     public constructor(
+        @Inject(forwardRef(() => CommentService))
         private readonly commentService: CommentService
     ) {}
 
