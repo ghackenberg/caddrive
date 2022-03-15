@@ -1,4 +1,4 @@
-import { Issue, IssueAddData, IssueUpdateData, Comment, Product, ProductAddData,ProductUpdateData, User, Version, CommentAddData, CommentUpdateData,  Member, MemberAddData, MemberUpdateData } from './data'
+import { Issue, IssueAddData, IssueUpdateData, Comment, Product, ProductAddData,ProductUpdateData, User, Version, CommentAddData, CommentUpdateData,  Member, MemberAddData, MemberUpdateData } from 'productboard-common'
 
 export interface UserREST<D, F> {
     checkUser(): Promise<User>
