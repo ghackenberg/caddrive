@@ -1,17 +1,17 @@
 import axios from 'axios'
 // Commons
-import { User, UserData, UserREST } from 'productboard-common'
+import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class UserClientImpl implements UserREST<UserData, File> {
+class UserClientImpl implements UserREST<UserAddData, File> {
     async checkUser(): Promise<User> {
         return (await axios.get<User>('/rest/users/check', { auth })).data
     }
     async findUsers(): Promise<User[]> {
         return (await axios.get<User[]>(`/rest/users`, { auth } )).data
     }
-    async addUser(data: UserData, file?: File): Promise<User> {
+    async addUser(data: UserAddData, file?: File): Promise<User> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         body.append('file', file)
@@ -20,7 +20,7 @@ class UserClientImpl implements UserREST<UserData, File> {
     async getUser(id: string): Promise<User> {
         return (await axios.get<User>(`/rest/users/${id}`, { auth })).data
     }
-    async updateUser(id: string, data: UserData, file?: File): Promise<User> {
+    async updateUser(id: string, data: UserUpdateData, file?: File): Promise<User> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         body.append('file', file)

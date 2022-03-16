@@ -1,7 +1,7 @@
-import { Version, VersionData, VersionREST } from 'productboard-common'
+import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { VersionClient } from '../clients/rest/version'
 
-class VersionManagerImpl implements VersionREST<VersionData, File> {
+class VersionManagerImpl implements VersionREST<VersionAddData, File> {
     private versionIndex: {[id: string]: Version} = {}
     private productIndex: {[id: string]: {[id: string]: boolean}} = {}
 
@@ -23,7 +23,7 @@ class VersionManagerImpl implements VersionREST<VersionData, File> {
         return Object.keys(this.productIndex[productId]).map(id => this.versionIndex[id])
     }
 
-    async addVersion(data: VersionData, file: File): Promise<Version> {
+    async addVersion(data: VersionAddData, file: File): Promise<Version> {
         // Call backend
         const version = await VersionClient.addVersion(data, file)
         // Update version index
@@ -51,7 +51,7 @@ class VersionManagerImpl implements VersionREST<VersionData, File> {
         return this.versionIndex[id]
     }
 
-    async updateVersion(id: string, data: VersionData, file?: File): Promise<Version> {
+    async updateVersion(id: string, data: VersionUpdateData, file?: File): Promise<Version> {
         // Update product index
         if (id in this.versionIndex) {
             const version = this.versionIndex[id]

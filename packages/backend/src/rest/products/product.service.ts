@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { Product, ProductData, ProductREST } from 'productboard-common'
+import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 import { VersionService } from '../versions/version.service'
 import { IssueService } from '../issues/issue.service'
 import { MemberService } from '../members/member.service'
@@ -29,9 +29,10 @@ export class ProductService implements ProductREST {
         return result
     }
 
-    async addProduct(data: ProductData) {
+    async addProduct(data: ProductAddData) {
         const product = { id: shortid(), deleted: false, ...data }
         ProductService.products.push(product)
+        this.memberService.addMember({productId: product.id, userId: product.userId})
         return product
     }
 
@@ -44,11 +45,11 @@ export class ProductService implements ProductREST {
         throw new NotFoundException()
     }
 
-    async updateProduct(id: string, data: ProductData): Promise<Product> {
+    async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
         for (var index = 0; index < ProductService.products.length; index++) {
             const product = ProductService.products[index]
             if (product.id == id) {
-                ProductService.products.splice(index, 1, { id, deleted: product.deleted, ...data })
+                ProductService.products.splice(index, 1, { ...product, ...data })
                 return ProductService.products[index]
             }
         }

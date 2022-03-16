@@ -1,4 +1,4 @@
-import { Issue, IssueData, Comment, Product, ProductData, User, Version, CommentData, Member, MemberData } from './data'
+import { Issue, IssueAddData, IssueUpdateData, Comment, Product, ProductAddData,ProductUpdateData, User, Version, CommentAddData, CommentUpdateData,  Member, MemberAddData, MemberUpdateData } from 'productboard-common'
 
 export interface UserREST<D, F> {
     checkUser(): Promise<User>
@@ -11,9 +11,9 @@ export interface UserREST<D, F> {
 
 export interface ProductREST {
     findProducts(): Promise<Product[]>
-    addProduct(data: ProductData): Promise<Product>
+    addProduct(data: ProductAddData): Promise<Product>
     getProduct(id: string): Promise<Product>
-    updateProduct(id: string, data: ProductData): Promise<Product>
+    updateProduct(id: string, data: ProductUpdateData): Promise<Product>
     deleteProduct(id: string): Promise<Product>
 }
 
@@ -27,25 +27,25 @@ export interface VersionREST<D, F> {
 
 export interface IssueREST {
     findIssues(productId: string): Promise<Issue[]>
-    addIssue(data: IssueData): Promise<Issue>
+    addIssue(data: IssueAddData): Promise<Issue>
     getIssue(id: string): Promise<Issue>
-    updateIssue(id: string, data: IssueData): Promise<Issue>
+    updateIssue(id: string, data: IssueUpdateData): Promise<Issue>
     deleteIssue(id: string): Promise<Issue>
 }
 
 export interface CommentREST {
     findComments(issueId: string): Promise<Comment[]>
-    addComment(data: CommentData): Promise<Comment>
+    addComment(data: CommentAddData): Promise<Comment>
     getComment(id: string): Promise<Comment>
-    updateComment(id: string, data: CommentData): Promise<Comment>
+    updateComment(id: string, data: CommentUpdateData): Promise<Comment>
     deleteComment(id: string): Promise<Comment>
 }
 
 export interface MemberREST {
     findMembers(productId: string, userId?: string): Promise<Member[]>
-    addMember(data: MemberData): Promise<Member>
+    addMember(data: MemberAddData): Promise<Member>
     getMember(id: string): Promise<Member>
-    updateMember(id: string, data: MemberData): Promise<Member>
+    updateMember(id: string, data: MemberUpdateData): Promise<Member>
     deleteMember(id: string): Promise<Member>
 }
 

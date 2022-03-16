@@ -1,7 +1,7 @@
-import { User, UserData, UserREST } from 'productboard-common'
+import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { UserClient } from '../clients/rest/user'
 
-class UserManagerImpl implements UserREST<UserData, File> {
+class UserManagerImpl implements UserREST<UserAddData, File> {
     private userIndex: {[id: string]: User} = {}
     private userSet: {[id: string]: boolean}
 
@@ -32,7 +32,7 @@ class UserManagerImpl implements UserREST<UserData, File> {
         return Object.keys(this.userSet).map(id => this.userIndex[id])
     }
 
-    async addUser(data: UserData, file?: File): Promise<User> {
+    async addUser(data: UserAddData, file?: File): Promise<User> {
         // Call backend
         const user = await UserClient.addUser(data, file)
         // Update user index
@@ -60,7 +60,7 @@ class UserManagerImpl implements UserREST<UserData, File> {
         return this.userIndex[id]
     }
 
-    async updateUser(id: string, data: UserData, file?: File): Promise<User> {
+    async updateUser(id: string, data: UserUpdateData, file?: File): Promise<User> {
         // Call backend
         const user = await UserClient.updateUser(id, data, file)
         // Update user index

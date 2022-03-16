@@ -1,4 +1,4 @@
-import { Comment, CommentData, CommentREST } from 'productboard-common'
+import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 import { CommentClient } from '../clients/rest/comment'
 
 class CommentManagerImpl implements CommentREST {
@@ -23,7 +23,7 @@ class CommentManagerImpl implements CommentREST {
         return Object.keys(this.issueIndex[issueId]).map(id => this.commentIndex[id])
     }
 
-    async addComment(data: CommentData): Promise<Comment> {
+    async addComment(data: CommentAddData): Promise<Comment> {
         // Call backend
         const comment = await CommentClient.addComment(data)
         // Update comment index
@@ -51,7 +51,7 @@ class CommentManagerImpl implements CommentREST {
         return this.commentIndex[id]
     }
 
-    async updateComment(id: string, data: CommentData): Promise<Comment> {
+    async updateComment(id: string, data: CommentUpdateData): Promise<Comment> {
         if (id in this.commentIndex) {
             const comment = this.commentIndex[id]
             // Update issue index

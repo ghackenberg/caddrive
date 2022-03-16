@@ -1,4 +1,4 @@
-import { Member, MemberData, MemberREST } from 'productboard-common'
+import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 import { MemberClient } from '../clients/rest/member'
 
 class MemberManagerImpl implements MemberREST {
@@ -44,7 +44,7 @@ class MemberManagerImpl implements MemberREST {
         }
     }
 
-    async addMember(data: MemberData): Promise<Member> {
+    async addMember(data: MemberAddData): Promise<Member> {
         // Call backend
         const member = await MemberClient.addMember(data)
         // Update member index
@@ -80,7 +80,7 @@ class MemberManagerImpl implements MemberREST {
         return this.memberIndex[id]
     }
 
-    async updateMember(id: string, data: MemberData): Promise<Member> {
+    async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
         if (id in this.memberIndex) {
             const member = this.memberIndex[id]
             // Update product index

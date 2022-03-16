@@ -1,14 +1,14 @@
 import axios from 'axios'
 // Commons
-import { Version, VersionData, VersionREST } from 'productboard-common'
+import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 // Globals
 import { auth } from '../auth'
 
-class VersionClientImpl implements VersionREST<VersionData, File> {
+class VersionClientImpl implements VersionREST<VersionAddData, File> {
     async findVersions(product: string): Promise<Version[]> {
         return (await axios.get<Version[]>('/rest/versions', { params: { product }, auth } )).data
     }
-    async addVersion(data: VersionData, file: File): Promise<Version> {
+    async addVersion(data: VersionAddData, file: File): Promise<Version> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         body.append('file', file)
@@ -17,7 +17,7 @@ class VersionClientImpl implements VersionREST<VersionData, File> {
     async getVersion(id: string): Promise<Version> {
         return (await axios.get<Version>(`/rest/versions/${id}`, { auth })).data
     }
-    async updateVersion(id: string, data: VersionData, file?: File): Promise<Version> {
+    async updateVersion(id: string, data: VersionUpdateData, file?: File): Promise<Version> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         body.append('file', file)

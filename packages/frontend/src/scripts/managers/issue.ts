@@ -1,4 +1,4 @@
-import { Issue, IssueData, IssueREST } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { IssueClient } from '../clients/rest/issue'
 
 class IssueManagerImpl implements IssueREST {
@@ -23,7 +23,7 @@ class IssueManagerImpl implements IssueREST {
         return Object.keys(this.productIndex[productId]).map(id => this.issueIndex[id])
     }
 
-    async addIssue(data: IssueData): Promise<Issue> {
+    async addIssue(data: IssueAddData): Promise<Issue> {
         // Call backend
         const issue = await IssueClient.addIssue(data)
         // Update issue index
@@ -51,7 +51,7 @@ class IssueManagerImpl implements IssueREST {
         return this.issueIndex[id]
     }
 
-    async updateIssue(id: string, data: IssueData): Promise<Issue> {
+    async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
         if (id in this.issueIndex) {
             const issue = this.issueIndex[id]
             // Update product index
