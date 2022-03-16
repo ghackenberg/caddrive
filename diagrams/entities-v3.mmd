@@ -1,0 +1,98 @@
+classDiagram
+    direction LR
+
+    class User {
+        id: string
+        name: string
+        email: string
+    }
+    class Product {
+        id: string
+        name: string
+        description: string
+    }
+    class Member {
+        id: string
+        role: string
+    }
+    class Version {
+        id: string
+        time: string
+        major: number
+        minor: number
+        patch: number
+        description: string
+    }
+    class File {
+        id: string
+        type: string
+        data: any
+    }
+    class Reference {
+        type: string
+    }
+    class Issue {
+        id: string
+        time: date
+        label: string
+        description: string
+        state: string
+    }
+    class Comment {
+        id: string
+        time: string
+        text: string
+    }
+    class Sprint {
+        id: string
+        start: date
+        ende: date
+        label: string
+        description: string
+    }
+
+    User <.. Member : references
+    Member --* Product : contains
+
+    Issue "1" *-- "*" Comment : contains
+    Product "1" *-- "*" Issue : contains
+
+    User "1" <.. "*" Product : created by
+    User "1" <.. "*" Version : created by
+    User "1" <.. "*" Issue : created by
+    User "1" <.. "*" Comment : created by
+    User "1" <.. "*" Sprint : created by
+    
+    Product "1" *-- "*" Version : contains
+    Product "1" *-- "*" Sprint : contains
+    
+    Version "1" *-- "1" File : contains
+    Version "1" ..> "*" Version : references
+    Version "*" *-- "*" Reference : contains
+    File  "1" <.. "1" Reference : references
+    
+    Issue "*" ..> "0..1" Sprint : assigned to
+    Issue "*" ..> "0..1" User : assigned to
+    Issue "*" *-- "*" Reference : contains
+    Comment "*" *-- "*" Reference : contains
+
+    Reference <|-- TextReference
+    Reference <|-- NodeReference
+    Reference <|-- AreaReference
+    Reference <|-- TimeReference
+
+    class TextReference {
+        fromChar: int
+        toChar: int
+    }
+    class NodeReference {
+        path: string
+    }
+    class AreaReference {
+        x1, y1, z1: int
+        x2, y2, z2: int
+    }
+    class TimeReference {
+        fromTime: long
+        toTime: long
+    }
