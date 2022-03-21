@@ -25,9 +25,6 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async findVersions(
         @Query('product') product: string
     ): Promise<Version[]> {
-        if ((await this.memberService.findMembers(product, (<User> this.request.user).id)).length == 0) {
-            throw new ForbiddenException()
-        }
         return this.versionService.findVersions(product)
     }
 
