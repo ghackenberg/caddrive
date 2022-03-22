@@ -72,8 +72,6 @@ body > div > main table a:hover {
 }
 body > div > main table img {
     display: block;
-    /* width: 1em;
-    height: 1em; */
     padding: 0.25em;
 }
 body > div > main table img.small {

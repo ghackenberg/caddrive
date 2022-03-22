@@ -7,11 +7,11 @@ import * as shortid from 'shortid'
 @Injectable()
 export class MemberService implements MemberREST {
     private static readonly members: Member[] = [
-        // { id: 'demo-1', userId: 'demo-1', productId: "demo-1", deleted: false},
+        { id: 'demo-1', userId: 'demo-1', productId: "demo-1", deleted: false},
         // { id: 'demo-2', userId: 'demo-2', productId: "demo-2", deleted: false},
-        // { id: 'demo-3', userId: 'demo-4', productId: "demo-1", deleted: false},
-        // { id: 'demo-4', userId: 'demo-4', productId: "demo-2", deleted: false},
-
+        { id: 'demo-3', userId: 'demo-4', productId: "demo-1", deleted: false},
+        { id: 'demo-4', userId: 'demo-4', productId: "demo-2", deleted: false},
+        { id: 'demo-5', userId: 'demo-2', productId: "demo-1", deleted: false},
     ]
     
     public constructor() {}

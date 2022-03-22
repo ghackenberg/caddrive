@@ -59,6 +59,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
             setIssues(issues.filter(other => other.id != issue.id))       
         }
     }
+    console.log(issues)
 
     const columns: Column<Issue>[] = [
         {label: 'State', class: 'center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`} className={issue.state}>{issue.state}</Link>},
