@@ -2,7 +2,7 @@ import { Issue, IssueAddData, IssueUpdateData, Comment, Product, ProductAddData,
 
 export interface UserREST<D, F> {
     checkUser(): Promise<User>
-    findUsers(): Promise<User[]>
+    findUsers(query?: string, productId?: string): Promise<User[]>
     addUser(data: D, file?: F): Promise<User>
     getUser(id: string): Promise<User>
     updateUser(id: string, data: D, file?: F): Promise<User>

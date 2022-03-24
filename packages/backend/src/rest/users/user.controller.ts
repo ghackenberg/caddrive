@@ -1,8 +1,8 @@
 import 'multer'
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Scope, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiBasicAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
+import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { UserService } from './user.service'
 import { FileInterceptor } from '@nestjs/platform-express'
@@ -24,9 +24,11 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     }
 
     @Get()
+    @ApiQuery({ name: 'query', type: 'string', required: false })
+    @ApiQuery({ name: 'product', type: 'string', required: false })
     @ApiResponse({ type: [User] })
-    async findUsers(): Promise<User[]> {
-        return this.userService.findUsers()
+    async findUsers(@Query('query') query?: string, @Query('product') product?: string): Promise<User[]> {
+        return this.userService.findUsers(query, product)
     }
   
     @Post()

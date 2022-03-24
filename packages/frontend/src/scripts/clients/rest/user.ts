@@ -8,8 +8,8 @@ class UserClientImpl implements UserREST<UserAddData, File> {
     async checkUser(): Promise<User> {
         return (await axios.get<User>('/rest/users/check', { auth })).data
     }
-    async findUsers(): Promise<User[]> {
-        return (await axios.get<User[]>(`/rest/users`, { auth } )).data
+    async findUsers(query?: string, product?: string): Promise<User[]> {
+        return (await axios.get<User[]>(`/rest/users`, { params: { query, product }, auth } )).data
     }
     async addUser(data: UserAddData, file?: File): Promise<User> {
         const body = new FormData()

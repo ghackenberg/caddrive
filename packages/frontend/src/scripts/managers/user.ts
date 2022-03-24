@@ -14,10 +14,12 @@ class UserManagerImpl implements UserREST<UserAddData, File> {
         return user
     }
 
-    async findUsers(): Promise<User[]> {
+    async findUsers(query?: string, product?: string): Promise<User[]> {
+        // TODO fix me!!
+        this.userSet = undefined
         if (!this.userSet) {
             // Call backend
-            const users = await UserClient.findUsers()
+            const users = await UserClient.findUsers(query, product)
             // Update user index
             for (const user of users) {
                 this.userIndex[user.id] = user

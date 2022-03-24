@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import * as hash from 'hash.js'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
+import { MemberService } from '../members/member.service'
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {
@@ -14,14 +15,29 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         { id: 'demo-4', name: 'Dominik Frühwirth', email: 'dominik.fruehwirth@fh-wels.at', password: hash.sha256().update('test').digest('hex'), deleted: false }
     ]
 
+    constructor(
+        private readonly memberService: MemberService
+    ) {}
+
     async checkUser(): Promise<User> {
         return null
     }
 
-    async findUsers() : Promise<User[]> {
+    async findUsers(query?: string, productId?: string) : Promise<User[]> {
+        console.log(query)
+        console.log(productId)
         const results: User[] = []
         for (const user of UserService.users) {
+            console.log(user.name)
             if (user.deleted) {
+                continue
+            }
+            if (query && !user.name.toLowerCase().includes(query.toLowerCase())) {
+                console.log("test1")
+                continue
+            }
+            if (productId && (await this.memberService.findMembers(productId, user.id)).length > 0) {
+                console.log("test2")
                 continue
             }
             results.push(user)
