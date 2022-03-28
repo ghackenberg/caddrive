@@ -188,9 +188,29 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (commentText) {
-            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText })
+            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'none' })
             setComments([...comments, comment])
             setCommentText('')
+        }
+    }
+
+    async function submitCommentAndClose(event: FormEvent) {
+        event.preventDefault()
+        if (commentText) {
+            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'close' })
+            setComments([...comments, comment])
+            setCommentText('')
+            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed' }))
+        }
+    }
+
+    async function submitCommentAndReopen(event: FormEvent) {
+        event.preventDefault()
+        if (commentText) {
+            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'reopen' })
+            setComments([...comments, comment])
+            setCommentText('')
+            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open' }))
         }
     }
 
@@ -238,6 +258,11 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                         <div className="text">
                                                             <textarea placeholder={'Type text'} value={commentText} onChange={event => setCommentText(event.currentTarget.value)}/>
                                                             <button onClick={submitComment}>Save</button>
+                                                            {issue.state == 'open' ? (
+                                                                <button onClick={submitCommentAndClose}>Close</button>
+                                                             ) : (
+                                                                <button onClick={submitCommentAndReopen}>Reopen</button>
+                                                             )}
                                                         </div>
                                                     </div>
                                                 </div>

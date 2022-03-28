@@ -6,6 +6,8 @@ import { Comment, Issue, User } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 // Icons
 import * as PartIcon from '/src/images/part.png'
+import * as CloseIcon from '/src/images/close.png'
+import * as ReopenIcon from '/src/images/reopen.png'
 
 interface Part {
     productId: string
@@ -18,6 +20,8 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
     const user = useContext(UserContext)
 
     const comment = props.comment
+
+    console.log(comment)
 
     return (
         <div key={comment.id} className={`${props.class}${comment.userId == user.id ? ' self' : ''}`}>
@@ -42,15 +46,36 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
                 </div>
             </div>
             {props.parts && props.parts.map((part, index) => (
-                <div key={index} className="part">
+                <div key={index} className="note part">
                     <div className="free">
 
                     </div>
                     <div className="text">
-                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectName}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}><img src={PartIcon}/>{part.objectName}</a> was mentioned
+                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectName}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
+                            <span>
+                                <img src={PartIcon}/>
+                            </span>
+                            {part.objectName}
+                        </a>
+                        was mentioned
                     </div>
                 </div>
             ))}
+            {'action' in comment && comment.action != 'none' && (
+                <div className={`note action ${comment.action}`}>
+                    <div className="free">
+
+                    </div>
+                    <div className="text">
+                        <a>
+                            <span>
+                                <img src={comment.action == 'close' ? CloseIcon : ReopenIcon}/>
+                            </span>
+                        </a>
+                        {comment.action == 'close' ? 'closed' : 'reopened'}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
