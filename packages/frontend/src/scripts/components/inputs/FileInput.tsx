@@ -4,7 +4,7 @@ import { Fragment } from 'react'
 import { GenericInput } from './GenericInput'
 import { TextInput } from './TextInput'
 
-export const FileInput = (props: {class?: string, label: string, change?: (value: File) => void, accept?: string, placeholder?: string, disabled?: boolean}) => {
+export const FileInput = (props: {class?: string, label: string, change?: (value: File) => void, accept?: string, placeholder?: string, disabled?: boolean, required: boolean}) => {
     
     const hiddenFileInput = React.useRef(null)
     
@@ -17,7 +17,7 @@ export const FileInput = (props: {class?: string, label: string, change?: (value
 
     return (
         <React.Fragment>
-            <TextInput class={props.class} label={props.label} value={fileName} placeholder={'No file selected yet'} required = {false}/>
+            <TextInput class={props.class} label={props.label} value={fileName} placeholder={'No file selected yet'} required = {props.required}/>
             <GenericInput>
                 <Fragment>
                     <input 

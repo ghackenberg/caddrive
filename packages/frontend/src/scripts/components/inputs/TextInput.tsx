@@ -11,8 +11,8 @@ export const TextInput = (props: {class?: string, value: string, label?: string,
                 placeholder={props.placeholder}
                 value={props.value}
                 disabled={props.disabled}
-                onChange={event => {props.change(event.currentTarget.value)}}
-                onInput={event => {props.input(event.currentTarget.value)}}
+                onChange={event => {props.change && props.change(event.currentTarget.value)}}
+                onInput={event => {props.input && props.input(event.currentTarget.value)}}
                 required = {props.required}/>
         </GenericInput>
     )

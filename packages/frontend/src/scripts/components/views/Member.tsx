@@ -51,7 +51,7 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
                                             <div key={user.id}>
                                                 <div/>
                                                 <div>
-                                                    <a onClick={() => select(user)}>{user.name}</a>
+                                                    <a href='#' onClick={() => select(user)}>{user.name}</a>
                                                 </div>
                                             </div>
                                         ))}

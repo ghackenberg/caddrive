@@ -59,7 +59,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
                     {error && <p style={{color: 'red'}}>{error}</p>}
                     <form onSubmit={submit} onReset={reset} className='data-input'>
                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                        <PasswordInput label='Password' placeholder='Type password' change={password => setPassword(encrypt(password))}/>
+                        <PasswordInput label='Password' placeholder='Type password' change={password => setPassword(encrypt(password))} required= {true}/>
                         <div>
                             <div/>
                             <div>

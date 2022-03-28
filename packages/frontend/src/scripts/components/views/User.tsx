@@ -17,8 +17,9 @@ import { auth } from '../../clients/auth'
 import { FileInput } from '../inputs/FileInput'
 
 export const UserView = (props: RouteComponentProps<{ user: string }>) => {
-
     const userId = props.match.params.user
+    
+    
     
     const history = useHistory()
 
@@ -42,23 +43,24 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                const user = await UserManager.addUser({ name, email, password: encrypt(password) },file)
-                history.replace(`/users/${user.id}`)
+                await UserManager.addUser({ name, email, password: encrypt(password) },file)
             }
         } else {
             if (name && email) {
-                setUser(await UserManager.updateUser(user.id, { name, email, password: encrypt(password) },file))
+                setUser(await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password },file))
                 if (auth.username == name) {
                     auth.password = encrypt(password)
                 }
             }
-        }       
+        }   
+        history.goBack()    
     }
 
     function encrypt(password: string): string {
         return hash.sha256().update(password).digest('hex')
     }
 
+        
     return (
         <main className="view extended user">
             { (userId == 'new' || user) && (
@@ -74,8 +76,8 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
                                     <form onSubmit={submit}>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                        <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword}/>
-                                        <FileInput label='Profile Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile}/>
+                                        <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword} required = {userId === 'new'}/>
+                                        <FileInput label='Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile} required= {userId === 'new'}/>
                                         <div>
                                             <div/>
                                             <div>

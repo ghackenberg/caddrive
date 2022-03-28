@@ -65,12 +65,13 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionManager.addVersion({ userId: user.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
-            history.replace(`/products/${productId}/versions/${version.id}`)
+            await VersionManager.addVersion({ userId: user.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
+            //history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
             console.log(description)
             setVersion(await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, file))
         }
+        history.goBack()
     }
         
     return (
@@ -100,7 +101,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                                             </Fragment>
                                         </GenericInput>
                                         <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                        {versionId == 'new' && <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile}/>}
+                                        {versionId == 'new' && <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required= {true}/>}
                                         <div>
                                             <div/>
                                             <div>

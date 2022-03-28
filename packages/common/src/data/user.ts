@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class UserUpdateData {
-
-}
-
-export class UserAddData extends UserUpdateData {
-    @ApiProperty()
-    name: string
     @ApiProperty()
     email: string
     @ApiProperty()
+    name: string
+    @ApiProperty()
     password: string
+}
+
+export class UserAddData extends UserUpdateData {
+    
 }
 
 export class User extends UserAddData {
@@ -18,4 +18,7 @@ export class User extends UserAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    pictureId: string
 }
+

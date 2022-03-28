@@ -28,7 +28,7 @@ export const UsersView = () => {
     }
 
     const columns: Column<User>[] = [
-        {label: 'Picture', content: user => <img src={`/rest/files/${user.id}.jpg`} className='big'/>},
+        {label: 'Picture', content: user => <img src={`/rest/files/${user.pictureId}.jpg`} className='big'/>},
         {label: 'Name', class: 'left nowrap', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
         {label: 'Email', class: 'left nowrap fill', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
         {label: '', content: user => <a onClick={_event => deleteUser(user)}><img src={DeleteIcon} className='small'/></a>}
