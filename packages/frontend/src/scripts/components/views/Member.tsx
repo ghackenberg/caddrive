@@ -69,7 +69,7 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true}/>
+                                    <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
                         </Fragment>

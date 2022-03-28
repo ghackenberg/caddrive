@@ -71,7 +71,7 @@ export const MembersView = (props: RouteComponentProps<{product: string}>) => {
                                    { members && <Table columns={columns} items={members}/> }
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true}/>
+                                    <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
                         </Fragment>

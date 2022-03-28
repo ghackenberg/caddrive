@@ -17,7 +17,7 @@ interface Part {
     objectName: string
 }
 
-export const ProductView3D = (props: { product?: Product, mouse: boolean, highlighted?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void }) => {
+export const ProductView3D = (props: { product?: Product, mouse: boolean, highlighted?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean }) => {
 
     const [load, setLoad] = useState<boolean>(props.product !== undefined)
     const [versions, setVersions] = useState<Version[]>(null)
@@ -31,7 +31,7 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
             ) : (
                 <Fragment>
                     { versions && versions.length > 0 ? (
-                        <VersionView3D version={versions[versions.length - 1]} mouse={props.mouse} highlighted={(props.highlighted || []).map(part => part.objectName)} selected={(props.selected || []).map(part => part.objectName)} click={props.click && (object => props.click(versions[versions.length - 1], object))}/>
+                        <VersionView3D version={versions[versions.length - 1]} mouse={props.mouse} highlighted={(props.highlighted || []).map(part => part.objectName)} selected={(props.selected || []).map(part => part.objectName)} click={props.click && (object => props.click(versions[versions.length - 1], object))} vr= {props.vr}/>
                     ) : (
                         <img className='empty' src={EmptyIcon}/>
                     )}

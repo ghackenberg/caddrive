@@ -112,7 +112,7 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
                                 </div>
                                 <div>
                                     { version ? (
-                                        <VersionView3D version={version} mouse={true}/>
+                                        <VersionView3D version={version} mouse={true} vr= {true}/>
                                     ) : (
                                         <div className="widget model_view">
                                             <img className='empty' src={EmptyIcon}/>

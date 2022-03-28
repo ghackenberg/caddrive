@@ -285,7 +285,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                     )}
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject}/>
+                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
                         </Fragment>

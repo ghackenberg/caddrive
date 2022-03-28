@@ -82,7 +82,7 @@ export const ProductsView = () => {
     }
 
     const columns: Column<Product>[] = [
-        {label: 'Preview', class: 'center', content: product => <Link to={`/products/${product.id}`}><ProductView3D product={product} mouse={false}/></Link>},
+        {label: 'Preview', class: 'center', content: product => <Link to={`/products/${product.id}`}><ProductView3D product={product} mouse={false} vr= {false}/></Link>},
         {label: 'Owner', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.id in users ? users[product.id].name : '?'}</Link>},
         {label: 'Name', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.name}</Link>},
         {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>},

@@ -10,7 +10,7 @@ import { SceneView } from './SceneView'
 import * as LoadIcon from '/src/images/load.png'
 import { FileManager } from '../../managers/file'
 
-export const VersionView3D = (props: { version: Version, mouse: boolean, highlighted?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
+export const VersionView3D = (props: { version: Version, mouse: boolean, highlighted?: string[], selected?: string[], click?: (object: Object3D) => void, vr: boolean}) => {
 
     const [load, setLoad] = useState<boolean>(true)
     const [path, setPath] = useState<string>('')
@@ -28,7 +28,7 @@ export const VersionView3D = (props: { version: Version, mouse: boolean, highlig
                 <img className='load' src={LoadIcon}/>
             ) : (
                 <Fragment>
-                    {model && <SceneView model={model} mouse={props.mouse} vr={false} highlighted={props.highlighted} selected={props.selected} click={props.click}/> }
+                    {model && <SceneView model={model} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} selected={props.selected} click={props.click}/> }
                 </Fragment>
             )}
         </div>

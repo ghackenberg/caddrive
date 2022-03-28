@@ -195,7 +195,7 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                                                         </div>
                                                     </div>
                                                     <div className="model">
-                                                        <VersionView3D version={vers} mouse={false}/>
+                                                        <VersionView3D version={vers} mouse={false} vr= {false}/>
                                                     </div>
                                                 </div>
                                             </Fragment>
@@ -204,9 +204,9 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                                 </div>
                                 <div>
                                     {version ? (
-                                        <VersionView3D version={version} mouse={true}/>
+                                        <VersionView3D version={version} mouse={true} vr= {true}/>
                                     ) : (
-                                        <ProductView3D product={product} mouse={true}/>
+                                        <ProductView3D product={product} mouse={true} vr= {true}/>
                                     )}
                                 </div>
                             </main>
