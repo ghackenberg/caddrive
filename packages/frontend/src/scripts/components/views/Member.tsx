@@ -23,10 +23,18 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
     const [product, setProduct] = useState<Product>()
     const [query, setQuery] = useState<string>('')
     const [users, setUsers] = useState<User[]>()
+    const [names, setNames] = useState<React.ReactNode[]>()
 
     // Load entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [query])
+    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
+    useEffect(() => { users && setNames(users.map(user => {
+        const index = user.name.toLowerCase().indexOf(query.toLowerCase())
+        const before = user.name.substring(0, index)
+        const between = user.name.substring(index, index + query.length)
+        const after = user.name.substring(index + query.length)
+        return <Fragment>{before}<mark>{between}</mark>{after}</Fragment>
+    }))}, [users])
 
     async function select(user: User) {
         await MemberManager.addMember({ productId, userId: user.id })
@@ -47,11 +55,14 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
                                     <h1>Settings</h1>
                                     <form>
                                         <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
-                                        {users && users.map(user => (
+                                        {users && users.map((user, index) => (
                                             <div key={user.id}>
                                                 <div/>
                                                 <div>
-                                                    <a href='#' onClick={() => select(user)}>{user.name}</a>
+                                                    <a onClick={() => select(user)}>
+                                                        <img src={`/rest/files/${user.pictureId}.jpg`} className="big"/>
+                                                        <span>{names && names[index]}</span>
+                                                    </a>
                                                 </div>
                                             </div>
                                         ))}

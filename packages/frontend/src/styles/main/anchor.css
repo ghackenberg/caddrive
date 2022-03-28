@@ -1,4 +1,5 @@
 body > div > main a {
     text-decoration: none;
     color: blue;
+    cursor: pointer;
 }

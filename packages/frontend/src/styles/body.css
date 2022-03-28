@@ -13,6 +13,13 @@ body a > img {
     height: 1.5em;
     margin-right: 0.25em;
 }
+body a > img.big {
+    vertical-align: middle;
+    width: 3em;
+    height: 3em;
+    margin-right: 0.5em;
+    border-radius: 50%;
+}
 
 body img.load {
     animation-name: spin;
