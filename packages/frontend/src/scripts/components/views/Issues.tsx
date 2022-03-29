@@ -69,7 +69,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
         {label: 'Comments', class: 'center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.id in comments ? comments[issue.id] : '?'}</Link>},
         {label: '', class: 'center', content: issue => <a onClick={_event => deleteIssue(issue)}><img src={DeleteIcon} className='small'/> </a>}
     ]
-    console.table(issues)
+    
 
     return (
         <main className="view extended product">

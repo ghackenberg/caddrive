@@ -8,7 +8,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeReact from 'rehype-react'
 import { Object3D } from 'three'
 // Commons
-import { Comment, Issue, Product, User, Version } from 'productboard-common'
+import { Comment, Issue, Product, User, Member, Version } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
@@ -21,9 +21,11 @@ import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { CommentView } from '../widgets/CommentView'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { MemberManager } from '../../managers/member'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { TextareaInput } from '../inputs/TextareaInput'
+import { Column, Table } from '../widgets/Table'
 
 interface Part {
     productId: string
@@ -52,6 +54,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const [issueLabel, setIssueLabel] = useState<string>('')
     const [issueText, setIssueText] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
+    const [members, setMember] = useState<Member[]>()
 
     // Define aggregates
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
@@ -63,8 +66,20 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
 
     // Load entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MemberManager.findMembers(productId).then(setMember) }, [props])
     useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
     useEffect(() => { issueId != 'new' && CommentManager.findComments(issueId).then(setComments) }, [props])
+    useEffect(() => {
+        if (members) {
+            Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
+                const newUsers = {...users}
+                for (var index = 0; index < members.length; index++) {
+                    newUsers[members[index].id] = memberUsers[index]
+                }
+                setUsers(newUsers)
+            })
+        }
+    }, [members])
     useEffect(() => {
         const userIds: string[] = []
         if (issue) {
@@ -215,6 +230,23 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         }
     }
 
+    const columns: Column<Member>[] = [
+        {label: 'Picture', content: member => member.id in users ? <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' /> : '?'},
+        {label: 'Member', class: 'fill left nowrap', content: member => <p>{member.id in users ? users[member.id].name : '?'}</p>},
+        {label: 'Assignee', class: 'fill center nowrap', content: _member => <input id='assigneeCheckbox' type= "checkbox"></input>},
+    ]
+  
+   
+    
+
+
+    console.log('member')
+    console.table(members)
+    console.log('user')
+    console.table(users)
+    console.log('issue')
+    console.table(issue)
+
     return (
         <main className='view extended audit'>
             { (issueId == 'new' || issue) && product && (
@@ -278,6 +310,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                 <div>
                                                     <div/>
                                                     <div>
+                                                    <div>
+                                                    { members && <Table columns={columns} items={members}/> }
+                                                    </div>
                                                         <input type='submit' value='Save'/>
                                                     </div>
                                                 </div>
