@@ -59,16 +59,17 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
             setIssues(issues.filter(other => other.id != issue.id))       
         }
     }
-    console.log(issues)
+
 
     const columns: Column<Issue>[] = [
         {label: 'State', class: 'center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`} className={issue.state}>{issue.state}</Link>},
-        {label: 'Picture', content: issue => <img src={`/rest/files/${issue.userId}.jpg`} className='big'/>},
-        {label: 'User', class: 'left nowrap', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.id in users ? users[issue.id].name : '?'}</Link>},
+        {label: 'Reporter', content: issue => <img src={`/rest/files/${issue.userId}.jpg`} className='big'/>},
+        {label: 'Assignees', class: 'nowrap', content: issue => issue.assigneeIds.map((assignedId) => <img src={`/rest/files/${assignedId}.jpg`} className='big'/> ) },
         {label: 'Label', class: 'left fill', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.label}</Link>},
         {label: 'Comments', class: 'center', content: issue => <Link to={`/products/${productId}/issues/${issue.id}`}>{issue.id in comments ? comments[issue.id] : '?'}</Link>},
         {label: '', class: 'center', content: issue => <a onClick={_event => deleteIssue(issue)}><img src={DeleteIcon} className='small'/> </a>}
     ]
+    console.table(issues)
 
     return (
         <main className="view extended product">

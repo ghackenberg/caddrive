@@ -175,7 +175,8 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         event.preventDefault()
         if (issueId == 'new') {
             if (issueLabel && issueText) {
-                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open' })
+                //TODO IssueAssignes von Form nehmen und ganz hinten angeben derweil noch leer
+                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open', assigneeIds: [] })
                 history.replace(`/products/${productId}/issues/${issue.id}`)
             }
         } else {
@@ -200,7 +201,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
             const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'close' })
             setComments([...comments, comment])
             setCommentText('')
-            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed' }))
+            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed', assigneeIds: issue.assigneeIds }))
         }
     }
 
@@ -210,7 +211,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
             const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'reopen' })
             setComments([...comments, comment])
             setCommentText('')
-            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open' }))
+            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds }))
         }
     }
 
