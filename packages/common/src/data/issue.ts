@@ -7,6 +7,11 @@ export class IssueUpdateData {
     text: string
     @ApiProperty()
     state: 'open' | 'closed'
+    // TODO:
+    // property: 
+    // @ApiProperty()
+    // assigneeIds: string[]
+    
 }
 
 export class IssueAddData extends IssueUpdateData {

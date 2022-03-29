@@ -10,6 +10,7 @@ import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 // Images
 import * as SettingIcon from '/src/images/setting.png'
+import { MilestonesLink } from '../links/MilestonesLink'
 
 export const ProductHeader = (props: {product?: Product}) => {
     return (
@@ -23,6 +24,7 @@ export const ProductHeader = (props: {product?: Product}) => {
                         <VersionsLink product={props.product}/>
                         <IssuesLink product={props.product}/>
                         <MembersLink product={props.product}/>
+                        <MilestonesLink product={props.product}/>
                     </Fragment>
                 )}
                 <span>
