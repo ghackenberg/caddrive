@@ -55,6 +55,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const [issueText, setIssueText] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
     const [members, setMember] = useState<Member[]>()
+    //const [selectedMembers, setSelectedMembers] = useState<String[]>()
 
     // Define aggregates
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
@@ -230,10 +231,18 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         }
     }
 
+    async function selectMember(_userID:String) {
+        
+        
+    }
+    
+
+
+
     const columns: Column<Member>[] = [
         {label: 'Picture', content: member => member.id in users ? <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' /> : '?'},
         {label: 'Member', class: 'fill left nowrap', content: member => <p>{member.id in users ? users[member.id].name : '?'}</p>},
-        {label: 'Assignee', class: 'fill center nowrap', content: _member => <input id='assigneeCheckbox' type= "checkbox"></input>},
+        {label: 'Assignee', class: 'fill center nowrap', content: member => <input id='assigneeCheckbox' type= "checkbox" onChange={() => selectMember(member.userId)} ></input>},
     ]
   
    

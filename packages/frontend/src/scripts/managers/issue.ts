@@ -5,10 +5,13 @@ class IssueManagerImpl implements IssueREST {
     private issueIndex: {[id: string]: Issue} = {}
     private productIndex: {[id: string]: {[id: string]: boolean}} = {}
 
-    async findIssues(productId: string): Promise<Issue[]> {
+    async findIssues(productId: string, state?: string): Promise<Issue[]> {
+        // TODO fix
+        delete this.productIndex[productId]
+
         if (!(productId in this.productIndex)) {
             // Call backend
-            const issues = await IssueClient.findIssues(productId)
+            const issues = await IssueClient.findIssues(productId, state)
             // Update issue index
             for (const issue of issues) {
                 this.issueIndex[issue.id] = issue

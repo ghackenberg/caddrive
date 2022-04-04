@@ -19,11 +19,13 @@ export class IssueController implements IssueREST {
 
     @Get()
     @ApiQuery({ name: 'product', type: 'string', required: true })
+    @ApiQuery({ name: 'state', type: 'string', required: false })
     @ApiResponse({ type: [Issue] })
     async findIssues(
-        @Query('product') productId: string
+        @Query('product') productId: string,
+        @Query('state') state?: string
     ): Promise<Issue[]> {
-        return this.IssueService.findIssues(productId)
+        return this.IssueService.findIssues(productId, state)
     }
 
     @Post()

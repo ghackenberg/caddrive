@@ -13,15 +13,19 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => {
             <thead>
                 <tr>
                     {props.columns.map((column, index) =>
-                        <th key={index} className={column.class}>{column.label}</th>
+                        <th key={`head-cell-${index}`} className={column.class}>
+                            {column.label}
+                        </th>
                     )}
                 </tr>
             </thead>
             <tbody>
                 {props.items.map((item, index) =>
-                    <tr key={index}>
+                    <tr key={`body-row-${index}`}>
                         {props.columns.map((column, index) =>
-                            <td key={index} className={column.class}>{column.content(item)}</td>
+                            <td key={`body-cell-${index}`} className={column.class}>
+                                {column.content(item)}
+                            </td>
                         )}
                     </tr>
                 )}

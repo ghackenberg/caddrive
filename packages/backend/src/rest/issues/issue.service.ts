@@ -20,13 +20,16 @@ export class IssueService implements IssueREST {
         private readonly commentService: CommentService
     ) {}
 
-    async findIssues(productId: string) : Promise<Issue[]> {
+    async findIssues(productId: string, state?: string) : Promise<Issue[]> {
         const result: Issue[] = []
         for (const issue of IssueService.issues) {
             if(issue.deleted){
                 continue
             }
             if (issue.productId != productId) {
+                continue
+            }
+            if(state && issue.state != state) {
                 continue
             }
             result.push(issue)

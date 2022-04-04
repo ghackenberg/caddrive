@@ -5,8 +5,8 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 import { auth } from '../auth'
 
 class IssueClientImpl implements IssueREST {
-    async findIssues(product: string): Promise<Issue[]> {
-        return (await axios.get<Issue[]>(`/rest/issues`, { params: { product }, auth })).data
+    async findIssues(product: string, state?: string): Promise<Issue[]> {
+        return (await axios.get<Issue[]>(`/rest/issues`, { params: { product, state }, auth })).data
     }
     async addIssue(data: IssueAddData): Promise<Issue> {
         return (await axios.post<Issue>('/rest/issues', data, { auth })).data
