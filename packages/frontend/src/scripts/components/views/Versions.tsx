@@ -16,23 +16,29 @@ import { VersionView3D } from '../widgets/VersionView3D'
 
 export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
 
+    // PARAMS
+
     const productId = props.match.params.product
     
-    // Define entities
+    // STATES
+
+    // - Entities
     const [product, setProduct] = useState<Product>()
     const [versions, setVersions] = useState<Version[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
-    
+    // - Computations
     const [children, setChildren] = useState<{[id: string]: Version[]}>({})
     const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>({})
     const [childrenMax, setChildrenMax] = useState<{[id: string]: number}>({})
     const [siblings, setSiblings] = useState<{[id: string]: Version[]}>({})
     const [indents, setIndents] = useState<{[id: string]: number}>({})
     const [indent, setIndent] = useState<number>(0)
-
+    // - Interactions
     const [version, setVersion] = useState<Version>()
 
-    // Load entities
+    // EFFECTS
+
+    // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => { versions && versions.length > 0 && setVersion(versions[versions.length - 1])}, [versions])
@@ -47,6 +53,8 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
             })
         }
     }, [versions])
+
+    // - Computations
     useEffect(() => {
         if (versions && versions.length > 0) {
             // Calculate children
@@ -134,6 +142,8 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
             setChildrenMax(childrenMax)
         }
     }, [versions])
+
+    // RETURN
 
     return (
         <main className="view extended products">

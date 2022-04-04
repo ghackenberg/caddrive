@@ -17,27 +17,32 @@ import { auth } from '../../clients/auth'
 import { FileInput } from '../inputs/FileInput'
 
 export const UserView = (props: RouteComponentProps<{ user: string }>) => {
-    const userId = props.match.params.user
-    
-    
     
     const history = useHistory()
+    
+    // PARAMS
 
-    // Define entities
+    const userId = props.match.params.user
+
+    // STATES
+    
+    // - Entities
     const [user, setUser] = useState<User>()
-
-    // Define values
+    // - Values
     const [email, setEmail] = useState<string>('')
     const [name, setName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [file, setFile] = useState<File>()
 
-    // Load entities
-    useEffect(() => { userId != 'new' && UserManager.getUser(userId).then(setUser) }, [props])
+    // EFFECTS
 
-    // Load values
+    // - Entities
+    useEffect(() => { userId != 'new' && UserManager.getUser(userId).then(setUser) }, [props])
+    // - Values
     useEffect(() => { user && setEmail(user.email) }, [user])
     useEffect(() => { user && setName(user.name) }, [user])
+
+    // FUNCTIONS
 
     async function submit(event: FormEvent){
         event.preventDefault()
@@ -47,12 +52,12 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
             }
         } else {
             if (name && email) {
-                setUser(await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password },file))
+                await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password },file)
                 if (auth.username == name) {
                     auth.password = encrypt(password)
                 }
             }
-        }   
+        }
         history.goBack()    
     }
 
@@ -60,6 +65,7 @@ export const UserView = (props: RouteComponentProps<{ user: string }>) => {
         return hash.sha256().update(password).digest('hex')
     }
 
+    // RETURN
         
     return (
         <main className="view extended user">

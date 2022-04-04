@@ -19,15 +19,12 @@ const icons: {[key: string]: string} = {
     SkinnedMesh: SkinnedMeshIcon
 }
 
-export const NodeItem = (props: { object: Object3D, click?: (object: Object3D) => void }) => {
-
-    return (
-        <div className="widget node_item">
-            <a onClick={() => props.click && props.click(props.object)}>
-                <img src={icons[props.object.type]}/>
-                {props.object.name || 'Anonymous'}
-            </a>
-            <NodeList list={props.object.children} click={props.click}/>
-        </div>
-    )
-}
+export const NodeItem = (props: { object: Object3D, click?: (object: Object3D) => void }) => (
+    <div className="widget node_item">
+        <a onClick={() => props.click && props.click(props.object)}>
+            <img src={icons[props.object.type]}/>
+            {props.object.name || 'Anonymous'}
+        </a>
+        <NodeList list={props.object.children} click={props.click}/>
+    </div>
+)

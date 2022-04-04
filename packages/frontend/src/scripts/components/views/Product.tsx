@@ -17,25 +17,33 @@ import { ProductView3D } from '../widgets/ProductView3D'
 
 export const ProductView = (props: RouteComponentProps<{product: string}>) => {
 
-    const productId = props.match.params.product
-
     const history = useHistory()
+
+    // CONTEXTS
 
     const user = useContext(UserContext)
 
-    // Define entities
-    const [product, setProduct] = useState<Product>()
+    // PARAMS
 
-    // Define values
+    const productId = props.match.params.product
+
+    // STATES
+
+    // - Entities
+    const [product, setProduct] = useState<Product>()
+    // - Values
     const [name, setName] = useState<string>('')
     const [description, setDescription] = useState<string>('')
 
-    // Load entities
-    useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
+    // EFFECTS
 
-    // Load values
+    // - Entities
+    useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
+    // - Values
     useEffect(() => { product && setName(product.name) }, [product])
     useEffect(() => { product && setDescription(product.description) }, [product])
+
+    // FUNCTIONS
 
     async function submit(event: FormEvent){
         event.preventDefault()
@@ -50,6 +58,8 @@ export const ProductView = (props: RouteComponentProps<{product: string}>) => {
             }
         }
     }
+
+    // RETURN
 
     return (
         <main className="view extended product">

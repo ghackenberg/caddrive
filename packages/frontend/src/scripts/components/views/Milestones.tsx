@@ -8,12 +8,29 @@ import { ProductHeader } from '../snippets/ProductHeader'
 
 export const MilestonesView = (props: RouteComponentProps<{product: string}>) => {
 
+    // PARAMS
+
     const productId = props.match.params.product
    
+    // STATES
+
+    // - Entities
     const [product, setProduct] = useState<Product>()
 
-    // Load entities
+    // EFFECTS
+
+    // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+
+    // FUNCTIONS
+
+    // TODO
+
+    // CONSTANTS
+
+    // TODO
+
+    // RETURN
 
     return (
         <main className="view extended product">
@@ -31,8 +48,7 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
                             </main>
                         </Fragment>
                     )}
-                 </Fragment>
-                
+                 </Fragment>  
             )}
         </main>
     )

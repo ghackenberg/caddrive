@@ -10,9 +10,15 @@ import * as IssueIcon from '/src/images/issue.png'
 
 export const IssuesLink = (props: {product: Product}) => {
 
+    // STATES
+
     const [count, setCount] = useState<number>()
 
+    // EFFECTS
+
     useEffect(() => { IssueManager.findIssues(props.product.id).then(issues => setCount(issues.length)) }, [props])
+
+    // RETURN
 
     return (
         <span>

@@ -15,31 +15,49 @@ import { UserManager } from '../../managers/user'
 import { MemberManager } from '../../managers/member'
 
 export const MemberView = (props: RouteComponentProps<{product: string, member: string}>) => {
-    const productId = props.match.params.product
     
     const history = useHistory()
 
-    // Define entities
-    const [product, setProduct] = useState<Product>()
-    const [query, setQuery] = useState<string>('')
-    const [users, setUsers] = useState<User[]>()
-    const [names, setNames] = useState<React.ReactNode[]>()
+    // PARAMS
 
-    // Load entities
+    const productId = props.match.params.product
+
+    // STATES
+
+    // - Entities
+    const [product, setProduct] = useState<Product>()
+    const [users, setUsers] = useState<User[]>()
+    // - Computations
+    const [names, setNames] = useState<React.ReactNode[]>()
+    // - Interactions
+    const [query, setQuery] = useState<string>('')
+
+    // EFFECTS
+
+    // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
-    useEffect(() => { users && setNames(users.map(user => {
-        const index = user.name.toLowerCase().indexOf(query.toLowerCase())
-        const before = user.name.substring(0, index)
-        const between = user.name.substring(index, index + query.length)
-        const after = user.name.substring(index + query.length)
-        return <Fragment>{before}<mark>{between}</mark>{after}</Fragment>
-    }))}, [users])
+    // - Computations
+    useEffect(() => {
+        if (users) {
+            setNames(users.map(user => {
+                const index = user.name.toLowerCase().indexOf(query.toLowerCase())
+                const before = user.name.substring(0, index)
+                const between = user.name.substring(index, index + query.length)
+                const after = user.name.substring(index + query.length)
+                return <Fragment>{before}<mark>{between}</mark>{after}</Fragment>
+            }))
+        }
+    }, [users])
 
-    async function select(user: User) {
+    // FUNCTIONS
+
+    async function selectUser(user: User) {
         await MemberManager.addMember({ productId, userId: user.id })
         history.goBack()
     }
+
+    // RETURN
 
     return (
         <main className="view extended product">
@@ -59,7 +77,7 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
                                             <div key={user.id}>
                                                 <div/>
                                                 <div>
-                                                    <a onClick={() => select(user)}>
+                                                    <a onClick={() => selectUser(user)}>
                                                         <img src={`/rest/files/${user.pictureId}.jpg`} className="big"/>
                                                         <span>{names && names[index]}</span>
                                                     </a>
@@ -75,7 +93,6 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
                         </Fragment>
                     )}
                  </Fragment>
-                
             )}
         </main>
     )

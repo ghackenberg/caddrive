@@ -23,19 +23,24 @@ import { GenericInput } from '../inputs/GenericInput'
 
 export const VersionView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
-    const productId = props.match.params.product
-    const versionId = props.match.params.version
-
     const history = useHistory()
+
+    // CONTEXTS
 
     const user = useContext(UserContext)
 
-    // Define entities
+    // PARAMS
+
+    const productId = props.match.params.product
+    const versionId = props.match.params.version
+
+    // STATES
+
+    // - Entities
     const [product, setProduct] = useState<Product>()
     const [versions, setVersions] = useState<Version[]>()
     const [version, setVersion] = useState<Version>()
-
-    // Define values
+    // - Values
     const [major, setMajor] = useState<number>(0)
     const [minor, setMinor] = useState<number>(0)
     const [patch, setPatch] = useState<number>(0)
@@ -43,16 +48,19 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
     const [description, setDescription] = useState<string>('')
     const [file, setFile] = useState<File>()
 
-    // Load entities
+    // EFFECTS
+
+    // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => { versionId != 'new' && VersionManager.getVersion(versionId).then(setVersion) }, [props])
-
-    // Load values
+    // - Values
     useEffect(() => { version && setMajor(version.major) }, [version])
     useEffect(() => { version && setMinor(version.minor) }, [version])
     useEffect(() => { version && setPatch(version.patch) }, [version])
     useEffect(() => { version && setDescription(version.description) }, [version])
+
+    // FUNCTIONS
 
     async function update(event: ChangeEvent<HTMLInputElement>) {
         if (event.currentTarget.checked) {
@@ -66,14 +74,14 @@ export const VersionView = (props: RouteComponentProps<{ product: string, versio
         event.preventDefault()
         if (versionId == 'new') {
             await VersionManager.addVersion({ userId: user.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
-            //history.replace(`/products/${productId}/versions/${version.id}`)
         } else {
-            console.log(description)
-            setVersion(await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, file))
+            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, file)
         }
         history.goBack()
     }
-        
+
+    // RETURN
+    
     return (
         <main className="view extended version">
             { (versionId == 'new' || version) && product && versions && (

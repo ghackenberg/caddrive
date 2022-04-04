@@ -8,10 +8,16 @@ import { SceneView } from './SceneView'
 
 export const ModelViewer = (props: { url: string, highlighted?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
 
+    // STATES
+
     const [model, setModel] = useState<GLTF>(null)
+
+    // EFFECTS
     
     // TODO: use auth!
     useEffect(() => { new GLTFLoader().loadAsync(props.url).then(setModel) }, [props.url])
+
+    // RETURN
 
     return (
         <div className="widget model_viewer">

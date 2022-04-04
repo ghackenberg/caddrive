@@ -19,10 +19,16 @@ interface Part {
 
 export const ProductView3D = (props: { product?: Product, mouse: boolean, highlighted?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean }) => {
 
+    // STATES
+
     const [load, setLoad] = useState<boolean>(props.product !== undefined)
     const [versions, setVersions] = useState<Version[]>(null)
+
+    // EFFECTS
     
     useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props])
+
+    // RETURN
 
     return (
         <div className="widget product_view">

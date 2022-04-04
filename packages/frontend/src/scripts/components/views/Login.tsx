@@ -12,18 +12,26 @@ import { PasswordInput } from '../inputs/PasswordInput'
 
 export const LoginView = (props: {callback: (user: User) => void}) => {
 
+    // STATES
+
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
     const [email, setEmail] = React.useState<string>(localStorage.getItem('username') || '')
     const [password, setPassword] = React.useState<string>(localStorage.getItem('password') || '')
 
-    async function check() {
-        setLoad(true)
+    // EFFECTS
 
-        auth.username = email
-        auth.password = password
-        
+    React.useEffect(() => { check() }, [])
+
+    // FUNCTIONS
+
+    async function check() {
         try {
+            setLoad(true)
+    
+            auth.username = email
+            auth.password = password
+
             props.callback(await UserManager.checkUser())
         } catch (error) {
             setError('Login failed!')
@@ -49,7 +57,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
         return hash.sha256().update(password).digest('hex')
     }
 
-    React.useEffect(() => { check() }, [])
+    // RETURN
 
     return (
         <main className="view login">

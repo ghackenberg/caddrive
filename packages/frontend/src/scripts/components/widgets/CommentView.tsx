@@ -17,11 +17,15 @@ interface Part {
 
 export const CommentView = (props: { class: string, comment: Issue | Comment, user?: User, html: ReactElement, parts: Part[], mouseover: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
 
+    // CONTEXTS
+
     const user = useContext(UserContext)
+
+    // CONSTANTS
 
     const comment = props.comment
 
-    console.log(comment)
+    // RETURN
 
     return (
         <div key={comment.id} className={`${props.class}${comment.userId == user.id ? ' self' : ''}`}>
@@ -78,4 +82,5 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
             )}
         </div>
     )
+    
 }

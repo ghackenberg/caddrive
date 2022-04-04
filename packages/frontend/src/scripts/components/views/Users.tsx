@@ -14,11 +14,17 @@ import * as DeleteIcon from '/src/images/delete.png'
 
 export const UsersView = () => {
 
-    // Define entities
+    // STATES
+
+    // - Entities
     const [users, setUsers] = useState<User[]>()
 
-    // Load entities
+    // EFFECTS
+
+    // - Entities
     useEffect(() => { UserManager.findUsers().then(setUsers) }, [])
+
+    // FUNCTIONS
 
     async function deleteUser(user: User) {
         if (confirm('Do you really want to delete this user?')) {
@@ -27,12 +33,32 @@ export const UsersView = () => {
         }
     }
 
+    // CONSTANTS
+
     const columns: Column<User>[] = [
-        {label: 'Picture', content: user => <img src={`/rest/files/${user.pictureId}.jpg`} className='big'/>},
-        {label: 'Name', class: 'left nowrap', content: user => <Link to={`/users/${user.id}`}>{user.name}</Link>},
-        {label: 'Email', class: 'left nowrap fill', content: user => <Link to={`/users/${user.id}`}>{user.email}</Link>},
-        {label: '', content: user => <a onClick={_event => deleteUser(user)}><img src={DeleteIcon} className='small'/></a>}
+        { label: 'Picture', content: user => (
+            <Link to={`/users/${user.id}`}>
+                <img src={`/rest/files/${user.pictureId}.jpg`} className='big'/>
+            </Link>
+        )},
+        { label: 'Name', class: 'left nowrap', content: user => (
+            <Link to={`/users/${user.id}`}>
+                {user.name}
+            </Link>
+        )},
+        { label: 'Email', class: 'left nowrap fill', content: user => (
+            <Link to={`/users/${user.id}`}>
+                {user.email}
+            </Link>
+        )},
+        { label: '', content: user => (
+            <a onClick={() => deleteUser(user)}>
+                <img src={DeleteIcon} className='small'/>
+            </a>
+        )}
     ]
+
+    // RETURN
 
     return (
         <main className="view users">

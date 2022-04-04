@@ -10,9 +10,15 @@ import * as VersionIcon from '/src/images/version.png'
 
 export const VersionsLink = (props: {product: Product}) => {
 
+    // STATES
+
     const [count, setCount] = useState<number>()
 
+    // EFFECTS
+
     useEffect(() => { VersionManager.findVersions(props.product.id).then(versions => setCount(versions.length)) }, [props])
+
+    // RETURN
 
     return (
         <span>

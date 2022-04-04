@@ -10,9 +10,15 @@ import * as MemberIcon from '/src/images/user.png'
 
 export const MembersLink = (props: {product: Product}) => {
 
+    // STATES
+
     const [count, setCount] = useState<number>()
 
+    // EFFECTS
+
     useEffect(() => { MemberManager.findMembers(props.product.id).then(members => setCount(members.length)) }, [props])
+
+    // RETURN
 
     return (
         <span>

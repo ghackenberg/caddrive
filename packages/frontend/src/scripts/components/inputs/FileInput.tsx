@@ -5,15 +5,23 @@ import { GenericInput } from './GenericInput'
 import { TextInput } from './TextInput'
 
 export const FileInput = (props: {class?: string, label: string, change?: (value: File) => void, accept?: string, placeholder?: string, disabled?: boolean, required: boolean}) => {
+
+    // REFS
     
     const hiddenFileInput = React.useRef(null)
+
+    // STATES
     
     const [fileName, setFileName] = React.useState<string>('')
+
+    // FUNCTIONS
 
     async function handleClick(event: React.FormEvent) {
         event.preventDefault()
         hiddenFileInput.current.click()
     }
+
+    // RETURN
 
     return (
         <React.Fragment>

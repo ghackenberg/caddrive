@@ -10,10 +10,16 @@ import * as MilestoneIcon from '/src/images/milestone.png'
 
 export const MilestonesLink = (props: {product: Product}) => {
 
+    // STATES
+
     const [count, setCount] = useState<number>()
+
+    // EFFECTS
 
     // TODO: Find Milestones und unten count übergeben
     useEffect(() => { MemberManager.findMembers(props.product.id).then(members => setCount(members.length)) }, [props])
+
+    // RETURN
 
     return (
         <span>

@@ -6,19 +6,17 @@ import { Issue, Product } from 'productboard-common'
 // Links
 import { IssuesLink } from './IssuesLink'
 
-export const IssueLink = (props: { product: Product, issue?: Issue }) => {
-    return (
-        <Fragment>
-            <IssuesLink product={props.product}/>
-            { props.issue ? (
-                <span>
-                    <NavLink to={`/products/${props.product.id}/issues/${props.issue.id}`}>{props.issue.label}</NavLink>
-                </span>
-            ) : (
-                <span>
-                    <NavLink to={`/products/${props.product.id}/issues/new`}>New issue</NavLink>
-                </span>
-            )}
-        </Fragment>  
-    )
-}
+export const IssueLink = (props: { product: Product, issue?: Issue }) => (
+    <Fragment>
+        <IssuesLink product={props.product}/>
+        { props.issue ? (
+            <span>
+                <NavLink to={`/products/${props.product.id}/issues/${props.issue.id}`}>{props.issue.label}</NavLink>
+            </span>
+        ) : (
+            <span>
+                <NavLink to={`/products/${props.product.id}/issues/new`}>New issue</NavLink>
+            </span>
+        )}
+    </Fragment>  
+)

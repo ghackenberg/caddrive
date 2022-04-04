@@ -19,14 +19,18 @@ import { MemberManager } from '../../managers/member'
 
 export const ProductsView = () => {
     
-    // Define entities
+    // STATES
+
+    // - Entities
     const [products, setProducts] = useState<Product[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
     const [versions, setVersions] = useState<{[id: string]: number}>({})
     const [issues, setIssues] = useState<{[id: string]: number}>({})
     const [members, setMembers] = useState<{[id: string]: number}>({})
 
-    // Load entities
+    // EFFECTS
+
+    // - Entities
     useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
     useEffect(() => {
         if (products) {
@@ -61,7 +65,6 @@ export const ProductsView = () => {
             })
         }
     }, [products])
-
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => MemberManager.findMembers(product.id))).then(productMembers => {
@@ -74,6 +77,8 @@ export const ProductsView = () => {
         }
     }, [products])
 
+    // FUNCTIONS
+
     async function deleteProduct(product: Product) {
         if (confirm('Do you really want to delete this Product?')) {
             await ProductManager.deleteProduct(product.id)
@@ -81,16 +86,52 @@ export const ProductsView = () => {
         }
     }
 
+    // CONSTANTS
+
     const columns: Column<Product>[] = [
-        {label: 'Preview', class: 'center', content: product => <Link to={`/products/${product.id}`}><ProductView3D product={product} mouse={false} vr= {false}/></Link>},
-        {label: 'Owner', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.id in users ? users[product.id].name : '?'}</Link>},
-        {label: 'Name', class: 'left nowrap', content: product => <Link to={`/products/${product.id}`}>{product.name}</Link>},
-        {label: 'Description', class: 'left fill', content: product => <Link to={`/products/${product.id}`}>{product.description}</Link>},
-        {label: 'Versions', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in versions ? versions[product.id] : '?'}</Link>},
-        {label: 'Issues', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in issues ? issues[product.id] : '?'}</Link>},
-        {label: 'Members', class: 'center', content: product => <Link to={`/products/${product.id}`}>{product.id in members ? members[product.id] : '?'}</Link>},
-        {label: '', content: product => <a onClick={_event => deleteProduct(product)}> <img src={DeleteIcon} className='small'/> </a>}
+        { label: 'Preview', class: 'center', content: product => (
+            <Link to={`/products/${product.id}`}>
+                <ProductView3D product={product} mouse={false} vr= {false}/>
+            </Link>
+        )},
+        { label: 'Owner', class: 'left nowrap', content: product => (
+            <Link to={`/products/${product.id}`}>
+                {product.id in users ? users[product.id].name : '?'}
+            </Link>
+        )},
+        { label: 'Name', class: 'left nowrap', content: product => (
+            <Link to={`/products/${product.id}`}>
+                {product.name}
+            </Link>
+        )},
+        { label: 'Description', class: 'left fill', content: product => (
+            <Link to={`/products/${product.id}`}>
+                {product.description}
+            </Link>
+        )},
+        { label: 'Versions', class: 'center', content: product => (
+            <Link to={`/products/${product.id}`}>
+                {product.id in versions ? versions[product.id] : '?'}
+            </Link>
+        )},
+        { label: 'Issues', class: 'center', content: product => (
+            <Link to={`/products/${product.id}`}>
+                {product.id in issues ? issues[product.id] : '?'}
+            </Link>
+        )},
+        { label: 'Members', class: 'center', content: product => (
+            <Link to={`/products/${product.id}`}>
+                {product.id in members ? members[product.id] : '?'}
+            </Link>
+        )},
+        { label: '', content: product => (
+            <a onClick={() => deleteProduct(product)}>
+                <img src={DeleteIcon} className='small'/>
+            </a>
+        )}
     ]
+
+    // RETURN
 
     return (
         <main className="view products">

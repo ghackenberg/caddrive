@@ -24,10 +24,15 @@ import { ProductsView } from './views/Products'
 import { MilestonesView } from './views/Milestones'
 // Images
 import * as AppIcon from '/src/images/app.png'
+import { CommentsView } from './views/Comments'
 
 export const Root = () => {
 
+    // STATES
+
     const [user, setUser] = React.useState<User>()
+
+    // FUNCTIONS
 
     function callback() {
         localStorage.removeItem('username')
@@ -38,6 +43,8 @@ export const Root = () => {
 
         setUser(undefined)
     }
+
+    // RETURN
     
     return (
         <React.Fragment>
@@ -56,6 +63,7 @@ export const Root = () => {
                             {/* Product views */}
                             <Route path="/products/:product/versions/:version" component={VersionView}/>
                             <Route path="/products/:product/versions" component={VersionsView}/>
+                            <Route path="/products/:product/issues/:issue/comments" component={CommentsView}/>
                             <Route path="/products/:product/issues/:issue" component={IssueView}/>
                             <Route path="/products/:product/issues" component={IssuesView}/>
                             <Route path="/products/:product/members/:member" component={MemberView}/>
