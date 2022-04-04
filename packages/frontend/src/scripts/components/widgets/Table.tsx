@@ -3,7 +3,7 @@ import * as React from 'react'
 export interface Column <T,> {
     class?: string
     label: React.ReactNode
-    content: (item: T) => React.ReactNode
+    content: (item: T, index: number) => React.ReactNode
 }
 
 export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => (
@@ -18,11 +18,11 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[]}) => (
             </tr>
         </thead>
         <tbody>
-            {props.items.map((item, index) =>
-                <tr key={`body-row-${index}`}>
-                    {props.columns.map((column, index) =>
-                        <td key={`body-cell-${index}`} className={column.class}>
-                            {column.content(item)}
+            {props.items.map((item, itemIndex) =>
+                <tr key={`body-row-${itemIndex}`}>
+                    {props.columns.map((column, columnIndex) =>
+                        <td key={`body-cell-${columnIndex}`} className={column.class}>
+                            {column.content(item, itemIndex)}
                         </td>
                     )}
                 </tr>

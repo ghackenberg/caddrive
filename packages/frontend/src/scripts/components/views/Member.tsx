@@ -13,6 +13,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { TextInput } from '../inputs/TextInput'
 import { UserManager } from '../../managers/user'
 import { MemberManager } from '../../managers/member'
+import { Column, Table } from '../widgets/Table'
 
 export const MemberView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
@@ -53,9 +54,26 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
     // FUNCTIONS
 
     async function selectUser(user: User) {
-        await MemberManager.addMember({ productId, userId: user.id })
-        history.goBack()
+        if (confirm('Do you really want to add this member?')) {
+            await MemberManager.addMember({ productId, userId: user.id })
+            history.goBack()               
+        }
     }
+
+    // CONSTANTS
+
+    const columns: Column<User>[] = [
+        { label: 'Picture', class: 'center', content: user => (
+            <a onClick={() => selectUser(user)}>
+                <img src={`/rest/files/${user.id}.jpg`} className='big'/>
+            </a>
+        )},
+        { label: 'Name', class: 'fill', content: (user, index) => (
+            <a onClick={() => selectUser(user)}>
+                {names ? names[index] : '?'}
+            </a>
+        )}
+    ]
 
     // RETURN
 
@@ -73,17 +91,14 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
                                     <h1>Settings</h1>
                                     <form>
                                         <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
-                                        {users && users.map((user, index) => (
-                                            <div key={user.id}>
-                                                <div/>
-                                                <div>
-                                                    <a onClick={() => selectUser(user)}>
-                                                        <img src={`/rest/files/${user.pictureId}.jpg`} className="big"/>
-                                                        <span>{names && names[index]}</span>
-                                                    </a>
-                                                </div>
+                                        <div>
+                                            <div>
+                                                Users:
                                             </div>
-                                        ))}
+                                            <div>
+                                                { users && <Table items={users} columns={columns}/> }
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                                 <div>
