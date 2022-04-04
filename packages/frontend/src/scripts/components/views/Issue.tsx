@@ -55,7 +55,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const [issueText, setIssueText] = useState<string>('')
     const [commentText, setCommentText] = useState<string>('')
     const [members, setMember] = useState<Member[]>()
-    //const [selectedMembers, setSelectedMembers] = useState<String[]>()
+    const [assignees, setAssignees] = useState<string[]>([])
 
     // Define aggregates
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
@@ -191,8 +191,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         event.preventDefault()
         if (issueId == 'new') {
             if (issueLabel && issueText) {
-                //TODO IssueAssignes von Form nehmen und ganz hinten angeben derweil noch leer
-                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open', assigneeIds: [] })
+                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: issueLabel, text: issueText, state: 'open', assigneeIds: assignees })
                 history.replace(`/products/${productId}/issues/${issue.id}`)
             }
         } else {
@@ -231,30 +230,23 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         }
     }
 
-    async function selectMember(_userID:String) {
-        
-        
+    async function selectAssignee(_userID: string) {
+        const newAssignees = [...assignees]
+        const index = newAssignees.indexOf(_userID)
+        if (index == -1) {
+            newAssignees.push(_userID)
+        } else {
+            newAssignees.splice(index, 1)
+        }
+        setAssignees(newAssignees)
     }
-    
-
-
 
     const columns: Column<Member>[] = [
         {label: 'Picture', content: member => member.id in users ? <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' /> : '?'},
         {label: 'Member', class: 'fill left nowrap', content: member => <p>{member.id in users ? users[member.id].name : '?'}</p>},
-        {label: 'Assignee', class: 'fill center nowrap', content: member => <input id='assigneeCheckbox' type= "checkbox" onChange={() => selectMember(member.userId)} ></input>},
+        {label: 'Assignee', class: 'fill center nowrap', content: member => <input type="checkbox" checked={assignees.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)} ></input>},
     ]
-  
-   
-    
 
-
-    console.log('member')
-    console.table(members)
-    console.log('user')
-    console.table(users)
-    console.log('issue')
-    console.table(issue)
 
     return (
         <main className='view extended audit'>
