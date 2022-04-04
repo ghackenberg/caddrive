@@ -34,6 +34,12 @@ body > div > main table > tbody > tr > td {
 
     border-top: 1px solid rgb(215,215,215);
 }
+body > div > main table > tbody > tr:last-child > td:first-child {
+    border-bottom-left-radius: 1em;
+}
+body > div > main table > tbody > tr:last-child > td:last-child {
+    border-bottom-right-radius: 1em;
+}
 body > div > main table *.fill {
     width: 100%;
 }
@@ -83,4 +89,15 @@ body > div > main table img.big {
     height: 3em;
     margin-right: 0;
     border-radius: 50%;
+}
+
+body > div > main form table {
+    border-color: rgb(245,245,245);
+}
+body > div > main form table > thead > tr > th {
+    background-color: rgb(205,205,205);
+}
+body > div > main form table > tbody > tr > td {
+    background-color: rgb(215,215,215);
+    border-top: 1px solid rgb(245,245,245);
 }
