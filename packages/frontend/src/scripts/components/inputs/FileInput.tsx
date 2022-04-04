@@ -6,9 +6,9 @@ import { TextInput } from './TextInput'
 
 export const FileInput = (props: {class?: string, label: string, change?: (value: File) => void, accept?: string, placeholder?: string, disabled?: boolean, required: boolean}) => {
 
-    // REFS
+    // REFERENCES
     
-    const hiddenFileInput = React.useRef(null)
+    const fileInput = React.useRef(null)
 
     // STATES
     
@@ -18,7 +18,7 @@ export const FileInput = (props: {class?: string, label: string, change?: (value
 
     async function handleClick(event: React.FormEvent) {
         event.preventDefault()
-        hiddenFileInput.current.click()
+        fileInput.current.click()
     }
 
     // RETURN
@@ -38,7 +38,7 @@ export const FileInput = (props: {class?: string, label: string, change?: (value
                         className={props.class}
                         accept={props.accept}
                         placeholder={props.placeholder}
-                        ref={hiddenFileInput}
+                        ref={fileInput}
                         onChange={event => {props.change(event.currentTarget.files.length > 0 ? event.currentTarget.files[0] : undefined), setFileName(event.currentTarget.files[0].name)}}
                         disabled={props.disabled}
                         style={{display: 'none'}}/>

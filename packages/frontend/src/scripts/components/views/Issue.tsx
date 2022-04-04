@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
+import { useState, useEffect, useContext, useRef, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router' 
 import { RouteComponentProps } from 'react-router-dom'
 import { Object3D } from 'three'
@@ -18,12 +18,15 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { MemberManager } from '../../managers/member'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
-import { TextareaInput } from '../inputs/TextareaInput'
 import { Column, Table } from '../widgets/Table'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     const history = useHistory()
+
+    // REFERENCES
+
+    const textReference = useRef<HTMLTextAreaElement>()
 
     // CONTEXTS
 
@@ -71,8 +74,19 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // FUNCTIONS
 
     async function selectObject(version: Version, object: Object3D) {
-        if (issueId == 'new') {
-            setText(`${text}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
+        const markdown = `[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`
+        if (document.activeElement == textReference.current) {
+            const before = text.substring(0, textReference.current.selectionStart)
+            const after = text.substring(textReference.current.selectionEnd)
+            setText(`${before}${markdown}${after}`)
+            setTimeout(() => {
+                textReference.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+            }, 0)
+        } else {
+            setText(`${text}${markdown}`)
+            setTimeout(() => {
+                textReference.current.focus()
+            }, 0)
         }
     }
 
@@ -132,7 +146,14 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                     <h1>Settings</h1>
                                         <form onSubmit={submitIssue} onReset={() => history.goBack()}>
                                             <TextInput class='fill' label='Label' placeholder='Type label' value={label} change={setLabel}/>
-                                            <TextareaInput class='fill' label='Text' placeholder='Type text' value={text} change={setText}/>
+                                            <div>
+                                                <div>
+                                                    Text:
+                                                </div>
+                                                <div>
+                                                    <textarea ref={textReference} className='fill' placeholder='Type label' value={text} onChange={event => { setText(event.currentTarget.value)}} required/>
+                                                </div>
+                                            </div>
                                             <div>
                                                 <div>
                                                     Milestone:
