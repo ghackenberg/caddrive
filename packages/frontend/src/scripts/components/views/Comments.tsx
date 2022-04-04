@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, createElement, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
+import { useState, useEffect, useContext, createElement, useRef, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
 import { Redirect } from 'react-router' 
 import { RouteComponentProps } from 'react-router-dom'
 import { unified } from 'unified'
@@ -34,6 +34,10 @@ export const CommentsView = (props: RouteComponentProps<{product: string, issue:
 
     const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
+    // REFERENCES
+
+    const textReference = useRef<HTMLTextAreaElement>()
+
     // CONTEXTS
 
     const user = useContext(UserContext)
@@ -51,7 +55,7 @@ export const CommentsView = (props: RouteComponentProps<{product: string, issue:
     const [comments, setComments] = useState<Comment[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
     // - Values
-    const [commentText, setCommentText] = useState<string>('')
+    const [text, setText] = useState<string>('')
     // - Computations
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
     const [issueParts, setIssueParts] = useState<Part[]>([])
@@ -167,34 +171,47 @@ export const CommentsView = (props: RouteComponentProps<{product: string, issue:
     }
 
     async function selectObject(version: Version, object: Object3D) {
-        setCommentText(`${commentText}[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`)
+        const markdown = `[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`
+        if (document.activeElement == textReference.current) {
+            const before = text.substring(0, textReference.current.selectionStart)
+            const after = text.substring(textReference.current.selectionEnd)
+            setText(`${before}${markdown}${after}`)
+            setTimeout(() => {
+                textReference.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+            }, 0)
+        } else {
+            setText(`${text}${markdown}`)
+            setTimeout(() => {
+                textReference.current.focus()
+            }, 0)
+        }
     }
 
     async function submitComment(event: FormEvent) {
         event.preventDefault()
-        if (commentText) {
-            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'none' })
+        if (text) {
+            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'none' })
             setComments([...comments, comment])
-            setCommentText('')
+            setText('')
         }
     }
 
     async function submitCommentAndClose(event: FormEvent) {
         event.preventDefault()
-        if (commentText) {
-            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'close' })
+        if (text) {
+            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'close' })
             setComments([...comments, comment])
-            setCommentText('')
+            setText('')
             setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed', assigneeIds: issue.assigneeIds }))
         }
     }
 
     async function submitCommentAndReopen(event: FormEvent) {
         event.preventDefault()
-        if (commentText) {
-            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: commentText, action: 'reopen' })
+        if (text) {
+            const comment = await CommentManager.addComment({ userId: user.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'reopen' })
             setComments([...comments, comment])
-            setCommentText('')
+            setText('')
             setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds }))
         }
     }
@@ -241,7 +258,7 @@ export const CommentsView = (props: RouteComponentProps<{product: string, issue:
 
                                                 </div>
                                                 <div className="text">
-                                                    <textarea placeholder={'Type text'} value={commentText} onChange={event => setCommentText(event.currentTarget.value)}/>
+                                                    <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)}/>
                                                     <button onClick={submitComment}>Save</button>
                                                     {issue.state == 'open' ? (
                                                         <button onClick={submitCommentAndClose}>Close</button>

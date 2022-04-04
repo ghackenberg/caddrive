@@ -151,7 +151,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                     Text:
                                                 </div>
                                                 <div>
-                                                    <textarea ref={textReference} className='fill' placeholder='Type label' value={text} onChange={event => { setText(event.currentTarget.value)}} required/>
+                                                    <textarea ref={textReference} className='fill' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
                                                 </div>
                                             </div>
                                             <div>
