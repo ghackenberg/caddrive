@@ -5,6 +5,7 @@ import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'p
 import { VersionService } from '../versions/version.service'
 import { IssueService } from '../issues/issue.service'
 import { MemberService } from '../members/member.service'
+import { MilestoneService } from '../milestones/milestone.service'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
@@ -17,6 +18,7 @@ export class ProductService implements ProductREST {
         private readonly versionService: VersionService,
         private readonly issueService: IssueService,
         private readonly memberService: MemberService,
+        private readonly milestoneService: MilestoneService,
         @Inject(REQUEST)
         private readonly request: Express.Request
     ) {}
@@ -70,6 +72,9 @@ export class ProductService implements ProductREST {
                 }
                 for (const issue of await this.issueService.findIssues(id)) {
                     await this.issueService.deleteIssue(issue.id)
+                }
+                for (const milestone of await this.milestoneService.findMilestones(id)) {
+                    await this.milestoneService.deleteMilestone(milestone.id)
                 }
                 for (const member of await this.memberService.findMembers(id)) {
                     await this.memberService.deleteMember(member.id)

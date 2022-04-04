@@ -4,6 +4,7 @@ export * from './data/member'
 export * from './data/product'
 export * from './data/user'
 export * from './data/version'
+export * from './data/milestone'
 
 export * from './rest'
 export * from './mqtt'

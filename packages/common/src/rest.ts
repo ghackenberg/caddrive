@@ -1,4 +1,10 @@
-import { Issue, IssueAddData, IssueUpdateData, Comment, Product, ProductAddData,ProductUpdateData, User, Version, CommentAddData, CommentUpdateData,  Member, MemberAddData, MemberUpdateData } from 'productboard-common'
+import { Comment, CommentAddData, CommentUpdateData } from './data/comment'
+import { Issue, IssueAddData, IssueUpdateData } from './data/issue'
+import { Member, MemberAddData, MemberUpdateData } from './data/member'
+import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
+import { Product, ProductAddData, ProductUpdateData } from './data/product'
+import { User } from './data/user'
+import { Version } from './data/version'
 
 export interface UserREST<D, F> {
     checkUser(): Promise<User>
@@ -26,7 +32,7 @@ export interface VersionREST<D, F> {
 }
 
 export interface IssueREST {
-    findIssues(productId: string): Promise<Issue[]>
+    findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]>
     addIssue(data: IssueAddData): Promise<Issue>
     getIssue(id: string): Promise<Issue>
     updateIssue(id: string, data: IssueUpdateData): Promise<Issue>
@@ -39,6 +45,14 @@ export interface CommentREST {
     getComment(id: string): Promise<Comment>
     updateComment(id: string, data: CommentUpdateData): Promise<Comment>
     deleteComment(id: string): Promise<Comment>
+}
+
+export interface MilestoneREST {
+    findMilestones(productId: string): Promise<Milestone[]>
+    addMilestone(data: MilestoneAddData): Promise<Milestone>
+    getMilestone(id: string): Promise<Milestone>
+    updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone>
+    deleteMilestone(id: string): Promise<Milestone>
 }
 
 export interface MemberREST {

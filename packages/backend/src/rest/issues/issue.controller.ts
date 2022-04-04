@@ -11,7 +11,7 @@ import { REQUEST } from '@nestjs/core'
 @ApiBasicAuth()
 export class IssueController implements IssueREST {
     constructor(
-        private readonly IssueService: IssueService,
+        private readonly issueService: IssueService,
         private readonly memberService: MemberService,
         @Inject(REQUEST)
         private readonly request: Express.Request
@@ -19,13 +19,15 @@ export class IssueController implements IssueREST {
 
     @Get()
     @ApiQuery({ name: 'product', type: 'string', required: true })
+    @ApiQuery({ name: 'milestone', type: 'string', required: false })
     @ApiQuery({ name: 'state', type: 'string', required: false })
     @ApiResponse({ type: [Issue] })
     async findIssues(
         @Query('product') productId: string,
+        @Query('milestone') milestoneId?: string,
         @Query('state') state?: string
     ): Promise<Issue[]> {
-        return this.IssueService.findIssues(productId, state)
+        return this.issueService.findIssues(productId, milestoneId, state)
     }
 
     @Post()
@@ -40,7 +42,7 @@ export class IssueController implements IssueREST {
         if ((await this.memberService.findMembers(data.productId, (<User> this.request.user).id)).length == 0) {
             throw new ForbiddenException()
         }
-        return this.IssueService.addIssue(data)
+        return this.issueService.addIssue(data)
     }  
 
     @Get(':id')
@@ -49,14 +51,14 @@ export class IssueController implements IssueREST {
     async getIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        const issue = await this.IssueService.getIssue(id)
+        const issue = await this.issueService.getIssue(id)
         if (!issue) {
             throw new NotFoundException()
         }
         if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
             throw new ForbiddenException()
         }
-        return this.IssueService.getIssue(id)
+        return this.issueService.getIssue(id)
     } 
 
     @Put(':id')
@@ -67,14 +69,14 @@ export class IssueController implements IssueREST {
         @Param('id') id: string,
         @Body() data: IssueUpdateData
     ): Promise<Issue> {
-        const issue = await this.IssueService.getIssue(id)
+        const issue = await this.issueService.getIssue(id)
         if (!issue) {
             throw new NotFoundException()
         }
         if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
             throw new ForbiddenException()
         }
-        return this.IssueService.updateIssue(id, data)
+        return this.issueService.updateIssue(id, data)
     }
 
     @Delete(':id')
@@ -83,13 +85,13 @@ export class IssueController implements IssueREST {
     async deleteIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        const issue = await this.IssueService.getIssue(id)
+        const issue = await this.issueService.getIssue(id)
         if (!issue) {
             throw new NotFoundException()
         }
         if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
             throw new ForbiddenException()
         }
-        return this.IssueService.deleteIssue(id)
+        return this.issueService.deleteIssue(id)
     } 
 }

@@ -9,7 +9,8 @@ export class IssueUpdateData {
     state: 'open' | 'closed'
     @ApiProperty()
     assigneeIds: string[]
-    
+    @ApiProperty()
+    milestoneId?: string
 }
 
 export class IssueAddData extends IssueUpdateData {

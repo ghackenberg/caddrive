@@ -160,7 +160,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                 </div>
                                                 <div>
                                                     <select>
-                                                        <option></option>
+                                                        <option>Milestone 1</option>
+                                                        <option>Milestone 2</option>
+                                                        <option>Milestone 3</option>
                                                     </select>
                                                 </div>
                                             </div>

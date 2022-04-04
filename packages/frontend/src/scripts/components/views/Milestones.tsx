@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { ProductManager } from '../../managers/product'
 import { ProductHeader } from '../snippets/ProductHeader'
+import { ProductView3D } from '../widgets/ProductView3D'
 
 
 export const MilestonesView = (props: RouteComponentProps<{product: string}>) => {
@@ -44,6 +45,9 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
                             <main className="sidebar">
                                 <div>           
                                    TODO 
+                                </div>
+                                <div>
+                                    <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
                         </Fragment>

@@ -28,6 +28,9 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
     }
  
     async addVersion(data: VersionAddData, file: Express.Multer.File): Promise<Version> {
+        // TODO check if user exists
+        // TODO check if product exists
+        // TODO check if base versions exist
         const version = { id: shortid(), deleted: false, ...data }
         if (file && file.originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {

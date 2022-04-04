@@ -13,14 +13,12 @@ export class IssueService implements IssueREST {
         { id: 'demo-3', userId: 'demo-3', productId: 'demo-1', time: new Date().toISOString(), label: 'Use blue helmet for driver.', text: 'Please change the helmet color (see [technic_driver_helmet_p_SOLIDS_1_1](/products/demo-1/versions/demo-3/objects/technic_driver_helmet_p_SOLIDS_1_1)). We want a blue helmet because it fits better to our corporate design standards.', state: 'open', deleted: false ,assigneeIds: ['demo-4', 'demo-3'] }
     ]
 
-    
-
     public constructor(
         @Inject(forwardRef(() => CommentService))
         private readonly commentService: CommentService
     ) {}
 
-    async findIssues(productId: string, state?: string) : Promise<Issue[]> {
+    async findIssues(productId: string, milestoneId?: string, state?: string) : Promise<Issue[]> {
         const result: Issue[] = []
         for (const issue of IssueService.issues) {
             if(issue.deleted){
@@ -29,7 +27,10 @@ export class IssueService implements IssueREST {
             if (issue.productId != productId) {
                 continue
             }
-            if(state && issue.state != state) {
+            if (milestoneId && issue.milestoneId != milestoneId) {
+                continue
+            }
+            if (state && issue.state != state) {
                 continue
             }
             result.push(issue)
@@ -38,6 +39,10 @@ export class IssueService implements IssueREST {
     }
   
     async addIssue(data: IssueAddData): Promise<Issue> {
+        // TODO check if user exists
+        // TODO check if product exists
+        // TODO check if milestone exists
+        // TODO check if assignees exist
         const issue = { id: shortid(), deleted: false, ...data }
         IssueService.issues.push(issue)
         return issue
@@ -53,6 +58,8 @@ export class IssueService implements IssueREST {
     }
 
     async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
+        // TODO check if milestone exists
+        // TODO check if assignees exist
         for (var index = 0; index < IssueService.issues.length; index++) {
             const issue = IssueService.issues[index]
             if (issue.id == id) {

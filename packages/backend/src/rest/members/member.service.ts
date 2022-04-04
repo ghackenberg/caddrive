@@ -34,6 +34,8 @@ export class MemberService implements MemberREST {
     }
 
     async addMember(data: MemberAddData): Promise<Member> {
+        // TODO check if user exists
+        // TODO check if product exists
         const members = await this.findMembers(data.productId, data.userId)
         if (members.length == 1) {
             return members[0]
