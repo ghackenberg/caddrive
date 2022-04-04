@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, createElement, useRef, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
 import { Redirect } from 'react-router' 
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
@@ -219,7 +219,7 @@ export const CommentsView = (props: RouteComponentProps<{product: string, issue:
     // RETURN
 
     return (
-        <main className='view extended audit'>
+        <main className='view extended comments'>
             { (issueId == 'new' || issue) && product && (
                 <Fragment>
                     { issue && issue.deleted ? (
@@ -229,6 +229,9 @@ export const CommentsView = (props: RouteComponentProps<{product: string, issue:
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
+                                    <Link to={`/products/${productId}/issues/${issueId}`}>
+                                        Edit issue
+                                    </Link>
                                     <h1>
                                         {issue.label}
                                     </h1>

@@ -111,6 +111,13 @@ body > div > main > main > div:nth-child(1) > a:first-child {
     background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.1));
     color: white;
 }
+body > div > main.comments > main > div:nth-child(1) > a {
+    float: right;
+    margin-left: 1em;
+    background-color: blue;
+    background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.1));
+    color: white;
+}
 body > div > main > main.sidebar > div:nth-child(1) {
     left: 0;
     right: 50%;

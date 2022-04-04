@@ -133,7 +133,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // RETURN
 
     return (
-        <main className='view extended audit'>
+        <main className='view extended issue'>
             { (issueId == 'new' || issue) && product && (
                 <Fragment>
                     { issue && issue.deleted ? (

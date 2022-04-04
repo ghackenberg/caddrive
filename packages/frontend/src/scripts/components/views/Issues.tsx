@@ -115,7 +115,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     // RETURN
 
     return (
-        <main className="view extended product">
+        <main className="view extended issues">
             { issues && product && (
                  <Fragment>
                     { product && product.deleted ? (

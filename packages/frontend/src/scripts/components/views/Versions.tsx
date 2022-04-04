@@ -146,7 +146,7 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
     // RETURN
 
     return (
-        <main className="view extended products">
+        <main className="view extended versions">
             { product && versions && (
                 <Fragment>
                     { product && product.deleted ? (

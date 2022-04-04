@@ -60,7 +60,7 @@ export const MemberView = (props: RouteComponentProps<{product: string, member: 
     // RETURN
 
     return (
-        <main className="view extended product">
+        <main className="view extended member">
             { product && (
                  <Fragment>
                     { product && product.deleted ? (

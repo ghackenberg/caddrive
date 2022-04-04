@@ -33,7 +33,7 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
     // RETURN
 
     return (
-        <main className="view extended product">
+        <main className="view extended milestones">
             { product && (
                  <Fragment>
                     { product && product.deleted ? (
