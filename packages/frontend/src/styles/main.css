@@ -114,7 +114,8 @@ body > div > main > main > div:nth-child(1) > a:first-child {
 body > div > main.comments > main > div:nth-child(1) > a {
     float: right;
     margin-left: 1em;
-    background-color: blue;
+    border-color: gray;
+    background-color: gray;
     background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.1));
     color: white;
 }
