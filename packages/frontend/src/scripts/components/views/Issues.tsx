@@ -81,7 +81,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
     }
 
     // CONSTANTS
-    // TODO milestones vor die members
+
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>

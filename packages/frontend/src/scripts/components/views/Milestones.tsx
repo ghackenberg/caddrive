@@ -1,10 +1,16 @@
-import { Product } from 'productboard-common'
+import { Issue, Milestone, Product } from 'productboard-common'
 import  * as React from 'react'
 import { Fragment, useEffect, useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { ProductManager } from '../../managers/product'
+import { MilestoneManager } from '../../managers/milestone'
+import { IssueManager } from '../../managers/issue'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductView3D } from '../widgets/ProductView3D'
+//import { Link } from 'react-router-dom'
+import { Column, Table } from '../widgets/Table'
+// Images
+import * as DeleteIcon from '/src/images/delete.png'
 
 
 export const MilestonesView = (props: RouteComponentProps<{product: string}>) => {
@@ -17,19 +23,92 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
 
     // - Entities
     const [product, setProduct] = useState<Product>()
+    const [milestones, setMilestones] = useState<Milestone[]>()
+    const [issues, setIssues] = useState<Issue[]>()
+    
+    const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
+    const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
+    
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
 
+    // - Entities
+
+    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilestones) }, [props])
+    useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props])
+    
+    console.table(product)
+    console.table(milestones)
+    console.table(issues)
+
+    useEffect(() => {
+        if (issues) {
+            Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
+                const newMilestones = {...openIssues}
+                for (var index = 0; index < milestones.length; index++) {
+                    newMilestones[milestones[index].id] = issueMilestones[index].length
+                }
+                setOpenIssues(newMilestones)
+            })
+        }
+    }, [issues])
+
+    useEffect(() => {
+        if (issues) {
+            Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
+                const newMilestones = {...closedIssues}
+                for (var index = 0; index < milestones.length; index++) {
+                    newMilestones[milestones[index].id] = issueMilestones[index].length
+                }
+                setClosedIssues(newMilestones)
+            })
+        }
+    }, [issues])
+
+  
+   
     // FUNCTIONS
 
-    // TODO
+    async function deleteMilestone(milestone: Milestone) {
+        if (confirm('Do you really want to delete this milestone?')) {
+            await MilestoneManager.deleteMilestone(milestone.id)
+            setMilestones(milestones.filter(other => other.id != milestone.id))       
+        }
+    }
 
     // CONSTANTS
 
-    // TODO
+    const columns: Column<Milestone>[] = [
+        { label: 'Reporter', content: milestone => ( 
+                <img src={`/rest/files/${milestone.userId}.jpg`} className='big'/>
+        )},
+        { label: 'Label', class: 'left fill', content: milestone => (
+            milestone.label
+        )},
+        { label: 'Start', class: 'left fill', content: milestone => (
+            milestone.start
+        )},
+        { label: 'End', class: 'left fill', content: milestone => (
+            milestone.end
+        )},
+
+        { label: 'Open Issues', class: 'left fill', content: milestone => (
+            milestone.id in openIssues ? openIssues[milestone.id] : '?'
+        )},
+        { label: 'Closed Issues', class: 'left fill', content: milestone => (
+            milestone.id in closedIssues ? closedIssues[milestone.id] : '?'
+        )},
+
+        { label: '', class: 'center', content: milestone => (
+            <a onClick={() => deleteMilestone(milestone)}>
+                <img src={DeleteIcon} className='small'/>
+            </a>
+        )}
+    ]
+
+    
 
     // RETURN
 
@@ -44,7 +123,7 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>           
-                                   TODO 
+                                   { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>

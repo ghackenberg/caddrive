@@ -10,6 +10,4 @@ import { MilestoneService } from './milestone.service'
     imports: [MemberModule, forwardRef(() => IssueModule)],
     exports: [MilestoneService]
 })
-export class MilestoneModule {
-
-}
+export class MilestoneModule {}

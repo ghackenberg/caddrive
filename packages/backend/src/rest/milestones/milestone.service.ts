@@ -1,11 +1,12 @@
 import { forwardRef, Inject, NotFoundException } from '@nestjs/common'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
-import * as shortid from 'shortid'
 import { IssueService } from '../issues/issue.service'
 
 export class MilestoneService implements MilestoneREST {
     private static readonly milestones: Milestone[] = [
-        { id: shortid(), userId: 'demo-1', productId: 'demo-1', label: 'Sprint 1', start: new Date().toISOString(), end: new Date().toISOString(), deleted: false}
+        { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', label: 'Sprint 1', start: new Date().toISOString(), end: new Date().toISOString(), deleted: false},
+        { id: 'demo-2', userId: 'demo-4', productId: 'demo-1', label: 'Sprint 2', start: new Date().toISOString(), end: new Date().toISOString(), deleted: false},
+        { id: 'demo-3', userId: 'demo-4', productId: 'demo-1', label: 'Sprint 3', start: new Date().toISOString(), end: new Date().toISOString(), deleted: false}
     ]
 
     constructor(
@@ -13,8 +14,18 @@ export class MilestoneService implements MilestoneREST {
         private readonly issueService: IssueService
     ) {}
 
-    async findMilestones(_productId: string): Promise<Milestone[]> {
-        throw new Error('Method not implemented.')
+    async findMilestones(productId: string): Promise<Milestone[]> {
+        const result: Milestone[] = []
+        for (const milestone of MilestoneService.milestones) {
+            if (milestone.deleted) {
+                continue
+            }
+            if (milestone.productId != productId) {
+                continue
+            }
+            result.push(milestone)
+        }
+        return result
     }
 
     async addMilestone(_data: MilestoneAddData): Promise<Milestone> {

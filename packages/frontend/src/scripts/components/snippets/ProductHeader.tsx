@@ -22,8 +22,8 @@ export const ProductHeader = (props: {product?: Product}) => (
                 <Fragment>
                     <VersionsLink product={props.product}/>
                     <IssuesLink product={props.product}/>
-                    <MembersLink product={props.product}/>
                     <MilestonesLink product={props.product}/>
+                    <MembersLink product={props.product}/>
                 </Fragment>
             )}
             <span>

@@ -12,7 +12,6 @@ class IssueManagerImpl implements IssueREST {
         if (!(productId in this.productIndex)) {
             // Call backend
             const issues = await IssueClient.findIssues(productId, milestoneId, state)
-            console.log(milestoneId)
             // Update issue index
             for (const issue of issues) {
                 this.issueIndex[issue.id] = issue
