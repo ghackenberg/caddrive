@@ -37,7 +37,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId,'',state).then(setIssues)}, [props, state])
+    useEffect(() => { IssueManager.findIssues(productId, undefined, state).then(setIssues)}, [props, state])
     useEffect(() => {
         if (issues) {
             Promise.all(issues.map(issue => UserManager.getUser(issue.userId))).then(issueUsers => {

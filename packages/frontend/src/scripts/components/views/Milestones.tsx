@@ -87,18 +87,25 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
         { label: 'Label', class: 'left fill', content: milestone => (
             milestone.label
         )},
-        { label: 'Start', class: 'left fill', content: milestone => (
-            milestone.start
+        { label: 'Start', class: 'nowrap center', content: milestone => (
+            milestone.start.substring(0,10)
         )},
-        { label: 'End', class: 'left fill', content: milestone => (
-            milestone.end
+        { label: 'End', class: 'nowrap center', content: milestone => (
+            milestone.end.substring(0,10)
         )},
 
-        { label: 'Open Issues', class: 'left fill', content: milestone => (
+        { label: 'Open', class: 'center', content: milestone => (
             milestone.id in openIssues ? openIssues[milestone.id] : '?'
         )},
-        { label: 'Closed Issues', class: 'left fill', content: milestone => (
+        { label: 'Closed', class: 'center', content: milestone => (
             milestone.id in closedIssues ? closedIssues[milestone.id] : '?'
+        )},
+        { label: 'Progress', class: 'center', content: milestone => (
+            <div>
+                <div style={{width: `${milestone.id in openIssues && milestone.id in closedIssues ? 100*closedIssues[milestone.id]/(closedIssues[milestone.id] + openIssues[milestone.id]) : 0}%` }}>
+                    
+                </div>
+            </div>
         )},
 
         { label: '', class: 'center', content: milestone => (

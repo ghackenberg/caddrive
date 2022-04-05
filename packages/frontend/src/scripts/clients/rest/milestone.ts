@@ -3,14 +3,14 @@ import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 
 import { auth } from '../auth'
 
 class MilestoneClientImpl implements MilestoneREST {
-    async findMilestones(productId: string): Promise<Milestone[]> {
-        return (await axios.get<Milestone[]>('/rest/milestones', { params: { productId }, auth } )).data
+    async findMilestones(product: string): Promise<Milestone[]> {
+        return (await axios.get<Milestone[]>('/rest/milestones', { params: { product }, auth } )).data
     }
     async addMilestone(_data: MilestoneAddData): Promise<Milestone> {
         throw new Error('Method not implemented.')
     }
-    async getMilestone(_id: string): Promise<Milestone> {
-        throw new Error('Method not implemented.')
+    async getMilestone(id: string): Promise<Milestone> {
+        return (await axios.get<Milestone>(`/rest/milestones/${id}`, { auth })).data
     }
     async updateMilestone(_id: string, _data: MilestoneUpdateData): Promise<Milestone> {
         throw new Error('Method not implemented.')

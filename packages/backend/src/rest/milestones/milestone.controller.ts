@@ -18,9 +18,9 @@ export class MilestoneController implements MilestoneREST {
     ) {}
 
     @Get()
-    @ApiQuery({ name: 'productId', type: 'string', required: true })
+    @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiResponse({ type: [Milestone] })
-    async findMilestones(@Query('productId') productId: string): Promise<Milestone[]> {
+    async findMilestones(@Query('product') productId: string): Promise<Milestone[]> {
         if ((await this.memberService.findMembers(productId, (<User> this.request.user).id)).length == 0) {
             throw new ForbiddenException()
         }

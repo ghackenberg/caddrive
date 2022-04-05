@@ -4,7 +4,7 @@ import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import { Object3D } from 'three'
 // Commons
-import { Issue, Product, User, Member, Version } from 'productboard-common'
+import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
@@ -19,6 +19,7 @@ import { MemberManager } from '../../managers/member'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { Column, Table } from '../widgets/Table'
+import { MilestoneManager } from '../../managers/milestone'
 
 export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -38,15 +39,18 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     const issueId = props.match.params.issue
 
     // STATES
-
+    
     // - Entities
     const [product, setProduct] = useState<Product>()
     const [members, setMembers] = useState<Member[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
     const [issue, setIssue] = useState<Issue>()
+    const [milestones, setMilstones] = useState<Milestone[]>()
+  
     // - Values
     const [label, setLabel] = useState<string>('')
     const [text, setText] = useState<string>('')
+    const [milestoneId, setMilestoneId] = useState<string>()
     const [assigneeIds, setAssigneeIds] = useState<string[]>([])
 
     // EFFECTS
@@ -55,6 +59,7 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
+    useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilstones) }, [props]) 
     useEffect(() => {
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
@@ -69,8 +74,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
     // - Values
     useEffect(() => { issue && setLabel(issue.label) }, [issue])
     useEffect(() => { issue && setText(issue.text) }, [issue])
+    useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
-
+    
     // FUNCTIONS
 
     async function selectObject(version: Version, object: Object3D) {
@@ -94,12 +100,12 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds })
+                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId })
                 history.replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
-                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds })
+                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId })
                 history.goBack()    
             }
         }
@@ -114,6 +120,16 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
             newAssignees.splice(index, 1)
         }
         setAssigneeIds(newAssignees)
+    }
+
+    async function selectMilestone(newMilestoneId: string){
+        if(newMilestoneId != 'none') {
+            setMilestoneId(newMilestoneId)
+        }
+        else {
+            setMilestoneId('')
+        }
+
     }
 
     // CONSTANTS
@@ -159,10 +175,9 @@ export const IssueView = (props: RouteComponentProps<{product: string, issue: st
                                                     Milestone:
                                                 </div>
                                                 <div>
-                                                    <select>
-                                                        <option>Milestone 1</option>
-                                                        <option>Milestone 2</option>
-                                                        <option>Milestone 3</option>
+                                                    <select value={milestoneId} onChange={event => selectMilestone(event.currentTarget.value)}>
+                                                        <option value={'none'}>none</option>
+                                                        {milestones && milestones.map((milestone) => <option key={milestone.id} value={milestone.id}>{milestone.label}</option>)}
                                                     </select>
                                                 </div>
                                             </div>
