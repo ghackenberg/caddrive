@@ -11,6 +11,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import { Link } from 'react-router-dom'
 
 
 export const MilestonesView = (props: RouteComponentProps<{product: string}>) => {
@@ -38,11 +39,6 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilestones) }, [props])
     useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props])
-    
-    console.table(product)
-    console.table(milestones)
-    console.table(issues)
-
     useEffect(() => {
         if (issues) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
@@ -130,6 +126,9 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>           
+                                <Link to={`/products/${productId}/milestones/new`}>
+                                        New milestone
+                                </Link>
                                    { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>

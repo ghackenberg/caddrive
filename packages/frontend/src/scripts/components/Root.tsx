@@ -25,6 +25,7 @@ import { MilestonesView } from './views/Milestones'
 // Images
 import * as AppIcon from '/src/images/app.png'
 import { CommentsView } from './views/Comments'
+import { MilestoneView } from './views/Milestone'
 
 export const Root = () => {
 
@@ -68,6 +69,7 @@ export const Root = () => {
                             <Route path="/products/:product/issues" component={IssuesView}/>
                             <Route path="/products/:product/members/:member" component={MemberView}/>
                             <Route path="/products/:product/members" component={MembersView}/>
+                            <Route path="/products/:product/milestones/:milestone" component={MilestoneView}/>
                             <Route path="/products/:product/milestones" component={MilestonesView}/>
                             <Route path="/products/:product/settings" component={ProductView}/>
                             <Route path="/products/:product" render={(props: RouteComponentProps<{product: string}>) => <Redirect to={`/products/${props.match.params.product}/versions`}/>}/>

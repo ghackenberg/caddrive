@@ -1,5 +1,6 @@
 import { forwardRef, Inject, NotFoundException } from '@nestjs/common'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+import * as shortid from 'shortid'
 import { IssueService } from '../issues/issue.service'
 
 export class MilestoneService implements MilestoneREST {
@@ -28,8 +29,10 @@ export class MilestoneService implements MilestoneREST {
         return result
     }
 
-    async addMilestone(_data: MilestoneAddData): Promise<Milestone> {
-        throw new Error('Method not implemented.')
+    async addMilestone(data: MilestoneAddData): Promise<Milestone> {   
+            const milestone = { id: shortid(), deleted: false, ...data }
+            MilestoneService.milestones.push(milestone)
+            return milestone
     }
 
     async getMilestone(id: string): Promise<Milestone> {

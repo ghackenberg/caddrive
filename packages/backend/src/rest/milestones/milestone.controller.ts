@@ -1,4 +1,4 @@
-import { Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
@@ -30,7 +30,7 @@ export class MilestoneController implements MilestoneREST {
     @Post()
     @ApiBody({ type: MilestoneAddData })
     @ApiResponse({ type: Milestone })
-    async addMilestone(data: MilestoneAddData): Promise<Milestone> {
+    async addMilestone(@Body() data: MilestoneAddData): Promise<Milestone> {
         if ((await this.memberService.findMembers(data.productId, (<User> this.request.user).id)).length == 0) {
             throw new ForbiddenException()
         }
