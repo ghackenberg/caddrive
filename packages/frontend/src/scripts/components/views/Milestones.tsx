@@ -70,6 +70,25 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
         }
     }
 
+    function calculateDateProgress(milestone: Milestone) {
+        const start = new Date(milestone.start).getTime()
+        const end = new Date(milestone.end).getTime()
+        const now = Date.now()
+        if (now >= start) {
+            return Math.min(100 * (now - start) / (end - start), 100)
+        } else {
+            return 0
+        }
+    }
+
+    function calculateIssueProgress(milestone: Milestone) {
+        if (milestone.id in openIssues && milestone.id in closedIssues) {
+            return 100 * closedIssues[milestone.id] / (closedIssues[milestone.id] + openIssues[milestone.id])
+        } else {
+            return 0
+        }
+    }
+
     // CONSTANTS
 
     const columns: Column<Milestone>[] = [
@@ -102,9 +121,14 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
             </Link>
         )},
         { label: 'Progress', class: 'center', content: milestone => (
-            <div>
-                <div style={{width: `${milestone.id in openIssues && milestone.id in closedIssues ? 100*closedIssues[milestone.id]/(closedIssues[milestone.id] + openIssues[milestone.id]) : 0}%` }}/>
-            </div>
+            <Fragment>
+                <div className='date'>
+                    <div style={{width: `${calculateDateProgress(milestone)}%` }}/>
+                </div>
+                <div className='issue'>
+                    <div style={{width: `${calculateIssueProgress(milestone)}%` }}/>
+                </div>
+            </Fragment>
         )},
         { label: '', class: 'center', content: milestone => (
             <a onClick={() => deleteMilestone(milestone)}>

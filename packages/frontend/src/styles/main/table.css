@@ -91,12 +91,14 @@ body > div > main table img.big {
     border-radius: 50%;
 }
 body > div > main table div {
-    
     height: 0.5em;
-    background-color: gray;
+    margin-bottom: 1px;
+    background-color: rgb(245,245,245);
 }
-body > div > main table div div {
-    
+body > div > main table div:last-child {
+    margin-bottom: 0;
+}
+body > div > main table div > div {
     background-color: black;
 }
 body > div > main form table {
