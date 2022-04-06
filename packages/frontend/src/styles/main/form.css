@@ -31,7 +31,8 @@ body > div > main form > div > div > label::after {
     content: ":";
 }
 body > div > main form > div > div > input,
-body > div > main form > div > div > textarea {
+body > div > main form > div > div > textarea,
+body > div > main form > div > div > select {
     box-sizing: border-box;
 
     max-width: 100%;
