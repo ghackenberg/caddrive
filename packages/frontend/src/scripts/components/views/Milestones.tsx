@@ -1,17 +1,20 @@
-import { Issue, Milestone, Product } from 'productboard-common'
 import  * as React from 'react'
 import { Fragment, useEffect, useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
+import { Link } from 'react-router-dom'
+// Commons
+import { Issue, Milestone, Product } from 'productboard-common'
+// Managers
 import { ProductManager } from '../../managers/product'
 import { MilestoneManager } from '../../managers/milestone'
 import { IssueManager } from '../../managers/issue'
+// Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
+// Widgets
 import { ProductView3D } from '../widgets/ProductView3D'
-//import { Link } from 'react-router-dom'
 import { Column, Table } from '../widgets/Table'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
-import { Link } from 'react-router-dom'
 
 export const MilestonesView = (props: RouteComponentProps<{product: string}>) => {
 
