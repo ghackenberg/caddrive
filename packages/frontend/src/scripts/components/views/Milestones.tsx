@@ -29,7 +29,6 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
     
     const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
     const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
-    
 
     // EFFECTS
 
@@ -112,8 +111,6 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
         )}
     ]
 
-    
-
     // RETURN
 
     return (
@@ -142,4 +139,5 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
             )}
         </main>
     )
+
 }
