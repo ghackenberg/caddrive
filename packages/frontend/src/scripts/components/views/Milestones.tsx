@@ -33,9 +33,7 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
 
     // EFFECTS
 
-
     // - Entities
-
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilestones) }, [props])
     useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props])
@@ -50,7 +48,6 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
             })
         }
     }, [issues])
-
     useEffect(() => {
         if (issues) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
@@ -62,8 +59,6 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
             })
         }
     }, [issues])
-
-  
    
     // FUNCTIONS
 
@@ -78,32 +73,38 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
 
     const columns: Column<Milestone>[] = [
         { label: 'Reporter', content: milestone => ( 
-                <img src={`/rest/files/${milestone.userId}.jpg`} className='big'/>
+            <img src={`/rest/files/${milestone.userId}.jpg`} className='big'/>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (
-            milestone.label
+            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+                {milestone.label}
+            </Link>
         )},
         { label: 'Start', class: 'nowrap center', content: milestone => (
-            milestone.start.substring(0,10)
+            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+                {milestone.start.substring(0,10)}
+            </Link>
         )},
         { label: 'End', class: 'nowrap center', content: milestone => (
-            milestone.end.substring(0,10)
+            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+                {milestone.end.substring(0,10)}
+            </Link>
         )},
-
         { label: 'Open', class: 'center', content: milestone => (
-            milestone.id in openIssues ? openIssues[milestone.id] : '?'
+            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+                {milestone.id in openIssues ? openIssues[milestone.id] : '?'}
+            </Link>
         )},
         { label: 'Closed', class: 'center', content: milestone => (
-            milestone.id in closedIssues ? closedIssues[milestone.id] : '?'
+            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+                {milestone.id in closedIssues ? closedIssues[milestone.id] : '?'}
+            </Link>
         )},
         { label: 'Progress', class: 'center', content: milestone => (
             <div>
-                <div style={{width: `${milestone.id in openIssues && milestone.id in closedIssues ? 100*closedIssues[milestone.id]/(closedIssues[milestone.id] + openIssues[milestone.id]) : 0}%` }}>
-                    
-                </div>
+                <div style={{width: `${milestone.id in openIssues && milestone.id in closedIssues ? 100*closedIssues[milestone.id]/(closedIssues[milestone.id] + openIssues[milestone.id]) : 0}%` }}/>
             </div>
         )},
-
         { label: '', class: 'center', content: milestone => (
             <a onClick={() => deleteMilestone(milestone)}>
                 <img src={DeleteIcon} className='small'/>
