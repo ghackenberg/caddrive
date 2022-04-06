@@ -13,7 +13,6 @@ import { Column, Table } from '../widgets/Table'
 import * as DeleteIcon from '/src/images/delete.png'
 import { Link } from 'react-router-dom'
 
-
 export const MilestonesView = (props: RouteComponentProps<{product: string}>) => {
 
     // PARAMS
