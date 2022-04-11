@@ -9,17 +9,19 @@ import { Issue, Product, User, Member, Version, Milestone } from 'productboard-c
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
 import { IssueManager } from '../../managers/issue'
+import { MemberManager } from '../../managers/member'
+import { MilestoneManager } from '../../managers/milestone'
+// Functions
+import { collectParts, Part } from '../../functions/markdown'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { ProductView3D } from '../widgets/ProductView3D'
-import { MemberManager } from '../../managers/member'
+import { Column, Table } from '../widgets/Table'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
-import { Column, Table } from '../widgets/Table'
-import { MilestoneManager } from '../../managers/milestone'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -46,12 +48,13 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [users, setUsers] = useState<{[id: string]: User}>({})
     const [issue, setIssue] = useState<Issue>()
     const [milestones, setMilstones] = useState<Milestone[]>()
-  
     // - Values
     const [label, setLabel] = useState<string>('')
     const [text, setText] = useState<string>('')
     const [milestoneId, setMilestoneId] = useState<string>()
     const [assigneeIds, setAssigneeIds] = useState<string[]>([])
+    // - Interactions
+    const [marked, setMarked] = useState<Part[]>([])
 
     // EFFECTS
 
@@ -76,6 +79,12 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     useEffect(() => { issue && setText(issue.text) }, [issue])
     useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
+    // - Computations
+    useEffect(() => {
+        const parts: Part[] = []
+        collectParts(text || '', parts)
+        setMarked(parts)
+    }, [text])
     
     // FUNCTIONS
 
@@ -206,7 +215,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} click={selectObject} vr= {true}/>
+                                    <ProductView3D product={product} marked={marked} mouse={true} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
                         </Fragment>

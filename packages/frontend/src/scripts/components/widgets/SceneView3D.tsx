@@ -5,7 +5,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class SceneView extends React.Component<{ model: GLTF, highlighted?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
+export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
 
@@ -135,9 +135,19 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.highlight_cache[mesh.uuid] = mesh.material
-            if (this.props.highlighted.indexOf(object.name) != -1) {
+            const highlighted = this.props.highlighted.indexOf(object.name) != -1
+            const marked = this.props.marked.indexOf(object.name) != -1
+            if (highlighted && marked) {
+                mesh.material = new MeshStandardMaterial({
+                    color: 0x0000ff
+                })
+            } else if (highlighted) {
                 mesh.material = new MeshStandardMaterial({
                     color: 0xff0000
+                })
+            } else if (marked) {
+                mesh.material = new MeshStandardMaterial({
+                    color: 0x00ff00
                 })
             } else {
                 mesh.material = new MeshStandardMaterial({
@@ -239,7 +249,7 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
             this.revertHighlight(this.scene)
             this.highlight_cache = undefined
         }
-        if (this.props.highlighted && this.props.highlighted.length > 0) {
+        if ((this.props.highlighted && this.props.highlighted.length > 0) || (this.props.marked && this.props.marked.length > 0)) {
             this.highlight_cache = {}
             this.setHighlight(this.scene)
         }

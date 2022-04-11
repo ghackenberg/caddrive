@@ -1,11 +1,7 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, createElement, useRef, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
+import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
 import { Redirect } from 'react-router' 
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { unified } from 'unified'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import rehypeReact from 'rehype-react'
 import { Object3D } from 'three'
 // Commons
 import { Comment, Issue, Product, User, Version } from 'productboard-common'
@@ -14,6 +10,8 @@ import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
 import { IssueManager } from '../../managers/issue'
 import { CommentManager } from '../../managers/comment'
+// Functions
+import { collectParts, createProcessor, Part } from '../../functions/markdown'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Snippets
@@ -22,17 +20,9 @@ import { ProductHeader } from '../snippets/ProductHeader'
 import { CommentView } from '../widgets/CommentView'
 import { ProductView3D } from '../widgets/ProductView3D'
 
-interface Part {
-    productId: string
-    versionId: string
-    objectName: string
-}
-
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     // CONSTANTS
-
-    const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
     // REFERENCES
 
@@ -63,6 +53,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const [commentsParts, setCommentsParts] = useState<{[id: string]: Part[]}>({})
     const [highlighted, setHighlighted] = useState<Part[]>()
     // - Interactions
+    const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
 
     // EFFECTS
@@ -98,7 +89,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     useEffect(() => {
         if (issue) {
             const parts: Part[] = []
-            setIssueHtml(createProcessor(parts).processSync(issue.text).result)
+            setIssueHtml(createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(issue.text).result)
             setIssueParts(parts)
         }
     }, [issue])
@@ -108,7 +99,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
             const commentsParts: {[id: string]: Part[]} = {}
             for (const comment of comments) {
                 const parts: Part[] = []
-                commentsHtml[comment.id] = createProcessor(parts).processSync(comment.text).result
+                commentsHtml[comment.id] = createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(comment.text).result
                 commentsParts[comment.id] = parts
             }
             setCommentsHtml(commentsHtml)
@@ -133,28 +124,13 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
         }
         setHighlighted(highlighted)
     }, [issueParts, commentsParts])
+    useEffect(() => {
+        const parts: Part[] = []
+        collectParts(text || '', parts)
+        setMarked(parts)
+    }, [text])
 
     // FUNCTIONS
-
-    function createProcessor(parts: Part[]) {
-        return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
-            createElement, components: {
-                a: (props: any) => {
-                    const match = regex.exec(props.href || '')
-                    if (match) {
-                        const productId = match[1]
-                        const versionId = match[2]
-                        const objectName = match[3]
-                        const part = { productId, versionId, objectName }
-                        parts.push(part)
-                        return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
-                    } else {
-                        return <a {...props}/>
-                    }
-                }
-            }
-        })
-    }
 
     function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
@@ -274,7 +250,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                     </div>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} selected={selected} click={selectObject} vr= {true}/>
+                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
                         </Fragment>
