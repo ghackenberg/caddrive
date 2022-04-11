@@ -1,5 +1,6 @@
 body > div > main form {
     display: table;
+    box-sizing: border-box;
     margin: 0;
     margin-top: 0.75em;
     margin-bottom: 0.75em;
