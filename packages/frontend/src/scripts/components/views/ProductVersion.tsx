@@ -12,6 +12,9 @@ import { VersionManager } from '../../managers/version'
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { VersionView3D } from '../widgets/VersionView3D'
+// Images
+import * as LoadIcon from '/src/images/load.png'
+import * as EmptyIcon from '/src/images/empty.png'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -212,7 +215,15 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                                 <div>
-                                    {version && <VersionView3D version={version} mouse={true} vr= {true}/>}
+                                    <div className='widget product_view'>
+                                        {!versions || (versions.length > 0 && !version) && (
+                                            <img className='load' src={LoadIcon}/>
+                                        )}
+                                        {versions && versions.length == 0 && (
+                                            <img className='empty' src={EmptyIcon}/>
+                                        )}
+                                        {version && <VersionView3D version={version} mouse={true} vr= {true}/>}
+                                    </div>
                                 </div>
                             </main>
                         </Fragment>
