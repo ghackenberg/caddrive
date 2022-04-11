@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 // Commons
-import { Issue, Milestone, Product } from 'productboard-common'
+import { Milestone, Product } from 'productboard-common'
 // Managers
 import { ProductManager } from '../../managers/product'
 import { MilestoneManager } from '../../managers/milestone'
@@ -27,7 +27,6 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // - Entities
     const [product, setProduct] = useState<Product>()
     const [milestones, setMilestones] = useState<Milestone[]>()
-    const [issues, setIssues] = useState<Issue[]>()
     
     const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
     const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
@@ -37,7 +36,6 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilestones) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props])
     useEffect(() => {
         if (milestones) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
@@ -50,7 +48,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
         }
     }, [milestones])
     useEffect(() => {
-        if (issues) {
+        if (milestones) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
                 const newMilestones = {...closedIssues}
                 for (var index = 0; index < milestones.length; index++) {
@@ -59,7 +57,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                 setClosedIssues(newMilestones)
             })
         }
-    }, [issues])
+    }, [milestones])
    
     // FUNCTIONS
 
