@@ -11,7 +11,6 @@ import { VersionManager } from '../../managers/version'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { ProductView3D } from '../widgets/ProductView3D'
 import { VersionView3D } from '../widgets/VersionView3D'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
@@ -213,11 +212,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                                 <div>
-                                    {version ? (
-                                        <VersionView3D version={version} mouse={true} vr= {true}/>
-                                    ) : (
-                                        <ProductView3D product={product} mouse={true} vr= {true}/>
-                                    )}
+                                    {version && <VersionView3D version={version} mouse={true} vr= {true}/>}
                                 </div>
                             </main>
                         </Fragment>
