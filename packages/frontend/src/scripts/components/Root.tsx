@@ -21,6 +21,7 @@ import { ProductIssueSettingView } from './views/ProductIssueSetting'
 import { ProductIssueCommentView } from './views/ProductIssueComment'
 import { ProductMilestoneView } from './views/ProductMilestone'
 import { ProductMilestoneSettingView } from './views/ProductMilestoneSetting'
+import { ProductMilestoneIssueView } from './views/ProductMilestoneIssue'
 import { ProductMemberView } from './views/ProductMember'
 import { ProductMemberSettingView } from './views/ProductMemberSetting'
 import { ProductSettingView } from './views/ProductSetting'
@@ -71,6 +72,7 @@ export const Root = () => {
                             <Route path="/products/:product/issues" component={ProductIssueView}/>
 
                             {/* Milestone views */}
+                            <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView}/>
                             <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
                             <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
 
