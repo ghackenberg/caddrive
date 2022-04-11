@@ -17,6 +17,7 @@
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
         "noUncheckedIndexedAccess": true,
-        "noPropertyAccessFromIndexSignature": true
+        "noPropertyAccessFromIndexSignature": true,
+        "sourceMap": true
     }
 }

@@ -62,5 +62,6 @@ module.exports = {
                 { from: /./, to: '/404.html' }
             ]
         }
-    }
+    },
+    devtool: 'inline-source-map'
 }

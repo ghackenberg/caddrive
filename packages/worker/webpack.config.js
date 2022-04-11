@@ -24,6 +24,7 @@ module.exports = (env, argv) => (
         devServer: {
             contentBase: path.join(__dirname, 'public'),
             port: 3002
-        }
+        },
+        devtool: 'inline-source-map'
     }
 )
