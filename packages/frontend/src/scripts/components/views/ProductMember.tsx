@@ -16,7 +16,7 @@ import { MemberManager } from '../../managers/member'
 import * as DeleteIcon from '/src/images/delete.png'
 import { UserManager } from '../../managers/user'
 
-export const MembersView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
 
     // PARAMS
 
@@ -82,7 +82,7 @@ export const MembersView = (props: RouteComponentProps<{product: string}>) => {
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                <Link to={`/products/${productId}/members/new`}>
+                                <Link to={`/products/${productId}/members/new/settings`}>
                                         New member
                                 </Link>
                                     

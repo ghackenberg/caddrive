@@ -21,7 +21,7 @@ import { VersionView3D } from '../widgets/VersionView3D'
 import * as EmptyIcon from '/src/images/empty.png'
 import { GenericInput } from '../inputs/GenericInput'
 
-export const VersionView = (props: RouteComponentProps<{ product: string, version: string }>) => {
+export const ProductVersionSettingView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
     const history = useHistory()
 

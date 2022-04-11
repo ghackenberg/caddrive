@@ -16,7 +16,7 @@ import { MilestoneManager } from '../../managers/milestone'
 import { DateInput } from '../inputs/DateInput'
 
 
-export const MilestoneView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
+export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
     const history = useHistory()
     

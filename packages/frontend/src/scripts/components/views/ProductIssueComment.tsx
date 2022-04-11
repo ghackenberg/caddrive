@@ -28,7 +28,7 @@ interface Part {
     objectName: string
 }
 
-export const CommentsView = (props: RouteComponentProps<{product: string, issue: string}>) => {
+export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     // CONSTANTS
 
@@ -229,7 +229,7 @@ export const CommentsView = (props: RouteComponentProps<{product: string, issue:
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                    <Link to={`/products/${productId}/issues/${issueId}`}>
+                                    <Link to={`/products/${productId}/issues/${issueId}/settings`}>
                                         Edit issue
                                     </Link>
                                     <h1>

@@ -21,7 +21,7 @@ import { TextInput } from '../inputs/TextInput'
 import { Column, Table } from '../widgets/Table'
 import { MilestoneManager } from '../../managers/milestone'
 
-export const IssueView = (props: RouteComponentProps<{product: string, issue: string}>) => {
+export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     const history = useHistory()
 

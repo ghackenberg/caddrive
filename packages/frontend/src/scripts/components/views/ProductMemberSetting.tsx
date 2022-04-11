@@ -15,7 +15,7 @@ import { UserManager } from '../../managers/user'
 import { MemberManager } from '../../managers/member'
 import { Column, Table } from '../widgets/Table'
 
-export const MemberView = (props: RouteComponentProps<{product: string, member: string}>) => {
+export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
     const history = useHistory()
 

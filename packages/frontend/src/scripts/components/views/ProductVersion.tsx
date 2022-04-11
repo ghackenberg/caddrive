@@ -14,7 +14,7 @@ import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { VersionView3D } from '../widgets/VersionView3D'
 
-export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
     // PARAMS
 
@@ -156,7 +156,7 @@ export const VersionsView = (props: RouteComponentProps<{product: string}>) => {
                             <ProductHeader product={product}/>
                             <main className='sidebar'>
                                 <div>
-                                    <Link to={`/products/${productId}/versions/new`}>
+                                    <Link to={`/products/${productId}/versions/new/settings`}>
                                         New version
                                     </Link>
                                     <div className="widget version_tree">

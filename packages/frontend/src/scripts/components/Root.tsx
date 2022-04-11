@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
-import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 // Commons
 import { User } from 'productboard-common'
 // Clients
@@ -12,20 +12,20 @@ import { PageHeader } from './snippets/PageHeader'
 // Views
 import { LoginView } from './views/Login'
 import { UserView } from './views/User'
-import { UsersView } from './views/Users'
-import { IssueView } from './views/Issue'
-import { IssuesView } from './views/Issues'
-import { VersionView } from './views/Version'
-import { VersionsView } from './views/Versions'
-import { MembersView } from './views/Members'
-import { MemberView } from './views/Member'
+import { UserSettingView } from './views/UserSetting'
 import { ProductView } from './views/Product'
-import { ProductsView } from './views/Products'
-import { MilestonesView } from './views/Milestones'
+import { ProductVersionView } from './views/ProductVersion'
+import { ProductVersionSettingView } from './views/ProductVersionSetting'
+import { ProductIssueView } from './views/ProductIssue'
+import { ProductIssueSettingView } from './views/ProductIssueSetting'
+import { ProductIssueCommentView } from './views/ProductIssueComment'
+import { ProductMilestoneView } from './views/ProductMilestone'
+import { ProductMilestoneSettingView } from './views/ProductMilestoneSetting'
+import { ProductMemberView } from './views/ProductMember'
+import { ProductMemberSettingView } from './views/ProductMemberSetting'
+import { ProductSettingView } from './views/ProductSetting'
 // Images
 import * as AppIcon from '/src/images/app.png'
-import { CommentsView } from './views/Comments'
-import { MilestoneView } from './views/Milestone'
 
 export const Root = () => {
 
@@ -58,22 +58,30 @@ export const Root = () => {
                     <UserContext.Provider value={{callback, ...user}}>
                         <Switch>
                             {/* User views */}
-                            <Route path="/users/:user/settings" component={UserView}/>
-                            <Route path="/users/:user" render={(props: RouteComponentProps<{user: string}>) => <Redirect to={`/users/${props.match.params.user}/settings`}/>}/>
-                            <Route path="/users" component={UsersView}/>
+                            <Route path="/users/:user/settings" component={UserSettingView}/>
+                            <Route path="/users" component={UserView}/>
+
+                            {/* Version views */}
+                            <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
+                            <Route path="/products/:product/versions" component={ProductVersionView}/>
+
+                            {/* Issue views */}
+                            <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView}/>
+                            <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView}/>
+                            <Route path="/products/:product/issues" component={ProductIssueView}/>
+
+                            {/* Milestone views */}
+                            <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
+                            <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
+
+                            {/* Member views */}
+                            <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView}/>
+                            <Route path="/products/:product/members" component={ProductMemberView}/>
+
                             {/* Product views */}
-                            <Route path="/products/:product/versions/:version" component={VersionView}/>
-                            <Route path="/products/:product/versions" component={VersionsView}/>
-                            <Route path="/products/:product/issues/:issue/comments" component={CommentsView}/>
-                            <Route path="/products/:product/issues/:issue" component={IssueView}/>
-                            <Route path="/products/:product/issues" component={IssuesView}/>
-                            <Route path="/products/:product/members/:member" component={MemberView}/>
-                            <Route path="/products/:product/members" component={MembersView}/>
-                            <Route path="/products/:product/milestones/:milestone" component={MilestoneView}/>
-                            <Route path="/products/:product/milestones" component={MilestonesView}/>
-                            <Route path="/products/:product/settings" component={ProductView}/>
-                            <Route path="/products/:product" render={(props: RouteComponentProps<{product: string}>) => <Redirect to={`/products/${props.match.params.product}/versions`}/>}/>
-                            <Route path="/products" component={ProductsView}/>
+                            <Route path="/products/:product/settings" component={ProductSettingView}/>
+                            <Route path="/products" component={ProductView}/>
+
                             {/* Home view */}
                             <Redirect to="/products"/>
                         </Switch>

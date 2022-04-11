@@ -1,102 +1,81 @@
-import  * as React from 'react'
-import { useState, useEffect, FormEvent, Fragment } from 'react'
-import { Redirect, useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
-import * as hash from 'hash.js'
+import * as React from 'react'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 // Commons
 import { User } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
-// Snippets
-import { UserHeader } from '../snippets/UserHeader'
-// Inputs
-import { TextInput } from '../inputs/TextInput'
-import { EmailInput } from '../inputs/EmailInput'
-import { PasswordInput } from '../inputs/PasswordInput'
-import { auth } from '../../clients/auth'
-import { FileInput } from '../inputs/FileInput'
+// Links
+import { UsersLink } from '../links/UsersLink'
+// Widgets
+import { Column, Table } from '../widgets/Table'
+// Images
+import * as DeleteIcon from '/src/images/delete.png'
 
-export const UserView = (props: RouteComponentProps<{ user: string }>) => {
-    
-    const history = useHistory()
-    
-    // PARAMS
-
-    const userId = props.match.params.user
+export const UserView = () => {
 
     // STATES
-    
+
     // - Entities
-    const [user, setUser] = useState<User>()
-    // - Values
-    const [email, setEmail] = useState<string>('')
-    const [name, setName] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
-    const [file, setFile] = useState<File>()
+    const [users, setUsers] = useState<User[]>()
 
     // EFFECTS
 
     // - Entities
-    useEffect(() => { userId != 'new' && UserManager.getUser(userId).then(setUser) }, [props])
-    // - Values
-    useEffect(() => { user && setEmail(user.email) }, [user])
-    useEffect(() => { user && setName(user.name) }, [user])
+    useEffect(() => { UserManager.findUsers().then(setUsers) }, [])
 
     // FUNCTIONS
 
-    async function submit(event: FormEvent){
-        event.preventDefault()
-        if(userId == 'new') {
-            if (name && email) {
-                await UserManager.addUser({ name, email, password: encrypt(password) },file)
-            }
-        } else {
-            if (name && email) {
-                await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password },file)
-                if (auth.username == name) {
-                    auth.password = encrypt(password)
-                }
-            }
+    async function deleteUser(user: User) {
+        if (confirm('Do you really want to delete this user?')) {
+            await UserManager.deleteUser(user.id)
+            setUsers(users.filter(other => other.id != user.id))
         }
-        history.goBack()    
     }
 
-    function encrypt(password: string): string {
-        return hash.sha256().update(password).digest('hex')
-    }
+    // CONSTANTS
+
+    const columns: Column<User>[] = [
+        { label: 'Picture', content: user => (
+            <Link to={`/users/${user.id}/settings`}>
+                <img src={`/rest/files/${user.pictureId}.jpg`} className='big'/>
+            </Link>
+        )},
+        { label: 'Name', class: 'left nowrap', content: user => (
+            <Link to={`/users/${user.id}/settings`}>
+                {user.name}
+            </Link>
+        )},
+        { label: 'Email', class: 'left nowrap fill', content: user => (
+            <Link to={`/users/${user.id}/settings`}>
+                {user.email}
+            </Link>
+        )},
+        { label: '', content: user => (
+            <a onClick={() => deleteUser(user)}>
+                <img src={DeleteIcon} className='small'/>
+            </a>
+        )}
+    ]
 
     // RETURN
-        
+
     return (
-        <main className="view extended user">
-            { (userId == 'new' || user) && (
-                <Fragment>
-                    { user && user.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <UserHeader user={user}/>
-                            <main>
-                                <div>
-                                    <h1>Settings</h1>
-                                    <form onSubmit={submit}>
-                                        <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                        <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                        <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword} required = {userId === 'new'}/>
-                                        <FileInput label='Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile} required= {userId === 'new'}/>
-                                        <div>
-                                            <div/>
-                                            <div>
-                                                <input type='submit' value='Save'/>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </main>
-                        </Fragment>
-                    )}
-                </Fragment>
-            )}
+        <main className="view users">
+            <header>
+                <div>
+                    <UsersLink/>
+                </div>
+            </header>
+            <main>
+                <div>
+                    <Link to={`/users/new/settings`}>
+                        New user
+                    </Link>
+                    { users && <Table columns={columns} items={users}/> }
+                </div>
+            </main>
         </main>
     )
+
 }

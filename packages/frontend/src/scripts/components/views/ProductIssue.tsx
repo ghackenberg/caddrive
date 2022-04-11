@@ -17,7 +17,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 
-export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
 
     // PARAMS
 
@@ -125,7 +125,7 @@ export const IssuesView = (props: RouteComponentProps<{product: string}>) => {
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                    <Link to={`/products/${productId}/issues/new`}>
+                                    <Link to={`/products/${productId}/issues/new/settings`}>
                                         New issue
                                     </Link>
                                     <a onClick={showOpenIssues} className={state == 'open' ? 'active' : ''}>

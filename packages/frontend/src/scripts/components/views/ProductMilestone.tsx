@@ -16,7 +16,7 @@ import { Column, Table } from '../widgets/Table'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 
-export const MilestonesView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
 
     // PARAMS
 
@@ -96,27 +96,27 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
             <img src={`/rest/files/${milestone.userId}.jpg`} className='big'/>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {milestone.label}
             </Link>
         )},
         { label: 'Start', class: 'nowrap center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
-                {milestone.start.substring(0,10)}
+            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+                {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
             </Link>
         )},
         { label: 'End', class: 'nowrap center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
-                {milestone.end.substring(0,10)}
+            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+                {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
             </Link>
         )},
         { label: 'Open', class: 'center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {milestone.id in openIssues ? openIssues[milestone.id] : '?'}
             </Link>
         )},
         { label: 'Closed', class: 'center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}`}>
+            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {milestone.id in closedIssues ? closedIssues[milestone.id] : '?'}
             </Link>
         )},
@@ -150,7 +150,7 @@ export const MilestonesView = (props: RouteComponentProps<{product: string}>) =>
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>           
-                                <Link to={`/products/${productId}/milestones/new`}>
+                                <Link to={`/products/${productId}/milestones/new/settings`}>
                                         New milestone
                                 </Link>
                                    { milestones && <Table columns={columns} items={milestones}/> }
