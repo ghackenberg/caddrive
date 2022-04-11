@@ -98,16 +98,18 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                         <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
                                         <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
-                                        <GenericInput label="Base">
-                                            <Fragment>
-                                                {versions.map(version => version).reverse().map(version => (
-                                                    <div key={version.id}>
-                                                        <input type="checkbox" value={version.id} onChange={update}/>
-                                                        <label>{version.major}.{version.minor}.{version.patch}</label>
-                                                    </div>
-                                                ))}
-                                            </Fragment>
-                                        </GenericInput>
+                                        {versions.length > 0 && (
+                                            <GenericInput label="Base">
+                                                <Fragment>
+                                                    {versions.map(version => version).reverse().map(version => (
+                                                        <div key={version.id}>
+                                                            <input type="checkbox" value={version.id} onChange={update}/>
+                                                            <label>{version.major}.{version.minor}.{version.patch}</label>
+                                                        </div>
+                                                    ))}
+                                                </Fragment>
+                                            </GenericInput>
+                                        )}
                                         <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                         {versionId == 'new' && <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required= {true}/>}
                                         <div>
