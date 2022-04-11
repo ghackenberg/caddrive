@@ -59,10 +59,18 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
 
     const columns: Column<Member>[] = [
         { label: 'Picture', content: member => (
-            member.id in users ? <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' /> : '?'
+            member.id in users ? (
+                <Link to={`/users/${users[member.id].id}/settings`}>
+                    <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' />
+                </Link> 
+            ) : '?'
         )},
         { label: 'User', class: 'fill left nowrap', content: (
-            member => member.id in users ? users[member.id].name : '?'
+            member => member.id in users ? (
+                <Link to={`/users/${users[member.id].id}/settings`}>
+                    {users[member.id].name}
+                </Link>
+             ) : '?'
         )},
         { label: '', class: 'center', content: member => (
             <a onClick={() => deleteMember(member)}><img src={DeleteIcon} className='small'/> </a>

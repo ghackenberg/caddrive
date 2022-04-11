@@ -76,22 +76,6 @@ body > div > main table a.closed {
 body > div > main table a:hover {
     color: blue;
 }
-body > div > main table img {
-    display: inline-block;
-    margin: 0.25em;
-    background-position: center center;
-    background-size: cover;
-}
-body > div > main table img.small {
-    width: 1em;
-    height: 1em;
-}
-body > div > main table img.big {
-    width: 3em;
-    height: 3em;
-    margin-right: 0;
-    border-radius: 50%;
-}
 body > div > main table div {
     height: 0.5em;
     margin-bottom: 1px;

@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router' 
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { Object3D } from 'three'
 // Commons
 import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
@@ -136,10 +136,18 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
 
     const columns: Column<Member>[] = [
         {label: 'Picture', content: member => (
-            member.id in users ? <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' /> : '?'
+            member.id in users ? (
+                <Link to={`/users/${users[member.id].id}/settings`}>
+                    <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big'/>
+                </Link>
+             ) : '?'
         )},
         {label: 'Member', class: 'fill left nowrap', content: member => (
-            member.id in users ? users[member.id].name : '?'
+            member.id in users ? (
+                <Link to={`/users/${users[member.id].id}/settings`}>
+                    {users[member.id].name}
+                </Link>
+            ) : '?'
         )},
         {label: 'Assignee', class: 'fill center nowrap', content: member => (
             <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>

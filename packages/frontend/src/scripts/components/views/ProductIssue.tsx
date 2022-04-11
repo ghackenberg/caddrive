@@ -113,7 +113,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         { label: 'Assignees', class: 'nowrap', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
-                    <Fragment>
+                    <Fragment key={assignedId}>
                         { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : '?' }
                     </Fragment>
                 ))}

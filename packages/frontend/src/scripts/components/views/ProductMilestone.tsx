@@ -39,7 +39,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilestones) }, [props])
     useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props])
     useEffect(() => {
-        if (issues) {
+        if (milestones) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
                 const newMilestones = {...openIssues}
                 for (var index = 0; index < milestones.length; index++) {
@@ -48,7 +48,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                 setOpenIssues(newMilestones)
             })
         }
-    }, [issues])
+    }, [milestones])
     useEffect(() => {
         if (issues) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
@@ -92,8 +92,10 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // CONSTANTS
 
     const columns: Column<Milestone>[] = [
-        { label: 'Reporter', content: milestone => ( 
-            <img src={`/rest/files/${milestone.userId}.jpg`} className='big'/>
+        { label: 'Reporter', content: milestone => (
+            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+                <img src={`/rest/files/${milestone.userId}.jpg`} className='big'/>
+            </Link>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>

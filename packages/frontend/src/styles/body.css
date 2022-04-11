@@ -12,6 +12,13 @@ body a > img {
     width: 1.5em;
     height: 1.5em;
     margin-right: 0.25em;
+    background-position: center center;
+    background-size: cover;
+}
+body a > img.small {
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
 }
 body a > img.big {
     vertical-align: middle;
