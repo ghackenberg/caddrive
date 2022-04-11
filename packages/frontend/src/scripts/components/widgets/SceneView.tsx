@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Color, DirectionalLight, Box3, Vector3 } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight, Box3, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
@@ -60,12 +60,11 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         // Directional light
         this.directional_light = new DirectionalLight(0xffffff, 1)
         // Renderer
-        this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true })
+        this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true })
         this.renderer.xr.enabled = true
         this.renderer.outputEncoding = sRGBEncoding
         this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize(this.div.current.offsetWidth, this.div.current.offsetHeight)
-        this.renderer.setClearColor(new Color(215/255,215/255,215/255))
         this.renderer.setAnimationLoop(this.paint)
         // Controller 1
         this.controller1 = this.renderer.xr.getController(0)

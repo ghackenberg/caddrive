@@ -124,10 +124,10 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
         )},
         { label: 'Progress', class: 'center', content: milestone => (
             <Fragment>
-                <div className='date'>
+                <div className='progress date'>
                     <div style={{width: `${calculateDateProgress(milestone)}%` }}/>
                 </div>
-                <div className='issue'>
+                <div className='progress issue'>
                     <div style={{width: `${calculateIssueProgress(milestone)}%` }}/>
                 </div>
             </Fragment>

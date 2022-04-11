@@ -76,15 +76,16 @@ body > div > main table a.closed {
 body > div > main table a:hover {
     color: blue;
 }
-body > div > main table div {
+body > div > main table div.progress {
     height: 0.5em;
     margin-bottom: 1px;
     background-color: rgb(245,245,245);
 }
-body > div > main table div:last-child {
+body > div > main table div.progress:last-child {
     margin-bottom: 0;
 }
-body > div > main table div > div {
+body > div > main table div.progress > div {
+    height: 100%;
     background-color: black;
 }
 body > div > main form table {
