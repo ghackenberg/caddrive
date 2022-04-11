@@ -4,17 +4,17 @@ import { RouteComponentProps } from 'react-router-dom'
 import { Redirect, useHistory } from 'react-router'
 // Commons
 import { Milestone, Product } from 'productboard-common'
+// Contexts
+import { UserContext } from '../../contexts/User'
 // Managers
 import { ProductManager } from '../../managers/product'
+import { MilestoneManager } from '../../managers/milestone'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { ProductView3D } from '../widgets/ProductView3D'
 import { TextInput } from '../inputs/TextInput'
-import { UserContext } from '../../contexts/User'
-import { MilestoneManager } from '../../managers/milestone'
 import { DateInput } from '../inputs/DateInput'
-
+import { BurndownChartWidget } from '../widgets/BurndownChart'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
@@ -36,8 +36,11 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     const [milestone, setMilstone] = useState<Milestone>()
     // - Values
     const [label, setLabel] = useState<string>('')
-    const [start, setStart] = useState<Date>(new Date())
-    const [end, setEnd] = useState<Date>(new Date())
+    const [start, setStart] = useState<Date>(new Date(new Date().setHours(0,0,0,0)))
+    const [end, setEnd] = useState<Date>(new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14))
+    // - Simulations
+    const [total, setTotalIssueCount] = useState<number>() 
+    const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
    
     // EFFECTS
 
@@ -48,6 +51,15 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     useEffect(() => { milestone && setLabel(milestone.label) }, [milestone])
     useEffect(() => { milestone && setStart(new Date(milestone.start)) }, [milestone])
     useEffect(() => { milestone && setEnd(new Date(milestone.end)) }, [milestone])
+    // - Simulations
+    useEffect(() => { setTotalIssueCount(10) }, [])
+    useEffect(() => {
+        const actual: { time: number, actual: number }[] = []
+        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 0, actual: 10 })
+        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 1, actual: 9 })
+        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 4, actual: 7 })
+        setActualBurndown(actual)
+    }, [])
 
     // FUNCTIONS
 
@@ -90,8 +102,8 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                             </div>
                                     </form>
                                 </div>
-                                <div>
-                                    <ProductView3D product={product} mouse={true} vr= {true}/>
+                                <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
+                                    <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
                                 </div>
                             </main>
                         </Fragment>

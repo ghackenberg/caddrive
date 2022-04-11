@@ -12,10 +12,12 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },{
+        },
+        {
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },{
+        },
+        {
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
         }
@@ -44,6 +46,7 @@
         "react-helmet": "^6.1.0",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
+        "recharts": "^2.1.9",
         "rehype-react": "^7.0.3",
         "remark-parse": "^10.0.1",
         "remark-rehype": "^10.1.0",
