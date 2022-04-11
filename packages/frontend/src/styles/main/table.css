@@ -78,7 +78,9 @@ body > div > main table a:hover {
 }
 body > div > main table img {
     display: inline-block;
-    padding: 0.25em;
+    margin: 0.25em;
+    background-position: center center;
+    background-size: cover;
 }
 body > div > main table img.small {
     width: 1em;

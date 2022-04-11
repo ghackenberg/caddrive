@@ -2,20 +2,21 @@ import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 // Commons
-import { Product, User } from 'productboard-common'
+import { Member, Product, User } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
 import { IssueManager } from '../../managers/issue'
+import { MemberManager } from '../../managers/member'
 // Links
 import { ProductsLink } from '../links/ProductsLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
-import { MemberManager } from '../../managers/member'
 
 export const ProductView = () => {
     
@@ -26,7 +27,7 @@ export const ProductView = () => {
     const [users, setUsers] = useState<{[id: string]: User}>({})
     const [versions, setVersions] = useState<{[id: string]: number}>({})
     const [issues, setIssues] = useState<{[id: string]: number}>({})
-    const [members, setMembers] = useState<{[id: string]: number}>({})
+    const [members, setMembers] = useState<{[id: string]: Member[]}>({})
 
     // EFFECTS
 
@@ -70,7 +71,7 @@ export const ProductView = () => {
             Promise.all(products.map(product => MemberManager.findMembers(product.id))).then(productMembers => {
                 const newMembers = {...members}
                 for (var index = 0; index < products.length; index++) {
-                    newMembers[products[index].id] = productMembers[index].length
+                    newMembers[products[index].id] = productMembers[index]
                 }
                 setMembers(newMembers)
             })
@@ -96,7 +97,7 @@ export const ProductView = () => {
         )},
         { label: 'Owner', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {product.id in users ? users[product.id].name : '?'}
+                {product.id in users && product.id in members ? <ProductUserNameWidget user={users[product.id]} members={members[product.id]}/> : '?'}
             </Link>
         )},
         { label: 'Name', class: 'left nowrap', content: product => (
@@ -121,7 +122,7 @@ export const ProductView = () => {
         )},
         { label: 'Members', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {product.id in members ? members[product.id] : '?'}
+                {product.id in members ? members[product.id].length : '?'}
             </Link>
         )},
         { label: '', content: product => (
