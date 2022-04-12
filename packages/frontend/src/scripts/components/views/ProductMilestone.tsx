@@ -28,7 +28,6 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const [product, setProduct] = useState<Product>()
     const [milestones, setMilestones] = useState<Milestone[]>()
     const [issues, setIssues] = useState<Issue[]>()
-    
     const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
     const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
 

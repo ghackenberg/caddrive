@@ -3,10 +3,11 @@ import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
 // Commons
-import { Issue, Member, Product, User } from 'productboard-common'
+import { Issue, Member, Milestone, Product, User } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
+import { MilestoneManager } from '../../managers/milestone'
 import { IssueManager } from '../../managers/issue'
 import { CommentManager } from '../../managers/comment'
 // Snippets
@@ -30,6 +31,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     // - Entities
     const [product, setProduct] = useState<Product>()
+    const [milestone, setMilestone] = useState<Milestone>()
     const [members, setMembers] = useState<Member[]>()
     const [issues, setIssues] = useState<Issue[]>()
     const [comments, setComments] = useState<{[id: string]: number}>({})
@@ -41,8 +43,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MilestoneManager.getMilestone(milestoneId).then(setMilestone) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId, state).then(setIssues)}, [props, state])
+    useEffect(() => { IssueManager.findIssues(productId, milestoneId, state).then(setIssues)}, [props, milestoneId, state])
     useEffect(() => {
         if (issues) {
             const userIds: string[] = []
@@ -82,11 +85,13 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // FUNCTIONS
 
     async function deleteIssue(issue: Issue) {
-        if (confirm('Do you really want to delete this issue?')) {
-            await IssueManager.deleteIssue(issue.id)
-            setIssues(issues.filter(other => other.id != issue.id))       
+        if (confirm('Do you really want to delete this issue from this milestone?')) {
+            await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: 'none' })
+            //setIssues(issues.filter(other => other.milestoneId != null))  
+            
         }
     }
+    console.table(issues)
     
     async function showClosedIssues(event: FormEvent) {
         event.preventDefault()
@@ -145,16 +150,26 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
+                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`}>
+                                        Edit Milestone
+                                    </Link>
+                                    <h1>
+                                        {milestone && milestone.label +' from ' + new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} ) + ' to ' + new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} ) }
+                                    </h1>
+                            
                                     <Link to={`/products/${productId}/issues/new/settings`}>
                                         New issue
                                     </Link>
+
                                     <a onClick={showOpenIssues} className={state == 'open' ? 'active' : ''}>
                                         Open issues
                                     </a>
                                     <a onClick={showClosedIssues} className={state == 'closed' ? 'active' : ''}>
                                         Closed issues
                                     </a>
+                                   
                                     <Table columns={columns} items={issues}/>
+                                    
                                 </div>
                                 <div>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
