@@ -55,7 +55,7 @@ module.exports = {
         filename: 'frontend.js'
     },
     devServer: {
-        contentBase: path.join(__dirname, 'public'),
+        static: path.join(__dirname, 'public'),
         port: 3003,
         historyApiFallback: {
             rewrites: [
