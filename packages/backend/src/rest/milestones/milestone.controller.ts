@@ -53,7 +53,7 @@ export class MilestoneController implements MilestoneREST {
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiBody({ type: MilestoneUpdateData })
     @ApiResponse({ type: Milestone })
-    async updateMilestone(@Param('id') id: string, data: MilestoneUpdateData): Promise<Milestone> {
+    async updateMilestone(@Param('id') id: string, @Body() data: MilestoneUpdateData): Promise<Milestone> {
         const milestone = await this.milestoneService.getMilestone(id)
         if (!milestone) {
             throw new NotFoundException()

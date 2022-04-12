@@ -157,8 +157,8 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     async function deleteIssue(issue: Issue) {
         if (confirm('Do you really want to delete this issue from this milestone?')) {
-            await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: 'none' })
-            //setIssues(issues.filter(other => other.milestoneId != null))  
+            await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: null })
+            setIssues(issues.filter(other => other.id != issue.id))  
             
         }
     }
@@ -212,9 +212,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     return (
         <main className="view extended issues">
-            { issues && product && (
+            { issues && product && milestone && (
                  <Fragment>
-                    { product && product.deleted ? (
+                    { product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
@@ -225,7 +225,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                         Edit Milestone
                                     </Link>
                                     <h1>
-                                        {milestone && milestone.label}
+                                        {milestone.label}
                                     </h1>
                                     <p>
                                         <span>Start: </span>    
