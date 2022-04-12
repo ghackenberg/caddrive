@@ -26,7 +26,7 @@ import { TextInput } from '../inputs/TextInput'
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     const history = useHistory()
-    const queryMilestoneId = new URLSearchParams(history.location.search).get('milestone')
+    const queryMilestoneId = new URLSearchParams(history.location.search).get('milestone') || ''
 
     // REFERENCES
 
