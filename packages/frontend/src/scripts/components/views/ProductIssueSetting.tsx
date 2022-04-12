@@ -26,6 +26,7 @@ import { TextInput } from '../inputs/TextInput'
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     const history = useHistory()
+    const queryMilestoneId = new URLSearchParams(history.location.search).get('milestone') || ''
 
     // REFERENCES
 
@@ -51,7 +52,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // - Values
     const [label, setLabel] = useState<string>('')
     const [text, setText] = useState<string>('')
-    const [milestoneId, setMilestoneId] = useState<string>()
+    const [milestoneId, setMilestoneId] = useState<string>(queryMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>([])
     // - Interactions
     const [marked, setMarked] = useState<Part[]>([])
@@ -109,12 +110,12 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId })
+                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null })
                 history.replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
-                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId })
+                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null })
                 history.goBack()    
             }
         }
@@ -131,15 +132,6 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         setAssigneeIds(newAssignees)
     }
 
-    async function selectMilestone(newMilestoneId: string){
-        if(newMilestoneId != 'none') {
-            setMilestoneId(newMilestoneId)
-        }
-        else {
-            setMilestoneId('')
-        }
-
-    }
 
     // CONSTANTS
 
@@ -192,8 +184,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                     Milestone:
                                                 </div>
                                                 <div>
-                                                    <select value={milestoneId} onChange={event => selectMilestone(event.currentTarget.value)}>
-                                                        <option value={'none'}>none</option>
+                                                    <select value={milestoneId} onChange={event => setMilestoneId(event.currentTarget.value)}>
+                                                        <option >none</option>
                                                         {milestones && milestones.map((milestone) => <option key={milestone.id} value={milestone.id}>{milestone.label}</option>)}
                                                     </select>
                                                 </div>
