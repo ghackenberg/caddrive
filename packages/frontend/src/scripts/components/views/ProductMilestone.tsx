@@ -149,10 +149,10 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>           
-                                <Link to={`/products/${productId}/milestones/new/settings`}>
+                                    <Link to={`/products/${productId}/milestones/new/settings`} className='button green fill'>
                                         New milestone
-                                </Link>
-                                   { milestones && <Table columns={columns} items={milestones}/> }
+                                    </Link>
+                                    { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>

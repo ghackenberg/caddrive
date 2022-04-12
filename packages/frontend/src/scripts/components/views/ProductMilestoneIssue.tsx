@@ -221,21 +221,31 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`}>
+                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button gray fill right'>
                                         Edit Milestone
                                     </Link>
                                     <h1>
-                                        {milestone && milestone.label +' from ' + new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} ) + ' to ' + new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} ) }
+                                        {milestone && milestone.label}
                                     </h1>
+                                    <p>
+                                        <span>Start: </span>    
+                                        <em>
+                                            {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        </em>
+                                        <span> / End: </span>  
+                                        <em>
+                                            {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        </em>
+                                    </p>
                             
-                                    <Link to={`/products/${productId}/issues/new/settings`}>
+                                    <Link to={`/products/${productId}/issues/new/settings`} className='button green fill'>
                                         New issue
                                     </Link>
 
-                                    <a onClick={showOpenIssues} className={state == 'open' ? 'active' : ''}>
+                                    <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
                                         Open issues
                                     </a>
-                                    <a onClick={showClosedIssues} className={state == 'closed' ? 'active' : ''}>
+                                    <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
                                         Closed issues
                                     </a>
                                     <Table columns={columns} items={issues} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>

@@ -205,7 +205,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                    <Link to={`/products/${productId}/issues/${issueId}/settings`}>
+                                    <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button gray fill right'>
                                         Edit issue
                                     </Link>
                                     <h1>

@@ -158,7 +158,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                             <ProductHeader product={product}/>
                             <main className='sidebar'>
                                 <div>
-                                    <Link to={`/products/${productId}/versions/new/settings`}>
+                                    <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
                                         New version
                                     </Link>
                                     <div className="widget version_tree">

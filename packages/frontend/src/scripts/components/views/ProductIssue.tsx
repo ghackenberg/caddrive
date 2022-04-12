@@ -215,13 +215,13 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                    <Link to={`/products/${productId}/issues/new/settings`}>
+                                    <Link to={`/products/${productId}/issues/new/settings`} className='button green fill'>
                                         New issue
                                     </Link>
-                                    <a onClick={showOpenIssues} className={state == 'open' ? 'active' : ''}>
+                                    <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
                                         Open issues
                                     </a>
-                                    <a onClick={showClosedIssues} className={state == 'closed' ? 'active' : ''}>
+                                    <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
                                         Closed issues
                                     </a>
                                     <Table columns={columns} items={issues} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
