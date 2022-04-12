@@ -12,13 +12,12 @@ import { IssueManager } from '../../managers/issue'
 import { CommentManager } from '../../managers/comment'
 import { MemberManager } from '../../managers/member'
 // Functions
-import { collectParts, Part } from '../../functions/markdown'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { Column, Table } from '../widgets/Table'
-import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { BurndownChartWidget } from '../widgets/BurndownChart'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 
@@ -39,12 +38,10 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
     // - Computations
-    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
-    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
+
     // - Interactions
     const [state, setState] = useState('open')
-    const [hovered, setHovered] = useState<Issue>()
-    const [hightlighted, setHighlighted] = useState<Part[]>()
+
 
     // EFFECTS
 
@@ -90,70 +87,11 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     }, [issues])
 
     // - Computations
-    useEffect(() => {
-        if (issues) {
-            const issuePartsNew: { [id: string]: Part[] } = {...issueParts}
-            for (const issue of issues) {
-                const parts: Part[] = []
-                collectParts(issue.text, parts)
-                issuePartsNew[issue.id] = parts
-            }
-            setIssueParts(issuePartsNew)
-        }
-        updateHightlighted()
-    }, [issues])
-    useEffect(() => {
-        if (comments) {
-            const commentPartsNew = {...commentParts}
-            for (const issueId of Object.keys(comments)) {
-                for (const comment of comments[issueId]) {
-                    const parts: Part[] = []
-                    collectParts(comment.text, parts)
-                    commentPartsNew[comment.id] = parts
-                }
-            }
-            setCommentParts(commentPartsNew)
-        }
-        updateHightlighted()
-    }, [comments])
-
-    // - Interactions
-    useEffect(() => {
-        updateHightlighted()
-    }, [hovered])
 
     // FUNCTIONS
 
-    function updateHightlighted() {
-        if (hovered) {
-            const hightlighted: Part[] = []
-            if (hovered.id in issueParts) {
-                issueParts[hovered.id].forEach(part => {
-                    hightlighted.push(part)
-                })
-            }
-            if (hovered.id in comments) {
-                comments[hovered.id].forEach(comment => {
-                    if (comment.id in commentParts) {
-                        commentParts[comment.id].forEach(part => {
-                            hightlighted.push(part)
-                        })
-                    }
-                })
-            }
-            setHighlighted(hightlighted)
-        } else {
-            setHighlighted([])
-        }
-    }
+ 
 
-    function handleMouseOver(issue: Issue) {
-        setHovered(issue)
-    }
-
-    function handleMouseOut(_issue: Issue) {
-        setHovered(undefined)
-    }
 
     async function deleteIssue(issue: Issue) {
         if (confirm('Do you really want to delete this issue from this milestone?')) {
@@ -248,10 +186,10 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
                                         Closed issues
                                     </a>
-                                    <Table columns={columns} items={issues} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                                    <Table columns={columns} items={issues} />
                                 </div>
-                                <div>
-                                    <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
+                                <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
+                                    <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={issues.length} actual={[]}/>
                                 </div>
                             </main>
                         </Fragment>
