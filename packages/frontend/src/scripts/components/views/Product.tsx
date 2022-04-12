@@ -143,7 +143,7 @@ export const ProductView = () => {
             </header>
             <main>
                 <div>
-                    <Link to={`/products/new/settings`}>
+                    <Link to={`/products/new/settings`} className='button green fill'>
                         New product
                     </Link>
                     { products && <Table columns={columns} items={products}/> }

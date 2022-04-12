@@ -3,10 +3,11 @@ import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
 // Commons
-import { Comment, Issue, Member, Product, User } from 'productboard-common'
+import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
+import { MilestoneManager } from '../../managers/milestone'
 import { IssueManager } from '../../managers/issue'
 import { CommentManager } from '../../managers/comment'
 import { MemberManager } from '../../managers/member'
@@ -32,6 +33,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     // - Entities
     const [product, setProduct] = useState<Product>()
+    const [milestone, setMilestone] = useState<Milestone>()
     const [members, setMembers] = useState<Member[]>()
     const [issues, setIssues] = useState<Issue[]>()
     const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
@@ -48,8 +50,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MilestoneManager.getMilestone(milestoneId).then(setMilestone) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId, state).then(setIssues)}, [props, state])
+    useEffect(() => { IssueManager.findIssues(productId, milestoneId, state).then(setIssues)}, [props, milestoneId, state])
     useEffect(() => {
         if (issues) {
             const userIds: string[] = []
@@ -153,11 +156,13 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     }
 
     async function deleteIssue(issue: Issue) {
-        if (confirm('Do you really want to delete this issue?')) {
-            await IssueManager.deleteIssue(issue.id)
-            setIssues(issues.filter(other => other.id != issue.id))       
+        if (confirm('Do you really want to delete this issue from this milestone?')) {
+            await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: 'none' })
+            //setIssues(issues.filter(other => other.milestoneId != null))  
+            
         }
     }
+    console.table(issues)
     
     async function showClosedIssues(event: FormEvent) {
         event.preventDefault()
@@ -216,13 +221,31 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                    <Link to={`/products/${productId}/issues/new/settings`}>
+                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button gray fill right'>
+                                        Edit Milestone
+                                    </Link>
+                                    <h1>
+                                        {milestone && milestone.label}
+                                    </h1>
+                                    <p>
+                                        <span>Start: </span>    
+                                        <em>
+                                            {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        </em>
+                                        <span> / End: </span>  
+                                        <em>
+                                            {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        </em>
+                                    </p>
+                            
+                                    <Link to={`/products/${productId}/issues/new/settings`} className='button green fill'>
                                         New issue
                                     </Link>
-                                    <a onClick={showOpenIssues} className={state == 'open' ? 'active' : ''}>
+
+                                    <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
                                         Open issues
                                     </a>
-                                    <a onClick={showClosedIssues} className={state == 'closed' ? 'active' : ''}>
+                                    <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
                                         Closed issues
                                     </a>
                                     <Table columns={columns} items={issues} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>

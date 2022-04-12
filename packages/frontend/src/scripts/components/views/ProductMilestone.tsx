@@ -27,7 +27,6 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // - Entities
     const [product, setProduct] = useState<Product>()
     const [milestones, setMilestones] = useState<Milestone[]>()
-    
     const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
     const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
 
@@ -150,10 +149,10 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>           
-                                <Link to={`/products/${productId}/milestones/new/settings`}>
+                                    <Link to={`/products/${productId}/milestones/new/settings`} className='button green fill'>
                                         New milestone
-                                </Link>
-                                   { milestones && <Table columns={columns} items={milestones}/> }
+                                    </Link>
+                                    { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>

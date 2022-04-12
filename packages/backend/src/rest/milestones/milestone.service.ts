@@ -44,9 +44,17 @@ export class MilestoneService implements MilestoneREST {
         throw new NotFoundException()
     }
 
-    async updateMilestone(_id: string, _data: MilestoneUpdateData): Promise<Milestone> {
-        throw new Error('Method not implemented.')
+    async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
+        for (var index = 0; index < MilestoneService.milestones.length; index++) {
+            const milestone = MilestoneService.milestones[index]
+            if (milestone.id == id) {
+                MilestoneService.milestones.splice(index, 1, { ...milestone,...data })
+                return MilestoneService.milestones[index]
+            }
+        }
+        throw new NotFoundException()
     }
+
 
     async deleteMilestone(_id: string): Promise<Milestone> {
         const milestone = await this.getMilestone(_id)

@@ -90,7 +90,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                             <ProductHeader product={product}/>
                             <main className="sidebar">
                                 <div>
-                                <Link to={`/products/${productId}/members/new/settings`}>
+                                <Link to={`/products/${productId}/members/new/settings`} className='button green fill'>
                                         New member
                                 </Link>
                                     

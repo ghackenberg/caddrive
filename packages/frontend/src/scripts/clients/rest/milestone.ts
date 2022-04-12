@@ -12,8 +12,8 @@ class MilestoneClientImpl implements MilestoneREST {
     async getMilestone(id: string): Promise<Milestone> {
         return (await axios.get<Milestone>(`/rest/milestones/${id}`, { auth })).data
     }
-    async updateMilestone(_id: string, _data: MilestoneUpdateData): Promise<Milestone> {
-        throw new Error('Method not implemented.')
+    async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
+        return (await axios.put<Milestone>(`/rest/members/${id}`, data, { auth })).data
     }
     async deleteMilestone(id: string): Promise<Milestone> {
         return (await axios.delete<Milestone>(`/rest/milestones/${id}`, { auth })).data
