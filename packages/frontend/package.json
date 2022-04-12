@@ -34,7 +34,7 @@
         "devel": "webpack serve --mode=development"
     },
     "dependencies": {
-        "axios": "^0.21.1",
+        "axios": "^0.26.1",
         "buffer": "^5.7.1",
         "hash.js": "^1.1.7",
         "http-server": "^0.12.3",
