@@ -42,7 +42,7 @@
         "@nestjs/swagger": "^5.1.4",
         "hash.js": "^1.1.7",
         "mqtt": "^4.2.6",
-        "passport": "^0.4.0",
+        "passport": "^0.5.2",
         "passport-http": "^0.3.0",
         "productboard-common": "^0.0.1",
         "reflect-metadata": "^0.1.13",
