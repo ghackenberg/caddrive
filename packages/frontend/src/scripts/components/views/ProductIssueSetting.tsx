@@ -26,6 +26,7 @@ import { TextInput } from '../inputs/TextInput'
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     const history = useHistory()
+    const queryMilestoneId = new URLSearchParams(history.location.search).get('milestone')
 
     // REFERENCES
 
@@ -51,7 +52,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // - Values
     const [label, setLabel] = useState<string>('')
     const [text, setText] = useState<string>('')
-    const [milestoneId, setMilestoneId] = useState<string>()
+    const [milestoneId, setMilestoneId] = useState<string>(queryMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>([])
     // - Interactions
     const [marked, setMarked] = useState<Part[]>([])

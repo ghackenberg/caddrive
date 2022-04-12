@@ -238,7 +238,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                         </em>
                                     </p>
                             
-                                    <Link to={`/products/${productId}/issues/new/settings`} className='button green fill'>
+                                    <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button green fill'>
                                         New issue
                                     </Link>
 
