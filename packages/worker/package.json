@@ -12,10 +12,12 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },{
+        },
+        {
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },{
+        },
+        {
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
         }
@@ -32,8 +34,8 @@
         "devel": "webpack serve --mode=development"
     },
     "dependencies": {
-        "productboard-common": "^0.0.1",
-        "http-server": "^0.12.3"
+        "http-server": "^14.1.0",
+        "productboard-common": "^0.0.1"
     },
     "devDependencies": {
         "ts-loader": "^9.2.3",
