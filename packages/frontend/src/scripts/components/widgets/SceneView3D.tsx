@@ -8,6 +8,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
+    private timeout: NodeJS.Timeout
 
     private factory = new XRControllerModelFactory()
     private ambient_light: AmbientLight
@@ -116,7 +117,12 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
         // Listen
         window.addEventListener('resize', this.resize)
         // Resize
-        setTimeout(this.resize, 100)
+        this.timeout = setTimeout(() => {
+            // Reset
+            this.timeout = undefined
+            // Call
+            this.resize()
+        }, 100)
         // Reload
         await this.reload()
     }
@@ -126,6 +132,13 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
         this.renderer.setAnimationLoop(null)
         // Resize
         window.removeEventListener('resize', this.resize)
+        // Timeout
+        if (this.timeout) {
+            // Clear
+            clearTimeout(this.timeout)
+            // Reset
+            this.timeout = undefined
+        }
     }
 
     private highlight_cache: {[uuid: string]: Material | Material[]}
@@ -262,15 +275,17 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
     }
 
     resize() {
-        const width = this.fullscreen ? window.innerWidth : this.div.current.offsetWidth
-        const height = this.fullscreen ? window.innerHeight : this.div.current.offsetHeight
-        // Camera
-        if (this.camera) {
-            this.camera.aspect = width / height
-            this.camera.updateProjectionMatrix()           
+        if (this.div.current) {
+            const width = this.fullscreen ? window.innerWidth : this.div.current.offsetWidth
+            const height = this.fullscreen ? window.innerHeight : this.div.current.offsetHeight
+            // Camera
+            if (this.camera) {
+                this.camera.aspect = width / height
+                this.camera.updateProjectionMatrix()           
+            }
+            // Renderer
+            this.renderer.setSize(width, height)
         }
-        // Renderer
-        this.renderer.setSize(width, height)
     }
 
     normalizeMousePosition(position: { clientX: number, clientY: number }) {
