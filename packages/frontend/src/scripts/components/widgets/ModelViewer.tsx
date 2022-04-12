@@ -4,7 +4,7 @@ import { Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // Widgets
 import { SceneGraph } from './SceneGraph'
-import { SceneView } from './SceneView'
+import { SceneView3D } from './SceneView3D'
 
 export const ModelViewer = (props: { url: string, highlighted?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
 
@@ -24,7 +24,7 @@ export const ModelViewer = (props: { url: string, highlighted?: string[], select
             {model && (
                 <React.Fragment>
                     <SceneGraph model={model} click={props.click}/>
-                    <SceneView model={model} mouse={true} vr={true} highlighted={props.highlighted} selected={props.selected} click={props.click}/>
+                    <SceneView3D model={model} mouse={true} vr={true} highlighted={props.highlighted} selected={props.selected} click={props.click}/>
                 </React.Fragment>
             )}
         </div>

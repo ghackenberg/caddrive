@@ -12,10 +12,12 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },{
+        },
+        {
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },{
+        },
+        {
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
         }
@@ -51,7 +53,7 @@
     },
     "devDependencies": {
         "@types/multer": "^1.4.7",
-        "@types/node": "^16.4.10",
+        "@types/node": "^17.0.23",
         "@types/passport": "^1.0.7",
         "@types/passport-http": "^0.3.9",
         "@types/shortid": "^0.0.29",
