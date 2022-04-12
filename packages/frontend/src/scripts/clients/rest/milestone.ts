@@ -13,7 +13,7 @@ class MilestoneClientImpl implements MilestoneREST {
         return (await axios.get<Milestone>(`/rest/milestones/${id}`, { auth })).data
     }
     async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
-        return (await axios.put<Milestone>(`/rest/members/${id}`, data, { auth })).data
+        return (await axios.put<Milestone>(`/rest/milestones/${id}`, data, { auth })).data
     }
     async deleteMilestone(id: string): Promise<Milestone> {
         return (await axios.delete<Milestone>(`/rest/milestones/${id}`, { auth })).data
