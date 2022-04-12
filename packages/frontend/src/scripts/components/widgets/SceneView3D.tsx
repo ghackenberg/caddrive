@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Color, DirectionalLight, Box3, Vector3 } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight, Box3, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class SceneView extends React.Component<{ model: GLTF, highlighted?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
+export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
 
@@ -60,12 +60,11 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         // Directional light
         this.directional_light = new DirectionalLight(0xffffff, 1)
         // Renderer
-        this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true })
+        this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true })
         this.renderer.xr.enabled = true
         this.renderer.outputEncoding = sRGBEncoding
         this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize(this.div.current.offsetWidth, this.div.current.offsetHeight)
-        this.renderer.setClearColor(new Color(215/255,215/255,215/255))
         this.renderer.setAnimationLoop(this.paint)
         // Controller 1
         this.controller1 = this.renderer.xr.getController(0)
@@ -136,9 +135,19 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.highlight_cache[mesh.uuid] = mesh.material
-            if (this.props.highlighted.indexOf(object.name) != -1) {
+            const highlighted = this.props.highlighted.indexOf(object.name) != -1
+            const marked = this.props.marked.indexOf(object.name) != -1
+            if (highlighted && marked) {
+                mesh.material = new MeshStandardMaterial({
+                    color: 0x0000ff
+                })
+            } else if (highlighted) {
                 mesh.material = new MeshStandardMaterial({
                     color: 0xff0000
+                })
+            } else if (marked) {
+                mesh.material = new MeshStandardMaterial({
+                    color: 0x00ff00
                 })
             } else {
                 mesh.material = new MeshStandardMaterial({
@@ -240,7 +249,7 @@ export class SceneView extends React.Component<{ model: GLTF, highlighted?: stri
             this.revertHighlight(this.scene)
             this.highlight_cache = undefined
         }
-        if (this.props.highlighted && this.props.highlighted.length > 0) {
+        if ((this.props.highlighted && this.props.highlighted.length > 0) || (this.props.marked && this.props.marked.length > 0)) {
             this.highlight_cache = {}
             this.setHighlight(this.scene)
         }

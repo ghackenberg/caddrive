@@ -8,7 +8,6 @@ class FileManagerImpl implements FileREST<string | ArrayBuffer> {
         if (!(id in this.fileIndex)) {
             // Call backend
             const file = await FileClient.getFile(id)
-            console.log(id, file)
             // Update file index
             this.fileIndex[id] = file
         }

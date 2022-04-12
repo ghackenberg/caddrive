@@ -22,10 +22,6 @@ body > div > main table > thead > tr > th:first-child {
 body > div > main table > thead > tr > th:last-child {
     border-top-right-radius: 1em;
 }
-body > div > main table > tbody > tr > td:first-child {
-    padding-top: calc(0.75rem - 0.25em);
-    padding-bottom: calc(0.75rem - 0.25em);
-}
 body > div > main table > tbody > tr > td {
     padding-top: calc(0.75rem - 0.25em);
     padding-left: 0.5em;
@@ -34,11 +30,18 @@ body > div > main table > tbody > tr > td {
 
     border-top: 1px solid rgb(215,215,215);
 }
+body > div > main table > tbody > tr > td:first-child {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+}
 body > div > main table > tbody > tr:last-child > td:first-child {
     border-bottom-left-radius: 1em;
 }
 body > div > main table > tbody > tr:last-child > td:last-child {
     border-bottom-right-radius: 1em;
+}
+body > div > main table > tbody > tr:hover > td {
+    background-color: rgb(245,245,245);
 }
 body > div > main table *.fill {
     width: 100%;
@@ -76,33 +79,19 @@ body > div > main table a.closed {
 body > div > main table a:hover {
     color: blue;
 }
-body > div > main table img {
-    display: inline-block;
-    margin: 0.25em;
-    background-position: center center;
-    background-size: cover;
-}
-body > div > main table img.small {
-    width: 1em;
-    height: 1em;
-}
-body > div > main table img.big {
-    width: 3em;
-    height: 3em;
-    margin-right: 0;
-    border-radius: 50%;
-}
-body > div > main table div {
+body > div > main table div.progress {
     height: 0.5em;
     margin-bottom: 1px;
     background-color: rgb(245,245,245);
 }
-body > div > main table div:last-child {
+body > div > main table div.progress:last-child {
     margin-bottom: 0;
 }
-body > div > main table div > div {
+body > div > main table div.progress > div {
+    height: 100%;
     background-color: black;
 }
+
 body > div > main form table {
     border-color: rgb(245,245,245);
 }
@@ -112,4 +101,7 @@ body > div > main form table > thead > tr > th {
 body > div > main form table > tbody > tr > td {
     background-color: rgb(215,215,215);
     border-top: 1px solid rgb(245,245,245);
+}
+body > div > main form table > tbody > tr:hover > td {
+    background-color: rgb(205,205,205);
 }

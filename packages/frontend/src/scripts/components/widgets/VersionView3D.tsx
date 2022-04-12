@@ -5,12 +5,12 @@ import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // Commons
 import { Version } from 'productboard-common'
 // Widgets
-import { SceneView } from './SceneView'
+import { SceneView3D } from './SceneView3D'
 // Images
 import * as LoadIcon from '/src/images/load.png'
 import { FileManager } from '../../managers/file'
 
-export const VersionView3D = (props: { version: Version, mouse: boolean, highlighted?: string[], selected?: string[], click?: (object: Object3D) => void, vr: boolean}) => {
+export const VersionView3D = (props: { version: Version, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void, vr: boolean}) => {
 
     // STATES
 
@@ -34,7 +34,7 @@ export const VersionView3D = (props: { version: Version, mouse: boolean, highlig
                 <img className='load' src={LoadIcon}/>
             ) : (
                 <Fragment>
-                    {model && <SceneView model={model} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} selected={props.selected} click={props.click}/> }
+                    {model && <SceneView3D model={model} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/> }
                 </Fragment>
             )}
         </div>

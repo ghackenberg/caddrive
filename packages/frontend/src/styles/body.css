@@ -6,12 +6,20 @@ body {
     font-family: Arial;
     line-height: 150%;
 }
+
 body a > img {
     display: inline-block;
     vertical-align: top;
     width: 1.5em;
     height: 1.5em;
     margin-right: 0.25em;
+    background-position: center center;
+    background-size: cover;
+}
+body a > img.small {
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
 }
 body a > img.big {
     vertical-align: middle;
@@ -26,9 +34,13 @@ body img.load {
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 }
-
 body img.empty {
     opacity: 0.25;
+}
+
+body > div > canvas {
+    background-color: rgb(215,215,215);
+    background-image: linear-gradient(rgba(0,0,0,00), rgba(0,0,0,0.05), rgba(0,0,0,0.15), rgba(0,0,0,0.4));
 }
 
 body svg text {
