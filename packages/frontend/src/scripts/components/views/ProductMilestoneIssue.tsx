@@ -38,6 +38,8 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
     // - Computations
+    const [total, setTotalIssueCount] = useState<number>() 
+    const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
 
     // - Interactions
     const [state, setState] = useState('open')
@@ -87,6 +89,14 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     }, [issues])
 
     // - Computations
+    useEffect(() => { IssueManager.findIssues(productId,milestoneId).then(issues => setTotalIssueCount(issues.length)) }, [])
+    useEffect(() => {
+        const actual: { time: number, actual: number }[] = []
+        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 0, actual: 3 })
+        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 1, actual: 2 })
+        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 4, actual: 1 })
+        setActualBurndown(actual)
+    }, [])
 
     // FUNCTIONS
 
@@ -189,7 +199,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     <Table columns={columns} items={issues} />
                                 </div>
                                 <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
-                                    <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={issues.length} actual={[]}/>
+                                    <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
                                 </div>
                             </main>
                         </Fragment>
