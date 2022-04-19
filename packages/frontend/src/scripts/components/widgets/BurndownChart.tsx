@@ -54,6 +54,9 @@ export const BurndownChartWidget = (props: { start: Date, end: Date, total: numb
                 <Line name='Target burndown' data={target} dataKey='target' stroke='green' strokeDasharray='3 3' dot={false}/>
                 <ReferenceLine x={props.start.getTime()} label='Start' stroke='red' strokeDasharray='3 3'/>
                 <ReferenceLine x={props.end.getTime()} label='End' stroke='red' strokeDasharray='3 3'/>
+                { Date.now() >= props.start.getTime() && Date.now() <= props.end.getTime() && (
+                    <ReferenceLine x={Date.now()} label='Now' stroke='gray' strokeDasharray='3 3'/>
+                ) }
                 <ReferenceLine y={props.total} label='Total' stroke='orange' strokeDasharray='3 3'/>
                 <Line name='Actual burndown' data={props.actual} dataKey='actual' stroke='blue'/>
             </LineChart>

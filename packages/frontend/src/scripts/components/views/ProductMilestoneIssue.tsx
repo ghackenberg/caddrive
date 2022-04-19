@@ -20,6 +20,7 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import { calculateActual } from '../../functions/burndown'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
 
@@ -40,10 +41,8 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // - Computations
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
-
     // - Interactions
     const [state, setState] = useState('open')
-
 
     // EFFECTS
 
@@ -51,7 +50,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MilestoneManager.getMilestone(milestoneId).then(setMilestone) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId, state).then(setIssues)}, [props, milestoneId, state])
+    useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues)}, [props, milestoneId])
     useEffect(() => {
         if (issues) {
             const userIds: string[] = []
@@ -89,19 +88,14 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     }, [issues])
 
     // - Computations
-    useEffect(() => { IssueManager.findIssues(productId,milestoneId).then(issues => setTotalIssueCount(issues.length)) }, [])
+    useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
     useEffect(() => {
-        const actual: { time: number, actual: number }[] = []
-        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 0, actual: 3 })
-        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 1, actual: 2 })
-        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 4, actual: 1 })
-        setActualBurndown(actual)
-    }, [])
+        if (milestone && issues && comments) {
+            setActualBurndown(calculateActual(milestone, issues, comments))
+        }
+    }, [milestone, issues, comments])
 
     // FUNCTIONS
-
- 
-
 
     async function deleteIssue(issue: Issue) {
         if (confirm('Do you really want to delete this issue from this milestone?')) {
@@ -109,9 +103,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
             setIssues(issues.filter(other => other.id != issue.id))  
             
         }
-    }
-    console.table(issues)
-    
+    }    
     async function showClosedIssues(event: FormEvent) {
         event.preventDefault()
         setState('closed')
@@ -170,7 +162,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <main className="sidebar">
                                 <div>
                                     <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button gray fill right'>
-                                        Edit Milestone
+                                        Edit milestone
                                     </Link>
                                     <h1>
                                         {milestone.label}
@@ -196,7 +188,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
                                         Closed issues
                                     </a>
-                                    <Table columns={columns} items={issues} />
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} />
                                 </div>
                                 <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
                                     <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
