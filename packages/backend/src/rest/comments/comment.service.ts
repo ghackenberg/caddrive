@@ -7,6 +7,7 @@ export class CommentService implements CommentREST {
     private static readonly comments: Comment[] = [
         { id: 'demo-1', userId: 'demo-1', issueId: 'demo-2', time: new Date().toISOString(), text: 'Ok, can you provide a profile specification?', action: 'none', deleted: false },
         { id: 'demo-2', userId: 'demo-1', issueId: 'demo-3', time: new Date().toISOString(), text: 'Ok, can you provide a RAL code?', action: 'none', deleted: false },
+        { id: 'demo-3', userId: 'demo-2', issueId: 'demo-3', time: new Date().toISOString(), text: 'I will search for a RAL code', action: 'none', deleted: false },
     ]
  
     async findComments(issueId: string): Promise<Comment[]> {

@@ -3,7 +3,7 @@ import { useState, useEffect, Fragment } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 // Commons
-import { Product, User, Version } from 'productboard-common'
+import { Member, Product, User, Version } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
@@ -15,6 +15,9 @@ import { VersionView3D } from '../widgets/VersionView3D'
 // Images
 import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
+import { MemberManager } from '../../managers/member'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -26,6 +29,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     // - Entities
     const [product, setProduct] = useState<Product>()
+    const [members, setMembers] = useState<Member[]>()
     const [versions, setVersions] = useState<Version[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
     // - Computations
@@ -42,6 +46,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => { versions && versions.length > 0 && setVersion(versions[versions.length - 1])}, [versions])
     useEffect(() => {
@@ -200,7 +205,8 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                     <div className="text">
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                            <span className="user">{vers.id in users ? `${users[vers.id].name} <${users[vers.id].email}>` : '?'}</span>
+                                                            <span className="user"> {vers.id in users && members ? <ProductUserNameWidget user={users[vers.id]} members={members}/> : '?'}  </span>
+                                                            <span className="user"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span>
                                                         </div>
                                                         <div>
                                                             <span className="description">{vers.description}</span>

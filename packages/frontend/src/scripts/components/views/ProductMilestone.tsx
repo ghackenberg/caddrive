@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 // Commons
-import { Milestone, Product } from 'productboard-common'
+import { Member, Milestone, Product, User } from 'productboard-common'
 // Managers
 import { ProductManager } from '../../managers/product'
 import { MilestoneManager } from '../../managers/milestone'
@@ -15,6 +15,9 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { MemberManager } from '../../managers/member'
+import { UserManager } from '../../managers/user'
 
 export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -26,14 +29,17 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
 
     // - Entities
     const [product, setProduct] = useState<Product>()
+    const [members, setMembers] = useState<Member[]>()
     const [milestones, setMilestones] = useState<Milestone[]>()
     const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
     const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
+    const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // EFFECTS
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilestones) }, [props])
     useEffect(() => {
         if (milestones) {
@@ -54,6 +60,17 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                     newMilestones[milestones[index].id] = issueMilestones[index].length
                 }
                 setClosedIssues(newMilestones)
+            })
+        }
+    }, [milestones])
+    useEffect(() => {
+        if (milestones) {
+            Promise.all(milestones.map(milestone => UserManager.getUser(milestone.userId))).then(milestoneUsers => {
+                const newUsers = {...users}
+                for (var index = 0; index < milestones.length; index++) {
+                    newUsers[milestones[index].id] = milestoneUsers[index]
+                }
+                setUsers(newUsers)
             })
         }
     }, [milestones])
@@ -91,7 +108,8 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const columns: Column<Milestone>[] = [
         { label: 'Reporter', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                <img src={`/rest/files/${milestone.userId}.jpg`} className='big'/>
+                {console.log(milestone.id)}
+                { milestone.userId in users && members ? <ProductUserPictureWidget user={users[milestone.id]} members={members} class='big'/> : '?' }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (

@@ -62,7 +62,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
             member.id in users ? (
                 <Link to={`/users/${users[member.id].id}/settings`}>
                     <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' />
-                </Link> 
+              </Link> 
             ) : '?'
         )},
         { label: 'User', class: 'fill left nowrap', content: (

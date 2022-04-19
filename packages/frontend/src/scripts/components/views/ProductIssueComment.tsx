@@ -4,7 +4,7 @@ import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Object3D } from 'three'
 // Commons
-import { Comment, Issue, Product, User, Version } from 'productboard-common'
+import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
 // Managers
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
@@ -19,6 +19,8 @@ import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
 import { CommentView } from '../widgets/CommentView'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { MemberManager } from '../../managers/member'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -41,6 +43,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
 
     // - Entities
     const [product, setProduct] = useState<Product>()
+    const [members, setMember] = useState<Member[]>()
     const [issue, setIssue] = useState<Issue>()
     const [comments, setComments] = useState<Comment[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
@@ -60,6 +63,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MemberManager.findMembers(productId).then(setMember) }, [props])
     useEffect(() => { IssueManager.getIssue(issueId).then(setIssue) }, [props])
     useEffect(() => { CommentManager.findComments(issueId).then(setComments) }, [props])
     useEffect(() => {
@@ -212,12 +216,13 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                         {issue.label}
                                     </h1>
                                     <p>
-                                        <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && users[issue.userId].name}</strong> opened issue on {issue.time.substring(0, 10)}
+                                        <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && members ? <ProductUserNameWidget user={users[issue.userId]} members={members}/> : '?'}</strong> opened issue on {issue.time.substring(0, 10)}
                                     </p>
+                                    
                                     <div className="widget thread">
-                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users= {users} members= {members}/>
                                         {comments && comments.map(comment => (
-                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}  users= {users} members= {members}/>
                                         ))}
                                         <div className="comment self">
                                             <div className="head">
