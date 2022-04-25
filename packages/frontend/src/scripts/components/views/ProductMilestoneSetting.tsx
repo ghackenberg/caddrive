@@ -3,7 +3,7 @@ import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { Redirect, useHistory } from 'react-router'
 // Commons
-import { Milestone, Product } from 'productboard-common'
+import { Comment, Issue, Milestone, Product } from 'productboard-common'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Managers
@@ -15,6 +15,11 @@ import { ProductHeader } from '../snippets/ProductHeader'
 import { TextInput } from '../inputs/TextInput'
 import { DateInput } from '../inputs/DateInput'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
+import { IssueManager } from '../../managers/issue'
+import { CommentManager } from '../../managers/comment'
+import { calculateActual } from '../../functions/burndown'
+// Icons
+import * as EmptyIcon from '/src/images/empty.png'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
@@ -34,11 +39,13 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // - Entities
     const [product, setProduct] = useState<Product>()
     const [milestone, setMilstone] = useState<Milestone>()
+    const [issues, setIssues] = useState<Issue[]>()
+    const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
     // - Values
     const [label, setLabel] = useState<string>('')
     const [start, setStart] = useState<Date>(new Date(new Date().setHours(0,0,0,0)))
     const [end, setEnd] = useState<Date>(new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14))
-    // - Simulations
+    // - Computations
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
    
@@ -47,19 +54,32 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { milestoneId != 'new' && MilestoneManager.getMilestone(milestoneId).then(setMilstone) }, [props])
+    useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues) }, [props, milestoneId])
+
+    useEffect(() => {
+        if (issues) {
+            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
+                const newComments = {...comments}
+                for (var index = 0; index < issues.length; index++) {
+                    newComments[issues[index].id] = issueComments[index]
+                }
+                setComments(newComments)
+            })
+        }
+    }, [issues])
+
+
     // - Values
     useEffect(() => { milestone && setLabel(milestone.label) }, [milestone])
     useEffect(() => { milestone && setStart(new Date(milestone.start)) }, [milestone])
     useEffect(() => { milestone && setEnd(new Date(milestone.end)) }, [milestone])
-    // - Simulations
-    useEffect(() => { setTotalIssueCount(10) }, [])
+    // - Computations
+    useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
     useEffect(() => {
-        const actual: { time: number, actual: number }[] = []
-        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 0, actual: 10 })
-        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 1, actual: 9 })
-        actual.push({ time: Date.now() + 1000 * 60 * 60 * 24 * 4, actual: 7 })
-        setActualBurndown(actual)
-    }, [])
+        if (milestone && issues && comments) {
+            setActualBurndown(calculateActual(milestone, issues, comments))
+        }
+    }, [milestone, issues, comments])
 
     // FUNCTIONS
 
@@ -81,7 +101,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
 
     return (
         <main className="view extended member">
-            { product && (
+            {product && (
                  <Fragment>
                     { product && product.deleted ? (
                         <Redirect to='/'/>
@@ -104,7 +124,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                     </form>
                                 </div>
                                 <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
-                                    <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
+                                {milestone ? <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/> : <img className='widget product_view empty' src={EmptyIcon}/>}
                                 </div>
                             </main>
                         </Fragment>
