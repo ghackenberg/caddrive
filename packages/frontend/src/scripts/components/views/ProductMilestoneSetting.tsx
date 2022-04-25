@@ -19,7 +19,7 @@ import { IssueManager } from '../../managers/issue'
 import { CommentManager } from '../../managers/comment'
 import { calculateActual } from '../../functions/burndown'
 // Icons
-import * as EmptyIcon from '/src/images/empty.png'
+
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
@@ -124,7 +124,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                     </form>
                                 </div>
                                 <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
-                                {milestone ? <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/> : <img className='widget product_view empty' src={EmptyIcon}/>}
+                                 <BurndownChartWidget start= {start} end= {end} total={total} actual={actual}/>
                                 </div>
                             </main>
                         </Fragment>
