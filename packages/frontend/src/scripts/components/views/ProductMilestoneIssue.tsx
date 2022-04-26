@@ -41,6 +41,8 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // - Computations
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
+    const [openIssueCount, setOpenIssueCount] = useState<Number>()
+    const [closedIssueCount, setClosedIssueCount] = useState<Number>()
     // - Interactions
     const [state, setState] = useState('open')
 
@@ -50,6 +52,8 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MilestoneManager.getMilestone(milestoneId).then(setMilestone) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
+    useEffect(() => { IssueManager.findIssues(productId, milestoneId, 'open').then(openIssues => setOpenIssueCount(openIssues.length))}, [props])
+    useEffect(() => { IssueManager.findIssues(productId, milestoneId, 'closed').then(closedIssues => setClosedIssueCount(closedIssues.length))}, [props])
     useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues)}, [props, milestoneId])
     useEffect(() => {
         if (issues) {
@@ -183,10 +187,10 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     </Link>
 
                                     <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
-                                        Open issues
+                                        Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
                                     </a>
                                     <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
-                                        Closed issues
+                                        Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
                                     </a>
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} />
                                 </div>

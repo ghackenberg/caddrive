@@ -38,6 +38,8 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
     const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
+    const [openIssueCount, setOpenIssueCount] = useState<Number>()
+    const [closedIssueCount, setClosedIssueCount] = useState<Number>()
     // - Interactions
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
@@ -48,6 +50,8 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
+    useEffect(() => { IssueManager.findIssues(productId, undefined, 'open').then(openIssues => setOpenIssueCount(openIssues.length)) }, [props])
+    useEffect(() => { IssueManager.findIssues(productId, undefined, 'closed').then(closedIssues => setClosedIssueCount(closedIssues.length)) }, [props])
     useEffect(() => { IssueManager.findIssues(productId, undefined, state).then(setIssues)}, [props, state])
     useEffect(() => {
         if (issues) {
@@ -219,10 +223,10 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                         New issue
                                     </Link>
                                     <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
-                                        Open issues
+                                        Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
                                     </a>
                                     <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
-                                        Closed issues
+                                        Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
                                     </a>
                                     <Table columns={columns} items={issues} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
