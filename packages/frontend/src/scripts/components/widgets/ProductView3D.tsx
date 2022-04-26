@@ -25,6 +25,7 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
     const [versions, setVersions] = useState<Version[]>(null)
 
     const [version, setVersion] = useState<Version>(null)
+    const [selectedVersion, setSelectedVersion] = useState<Version>(null)
 
     const [highlighted, setHighlighted] = useState<string[]>([])
     const [marked, setMarked] = useState<string[]>([])
@@ -34,13 +35,16 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
     
     useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props])
 
-    useEffect(() => { versions && versions.length > 0 && setVersion(versions[versions.length - 1]) }, [versions])
+    useEffect(() => { !selectedVersion && versions && versions.length > 0 && setVersion(versions[versions.length - 1]) }, [versions])
+    useEffect(() => { selectedVersion && setVersion(selectedVersion)  }, [selectedVersion, versions])
 
     useEffect(() => { setHighlighted((props.highlighted || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.highlighted])
     useEffect(() => { setMarked((props.marked || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.marked])
     useEffect(() => { setSelected((props.selected || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.selected])
     
     // RETURN
+
+    console.log(selectedVersion)
 
     return (
         <div className="widget product_view">
@@ -51,7 +55,7 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
                     { versions && versions.length > 0 ? (
                         <Fragment>
                             <header>
-                                <select value={version.id} onChange={event => setVersion(versions.filter(version => version.id == event.currentTarget.value)[0])}>
+                                <select value={version.id} onChange={event => setSelectedVersion(versions.filter(version => version.id == event.currentTarget.value)[0])}>
                                    { versions.map((version) => <option value={version.id}>{version.major +'.' + version.minor  +'.'+ version.patch + ': ' + version.description}</option> )}
                                 </select>
                             </header>
