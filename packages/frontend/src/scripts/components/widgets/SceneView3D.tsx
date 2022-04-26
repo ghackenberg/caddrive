@@ -42,7 +42,6 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
         this.handleMouseDown = this.handleMouseDown.bind(this)
         this.handleMouseMove = this.handleMouseMove.bind(this)
         this.handleMouseUp = this.handleMouseUp.bind(this)
-        this.handleClick = this.handleClick.bind(this)
 
         this.handleTouchStart = this.handleTouchStart.bind(this)
         this.handleTouchMove = this.handleTouchMove.bind(this)
@@ -389,15 +388,11 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
     handleMouseUp(_event: React.MouseEvent) {
         if (this.position_start && this.position_end) {
             if (this.calculateDistance() <= 1) {
-                this.updateSelected(this.position_end)
+                 this.updateSelected(this.position_end)
             }
             this.position_start = null
             this.position_end = null
         }
-    }
-
-    handleClick(event: React.MouseEvent) {
-        this.updateSelected(event)
     }
 
     handleTouchStart(event: React.TouchEvent) {
@@ -425,7 +420,7 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
     }
     
     override render() {
-        return <div className="widget scene_view" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onClick={this.handleClick} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
+        return <div className="widget scene_view" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
     }
     
 }

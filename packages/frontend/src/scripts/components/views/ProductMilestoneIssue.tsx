@@ -21,6 +21,7 @@ import { BurndownChartWidget } from '../widgets/BurndownChart'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 import { calculateActual } from '../../functions/burndown'
+import { collectParts, Part } from '../../functions/markdown'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
 
@@ -39,10 +40,13 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
     // - Computations
+    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
+    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
+    const [partsCount, setPartsCount] = useState<{[id: string]: number}>({})
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
-    const [openIssueCount, setOpenIssueCount] = useState<Number>()
-    const [closedIssueCount, setClosedIssueCount] = useState<Number>()
+    const [openIssueCount, setOpenIssueCount] = useState<number>()
+    const [closedIssueCount, setClosedIssueCount] = useState<number>()
     // - Interactions
     const [state, setState] = useState('open')
 
@@ -52,8 +56,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MilestoneManager.getMilestone(milestoneId).then(setMilestone) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId, 'open').then(openIssues => setOpenIssueCount(openIssues.length))}, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId, 'closed').then(closedIssues => setClosedIssueCount(closedIssues.length))}, [props])
+
+    
+
     useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues)}, [props, milestoneId])
     useEffect(() => {
         if (issues) {
@@ -92,12 +97,56 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     }, [issues])
 
     // - Computations
+    useEffect(() => {
+        if (issues) {
+            const issuePartsNew: { [id: string]: Part[] } = {...issueParts}
+            for (const issue of issues) {
+                const parts: Part[] = []
+                collectParts(issue.text, parts)
+                issuePartsNew[issue.id] = parts
+            }
+            setIssueParts(issuePartsNew)
+        }
+    }, [issues])
+    useEffect(() => {
+        if (comments) {
+            const commentPartsNew = {...commentParts}
+            for (const issueId of Object.keys(comments)) {
+                for (const comment of comments[issueId]) {
+                    const parts: Part[] = []
+                    collectParts(comment.text, parts)
+                    commentPartsNew[comment.id] = parts
+                }
+            }
+            setCommentParts(commentPartsNew)
+        }
+    }, [comments])
+    useEffect(() => {
+        if (issueParts && commentParts && issues && comments) {
+            const partsCountNew = {... partsCount}
+            for(const issue of issues) {
+                if(issue.id in issueParts) {
+                    partsCountNew[issue.id] = issueParts[issue.id].length
+                    if (issue.id in comments) {
+                        for ( const comment of comments[issue.id]) {
+                            if(comment.id in commentParts ) {
+                                partsCountNew[issue.id] += commentParts[comment.id].length
+                            }
+                        }
+                    }
+                }
+            }
+            setPartsCount(partsCountNew)
+        }
+    }, [issueParts, commentParts])
     useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
     useEffect(() => {
         if (milestone && issues && comments) {
             setActualBurndown(calculateActual(milestone, issues, comments))
         }
     }, [milestone, issues, comments])
+    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
+    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
 
     // FUNCTIONS
 
@@ -117,6 +166,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
         event.preventDefault()
         setState('open')
     }
+    
 
     // CONSTANTS
 
@@ -143,6 +193,11 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
         { label: 'Comments', class: 'center', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.id in comments ? comments[issue.id].length : '?'}
+            </Link>
+        )},
+        { label: 'Parts', class: 'center', content: issue => (
+            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+                {issue.id in partsCount ? partsCount[issue.id] : '?'}
             </Link>
         )},
         { label: '', class: 'center', content: issue => (

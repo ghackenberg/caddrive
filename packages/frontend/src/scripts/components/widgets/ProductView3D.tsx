@@ -44,7 +44,7 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
     
     // RETURN
 
-    console.log(selectedVersion)
+    //console.log(selectedVersion)
 
     return (
         <div className="widget product_view">

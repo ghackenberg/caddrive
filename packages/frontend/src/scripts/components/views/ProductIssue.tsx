@@ -38,8 +38,9 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
     const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
-    const [openIssueCount, setOpenIssueCount] = useState<Number>()
-    const [closedIssueCount, setClosedIssueCount] = useState<Number>()
+    const [partsCount, setPartsCount] = useState<{[id: string]: number}>({})
+    const [openIssueCount, setOpenIssueCount] = useState<number>()
+    const [closedIssueCount, setClosedIssueCount] = useState<number>()
     // - Interactions
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
@@ -50,9 +51,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, undefined, 'open').then(openIssues => setOpenIssueCount(openIssues.length)) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, undefined, 'closed').then(closedIssues => setClosedIssueCount(closedIssues.length)) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, undefined, state).then(setIssues)}, [props, state])
+    useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props, state])
     useEffect(() => {
         if (issues) {
             const userIds: string[] = []
@@ -116,6 +115,28 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         }
         updateHightlighted()
     }, [comments])
+    useEffect(() => {
+        if (issueParts && commentParts && issues && comments) {
+            const partsCountNew = {... partsCount}
+            for(const issue of issues) {
+                if(issue.id in issueParts) {
+                    partsCountNew[issue.id] = issueParts[issue.id].length
+                    if (issue.id in comments) {
+                        for ( const comment of comments[issue.id]) {
+                            if(comment.id in commentParts ) {
+                                partsCountNew[issue.id] += commentParts[comment.id].length
+                            }
+                        }
+                    }
+                }
+            }
+            setPartsCount(partsCountNew)
+        }
+    }, [issueParts, commentParts])
+    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
+    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
+
+
 
     // - Interactions
     useEffect(() => {
@@ -199,6 +220,11 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                 {issue.id in comments ? comments[issue.id].length : '?'}
             </Link>
         )},
+        { label: 'Parts', class: 'center', content: issue => (
+            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+                {issue.id in partsCount ? partsCount[issue.id] : '?'}
+            </Link>
+        )},
         { label: '', class: 'center', content: issue => (
             <a onClick={() => deleteIssue(issue)}>
                 <img src={DeleteIcon} className='small'/>
@@ -228,7 +254,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
                                         Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
                                     </a>
-                                    <Table columns={columns} items={issues} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
