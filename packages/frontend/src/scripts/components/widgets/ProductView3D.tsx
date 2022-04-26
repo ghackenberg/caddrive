@@ -56,7 +56,7 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
                         <Fragment>
                             <header>
                                 <select value={version.id} onChange={event => setSelectedVersion(versions.filter(version => version.id == event.currentTarget.value)[0])}>
-                                   { versions.map((version) => <option value={version.id}>{version.major +'.' + version.minor  +'.'+ version.patch + ': ' + version.description}</option> )}
+                                   { versions.map((version) => <option key={version.id} value={version.id}>{version.major +'.' + version.minor  +'.'+ version.patch + ': ' + version.description}</option> )}
                                 </select>
                             </header>
                             <main>

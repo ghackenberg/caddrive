@@ -20,18 +20,6 @@ import { CommentManager } from '../../managers/comment'
 import { calculateActual } from '../../functions/burndown'
 // Icons
 
-new Promise<number>((resolve, reject) => {
-    if (Math.random() < 0.5) {
-        resolve(1)
-    } else {
-        reject('Hat leider nicht geklappt!')
-    }
-}).then(zahl => {
-    console.log(zahl)
-}).catch(fehler => {
-    console.error(fehler)
-})
-
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
     const history = useHistory()
@@ -72,9 +60,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
             Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
                 const newComments = {...comments}
                 for (var index = 0; index < issues.length; index++) {
-                    const issue = issues[index]
-                    const comments = issueComments[index]
-                    newComments[issue.id] = comments
+                    newComments[issues[index].id] = issueComments[index]
                 }
                 setComments(newComments)
             })
