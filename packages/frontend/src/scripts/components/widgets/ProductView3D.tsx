@@ -24,10 +24,22 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
     const [load, setLoad] = useState<boolean>(props.product !== undefined)
     const [versions, setVersions] = useState<Version[]>(null)
 
+    const [version, setVersion] = useState<Version>(null)
+
+    const [highlighted, setHighlighted] = useState<string[]>([])
+    const [marked, setMarked] = useState<string[]>([])
+    const [selected, setSelected] = useState<string[]>([])
+
     // EFFECTS
     
     useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props])
 
+    useEffect(() => { versions && versions.length > 0 && setVersion(versions[versions.length - 1]) }, [versions])
+
+    useEffect(() => { setHighlighted((props.highlighted || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.highlighted])
+    useEffect(() => { setMarked((props.marked || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.marked])
+    useEffect(() => { setSelected((props.selected || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.selected])
+    
     // RETURN
 
     return (
@@ -37,7 +49,16 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
             ) : (
                 <Fragment>
                     { versions && versions.length > 0 ? (
-                        <VersionView3D version={versions[versions.length - 1]} mouse={props.mouse} highlighted={(props.highlighted || []).map(part => part.objectName)} marked={(props.marked || []).map(part => part.objectName)} selected={(props.selected || []).map(part => part.objectName)} click={props.click && (object => props.click(versions[versions.length - 1], object))} vr= {props.vr}/>
+                        <Fragment>
+                            <header>
+                                <select value={version.id} onChange={event => setVersion(versions.filter(version => version.id == event.currentTarget.value)[0])}>
+                                   { versions.map((version) => <option value={version.id}>{version.major +'.' + version.minor  +'.'+ version.patch + ': ' + version.description}</option> )}
+                                </select>
+                            </header>
+                            <main>
+                                { version && <VersionView3D version={version} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(version, object))} vr= {props.vr}/> }
+                            </main>
+                        </Fragment>
                     ) : (
                         <img className='empty' src={EmptyIcon}/>
                     )}
