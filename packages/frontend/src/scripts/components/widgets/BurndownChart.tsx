@@ -49,7 +49,7 @@ export const BurndownChartWidget = (props: { start: Date, end: Date, total: numb
             <LineChart>
                 <CartesianGrid/>
                 <XAxis name='Time' dataKey='time' type='number' domain={[min - (max - min) * 0.25, max + (max - min) * 0.25]} scale='time' tickFormatter={time => new Date(time).toLocaleString()}/>
-                <YAxis name='Open issue count' dataKey='target' allowDecimals={false}/>
+                <YAxis name='Open issue count' dataKey='target' domain={[0, 'dataMax + 1']} allowDecimals={false} tickFormatter={value => `${Math.round(value)}`}/>
                 <Legend/>
                 <Line name='Target burndown' data={target} dataKey='target' stroke='green' strokeDasharray='3 3' dot={false}/>
                 <ReferenceLine x={props.start.getTime()} label='Start' stroke='red' strokeDasharray='3 3'/>
