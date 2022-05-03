@@ -40,6 +40,7 @@
         "@nestjs/passport": "^8.0.1",
         "@nestjs/platform-express": "^8.1.2",
         "@nestjs/swagger": "^5.1.4",
+        "@nestjs/typeorm": "^8.0.3",
         "hash.js": "^1.1.7",
         "mqtt": "^4.2.6",
         "passport": "^0.5.2",
@@ -48,8 +49,10 @@
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.1.0",
         "shortid": "^2.2.16",
+        "sqlite3": "^5.0.6",
         "swagger-ui-express": "^4.1.6",
-        "ts-node": "^10.0.0"
+        "ts-node": "^10.0.0",
+        "typeorm": "^0.2.45"
     },
     "devDependencies": {
         "@types/multer": "^1.4.7",

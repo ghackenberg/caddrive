@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { ProductModule } from './rest/products/product.module'
 import { UserModule } from './rest/users/user.module'
 import { VersionModule } from './rest/versions/version.module'
@@ -7,8 +8,19 @@ import { IssueModule } from './rest/issues/issue.module'
 import { CommentModule } from './rest/comments/comment.module'
 import { MemberModule } from './rest/members/member.module'
 import { MilestoneModule } from './rest/milestones/milestone.module'
+import { UserEntity } from './rest/users/user.entity'
+import { ProductEntity } from './rest/products/product.entity'
 
 @Module({
-    imports: [UserModule, ProductModule, VersionModule, IssueModule, CommentModule, FileModule, MilestoneModule, MemberModule]
+    imports: [
+        TypeOrmModule.forRoot({
+            type: 'sqlite',
+            database: './database.sqlite',
+            entities: [UserEntity, ProductEntity],
+            synchronize: true,
+            logging: true,
+        }),
+        UserModule, ProductModule, VersionModule, IssueModule, CommentModule, FileModule, MilestoneModule, MemberModule
+    ]
 })
 export class RESTModule {}

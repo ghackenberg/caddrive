@@ -17,3 +17,5 @@ packages/backend/uploads/*.png
 public
 
 bin
+
+database.sqlite

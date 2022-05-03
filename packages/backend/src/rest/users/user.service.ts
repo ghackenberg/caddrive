@@ -5,6 +5,9 @@ import * as shortid from 'shortid'
 import * as hash from 'hash.js'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { MemberService } from '../members/member.service'
+import { Like, Repository } from 'typeorm'
+import { UserEntity } from './user.entity'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {
@@ -16,8 +19,18 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     ]
 
     constructor(
-        private readonly memberService: MemberService
-    ) {}
+        private readonly memberService: MemberService,
+        @InjectRepository(UserEntity)
+        private readonly userRepository: Repository <UserEntity>
+    ) {
+        this.userRepository.count().then(async count => {
+            if (count == 0) {
+                for (const user of UserService.users) {
+                    await this.userRepository.save(user)
+                }
+            }
+        })
+    }
 
     async checkUser(): Promise<User> {
         return null
@@ -25,13 +38,8 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
 
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
         const results: User[] = []
-        for (const user of UserService.users) {
-            if (user.deleted) {
-                continue
-            }
-            if (query && !user.name.toLowerCase().includes(query.toLowerCase())) {
-                continue
-            }
+        const options = query ? { deleted: false, name: Like(`%${query}%`) } : { deleted: false }
+        for (const user of await this.userRepository.find(options)) {
             if (productId && (await this.memberService.findMembers(productId, user.id)).length > 0) {
                 continue
             }
@@ -48,43 +56,40 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
             }
             fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
-        UserService.users.push(user)
-        return user
+        return this.userRepository.save(user)
     }
 
     async getUser(id: string): Promise<User> {
-        for (const user of UserService.users) {
-            if (user.id == id) {
-                return user
-            }
+        const user = await this.userRepository.findOne(id)
+        if (user) {
+            return user
         }
         throw new NotFoundException()
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
-        for (var index = 0; index < UserService.users.length; index++) {
-            const user = UserService.users[index]
-            if (user.id == id) {
-                UserService.users.splice(index, 1, { ...user,...data })
-                if (file && file.originalname.endsWith('.jpg')) {
-                    UserService.users[index].pictureId = shortid()
-                    if (!fs.existsSync('./uploads')) {
-                        fs.mkdirSync('./uploads')
-                    }
-                    fs.writeFileSync(`./uploads/${UserService.users[index].pictureId}.jpg`, file.buffer)
+        const user = await this.userRepository.findOne(id)
+        if (user) {
+            user.email = data.email
+            user.password = data.password
+            user.name = data.name
+            if (file && file.originalname.endsWith('.jpg')) {
+                user.pictureId = shortid()
+                if (!fs.existsSync('./uploads')) {
+                    fs.mkdirSync('./uploads')
                 }
-                return UserService.users[index]
+                fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
             }
+            return this.userRepository.save(user)
         }
         throw new NotFoundException()
     }
 
     async deleteUser(id: string): Promise<User> {
-        for (const user of UserService.users) {
-            if (user.id == id) {
-                user.deleted = true
-                return user
-            }
+        const user = await this.userRepository.findOne(id)
+        if (user) {
+            user.deleted = true
+            return this.userRepository.save(user)
         }
         throw new NotFoundException()
     }
