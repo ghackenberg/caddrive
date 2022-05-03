@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 import { UserEntity } from '../users/user.entity'
+import { VersionEntity } from '../versions/version.entity'
 
 @Entity()
 export class ProductEntity {
@@ -20,4 +21,8 @@ export class ProductEntity {
     
     @ManyToOne(() => UserEntity)
     user: UserEntity
+
+    @OneToMany(() => VersionEntity, version => version.product)
+    versions: VersionEntity[]
+
 }

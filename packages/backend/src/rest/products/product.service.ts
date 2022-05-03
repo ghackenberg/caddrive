@@ -37,15 +37,15 @@ export class ProductService implements ProductREST {
     }
 
     async findProducts() : Promise<Product[]> {
-        const results: Product[] = []
+        const result: Product[] = []
         const options = { deleted: false }
         for (const product of await this.productRepository.find(options)) {
             if ((await this.memberService.findMembers(product.id, (<User> (<any> this.request).user).id)).length == 0) {
                 continue
             }
-            results.push(product)
+            result.push(product)
         }
-        return results
+        return result
     }
 
     async addProduct(data: ProductAddData) {

@@ -3,6 +3,10 @@ import * as fs from 'fs'
 import * as shortid from 'shortid'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
+//import { InjectRepository } from '@nestjs/typeorm'
+//import { ProductEntity } from '../products/product.entity'
+//import { VersionEntity } from './version.entity'
+//import { Repository } from 'typeorm'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
@@ -13,7 +17,27 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         { id: 'demo-4', userId: 'demo-2', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Initial commit.', deleted: false }
     ]
 
+    // constructor(
+    //     @InjectRepository(VersionEntity)
+    //     private readonly versionRepository: Repository <VersionEntity>
+    // ) {
+    //     this.versionRepository.count().then(async count => {
+    //         if (count == 0) {
+    //             for (const version of VersionService.versions) {
+    //                 await this.versionRepository.save(version)
+    //             }
+    //         }
+    //     })
+    // }
+
     async findVersions(productId: string) : Promise<Version[]> {
+        // const options = { deleted: false, productId: productId }
+        // for (const version of await this.versionRepository.find(options)) {
+            //     result.push(version)
+            // }
+            
+            
+            
         const result: Version[] = []
         for (const version of VersionService.versions) {
             if (version.deleted) {
