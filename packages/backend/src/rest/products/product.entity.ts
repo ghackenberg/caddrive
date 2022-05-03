@@ -9,6 +9,15 @@ export class ProductEntity {
     @Column({ nullable: false, default: false })
     deleted: boolean
 
+    @Column({ nullable: false })
+    userId: string
+    
+    @Column({ nullable: false })
+    name: string
+    
+    @Column({ nullable: false })
+    description: string
+    
     @ManyToOne(() => UserEntity)
     user: UserEntity
 }

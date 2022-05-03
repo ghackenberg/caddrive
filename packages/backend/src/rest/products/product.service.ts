@@ -6,6 +6,9 @@ import { VersionService } from '../versions/version.service'
 import { IssueService } from '../issues/issue.service'
 import { MemberService } from '../members/member.service'
 import { MilestoneService } from '../milestones/milestone.service'
+import { ProductEntity } from './product.entity'
+import { Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
@@ -20,46 +23,52 @@ export class ProductService implements ProductREST {
         private readonly memberService: MemberService,
         private readonly milestoneService: MilestoneService,
         @Inject(REQUEST)
-        private readonly request: Express.Request
-    ) {}
+        private readonly request: Express.Request,
+        @InjectRepository(ProductEntity)
+        private readonly productRepository: Repository <ProductEntity>
+    ) {
+        this.productRepository.count().then(async count => {
+            if (count == 0) {
+                for (const product of ProductService.products) {
+                    await this.productRepository.save(product)
+                }
+            }
+        })
+    }
 
     async findProducts() : Promise<Product[]> {
-        const result: Product[] = []
-        for (const product of ProductService.products) {
-            if(product.deleted) {
-                continue
-            }
+        const results: Product[] = []
+        const options = { deleted: false }
+        for (const product of await this.productRepository.find(options)) {
             if ((await this.memberService.findMembers(product.id, (<User> (<any> this.request).user).id)).length == 0) {
                 continue
             }
-            result.push(product)
+            results.push(product)
         }
-        return result
+        return results
     }
 
     async addProduct(data: ProductAddData) {
         const product = { id: shortid(), deleted: false, ...data }
-        ProductService.products.push(product)
+        this.productRepository.save(product)
         this.memberService.addMember({productId: product.id, userId: product.userId})
         return product
     }
 
     async getProduct(id: string): Promise<Product> {
-        for (const product of ProductService.products) {
-            if (product.id == id) {
-                return product
-            }
+        const product = this.productRepository.findOne(id)
+        if(product) {
+            return product
         }
         throw new NotFoundException()
     }
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
-        for (var index = 0; index < ProductService.products.length; index++) {
-            const product = ProductService.products[index]
-            if (product.id == id) {
-                ProductService.products.splice(index, 1, { ...product, ...data })
-                return ProductService.products[index]
-            }
+        const product = await this.productRepository.findOne(id)
+        if (product) {
+            product.name = data.name
+            product.description = data.description
+            return this.productRepository.save(product)
         }
         throw new NotFoundException()
     }
@@ -79,9 +88,14 @@ export class ProductService implements ProductREST {
                 for (const member of await this.memberService.findMembers(id)) {
                     await this.memberService.deleteMember(member.id)
                 }
-                product.deleted = true
-                return product
+
             }
+        }
+        //DB
+        const product = await this.productRepository.findOne(id)
+        if(product) {
+            product.deleted = true
+            return this.productRepository.save(product)
         }
         throw new NotFoundException()
     }
