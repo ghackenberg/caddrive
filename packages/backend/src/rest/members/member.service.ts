@@ -1,6 +1,9 @@
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
+import { InjectRepository } from '@nestjs/typeorm'
+import { MemberEntity } from './member.entity'
+import { Repository } from 'typeorm'
 
 
 
@@ -15,20 +18,23 @@ export class MemberService implements MemberREST {
         { id: 'demo-6', userId: 'demo-3', productId: "demo-1", deleted: false},
     ]
     
-    public constructor() {}
+    public constructor(
+        @InjectRepository(MemberEntity)
+        private readonly memberRepository: Repository <MemberEntity>
+    ) {
+        this.memberRepository.count().then(async count => {
+            if (count == 0) {
+                for (const member of MemberService.members) {
+                    await this.memberRepository.save(member)
+                }
+            }
+        })
+    }
 
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         const result: Member[] = []
-        for (const member of MemberService.members) {
-            if (member.deleted) {
-                continue
-            }
-            if (member.productId != productId) {
-                continue
-            }
-            if (userId && member.userId != userId) {
-                continue
-            }
+        const options = userId ? { deleted: false, productId: productId } : { deleted: false, productId: productId }
+        for (const member of await this.memberRepository.find(options)) {
             result.push(member)
         }
         return result
@@ -37,41 +43,31 @@ export class MemberService implements MemberREST {
     async addMember(data: MemberAddData): Promise<Member> {
         // TODO check if user exists
         // TODO check if product exists
-        const members = await this.findMembers(data.productId, data.userId)
-        if (members.length == 1) {
-            return members[0]
-        } else {
-            const member = { id: shortid(), deleted: false, ...data }
-            MemberService.members.push(member)
-            return member
-        }
+        const member = { id: shortid(), deleted: false, ...data }
+        return this.memberRepository.save(member)
     }
 
     async getMember(id: string): Promise<Member> {
-        for (const member of MemberService.members) {
-            if (member.id == id) {
-                return member
-            }
+       const member = await this.memberRepository.findOne(id)
+        if (member) {
+            return member
         }
         throw new NotFoundException()
     }
 
-    async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
-        for (var index = 0; index < MemberService.members.length; index++) {
-            const member = MemberService.members[index]
-            if (member.id == id) {
-                MemberService.members.splice(index, 1, { ...member,...data })
-                return MemberService.members[index]
-            }
+    async updateMember(id: string, _data: MemberUpdateData): Promise<Member> {
+        const member = await this.memberRepository.findOne(id)   
+        if (member) {  
+            return this.memberRepository.save(member)
         }
         throw new NotFoundException()
     }
+    
     async deleteMember(id: string): Promise<Member> {
-        for (const member of MemberService.members) {
-            if (member.id == id) {
-                member.deleted = true
-                return member
-            }
+        const member = await this.memberRepository.findOne(id)   
+        if (member) { 
+            member.deleted = true 
+            return this.memberRepository.save(member)
         }
         throw new NotFoundException()
     }

@@ -11,13 +11,14 @@ import { MilestoneModule } from './rest/milestones/milestone.module'
 import { UserEntity } from './rest/users/user.entity'
 import { ProductEntity } from './rest/products/product.entity'
 import { VersionEntity } from './rest/versions/version.entity'
+import { MemberEntity } from './rest/members/member.entity'
 
 @Module({
     imports: [
         TypeOrmModule.forRoot({
             type: 'sqlite',
             database: './database.sqlite',
-            entities: [UserEntity, ProductEntity, VersionEntity],
+            entities: [UserEntity, ProductEntity, VersionEntity, MemberEntity],
             synchronize: true,
             logging: true,
         }),
