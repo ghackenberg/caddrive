@@ -41,8 +41,8 @@
     "scripts": {
         "clean": "workspaces-run -- npm run clean",
         "build": "workspaces-run -- npm run build",
-        "start": "workspaces-run --parallel --ignore=\"productboard-common\" -- npm run start",
-        "devel": "workspaces-run --parallel --ignore=\"productboard-common\" -- npm run devel"
+        "start": "docker-compose -f ./compositions/production.yml up -d && workspaces-run --parallel --ignore=\"productboard-common\" -- npm run start",
+        "devel": "docker-compose -f ./compositions/development.yml up -d && workspaces-run --parallel --ignore=\"productboard-common\" -- npm run devel"
     },
     "dependencies": {
         "workspaces-run": "^1.0.1"
