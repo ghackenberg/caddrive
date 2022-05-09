@@ -1,3 +1,3 @@
-# [ProductBoard](../../README.md) / Worker
+# ProductBoard Worker Package
 
 TODO

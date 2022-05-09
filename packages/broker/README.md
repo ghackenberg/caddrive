@@ -1,3 +1,3 @@
-# [ProductBoard](../../README.md) / Broker
+# ProductBoard Broker Package
 
 TODO

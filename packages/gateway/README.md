@@ -1,3 +1,3 @@
-# [ProductBoard](../../README.md) / Gateway
+# ProductBoard Gateway Package
 
 TODO
