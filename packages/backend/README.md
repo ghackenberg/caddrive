@@ -1,3 +1,3 @@
-# [ProductBoard](../../README.md) / Backend
+# ProductBoard Backend Package
 
 TODO

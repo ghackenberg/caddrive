@@ -1,3 +1,3 @@
-# [ProductBoard](../../README.md) / Common
+# ProductBoard Common Package
 
 TODO
