@@ -4,6 +4,8 @@ import * as shortid from 'shortid'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MemberEntity } from './member.entity'
 import { Repository } from 'typeorm'
+import { ProductEntity } from '../products/product.entity'
+import { UserEntity } from '../users/user.entity'
 
 
 
@@ -20,12 +22,16 @@ export class MemberService implements MemberREST {
     
     public constructor(
         @InjectRepository(MemberEntity)
-        private readonly memberRepository: Repository <MemberEntity>
+        private readonly memberRepository: Repository <MemberEntity>,
+        @InjectRepository(ProductEntity)
+        private readonly productRepository: Repository <ProductEntity>,
+        @InjectRepository(UserEntity)
+        private readonly userRepository: Repository <UserEntity>,
     ) {
         this.memberRepository.count().then(async count => {
             if (count == 0) {
-                for (const member of MemberService.members) {
-                    await this.memberRepository.save(member)
+                for (const _member of MemberService.members) {
+                    // await this.memberRepository.save(member)
                 }
             }
         })
@@ -33,24 +39,34 @@ export class MemberService implements MemberREST {
 
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         const result: Member[] = []
-        const options = userId ? { deleted: false, productId: productId } : { deleted: false, productId: productId }
-        for (const member of await this.memberRepository.find(options)) {
-            result.push(member)
+
+        const where = userId ? { deleted: false, productId, userId } : { deleted: false, productId }
+
+        // TODO check query
+        for (const member of await this.memberRepository.find({ where })) {
+            result.push({ id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId })
         }
+
         return result
     }
 
     async addMember(data: MemberAddData): Promise<Member> {
-        // TODO check if user exists
-        // TODO check if product exists
-        const member = { id: shortid(), deleted: false, ...data }
-        return this.memberRepository.save(member)
+        const product = await this.productRepository.findOne(data.productId)
+        if (!product) {
+            throw new NotFoundException()
+        }
+        const user = await this.userRepository.findOne(data.userId)
+        if (!user) {
+            throw new NotFoundException()
+        }
+        const member = await this.memberRepository.save({ id: shortid(), deleted: false, product, user })
+        return { id: member.id, deleted: member.deleted, productId: product.id, userId: user.id }
     }
 
     async getMember(id: string): Promise<Member> {
        const member = await this.memberRepository.findOne(id)
         if (member) {
-            return member
+            return { id: member.id, deleted: member.deleted, productId: member.product.id, userId: member.user.id }
         }
         throw new NotFoundException()
     }
@@ -58,7 +74,8 @@ export class MemberService implements MemberREST {
     async updateMember(id: string, _data: MemberUpdateData): Promise<Member> {
         const member = await this.memberRepository.findOne(id)   
         if (member) {  
-            return this.memberRepository.save(member)
+            await this.memberRepository.save(member)
+            return { id: member.id, deleted: member.deleted, productId: member.product.id, userId: member.user.id }
         }
         throw new NotFoundException()
     }
@@ -67,7 +84,8 @@ export class MemberService implements MemberREST {
         const member = await this.memberRepository.findOne(id)   
         if (member) { 
             member.deleted = true 
-            return this.memberRepository.save(member)
+            this.memberRepository.save(member)
+            return { id: member.id, deleted: member.deleted, productId: member.product.id, userId: member.user.id }
         }
         throw new NotFoundException()
     }

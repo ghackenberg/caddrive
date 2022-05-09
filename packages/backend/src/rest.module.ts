@@ -16,8 +16,12 @@ import { MemberEntity } from './rest/members/member.entity'
 @Module({
     imports: [
         TypeOrmModule.forRoot({
-            type: 'sqlite',
-            database: './database.sqlite',
+            type: 'postgres',
+            host: 'localhost',
+            port: 5432,
+            database: 'postgres',
+            username: 'postgres',
+            password: 'test',
             entities: [UserEntity, ProductEntity, VersionEntity, MemberEntity],
             synchronize: true,
             logging: true,

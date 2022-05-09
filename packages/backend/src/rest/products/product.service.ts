@@ -29,8 +29,8 @@ export class ProductService implements ProductREST {
     ) {
         this.productRepository.count().then(async count => {
             if (count == 0) {
-                for (const product of ProductService.products) {
-                    await this.productRepository.save(product)
+                for (const _product of ProductService.products) {
+                    // await this.productRepository.save(product)
                 }
             }
         })
@@ -50,8 +50,8 @@ export class ProductService implements ProductREST {
 
     async addProduct(data: ProductAddData) {
         const product = { id: shortid(), deleted: false, ...data }
-        this.productRepository.save(product)
-        this.memberService.addMember({productId: product.id, userId: product.userId})
+        await this.productRepository.save(product)
+        await this.memberService.addMember({productId: product.id, userId: product.userId})
         return product
     }
 
