@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 import { MemberEntity } from '../members/member.entity'
 import { UserEntity } from '../users/user.entity'
 import { VersionEntity } from '../versions/version.entity'
@@ -11,6 +11,10 @@ export class ProductEntity {
     @Column({ nullable: false, default: false })
     deleted: boolean
 
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity
+
     @Column({ nullable: false })
     userId: string
     
@@ -20,9 +24,6 @@ export class ProductEntity {
     @Column({ nullable: false })
     description: string
     
-    @ManyToOne(() => UserEntity)
-    user: UserEntity
-
     @OneToMany(() => VersionEntity, version => version.product)
     versions: VersionEntity[]
 

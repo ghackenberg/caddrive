@@ -38,27 +38,26 @@ export class ProductService implements ProductREST {
 
     async findProducts() : Promise<Product[]> {
         const result: Product[] = []
-        const options = { deleted: false }
-        for (const product of await this.productRepository.find(options)) {
+        const where = { deleted: false }
+        for (const product of await this.productRepository.find({ where })) {
             if ((await this.memberService.findMembers(product.id, (<User> (<any> this.request).user).id)).length == 0) {
                 continue
             }
-            result.push(product)
+            result.push({ id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description })
         }
         return result
     }
 
     async addProduct(data: ProductAddData) {
-        const product = { id: shortid(), deleted: false, ...data }
-        await this.productRepository.save(product)
+        const product = await this.productRepository.save({ id: shortid(), deleted: false, ...data })
         await this.memberService.addMember({productId: product.id, userId: product.userId})
-        return product
+        return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
     }
 
     async getProduct(id: string): Promise<Product> {
-        const product = this.productRepository.findOne(id)
+        const product = await this.productRepository.findOne(id)
         if(product) {
-            return product
+            return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
         }
         throw new NotFoundException()
     }
@@ -68,7 +67,8 @@ export class ProductService implements ProductREST {
         if (product) {
             product.name = data.name
             product.description = data.description
-            return this.productRepository.save(product)
+            await this.productRepository.save(product)
+            return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
         }
         throw new NotFoundException()
     }
@@ -95,7 +95,8 @@ export class ProductService implements ProductREST {
         const product = await this.productRepository.findOne(id)
         if(product) {
             product.deleted = true
-            return this.productRepository.save(product)
+            await this.productRepository.save(product)
+            return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
         }
         throw new NotFoundException()
     }
