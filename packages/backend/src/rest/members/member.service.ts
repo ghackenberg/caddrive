@@ -39,9 +39,7 @@ export class MemberService implements MemberREST {
 
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         const result: Member[] = []
-
         const where = userId ? { deleted: false, productId, userId } : { deleted: false, productId }
-
         // TODO check query
         for (const member of await this.memberRepository.find({ where })) {
             result.push({ id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId })
@@ -84,7 +82,7 @@ export class MemberService implements MemberREST {
         const member = await this.memberRepository.findOne(id)   
         if (member) { 
             member.deleted = true 
-            this.memberRepository.save(member)
+            await this.memberRepository.save(member)
             return { id: member.id, deleted: member.deleted, productId: member.product.id, userId: member.user.id }
         }
         throw new NotFoundException()

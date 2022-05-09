@@ -25,8 +25,8 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     ) {
         this.userRepository.count().then(async count => {
             if (count == 0) {
-                for (const user of UserService.users) {
-                    await this.userRepository.save(user)
+                for (const _user of UserService.users) {
+                    // await this.userRepository.save(user)
                 }
             }
         })
@@ -37,32 +37,32 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
-        const results: User[] = []
-        const options = query ? { deleted: false, name: Like(`%${query}%`) } : { deleted: false }
-        for (const user of await this.userRepository.find(options)) {
+        const result: User[] = []
+        const where = query ? { deleted: false, name: Like(`%${query}%`) } : { deleted: false }
+        for (const user of await this.userRepository.find( { where })) {
             if (productId && (await this.memberService.findMembers(productId, user.id)).length > 0) {
                 continue
             }
-            results.push(user)
+            result.push({ id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId })
         }
-        return results
+        return result
     }
 
     async addUser(data: UserAddData, file?: Express.Multer.File) {
-        const user = { id: shortid(), deleted: false, pictureId: shortid(), ...data }
+        const user = await this.userRepository.save({ id: shortid(), deleted: false, pictureId: shortid(), ...data })
         if (file && file.originalname.endsWith('.jpg')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
             fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
-        return this.userRepository.save(user)
+        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
     }
 
     async getUser(id: string): Promise<User> {
         const user = await this.userRepository.findOne(id)
         if (user) {
-            return user
+            return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
         }
         throw new NotFoundException()
     }
@@ -80,7 +80,8 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
                 }
                 fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
             }
-            return this.userRepository.save(user)
+            await this.userRepository.save(user)
+            return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
         }
         throw new NotFoundException()
     }
@@ -89,7 +90,8 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         const user = await this.userRepository.findOne(id)
         if (user) {
             user.deleted = true
-            return this.userRepository.save(user)
+            await this.userRepository.save(user)
+            return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
         }
         throw new NotFoundException()
     }
