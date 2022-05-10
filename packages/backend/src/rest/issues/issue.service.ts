@@ -2,6 +2,9 @@ import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/commo
 import * as shortid from 'shortid'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { CommentService } from '../comments/comment.service'
+import { InjectRepository } from '@nestjs/typeorm'
+import { IssueEntity } from './issue.entity'
+import { Repository } from 'typeorm'
 
 
 
@@ -20,25 +23,29 @@ export class IssueService implements IssueREST {
 
     public constructor(
         @Inject(forwardRef(() => CommentService))
-        private readonly commentService: CommentService
-    ) {}
+        private readonly commentService: CommentService,
+
+        @InjectRepository(IssueEntity)
+        private readonly issueRepository: Repository <IssueEntity>,
+    ) {
+        this.issueRepository.count().then(async count => {
+            if (count == 0) {
+                for (const _issue of IssueService.issues) {
+                    // await this.memberRepository.save(member)
+                }
+            }
+        })
+    }
 
     async findIssues(productId: string, milestoneId?: string, state?: string) : Promise<Issue[]> {
         const result: Issue[] = []
-        for (const issue of IssueService.issues) {
-            if(issue.deleted){
-                continue
-            }
-            if (issue.productId != productId) {
-                continue
-            }
-            if (milestoneId && issue.milestoneId != milestoneId) {
-                continue
-            }
-            if (state && issue.state != state) {
-                continue
-            }
-            result.push(issue)
+        var where
+        if (milestoneId && state) { where = { deleted: false, productId: productId, milestoneId: milestoneId, state: state } }
+        else if (milestoneId) { where = { deleted: false, productId: productId, milestoneId: milestoneId } }
+        else if (state) { where = { deleted: false, productId: productId, state: state } }
+        else { where = { deleted: false, productId: productId } }
+        for (const issue of await this.issueRepository.find({ where })) {
+            result.push( {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId } )
         }
         return result
     }
@@ -48,16 +55,14 @@ export class IssueService implements IssueREST {
         // TODO check if product exists
         // TODO check if milestone exists
         // TODO check if assignees exist
-        const issue = { id: shortid(), deleted: false, ...data }
-        IssueService.issues.push(issue)
-        return issue
+        const issue = await this.issueRepository.save({ id: shortid(), deleted: false, ...data })
+        return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
     }
 
     async getIssue(id: string): Promise<Issue> {
-        for (const issue of IssueService.issues) {
-            if (issue.id == id) {
-                return issue
-            }
+        const issue = await this.issueRepository.findOne(id)
+        if (issue) {
+            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
         }
         throw new NotFoundException()
     }
@@ -65,24 +70,39 @@ export class IssueService implements IssueREST {
     async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
         // TODO check if milestone exists
         // TODO check if assignees exist
-        for (var index = 0; index < IssueService.issues.length; index++) {
-            const issue = IssueService.issues[index]
-            if (issue.id == id) {
-                IssueService.issues.splice(index, 1, { ...issue, ...data })
-                return IssueService.issues[index]
-            }
+
+        const issue = await this.issueRepository.findOne(id)
+        if (issue) {
+            issue.assigneeIds = data.assigneeIds
+            issue.label = data.label
+            issue.milesoneId =  data.milestoneId
+            issue.state = data.state
+            issue.text = data.text
+            await this.issueRepository.save(issue)
+            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
         }
         throw new NotFoundException()
     }
 
     async deleteIssue(id: string): Promise<Issue> {
+
+        const issue = await this.issueRepository.findOne(id)
+        if (issue) {
+            issue.deleted = true
+            await this.issueRepository.save(issue)
+            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
+        }
+
+
+        // Kommentare zu Issue löschen
+        // später über db
         for (const issue of IssueService.issues) {
             if (issue.id == id) {
                 for (const comment of await this.commentService.findComments(id)) {
                     await this.commentService.deleteComment(comment.id)
                 }
-                issue.deleted = true
-                return issue
+                //issue.deleted = true
+                //return issue
             }
         }
         throw new NotFoundException()
