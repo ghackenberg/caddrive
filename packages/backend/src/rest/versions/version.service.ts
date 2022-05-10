@@ -3,10 +3,10 @@ import * as fs from 'fs'
 import * as shortid from 'shortid'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
-//import { InjectRepository } from '@nestjs/typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
 //import { ProductEntity } from '../products/product.entity'
-//import { VersionEntity } from './version.entity'
-//import { Repository } from 'typeorm'
+import { VersionEntity } from './version.entity'
+import { Repository } from 'typeorm'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
@@ -17,82 +17,74 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         { id: 'demo-4', userId: 'demo-2', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Initial commit.', deleted: false }
     ]
 
-    // constructor(
-    //     @InjectRepository(VersionEntity)
-    //     private readonly versionRepository: Repository <VersionEntity>
-    // ) {
-    //     this.versionRepository.count().then(async count => {
-    //         if (count == 0) {
-    //             for (const version of VersionService.versions) {
-    //                 await this.versionRepository.save(version)
-    //             }
-    //         }
-    //     })
-    // }
+    constructor(
+        @InjectRepository(VersionEntity)
+        private readonly versionRepository: Repository <VersionEntity>
+    ) {
+        this.versionRepository.count().then(async count => {
+            if (count == 0) {
+                for (const _version of VersionService.versions) {
+                    // await this.versionRepository.save(version)
+                }
+            }
+        })
+    }
 
     async findVersions(productId: string) : Promise<Version[]> {
-        // const options = { deleted: false, productId: productId }
-        // for (const version of await this.versionRepository.find(options)) {
-            //     result.push(version)
-            // }
-            
-            
-            
         const result: Version[] = []
-        for (const version of VersionService.versions) {
-            if (version.deleted) {
-                continue
+         const where = { deleted: false, productId: productId }
+        for (const version of await this.versionRepository.find({ where })) {
+                result.push({ id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description })
             }
-            if (version.productId != productId) {
-                continue
-            }
-            result.push(version)
-        }
         return result
     }
  
     async addVersion(data: VersionAddData, file: Express.Multer.File): Promise<Version> {
-        // TODO check if user exists
-        // TODO check if product exists
-        // TODO check if base versions exist
-        const version = { id: shortid(), deleted: false, ...data }
+        const version = await this.versionRepository.save({ id: shortid(), deleted: false, ...data })
         if (file && file.originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
             fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
         }
-        VersionService.versions.push(version)
-        return version
+        console.log(version.baseVersionIds)
+        return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
     }
 
     async getVersion(id: string): Promise<Version> {
-        for (const version of VersionService.versions) {
-            if (version.id == id) {
-                return version
-            }
+        const version = await this.versionRepository.findOne(id)
+        if (version) {
+            return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
         }
         throw new NotFoundException()
     }
 
-    async updateVersion(id: string, data: VersionUpdateData, _file?: Express.Multer.File): Promise<Version> {
-        for (var index = 0; index < VersionService.versions.length; index++) {
-            const version = VersionService.versions[index]
-            if (version.id == id) {
-                VersionService.versions.splice(index, 1, { ...version,...data})
-                return VersionService.versions[index]
-            }
+    async updateVersion(id: string, data: VersionUpdateData, file?: Express.Multer.File): Promise<Version> {
+      
+        const version = await this.versionRepository.findOne(id)
+        if (version) {
+            version.major = data.major
+            version.minor = data.minor
+            version.patch = data.patch
+            version.description = data.description
         }
-        throw new NotFoundException()
+        if (file && file.originalname.endsWith('.glb')) {
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
+        }
+        await this.versionRepository.save(version)
+        return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
     }
 
 
     async deleteVersion(id: string): Promise<Version> {
-        for (const version of VersionService.versions) {
-            if (version.id == id) {
-                version.deleted = true
-                return version
-            }
+        const version = await this.versionRepository.findOne(id)
+        if (version) {
+            version.deleted = true
+            await this.versionRepository.save(version)
+            return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
         }
         throw new NotFoundException()
     }

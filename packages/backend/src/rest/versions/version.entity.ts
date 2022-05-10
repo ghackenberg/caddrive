@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { ProductEntity } from '../products/product.entity'
 
 @Entity()
@@ -15,8 +15,13 @@ export class VersionEntity {
     @Column({ nullable: false })
     productId: string
 
-    @Column({ nullable: false })
-    baseVersionIds: string
+    @ManyToOne(() => ProductEntity)
+    @JoinColumn({ name: 'productId' })
+    product: ProductEntity
+
+    //@Column({ nullable: false, array: true })
+    @Column("simple-array")
+    baseVersionIds: string[]
 
     @Column({ nullable: false })
     time: string
@@ -32,8 +37,4 @@ export class VersionEntity {
 
     @Column({ nullable: false })
     description: string
-
-    @ManyToOne(() => ProductEntity)
-    product: ProductEntity
-
 }
