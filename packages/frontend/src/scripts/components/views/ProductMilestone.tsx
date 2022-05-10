@@ -104,12 +104,21 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     }
 
     // CONSTANTS
+    
+    // console.log(milestones)
+    // console.log(users)
+    // console.log(members)
 
     const columns: Column<Milestone>[] = [
         { label: 'Reporter', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {console.log(milestone.id)}
                 { milestone.userId in users && members ? <ProductUserPictureWidget user={users[milestone.id]} members={members} class='big'/> : '?' }
+                { milestone.userId in users && members ? console.log('true') : console.log('false') }
+                { milestone.userId in users ? console.log('true') : console.log('false') }
+                { milestone.userId in members ? console.log('true') : console.log('false') }
+                {console.log(milestone.userId)}
+                {console.log(users)}
+                {console.log(members)}
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (

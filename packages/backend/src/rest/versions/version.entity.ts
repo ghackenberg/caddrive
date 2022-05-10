@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { ProductEntity } from '../products/product.entity'
+import { UserEntity } from "../users/user.entity";
 
 @Entity()
 export class VersionEntity {
@@ -9,15 +10,19 @@ export class VersionEntity {
     @Column({ nullable: false, default: false })
     deleted: boolean
 
-    @Column({ nullable: false })
-    userId: string
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity
 
     @Column({ nullable: false })
-    productId: string
+    userId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
+
+    @Column({ nullable: false })
+    productId: string
 
     //@Column({ nullable: false, array: true })
     @Column("simple-array")

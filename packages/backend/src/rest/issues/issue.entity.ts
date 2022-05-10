@@ -1,5 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { MilestoneEntity } from "../milestones/milestone.entity";
 import { ProductEntity } from "../products/product.entity";
+import { UserEntity } from "../users/user.entity";
 
 @Entity()
 export class IssueEntity {
@@ -9,6 +11,10 @@ export class IssueEntity {
 
     @Column({nullable: false})
     deleted: boolean
+
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity
 
     @Column({nullable: false})
     userId: string
@@ -35,7 +41,11 @@ export class IssueEntity {
     @Column('simple-array')
     assigneeIds: string[]
 
+    @ManyToOne(() => MilestoneEntity)
+    @JoinColumn({ name: 'milestoneId' })
+    milestone: MilestoneEntity
+
     @Column({nullable: true})
-    milesoneId: string
+    milestoneId: string
 
 }

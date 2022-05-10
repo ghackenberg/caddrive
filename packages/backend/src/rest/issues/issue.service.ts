@@ -44,8 +44,9 @@ export class IssueService implements IssueREST {
         else if (milestoneId) { where = { deleted: false, productId: productId, milestoneId: milestoneId } }
         else if (state) { where = { deleted: false, productId: productId, state: state } }
         else { where = { deleted: false, productId: productId } }
+        console.log(where)
         for (const issue of await this.issueRepository.find({ where })) {
-            result.push( {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId } )
+            result.push( {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId } )
         }
         return result
     }
@@ -56,13 +57,13 @@ export class IssueService implements IssueREST {
         // TODO check if milestone exists
         // TODO check if assignees exist
         const issue = await this.issueRepository.save({ id: shortid(), deleted: false, ...data })
-        return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
+        return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
     }
 
     async getIssue(id: string): Promise<Issue> {
         const issue = await this.issueRepository.findOne(id)
         if (issue) {
-            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
+            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
         }
         throw new NotFoundException()
     }
@@ -75,11 +76,11 @@ export class IssueService implements IssueREST {
         if (issue) {
             issue.assigneeIds = data.assigneeIds
             issue.label = data.label
-            issue.milesoneId =  data.milestoneId
+            issue.milestoneId =  data.milestoneId
             issue.state = data.state
             issue.text = data.text
             await this.issueRepository.save(issue)
-            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
+            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
         }
         throw new NotFoundException()
     }
@@ -87,24 +88,27 @@ export class IssueService implements IssueREST {
     async deleteIssue(id: string): Promise<Issue> {
 
         const issue = await this.issueRepository.findOne(id)
-        if (issue) {
-            issue.deleted = true
-            await this.issueRepository.save(issue)
-            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milesoneId }
-        }
-
 
         // Kommentare zu Issue löschen
         // später über db
-        for (const issue of IssueService.issues) {
-            if (issue.id == id) {
-                for (const comment of await this.commentService.findComments(id)) {
-                    await this.commentService.deleteComment(comment.id)
+        if (issue) {
+            for (const issue of IssueService.issues) {
+                if (issue.id == id) {
+                    for (const comment of await this.commentService.findComments(id)) {
+                        await this.commentService.deleteComment(comment.id)
+                    }
+                    //issue.deleted = true
+                    //return issue
                 }
-                //issue.deleted = true
-                //return issue
             }
+
+        // db
+            issue.deleted = true
+            await this.issueRepository.save(issue)
+            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
         }
+
+
         throw new NotFoundException()
     }
 }

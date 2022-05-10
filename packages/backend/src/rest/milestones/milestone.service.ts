@@ -1,7 +1,10 @@
 import { forwardRef, Inject, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 import * as shortid from 'shortid'
+import { Repository } from 'typeorm'
 import { IssueService } from '../issues/issue.service'
+import { MilestoneEntity } from './milestone.entity'
 
 export class MilestoneService implements MilestoneREST {
     private static readonly milestones: Milestone[] = [
@@ -14,56 +17,73 @@ export class MilestoneService implements MilestoneREST {
 
     constructor(
         @Inject(forwardRef(() => IssueService))
-        private readonly issueService: IssueService
-    ) {}
+        private readonly issueService: IssueService,
+        @InjectRepository(MilestoneEntity)
+        private readonly milestoneRepository: Repository <MilestoneEntity>
+
+    ) {
+        this.milestoneRepository.count().then(async count => {
+            if (count == 0) {
+                for (const _milestone of MilestoneService.milestones) {
+                    // await this.memberRepository.save(member)
+                }
+            }
+        })
+    }
 
     async findMilestones(productId: string): Promise<Milestone[]> {
         const result: Milestone[] = []
-        for (const milestone of MilestoneService.milestones) {
-            if (milestone.deleted) {
-                continue
-            }
-            if (milestone.productId != productId) {
-                continue
-            }
+        const where = {deleted: false, productId}
+        for (const milestone of await this.milestoneRepository.find({ where })) {
             result.push(milestone)
+            console.log(milestone)
         }
         return result
     }
 
     async addMilestone(data: MilestoneAddData): Promise<Milestone> {   
-            const milestone = { id: shortid(), deleted: false, ...data }
-            MilestoneService.milestones.push(milestone)
-            return milestone
+        //TODO check if product,.... exists
+        const milestone = await this.milestoneRepository.save({ id: shortid(), deleted: false, ...data })
+        return ({ id: milestone.id, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end })
     }
 
     async getMilestone(id: string): Promise<Milestone> {
-        for (const milestone of MilestoneService.milestones) {
-            if (milestone.id == id) {
-                return milestone
-            }
+
+        const milestone = await this.milestoneRepository.findOne(id)
+        if (milestone) {
+            return ({ id: milestone.id, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end })
         }
         throw new NotFoundException()
     }
 
     async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
-        for (var index = 0; index < MilestoneService.milestones.length; index++) {
-            const milestone = MilestoneService.milestones[index]
-            if (milestone.id == id) {
-                MilestoneService.milestones.splice(index, 1, { ...milestone,...data })
-                return MilestoneService.milestones[index]
-            }
+        const milestone = await this.milestoneRepository.findOne(id)
+        if (milestone) {
+            milestone.label = data.label
+            milestone.start = data.start
+            milestone.end = data.end
+            await this.milestoneRepository.save(milestone)
+            return ({ id: milestone.id, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end })
         }
         throw new NotFoundException()
     }
 
 
-    async deleteMilestone(_id: string): Promise<Milestone> {
-        const milestone = await this.getMilestone(_id)
-        for (const issue of await this.issueService.findIssues(milestone.productId, milestone.id)) {
-            await this.issueService.updateIssue(issue.id, { ...issue, milestoneId: undefined })
+    async deleteMilestone(id: string): Promise<Milestone> {
+
+        const milestone = await this.milestoneRepository.findOne(id)
+        
+        // Löschen der issues mit service
+        if (milestone) {
+            for (const issue of await this.issueService.findIssues(milestone.productId, milestone.id)) {
+                await this.issueService.updateIssue(issue.id, { ...issue, milestoneId: undefined })
+            }
+
+        // db
+            milestone.deleted = true
+            await this.milestoneRepository.save(milestone)
+            return ({ id: milestone.id, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end })
         }
-        milestone.deleted = true
-        return milestone
+        throw new NotFoundException()
     }
 }

@@ -1,5 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { IssueEntity } from '../issues/issue.entity'
+import { MemberEntity } from '../members/member.entity'
+import { MilestoneEntity } from '../milestones/milestone.entity'
 import { ProductEntity } from '../products/product.entity'
+import { VersionEntity } from '../versions/version.entity'
 
 @Entity()
 export class UserEntity {
@@ -23,4 +27,25 @@ export class UserEntity {
 
     @OneToMany(() => ProductEntity, product => product.user)
     products: ProductEntity[]
+
+    @OneToMany(() => MilestoneEntity, milestone => milestone.user)
+    milestones: MilestoneEntity[]
+
+    @OneToMany(() => VersionEntity, version => version.user)
+    versions: VersionEntity[]
+
+    @OneToMany(() => IssueEntity, issue => issue.user)
+    issues: IssueEntity[]
+
+    // zuerst comments eintragen
+    // @OneToMany(() => CommentEntity, comment => comment.user)
+    // comments: CommentEntity[]
+
+    @OneToMany(() => MemberEntity, member => member.user)
+    member: MemberEntity[]
+
+
+
+
+
 }

@@ -13,6 +13,7 @@ import { ProductEntity } from './rest/products/product.entity'
 import { VersionEntity } from './rest/versions/version.entity'
 import { MemberEntity } from './rest/members/member.entity'
 import { IssueEntity } from './rest/issues/issue.entity'
+import { MilestoneEntity } from './rest/milestones/milestone.entity'
 
 @Module({
     imports: [
@@ -23,7 +24,7 @@ import { IssueEntity } from './rest/issues/issue.entity'
             database: 'postgres',
             username: 'postgres',
             password: 'test',
-            entities: [UserEntity, ProductEntity, VersionEntity, MemberEntity, IssueEntity],
+            entities: [UserEntity, ProductEntity, VersionEntity, MemberEntity, IssueEntity, MilestoneEntity],
             synchronize: true,
             logging: true,
         }),

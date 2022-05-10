@@ -1,5 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
+import { IssueEntity } from '../issues/issue.entity'
 import { MemberEntity } from '../members/member.entity'
+import { MilestoneEntity } from '../milestones/milestone.entity'
 import { UserEntity } from '../users/user.entity'
 import { VersionEntity } from '../versions/version.entity'
 
@@ -29,5 +31,11 @@ export class ProductEntity {
 
     @OneToMany(() => MemberEntity, member => member.product)
     member: MemberEntity[]
+
+    @OneToMany(() => IssueEntity, issue => issue.product)
+    issue: IssueEntity[]
+
+    @OneToMany(() => MilestoneEntity, milestone => milestone.product)
+    milestone: MilestoneEntity[]
 
 }
