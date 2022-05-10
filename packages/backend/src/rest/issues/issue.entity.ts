@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { CommentEntity } from "../comments/comment.entity";
 import { MilestoneEntity } from "../milestones/milestone.entity";
 import { ProductEntity } from "../products/product.entity";
 import { UserEntity } from "../users/user.entity";
@@ -47,5 +48,8 @@ export class IssueEntity {
 
     @Column({nullable: true})
     milestoneId: string
+
+    @OneToMany(() => CommentEntity, comment => comment.issue)
+    comment: CommentEntity[]
 
 }

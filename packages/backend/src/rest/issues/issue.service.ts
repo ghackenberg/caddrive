@@ -44,7 +44,6 @@ export class IssueService implements IssueREST {
         else if (milestoneId) { where = { deleted: false, productId: productId, milestoneId: milestoneId } }
         else if (state) { where = { deleted: false, productId: productId, state: state } }
         else { where = { deleted: false, productId: productId } }
-        console.log(where)
         for (const issue of await this.issueRepository.find({ where })) {
             result.push( {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId } )
         }

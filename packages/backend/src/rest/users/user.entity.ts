@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { CommentEntity } from '../comments/comment.entity'
 import { IssueEntity } from '../issues/issue.entity'
 import { MemberEntity } from '../members/member.entity'
 import { MilestoneEntity } from '../milestones/milestone.entity'
@@ -37,9 +38,8 @@ export class UserEntity {
     @OneToMany(() => IssueEntity, issue => issue.user)
     issues: IssueEntity[]
 
-    // zuerst comments eintragen
-    // @OneToMany(() => CommentEntity, comment => comment.user)
-    // comments: CommentEntity[]
+    @OneToMany(() => CommentEntity, comment => comment.user)
+    comments: CommentEntity[]
 
     @OneToMany(() => MemberEntity, member => member.user)
     member: MemberEntity[]

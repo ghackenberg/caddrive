@@ -68,7 +68,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
             Promise.all(milestones.map(milestone => UserManager.getUser(milestone.userId))).then(milestoneUsers => {
                 const newUsers = {...users}
                 for (var index = 0; index < milestones.length; index++) {
-                    newUsers[milestones[index].id] = milestoneUsers[index]
+                    newUsers[milestones[index].userId] = milestoneUsers[index]
                 }
                 setUsers(newUsers)
             })
@@ -104,21 +104,11 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     }
 
     // CONSTANTS
-    
-    // console.log(milestones)
-    // console.log(users)
-    // console.log(members)
 
     const columns: Column<Milestone>[] = [
         { label: 'Reporter', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                { milestone.userId in users && members ? <ProductUserPictureWidget user={users[milestone.id]} members={members} class='big'/> : '?' }
-                { milestone.userId in users && members ? console.log('true') : console.log('false') }
-                { milestone.userId in users ? console.log('true') : console.log('false') }
-                { milestone.userId in members ? console.log('true') : console.log('false') }
-                {console.log(milestone.userId)}
-                {console.log(users)}
-                {console.log(members)}
+                { milestone.userId in users && members ? <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/> : '?' }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (

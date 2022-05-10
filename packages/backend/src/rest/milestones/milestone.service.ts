@@ -36,7 +36,6 @@ export class MilestoneService implements MilestoneREST {
         const where = {deleted: false, productId}
         for (const milestone of await this.milestoneRepository.find({ where })) {
             result.push(milestone)
-            console.log(milestone)
         }
         return result
     }

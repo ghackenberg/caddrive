@@ -203,9 +203,6 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : '?' }
-                { issue.userId in users && members ? console.log('true') : console.log('false') }
-                { issue.userId in users ? console.log('true') : console.log('false') }
-                { issue.userId in members ? console.log('true') : console.log('false') }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: issue => (

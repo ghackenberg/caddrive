@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import * as shortid from 'shortid'
+import { Repository } from 'typeorm'
+import { CommentEntity } from './comment.entity'
 
 @Injectable()
 export class CommentService implements CommentREST {
@@ -16,16 +19,25 @@ export class CommentService implements CommentREST {
         { id: 'demo-8', userId: 'demo-3', issueId: 'demo-7', time: new Date('2022-04-22').toISOString(), text: 'Work in progress', action: 'none', deleted: false },
 
     ]
+
+    public constructor(
+        @InjectRepository(CommentEntity)
+        private readonly commentRepository: Repository <CommentEntity>,
+    ) {
+        this.commentRepository.count().then(async count => {
+            if (count == 0) {
+                for (const _comment of CommentService.comments) {
+                    // await this.memberRepository.save(member)
+                }
+            }
+        })
+    }
  
     async findComments(issueId: string): Promise<Comment[]> {
         const result: Comment[] = []
-        for (const comment of CommentService.comments) {
-            if (comment.deleted) {
-                continue
-            }
-            if (comment.issueId != issueId) {
-                continue
-            }
+
+        const where = {deleted:false, issueId}
+        for (const comment of await this.commentRepository.find({ where })) {
             result.push(comment)
         }
         return result
@@ -34,37 +46,36 @@ export class CommentService implements CommentREST {
     async addComment(data: CommentAddData): Promise<Comment> {
         // TODO check if user exists
         // TODO check if issue exists
-        const comment = { id: shortid(), deleted: false, ...data }
-        CommentService.comments.push(comment)
-        return comment
+        const comment = await this.commentRepository.save({ id: shortid(), deleted: false, ...data })
+        return { id: comment.id, deleted: comment.deleted, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
     }
 
     async getComment(id: string): Promise<Comment> {
-        for (const comment of CommentService.comments) {
-            if (comment.id == id) {
-                return comment
-            }
+        const comment = await this.commentRepository.findOne(id)
+        if (comment) {
+            return { id: comment.id, deleted: comment.deleted, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
         }
         throw new NotFoundException()
     }
 
     async updateComment(id: string, data: CommentUpdateData): Promise<Comment> {
-        for (var index = 0; index < CommentService.comments.length; index++) {
-            const comment = CommentService.comments[index]
-            if (comment.id == id) {
-                CommentService.comments.splice(index, 1, { ...comment,...data})
-                return CommentService.comments[index]
-            }
+        const comment = await this.commentRepository.findOne(id)
+        if (comment) {
+            comment.action = data.action
+            comment.text = data.text
+            await this.commentRepository.save(comment)
+            return { id: comment.id, deleted: comment.deleted, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
         }
         throw new NotFoundException()
     }
 
     async deleteComment(id: string): Promise<Comment> {
-        for (const comment of CommentService.comments) {
-            if (comment.id == id) {
-                comment.deleted = true
-                return comment
-            }
+
+        const comment = await this.commentRepository.findOne(id)
+        if (comment) {
+            comment.deleted = true
+            await this.commentRepository.save(comment)
+            return { id: comment.id, deleted: comment.deleted, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
         }
         throw new NotFoundException()
     }
