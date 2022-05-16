@@ -27,7 +27,7 @@ import { CommentEntity } from './rest/comments/comment.entity'
             password: 'test',
             entities: [UserEntity, ProductEntity, VersionEntity, MemberEntity, IssueEntity, MilestoneEntity, CommentEntity],
             synchronize: true,
-            logging: true,
+            logging: false,
         }),
         UserModule, ProductModule, VersionModule, IssueModule, CommentModule, FileModule, MilestoneModule, MemberModule
     ]

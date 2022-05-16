@@ -64,7 +64,7 @@ export class MemberService implements MemberREST {
     async getMember(id: string): Promise<Member> {
        const member = await this.memberRepository.findOne(id)
         if (member) {
-            return { id: member.id, deleted: member.deleted, productId: member.product.id, userId: member.user.id }
+            return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
         }
         throw new NotFoundException()
     }
@@ -73,7 +73,7 @@ export class MemberService implements MemberREST {
         const member = await this.memberRepository.findOne(id)   
         if (member) {  
             await this.memberRepository.save(member)
-            return { id: member.id, deleted: member.deleted, productId: member.product.id, userId: member.user.id }
+            return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
         }
         throw new NotFoundException()
     }
@@ -83,7 +83,7 @@ export class MemberService implements MemberREST {
         if (member) { 
             member.deleted = true 
             await this.memberRepository.save(member)
-            return { id: member.id, deleted: member.deleted, productId: member.product.id, userId: member.user.id }
+            return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
         }
         throw new NotFoundException()
     }
