@@ -26,8 +26,8 @@ export class CommentService implements CommentREST {
     ) {
         this.commentRepository.count().then(async count => {
             if (count == 0) {
-                for (const comment of CommentService.comments) {
-                     await this.commentRepository.save(comment)
+                for (const _comment of CommentService.comments) {
+                     //await this.commentRepository.save(comment)
                 }
             }
         })
@@ -70,7 +70,6 @@ export class CommentService implements CommentREST {
     }
 
     async deleteComment(id: string): Promise<Comment> {
-
         const comment = await this.commentRepository.findOne(id)
         if (comment) {
             comment.deleted = true
