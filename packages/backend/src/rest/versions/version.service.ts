@@ -24,7 +24,7 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         this.versionRepository.count().then(async count => {
             if (count == 0) {
                 for (const _version of VersionService.versions) {
-                    // await this.versionRepository.save(version)
+                    //await this.versionRepository.save(version)
                 }
             }
         })

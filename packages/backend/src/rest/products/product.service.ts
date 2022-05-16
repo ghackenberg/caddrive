@@ -26,16 +26,18 @@ export class ProductService implements ProductREST {
         private readonly request: Express.Request,
         @InjectRepository(ProductEntity)
         private readonly productRepository: Repository <ProductEntity>
-    ) {
-        this.productRepository.count().then(async count => {
-            if (count == 0) {
-                for (const _product of ProductService.products) {
-                    // await this.productRepository.save(product)
+        ) {
+            this.productRepository.count().then(async count => {
+                if (count == 0) {
+                    for (const product of ProductService.products) {
+                        await this.productRepository.save(product)
+                    }
                 }
-            }
-        })
-    }
-
+            })
+        }
+    
+    
+        
     async findProducts() : Promise<Product[]> {
         const result: Product[] = []
         const where = { deleted: false }

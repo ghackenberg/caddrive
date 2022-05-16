@@ -25,7 +25,7 @@ export class MilestoneService implements MilestoneREST {
         this.milestoneRepository.count().then(async count => {
             if (count == 0) {
                 for (const _milestone of MilestoneService.milestones) {
-                    // await this.memberRepository.save(member)
+                    //await this.milestoneRepository.save(milestone)
                 }
             }
         })

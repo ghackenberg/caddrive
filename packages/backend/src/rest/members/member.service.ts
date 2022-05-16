@@ -31,7 +31,7 @@ export class MemberService implements MemberREST {
         this.memberRepository.count().then(async count => {
             if (count == 0) {
                 for (const _member of MemberService.members) {
-                    // await this.memberRepository.save(member)
+                    //await this.memberRepository.save(member)
                 }
             }
         })

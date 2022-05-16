@@ -31,7 +31,7 @@ export class IssueService implements IssueREST {
         this.issueRepository.count().then(async count => {
             if (count == 0) {
                 for (const _issue of IssueService.issues) {
-                    // await this.memberRepository.save(member)
+                     //await this.issueRepository.save(issue)
                 }
             }
         })

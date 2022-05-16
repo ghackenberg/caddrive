@@ -26,8 +26,8 @@ export class CommentService implements CommentREST {
     ) {
         this.commentRepository.count().then(async count => {
             if (count == 0) {
-                for (const _comment of CommentService.comments) {
-                    // await this.memberRepository.save(member)
+                for (const comment of CommentService.comments) {
+                     await this.commentRepository.save(comment)
                 }
             }
         })
