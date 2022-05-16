@@ -88,7 +88,6 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
             await MilestoneManager.addMilestone({userId: user.id, productId: productId, label: label, start: start.toISOString(), end: end.toISOString()})
             history.replace(`/products/${productId}/milestones/`)
         } else {
-            console.log("update Milestone")
             await MilestoneManager.updateMilestone( milestone.id, { ...milestone, label: label, start: start.toISOString(), end: end.toISOString()})
             history.goBack()
         }

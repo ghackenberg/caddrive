@@ -195,10 +195,6 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     // CONSTANTS
 
-    console.log(issues)
-    console.log(users)
-    console.log(members)
-
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
