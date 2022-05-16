@@ -5,7 +5,7 @@ import { UserEntity } from "../users/user.entity"
 
 @Entity()
 export class MemberEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ nullable: false })
     id: string
 
     @Column({ nullable: false, default: false })
@@ -15,13 +15,13 @@ export class MemberEntity {
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
 
-    @Column({ nullable: true })
+    @Column({ nullable: false })
     productId: string
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity
 
-    @Column({ nullable: true })
+    @Column({ nullable: false })
     userId: string
 }

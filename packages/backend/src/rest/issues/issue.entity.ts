@@ -7,10 +7,10 @@ import { UserEntity } from "../users/user.entity";
 @Entity()
 export class IssueEntity {
 
-    @PrimaryColumn({nullable: false})
+    @PrimaryColumn({ nullable: false })
     id: string
 
-    @Column({nullable: false})
+    @Column({ nullable: false, default: false })
     deleted: boolean
 
     @ManyToOne(() => UserEntity)
@@ -24,10 +24,10 @@ export class IssueEntity {
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
 
-    @Column({nullable: false})
+    @Column({ nullable: false })
     productId: string
 
-    @Column({nullable: false})
+    @Column({ nullable: false })
     time: string
 
     @Column({nullable: false})
@@ -36,7 +36,7 @@ export class IssueEntity {
     @Column({nullable: false})
     text: string
 
-    @Column({nullable: false})
+    @Column({nullable: false, default: 'open'})
     state: 'open' | 'closed'
 
     @Column('simple-array')

@@ -5,10 +5,10 @@ import { UserEntity } from "../users/user.entity";
 
 @Entity()
 export class MilestoneEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ nullable: false })
     id: string
 
-    @Column()
+    @Column({ nullable: false, default: false })
     deleted: boolean
 
     @ManyToOne(() => UserEntity)
@@ -22,16 +22,16 @@ export class MilestoneEntity {
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
 
-    @Column()
+    @Column({ nullable: false })
     productId: string
 
-    @Column()
+    @Column({ nullable: false })
     label: string
 
-    @Column()
+    @Column({ nullable: false })
     start: string
 
-    @Column()
+    @Column({ nullable: false })
     end: string
 
     @OneToMany(() => IssueEntity, issue => issue.milestoneId)

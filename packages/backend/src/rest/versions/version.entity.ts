@@ -4,7 +4,7 @@ import { UserEntity } from "../users/user.entity";
 
 @Entity()
 export class VersionEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ nullable: false })
     id: string
 
     @Column({ nullable: false, default: false })

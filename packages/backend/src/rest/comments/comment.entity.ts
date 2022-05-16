@@ -4,10 +4,10 @@ import { UserEntity } from "../users/user.entity";
 
 @Entity()
 export class CommentEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ nullable: false })
     id: string
 
-    @Column()
+    @Column({ nullable: false, default: false })
     deleted: boolean
 
     @ManyToOne(() => UserEntity)
@@ -21,16 +21,16 @@ export class CommentEntity {
     @JoinColumn({ name: 'issueId' })
     issue: IssueEntity
 
-    @Column()
+    @Column({ nullable: false })
     issueId: string
 
-    @Column()
+    @Column({ nullable: false })
     time: string
 
-    @Column()
+    @Column({ nullable: false })
     text: string
 
-    @Column()
+    @Column({ nullable: false, default: 'none' })
     action: 'none' | 'close' | 'reopen'
 
 }

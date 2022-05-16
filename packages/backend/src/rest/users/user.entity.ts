@@ -8,7 +8,7 @@ import { VersionEntity } from '../versions/version.entity'
 
 @Entity()
 export class UserEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({ nullable: false })
     id: string
 
     @Column({ nullable: false, default: false })
