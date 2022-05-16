@@ -47,7 +47,6 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
             }
             fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
         }
-        console.log(version.baseVersionIds)
         return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
     }
 
@@ -60,7 +59,6 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
     }
 
     async updateVersion(id: string, data: VersionUpdateData, file?: Express.Multer.File): Promise<Version> {
-      
         const version = await this.versionRepository.findOne(id)
         if (version) {
             version.major = data.major
@@ -77,7 +75,6 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         await this.versionRepository.save(version)
         return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
     }
-
 
     async deleteVersion(id: string): Promise<Version> {
         const version = await this.versionRepository.findOne(id)

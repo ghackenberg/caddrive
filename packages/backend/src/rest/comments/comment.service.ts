@@ -44,8 +44,6 @@ export class CommentService implements CommentREST {
     }
 
     async addComment(data: CommentAddData): Promise<Comment> {
-        // TODO check if user exists
-        // TODO check if issue exists
         const comment = await this.commentRepository.save({ id: shortid(), deleted: false, ...data })
         return { id: comment.id, deleted: comment.deleted, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
     }

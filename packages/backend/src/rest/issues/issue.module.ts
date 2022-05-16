@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { CommentEntity } from '../comments/comment.entity'
 import { CommentModule } from '../comments/comment.module'
 import { MemberModule } from '../members/member.module'
 import { MilestoneModule } from '../milestones/milestone.module'
@@ -11,6 +12,6 @@ import { IssueService } from './issue.service'
     controllers: [IssueController],
     providers: [IssueService],
     exports: [IssueService],
-    imports: [CommentModule, MemberModule, forwardRef(() => MilestoneModule), TypeOrmModule.forFeature([IssueEntity])]
+    imports: [CommentModule, MemberModule, forwardRef(() => MilestoneModule), TypeOrmModule.forFeature([IssueEntity]), TypeOrmModule.forFeature([CommentEntity])]
 })
 export class IssueModule {}

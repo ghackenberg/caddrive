@@ -36,8 +36,6 @@ export class ProductService implements ProductREST {
             })
         }
     
-    
-        
     async findProducts() : Promise<Product[]> {
         const result: Product[] = []
         const where = { deleted: false }
@@ -93,7 +91,6 @@ export class ProductService implements ProductREST {
 
             }
         }
-        //DB
         const product = await this.productRepository.findOne(id)
         if(product) {
             product.deleted = true

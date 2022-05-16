@@ -40,11 +40,9 @@ export class MemberService implements MemberREST {
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         const result: Member[] = []
         const where = userId ? { deleted: false, productId, userId } : { deleted: false, productId }
-        // TODO check query
         for (const member of await this.memberRepository.find({ where })) {
             result.push({ id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId })
         }
-
         return result
     }
 
