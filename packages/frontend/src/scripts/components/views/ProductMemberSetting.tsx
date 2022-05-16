@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 // Commons
 import { Product, User } from 'productboard-common'
 // Managers
@@ -17,7 +17,7 @@ import { Column, Table } from '../widgets/Table'
 
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
-    const history = useHistory()
+    //const history = useHistory()
 
     // PARAMS
 
@@ -37,7 +37,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
+    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query, selectUser])
     // - Computations
     useEffect(() => {
         if (users) {
@@ -56,7 +56,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     async function selectUser(user: User) {
         if (confirm('Do you really want to add this member?')) {
             await MemberManager.addMember({ productId, userId: user.id })
-            history.goBack()               
+            //history.goBack()               
         }
     }
 
