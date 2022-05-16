@@ -1,9 +1,9 @@
-import { forwardRef, Inject, NotFoundException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 import * as shortid from 'shortid'
 import { Repository } from 'typeorm'
-import { IssueService } from '../issues/issue.service'
+import { IssueEntity } from '../issues/issue.entity'
 import { MilestoneEntity } from './milestone.entity'
 
 export class MilestoneService implements MilestoneREST {
@@ -16,10 +16,10 @@ export class MilestoneService implements MilestoneREST {
     ]
 
     constructor(
-        @Inject(forwardRef(() => IssueService))
-        private readonly issueService: IssueService,
         @InjectRepository(MilestoneEntity)
-        private readonly milestoneRepository: Repository <MilestoneEntity>
+        private readonly milestoneRepository: Repository <MilestoneEntity>,
+        @InjectRepository(IssueEntity)
+        private readonly issueRepository: Repository <IssueEntity>
 
     ) {
         this.milestoneRepository.count().then(async count => {
@@ -41,7 +41,6 @@ export class MilestoneService implements MilestoneREST {
     }
 
     async addMilestone(data: MilestoneAddData): Promise<Milestone> {   
-        //TODO check if product,.... exists
         const milestone = await this.milestoneRepository.save({ id: shortid(), deleted: false, ...data })
         return ({ id: milestone.id, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end })
     }
@@ -69,16 +68,12 @@ export class MilestoneService implements MilestoneREST {
 
 
     async deleteMilestone(id: string): Promise<Milestone> {
-
         const milestone = await this.milestoneRepository.findOne(id)
-        
-        // Löschen der issues mit service
         if (milestone) {
-            for (const issue of await this.issueService.findIssues(milestone.productId, milestone.id)) {
-                await this.issueService.updateIssue(issue.id, { ...issue, milestoneId: undefined })
+            for (const issue of await this.issueRepository.find({ productId: milestone.productId, milestoneId: milestone.id})) {
+                issue.milestoneId = null
+                await this.issueRepository.save(issue)
             }
-
-        // db
             milestone.deleted = true
             await this.milestoneRepository.save(milestone)
             return ({ id: milestone.id, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end })

@@ -11,6 +11,6 @@ import { CommentService } from './comment.service'
     controllers: [CommentController],
     providers: [CommentService],
     exports: [CommentService],
-    imports: [forwardRef(() => IssueModule),MemberModule, TypeOrmModule.forFeature([CommentEntity])],
+    imports: [forwardRef(() => IssueModule), MemberModule, TypeOrmModule.forFeature([CommentEntity])],
 })
 export class CommentModule {}

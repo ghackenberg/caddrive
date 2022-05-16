@@ -4,7 +4,6 @@ import * as shortid from 'shortid'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { InjectRepository } from '@nestjs/typeorm'
-//import { ProductEntity } from '../products/product.entity'
 import { VersionEntity } from './version.entity'
 import { Repository } from 'typeorm'
 
