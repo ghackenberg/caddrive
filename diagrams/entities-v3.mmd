@@ -5,6 +5,7 @@ classDiagram
         id: string
         name: string
         email: string
+        role: string
     }
     class Product {
         id: string
@@ -43,13 +44,25 @@ classDiagram
         time: string
         text: string
     }
-    class Sprint {
+    class Milestone {
         id: string
         start: date
         ende: date
         label: string
         description: string
     }
+
+    <<Entity>> User
+    <<Entity>> Product
+    <<Entity>> Member
+    <<Entity>> Version
+    <<Entity>> Issue
+    <<Entity>> Comment
+    <<Entity>> Milestone
+
+    <<File>> File
+
+    <<Data>> Reference
 
     User <.. Member : references
     Member --* Product : contains
@@ -61,17 +74,17 @@ classDiagram
     User "1" <.. "*" Version : created by
     User "1" <.. "*" Issue : created by
     User "1" <.. "*" Comment : created by
-    User "1" <.. "*" Sprint : created by
+    User "1" <.. "*" Milestone : created by
     
     Product "1" *-- "*" Version : contains
-    Product "1" *-- "*" Sprint : contains
+    Product "1" *-- "*" Milestone : contains
     
     Version "1" *-- "1" File : contains
     Version "1" ..> "*" Version : references
     Version "*" *-- "*" Reference : contains
     File  "1" <.. "1" Reference : references
     
-    Issue "*" ..> "0..1" Sprint : assigned to
+    Issue "*" ..> "0..1" Milestone : assigned to
     Issue "*" ..> "0..1" User : assigned to
     Issue "*" *-- "*" Reference : contains
     Comment "*" *-- "*" Reference : contains
@@ -80,6 +93,8 @@ classDiagram
     Reference <|-- NodeReference
     Reference <|-- AreaReference
     Reference <|-- TimeReference
+    Reference <|-- CompositeReference
+    Reference "*" --* "0..1" CompositeReference
 
     class TextReference {
         fromChar: int
@@ -96,3 +111,12 @@ classDiagram
         fromTime: long
         toTime: long
     }
+    class CompositeReference {
+
+    }
+
+    <<Data>> TextReference
+    <<Data>> NodeReference
+    <<Data>> AreaReference
+    <<Data>> TimeReference
+    <<Data>> CompositeReference
