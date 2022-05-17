@@ -1,4 +1,4 @@
-# [ProductBoard](README.md) / Changelog
+# ProductBoard Changelog
 
 ## Version 0.0.1
 

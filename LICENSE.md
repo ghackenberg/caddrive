@@ -1,4 +1,4 @@
-# [ProductBoard](README.md) / License
+# ProductBoard License
 
 Copyright (c) 2021 Georg Hackenberg and Christian Zehetner
 

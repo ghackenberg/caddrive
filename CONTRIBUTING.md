@@ -1,3 +1,3 @@
-# [ProductBoard](README.md) / Contributing
+# ProductBoard Contributing
 
 TODO
