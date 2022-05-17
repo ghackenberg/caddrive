@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "rootDirs": ["src", "../common/src", "../database/src"],
+        "rootDirs": ["src", "../common/src"],
         "outDir": "bin",
         "lib": ["ES2015"],
         "types": [],

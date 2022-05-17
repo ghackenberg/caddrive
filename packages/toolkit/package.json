@@ -1,7 +1,7 @@
 {
-    "name": "productboard-common",
+    "name": "productboard-toolkit",
     "version": "0.0.1",
-    "description": "Common data structures shared between different services",
+    "description": "ProductBoard toolkit",
     "license": "MIT",
     "private": "true",
     "main": "src/main",
@@ -31,20 +31,18 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/ghackenberg/productboard.git",
-        "directory": "packages/common"
+        "directory": "packages/toolkit"
     },
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc"
     },
     "dependencies": {
-        "@nestjs/common": "^8.1.2",
-        "@nestjs/core": "^8.1.2",
-        "@nestjs/swagger": "^5.1.4"
+        "productboard-common": "^0.0.1",
+        "productboard-database": "^0.0.1"
     },
     "devDependencies": {
         "@types/node": "^17.0.23",
-        "reflect-metadata": "^0.1.13",
         "typescript": "^4.3.2"
     }
 }

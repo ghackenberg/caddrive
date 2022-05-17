@@ -1,7 +1,7 @@
 {
-    "name": "productboard-common",
+    "name": "productboard-database",
     "version": "0.0.1",
-    "description": "Common data structures shared between different services",
+    "description": "Database library",
     "license": "MIT",
     "private": "true",
     "main": "src/main",
@@ -38,9 +38,7 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@nestjs/common": "^8.1.2",
-        "@nestjs/core": "^8.1.2",
-        "@nestjs/swagger": "^5.1.4"
+        "productboard-common": "^0.0.1"
     },
     "devDependencies": {
         "@types/node": "^17.0.23",

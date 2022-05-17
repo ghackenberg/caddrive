@@ -22,7 +22,7 @@
             "email": "juergen.humenberger@fh-wels.at"
         },
         {
-            "name": "Doninik Frühwirth",
+            "name": "Dominik Frühwirth",
             "email": "dominik.fruehwirth@fh-wels.at"
         }
     ],
@@ -31,12 +31,13 @@
         "url": "https://github.com/ghackenberg/productboard.git"
     },
     "workspaces": [
-        "packages/backend",
-        "packages/broker",
         "packages/common",
+        "packages/database",
+        "packages/broker",
+        "packages/backend",
+        "packages/worker",
         "packages/frontend",
-        "packages/gateway",
-        "packages/worker"
+        "packages/gateway"
     ],
     "scripts": {
         "clean": "workspaces-run -- npm run clean",

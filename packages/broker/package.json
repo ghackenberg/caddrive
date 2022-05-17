@@ -20,12 +20,16 @@
         {
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
+        },
+        {
+            "name": "Dominik Frühwirth",
+            "email": "dominik.fruewirth@fh-wels.at"
         }
     ],
     "repository": {
         "type": "git",
         "url": "https://github.com/ghackenberg/productboard.git",
-        "directory": "broker"
+        "directory": "packages/broker"
     },
     "scripts": {
         "clean": "rm -rf bin",
