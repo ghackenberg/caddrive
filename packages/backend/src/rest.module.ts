@@ -22,7 +22,7 @@ import { CommentEntity } from './rest/comments/comment.entity'
             type: 'postgres',
             host: 'localhost',
             port: 5432,
-            database: 'dummyData',
+            database: 'postgres',
             username: 'postgres',
             password: 'test',
             entities: [UserEntity, ProductEntity, VersionEntity, MemberEntity, IssueEntity, MilestoneEntity, CommentEntity],
