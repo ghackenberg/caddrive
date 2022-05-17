@@ -78,6 +78,8 @@ The software implements the following entity structure:
 The software comprises the following packages:
 
 * [Common](packages/common/README.md)
+* [Database](packages/database/README.md)
+* [Toolkit](packages/toolkit/README.md)
 * [Broker](packages/broker/README.md)
 * [Backend](packages/backend/README.md)
 * [Worker](packages/worker/README.md)
