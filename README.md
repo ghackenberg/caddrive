@@ -65,13 +65,13 @@ npm start
 
 The software exhibits the following package structure:
 
-![Modules](diagrams/packages-v1.png)
+![Modules](diagrams/packages-v2.png)
 
 ### 📊 Entity structure
 
 The software implements the following entity structure:
 
-![Entities](diagrams/entities-v1.png)
+![Entities](diagrams/entities-v3.png)
 
 ## Packages
 

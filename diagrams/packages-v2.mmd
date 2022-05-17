@@ -1,0 +1,71 @@
+classDiagram
+    class Bash
+    class Browser
+    class Postgres
+    class React
+    class Recharts
+    class Three
+    class Nest
+    class TypeORM
+    class Aedes
+
+    class Common
+    class Database
+    class Toolkit
+    class Backend {
+        port = 3001
+    }
+    class Worker {
+        port = 3002
+    }
+    class Frontend {
+        port = 3003
+    }
+    class Broker {
+
+    }
+    class Gateway {
+        port = 3000
+    }
+    
+    <<Service>> Broker
+    <<Service>> Backend
+    <<Service>> Worker
+    <<Service>> Frontend
+    <<Service>> Gateway
+    <<Service>> Toolkit
+    <<Service>> Postgres
+    <<Library>> Common
+    <<Library>> Database
+    <<Library>> React
+    <<Library>> Recharts
+    <<Library>> Three
+    <<Library>> Nest
+    <<Library>> TypeORM
+    <<Library>> Aedes
+    <<Environment>> Bash
+    <<Environment>> Browser
+
+    Bash --> Toolkit: run
+    Browser --> Gateway: http(s)
+    Browser --> Gateway: ws(s)
+    Gateway --> Backend: http(s) /rest
+    Gateway --> Backend: http(s) /rest-doc
+    Gateway <-- Backend: ws(s)
+    Gateway --> Broker: ws(s) /mqtt
+    Gateway --> Worker: http(s) /worker.js
+    Gateway --> Frontend: http(s) /
+    Toolkit --> Database: import
+    Backend --> Database: import
+    Backend --> Nest: import
+    Backend --> Common: import
+    Nest <-- Common: import
+    Worker --> Common: import
+    Frontend --> Common: import
+    Frontend --> React: import
+    Frontend --> Recharts: import
+    Frontend --> Three: import
+    Database --> TypeORM: import
+    Database --> Common: import
+    TypeORM --> Postgres: connect
+    Broker --> Aedes: import
