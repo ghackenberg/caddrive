@@ -89,12 +89,12 @@ classDiagram
     Issue "*" *-- "*" Reference : contains
     Comment "*" *-- "*" Reference : contains
 
-    Reference <|-- TextReference
-    Reference <|-- NodeReference
-    Reference <|-- AreaReference
-    Reference <|-- TimeReference
-    Reference <|-- CompositeReference
-    Reference "*" --* "0..1" CompositeReference
+    Reference <|-- TextReference: inherits
+    Reference <|-- NodeReference: inherits
+    Reference <|-- AreaReference: inherits
+    Reference <|-- TimeReference: inherits
+    Reference <|-- CompositeReference: inherits
+    Reference "*" --* "0..1" CompositeReference: contains
 
     class TextReference {
         fromChar: int
