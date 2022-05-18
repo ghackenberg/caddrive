@@ -2,30 +2,12 @@ import 'multer'
 import * as fs from 'fs'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
-import * as hash from 'hash.js'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { MemberRepository, UserRepository } from 'productboard-database'
 import { Like } from 'typeorm'
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {
-    private static readonly users: User[] = [
-        { id: 'demo-1', name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', password: hash.sha256().update('test').digest('hex'), pictureId: 'demo-1', deleted: false},
-        { id: 'demo-2', name: 'Christian Zehetner', email: 'christian.zehetner@fh-wels.at', password: hash.sha256().update('test').digest('hex'), pictureId: 'demo-2', deleted: false },
-        { id: 'demo-3', name: 'Jürgen Humenberger', email: 'juergen.humenberger@fh-wels.at', password: hash.sha256().update('test').digest('hex'), pictureId: 'demo-3', deleted: false },
-        { id: 'demo-4', name: 'Dominik Frühwirth', email: 'dominik.fruehwirth@fh-wels.at', password: hash.sha256().update('test').digest('hex'), pictureId: 'demo-4', deleted: false }
-    ]
-
-    constructor() {
-        UserRepository.count().then(async count => {
-            if (count == 0) {
-                for (const _user of UserService.users) {
-                    // await this.userRepository.save(user)
-                }
-            }
-        })
-    }
-
     async checkUser(): Promise<User> {
         return null
     }

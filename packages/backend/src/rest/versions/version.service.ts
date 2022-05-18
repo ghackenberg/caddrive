@@ -7,23 +7,6 @@ import { VersionRepository } from 'productboard-database'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
-    private static readonly versions: Version[] = [
-        { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Platform design completed.', deleted: false },
-        { id: 'demo-2', userId: 'demo-1', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 1, patch: 0, description: 'Winter version of the vehicle.', deleted: false },
-        { id: 'demo-3', userId: 'demo-2', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 2, patch: 0, description: 'Summer version of the vehicle.', deleted: false },
-        { id: 'demo-4', userId: 'demo-2', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Initial commit.', deleted: false }
-    ]
-
-    constructor() {
-        VersionRepository.count().then(async count => {
-            if (count == 0) {
-                for (const _version of VersionService.versions) {
-                    //await this.versionRepository.save(version)
-                }
-            }
-        })
-    }
-
     async findVersions(productId: string) : Promise<Version[]> {
         const result: Version[] = []
          const where = { deleted: false, productId: productId }

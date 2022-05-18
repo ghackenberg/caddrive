@@ -6,23 +6,10 @@ import { IssueRepository, MemberRepository, MilestoneRepository, ProductReposito
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
-    private static readonly products: Product[] = [
-        { id: 'demo-1', userId: 'demo-1', name: 'Lego Buggy', description: 'The Lego Buggy is a toy for children and adults of all sizes.', deleted: false },
-        { id: 'demo-2', userId: 'demo-2', name: '2 Cylinder Engine', description: 'The 2 Cylinder Engine is a motor for applications of all sizes.', deleted: false }
-    ]
-
     public constructor(
         @Inject(REQUEST)
         private readonly request: Express.Request,
-    ) {
-        ProductRepository.count().then(async count => {
-            if (count == 0) {
-                for (const _product of ProductService.products) {
-                    //await ProductRepository.save(product)
-                }
-            }
-        })
-    }
+    ) {}
     
     async findProducts() : Promise<Product[]> {
         const result: Product[] = []
