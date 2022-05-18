@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { DataSource } from 'typeorm'
+import { DataSource, FindOptionsWhere, Repository } from 'typeorm'
 import { CommentEntity } from './entities/comment'
 import { IssueEntity } from './entities/issue'
 import { MemberEntity } from './entities/member'
@@ -37,3 +37,33 @@ export const VersionRepository = AppDataSource.getRepository(VersionEntity)
 export const IssueRepository = AppDataSource.getRepository(IssueEntity)
 export const CommentRepository = AppDataSource.getRepository(CommentEntity)
 export const MilestoneRepository = AppDataSource.getRepository(MilestoneEntity)
+
+async function getEntityOrFail<T, E>(repository: Repository<T>, where: FindOptionsWhere<T>, ErrorType: { new(): E }) {
+    try {
+        return await repository.findOneByOrFail(where)
+    } catch (error) {
+        throw new ErrorType()
+    }
+}
+
+export async function getUserOrFail<E>(where: FindOptionsWhere<UserEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(UserRepository, where, ErrorType)
+}
+export async function getProductOrFail<E>(where: FindOptionsWhere<ProductEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(ProductRepository, where, ErrorType)
+}
+export async function getMemberOrFail<E>(where: FindOptionsWhere<MemberEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(MemberRepository, where, ErrorType)
+}
+export async function getVersionOrFail<E>(where: FindOptionsWhere<VersionEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(VersionRepository, where, ErrorType)
+}
+export async function getMilestoneOrFail<E>(where: FindOptionsWhere<MilestoneEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(MilestoneRepository, where, ErrorType)
+}
+export async function getIssueOrFail<E>(where: FindOptionsWhere<IssueEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(IssueRepository, where, ErrorType)
+}
+export async function getCommentOrFail<E>(where: FindOptionsWhere<CommentEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(CommentRepository, where, ErrorType)
+}

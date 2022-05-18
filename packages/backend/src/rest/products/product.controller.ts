@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { MemberRepository, ProductRepository } from 'productboard-database'
+import { getMemberOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')
@@ -37,13 +37,10 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        const product = await ProductRepository.findOneByOrFail({ id })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: product.id, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
-        return product
+        const product = await getProductOrFail({ id, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        return this.productService.getProduct(id)
     }
 
     @Put(':id')
@@ -54,12 +51,9 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        const product = await ProductRepository.findOneByOrFail({ id })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: product.id, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const product = await getProductOrFail({ id, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
         return this.productService.updateProduct(id, data)
     }
 
@@ -69,12 +63,9 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        const product = await ProductRepository.findOneByOrFail({ id })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: product.id, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const product = await getProductOrFail({ id, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
         return this.productService.deleteProduct(id)
     }
 }

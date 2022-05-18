@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
+import { getIssueOrFail, getMemberOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { IssueService } from './issue.service'
-import { REQUEST } from '@nestjs/core'
-import { IssueRepository, MemberRepository } from 'productboard-database'
 
 @Controller('rest/issues')
 @UseGuards(AuthGuard('basic'))
@@ -26,11 +26,9 @@ export class IssueController implements IssueREST {
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
-        try {
-            await MemberRepository.findOneByOrFail({ productId: productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
         return this.issueService.findIssues(productId, milestoneId, state)
     }
 
@@ -40,11 +38,9 @@ export class IssueController implements IssueREST {
     async addIssue(
         @Body() data: IssueAddData
     ): Promise<Issue> {
-        try {
-            await MemberRepository.findOneByOrFail({ productId: data.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const product = await getProductOrFail({ id: data.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
         return this.issueService.addIssue(data)
     }  
 
@@ -54,13 +50,11 @@ export class IssueController implements IssueREST {
     async getIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        const issue = await IssueRepository.findOneByOrFail({ id })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
-        return issue
+        const issue = await getIssueOrFail({ id, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        return this.issueService.getIssue(id)
     } 
 
     @Put(':id')
@@ -71,12 +65,10 @@ export class IssueController implements IssueREST {
         @Param('id') id: string,
         @Body() data: IssueUpdateData
     ): Promise<Issue> {
-        const issue = await IssueRepository.findOneByOrFail({ id })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const issue = await getIssueOrFail({ id, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
         return this.issueService.updateIssue(id, data)
     }
 
@@ -86,12 +78,10 @@ export class IssueController implements IssueREST {
     async deleteIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        const issue = await IssueRepository.findOneByOrFail({ id })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const issue = await getIssueOrFail({ id, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
         return this.issueService.deleteIssue(id)
     } 
 }

@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
-import { CommentRepository, IssueRepository, MemberRepository } from 'productboard-database'
+import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { CommentService } from './comment.service'
 
 @Controller('rest/comments')
@@ -22,12 +22,10 @@ export class CommentController implements CommentREST {
     async findComments(
         @Query('issue') issueId: string
     ): Promise<Comment[]> {
-        const issue = await IssueRepository.findOneByOrFail({ id: issueId })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const issue = await getIssueOrFail({ id: issueId, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id,  userId: user.id, deleted: false }, ForbiddenException)
         return this.commentService.findComments(issueId)
     }
 
@@ -37,12 +35,10 @@ export class CommentController implements CommentREST {
     async addComment(
         @Body() data: CommentAddData
     ): Promise<Comment> {
-        const issue = await IssueRepository.findOneByOrFail({ id: data.issueId })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const issue = await getIssueOrFail({ id: data.issueId, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id,  userId: user.id, deleted: false }, ForbiddenException)
         return this.commentService.addComment(data)
     }
 
@@ -52,14 +48,12 @@ export class CommentController implements CommentREST {
     async getComment(
         @Param('id') id: string
     ): Promise<Comment> {
-        const comment = await CommentRepository.findOneByOrFail({ id })
-        const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId,  userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
-        return comment
+        const comment = await getCommentOrFail({ id, deleted: false }, NotFoundException)
+        const issue = await getIssueOrFail({ id: comment.issueId, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id,  userId: user.id, deleted: false }, ForbiddenException)
+        return this.commentService.getComment(id)
     }
 
     @Put(':id')
@@ -69,13 +63,11 @@ export class CommentController implements CommentREST {
     async updateComment(
         @Param('id') id: string, @Body() data: CommentUpdateData
     ): Promise<Comment> {
-        const comment = await CommentRepository.findOneByOrFail({ id })
-        const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const comment = await getCommentOrFail({ id, deleted: false }, NotFoundException)
+        const issue = await getIssueOrFail({ id: comment.issueId, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id,  userId: user.id, deleted: false }, ForbiddenException)
         return this.commentService.updateComment(id, data)
     }
 
@@ -85,13 +77,11 @@ export class CommentController implements CommentREST {
     async deleteComment(
         @Param('id') id: string 
     ): Promise<Comment> {
-        const comment = await CommentRepository.findOneByOrFail({ id })
-        const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
-        try {
-            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
-        } catch (error) {
-            throw new ForbiddenException()
-        }
+        const comment = await getCommentOrFail({ id, deleted: false }, NotFoundException)
+        const issue = await getIssueOrFail({ id: comment.issueId, deleted: false }, NotFoundException)
+        const product = await getProductOrFail({ id: issue.productId, deleted: false }, NotFoundException)
+        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
+        await getMemberOrFail({ productId: product.id,  userId: user.id, deleted: false }, ForbiddenException)
         return this.commentService.deleteComment(id)
     }
 }
