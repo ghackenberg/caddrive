@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { Member, MemberAddData, MemberUpdateData, MemberREST, User } from 'productboard-common'
 import { MemberService } from './member.service'
@@ -24,7 +24,11 @@ export class MemberController implements MemberREST {
         @Query('product') productId: string,
         @Query('user') userId?: string
     ): Promise<Member[]> {
-        await MemberRepository.findOneByOrFail({ productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.memberService.findMembers(productId, userId)
     }
 
@@ -34,7 +38,11 @@ export class MemberController implements MemberREST {
     async addMember(
         @Body() data: MemberAddData
     ): Promise<Member> {
-        await MemberRepository.findOneByOrFail({ productId: data.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: data.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.memberService.addMember(data)
     }
 
@@ -45,7 +53,11 @@ export class MemberController implements MemberREST {
         @Param('id') id: string
     ): Promise<Member> {
         const member = await this.memberService.getMember(id)
-        await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return member
     }
 
@@ -58,7 +70,11 @@ export class MemberController implements MemberREST {
         @Body() data: MemberUpdateData
     ): Promise<Member> {
         const member = await this.memberService.getMember(id)
-        await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.memberService.updateMember(id,data)
     }
 
@@ -69,7 +85,11 @@ export class MemberController implements MemberREST {
         @Param('id') id: string
     ): Promise<Member> {
         const member = await this.memberService.getMember(id)
-        await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.memberService.deleteMember(id)
     }
 }

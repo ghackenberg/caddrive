@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
@@ -23,7 +23,11 @@ export class CommentController implements CommentREST {
         @Query('issue') issueId: string
     ): Promise<Comment[]> {
         const issue = await IssueRepository.findOneByOrFail({ id: issueId })
-        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.commentService.findComments(issueId)
     }
 
@@ -34,7 +38,11 @@ export class CommentController implements CommentREST {
         @Body() data: CommentAddData
     ): Promise<Comment> {
         const issue = await IssueRepository.findOneByOrFail({ id: data.issueId })
-        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.commentService.addComment(data)
     }
 
@@ -46,7 +54,11 @@ export class CommentController implements CommentREST {
     ): Promise<Comment> {
         const comment = await this.commentService.getComment(id)
         const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
-        await MemberRepository.findOneByOrFail({ productId: issue.productId,  userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: issue.productId,  userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return comment
     }
 
@@ -59,7 +71,11 @@ export class CommentController implements CommentREST {
     ): Promise<Comment> {
         const comment = await this.commentService.getComment(id)
         const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
-        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.commentService.updateComment(id, data)
     }
 
@@ -71,7 +87,11 @@ export class CommentController implements CommentREST {
     ): Promise<Comment> {
         const comment = await this.commentService.getComment(id)
         const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
-        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.commentService.deleteComment(id)
     }
 }

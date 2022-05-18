@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
@@ -22,7 +22,11 @@ export class MilestoneController implements MilestoneREST {
     async findMilestones(
         @Query('product') productId: string
     ): Promise<Milestone[]> {
-        await MemberRepository.findOneByOrFail({ productId: productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.milestoneService.findMilestones(productId)
     }   
 
@@ -32,7 +36,11 @@ export class MilestoneController implements MilestoneREST {
     async addMilestone(
         @Body() data: MilestoneAddData
     ): Promise<Milestone> {
-        await MemberRepository.findOneByOrFail({ productId: data.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: data.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.milestoneService.addMilestone(data)
     }
     @Get(':id')
@@ -42,7 +50,11 @@ export class MilestoneController implements MilestoneREST {
         @Param('id') id: string
     ): Promise<Milestone> {
         const milestone = await this.milestoneService.getMilestone(id)
-        await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return milestone
     }
     @Put(':id')
@@ -54,7 +66,11 @@ export class MilestoneController implements MilestoneREST {
         @Body() data: MilestoneUpdateData
     ): Promise<Milestone> {
         const milestone = await this.milestoneService.getMilestone(id)
-        await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.milestoneService.updateMilestone(id, data)
     }
     @Delete(':id')
@@ -64,7 +80,11 @@ export class MilestoneController implements MilestoneREST {
         @Param('id') id: string
     ): Promise<Milestone> {
         const milestone = await this.milestoneService.getMilestone(id)
-        await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.milestoneService.deleteMilestone(id)
     }
 }

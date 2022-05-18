@@ -1,5 +1,5 @@
 import 'multer'
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/swagger'
 import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
@@ -24,7 +24,11 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async findVersions(
         @Query('product') productId: string
     ): Promise<Version[]> {
-        await MemberRepository.findOneByOrFail({ productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.versionService.findVersions(productId)
     }
 
@@ -37,7 +41,11 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @UploadedFile() file: Express.Multer.File
     ): Promise<Version> {
         const dataParsed = <VersionAddData> JSON.parse(data)
-        await MemberRepository.findOneByOrFail({ productId: dataParsed.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: dataParsed.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.versionService.addVersion(dataParsed, file)
     }
 
@@ -48,7 +56,11 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @Param('id') id: string
     ): Promise<Version> {
         const version = await this.versionService.getVersion(id)
-        await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return version
     }
 
@@ -63,7 +75,11 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @UploadedFile() file?: Express.Multer.File
     ): Promise<Version> {
         const version = await this.versionService.getVersion(id)
-        await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.versionService.updateVersion(id, JSON.parse(data), file)
     }
 
@@ -74,7 +90,11 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @Param('id') id: string
     ): Promise<Version> {
         const version = await this.versionService.getVersion(id)
-        await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
+        try {
+            await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
+        } catch (error) {
+            throw new ForbiddenException()
+        }
         return this.versionService.deleteVersion(id)
     }
 }
