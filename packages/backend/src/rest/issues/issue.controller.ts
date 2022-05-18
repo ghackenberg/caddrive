@@ -3,8 +3,8 @@ import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 import { IssueService } from './issue.service'
-import { MemberService } from '../members/member.service'
 import { REQUEST } from '@nestjs/core'
+import { MemberRepository } from 'productboard-database'
 
 @Controller('rest/issues')
 @UseGuards(AuthGuard('basic'))
@@ -12,7 +12,6 @@ import { REQUEST } from '@nestjs/core'
 export class IssueController implements IssueREST {
     constructor(
         private readonly issueService: IssueService,
-        private readonly memberService: MemberService,
         @Inject(REQUEST)
         private readonly request: Express.Request
     ) {}
@@ -39,7 +38,7 @@ export class IssueController implements IssueREST {
         if (!data) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(data.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: data.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.issueService.addIssue(data)
@@ -55,7 +54,7 @@ export class IssueController implements IssueREST {
         if (!issue) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.issueService.getIssue(id)
@@ -73,7 +72,7 @@ export class IssueController implements IssueREST {
         if (!issue) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.issueService.updateIssue(id, data)
@@ -89,7 +88,7 @@ export class IssueController implements IssueREST {
         if (!issue) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.issueService.deleteIssue(id)

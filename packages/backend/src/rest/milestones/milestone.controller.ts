@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
-import { MemberService } from '../members/member.service'
+import { MemberRepository } from 'productboard-database'
 import { MilestoneService } from './milestone.service'
 
 @Controller('rest/milestones')
@@ -12,7 +12,6 @@ import { MilestoneService } from './milestone.service'
 export class MilestoneController implements MilestoneREST {
     constructor(
         private readonly milestoneService: MilestoneService,
-        private readonly memberService: MemberService,
         @Inject(REQUEST)
         private readonly request: Express.Request
     ) {}
@@ -21,7 +20,7 @@ export class MilestoneController implements MilestoneREST {
     @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiResponse({ type: [Milestone] })
     async findMilestones(@Query('product') productId: string): Promise<Milestone[]> {
-        if ((await this.memberService.findMembers(productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.milestoneService.findMilestones(productId)
@@ -31,7 +30,7 @@ export class MilestoneController implements MilestoneREST {
     @ApiBody({ type: MilestoneAddData })
     @ApiResponse({ type: Milestone })
     async addMilestone(@Body() data: MilestoneAddData): Promise<Milestone> {
-        if ((await this.memberService.findMembers(data.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: data.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.milestoneService.addMilestone(data)
@@ -44,7 +43,7 @@ export class MilestoneController implements MilestoneREST {
         if (!milestone) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(milestone.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: milestone.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return milestone
@@ -58,7 +57,7 @@ export class MilestoneController implements MilestoneREST {
         if (!milestone) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(milestone.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: milestone.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.milestoneService.updateMilestone(id, data)
@@ -71,7 +70,7 @@ export class MilestoneController implements MilestoneREST {
         if (!milestone) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(milestone.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: milestone.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.milestoneService.deleteMilestone(id)

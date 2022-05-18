@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, ForbiddenException, forwardRef, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
-import { IssueService } from '../issues/issue.service'
-import { MemberService } from '../members/member.service'
+import { IssueRepository, MemberRepository } from 'productboard-database'
 import { CommentService } from './comment.service'
 
 @Controller('rest/comments')
@@ -13,9 +12,6 @@ import { CommentService } from './comment.service'
 export class CommentController implements CommentREST {
     constructor(
         private readonly commentService: CommentService,
-        @Inject(forwardRef(() => IssueService))
-        private readonly issueService: IssueService,
-        private readonly memberService: MemberService,
         @Inject(REQUEST)
         private readonly request: Express.Request
     ) {}
@@ -38,11 +34,11 @@ export class CommentController implements CommentREST {
         if (!data) {
             throw new NotFoundException()
         }
-        const issue = await this.issueService.getIssue(data.issueId)
+        const issue = await IssueRepository.findOne({ where: { id: data.issueId } })
         if (!issue) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.commentService.addComment(data)
@@ -58,11 +54,11 @@ export class CommentController implements CommentREST {
         if (!comment) {
             throw new NotFoundException()
         }
-        const issue = await this.issueService.getIssue(comment.issueId)
+        const issue = await IssueRepository.findOne({ where: { id: comment.issueId } })
         if (!issue) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: issue.productId,  userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.commentService.getComment(id)
@@ -79,11 +75,11 @@ export class CommentController implements CommentREST {
         if (!comment) {
             throw new NotFoundException()
         }
-        const issue = await this.issueService.getIssue(comment.issueId)
+        const issue = await IssueRepository.findOne({ where: { id: comment.issueId } })
         if (!issue) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.commentService.updateComment(id, data)
@@ -99,11 +95,11 @@ export class CommentController implements CommentREST {
         if (!comment) {
             throw new NotFoundException()
         }
-        const issue = await this.issueService.getIssue(comment.issueId)
+        const issue = await IssueRepository.findOne({ where: { id: comment.issueId } })
         if (!issue) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(issue.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.commentService.deleteComment(id)

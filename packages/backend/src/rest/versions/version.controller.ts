@@ -5,8 +5,8 @@ import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/
 import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
 import { AuthGuard } from '@nestjs/passport'
-import { MemberService } from '../members/member.service'
 import { REQUEST } from '@nestjs/core'
+import { MemberRepository } from 'productboard-database'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
@@ -14,7 +14,6 @@ import { REQUEST } from '@nestjs/core'
 export class VersionController implements VersionREST<string, Express.Multer.File> {
     constructor(
         private versionService: VersionService,
-        private readonly memberService: MemberService,
         @Inject(REQUEST)
         private readonly request: Express.Request
     ) {}
@@ -37,7 +36,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @UploadedFile() file: Express.Multer.File
     ): Promise<Version> {
         const dataParsed = <VersionAddData> JSON.parse(data)
-        if ((await this.memberService.findMembers(dataParsed.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: dataParsed.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.versionService.addVersion(dataParsed, file)
@@ -53,7 +52,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         if (!version) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(version.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: version.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return version
@@ -73,7 +72,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         if (!version) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(version.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: version.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.versionService.updateVersion(id, JSON.parse(data), file)
@@ -89,7 +88,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         if (!version) {
             throw new NotFoundException()
         }
-        if ((await this.memberService.findMembers(version.productId, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: version.productId, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.versionService.deleteVersion(id)

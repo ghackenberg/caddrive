@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { MemberService } from '../members/member.service'
+import { MemberRepository } from 'productboard-database'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')
@@ -12,7 +12,6 @@ import { ProductService } from './product.service'
 export class ProductController implements ProductREST {
     constructor(
         private readonly productService: ProductService,
-        private readonly memberService: MemberService,
         @Inject(REQUEST)
         private readonly request: Express.Request
     ) {}
@@ -38,7 +37,7 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        if ((await this.memberService.findMembers(id, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: id, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.productService.getProduct(id)
@@ -52,7 +51,7 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        if ((await this.memberService.findMembers(id, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: id, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.productService.updateProduct(id, data)
@@ -64,7 +63,7 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        if ((await this.memberService.findMembers(id, (<User> this.request.user).id)).length == 0) {
+        if ((await MemberRepository.find({ where: { productId: id, userId: (<User> this.request.user).id } })).length == 0) {
             throw new ForbiddenException()
         }
         return this.productService.deleteProduct(id)
