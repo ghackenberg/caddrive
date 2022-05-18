@@ -1,12 +1,13 @@
-import 'multer'
 import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/swagger'
-import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
-import { VersionService } from './version.service'
-import { AuthGuard } from '@nestjs/passport'
 import { REQUEST } from '@nestjs/core'
+import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/swagger'
+import { AuthGuard } from '@nestjs/passport'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { Request } from 'express'
+import 'multer'
+import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
 import { getMemberOrFail, getProductOrFail, getUserOrFail, getVersionOrFail } from 'productboard-database'
+import { VersionService } from './version.service'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
@@ -15,7 +16,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     constructor(
         private versionService: VersionService,
         @Inject(REQUEST)
-        private readonly request: Express.Request
+        private readonly request: Request
     ) {}
 
     @Get()

@@ -1,11 +1,12 @@
-import 'multer'
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { Request } from 'express'
+import 'multer'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { UserService } from './user.service'
-import { FileInterceptor } from '@nestjs/platform-express'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(AuthGuard('basic'))
@@ -14,7 +15,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
         @Inject(REQUEST)
-        private readonly request: Express.Request
+        private readonly request: Request
     ) {}
 
     @Get('check')

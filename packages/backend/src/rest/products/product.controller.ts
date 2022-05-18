@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
+import { AuthGuard } from '@nestjs/passport'
+import { Request } from 'express'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
 import { getMemberOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { ProductService } from './product.service'
@@ -13,7 +14,7 @@ export class ProductController implements ProductREST {
     constructor(
         private readonly productService: ProductService,
         @Inject(REQUEST)
-        private readonly request: Express.Request
+        private readonly request: Request
     ) {}
 
     @Get()

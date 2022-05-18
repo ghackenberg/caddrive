@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { AuthGuard } from '@nestjs/passport'
+import { Request } from 'express'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 import { getIssueOrFail, getMemberOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { IssueService } from './issue.service'
@@ -13,7 +14,7 @@ export class IssueController implements IssueREST {
     constructor(
         private readonly issueService: IssueService,
         @Inject(REQUEST)
-        private readonly request: Express.Request
+        private readonly request: Request
     ) {}
 
     @Get()

@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { AuthGuard } from '@nestjs/passport'
+import { Request } from 'express'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
 import { getMemberOrFail, getMilestoneOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { MilestoneService } from './milestone.service'
@@ -13,7 +14,7 @@ export class MilestoneController implements MilestoneREST {
     constructor(
         private readonly milestoneService: MilestoneService,
         @Inject(REQUEST)
-        private readonly request: Express.Request
+        private readonly request: Request
     ) {}
 
     @Get()
