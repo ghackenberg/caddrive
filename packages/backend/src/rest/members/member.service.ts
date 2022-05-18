@@ -29,29 +29,29 @@ export class MemberService implements MemberREST {
 
     async getMember(id: string): Promise<Member> {
        const member = await MemberRepository.findOne({ where: { id } })
-        if (member) {
-            return this.convert(member)
+        if (!member) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        return this.convert(member)
     }
 
     async updateMember(id: string, _data: MemberUpdateData): Promise<Member> {
         const member = await MemberRepository.findOne({ where: { id } })
-        if (member) {  
-            await MemberRepository.save(member)
-            return this.convert(member)
+        if (!member) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        await MemberRepository.save(member)
+        return this.convert(member)
     }
     
     async deleteMember(id: string): Promise<Member> {
         const member = await MemberRepository.findOne({ where: { id } })
-        if (member) { 
-            member.deleted = true 
-            await MemberRepository.save(member)
-            return this.convert(member)
+        if (!member) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        member.deleted = true
+        await MemberRepository.save(member)
+        return this.convert(member)
     }
 
     private convert(member: MemberEntity) {

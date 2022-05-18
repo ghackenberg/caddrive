@@ -29,20 +29,21 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
 
     async getVersion(id: string): Promise<Version> {
         const version = await VersionRepository.findOne({ where: { id } })
-        if (version) {
-            return this.convert(version)
+        if (!version) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        return this.convert(version)
     }
 
     async updateVersion(id: string, data: VersionUpdateData, file?: Express.Multer.File): Promise<Version> {
         const version = await VersionRepository.findOne({ where: { id } })
-        if (version) {
-            version.major = data.major
-            version.minor = data.minor
-            version.patch = data.patch
-            version.description = data.description
+        if (!version) {
+            throw new NotFoundException()
         }
+        version.major = data.major
+        version.minor = data.minor
+        version.patch = data.patch
+        version.description = data.description
         if (file && file.originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
@@ -55,12 +56,12 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
 
     async deleteVersion(id: string): Promise<Version> {
         const version = await VersionRepository.findOne({ where: { id } })
-        if (version) {
-            version.deleted = true
-            await VersionRepository.save(version)
-            return this.convert(version)
+        if (!version) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        version.deleted = true
+        await VersionRepository.save(version)
+        return this.convert(version)
     }
 
     private convert(version: VersionEntity) {

@@ -37,39 +37,39 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
 
     async getUser(id: string): Promise<User> {
         const user = await UserRepository.findOne({ where: { id } })
-        if (user) {
-            return this.convert(user)
+        if (!user) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        return this.convert(user)
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
         const user = await UserRepository.findOne({ where: { id } })
-        if (user) {
-            user.email = data.email
-            user.password = data.password
-            user.name = data.name
-            if (file && file.originalname.endsWith('.jpg')) {
-                user.pictureId = shortid()
-                if (!fs.existsSync('./uploads')) {
-                    fs.mkdirSync('./uploads')
-                }
-                fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
-            }
-            await UserRepository.save(user)
-            return this.convert(user)
+        if (!user) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        user.email = data.email
+        user.password = data.password
+        user.name = data.name
+        if (file && file.originalname.endsWith('.jpg')) {
+            user.pictureId = shortid()
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
+        }
+        await UserRepository.save(user)
+        return this.convert(user)
     }
 
     async deleteUser(id: string): Promise<User> {
         const user = await UserRepository.findOne({ where: { id } })
-        if (user) {
-            user.deleted = true
-            await UserRepository.save(user)
-            return this.convert(user)
+        if (!user) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        user.deleted = true
+        await UserRepository.save(user)
+        return this.convert(user)
     }
 
     private convert(user: UserEntity) {

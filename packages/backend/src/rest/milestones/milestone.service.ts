@@ -21,37 +21,34 @@ export class MilestoneService implements MilestoneREST {
 
     async getMilestone(id: string): Promise<Milestone> {
         const milestone = await MilestoneRepository.findOne({ where: { id } })
-        if (milestone) {
-            return this.convert(milestone)
+        if (!milestone) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        return this.convert(milestone)
     }
 
     async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
         const milestone = await MilestoneRepository.findOne({ where: { id } })
-        if (milestone) {
-            milestone.label = data.label
-            milestone.start = data.start
-            milestone.end = data.end
-            await MilestoneRepository.save(milestone)
-            return this.convert(milestone)
+        if (!milestone) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        milestone.label = data.label
+        milestone.start = data.start
+        milestone.end = data.end
+        await MilestoneRepository.save(milestone)
+        return this.convert(milestone)
     }
 
 
     async deleteMilestone(id: string): Promise<Milestone> {
         const milestone = await MilestoneRepository.findOne({ where: { id } })
-        if (milestone) {
-            for (const issue of await IssueRepository.find({ where: { productId: milestone.productId, milestoneId: milestone.id } })) {
-                issue.milestoneId = null
-                await IssueRepository.save(issue)
-            }
-            milestone.deleted = true
-            await MilestoneRepository.save(milestone)
-            return this.convert(milestone)
+        if (!milestone) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        await IssueRepository.update({ milestoneId: milestone.id }, { milestoneId: null })
+        milestone.deleted = true
+        await MilestoneRepository.save(milestone)
+        return this.convert(milestone)
     }
 
     private convert(milestone: MilestoneEntity) {

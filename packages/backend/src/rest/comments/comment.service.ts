@@ -21,31 +21,31 @@ export class CommentService implements CommentREST {
 
     async getComment(id: string): Promise<Comment> {
         const comment = await CommentRepository.findOne({ where: { id } })
-        if (comment) {
-            return this.convert(comment)
+        if (!comment) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        return this.convert(comment)
     }
 
     async updateComment(id: string, data: CommentUpdateData): Promise<Comment> {
         const comment = await CommentRepository.findOne({ where: { id } })
-        if (comment) {
-            comment.action = data.action
-            comment.text = data.text
-            await CommentRepository.save(comment)
-            return this.convert(comment)
+        if (!comment) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        comment.action = data.action
+        comment.text = data.text
+        await CommentRepository.save(comment)
+        return this.convert(comment)
     }
 
     async deleteComment(id: string): Promise<Comment> {
         const comment = await CommentRepository.findOne({ where: { id } })
-        if (comment) {
-            comment.deleted = true
-            await CommentRepository.save(comment)
-            return this.convert(comment)
+        if (!comment) {
+            throw new NotFoundException()
         }
-        throw new NotFoundException()
+        comment.deleted = true
+        await CommentRepository.save(comment)
+        return this.convert(comment)
     }
 
     private convert(comment: CommentEntity) {
