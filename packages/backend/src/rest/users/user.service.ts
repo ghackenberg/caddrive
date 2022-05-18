@@ -13,13 +13,12 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
-        const where: FindOptionsWhere<UserEntity>[] = []
-        if (query)
-            where.push({ name: Like(`%${query}%`) })
-        if (productId)
-            where.push({ members: [{ productId, deleted: false }] })
-        if (true)
-            where.push({ deleted: false })
+        var where: FindOptionsWhere<UserEntity>
+        if (query && productId)
+            // TODO check NOT member yet!
+            where = { name: Like(`%${query}%`), members: [{ productId, deleted: false }], deleted: false }
+        else
+            where = { deleted: false }
         const result: User[] = []
         for (const user of await UserRepository.findBy(where))
             result.push(this.convert(user))

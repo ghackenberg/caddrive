@@ -9,11 +9,9 @@ import { FindOptionsWhere } from 'typeorm'
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
     async findVersions(productId: string) : Promise<Version[]> {
-        const where: FindOptionsWhere<VersionEntity>[] = []
+        var where: FindOptionsWhere<VersionEntity>
         if (productId)
-            where.push({ productId })
-        if (true)
-            where.push({ deleted: false })
+            where = { productId, deleted: false }
         const result: Version[] = []
         for (const version of await VersionRepository.findBy(where))
             result.push(this.convert(version))

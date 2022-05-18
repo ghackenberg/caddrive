@@ -7,11 +7,9 @@ import { FindOptionsWhere } from 'typeorm'
 @Injectable()
 export class CommentService implements CommentREST { 
     async findComments(issueId: string): Promise<Comment[]> {
-        const where: FindOptionsWhere<CommentEntity>[] = []
+        var where: FindOptionsWhere<CommentEntity>
         if (issueId)
-            where.push({ issueId })
-        if (true)
-            where.push({ deleted: false })
+            where = { issueId, deleted: false }
         const result: Comment[] = []
         for (const comment of await CommentRepository.findBy(where))
             result.push(this.convert(comment))

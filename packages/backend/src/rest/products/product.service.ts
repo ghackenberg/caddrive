@@ -1,5 +1,6 @@
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
+import { Request } from 'express'
 import * as shortid from 'shortid'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
 import { CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
@@ -9,15 +10,13 @@ import { FindOptionsWhere } from 'typeorm'
 export class ProductService implements ProductREST {
     public constructor(
         @Inject(REQUEST)
-        private readonly request: Express.Request,
+        private readonly request: Request,
     ) {}
     
     async findProducts() : Promise<Product[]> {
-        const where: FindOptionsWhere<ProductEntity>[] = []
+        var where: FindOptionsWhere<ProductEntity>
         if (true)
-            where.push({ members: [ { userId: (<User> (<any> this.request).user).id, deleted: false } ] })
-        if (true)
-            where.push({ deleted: false })
+            where = { members: [ { userId: (<User> (<any> this.request).user).id, deleted: false } ], deleted: false }
         const result: Product[] = []
         for (const product of await ProductRepository.find({ where }))
             result.push(this.convert(product))

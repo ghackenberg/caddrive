@@ -7,13 +7,11 @@ import { FindOptionsWhere } from 'typeorm'
 @Injectable()
 export class MemberService implements MemberREST {
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
-        const where: FindOptionsWhere<MemberEntity>[] = []
-        if (productId) 
-            where.push({ productId })
-        if (userId)
-            where.push({ userId })
-        if (true)
-            where.push({ deleted: false})
+        var where: FindOptionsWhere<MemberEntity>
+        if (productId && userId) 
+            where = { productId, userId, deleted: false }
+        else if (productId)
+            where = { productId, deleted: false }
         const result: Member[] = []
         for (const member of await MemberRepository.findBy(where))
             result.push(this.convert(member))

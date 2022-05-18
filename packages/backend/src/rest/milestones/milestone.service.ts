@@ -7,11 +7,9 @@ import { FindOptionsWhere } from 'typeorm'
 @Injectable()
 export class MilestoneService implements MilestoneREST {
     async findMilestones(productId: string): Promise<Milestone[]> {
-        const where: FindOptionsWhere<MilestoneEntity>[] = []
+        var where: FindOptionsWhere<MilestoneEntity>
         if (productId)
-            where.push({ productId })
-        if (true)
-            where.push({ deleted: false })
+            where = { productId, deleted: false }
         const result: Milestone[] = []
         for (const milestone of await MilestoneRepository.findBy(where))
             result.push(this.convert(milestone))
