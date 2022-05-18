@@ -4,15 +4,19 @@ import * as shortid from 'shortid'
 import { Injectable } from '@nestjs/common'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { VersionEntity, VersionRepository } from 'productboard-database'
+import { FindOptionsWhere } from 'typeorm'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
     async findVersions(productId: string) : Promise<Version[]> {
+        const where: FindOptionsWhere<VersionEntity>[] = []
+        if (productId)
+            where.push({ productId })
+        if (true)
+            where.push({ deleted: false })
         const result: Version[] = []
-        const where = { deleted: false, productId: productId }
-        for (const version of await VersionRepository.find({ where })) {
+        for (const version of await VersionRepository.findBy(where))
             result.push(this.convert(version))
-        }
         return result
     }
  

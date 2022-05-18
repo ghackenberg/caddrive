@@ -30,12 +30,11 @@ export class ProductEntity {
     versions: VersionEntity[]
 
     @OneToMany(() => MemberEntity, member => member.product)
-    member: MemberEntity[]
-
-    @OneToMany(() => IssueEntity, issue => issue.product)
-    issue: IssueEntity[]
+    members: MemberEntity[]
 
     @OneToMany(() => MilestoneEntity, milestone => milestone.product)
-    milestone: MilestoneEntity[]
+    milestones: MilestoneEntity[]
 
+    @OneToMany(() => IssueEntity, issue => issue.product)
+    issues: IssueEntity[]
 }

@@ -2,15 +2,19 @@ import { Injectable } from '@nestjs/common'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 import { IssueRepository, MilestoneEntity, MilestoneRepository } from 'productboard-database'
 import * as shortid from 'shortid'
+import { FindOptionsWhere } from 'typeorm'
 
 @Injectable()
 export class MilestoneService implements MilestoneREST {
     async findMilestones(productId: string): Promise<Milestone[]> {
+        const where: FindOptionsWhere<MilestoneEntity>[] = []
+        if (productId)
+            where.push({ productId })
+        if (true)
+            where.push({ deleted: false })
         const result: Milestone[] = []
-        const where = { deleted: false, productId }
-        for (const milestone of await MilestoneRepository.find({ where })) {
+        for (const milestone of await MilestoneRepository.findBy(where))
             result.push(this.convert(milestone))
-        }
         return result
     }
 
@@ -32,7 +36,6 @@ export class MilestoneService implements MilestoneREST {
         await MilestoneRepository.save(milestone)
         return this.convert(milestone)
     }
-
 
     async deleteMilestone(id: string): Promise<Milestone> {
         const milestone = await MilestoneRepository.findOneByOrFail({ id })

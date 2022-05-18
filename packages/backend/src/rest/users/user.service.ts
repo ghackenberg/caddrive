@@ -3,8 +3,8 @@ import * as fs from 'fs'
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
-import { MemberRepository, UserEntity, UserRepository } from 'productboard-database'
-import { Like } from 'typeorm'
+import { UserEntity, UserRepository } from 'productboard-database'
+import { FindOptionsWhere, Like } from 'typeorm'
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {
@@ -13,16 +13,16 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
+        const where: FindOptionsWhere<UserEntity>[] = []
+        if (query)
+            where.push({ name: Like(`%${query}%`) })
+        if (productId)
+            where.push({ members: [{ productId, deleted: false }] })
+        if (true)
+            where.push({ deleted: false })
         const result: User[] = []
-        const where = query ? { deleted: false, name: Like(`%${query}%`) } : { deleted: false }
-        for (const user of await UserRepository.find( { where })) {
-            try {
-                productId && await MemberRepository.findOneByOrFail({ productId: productId, userId: user.id, deleted: false })
-                result.push(this.convert(user))
-            } catch (error) {
-                // Ignore
-            }
-        }
+        for (const user of await UserRepository.findBy(where))
+            result.push(this.convert(user))
         return result
     }
 
@@ -60,6 +60,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
 
     async deleteUser(id: string): Promise<User> {
         const user = await UserRepository.findOneByOrFail({ id })
+        // TODO Delete members
         user.deleted = true
         await UserRepository.save(user)
         return this.convert(user)

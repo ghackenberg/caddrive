@@ -7,13 +7,18 @@ import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-da
 @Injectable()
 export class IssueService implements IssueREST {
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
+        const where: FindOptionsWhere<IssueEntity>[] = []
+        if (productId)
+            where.push({ productId })
+        if (milestoneId)
+            where.push({ milestoneId })
+        if (state)
+            where.push({ state })
+        if (true)
+            where.push({ deleted: false })
         const result: Issue[] = []
-        const where: FindOptionsWhere<IssueEntity>[] = [{ deleted: false, productId }]
-        milestoneId && where.push({ milestoneId })
-        state && where.push({ state })
-        for (const issue of await IssueRepository.find({ where })) {
+        for (const issue of await IssueRepository.findBy(where))
             result.push(this.convert(issue))
-        }
         return result
     }
   

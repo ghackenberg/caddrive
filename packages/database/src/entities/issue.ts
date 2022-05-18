@@ -27,6 +27,16 @@ export class IssueEntity {
     @Column({ nullable: false })
     productId: string
 
+    @ManyToOne(() => MilestoneEntity)
+    @JoinColumn({ name: 'milestoneId' })
+    milestone: MilestoneEntity
+
+    @Column({nullable: true})
+    milestoneId: string
+
+    @Column('simple-array')
+    assigneeIds: string[]
+
     @Column({ nullable: false })
     time: string
 
@@ -39,17 +49,6 @@ export class IssueEntity {
     @Column({nullable: false, default: 'open'})
     state: 'open' | 'closed'
 
-    @Column('simple-array')
-    assigneeIds: string[]
-
-    @ManyToOne(() => MilestoneEntity)
-    @JoinColumn({ name: 'milestoneId' })
-    milestone: MilestoneEntity
-
-    @Column({nullable: true})
-    milestoneId: string
-
     @OneToMany(() => CommentEntity, comment => comment.issue)
-    comment: CommentEntity[]
-
+    comments: CommentEntity[]
 }

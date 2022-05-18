@@ -2,15 +2,21 @@ import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 import { MemberEntity, MemberRepository, ProductRepository, UserRepository } from 'productboard-database'
+import { FindOptionsWhere } from 'typeorm'
 
 @Injectable()
 export class MemberService implements MemberREST {
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
+        const where: FindOptionsWhere<MemberEntity>[] = []
+        if (productId) 
+            where.push({ productId })
+        if (userId)
+            where.push({ userId })
+        if (true)
+            where.push({ deleted: false})
         const result: Member[] = []
-        const where = userId ? { deleted: false, productId, userId } : { deleted: false, productId }
-        for (const member of await MemberRepository.find({ where })) {
+        for (const member of await MemberRepository.findBy(where))
             result.push(this.convert(member))
-        }
         return result
     }
 

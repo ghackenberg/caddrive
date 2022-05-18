@@ -2,15 +2,19 @@ import { Injectable } from '@nestjs/common'
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import { CommentEntity, CommentRepository } from 'productboard-database'
 import * as shortid from 'shortid'
+import { FindOptionsWhere } from 'typeorm'
 
 @Injectable()
 export class CommentService implements CommentREST { 
     async findComments(issueId: string): Promise<Comment[]> {
+        const where: FindOptionsWhere<CommentEntity>[] = []
+        if (issueId)
+            where.push({ issueId })
+        if (true)
+            where.push({ deleted: false })
         const result: Comment[] = []
-        const where = { deleted: false, issueId }
-        for (const comment of await CommentRepository.find({ where })) {
+        for (const comment of await CommentRepository.findBy(where))
             result.push(this.convert(comment))
-        }
         return result
     }
 

@@ -32,5 +32,4 @@ export class CommentEntity {
 
     @Column({ nullable: false, default: 'none' })
     action: 'none' | 'close' | 'reopen'
-
 }

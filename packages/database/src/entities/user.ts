@@ -28,24 +28,19 @@ export class UserEntity {
 
     @OneToMany(() => ProductEntity, product => product.user)
     products: ProductEntity[]
-
-    @OneToMany(() => MilestoneEntity, milestone => milestone.user)
-    milestones: MilestoneEntity[]
+    
+    @OneToMany(() => MemberEntity, member => member.user)
+    members: MemberEntity[]
 
     @OneToMany(() => VersionEntity, version => version.user)
     versions: VersionEntity[]
+
+    @OneToMany(() => MilestoneEntity, milestone => milestone.user)
+    milestones: MilestoneEntity[]
 
     @OneToMany(() => IssueEntity, issue => issue.user)
     issues: IssueEntity[]
 
     @OneToMany(() => CommentEntity, comment => comment.user)
     comments: CommentEntity[]
-
-    @OneToMany(() => MemberEntity, member => member.user)
-    member: MemberEntity[]
-
-
-
-
-
 }
