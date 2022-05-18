@@ -22,6 +22,8 @@ export class CommentController implements CommentREST {
     async findComments(
         @Query('issue') issueId: string
     ): Promise<Comment[]> {
+        const issue = await IssueRepository.findOneByOrFail({ id: issueId })
+        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.commentService.findComments(issueId)
     }
 
