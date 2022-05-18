@@ -6,7 +6,7 @@ import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
 import { AuthGuard } from '@nestjs/passport'
 import { REQUEST } from '@nestjs/core'
-import { getMemberOrFail, getProductOrFail, getUserOrFail, getVersionOrFail, MemberRepository, VersionRepository } from 'productboard-database'
+import { getMemberOrFail, getProductOrFail, getUserOrFail, getVersionOrFail } from 'productboard-database'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
