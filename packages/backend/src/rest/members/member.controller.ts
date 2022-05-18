@@ -20,15 +20,20 @@ export class MemberController implements MemberREST {
     @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiQuery({ name: 'user', type: 'string', required: false })
     @ApiResponse({ type: [Member] })
-    async findMembers(@Query('product') productId: string, @Query('user') userId?: string): Promise<Member[]> {
-        await MemberRepository.findOneByOrFail({ productId: productId, userId: (<User> this.request.user).id, deleted: false })
+    async findMembers(
+        @Query('product') productId: string,
+        @Query('user') userId?: string
+    ): Promise<Member[]> {
+        await MemberRepository.findOneByOrFail({ productId, userId: (<User> this.request.user).id, deleted: false })
         return this.memberService.findMembers(productId, userId)
     }
 
     @Post()
     @ApiBody({ type: MemberAddData, required: true })
     @ApiResponse({ type: Member })
-    async addMember(@Body() data: MemberAddData): Promise<Member> {
+    async addMember(
+        @Body() data: MemberAddData
+    ): Promise<Member> {
         await MemberRepository.findOneByOrFail({ productId: data.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.memberService.addMember(data)
     }
@@ -36,7 +41,9 @@ export class MemberController implements MemberREST {
     @Get(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: Member })
-    async getMember(@Param('id') id: string): Promise<Member> {
+    async getMember(
+        @Param('id') id: string
+    ): Promise<Member> {
         const member = await this.memberService.getMember(id)
         await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
         return member
@@ -46,7 +53,10 @@ export class MemberController implements MemberREST {
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiBody({ type: Member, required: true })
     @ApiResponse({ type: Member })
-    async updateMember(@Param('id') id: string, @Body() data: MemberUpdateData): Promise<Member> {
+    async updateMember(
+        @Param('id') id: string,
+        @Body() data: MemberUpdateData
+    ): Promise<Member> {
         const member = await this.memberService.getMember(id)
         await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.memberService.updateMember(id,data)
@@ -55,7 +65,9 @@ export class MemberController implements MemberREST {
     @Delete(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: [Member] })
-    async deleteMember(@Param('id') id: string): Promise<Member> {
+    async deleteMember(
+        @Param('id') id: string
+    ): Promise<Member> {
         const member = await this.memberService.getMember(id)
         await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.memberService.deleteMember(id)
