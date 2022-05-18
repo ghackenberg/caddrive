@@ -8,15 +8,12 @@ import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-da
 export class IssueService implements IssueREST {
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
         const result: Issue[] = []
-
         const where: FindOptionsWhere<IssueEntity>[] = [{ productId }]
         milestoneId && where.push({ milestoneId })
         state && where.push({ state })
-
         for (const issue of await IssueRepository.find({ where })) {
             result.push( {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId } )
         }
-
         return result
     }
   

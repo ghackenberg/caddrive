@@ -9,10 +9,10 @@ import { VersionRepository } from 'productboard-database'
 export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
     async findVersions(productId: string) : Promise<Version[]> {
         const result: Version[] = []
-         const where = { deleted: false, productId: productId }
+        const where = { deleted: false, productId: productId }
         for (const version of await VersionRepository.find({ where })) {
-                result.push({ id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description })
-            }
+            result.push({ id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description })
+        }
         return result
     }
  
