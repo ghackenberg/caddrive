@@ -1,6 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { ProductEntity } from '../products/product.entity'
-import { UserEntity } from "../users/user.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { ProductEntity } from './product'
+import { UserEntity } from './user'
 
 @Entity()
 export class VersionEntity {
@@ -25,7 +25,7 @@ export class VersionEntity {
     productId: string
 
     //@Column({ nullable: false, array: true })
-    @Column("simple-array")
+    @Column('simple-array')
     baseVersionIds: string[]
 
     @Column({ nullable: false })

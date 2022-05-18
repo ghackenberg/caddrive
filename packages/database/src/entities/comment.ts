@@ -1,6 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { IssueEntity } from "../issues/issue.entity";
-import { UserEntity } from "../users/user.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { IssueEntity } from './issue'
+import { UserEntity } from './user'
 
 @Entity()
 export class CommentEntity {

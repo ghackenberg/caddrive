@@ -38,11 +38,9 @@
         "build": "tsc"
     },
     "dependencies": {
-        "productboard-common": "^0.0.1",
-        "productboard-database": "^0.0.1"
-    },
-    "devDependencies": {
         "@types/node": "^17.0.23",
+        "productboard-common": "^0.0.1",
+        "productboard-database": "^0.0.1",
         "typescript": "^4.3.2"
     }
 }

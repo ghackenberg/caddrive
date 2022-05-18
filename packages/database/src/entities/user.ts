@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
-import { CommentEntity } from '../comments/comment.entity'
-import { IssueEntity } from '../issues/issue.entity'
-import { MemberEntity } from '../members/member.entity'
-import { MilestoneEntity } from '../milestones/milestone.entity'
-import { ProductEntity } from '../products/product.entity'
-import { VersionEntity } from '../versions/version.entity'
+import { CommentEntity } from './comment'
+import { IssueEntity } from './issue'
+import { MemberEntity } from './member'
+import { MilestoneEntity } from './milestone'
+import { ProductEntity } from './product'
+import { VersionEntity } from './version'
 
 @Entity()
 export class UserEntity {

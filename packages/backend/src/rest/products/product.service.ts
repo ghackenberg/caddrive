@@ -2,13 +2,7 @@ import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import * as shortid from 'shortid'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { ProductEntity } from './product.entity'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
-import { VersionEntity } from '../versions/version.entity'
-import { IssueEntity } from '../issues/issue.entity'
-import { MemberEntity } from '../members/member.entity'
-import { MilestoneEntity } from '../milestones/milestone.entity'
+import { IssueRepository, MemberRepository, MilestoneRepository, ProductRepository, VersionRepository } from 'productboard-database'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
@@ -20,31 +14,21 @@ export class ProductService implements ProductREST {
     public constructor(
         @Inject(REQUEST)
         private readonly request: Express.Request,
-        @InjectRepository(ProductEntity)
-        private readonly productRepository: Repository <ProductEntity>,
-        @InjectRepository(VersionEntity)
-        private readonly versionRepository: Repository <VersionEntity>,
-        @InjectRepository(IssueEntity)
-        private readonly issueRepository: Repository <IssueEntity>,
-        @InjectRepository(MemberEntity)
-        private readonly memberRepository: Repository <MemberEntity>,
-        @InjectRepository(MilestoneEntity)
-        private readonly milestoneRepository: Repository <MilestoneEntity>,
-        ) {
-            this.productRepository.count().then(async count => {
-                if (count == 0) {
-                    for (const product of ProductService.products) {
-                        await this.productRepository.save(product)
-                    }
+    ) {
+        ProductRepository.count().then(async count => {
+            if (count == 0) {
+                for (const _product of ProductService.products) {
+                    //await ProductRepository.save(product)
                 }
-            })
-        }
+            }
+        })
+    }
     
     async findProducts() : Promise<Product[]> {
         const result: Product[] = []
         const where = { deleted: false }
-        for (const product of await this.productRepository.find({ where })) {
-            if ((await this.memberRepository.find({ productId: product.id, userId: (<User> (<any> this.request).user).id })).length == 0) {
+        for (const product of await ProductRepository.find({ where })) {
+            if ((await MemberRepository.find({ where: { productId: product.id, userId: (<User> (<any> this.request).user).id } })).length == 0) {
                 continue
             }
             result.push({ id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description })
@@ -54,13 +38,13 @@ export class ProductService implements ProductREST {
     
 
     async addProduct(data: ProductAddData) {
-        const product = await this.productRepository.save({ id: shortid(), deleted: false, ...data })
-        await this.memberRepository.save({ id: shortid(), productId: product.id, userId: product.userId })
+        const product = await ProductRepository.save({ id: shortid(), deleted: false, ...data })
+        await MemberRepository.save({ id: shortid(), productId: product.id, userId: product.userId })
         return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
     }
 
     async getProduct(id: string): Promise<Product> {
-        const product = await this.productRepository.findOne(id)
+        const product = await ProductRepository.findOne({ where: { id } })
         if(product) {
             return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
         }
@@ -68,37 +52,37 @@ export class ProductService implements ProductREST {
     }
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
-        const product = await this.productRepository.findOne(id)
+        const product = await ProductRepository.findOne({ where: { id } })
         if (product) {
             product.name = data.name
             product.description = data.description
-            await this.productRepository.save(product)
+            await ProductRepository.save(product)
             return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
         }
         throw new NotFoundException()
     }
 
     async deleteProduct(id: string): Promise<Product> {
-        const product = await this.productRepository.findOne(id)
+        const product = await ProductRepository.findOne({ where: { id } })
         if (product) {
-            for (const version of await this.versionRepository.find({ productId: product.id})) {
+            for (const version of await VersionRepository.find({ where: { productId: product.id } })) {
                 version.deleted = true
-                this.versionRepository.save(version)
+                VersionRepository.save(version)
             }
-            for (const issue of await this.issueRepository.find({ productId: product.id })) {
+            for (const issue of await IssueRepository.find({ where: { productId: product.id } })) {
                 issue.deleted = true
-                this.issueRepository.save(issue)
+                IssueRepository.save(issue)
             }
-            for (const milestone of await this.milestoneRepository.find({ productId: product.id })) {
+            for (const milestone of await MilestoneRepository.find({ where: { productId: product.id } })) {
                 milestone.deleted = true
-                this.milestoneRepository.save(milestone)
+                MilestoneRepository.save(milestone)
             }
-            for (const member of await this.memberRepository.find({ productId: product.id })) {
+            for (const member of await MilestoneRepository.find({ where: { productId: product.id } })) {
                 member.deleted = true
-                this.memberRepository.save(member)
+                MemberRepository.save(member)
             }
             product.deleted = true
-            await this.productRepository.save(product)
+            await ProductRepository.save(product)
             return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
         }
         throw new NotFoundException()

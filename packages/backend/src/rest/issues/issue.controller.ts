@@ -25,7 +25,7 @@ export class IssueController implements IssueREST {
     async findIssues(
         @Query('product') productId: string,
         @Query('milestone') milestoneId?: string,
-        @Query('state') state?: string
+        @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
         return this.issueService.findIssues(productId, milestoneId, state)
     }

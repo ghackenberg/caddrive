@@ -1,9 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
-import { IssueEntity } from '../issues/issue.entity'
-import { MemberEntity } from '../members/member.entity'
-import { MilestoneEntity } from '../milestones/milestone.entity'
-import { UserEntity } from '../users/user.entity'
-import { VersionEntity } from '../versions/version.entity'
+import { IssueEntity } from './issue'
+import { MemberEntity } from './member'
+import { MilestoneEntity } from './milestone'
+import { UserEntity } from './user'
+import { VersionEntity } from './version'
 
 @Entity()
 export class ProductEntity {

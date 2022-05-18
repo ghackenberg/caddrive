@@ -32,7 +32,7 @@ export interface VersionREST<D, F> {
 }
 
 export interface IssueREST {
-    findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]>
+    findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed'): Promise<Issue[]>
     addIssue(data: IssueAddData): Promise<Issue>
     getIssue(id: string): Promise<Issue>
     updateIssue(id: string, data: IssueUpdateData): Promise<Issue>

@@ -1,6 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm"
-import { ProductEntity } from "../products/product.entity"
-import { UserEntity } from "../users/user.entity"
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { ProductEntity } from './product'
+import { UserEntity } from './user'
 
 
 @Entity()
