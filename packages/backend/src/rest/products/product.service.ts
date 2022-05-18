@@ -2,7 +2,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import * as shortid from 'shortid'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
+import { CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
 import { FindOptionsWhere } from 'typeorm'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -49,7 +49,7 @@ export class ProductService implements ProductREST {
         await VersionRepository.update({ productId: product.id }, { deleted: true })
         await MilestoneRepository.update({ productId: product.id }, { deleted: true })
         await IssueRepository.update({ productId: product.id }, { deleted: true })
-        // TODO Delete comments
+        await CommentRepository.update({ issue: { productId: product.id } }, { deleted: true })
         product.deleted = true
         await ProductRepository.save(product)
         return this.convert(product)
