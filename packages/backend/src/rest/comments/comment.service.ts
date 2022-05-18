@@ -7,7 +7,7 @@ import * as shortid from 'shortid'
 export class CommentService implements CommentREST { 
     async findComments(issueId: string): Promise<Comment[]> {
         const result: Comment[] = []
-        const where = { deleted:false, issueId }
+        const where = { deleted: false, issueId }
         for (const comment of await CommentRepository.find({ where })) {
             result.push(this.convert(comment))
         }
