@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import * as shortid from 'shortid'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { IssueRepository, MemberRepository, MilestoneRepository, ProductRepository, VersionRepository } from 'productboard-database'
+import { IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
@@ -18,7 +18,7 @@ export class ProductService implements ProductREST {
             if ((await MemberRepository.find({ where: { productId: product.id, userId: (<User> (<any> this.request).user).id } })).length == 0) {
                 continue
             }
-            result.push({ id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description })
+            result.push(this.convert(product))
         }
         return result
     }
@@ -27,13 +27,13 @@ export class ProductService implements ProductREST {
     async addProduct(data: ProductAddData) {
         const product = await ProductRepository.save({ id: shortid(), deleted: false, ...data })
         await MemberRepository.save({ id: shortid(), productId: product.id, userId: product.userId })
-        return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
+        return this.convert(product)
     }
 
     async getProduct(id: string): Promise<Product> {
         const product = await ProductRepository.findOne({ where: { id } })
         if(product) {
-            return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
+            return this.convert(product)
         }
         throw new NotFoundException()
     }
@@ -44,7 +44,7 @@ export class ProductService implements ProductREST {
             product.name = data.name
             product.description = data.description
             await ProductRepository.save(product)
-            return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
+            return this.convert(product)
         }
         throw new NotFoundException()
     }
@@ -70,8 +70,12 @@ export class ProductService implements ProductREST {
             }
             product.deleted = true
             await ProductRepository.save(product)
-            return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
+            return this.convert(product)
         }
         throw new NotFoundException()
+    }
+
+    private convert(product: ProductEntity) {
+        return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
     }
 }

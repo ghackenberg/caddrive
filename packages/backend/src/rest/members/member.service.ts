@@ -1,7 +1,7 @@
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
-import { MemberRepository, ProductRepository, UserRepository } from 'productboard-database'
+import { MemberEntity, MemberRepository, ProductRepository, UserRepository } from 'productboard-database'
 
 @Injectable()
 export class MemberService implements MemberREST {
@@ -9,7 +9,7 @@ export class MemberService implements MemberREST {
         const result: Member[] = []
         const where = userId ? { deleted: false, productId, userId } : { deleted: false, productId }
         for (const member of await MemberRepository.find({ where })) {
-            result.push({ id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId })
+            result.push(this.convert(member))
         }
         return result
     }
@@ -24,13 +24,13 @@ export class MemberService implements MemberREST {
             throw new NotFoundException()
         }
         const member = await MemberRepository.save({ id: shortid(), deleted: false, product, user })
-        return { id: member.id, deleted: member.deleted, productId: product.id, userId: user.id }
+        return this.convert(member)
     }
 
     async getMember(id: string): Promise<Member> {
        const member = await MemberRepository.findOne({ where: { id } })
         if (member) {
-            return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
+            return this.convert(member)
         }
         throw new NotFoundException()
     }
@@ -39,7 +39,7 @@ export class MemberService implements MemberREST {
         const member = await MemberRepository.findOne({ where: { id } })
         if (member) {  
             await MemberRepository.save(member)
-            return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
+            return this.convert(member)
         }
         throw new NotFoundException()
     }
@@ -49,8 +49,12 @@ export class MemberService implements MemberREST {
         if (member) { 
             member.deleted = true 
             await MemberRepository.save(member)
-            return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
+            return this.convert(member)
         }
         throw new NotFoundException()
+    }
+
+    private convert(member: MemberEntity) {
+        return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
     }
 }

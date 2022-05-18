@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
-import { MemberRepository, UserRepository } from 'productboard-database'
+import { MemberRepository, UserEntity, UserRepository } from 'productboard-database'
 import { Like } from 'typeorm'
 
 @Injectable()
@@ -19,7 +19,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
             if (productId && await (await MemberRepository.find({ where: { productId: productId, userId: user.id } })).length > 0) {
                 continue
             }
-            result.push({ id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId })
+            result.push(this.convert(user))
         }
         return result
     }
@@ -32,13 +32,13 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
             }
             fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
-        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
+        return this.convert(user)
     }
 
     async getUser(id: string): Promise<User> {
         const user = await UserRepository.findOne({ where: { id } })
         if (user) {
-            return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
+            return this.convert(user)
         }
         throw new NotFoundException()
     }
@@ -57,7 +57,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
                 fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
             }
             await UserRepository.save(user)
-            return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
+            return this.convert(user)
         }
         throw new NotFoundException()
     }
@@ -67,8 +67,12 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         if (user) {
             user.deleted = true
             await UserRepository.save(user)
-            return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
+            return this.convert(user)
         }
         throw new NotFoundException()
+    }
+
+    private convert(user: UserEntity) {
+        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
     }
 }

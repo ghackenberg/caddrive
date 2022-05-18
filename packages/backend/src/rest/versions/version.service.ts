@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as shortid from 'shortid'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
-import { VersionRepository } from 'productboard-database'
+import { VersionEntity, VersionRepository } from 'productboard-database'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
@@ -11,7 +11,7 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         const result: Version[] = []
         const where = { deleted: false, productId: productId }
         for (const version of await VersionRepository.find({ where })) {
-            result.push({ id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description })
+            result.push(this.convert(version))
         }
         return result
     }
@@ -24,13 +24,13 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
             }
             fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
         }
-        return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
+        return this.convert(version)
     }
 
     async getVersion(id: string): Promise<Version> {
         const version = await VersionRepository.findOne({ where: { id } })
         if (version) {
-            return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
+            return this.convert(version)
         }
         throw new NotFoundException()
     }
@@ -50,7 +50,7 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
             fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
         }
         await VersionRepository.save(version)
-        return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
+        return this.convert(version)
     }
 
     async deleteVersion(id: string): Promise<Version> {
@@ -58,8 +58,12 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         if (version) {
             version.deleted = true
             await VersionRepository.save(version)
-            return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
+            return this.convert(version)
         }
         throw new NotFoundException()
+    }
+
+    private convert(version: VersionEntity) {
+        return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
     }
 }

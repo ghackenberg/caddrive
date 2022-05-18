@@ -12,20 +12,20 @@ export class IssueService implements IssueREST {
         milestoneId && where.push({ milestoneId })
         state && where.push({ state })
         for (const issue of await IssueRepository.find({ where })) {
-            result.push( {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId } )
+            result.push(this.convert(issue))
         }
         return result
     }
   
     async addIssue(data: IssueAddData): Promise<Issue> {
         const issue = await IssueRepository.save({ id: shortid(), deleted: false, ...data })
-        return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
+        return this.convert(issue)
     }
 
     async getIssue(id: string): Promise<Issue> {
         const issue = await IssueRepository.findOne({ where: { id } })
         if (issue) {
-            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
+            return this.convert(issue)
         }
         throw new NotFoundException()
     }
@@ -39,7 +39,7 @@ export class IssueService implements IssueREST {
             issue.state = data.state
             issue.text = data.text
             await IssueRepository.save(issue)
-            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
+            return this.convert(issue)
         }
         throw new NotFoundException()
     }
@@ -53,8 +53,12 @@ export class IssueService implements IssueREST {
             }
             issue.deleted = true
             await IssueRepository.save(issue)
-            return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
+            return this.convert(issue)
         }
         throw new NotFoundException()
+    }
+
+    private convert(issue: IssueEntity) {
+        return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
     }
 }
