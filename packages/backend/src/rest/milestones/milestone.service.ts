@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 import { IssueRepository, MilestoneEntity, MilestoneRepository } from 'productboard-database'
 import * as shortid from 'shortid'
@@ -20,18 +20,12 @@ export class MilestoneService implements MilestoneREST {
     }
 
     async getMilestone(id: string): Promise<Milestone> {
-        const milestone = await MilestoneRepository.findOne({ where: { id } })
-        if (!milestone) {
-            throw new NotFoundException()
-        }
+        const milestone = await MilestoneRepository.findOneByOrFail({ id })
         return this.convert(milestone)
     }
 
     async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
-        const milestone = await MilestoneRepository.findOne({ where: { id } })
-        if (!milestone) {
-            throw new NotFoundException()
-        }
+        const milestone = await MilestoneRepository.findOneByOrFail({ id })
         milestone.label = data.label
         milestone.start = data.start
         milestone.end = data.end
@@ -41,10 +35,7 @@ export class MilestoneService implements MilestoneREST {
 
 
     async deleteMilestone(id: string): Promise<Milestone> {
-        const milestone = await MilestoneRepository.findOne({ where: { id } })
-        if (!milestone) {
-            throw new NotFoundException()
-        }
+        const milestone = await MilestoneRepository.findOneByOrFail({ id })
         await IssueRepository.update({ milestoneId: milestone.id }, { milestoneId: null })
         milestone.deleted = true
         await MilestoneRepository.save(milestone)

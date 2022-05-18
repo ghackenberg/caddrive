@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
@@ -26,6 +26,7 @@ export class IssueController implements IssueREST {
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
+        await MemberRepository.findOneByOrFail({ productId: productId, userId: (<User> this.request.user).id, deleted: false })
         return this.issueService.findIssues(productId, milestoneId, state)
     }
 
@@ -35,12 +36,7 @@ export class IssueController implements IssueREST {
     async addIssue(
         @Body() data: IssueAddData
     ): Promise<Issue> {
-        if (!data) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: data.productId, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        await MemberRepository.findOneByOrFail({ productId: data.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.issueService.addIssue(data)
     }  
 
@@ -51,12 +47,7 @@ export class IssueController implements IssueREST {
         @Param('id') id: string
     ): Promise<Issue> {
         const issue = await this.issueService.getIssue(id)
-        if (!issue) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.issueService.getIssue(id)
     } 
 
@@ -69,12 +60,7 @@ export class IssueController implements IssueREST {
         @Body() data: IssueUpdateData
     ): Promise<Issue> {
         const issue = await this.issueService.getIssue(id)
-        if (!issue) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.issueService.updateIssue(id, data)
     }
 
@@ -85,12 +71,7 @@ export class IssueController implements IssueREST {
         @Param('id') id: string
     ): Promise<Issue> {
         const issue = await this.issueService.getIssue(id)
-        if (!issue) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.issueService.deleteIssue(id)
     } 
 }

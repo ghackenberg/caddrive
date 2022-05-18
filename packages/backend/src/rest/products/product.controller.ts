@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
@@ -37,9 +37,7 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        if ((await MemberRepository.find({ where: { productId: id, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        await MemberRepository.findOneByOrFail({ productId: id, userId: (<User> this.request.user).id, deleted: false })
         return this.productService.getProduct(id)
     }
 
@@ -51,9 +49,7 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        if ((await MemberRepository.find({ where: { productId: id, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        await MemberRepository.findOneByOrFail({ productId: id, userId: (<User> this.request.user).id, deleted: false })
         return this.productService.updateProduct(id, data)
     }
 
@@ -63,9 +59,7 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        if ((await MemberRepository.find({ where: { productId: id, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        await MemberRepository.findOneByOrFail({ productId: id, userId: (<User> this.request.user).id, deleted: false })
         return this.productService.deleteProduct(id)
     }
 }

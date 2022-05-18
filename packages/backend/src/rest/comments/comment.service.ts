@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import { CommentEntity, CommentRepository } from 'productboard-database'
 import * as shortid from 'shortid'
@@ -20,18 +20,12 @@ export class CommentService implements CommentREST {
     }
 
     async getComment(id: string): Promise<Comment> {
-        const comment = await CommentRepository.findOne({ where: { id } })
-        if (!comment) {
-            throw new NotFoundException()
-        }
+        const comment = await CommentRepository.findOneByOrFail({ id })
         return this.convert(comment)
     }
 
     async updateComment(id: string, data: CommentUpdateData): Promise<Comment> {
-        const comment = await CommentRepository.findOne({ where: { id } })
-        if (!comment) {
-            throw new NotFoundException()
-        }
+        const comment = await CommentRepository.findOneByOrFail({ id })
         comment.action = data.action
         comment.text = data.text
         await CommentRepository.save(comment)
@@ -39,10 +33,7 @@ export class CommentService implements CommentREST {
     }
 
     async deleteComment(id: string): Promise<Comment> {
-        const comment = await CommentRepository.findOne({ where: { id } })
-        if (!comment) {
-            throw new NotFoundException()
-        }
+        const comment = await CommentRepository.findOneByOrFail({ id })
         comment.deleted = true
         await CommentRepository.save(comment)
         return this.convert(comment)

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
@@ -31,16 +31,8 @@ export class CommentController implements CommentREST {
     async addComment(
         @Body() data: CommentAddData
     ): Promise<Comment> {
-        if (!data) {
-            throw new NotFoundException()
-        }
-        const issue = await IssueRepository.findOne({ where: { id: data.issueId } })
-        if (!issue) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        const issue = await IssueRepository.findOneByOrFail({ id: data.issueId })
+        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.commentService.addComment(data)
     }
 
@@ -51,17 +43,9 @@ export class CommentController implements CommentREST {
         @Param('id') id: string
     ): Promise<Comment> {
         const comment = await this.commentService.getComment(id)
-        if (!comment) {
-            throw new NotFoundException()
-        }
-        const issue = await IssueRepository.findOne({ where: { id: comment.issueId } })
-        if (!issue) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: issue.productId,  userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
-        return this.commentService.getComment(id)
+        const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
+        await MemberRepository.findOneByOrFail({ productId: issue.productId,  userId: (<User> this.request.user).id, deleted: false })
+        return comment
     }
 
     @Put(':id')
@@ -72,16 +56,8 @@ export class CommentController implements CommentREST {
         @Param('id') id: string, @Body() data: CommentUpdateData
     ): Promise<Comment> {
         const comment = await this.commentService.getComment(id)
-        if (!comment) {
-            throw new NotFoundException()
-        }
-        const issue = await IssueRepository.findOne({ where: { id: comment.issueId } })
-        if (!issue) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
+        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.commentService.updateComment(id, data)
     }
 
@@ -92,16 +68,8 @@ export class CommentController implements CommentREST {
         @Param('id') id: string 
     ): Promise<Comment> {
         const comment = await this.commentService.getComment(id)
-        if (!comment) {
-            throw new NotFoundException()
-        }
-        const issue = await IssueRepository.findOne({ where: { id: comment.issueId } })
-        if (!issue) {
-            throw new NotFoundException()
-        }
-        if ((await MemberRepository.find({ where: { productId: issue.productId, userId: (<User> this.request.user).id } })).length == 0) {
-            throw new ForbiddenException()
-        }
+        const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
+        await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         return this.commentService.deleteComment(id)
     }
 }

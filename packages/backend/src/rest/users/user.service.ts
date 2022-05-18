@@ -1,6 +1,6 @@
 import 'multer'
 import * as fs from 'fs'
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { MemberRepository, UserEntity, UserRepository } from 'productboard-database'
@@ -16,10 +16,12 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         const result: User[] = []
         const where = query ? { deleted: false, name: Like(`%${query}%`) } : { deleted: false }
         for (const user of await UserRepository.find( { where })) {
-            if (productId && await (await MemberRepository.find({ where: { productId: productId, userId: user.id } })).length > 0) {
-                continue
+            try {
+                productId && await MemberRepository.findOneByOrFail({ productId: productId, userId: user.id, deleted: false })
+                result.push(this.convert(user))
+            } catch (error) {
+                // Ignore
             }
-            result.push(this.convert(user))
         }
         return result
     }
@@ -36,18 +38,12 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     async getUser(id: string): Promise<User> {
-        const user = await UserRepository.findOne({ where: { id } })
-        if (!user) {
-            throw new NotFoundException()
-        }
+        const user = await UserRepository.findOneByOrFail({ id })
         return this.convert(user)
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
-        const user = await UserRepository.findOne({ where: { id } })
-        if (!user) {
-            throw new NotFoundException()
-        }
+        const user = await UserRepository.findOneByOrFail({ id })
         user.email = data.email
         user.password = data.password
         user.name = data.name
@@ -63,10 +59,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     async deleteUser(id: string): Promise<User> {
-        const user = await UserRepository.findOne({ where: { id } })
-        if (!user) {
-            throw new NotFoundException()
-        }
+        const user = await UserRepository.findOneByOrFail({ id })
         user.deleted = true
         await UserRepository.save(user)
         return this.convert(user)

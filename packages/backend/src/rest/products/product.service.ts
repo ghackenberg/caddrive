@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common'
+import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import * as shortid from 'shortid'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
@@ -15,10 +15,12 @@ export class ProductService implements ProductREST {
         const result: Product[] = []
         const where = { deleted: false }
         for (const product of await ProductRepository.find({ where })) {
-            if ((await MemberRepository.find({ where: { productId: product.id, userId: (<User> (<any> this.request).user).id } })).length == 0) {
-                continue
+            try {
+                await MemberRepository.findOneByOrFail({ productId: product.id, userId: (<User> (<any> this.request).user).id, deleted: false })
+                result.push(this.convert(product))
+            } catch (error) {
+                // Ignore
             }
-            result.push(this.convert(product))
         }
         return result
     }
@@ -31,18 +33,12 @@ export class ProductService implements ProductREST {
     }
 
     async getProduct(id: string): Promise<Product> {
-        const product = await ProductRepository.findOne({ where: { id } })
-        if (!product) {
-            throw new NotFoundException()
-        }
+        const product = await ProductRepository.findOneByOrFail({ id })
         return this.convert(product)
     }
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
-        const product = await ProductRepository.findOne({ where: { id } })
-        if (!product) {
-            throw new NotFoundException()
-        }
+        const product = await ProductRepository.findOneByOrFail({ id })
         product.name = data.name
         product.description = data.description
         await ProductRepository.save(product)
@@ -50,10 +46,7 @@ export class ProductService implements ProductREST {
     }
 
     async deleteProduct(id: string): Promise<Product> {
-        const product = await ProductRepository.findOne({ where: { id } })
-        if (!product) {
-            throw new NotFoundException()
-        }
+        const product = await ProductRepository.findOneByOrFail({ id })
         await MemberRepository.update({ productId: product.id }, { deleted: true })
         await VersionRepository.update({ productId: product.id }, { deleted: true })
         await MilestoneRepository.update({ productId: product.id }, { deleted: true })

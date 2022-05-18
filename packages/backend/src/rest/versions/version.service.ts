@@ -1,7 +1,7 @@
 import 'multer'
 import * as fs from 'fs'
 import * as shortid from 'shortid'
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { VersionEntity, VersionRepository } from 'productboard-database'
 
@@ -28,18 +28,12 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
     }
 
     async getVersion(id: string): Promise<Version> {
-        const version = await VersionRepository.findOne({ where: { id } })
-        if (!version) {
-            throw new NotFoundException()
-        }
+        const version = await VersionRepository.findOneByOrFail({ id })
         return this.convert(version)
     }
 
     async updateVersion(id: string, data: VersionUpdateData, file?: Express.Multer.File): Promise<Version> {
-        const version = await VersionRepository.findOne({ where: { id } })
-        if (!version) {
-            throw new NotFoundException()
-        }
+        const version = await VersionRepository.findOneByOrFail({ id })
         version.major = data.major
         version.minor = data.minor
         version.patch = data.patch
@@ -55,10 +49,7 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
     }
 
     async deleteVersion(id: string): Promise<Version> {
-        const version = await VersionRepository.findOne({ where: { id } })
-        if (!version) {
-            throw new NotFoundException()
-        }
+        const version = await VersionRepository.findOneByOrFail({ id })
         version.deleted = true
         await VersionRepository.save(version)
         return this.convert(version)
