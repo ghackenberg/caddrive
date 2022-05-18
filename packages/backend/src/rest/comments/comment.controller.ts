@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
-import { IssueRepository, MemberRepository } from 'productboard-database'
+import { CommentRepository, IssueRepository, MemberRepository } from 'productboard-database'
 import { CommentService } from './comment.service'
 
 @Controller('rest/comments')
@@ -52,7 +52,7 @@ export class CommentController implements CommentREST {
     async getComment(
         @Param('id') id: string
     ): Promise<Comment> {
-        const comment = await this.commentService.getComment(id)
+        const comment = await CommentRepository.findOneByOrFail({ id })
         const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
         try {
             await MemberRepository.findOneByOrFail({ productId: issue.productId,  userId: (<User> this.request.user).id, deleted: false })
@@ -69,7 +69,7 @@ export class CommentController implements CommentREST {
     async updateComment(
         @Param('id') id: string, @Body() data: CommentUpdateData
     ): Promise<Comment> {
-        const comment = await this.commentService.getComment(id)
+        const comment = await CommentRepository.findOneByOrFail({ id })
         const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
         try {
             await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
@@ -85,7 +85,7 @@ export class CommentController implements CommentREST {
     async deleteComment(
         @Param('id') id: string 
     ): Promise<Comment> {
-        const comment = await this.commentService.getComment(id)
+        const comment = await CommentRepository.findOneByOrFail({ id })
         const issue = await IssueRepository.findOneByOrFail({ id: comment.issueId })
         try {
             await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })

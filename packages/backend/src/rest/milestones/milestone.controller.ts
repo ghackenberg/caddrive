@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
-import { MemberRepository } from 'productboard-database'
+import { MemberRepository, MilestoneRepository } from 'productboard-database'
 import { MilestoneService } from './milestone.service'
 
 @Controller('rest/milestones')
@@ -49,7 +49,7 @@ export class MilestoneController implements MilestoneREST {
     async getMilestone(
         @Param('id') id: string
     ): Promise<Milestone> {
-        const milestone = await this.milestoneService.getMilestone(id)
+        const milestone = await MilestoneRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -65,7 +65,7 @@ export class MilestoneController implements MilestoneREST {
         @Param('id') id: string,
         @Body() data: MilestoneUpdateData
     ): Promise<Milestone> {
-        const milestone = await this.milestoneService.getMilestone(id)
+        const milestone = await MilestoneRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -79,7 +79,7 @@ export class MilestoneController implements MilestoneREST {
     async deleteMilestone(
         @Param('id') id: string
     ): Promise<Milestone> {
-        const milestone = await this.milestoneService.getMilestone(id)
+        const milestone = await MilestoneRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: milestone.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {

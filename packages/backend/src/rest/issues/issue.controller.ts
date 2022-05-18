@@ -4,7 +4,7 @@ import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 import { IssueService } from './issue.service'
 import { REQUEST } from '@nestjs/core'
-import { MemberRepository } from 'productboard-database'
+import { IssueRepository, MemberRepository } from 'productboard-database'
 
 @Controller('rest/issues')
 @UseGuards(AuthGuard('basic'))
@@ -54,7 +54,7 @@ export class IssueController implements IssueREST {
     async getIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        const issue = await this.issueService.getIssue(id)
+        const issue = await IssueRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -71,7 +71,7 @@ export class IssueController implements IssueREST {
         @Param('id') id: string,
         @Body() data: IssueUpdateData
     ): Promise<Issue> {
-        const issue = await this.issueService.getIssue(id)
+        const issue = await IssueRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -86,7 +86,7 @@ export class IssueController implements IssueREST {
     async deleteIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        const issue = await this.issueService.getIssue(id)
+        const issue = await IssueRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: issue.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {

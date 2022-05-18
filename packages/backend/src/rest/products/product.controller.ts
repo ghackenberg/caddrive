@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { MemberRepository } from 'productboard-database'
+import { MemberRepository, ProductRepository } from 'productboard-database'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')
@@ -37,7 +37,7 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        const product = await this.productService.getProduct(id)
+        const product = await ProductRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: product.id, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -54,7 +54,7 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        const product = await this.productService.getProduct(id)
+        const product = await ProductRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: product.id, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -69,7 +69,7 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        const product = await this.productService.getProduct(id)
+        const product = await ProductRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: product.id, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {

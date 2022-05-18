@@ -52,7 +52,7 @@ export class MemberController implements MemberREST {
     async getMember(
         @Param('id') id: string
     ): Promise<Member> {
-        const member = await this.memberService.getMember(id)
+        const member = await MemberRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -69,7 +69,7 @@ export class MemberController implements MemberREST {
         @Param('id') id: string,
         @Body() data: MemberUpdateData
     ): Promise<Member> {
-        const member = await this.memberService.getMember(id)
+        const member = await MemberRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -84,7 +84,7 @@ export class MemberController implements MemberREST {
     async deleteMember(
         @Param('id') id: string
     ): Promise<Member> {
-        const member = await this.memberService.getMember(id)
+        const member = await MemberRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: member.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {

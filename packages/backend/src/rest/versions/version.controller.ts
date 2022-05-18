@@ -6,7 +6,7 @@ import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
 import { AuthGuard } from '@nestjs/passport'
 import { REQUEST } from '@nestjs/core'
-import { MemberRepository } from 'productboard-database'
+import { MemberRepository, VersionRepository } from 'productboard-database'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
@@ -55,7 +55,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async getVersion(
         @Param('id') id: string
     ): Promise<Version> {
-        const version = await this.versionService.getVersion(id)
+        const version = await VersionRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -74,7 +74,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<Version> {
-        const version = await this.versionService.getVersion(id)
+        const version = await VersionRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
@@ -89,7 +89,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async deleteVersion(
         @Param('id') id: string
     ): Promise<Version> {
-        const version = await this.versionService.getVersion(id)
+        const version = await VersionRepository.findOneByOrFail({ id })
         try {
             await MemberRepository.findOneByOrFail({ productId: version.productId, userId: (<User> this.request.user).id, deleted: false })
         } catch (error) {
