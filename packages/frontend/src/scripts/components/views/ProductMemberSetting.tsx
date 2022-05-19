@@ -37,7 +37,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query, selectUser])
+    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
     // - Computations
     useEffect(() => {
         if (users) {
