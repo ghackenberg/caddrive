@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
-import { MemberRepository, UserEntity, UserRepository } from 'productboard-database'
+import { getMemberOrFail, MemberRepository, UserEntity, UserRepository } from 'productboard-database'
 import { FindOptionsWhere, Like } from 'typeorm'
 
 @Injectable()
@@ -15,13 +15,20 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
         var where: FindOptionsWhere<UserEntity>
         if (query && productId)
-            // TODO check NOT member yet!
-            where = { name: Like(`%${query}%`), members: [{ productId, deleted: false }], deleted: false }
+            where = { name: Like(`%${query}%`), deleted: false }
         else
             where = { deleted: false }
         const result: User[] = []
         for (const user of await UserRepository.findBy(where))
-            result.push(this.convert(user))
+            try {
+                if (productId) {
+                    await getMemberOrFail({ userId: user.id, productId, deleted: false }, Error)
+                } else {
+                    throw new Error()
+                }
+            } catch (error) {
+                result.push(this.convert(user))
+            }
         return result
     }
 
