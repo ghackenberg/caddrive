@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { getMemberOrFail, MemberRepository, UserEntity, UserRepository } from 'productboard-database'
-import { FindOptionsWhere, Like } from 'typeorm'
+import { FindOptionsWhere, Raw } from 'typeorm'
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {
@@ -15,7 +15,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
         var where: FindOptionsWhere<UserEntity>
         if (query && productId)
-            where = { name: Like(`%${query}%`), deleted: false }
+            where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`), deleted: false }
         else
             where = { deleted: false }
         const result: User[] = []

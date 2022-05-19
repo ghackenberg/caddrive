@@ -29,7 +29,10 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     @ApiQuery({ name: 'query', type: 'string', required: false })
     @ApiQuery({ name: 'product', type: 'string', required: false })
     @ApiResponse({ type: [User] })
-    async findUsers(@Query('query') query?: string, @Query('product') product?: string): Promise<User[]> {
+    async findUsers(
+        @Query('query') query?: string,
+        @Query('product') product?: string
+    ): Promise<User[]> {
         return this.userService.findUsers(query, product)
     }
   
