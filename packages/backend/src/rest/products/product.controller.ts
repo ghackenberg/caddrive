@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { getMemberOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { ProductService } from './product.service'
+import { canReadProductOrFail, canWriteProductOrFail } from '../../permission'
 
 @Controller('rest/products')
 @UseGuards(AuthGuard('basic'))
@@ -38,9 +38,7 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        const product = await getProductOrFail({ id, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canReadProductOrFail((<User> this.request.user).id, id)
         return this.productService.getProduct(id)
     }
 
@@ -52,9 +50,7 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        const product = await getProductOrFail({ id, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canWriteProductOrFail((<User> this.request.user).id, id)
         return this.productService.updateProduct(id, data)
     }
 
@@ -64,9 +60,7 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        const product = await getProductOrFail({ id, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canWriteProductOrFail((<User> this.request.user).id, id)
         return this.productService.deleteProduct(id)
     }
 }

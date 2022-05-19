@@ -6,6 +6,7 @@ import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/
 import { Request } from 'express'
 import 'multer'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
+import { canReadUserOrFail, canWriteUserOrFail } from '../../permission'
 import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
@@ -49,6 +50,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     async getUser(
         @Param('id') id: string
     ): Promise<User> {
+        canReadUserOrFail((<User> this.request.user).id, id)
         return this.userService.getUser(id)
     }
 
@@ -62,6 +64,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<User> {
+        canWriteUserOrFail((<User> this.request.user).id, id)
         return this.userService.updateUser(id, JSON.parse(data), file)
     }
 
@@ -71,6 +74,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     async deleteUser(
         @Param('id') id: string
     ): Promise<User> {
+        canWriteUserOrFail((<User> this.request.user).id, id)
         return this.userService.deleteUser(id)
     }
 }

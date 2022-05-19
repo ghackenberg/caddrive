@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
-import { getMemberOrFail, getMilestoneOrFail, getProductOrFail, getUserOrFail } from 'productboard-database'
 import { MilestoneService } from './milestone.service'
+import { canReadMilestoneOrFail, canReadProductOrFail, canWriteMilestoneOrFail, canWriteProductOrFail } from '../../permission'
 
 @Controller('rest/milestones')
 @UseGuards(AuthGuard('basic'))
@@ -23,9 +23,7 @@ export class MilestoneController implements MilestoneREST {
     async findMilestones(
         @Query('product') productId: string
     ): Promise<Milestone[]> {
-        const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canReadProductOrFail((<User> this.request.user).id, productId)
         return this.milestoneService.findMilestones(productId)
     }   
 
@@ -35,9 +33,7 @@ export class MilestoneController implements MilestoneREST {
     async addMilestone(
         @Body() data: MilestoneAddData
     ): Promise<Milestone> {
-        const product = await getProductOrFail({ id: data.productId, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canWriteProductOrFail((<User> this.request.user).id, data.productId)
         return this.milestoneService.addMilestone(data)
     }
     @Get(':id')
@@ -46,10 +42,7 @@ export class MilestoneController implements MilestoneREST {
     async getMilestone(
         @Param('id') id: string
     ): Promise<Milestone> {
-        const milestone = await getMilestoneOrFail({ id, deleted: false }, NotFoundException)
-        const product = await getProductOrFail({ id: milestone.productId, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canReadMilestoneOrFail((<User> this.request.user).id, id)
         return this.milestoneService.getMilestone(id)
     }
     @Put(':id')
@@ -60,10 +53,7 @@ export class MilestoneController implements MilestoneREST {
         @Param('id') id: string,
         @Body() data: MilestoneUpdateData
     ): Promise<Milestone> {
-        const milestone = await getMilestoneOrFail({ id, deleted: false }, NotFoundException)
-        const product = await getProductOrFail({ id: milestone.productId, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canWriteMilestoneOrFail((<User> this.request.user).id, id)
         return this.milestoneService.updateMilestone(id, data)
     }
     @Delete(':id')
@@ -72,10 +62,7 @@ export class MilestoneController implements MilestoneREST {
     async deleteMilestone(
         @Param('id') id: string
     ): Promise<Milestone> {
-        const milestone = await getMilestoneOrFail({ id, deleted: false }, NotFoundException)
-        const product = await getProductOrFail({ id: milestone.productId, deleted: false }, NotFoundException)
-        const user = await getUserOrFail({ id: (<User> this.request.user).id, deleted: false }, NotFoundException)
-        await getMemberOrFail({ productId: product.id, userId: user.id, deleted: false }, ForbiddenException)
+        canWriteMilestoneOrFail((<User> this.request.user).id, id)
         return this.milestoneService.deleteMilestone(id)
     }
 }
