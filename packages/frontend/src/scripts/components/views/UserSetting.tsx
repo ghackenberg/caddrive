@@ -48,11 +48,11 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                await UserManager.addUser({ name, email, password: encrypt(password) },file)
+                await UserManager.addUser({ name, email, password: encrypt(password), userManagementPermission: true, productManagementPermission: true },file)
             }
         } else {
             if (name && email) {
-                await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password },file)
+                await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password, userManagementPermission: true, productManagementPermission: true },file)
                 if (auth.username == name) {
                     auth.password = encrypt(password)
                 }

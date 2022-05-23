@@ -73,6 +73,6 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     private convert(user: UserEntity) {
-        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
+        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId, userManagementPermission: user.userManagementPermission, productManagementPermission: user.productManagementPermission }
     }
 }

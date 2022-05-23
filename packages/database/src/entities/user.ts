@@ -27,6 +27,12 @@ export class UserEntity extends User {
     @Column({ nullable: false })
     override pictureId: string
 
+    @Column({ nullable: false })
+    override userManagementPermission: boolean
+
+    @Column({ nullable: false })
+    override productManagementPermission: boolean
+
     @OneToMany(() => ProductEntity, product => product.user)
     products: ProductEntity[]
     
