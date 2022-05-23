@@ -1,35 +1,36 @@
+import { Comment } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { IssueEntity } from './issue'
 import { UserEntity } from './user'
 
 @Entity()
-export class CommentEntity {
+export class CommentEntity extends Comment {
     @PrimaryColumn({ nullable: false })
-    id: string
+    override id: string
 
     @Column({ nullable: false, default: false })
-    deleted: boolean
+    override deleted: boolean
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity
 
     @Column({ nullable: false })
-    userId: string
+    override userId: string
 
     @ManyToOne(() => IssueEntity)
     @JoinColumn({ name: 'issueId' })
     issue: IssueEntity
 
     @Column({ nullable: false })
-    issueId: string
+    override issueId: string
 
     @Column({ nullable: false })
-    time: string
+    override time: string
 
     @Column({ nullable: false })
-    text: string
+    override text: string
 
     @Column({ nullable: false, default: 'none' })
-    action: 'none' | 'close' | 'reopen'
+    override action: 'none' | 'close' | 'reopen'
 }

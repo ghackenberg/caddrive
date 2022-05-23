@@ -60,6 +60,7 @@ const comments: Comment[] = [
 ]
 
 async function main() {
+    console.log('running toolkit')
     await AppDataSource.initialize()
 
     if (await UserRepository.count() == 0) {
