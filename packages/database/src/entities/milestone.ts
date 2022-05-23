@@ -1,38 +1,39 @@
+import { Milestone } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 import { IssueEntity } from './issue'
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class MilestoneEntity {
+export class MilestoneEntity extends Milestone {
     @PrimaryColumn({ nullable: false })
-    id: string
+    override id: string
 
     @Column({ nullable: false, default: false })
-    deleted: boolean
+    override deleted: boolean
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity
 
     @Column({nullable: false})
-    userId: string
+    override userId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
 
     @Column({ nullable: false })
-    productId: string
+    override productId: string
 
     @Column({ nullable: false })
-    label: string
+    override label: string
 
     @Column({ nullable: false })
-    start: string
+    override start: string
 
     @Column({ nullable: false })
-    end: string
+    override end: string
 
     @OneToMany(() => IssueEntity, issue => issue.milestoneId)
     issues: IssueEntity[]

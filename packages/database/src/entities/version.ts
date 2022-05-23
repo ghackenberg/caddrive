@@ -1,45 +1,46 @@
+import { Version } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class VersionEntity {
+export class VersionEntity extends Version {
     @PrimaryColumn({ nullable: false })
-    id: string
+    override id: string
 
     @Column({ nullable: false, default: false })
-    deleted: boolean
+    override deleted: boolean
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity
 
     @Column({ nullable: false })
-    userId: string
+    override userId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
 
     @Column({ nullable: false })
-    productId: string
+    override productId: string
 
     //@Column({ nullable: false, array: true })
     @Column('simple-array')
-    baseVersionIds: string[]
+    override baseVersionIds: string[]
 
     @Column({ nullable: false })
-    time: string
+    override time: string
 
     @Column({ nullable: false })
-    major: number
+    override major: number
 
     @Column({ nullable: false })
-    minor: number
+    override minor: number
 
     @Column({ nullable: false })
-    patch: number
+    override patch: number
 
     @Column({ nullable: false })
-    description: string
+    override description: string
 }

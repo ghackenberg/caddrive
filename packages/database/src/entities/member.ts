@@ -1,27 +1,28 @@
+import { Member } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 
 @Entity()
-export class MemberEntity {
+export class MemberEntity extends Member {
     @PrimaryColumn({ nullable: false })
-    id: string
+    override id: string
 
     @Column({ nullable: false, default: false })
-    deleted: boolean
+    override deleted: boolean
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
 
     @Column({ nullable: false })
-    productId: string
+    override productId: string
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity
 
     @Column({ nullable: false })
-    userId: string
+    override userId: string
 }

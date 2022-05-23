@@ -1,3 +1,4 @@
+import { Issue } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 import { CommentEntity } from './comment'
 import { MilestoneEntity } from './milestone'
@@ -5,49 +6,49 @@ import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class IssueEntity {
+export class IssueEntity extends Issue {
 
     @PrimaryColumn({ nullable: false })
-    id: string
+    override id: string
 
     @Column({ nullable: false, default: false })
-    deleted: boolean
+    override deleted: boolean
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity
 
     @Column({nullable: false})
-    userId: string
+    override userId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
     product: ProductEntity
 
     @Column({ nullable: false })
-    productId: string
+    override productId: string
 
     @ManyToOne(() => MilestoneEntity)
     @JoinColumn({ name: 'milestoneId' })
     milestone: MilestoneEntity
 
     @Column({nullable: true})
-    milestoneId: string
+    override milestoneId: string
 
     @Column('simple-array')
-    assigneeIds: string[]
+    override assigneeIds: string[]
 
     @Column({ nullable: false })
-    time: string
+    override time: string
 
     @Column({nullable: false})
-    label: string
+    override label: string
 
     @Column({nullable: false})
-    text: string
+    override text: string
 
     @Column({nullable: false, default: 'open'})
-    state: 'open' | 'closed'
+    override state: 'open' | 'closed'
 
     @OneToMany(() => CommentEntity, comment => comment.issue)
     comments: CommentEntity[]
