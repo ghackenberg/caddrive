@@ -60,9 +60,7 @@ export const Root = () => {
                     {user ? (
                         <Switch>
                             {/* User views */}
-                            {/* TODO: usermanagementpermission oder eigener nutzer */}
                             <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => user.userManagementPermission || user.email == auth.username ? <UserSettingView {...props}/> : <MissingView/>}/>
-                            {/* TODO: nur klickbar wenn usermanagementpermission  */}
                             <Route path="/users" render={() => user.userManagementPermission ? <UserView/> : <MissingView/>}/>
 
                             {/* Version views */}

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 // Commons
 import { Member, Product, User } from 'productboard-common'
@@ -17,9 +17,13 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import { UserContext } from '../../contexts/User'
 
 export const ProductView = () => {
     
+    const user = useContext(UserContext)
+    console.log(user)
+
     // STATES
 
     // - Entities
@@ -143,9 +147,11 @@ export const ProductView = () => {
             </header>
             <main>
                 <div>
-                    <Link to={`/products/new/settings`} className='button green fill'>
-                        New product
-                    </Link>
+                    { user.productManagementPermission && (
+                        <Link to={`/products/new/settings`} className='button green fill'>
+                            New product
+                        </Link>
+                    ) }
                     { products && <Table columns={columns} items={products}/> }
                 </div>
             </main>
