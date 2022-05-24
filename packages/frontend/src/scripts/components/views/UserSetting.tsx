@@ -60,6 +60,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                 await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password, userManagementPermission, productManagementPermission },file)
                 if (auth.username == name) {
                     auth.password = encrypt(password)
+                    // TODO: Updatae Usercontext
                 }
             }
         }

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
 // Commons
 import { User } from 'productboard-common'
 // Clients
@@ -27,6 +27,7 @@ import { ProductMemberSettingView } from './views/ProductMemberSetting'
 import { ProductSettingView } from './views/ProductSetting'
 // Images
 import * as AppIcon from '/src/images/app.png'
+import { MissingView } from './views/Missing'
 
 export const Root = () => {
 
@@ -54,13 +55,15 @@ export const Root = () => {
                 <link rel="icon" href={AppIcon}/>
             </Helmet>
             <BrowserRouter>
-                <PageHeader/>
-                {user ? (
-                    <UserContext.Provider value={{callback, ...user}}>
+                <UserContext.Provider value={{callback, ...user}}>
+                    <PageHeader/>
+                    {user ? (
                         <Switch>
                             {/* User views */}
-                            <Route path="/users/:user/settings" component={UserSettingView}/>
-                            <Route path="/users" component={UserView}/>
+                            {/* TODO: usermanagementpermission oder eigener nutzer */}
+                            <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => user.userManagementPermission || user.email == auth.username ? <UserSettingView {...props}/> : <MissingView/>}/>
+                            {/* TODO: nur klickbar wenn usermanagementpermission  */}
+                            <Route path="/users" render={() => user.userManagementPermission ? <UserView/> : <MissingView/>}/>
 
                             {/* Version views */}
                             <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
@@ -87,10 +90,10 @@ export const Root = () => {
                             {/* Home view */}
                             <Redirect to="/products"/>
                         </Switch>
-                    </UserContext.Provider>
-                ) : (
-                    <LoginView callback={setUser}/>
-                )}
+                    ) : (
+                        <LoginView callback={setUser}/>
+                    )}
+                </UserContext.Provider>
             </BrowserRouter>
         </React.Fragment>
     )
