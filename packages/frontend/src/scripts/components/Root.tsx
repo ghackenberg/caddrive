@@ -37,7 +37,7 @@ export const Root = () => {
 
     // FUNCTIONS
 
-    function callback() {
+    function logout() {
         localStorage.removeItem('username')
         localStorage.removeItem('password')
 
@@ -45,6 +45,16 @@ export const Root = () => {
         auth.password = undefined
 
         setUser(undefined)
+    }
+
+    function update(user: User) {
+        localStorage.setItem('username', user.email)
+        localStorage.setItem('password', user.password)
+
+        auth.username = user.email
+        auth.password = user.password
+
+        setUser(user)
     }
 
     // RETURN
@@ -55,7 +65,7 @@ export const Root = () => {
                 <link rel="icon" href={AppIcon}/>
             </Helmet>
             <BrowserRouter>
-                <UserContext.Provider value={{callback, ...user}}>
+                <UserContext.Provider value={{logout, update, ...user}}>
                     <PageHeader/>
                     {user ? (
                         <Switch>
@@ -82,14 +92,15 @@ export const Root = () => {
                             <Route path="/products/:product/members" component={ProductMemberView}/>
 
                             {/* Product views */}
-                            <Route path="/products/:product/settings" component={ProductSettingView}/>
+                            <Route path="/products/:product/settings" render={(props: RouteComponentProps<{ product: string }>) => user.productManagementPermission || props.match.params.product != 'new' ? <ProductSettingView {...props}/> : <MissingView/>}/>
+                            {/* <Route path="/products/:product/settings" component={ProductSettingView}/> */}
                             <Route path="/products" component={ProductView}/>
 
                             {/* Home view */}
                             <Redirect to="/products"/>
                         </Switch>
                     ) : (
-                        <LoginView callback={setUser}/>
+                        <LoginView/>
                     )}
                 </UserContext.Provider>
             </BrowserRouter>

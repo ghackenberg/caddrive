@@ -22,7 +22,6 @@ import { UserContext } from '../../contexts/User'
 export const ProductView = () => {
     
     const user = useContext(UserContext)
-    console.log(user)
 
     // STATES
 

@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class MemberUpdateData {
-
+    @ApiProperty()
+    role: 'manager' | 'engineer' | 'customer'
 }
 
 export class MemberAddData extends MemberUpdateData {

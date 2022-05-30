@@ -1,12 +1,33 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common'
-import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getVersionOrFail } from 'productboard-database'
+import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getUserOrFail, getVersionOrFail } from 'productboard-database'
 
-export async function canReadUserOrFail(_userId: string, _otherUserId: string) {
-    
+// USER
+
+export async function canFindUserOrFail(userId: string, _query: string, _productId: string) {
+    await getUserOrFail({id: userId, deleted: false, userManagementPermission: true}, ForbiddenException)
 }
-export async function canWriteUserOrFail(_userId: string, _otherUserId: string) {
-    
+
+export async function canAddUserOrFail(userId: string ) {
+    await getUserOrFail({id: userId, deleted: false, userManagementPermission: true}, ForbiddenException)
 }
+
+export async function canReadUserOrFail(userId: string, otherUserId: string) {
+    if(userId != otherUserId) {
+        try {
+            await getUserOrFail({id: userId, deleted: false, userManagementPermission: true}, Error)
+        } catch(error) {
+            await getMemberOrFail({ userId: userId, deleted: false, product: { members: { userId: otherUserId, deleted: false } } }, ForbiddenException)
+        }
+    }
+}
+
+export async function canWriteUserOrFail(userId: string, otherUserId: string) {
+    if(userId != otherUserId) {
+        await getUserOrFail({id: userId, deleted: false, userManagementPermission: true}, ForbiddenException)
+    }   
+}
+
+// PRODUCT
 
 export async function canReadProductOrFail(userId: string, productId: string) {
     const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
@@ -16,6 +37,8 @@ export async function canWriteProductOrFail(userId: string, productId: string) {
     const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
     await getMemberOrFail({ userId, productId: product.id, deleted: false }, ForbiddenException)
 }
+
+// MEMBER
 
 export async function canReadMemberOrFail(userId: string, memberId: string) {
     const member = await getMemberOrFail({ id: memberId, deleted: false }, NotFoundException)

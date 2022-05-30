@@ -1,7 +1,6 @@
 import * as React from 'react'
+import { useContext, useEffect, useState } from 'react'
 import * as hash from 'hash.js'
-// Commons
-import { User } from 'productboard-common'
 // Clients
 import { auth } from '../../clients/auth'
 // Managers
@@ -9,19 +8,22 @@ import { UserManager } from '../../managers/user'
 // Inputs
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
+import { UserContext } from '../../contexts/User'
 
-export const LoginView = (props: {callback: (user: User) => void}) => {
+export const LoginView = () => {
+
+    const user = useContext(UserContext)
 
     // STATES
 
-    const [load, setLoad] = React.useState<boolean>(false)
-    const [error, setError] = React.useState<string>()
-    const [email, setEmail] = React.useState<string>(localStorage.getItem('username') || '')
-    const [password, setPassword] = React.useState<string>(localStorage.getItem('password') || '')
+    const [load, setLoad] = useState<boolean>(false)
+    const [error, setError] = useState<string>()
+    const [email, setEmail] = useState<string>(localStorage.getItem('username') || '')
+    const [password, setPassword] = useState<string>(localStorage.getItem('password') || '')
 
     // EFFECTS
 
-    React.useEffect(() => { check() }, [])
+    useEffect(() => { check() }, [])
 
     // FUNCTIONS
 
@@ -32,7 +34,7 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
             auth.username = email
             auth.password = password
 
-            props.callback(await UserManager.checkUser())
+            user.update(await UserManager.checkUser())
         } catch (error) {
             setError('Login failed!')
             setLoad(false)
@@ -41,10 +43,6 @@ export const LoginView = (props: {callback: (user: User) => void}) => {
 
     async function submit(event: React.FormEvent) {
         event.preventDefault()
-
-        localStorage.setItem('username', email)
-        localStorage.setItem('password', password)
-
         await check()
     }
 
