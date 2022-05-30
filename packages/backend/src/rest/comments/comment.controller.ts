@@ -23,7 +23,7 @@ export class CommentController implements CommentREST {
     async findComments(
         @Query('issue') issueId: string
     ): Promise<Comment[]> {
-        canReadIssueOrFail((<User> this.request.user).id, issueId)
+        await canReadIssueOrFail((<User> this.request.user).id, issueId)
         return this.commentService.findComments(issueId)
     }
 
@@ -33,7 +33,7 @@ export class CommentController implements CommentREST {
     async addComment(
         @Body() data: CommentAddData
     ): Promise<Comment> {
-        canWriteIssueOrFail((<User> this.request.user).id, data.issueId)
+        await canWriteIssueOrFail((<User> this.request.user).id, data.issueId)
         return this.commentService.addComment(data)
     }
 
@@ -43,7 +43,7 @@ export class CommentController implements CommentREST {
     async getComment(
         @Param('id') id: string
     ): Promise<Comment> {
-        canReadCommentOrFail((<User> this.request.user).id, id)
+        await canReadCommentOrFail((<User> this.request.user).id, id)
         return this.commentService.getComment(id)
     }
 
@@ -54,7 +54,7 @@ export class CommentController implements CommentREST {
     async updateComment(
         @Param('id') id: string, @Body() data: CommentUpdateData
     ): Promise<Comment> {
-        canWriteCommentOrFail((<User> this.request.user).id, id)
+        await canWriteCommentOrFail((<User> this.request.user).id, id)
         return this.commentService.updateComment(id, data)
     }
 
@@ -64,7 +64,7 @@ export class CommentController implements CommentREST {
     async deleteComment(
         @Param('id') id: string 
     ): Promise<Comment> {
-        canWriteCommentOrFail((<User> this.request.user).id, id)
+        await canWriteCommentOrFail((<User> this.request.user).id, id)
         return this.commentService.deleteComment(id)
     }
 }

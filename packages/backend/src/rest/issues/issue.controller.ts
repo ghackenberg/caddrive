@@ -27,7 +27,7 @@ export class IssueController implements IssueREST {
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
-        canReadProductOrFail((<User> this.request.user).id, productId)
+        await canReadProductOrFail((<User> this.request.user).id, productId)
         return this.issueService.findIssues(productId, milestoneId, state)
     }
 
@@ -37,7 +37,7 @@ export class IssueController implements IssueREST {
     async addIssue(
         @Body() data: IssueAddData
     ): Promise<Issue> {
-        canWriteProductOrFail((<User> this.request.user).id, data.productId)
+        await canWriteProductOrFail((<User> this.request.user).id, data.productId)
         return this.issueService.addIssue(data)
     }  
 
@@ -47,7 +47,7 @@ export class IssueController implements IssueREST {
     async getIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        canReadIssueOrFail((<User> this.request.user).id, id)
+        await canReadIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.getIssue(id)
     } 
 
@@ -59,7 +59,7 @@ export class IssueController implements IssueREST {
         @Param('id') id: string,
         @Body() data: IssueUpdateData
     ): Promise<Issue> {
-        canWriteIssueOrFail((<User> this.request.user).id, id)
+        await canWriteIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.updateIssue(id, data)
     }
 
@@ -69,7 +69,7 @@ export class IssueController implements IssueREST {
     async deleteIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        canWriteIssueOrFail((<User> this.request.user).id, id)
+        await canWriteIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.deleteIssue(id)
     } 
 }
