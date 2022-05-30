@@ -26,7 +26,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     
     // CONTEXTS
 
-    const user = useContext(UserContext)
+    const contextUser = useContext(UserContext)
 
     // PARAMS
 
@@ -85,7 +85,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     async function submitMilestone(event: FormEvent){
         event.preventDefault()
         if(milestoneId == 'new') {
-            await MilestoneManager.addMilestone({userId: user.id, productId: productId, label: label, start: start.toISOString(), end: end.toISOString()})
+            await MilestoneManager.addMilestone({userId: contextUser.id, productId: productId, label: label, start: start.toISOString(), end: end.toISOString()})
             history.replace(`/products/${productId}/milestones/`)
         } else {
             await MilestoneManager.updateMilestone( milestone.id, { ...milestone, label: label, start: start.toISOString(), end: end.toISOString()})

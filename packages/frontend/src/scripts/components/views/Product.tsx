@@ -21,7 +21,7 @@ import { UserContext } from '../../contexts/User'
 
 export const ProductView = () => {
     
-    const user = useContext(UserContext)
+    const contextUser = useContext(UserContext)
 
     // STATES
 
@@ -146,7 +146,7 @@ export const ProductView = () => {
             </header>
             <main>
                 <div>
-                    { user.productManagementPermission && (
+                    { contextUser.productManagementPermission && (
                         <Link to={`/products/new/settings`} className='button green fill'>
                             New product
                         </Link>

@@ -34,7 +34,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
 
     // CONTEXTS
 
-    const user = useContext(UserContext)
+    const contextUser = useContext(UserContext)
 
     // PARAMS
 
@@ -110,7 +110,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ userId: user.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null })
+                const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null })
                 history.replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {

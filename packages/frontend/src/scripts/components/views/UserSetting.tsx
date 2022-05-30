@@ -19,10 +19,10 @@ import { UserContext } from '../../contexts/User'
 
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     
-    const contextUser = useContext(UserContext)
     const history = useHistory()
-
-
+    
+    // CONTEXTS
+    const contextUser = useContext(UserContext)
     
     // PARAMS
 

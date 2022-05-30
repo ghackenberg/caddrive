@@ -27,7 +27,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
 
     // CONTEXTS
 
-    const user = useContext(UserContext)
+    const contextUser = useContext(UserContext)
 
     // PARAMS
 
@@ -73,7 +73,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     async function submit(event: FormEvent){
         event.preventDefault()
         if (versionId == 'new') {
-            await VersionManager.addVersion({ userId: user.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
+            await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file)
         } else {
             await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, file)
         }

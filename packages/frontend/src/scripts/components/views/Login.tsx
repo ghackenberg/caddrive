@@ -12,7 +12,7 @@ import { UserContext } from '../../contexts/User'
 
 export const LoginView = () => {
 
-    const user = useContext(UserContext)
+    const contextUser = useContext(UserContext)
 
     // STATES
 
@@ -34,7 +34,7 @@ export const LoginView = () => {
             auth.username = email
             auth.password = password
 
-            user.update(await UserManager.checkUser())
+            contextUser.update(await UserManager.checkUser())
         } catch (error) {
             setError('Login failed!')
             setLoad(false)
