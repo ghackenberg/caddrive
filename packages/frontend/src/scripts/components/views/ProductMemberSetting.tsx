@@ -55,7 +55,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     async function selectUser(user: User) {
         if (confirm('Do you really want to add this member?')) {
-            await MemberManager.addMember({ productId, userId: user.id })
+            await MemberManager.addMember({ productId, userId: user.id, role: 'manager' })
             //history.goBack()               
         }
     }

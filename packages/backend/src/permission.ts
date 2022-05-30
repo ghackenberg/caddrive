@@ -49,6 +49,8 @@ export async function canWriteMemberOrFail(userId: string, memberId: string) {
     await canWriteProductOrFail(userId, member.productId)
 }
 
+// VERSION
+
 export async function canReadVersionOrFail(userId: string, versionId: string) {
     const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
     await canReadProductOrFail(userId, version.productId)
@@ -58,12 +60,16 @@ export async function canWriteVersionOrFail(userId: string, versionId: string) {
     await canReadProductOrFail(userId, version.productId)
 }
 
+// FILE
+
 export async function canReadFileOrFail(_userId: string, _fileId: string) {
 
 }
 export async function canWriteFileOrFail(_userId: string, _fileId: string) {
 
 }
+
+// ISSUE
 
 export async function canReadIssueOrFail(userId: string, issueId: string) {
     const issue = await getIssueOrFail({ id: issueId, deleted: false }, NotFoundException)
@@ -74,6 +80,8 @@ export async function canWriteIssueOrFail(userId: string, issueId: string) {
     await canReadProductOrFail(userId, issue.productId)
 }
 
+// COMMENT
+
 export async function canReadCommentOrFail(userId: string, commentId: string) {
     const comment = await getCommentOrFail({ id: commentId, deleted: false }, NotFoundException)
     await canReadIssueOrFail(userId, comment.issueId)
@@ -82,6 +90,8 @@ export async function canWriteCommentOrFail(userId: string, commentId: string) {
     const comment = await getCommentOrFail({ id: commentId, deleted: false }, NotFoundException)
     await canReadIssueOrFail(userId, comment.issueId)
 }
+
+// MILESTONE
 
 export async function canReadMilestoneOrFail(userId: string, milestoneId: string) {
     const milestone = await getMilestoneOrFail({ id: milestoneId, deleted: false }, NotFoundException)

@@ -44,6 +44,6 @@ export class MemberService implements MemberREST {
     }
 
     private convert(member: MemberEntity) {
-        return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
+        return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId, role: member.role }
     }
 }

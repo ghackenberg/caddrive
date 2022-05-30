@@ -15,12 +15,12 @@ const products: Product[] = [
 ]
 
 const members: Member[] = [
-    { id: 'demo-1', userId: 'demo-1', productId: "demo-1", deleted: false},
-    { id: 'demo-2', userId: 'demo-2', productId: "demo-2", deleted: false},
-    { id: 'demo-3', userId: 'demo-4', productId: "demo-1", deleted: false},
-    { id: 'demo-4', userId: 'demo-4', productId: "demo-2", deleted: false},
-    { id: 'demo-5', userId: 'demo-2', productId: "demo-1", deleted: false},
-    { id: 'demo-6', userId: 'demo-3', productId: "demo-1", deleted: false},
+    { id: 'demo-1', userId: 'demo-1', productId: "demo-1", deleted: false, role: 'manager'},
+    { id: 'demo-2', userId: 'demo-2', productId: "demo-2", deleted: false, role: 'manager'},
+    { id: 'demo-3', userId: 'demo-4', productId: "demo-1", deleted: false, role: 'manager'},
+    { id: 'demo-4', userId: 'demo-4', productId: "demo-2", deleted: false, role: 'manager'},
+    { id: 'demo-5', userId: 'demo-2', productId: "demo-1", deleted: false, role: 'manager'},
+    { id: 'demo-6', userId: 'demo-3', productId: "demo-1", deleted: false, role: 'manager'},
 ]
 
 const versions: Version[] = [
@@ -45,7 +45,7 @@ const issues: Issue[] = [
     { id: 'demo-4', userId: 'demo-4', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), label: 'Install car radio for music.', text: 'Please install a car radio, so the driver can listen to music and news.', state: 'closed', deleted: false ,assigneeIds: ['demo-1', 'demo-2'], milestoneId: 'demo-1' },
     { id: 'demo-5', userId: 'demo-4', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), label: 'Provide a possibility to mount a roof.', text: 'Please provide a mount to give possibility to hang up a roof in rainy days', state: 'closed', deleted: false ,assigneeIds: ['demo-1'], milestoneId: 'demo-1' },
     { id: 'demo-6', userId: 'demo-1', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), label: 'Install seat belt for driver.', text: 'Please install a seat belt for safety', state: 'closed', deleted: false ,assigneeIds: ['demo-2', 'demo-4'], milestoneId: 'demo-1' },
-    { id: 'demo-7', userId: 'demo-2', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), label: 'Add frontlight and backlight .', text: 'Please provide frontlights and backlights for driving in the dark', state: 'open', deleted: false ,assigneeIds: ['demo-1', 'demo-4', 'demo-3'], milestoneId: 'demo-1' },
+    { id: 'demo-7', userId: 'demo-2', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), label: 'Add frontlight and backlight.', text: 'Please provide frontlights and backlights for driving in the dark', state: 'open', deleted: false ,assigneeIds: ['demo-1', 'demo-4', 'demo-3'], milestoneId: 'demo-1' },
 ]
 
 const comments: Comment[] = [
