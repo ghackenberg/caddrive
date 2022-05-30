@@ -26,14 +26,14 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
 
     // - Entities
     const [product, setProduct] = useState<Product>()
-    const [members, setMember] = useState<Member[]>()
+    const [members, setMembers] = useState<Member[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
 
     // EFFECTS
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMember) }, [props])
+    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => {
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
@@ -51,7 +51,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
     async function deleteMember(member:Member) {
         if (confirm('Do you really want to delete this member?')) {
             await MemberManager.deleteMember(member.id)
-            setMember(members.filter(other => other.id != member.id))  
+            setMembers(members.filter(other => other.id != member.id))  
         }
     }
 
@@ -65,10 +65,17 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
               </Link> 
             ) : '?'
         )},
-        { label: 'User', class: 'fill left nowrap', content: (
+        { label: 'User', class: 'left nowrap', content: (
             member => member.id in users ? (
                 <Link to={`/users/${users[member.id].id}/settings`}>
                     {users[member.id].name}
+                </Link>
+             ) : '?'
+        )},
+        { label: 'Role', class: 'fill left nowrap', content: (
+            member => member.id in users ? (
+                <Link to={`/users/${users[member.id].id}/settings`}>
+                    {member.role}
                 </Link>
              ) : '?'
         )},
