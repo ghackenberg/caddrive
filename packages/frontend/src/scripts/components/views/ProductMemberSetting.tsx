@@ -1,9 +1,9 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
 // Commons
-import { Product, User } from 'productboard-common'
+import { MemberRole, Product, User } from 'productboard-common'
 // Managers
 import { ProductManager } from '../../managers/product'
 // Snippets
@@ -18,6 +18,7 @@ import { Column, Table } from '../widgets/Table'
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
     //const history = useHistory()
+    const roles: MemberRole[] = ['manager', 'engineer', 'customer']
 
     // PARAMS
 
@@ -30,6 +31,8 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const [users, setUsers] = useState<User[]>()
     // - Computations
     const [names, setNames] = useState<React.ReactNode[]>()
+    // - Values
+    const [role, setRole] = useState<MemberRole>('customer')
     // - Interactions
     const [query, setQuery] = useState<string>('')
 
@@ -55,9 +58,14 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     async function selectUser(user: User) {
         if (confirm('Do you really want to add this member?')) {
-            await MemberManager.addMember({ productId, userId: user.id, role: 'engineer' })
+            await MemberManager.addMember({ productId, userId: user.id, role: role })
             //history.goBack()               
         }
+    }
+
+    async function submitMember(event: FormEvent) {
+        event.preventDefault()
+        console.log(role)
     }
 
     // CONSTANTS
@@ -89,7 +97,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                             <main className="sidebar">
                                 <div>
                                     <h1>Settings</h1>
-                                    <form>
+                                    <form onSubmit={submitMember}>
                                         <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
                                         <div>
                                             <div>
@@ -99,6 +107,26 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                                 { users && <Table items={users} columns={columns}/> }
                                             </div>
                                         </div>
+
+                                        <div>
+                                            <div>
+                                                Role:
+                                            </div>
+                                            <div>
+                                                <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)}> 
+                                                    {roles.map((role) => <option key={role} value={role}>{role}</option>)}
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div/>
+                                                <div>
+                                                    <input type='submit' value='Save'/>
+                                                </div>
+                                            </div>
+
                                     </form>
                                 </div>
                                 <div>
