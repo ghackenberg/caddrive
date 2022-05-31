@@ -60,21 +60,21 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
     const columns: Column<Member>[] = [
         { label: 'Picture', content: member => (
             member.id in users ? (
-                <Link to={`/users/${users[member.id].id}/settings`}>
+                <Link to={`/products/${productId}/members/${member.id}/settings`}>
                     <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' />
               </Link> 
             ) : '?'
         )},
         { label: 'User', class: 'left nowrap', content: (
             member => member.id in users ? (
-                <Link to={`/users/${users[member.id].id}/settings`}>
+                <Link to={`/products/${productId}/members/${member.id}/settings`}>
                     {users[member.id].name}
                 </Link>
              ) : '?'
         )},
         { label: 'Role', class: 'fill left nowrap', content: (
             member => member.id in users ? (
-                <Link to={`/users/${users[member.id].id}/settings`}>
+                <Link to={`/products/${productId}/members/${member.id}/settings`}>
                     {member.role}
                 </Link>
              ) : '?'
