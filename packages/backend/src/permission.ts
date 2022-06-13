@@ -1,5 +1,6 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common'
-import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getUserOrFail, getVersionOrFail } from 'productboard-database'
+import { In } from 'typeorm'
+import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getUserOrFail, MemberRepository } from 'productboard-database'
 
 // USER
 
@@ -35,7 +36,7 @@ export async function canReadProductOrFail(userId: string, productId: string) {
 }
 export async function canWriteProductOrFail(userId: string, productId: string) {
     const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
-    await getMemberOrFail({ userId, productId: product.id, deleted: false }, ForbiddenException)
+    await getMemberOrFail({ userId, productId: product.id, role: 'manager', deleted: false }, ForbiddenException)
 }
 
 // MEMBER
@@ -52,12 +53,30 @@ export async function canWriteMemberOrFail(userId: string, memberId: string) {
 // VERSION
 
 export async function canReadVersionOrFail(userId: string, versionId: string) {
-    const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
-    await canReadProductOrFail(userId, version.productId)
+    // const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
+    // await canReadProductOrFail(userId, version.productId)
+
+    try {
+        MemberRepository.findOneByOrFail({ userId, product: { versions: { id: versionId, deleted: false }, deleted: false }, deleted: false })
+    } catch {
+        throw new ForbiddenException()
+    }
 }
 export async function canWriteVersionOrFail(userId: string, versionId: string) {
-    const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
-    await canReadProductOrFail(userId, version.productId)
+    // const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
+    // const product = await getProductOrFail({ id: version.productId, deleted: false }, NotFoundException)
+    // try {
+    //     await getMemberOrFail({ userId, productId: product.id, role: 'manager', deleted: false }, Error)
+    // } catch {
+    //     await getMemberOrFail({ userId, productId: product.id, role: 'engineer', deleted: false }, ForbiddenException)
+    // }
+
+    try {
+        MemberRepository.findOneByOrFail({ userId, product: { versions: { id: versionId, deleted: false }, deleted: false }, role: In(['manager', 'engineer']), deleted: false })
+    } catch {
+        throw new ForbiddenException()
+    }
+
 }
 
 // FILE

@@ -163,8 +163,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                                 </div>
                                                 <div>
                                                     <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)}> 
-                                                        {roles.map((role) => <option key={role} value={role}>{role}</option>)}
-                                                        
+                                                        {roles.map((role) => <option key={role} value={role}>{role}</option>)}    
                                                     </select>
                                                 </div>
                                             </div>

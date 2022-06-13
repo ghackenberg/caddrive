@@ -1,4 +1,4 @@
-import { Member } from 'productboard-common'
+import { Member, MemberRole } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
@@ -27,5 +27,5 @@ export class MemberEntity extends Member {
     override userId: string
 
     @Column({ nullable: false })
-    override role: 'manager' | 'engineer' | 'customer'
+    override role: MemberRole
 }

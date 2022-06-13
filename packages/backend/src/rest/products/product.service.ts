@@ -25,7 +25,7 @@ export class ProductService implements ProductREST {
     
     async addProduct(data: ProductAddData) {
         const product = await ProductRepository.save({ id: shortid(), deleted: false, ...data })
-        await MemberRepository.save({ id: shortid(), productId: product.id, userId: product.userId })
+        await MemberRepository.save({ id: shortid(), productId: product.id, userId: product.userId, role: 'manager' })
         return this.convert(product)
     }
 
