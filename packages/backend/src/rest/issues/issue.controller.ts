@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 import { IssueService } from './issue.service'
-import { canReadIssueOrFail, canReadProductOrFail, canWriteIssueOrFail, canWriteProductOrFail } from '../../permission'
+import { canReadIssueOrFail, canReadProductOrFail, canCreateProductOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail } from '../../permission'
 
 @Controller('rest/issues')
 @UseGuards(AuthGuard('basic'))
@@ -37,7 +37,7 @@ export class IssueController implements IssueREST {
     async addIssue(
         @Body() data: IssueAddData
     ): Promise<Issue> {
-        await canWriteProductOrFail((<User> this.request.user).id, data.productId)
+        await canCreateProductOrFail((<User> this.request.user).id, data.productId)
         return this.issueService.addIssue(data)
     }  
 
@@ -59,7 +59,7 @@ export class IssueController implements IssueREST {
         @Param('id') id: string,
         @Body() data: IssueUpdateData
     ): Promise<Issue> {
-        await canWriteIssueOrFail((<User> this.request.user).id, id)
+        await canUpdateIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.updateIssue(id, data)
     }
 
@@ -69,7 +69,7 @@ export class IssueController implements IssueREST {
     async deleteIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        await canWriteIssueOrFail((<User> this.request.user).id, id)
+        await canDeleteIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.deleteIssue(id)
     } 
 }

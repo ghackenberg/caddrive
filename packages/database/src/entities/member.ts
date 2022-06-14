@@ -26,6 +26,6 @@ export class MemberEntity extends Member {
     @Column({ nullable: false })
     override userId: string
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     override role: MemberRole
 }

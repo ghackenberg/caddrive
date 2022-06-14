@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
 import { CommentService } from './comment.service'
-import { canReadCommentOrFail, canReadIssueOrFail, canWriteCommentOrFail, canWriteIssueOrFail } from '../../permission'
+import { canReadCommentOrFail, canReadIssueOrFail, canCreateIssueOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail } from '../../permission'
 
 @Controller('rest/comments')
 @UseGuards(AuthGuard('basic'))
@@ -33,7 +33,7 @@ export class CommentController implements CommentREST {
     async addComment(
         @Body() data: CommentAddData
     ): Promise<Comment> {
-        await canWriteIssueOrFail((<User> this.request.user).id, data.issueId)
+        await canCreateIssueOrFail((<User> this.request.user).id, data.issueId)
         return this.commentService.addComment(data)
     }
 
@@ -54,7 +54,7 @@ export class CommentController implements CommentREST {
     async updateComment(
         @Param('id') id: string, @Body() data: CommentUpdateData
     ): Promise<Comment> {
-        await canWriteCommentOrFail((<User> this.request.user).id, id)
+        await canUpdateCommentOrFail((<User> this.request.user).id, id)
         return this.commentService.updateComment(id, data)
     }
 
@@ -64,7 +64,7 @@ export class CommentController implements CommentREST {
     async deleteComment(
         @Param('id') id: string 
     ): Promise<Comment> {
-        await canWriteCommentOrFail((<User> this.request.user).id, id)
+        await canDeleteCommentOrFail((<User> this.request.user).id, id)
         return this.commentService.deleteComment(id)
     }
 }

@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
 import { ProductService } from './product.service'
-import { canReadProductOrFail, canWriteProductOrFail } from '../../permission'
+import { canReadProductOrFail, canUpdateProductOrFail, canDeleteProductOrFail } from '../../permission'
 
 @Controller('rest/products')
 @UseGuards(AuthGuard('basic'))
@@ -50,7 +50,7 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        await canWriteProductOrFail((<User> this.request.user).id, id)
+        await canUpdateProductOrFail((<User> this.request.user).id, id)
         return this.productService.updateProduct(id, data)
     }
 
@@ -60,7 +60,7 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        await canWriteProductOrFail((<User> this.request.user).id, id)
+        await canDeleteProductOrFail((<User> this.request.user).id, id)
         return this.productService.deleteProduct(id)
     }
 }
