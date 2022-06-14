@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
 import { CommentService } from './comment.service'
-import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail } from '../../permission'
+import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../permission'
 
 @Controller('rest/comments')
 @UseGuards(AuthGuard('basic'))
@@ -23,7 +23,7 @@ export class CommentController implements CommentREST {
     async findComments(
         @Query('issue') issueId: string
     ): Promise<Comment[]> {
-        await canReadCommentOrFail((<User> this.request.user).id, issueId)
+        await canFindCommentOrFail((<User> this.request.user).id, issueId)
         return this.commentService.findComments(issueId)
     }
 

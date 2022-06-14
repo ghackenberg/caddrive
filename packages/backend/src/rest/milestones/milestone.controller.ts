@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
 import { MilestoneService } from './milestone.service'
-import { canReadMilestoneOrFail, canReadProductOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail } from '../../permission'
+import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../permission'
 
 @Controller('rest/milestones')
 @UseGuards(AuthGuard('basic'))
@@ -23,7 +23,7 @@ export class MilestoneController implements MilestoneREST {
     async findMilestones(
         @Query('product') productId: string
     ): Promise<Milestone[]> {
-        await canReadProductOrFail((<User> this.request.user).id, productId)
+        await canFindMilestoneOrFail((<User> this.request.user).id, productId)
         return this.milestoneService.findMilestones(productId)
     }   
 

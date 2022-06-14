@@ -7,7 +7,7 @@ import { Request } from 'express'
 import 'multer'
 import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
-import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail } from '../../permission'
+import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../permission'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
@@ -25,7 +25,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async findVersions(
         @Query('product') productId: string
     ): Promise<Version[]> {
-        await canReadVersionOrFail((<User> this.request.user).id, productId)
+        await canFindVersionOrFail((<User> this.request.user).id, productId)
         return this.versionService.findVersions(productId)
     }
 
