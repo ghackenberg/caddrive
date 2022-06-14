@@ -7,7 +7,7 @@ import { Request } from 'express'
 import 'multer'
 import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
-import { canReadProductOrFail, canReadVersionOrFail, canCreateProductOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail } from '../../permission'
+import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail } from '../../permission'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
@@ -25,7 +25,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async findVersions(
         @Query('product') productId: string
     ): Promise<Version[]> {
-        await canReadProductOrFail((<User> this.request.user).id, productId)
+        await canReadVersionOrFail((<User> this.request.user).id, productId)
         return this.versionService.findVersions(productId)
     }
 
@@ -38,7 +38,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @UploadedFile() file: Express.Multer.File
     ): Promise<Version> {
         const dataParsed = <VersionAddData> JSON.parse(data)
-        await canCreateProductOrFail((<User> this.request.user).id, dataParsed.productId)
+        await canCreateVersionOrFail((<User> this.request.user).id, dataParsed.productId)
         return this.versionService.addVersion(dataParsed, file)
     }
 

@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 import { IssueService } from './issue.service'
-import { canReadIssueOrFail, canReadProductOrFail, canCreateProductOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail } from '../../permission'
+import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail } from '../../permission'
 
 @Controller('rest/issues')
 @UseGuards(AuthGuard('basic'))
@@ -27,7 +27,7 @@ export class IssueController implements IssueREST {
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
-        await canReadProductOrFail((<User> this.request.user).id, productId)
+        await canReadIssueOrFail((<User> this.request.user).id, productId)
         return this.issueService.findIssues(productId, milestoneId, state)
     }
 
@@ -37,7 +37,7 @@ export class IssueController implements IssueREST {
     async addIssue(
         @Body() data: IssueAddData
     ): Promise<Issue> {
-        await canCreateProductOrFail((<User> this.request.user).id, data.productId)
+        await canCreateIssueOrFail((<User> this.request.user).id, data.productId)
         return this.issueService.addIssue(data)
     }  
 

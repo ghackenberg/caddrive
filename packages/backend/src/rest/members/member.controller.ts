@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Member, MemberAddData, MemberUpdateData, MemberREST, User } from 'productboard-common'
 import { MemberService } from './member.service'
-import { canReadMemberOrFail, canReadProductOrFail, canCreateProductOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail } from '../../permission'
+import { canReadMemberOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail } from '../../permission'
 
 @Controller('rest/members')
 @UseGuards(AuthGuard('basic'))
@@ -25,7 +25,7 @@ export class MemberController implements MemberREST {
         @Query('product') productId: string,
         @Query('user') userId?: string
     ): Promise<Member[]> {
-        await canReadProductOrFail((<User> this.request.user).id, productId)
+        await canReadMemberOrFail((<User> this.request.user).id, productId)
         return this.memberService.findMembers(productId, userId)
     }
 
@@ -35,7 +35,7 @@ export class MemberController implements MemberREST {
     async addMember(
         @Body() data: MemberAddData
     ): Promise<Member> {
-        await canCreateProductOrFail((<User> this.request.user).id, data.productId)
+        await canUpdateMemberOrFail((<User> this.request.user).id, data.productId)
         return this.memberService.addMember(data)
     }
 

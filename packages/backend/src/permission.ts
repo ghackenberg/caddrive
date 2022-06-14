@@ -1,5 +1,6 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common'
-import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getUserOrFail, getVersionOrFail } from 'productboard-database'
+import { In } from 'typeorm'
+import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getUserOrFail, getVersionOrFail, MemberRepository } from 'productboard-database'
 
 // USER
 
@@ -18,7 +19,6 @@ export async function canReadUserOrFail(userId: string, otherUserId: string) {
         }
     }
 }
-
 export async function canUpdateUserOrFail(userId: string, otherUserId: string) {
     if(userId != otherUserId) {
         await getUserOrFail({id: userId, deleted: false, userManagementPermission: true}, ForbiddenException)
@@ -32,10 +32,9 @@ export async function canDeleteUserOrFail(userId: string, otherUserId: string) {
 
 // PRODUCT
 
-export async function canCreateProductOrFail(userId: string, productId: string) {
+export async function canCreateProductOrFail(userId: string) {
     await getUserOrFail({id: userId, deleted: false, productManagementPermission: true}, ForbiddenException)
-    const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
-    await getMemberOrFail({ userId, productId: product.id, deleted: false }, ForbiddenException)
+   
 }
 export async function canReadProductOrFail(userId: string, productId: string) {
     const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
@@ -43,18 +42,18 @@ export async function canReadProductOrFail(userId: string, productId: string) {
 }
 export async function canUpdateProductOrFail(userId: string, productId: string) {
     const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
-    await getMemberOrFail({ userId, productId: product.id, deleted: false }, ForbiddenException)
+    await getMemberOrFail({ userId, productId: product.id, role: 'manager', deleted: false }, ForbiddenException)
 }
 export async function canDeleteProductOrFail(userId: string, productId: string) {
     const product = await getProductOrFail({ id: productId, deleted: false }, NotFoundException)
-    await getMemberOrFail({ userId, productId: product.id, deleted: false }, ForbiddenException)
+    await getMemberOrFail({ userId, productId: product.id, role: 'manager', deleted: false }, ForbiddenException)
 }
 
 // MEMBER
 
 export async function canCreateMemberOrFail(userId: string, memberId: string) {
     const member = await getMemberOrFail({ id: memberId, deleted: false }, NotFoundException)
-    await canCreateProductOrFail(userId, member.productId)
+    await canUpdateProductOrFail(userId, member.productId)
 }
 export async function canReadMemberOrFail(userId: string, memberId: string) {
     const member = await getMemberOrFail({ id: memberId, deleted: false }, NotFoundException)
@@ -62,11 +61,11 @@ export async function canReadMemberOrFail(userId: string, memberId: string) {
 }
 export async function canUpdateMemberOrFail(userId: string, memberId: string) {
     const member = await getMemberOrFail({ id: memberId, deleted: false }, NotFoundException)
-    await canCreateProductOrFail(userId, member.productId)
+    await canUpdateProductOrFail(userId, member.productId)
 }
 export async function canDeleteMemberOrFail(userId: string, memberId: string) {
     const member = await getMemberOrFail({ id: memberId, deleted: false }, NotFoundException)
-    await canCreateProductOrFail(userId, member.productId)
+    await canUpdateProductOrFail(userId, member.productId)
 }
 
 
@@ -77,16 +76,25 @@ export async function canCreateVersionOrFail(userId: string, versionId: string) 
     await canReadProductOrFail(userId, version.productId)
 }
 export async function canReadVersionOrFail(userId: string, versionId: string) {
-    const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
-    await canReadProductOrFail(userId, version.productId)
+    try {
+        MemberRepository.findOneByOrFail({ userId, product: { versions: { id: versionId, deleted: false }, deleted: false }, deleted: false })
+    } catch {
+        throw new ForbiddenException()
+    }
 }
 export async function canUpdateVersionOrFail(userId: string, versionId: string) {
-    const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
-    await canReadProductOrFail(userId, version.productId)
+    try {
+        MemberRepository.findOneByOrFail({ userId, product: { versions: { id: versionId, deleted: false }, deleted: false }, role: In(['manager', 'engineer']), deleted: false })
+    } catch {
+        throw new ForbiddenException()
+    }
 }
 export async function canDeleteVersionOrFail(userId: string, versionId: string) {
-    const version = await getVersionOrFail({ id: versionId, deleted: false }, NotFoundException)
-    await canReadProductOrFail(userId, version.productId)
+    try {
+        MemberRepository.findOneByOrFail({ userId, product: { versions: { id: versionId, deleted: false }, deleted: false }, role: In(['manager', 'engineer']), deleted: false })
+    } catch {
+        throw new ForbiddenException()
+    }
 }
 
 // FILE
