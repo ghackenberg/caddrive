@@ -26,6 +26,6 @@ export class MemberEntity extends Member {
     @Column({ nullable: false })
     override userId: string
 
-    @Column({ nullable: true })
+    @Column({ nullable: false, type: 'enum', enum: ["manager", "engineer", "customer"] })
     override role: MemberRole
 }
