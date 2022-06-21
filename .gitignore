@@ -19,3 +19,7 @@ public
 bin
 
 database.sqlite
+
+manuscripts/*/*
+!manuscripts/*/*.tex
+!manuscripts/*/*.bib
