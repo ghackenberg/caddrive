@@ -46,12 +46,22 @@ export const UserView = () => {
                 {user.name}
             </Link>
         )},
-        { label: 'Email', class: 'left nowrap fill', content: user => (
+        { label: 'Email', class: 'left nowrap', content: user => (
             <Link to={`/users/${user.id}/settings`}>
                 {user.email}
             </Link>
         )},
-        { label: '', content: user => (
+        { label: 'User Manager', class: 'center', content: user => (
+            <Link to={`/users/${user.id}/settings`}>
+                <input type="checkbox" checked= {user.userManagementPermission} readOnly />
+            </Link>
+        )},
+        { label: 'Product Manager', class: 'center', content: user => (
+            <Link to={`/users/${user.id}/settings`}>
+                <input type="checkbox" checked= {user.productManagementPermission} readOnly />
+            </Link>
+        )},
+        { label: '',class: 'fill right', content: user => (
             <a onClick={() => deleteUser(user)}>
                 <img src={DeleteIcon} className='small'/>
             </a>

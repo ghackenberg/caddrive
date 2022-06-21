@@ -7,7 +7,7 @@ import { Request } from 'express'
 import 'multer'
 import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
 import { VersionService } from './version.service'
-import { canReadProductOrFail, canReadVersionOrFail, canWriteProductOrFail, canWriteVersionOrFail } from '../../permission'
+import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../permission'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
@@ -25,7 +25,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async findVersions(
         @Query('product') productId: string
     ): Promise<Version[]> {
-        canReadProductOrFail((<User> this.request.user).id, productId)
+        await canFindVersionOrFail((<User> this.request.user).id, productId)
         return this.versionService.findVersions(productId)
     }
 
@@ -38,7 +38,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @UploadedFile() file: Express.Multer.File
     ): Promise<Version> {
         const dataParsed = <VersionAddData> JSON.parse(data)
-        canWriteProductOrFail((<User> this.request.user).id, dataParsed.productId)
+        await canCreateVersionOrFail((<User> this.request.user).id, dataParsed.productId)
         return this.versionService.addVersion(dataParsed, file)
     }
 
@@ -48,7 +48,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async getVersion(
         @Param('id') id: string
     ): Promise<Version> {
-        canReadVersionOrFail((<User> this.request.user).id, id)
+        await canReadVersionOrFail((<User> this.request.user).id, id)
         return this.versionService.getVersion(id)
     }
 
@@ -62,7 +62,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<Version> {
-        canWriteVersionOrFail((<User> this.request.user).id, id)
+        await canUpdateVersionOrFail((<User> this.request.user).id, id)
         return this.versionService.updateVersion(id, JSON.parse(data), file)
     }
 
@@ -72,7 +72,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     async deleteVersion(
         @Param('id') id: string
     ): Promise<Version> {
-        canWriteVersionOrFail((<User> this.request.user).id, id)
+        await canDeleteVersionOrFail((<User> this.request.user).id, id)
         return this.versionService.deleteVersion(id)
     }
 }

@@ -36,3 +36,8 @@ body > div > header > div:first-child > span > a > img {
     margin-right: 0.5em;
     padding: 0;
 }
+body > div > header > div:last-child > span:last-child > a > img {
+    filter: none;
+    border-radius: 50%;
+    margin-left: 1em;
+}

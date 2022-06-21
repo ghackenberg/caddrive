@@ -1,3 +1,4 @@
+import { User } from 'productboard-common'
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { CommentEntity } from './comment'
 import { IssueEntity } from './issue'
@@ -7,24 +8,30 @@ import { ProductEntity } from './product'
 import { VersionEntity } from './version'
 
 @Entity()
-export class UserEntity {
+export class UserEntity extends User {
     @PrimaryColumn({ nullable: false })
-    id: string
+    override id: string
 
     @Column({ nullable: false, default: false })
-    deleted: boolean
+    override deleted: boolean
 
     @Column({ nullable: false, unique: true })
-    email: string
+    override email: string
 
     @Column({ nullable: false })
-    name: string
+    override name: string
 
     @Column({ nullable: false })
-    password: string
+    override password: string
 
     @Column({ nullable: false })
-    pictureId: string
+    override pictureId: string
+
+    @Column({ nullable: false })
+    override userManagementPermission: boolean
+
+    @Column({ nullable: false })
+    override productManagementPermission: boolean
 
     @OneToMany(() => ProductEntity, product => product.user)
     products: ProductEntity[]

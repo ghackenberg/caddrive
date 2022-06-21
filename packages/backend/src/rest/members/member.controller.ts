@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Member, MemberAddData, MemberUpdateData, MemberREST, User } from 'productboard-common'
 import { MemberService } from './member.service'
-import { canReadMemberOrFail, canReadProductOrFail, canWriteMemberOrFail, canWriteProductOrFail } from '../../permission'
+import { canReadMemberOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail, canFindMemberOrFail, canCreateMemberOrFail } from '../../permission'
 
 @Controller('rest/members')
 @UseGuards(AuthGuard('basic'))
@@ -25,7 +25,7 @@ export class MemberController implements MemberREST {
         @Query('product') productId: string,
         @Query('user') userId?: string
     ): Promise<Member[]> {
-        canReadProductOrFail((<User> this.request.user).id, productId)
+        await canFindMemberOrFail((<User> this.request.user).id, productId)
         return this.memberService.findMembers(productId, userId)
     }
 
@@ -35,7 +35,7 @@ export class MemberController implements MemberREST {
     async addMember(
         @Body() data: MemberAddData
     ): Promise<Member> {
-        canWriteProductOrFail((<User> this.request.user).id, data.productId)
+        await canCreateMemberOrFail((<User> this.request.user).id, data.productId)
         return this.memberService.addMember(data)
     }
 
@@ -45,7 +45,7 @@ export class MemberController implements MemberREST {
     async getMember(
         @Param('id') id: string
     ): Promise<Member> {
-        canReadMemberOrFail((<User> this.request.user).id, id)
+        await canReadMemberOrFail((<User> this.request.user).id, id)
         return this.memberService.getMember(id)
     }
 
@@ -57,7 +57,7 @@ export class MemberController implements MemberREST {
         @Param('id') id: string,
         @Body() data: MemberUpdateData
     ): Promise<Member> {
-        canWriteMemberOrFail((<User> this.request.user).id, id)
+        await canUpdateMemberOrFail((<User> this.request.user).id, id)
         return this.memberService.updateMember(id,data)
     }
 
@@ -67,7 +67,7 @@ export class MemberController implements MemberREST {
     async deleteMember(
         @Param('id') id: string
     ): Promise<Member> {
-        canWriteMemberOrFail((<User> this.request.user).id, id)
+        await canDeleteMemberOrFail((<User> this.request.user).id, id)
         return this.memberService.deleteMember(id)
     }
 }

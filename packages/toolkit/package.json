@@ -4,8 +4,6 @@
     "description": "ProductBoard toolkit",
     "license": "MIT",
     "private": "true",
-    "main": "src/main",
-    "types": "src/main",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -35,12 +33,18 @@
     },
     "scripts": {
         "clean": "rm -rf bin",
-        "build": "tsc"
+        "build": "tsc",
+        "start": "ts-node src/main",
+        "devel": "ts-node-dev src/main"
     },
-    "dependencies": {
+    "dependecies": {
         "@types/node": "^17.0.23",
         "productboard-common": "^0.0.1",
         "productboard-database": "^0.0.1",
+        "ts-node": "^10.8.0",
         "typescript": "^4.3.2"
+    },
+    "devDependencies": {
+        "ts-node-dev": "^1.1.8"
     }
 }

@@ -53,6 +53,8 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         user.email = data.email
         user.password = data.password
         user.name = data.name
+        user.userManagementPermission = data.userManagementPermission
+        user.productManagementPermission = data.productManagementPermission
         if (file && file.originalname.endsWith('.jpg')) {
             user.pictureId = shortid()
             if (!fs.existsSync('./uploads')) {
@@ -73,6 +75,6 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     private convert(user: UserEntity) {
-        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId }
+        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId, userManagementPermission: user.userManagementPermission, productManagementPermission: user.productManagementPermission }
     }
 }

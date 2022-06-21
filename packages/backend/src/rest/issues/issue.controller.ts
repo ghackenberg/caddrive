@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 import { IssueService } from './issue.service'
-import { canReadIssueOrFail, canReadProductOrFail, canWriteIssueOrFail, canWriteProductOrFail } from '../../permission'
+import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail } from '../../permission'
 
 @Controller('rest/issues')
 @UseGuards(AuthGuard('basic'))
@@ -27,7 +27,7 @@ export class IssueController implements IssueREST {
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
-        canReadProductOrFail((<User> this.request.user).id, productId)
+        await canReadIssueOrFail((<User> this.request.user).id, productId)
         return this.issueService.findIssues(productId, milestoneId, state)
     }
 
@@ -37,7 +37,7 @@ export class IssueController implements IssueREST {
     async addIssue(
         @Body() data: IssueAddData
     ): Promise<Issue> {
-        canWriteProductOrFail((<User> this.request.user).id, data.productId)
+        await canCreateIssueOrFail((<User> this.request.user).id, data.productId)
         return this.issueService.addIssue(data)
     }  
 
@@ -47,7 +47,7 @@ export class IssueController implements IssueREST {
     async getIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        canReadIssueOrFail((<User> this.request.user).id, id)
+        await canReadIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.getIssue(id)
     } 
 
@@ -59,7 +59,7 @@ export class IssueController implements IssueREST {
         @Param('id') id: string,
         @Body() data: IssueUpdateData
     ): Promise<Issue> {
-        canWriteIssueOrFail((<User> this.request.user).id, id)
+        await canUpdateIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.updateIssue(id, data)
     }
 
@@ -69,7 +69,7 @@ export class IssueController implements IssueREST {
     async deleteIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        canWriteIssueOrFail((<User> this.request.user).id, id)
+        await canDeleteIssueOrFail((<User> this.request.user).id, id)
         return this.issueService.deleteIssue(id)
     } 
 }

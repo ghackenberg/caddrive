@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
 import { MilestoneService } from './milestone.service'
-import { canReadMilestoneOrFail, canReadProductOrFail, canWriteMilestoneOrFail, canWriteProductOrFail } from '../../permission'
+import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../permission'
 
 @Controller('rest/milestones')
 @UseGuards(AuthGuard('basic'))
@@ -23,7 +23,7 @@ export class MilestoneController implements MilestoneREST {
     async findMilestones(
         @Query('product') productId: string
     ): Promise<Milestone[]> {
-        canReadProductOrFail((<User> this.request.user).id, productId)
+        await canFindMilestoneOrFail((<User> this.request.user).id, productId)
         return this.milestoneService.findMilestones(productId)
     }   
 
@@ -33,7 +33,7 @@ export class MilestoneController implements MilestoneREST {
     async addMilestone(
         @Body() data: MilestoneAddData
     ): Promise<Milestone> {
-        canWriteProductOrFail((<User> this.request.user).id, data.productId)
+        await canCreateMilestoneOrFail((<User> this.request.user).id, data.productId)
         return this.milestoneService.addMilestone(data)
     }
     @Get(':id')
@@ -42,7 +42,7 @@ export class MilestoneController implements MilestoneREST {
     async getMilestone(
         @Param('id') id: string
     ): Promise<Milestone> {
-        canReadMilestoneOrFail((<User> this.request.user).id, id)
+        await canReadMilestoneOrFail((<User> this.request.user).id, id)
         return this.milestoneService.getMilestone(id)
     }
     @Put(':id')
@@ -53,7 +53,7 @@ export class MilestoneController implements MilestoneREST {
         @Param('id') id: string,
         @Body() data: MilestoneUpdateData
     ): Promise<Milestone> {
-        canWriteMilestoneOrFail((<User> this.request.user).id, id)
+        await canUpdateMilestoneOrFail((<User> this.request.user).id, id)
         return this.milestoneService.updateMilestone(id, data)
     }
     @Delete(':id')
@@ -62,7 +62,7 @@ export class MilestoneController implements MilestoneREST {
     async deleteMilestone(
         @Param('id') id: string
     ): Promise<Milestone> {
-        canWriteMilestoneOrFail((<User> this.request.user).id, id)
+        await canDeleteMilestoneOrFail((<User> this.request.user).id, id)
         return this.milestoneService.deleteMilestone(id)
     }
 }

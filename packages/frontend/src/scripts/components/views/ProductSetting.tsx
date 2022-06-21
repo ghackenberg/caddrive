@@ -21,7 +21,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     // CONTEXTS
 
-    const user = useContext(UserContext)
+    const contextUser = useContext(UserContext)
 
     // PARAMS
 
@@ -49,7 +49,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductManager.addProduct({userId: user.id, name, description})
+                const product = await ProductManager.addProduct({userId: contextUser.id, name, description})
                 history.replace(`/products/${product.id}`)
             }
         } else {

@@ -1,9 +1,6 @@
-import { Controller, Get, Inject, Param, StreamableFile } from '@nestjs/common'
-import { REQUEST } from '@nestjs/core'
+import { Controller, Get, Param, StreamableFile } from '@nestjs/common'
 import { ApiParam, ApiResponse } from '@nestjs/swagger'
-import { Request } from 'express'
-import { FileREST, User } from 'productboard-common'
-import { canReadFileOrFail } from '../../permission'
+import { FileREST } from 'productboard-common'
 import { FileService } from './file.service'
 
 @Controller('rest/files')
@@ -12,8 +9,8 @@ import { FileService } from './file.service'
 export class FileController implements FileREST<StreamableFile> {
     constructor(
         private readonly fileService: FileService,
-        @Inject(REQUEST)
-        private readonly request: Request
+        // @Inject(REQUEST)
+        // private readonly request: Request
     ) {}
 
     @Get(':id')
@@ -22,7 +19,7 @@ export class FileController implements FileREST<StreamableFile> {
     async getFile(
         @Param('id') id: string
     ): Promise<StreamableFile> {
-        canReadFileOrFail((<User> this.request.user).id, id)
+        //canReadFileOrFail((<User> this.request.user).id, id)
         return new StreamableFile(await this.fileService.getFile(id))
     }
 }

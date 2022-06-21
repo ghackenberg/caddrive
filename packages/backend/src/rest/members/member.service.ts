@@ -21,7 +21,7 @@ export class MemberService implements MemberREST {
     async addMember(data: MemberAddData): Promise<Member> {
         const product = await ProductRepository.findOneByOrFail({ id: data.productId })
         const user = await UserRepository.findOneByOrFail({ id: data.userId })
-        const member = await MemberRepository.save({ id: shortid(), deleted: false, product, user })
+        const member = await MemberRepository.save({ id: shortid(), deleted: false, product, user, ...data })
         return this.convert(member)
     }
 
@@ -32,6 +32,7 @@ export class MemberService implements MemberREST {
 
     async updateMember(id: string, _data: MemberUpdateData): Promise<Member> {
         const member = await MemberRepository.findOneByOrFail({ id })
+        member.role = _data.role
         await MemberRepository.save(member)
         return this.convert(member)
     }
@@ -44,6 +45,6 @@ export class MemberService implements MemberREST {
     }
 
     private convert(member: MemberEntity) {
-        return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId }
+        return { id: member.id, deleted: member.deleted, productId: member.productId, userId: member.userId, role: member.role }
     }
 }

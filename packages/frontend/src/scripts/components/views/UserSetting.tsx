@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, FormEvent, Fragment } from 'react'
+import { useState, useEffect, FormEvent, Fragment, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import * as hash from 'hash.js'
@@ -13,12 +13,16 @@ import { UserHeader } from '../snippets/UserHeader'
 import { TextInput } from '../inputs/TextInput'
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
-import { auth } from '../../clients/auth'
+import { CheckboxInput } from '../inputs/CheckboxInput'
 import { FileInput } from '../inputs/FileInput'
+import { UserContext } from '../../contexts/User'
 
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     
     const history = useHistory()
+    
+    // CONTEXTS
+    const contextUser = useContext(UserContext)
     
     // PARAMS
 
@@ -32,6 +36,8 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     const [email, setEmail] = useState<string>('')
     const [name, setName] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [userManagementPermission, setUserManagementPermission] = useState<boolean>(false)
+    const [productManagementPermission, setProductManagementPermission] = useState<boolean>(false)
     const [file, setFile] = useState<File>()
 
     // EFFECTS
@@ -41,25 +47,29 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     // - Values
     useEffect(() => { user && setEmail(user.email) }, [user])
     useEffect(() => { user && setName(user.name) }, [user])
+    useEffect(() => {user && setUserManagementPermission(user.userManagementPermission)}, [user])
+    useEffect(() => {user && setProductManagementPermission(user.productManagementPermission)}, [user])
 
-    // FUNCTIONS
-
+    // FUNCTIONS 
     async function submit(event: FormEvent){
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
-                await UserManager.addUser({ name, email, password: encrypt(password) },file)
+                await UserManager.addUser({ name, email, password: encrypt(password), userManagementPermission, productManagementPermission },file)
             }
         } else {
             if (name && email) {
-                await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password },file)
-                if (auth.username == name) {
-                    auth.password = encrypt(password)
+                const newUser = await UserManager.updateUser(user.id, { name, email, password: password.length > 0 ? encrypt(password) : user.password, userManagementPermission, productManagementPermission },file)
+                if (contextUser.email == newUser.email) {
+                    contextUser.update(newUser)
                 }
             }
         }
-        history.goBack()    
+        history.goBack() 
     }
+
+   
+
 
     function encrypt(password: string): string {
         return hash.sha256().update(password).digest('hex')
@@ -83,6 +93,8 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                         <PasswordInput label='Password' placeholder='Type password' value={password} change={setPassword} required = {userId === 'new'}/>
+                                        { contextUser.userManagementPermission && ( <CheckboxInput label= 'User Manager' checked={userManagementPermission} change={setUserManagementPermission} /> ) }
+                                        { contextUser.userManagementPermission && ( <CheckboxInput label= 'Product Manager' checked={productManagementPermission} change={setProductManagementPermission}/> ) }
                                         <FileInput label='Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile} required= {userId === 'new'}/>
                                         <div>
                                             <div/>
