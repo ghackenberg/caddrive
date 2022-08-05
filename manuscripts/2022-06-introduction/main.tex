@@ -1,4 +1,6 @@
 \documentclass{IEEEtran}
+\usepackage{graphicx}
+\graphicspath{ {./graphics/} }
 % abfangen: überall mal bulletpoints, referenzen, bilder einfügen (kann auch deutsch sein)
 % abstract, titlel amschluss, sonst von oben nach unten schreiben
 % lieber hinten dünner lassen, vorne ist wichtig für roten faden
@@ -8,93 +10,15 @@
 % wichtig: struktur immer aktuell halten
 % spellchecking: extension installieren für code
 
-
-
 \title{TODO}
 \author{TODO}
 
 \begin{document}
     \maketitle
- 
-    i want to eat a orange 
 
-    \begin{abstract}
-        TODO
-        hallo
-    \end{abstract}
-    
-    \section{Introduction}
-    \label{sec:introduction}
-
-    \subsection*{Context}
-    TODO~\cite{Hackenberg2014}~\cite{Legat2014}~\cite{Teufl2015}
-    % 3-4 absätze längster teil von oben
-    % umgebungsbedingungen in denen das problem besteht 
-    % referenzen: trends, kunden immer individuellere produkte, immer kürzeren zyklen, agile auf kunden reagieren, kosten, effizienz, digitalisierung
-    % für jeden absatz ein zentrales thema zb agilität, digitalisierung, lotsize one: losgröße1, individualisierung von kunden, 
-    % ausgangspunkt: losgröße1, agilität für umsetzung, digitalisierung als enabler für agilität
-    % engineer-to-order bereich vor losgröße oder statt losgröße andere begriffe: assemble-to-order, fabricate-to-order, configure-to-order
-
-
-    \subsection*{Problem}
-    TODO 
-    % anforderungs management schwierig, läuft häufig in excel, bezug zu cad daten bzw ergebnissen, engeneering artefakten geht verloren
-    % aufgabenplanung, zeitplanung, kunde hat keinen zugriff auf anforderungen (excelliste) deswegen schwierig dass entwickler mit kundne diskutieren können
-    % zeitenpriorisierung anforderungspriorisierung transperenter entwicklungsfortschritt
-    % nur ein bis zwei absatz
-
-    \subsection*{Solution}
-    TODO 
-    % platform nach vorbild von github für cad kurzer abriss wie problem gelöst wird 
-    % platform grob beschreiben mit funktionen
-    % 5-6 sätze 1 absatz
-
-    \subsection*{Outline}
-    % struktur vom dokument kurz erklärt
-    This article is structured as follows:
-    In Section~\ref{sec:differentiation} we discuss related work on the problem defined previously.
-    In Section~\ref{sec:contribution} we present our original solution to the problem at hand.
-    Then, in Section~\ref{sec:evaluation} we evaluate our solution with respect to different criteria.
-    Finally, in Section~\ref{sec:conclusion} we summarize our learnings and provide an outlook on future work.
-    
-    \section{Related work}
-    \label{sec:differentiation}
-    TODO
-    % onshape, recherche bei google schoolar (problem als suchbegriff: requirement management, engineer to order)
-    % wichtig um deutlich zu machen dass unser ansatz neu und wichtig ist
-    % zentral: richtige suchbegriffe rumprobieren (manchmal werden dafür andere begriffe verwendet)
-    % suchbegriffe notieren, systematik erklären können, wie man zu den quellen gekommen ist 
-    % von 10000 ergebnisse erste 10 setien durchgescannt, anhand der kurzbeschreibung: relevant, vlt relevant, nicht relevant
-    % relevante reingeschaut und dann erst entschieden 
-    % wir form verwenden aktiv form überwiegend verwenden
-
-    \section{Our solution}
-    \label{sec:contribution}
-    TODO 
-    % details architektur beschreiben, datenmodell, funktionsmodell, berechtigungsmodell, schnittstellenmodell(gui, )
-    % verallgemeinerungen beschreiben, erkenntnisgewinn beschreiben der generiert worden ist, screenshots: modelle
-    % subsections überlegen: struktur
-
-    \section{Critical evaluation}
-    \label{sec:evaluation}
-    TODO
-    % stärken und schwächen, vor und nachteile, anhand von kriterien (noch überlegen), anwendbarkeit, vollständigkeit (wie vollständig wird definiertes problem gelöst)
-    % wird das problem gelöst oder nicht systematisch runterbrechen und aufarbeiten: anwendbarketi (könnte das ein unternehmen heute schon so anwenden) 
-    % welche probleme wurden nicht gelöst, warum wurdne sie nicht gelöst, wie könnt man sie grob lösen, ist lösung denkbar basierend auf aktuellen stand oder 
-    % bedarf es einer kompletten überarbeitung
-
-    \section{Conclusion}
-    \label{sec:conclusion}
-    % 
-
-    \subsection*{Summary}
-    TODO
-    % ganzes paper zusammenfassen, grob, was wurde warum wie gemacht, ergebnisse, wichtigste erkenntnisse
-
-    \subsection*{Outlook}
-    TODO
-    % next steps, was steht auf dem plan
-    % vr, simulationsdaten, ecat, engineering-artefacts (arbeitsergebnisse einer engineering aktivität)
+    \input{text/1_introduction.tex}
+    \input{text/2_oursolution.tex}
+    \input{text/3_finalpart.tex}
 
     \bibliographystyle{plain}
     \bibliography{main}
