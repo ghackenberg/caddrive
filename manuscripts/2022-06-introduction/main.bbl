@@ -1,0 +1,25 @@
+\begin{thebibliography}{1}
+
+\bibitem{Hackenberg2014}
+Georg Hackenberg, Christoph Richter, and Michael~F. Zäh.
+\newblock A multi-disciplinary modeling technique for requirements management
+  in mechatronic systems engineering.
+\newblock {\em Procedia Technology}, 15:5--16, 2014.
+\newblock 2nd International Conference on System-Integrated Intelligence:
+  Challenges for Product and Production Engineering.
+
+\bibitem{Legat2014}
+Christoph Legat, Jakob Mund, Alarico Campetelli, Georg Hackenberg, Jens Folmer,
+  Daniel Schütz, Manfred Broy, and Birgit Vogel-Heuser.
+\newblock Interface behavior modeling for automatic verification of industrial
+  automation systems' functional conformance.
+\newblock {\em at - Automatisierungstechnik}, 62(11):815--825, 2014.
+
+\bibitem{Teufl2015}
+Sabine Teufl and Georg Hackenberg.
+\newblock Efficient impact analysis of changes in the requirements of
+  manufacturing automation systems.
+\newblock {\em IFAC-PapersOnLine}, 48(3):1482--1489, 2015.
+\newblock 15th IFAC Symposium onInformation Control Problems inManufacturing.
+
+\end{thebibliography}

@@ -20,6 +20,6 @@ bin
 
 database.sqlite
 
-manuscripts/*/*
-!manuscripts/*/*.tex
-!manuscripts/*/*.bib
+# manuscripts/*/*
+# !manuscripts/*/*.tex
+# !manuscripts/*/*.bib
