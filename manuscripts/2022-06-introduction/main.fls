@@ -262,6 +262,7 @@ INPUT c:/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmri7t.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmri8r.tfm
 INPUT main.aux
 INPUT c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc
+INPUT c:/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb
 INPUT c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb
 INPUT c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb
 INPUT c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb
