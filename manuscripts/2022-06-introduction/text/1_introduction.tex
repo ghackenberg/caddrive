@@ -6,55 +6,21 @@
 \section{Introduction}
     \label{sec:introduction}
 
-
     \subsection*{Context}
-    % 3-4 absätze längster teil von oben
-    % umgebungsbedingungen in denen das problem besteht 
-    % referenzen: trends, kunden immer individuellere produkte, immer kürzeren zyklen, agile auf kunden reagieren, kosten, effizienz, digitalisierung
-    % für jeden absatz ein zentrales thema zb agilität, digitalisierung, lotsize one: losgröße1, individualisierung von kunden, 
-    % ausgangspunkt: losgröße1, agilität für umsetzung, digitalisierung als enabler für agilität
-    % engineer-to-order bereich vor losgröße oder statt losgröße andere begriffe: assemble-to-order, fabricate-to-order, configure-to-order
-    
     %engineer to order und losgröße1 individualisierung
-    Over time, customers demand more and more specific products at small batch sizes.
-    Engineer to order is a part of the production chain in which a product is produced and customized according to exact specifications.
-    Such customization is becoming more and more important to increase customer satisfaction and thus also to increase the value of the company.
-
+    Over time, customers demand more and more specific products at small batch sizes. Product cycles are becoming even shorter and the customer wants to get to his product in an agile and cost-efficient way. Engineer to order is a part of the production chain in which a product is produced and customized according to exact specifications. It is becoming increasingly important to involve the customer in the project management process in order to develop precise solutions for him. 
     % agilität
-    An important part of this individual production consists of regular meetings. Through constant exchange, customer requirements can be discussed and specified.
-    Through agile product management is it possible
-    to adjust the product in the developing process if necessary. 
-
-    % digitalisierung als enabler für die agilität - 
-    Digitization enables such agile product management, as this would be laborious and sometimes impossible without databases and digital spreadsheets.  
+    An important part of this individual production consists of regular meetings. Through constant exchange, customer requirements can be discussed and specified. Agile product management makes it possible to adjust the product in the developing process if necessary. 
+    % digitalisierung als enabler für die agilität 
+    The digitization of development processes serves as an enabler for agility. It makes it possible to create a common basis for project management regardless of location. Customers can follow and evaluate the processes digitally. Through constant feedback, it is possible to react to customer wishes in order to reflect their interests. Agile product management is often supported by digital tools. With the help of spreadsheets and databases, the customer is involved in the development process. Project management and product development are not mapped together in such tools. Thus, depending on the product to be developed, it is difficult to give the customer a full overview of the progress.
 
     \subsection*{Problem}
-    % anforderungs management schwierig, läuft häufig in excel, bezug zu cad daten bzw ergebnissen, engeneering artefakten geht verloren
-    % aufgabenplanung, zeitplanung, kunde hat keinen zugriff auf anforderungen (excelliste) deswegen schwierig dass entwickler mit kundne diskutieren können
-    % zeitenpriorisierung anforderungspriorisierung transperenter entwicklungsfortschritt
-    % nur ein bis zwei absatz
-
-    Requirements management is complicated by the fact that CAD data and documentation are kept separate. By keeping the documentation in Excel lists or documents, some engineering artifacts are lost. 
-
-    Since the customer does not have access to the requirements or the Excel lists, agreements, task planning and scheduling are difficult. 
-    
-    This lack of transparency in product development makes it difficult to implement agile product management.
-    
-    If the customer has no access to the development progress, there is no possibility of prioritizing times and requirements.
-    
-   
+    Requirements management is complicated by the fact that CAD data and documentation are kept separate. Because the customer does not have all of these necessary documents available in a clear manner, it is hard to follow the progress of the project. Requirement engineering task planning and scheduling are therefore difficult. By keeping the documentation in Excel lists or other documents, some engineering artifacts are lost. This lack of transparency in product development makes it difficult to implement agile product management. If the customer has no access to the development progress, there is no possibility of prioritizing times and requirements. He also cannot participate in design decisions and shape the product according to his wishes.
 
     \subsection*{Solution}
-    % platform nach vorbild von github für cad kurzer abriss wie problem gelöst wird 
-    % platform grob beschreiben mit funktionen
-    % 5-6 sätze 1 absatz
-
-    To address these issues, we developed a product development platform modeled after GitHub. CAD models can be uploaded to our platform. The platform offers a user management and the possibility to add members with different rights to a CAD model. Authorized members can upload different versions of the CAD model, just like on GitHub. Milestones can be created for each CAD model. Issues can be added for each milestone, on the basis of which changes can be made to the model. For each issue there is a discussion thread that can be opened and closed. Once all issues have been resolved, the respective milestone is considered completed. On the platform, the CAD model can be viewed in a 3D view and is connected to the integrated product management tools. 
-
-   
+    To address these issues, we developed a product development platform. The platform offers user management, member management project management and provides a 3D view for the uploaded CAD models. On our platform, users can create different products. For each product, members, versions, issues, comments and milestones can then be added and edited. As in GitHub, different versions can be created. Each version of the product contain a 3D CAD model that can be viewed like in a 3D CAD software. Members can be registered for a product which possess different permissions. With the help of the customer member role, the customer can participate in agile project management and track the current status of product development. Issues, Comments and Milestones serve as project management tools. Milestones are filled with issues that can be open or closed. A milestone is considered complete when all associated issues are closed. Each issue contains a communication channel where the respective task can be evaluated. On the platform, the CAD model can be viewed in a 3D view and is connected to the integrated product management tools.
 
     \subsection*{Outline}
-    % struktur vom dokument kurz erklärt
     This article is structured as follows:
     In Section~\ref{sec:differentiation} we discuss related work on the problem defined previously.
     In Section~\ref{sec:contribution} we present our original solution to the problem at hand.
@@ -70,4 +36,11 @@
     % von 10000 ergebnisse erste 10 setien durchgescannt, anhand der kurzbeschreibung: relevant, vlt relevant, nicht relevant
     % relevante reingeschaut und dann erst entschieden 
     % wir form verwenden aktiv form überwiegend verwenden
-    % papers: titel in google schoolar eingeben
+    % papers: titel in google schoolar eingeben 
+
+    % paper,github,onshape
+    The search term requirement engineering results in 5 380 000 entries on google schoolar. We scanned the first page of results and found many articles in the field of software development. On ScienceDirect, the search for requirement engineering returned 937,353 entries. Here we found a broader range of use cases. Using the search term requirement management and product development we were able to find more specific articles on the topic on google schoolar. Project management is a huge subject, and it is difficult to specify specific issues. We have looked at some papers and consider the idea of combining project management with product development as new and important.
+
+    A great representative and the model for this software is the platform GitHub. The difference is that GitHub is purely about the management of software. We want to create a broader application area with our app. 
+
+    Another software that already exists on the market is Onshape. This software also combines product development with project management and offers a wide range of functions. We only discovered this software in the course of developing our own software. 
