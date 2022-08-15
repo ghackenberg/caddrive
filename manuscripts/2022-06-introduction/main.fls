@@ -151,10 +151,6 @@ INPUT text/1_introduction.tex
 INPUT ./text/1_introduction.tex
 INPUT text/1_introduction.tex
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmrc7t.tfm
-INPUT ./text/2_oursolution.tex
-INPUT text/2_oursolution.tex
-INPUT ./text/2_oursolution.tex
-INPUT text/2_oursolution.tex
 OUTPUT main.pdf
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
@@ -173,6 +169,10 @@ INPUT c:/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmri7t.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmri8r.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf
+INPUT ./text/2_oursolution.tex
+INPUT text/2_oursolution.tex
+INPUT ./text/2_oursolution.tex
+INPUT text/2_oursolution.tex
 INPUT ./graphics//packages-v2.png
 INPUT ./graphics//packages-v2.png
 INPUT ./graphics//packages-v2.png
