@@ -1,0 +1,37 @@
+classDiagram
+    direction LR
+
+    class Bash
+    class Browser
+
+    class Common
+    class Database
+    class Toolkit
+    class Backend {
+        port = 3001
+    }
+    class Frontend {
+        port = 3002
+    }
+    class Gateway {
+        port = 3000
+    }
+    
+    <<Service>> Backend
+    <<Service>> Frontend
+    <<Service>> Gateway
+    <<Service>> Toolkit
+    <<Library>> Common
+    <<Library>> Database
+    <<Environment>> Bash
+    <<Environment>> Browser
+
+    Bash --> Toolkit: run
+    Browser --> Gateway: http(s)
+    Gateway --> Backend: http(s) /api
+    Gateway --> Frontend: http(s) /
+    Toolkit --> Database: import
+    Backend --> Database: import
+    Backend --> Common: import
+    Frontend --> Common: import
+    Database --> Common: import
