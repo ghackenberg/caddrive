@@ -1,0 +1,108 @@
+classDiagram
+    direction TB
+
+    class User {
+        id: string <readOnly>
+        name: string 
+        email: string
+        role: string
+    }
+    class Product {
+        id: string <readOnly>
+        name: string
+        description: string
+    }
+    class Member {
+        id: string <readOnly>
+        role: string
+    }
+    class Version {
+        id: string <readOnly>
+        time: string <readOnly>
+        major: number
+        minor: number
+        patch: number
+        description: string <markDown>
+    }
+    class Model {
+        id: string <readOnly>
+    }
+    class Node {
+        type: string <readOnly>
+        name: string <readOnly>
+    }
+    class Group {
+    
+    }
+    class Mesh {
+        geometry: Geometry <readOnly>
+        material: Material <readOnly>
+    }
+    class Reference {
+        path: string <readOnly>
+    }
+    class Issue {
+        id: string <readOnly>
+        time: date <readOnly>
+        label: string
+        state: string
+        description: string <markDown>
+    }
+    class Comment {
+        id: string <readOnly>
+        time: string <readOnly>
+        text: string <markDown>
+    }
+    class Milestone {
+        id: string <readOnly>
+        start: date
+        ende: date
+        label: string
+        description: string
+    }
+
+    <<Entity>> User
+    <<Entity>> Product
+    <<Entity>> Member
+    <<Entity>> Version
+    <<Entity>> Issue
+    <<Entity>> Comment
+    <<Entity>> Milestone
+
+    <<File>> Model
+    <<Data>> Node
+    <<Data>> Group
+    <<Data>> Mesh
+
+    <<Data>> Reference
+
+    User <.. Member : references <readOnly>
+    Member --* Product : contains
+
+    Issue "1" *-- "*" Comment : contains
+    Product "1" *-- "*" Issue : contains
+
+    User "1" <.. "*" Product : created by <readOnly>
+    User "1" <.. "*" Version : created by <readOnly>
+    User "1" <.. "*" Issue : created by <readOnly>
+    User "1" <.. "*" Comment : created by <readOnly>
+    User "1" <.. "*" Milestone : created by <readOnly>
+    
+    Product "1" *-- "*" Version : contains
+    Product "1" *-- "*" Milestone : contains
+
+    Node <|-- Group
+    Node <|-- Mesh
+    Group "1" *-- "*" Node : contains <readOnly>
+    Model "1" *-- "1" Node : contains <readOnly>
+
+    Mesh "1" <.. "*" Reference : references <readOnly>
+    
+    Version "1" *-- "1" Model : contains <readOnly>
+    Version "1" ..> "*" Version : based on <readOnly>
+    Version "*" *-- "*" Reference : contains
+    
+    Issue "*" ..> "0..1" Milestone : assigned to
+    Issue "*" ..> "*" User : assigned to
+    Issue "*" *-- "*" Reference : contains
+    Comment "*" *-- "*" Reference : contains
