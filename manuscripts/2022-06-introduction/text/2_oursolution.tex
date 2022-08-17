@@ -10,7 +10,7 @@
     
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{packages-v2.png}
+        \includegraphics[width=\columnwidth]{packages-v3.png}
         \caption{Packages}
         \label{fig: packages}
     \end{figure}
@@ -34,11 +34,11 @@
     \subsubsection*{Toolkit}
     The toolkit package provides functionality to fill the database with test data. Based on the classes defined in the interface, the respective objects are instantiated here. These objects are filled with fictitious data to test the functionality of the app. After the objects are instantiated, they are loaded into the database. For this purpose asynchronous function calls are executed.
     
-    \subsubsection*{Worker}
-    This package is not used yet. It is used to parallelize processes for later extensions of the software.
+    % \subsubsection*{Worker}
+    % This package is not used yet. It is used to parallelize processes for later extensions of the software.
     
-    \subsubsection*{Broker}
-    This package is not used yet. It is used to send routing messages between different services for later extensions of the software.
+    % \subsubsection*{Broker}
+    % This package is not used yet. It is used to send routing messages between different services for later extensions of the software.
 
     \subsection*{Data model}
     The core of the software is in the backend. Via the API, the data can be manipulated using CRUD methods. This section describes the data model of the app. The necessary classes and entities are based on the interfaces in the common package. The difference between the data in the backend and in the database is that each entity class in the backend is divided into update, add and the base class. In the database, the classes are not divided. For example, the class product is mapped to a table in the database.
@@ -60,22 +60,22 @@
     \subsubsection*{Class diagram}
     The following figure [see Fig. \ref{fig: classdiagram} on page~\pageref{fig: classdiagram}] shows the data model of the developed API in the backend. In order to clearly define which data of a class is changed, added and constant, each class is divided into three subclasses that inherit from each other. Thus, the classes are divided into UpdateData, AddData and the entity itself. AddData inherits from UpdateData and the Entity inherits again from AddData. The respective Entity subclasses serve as passing parameters for the API methods. Each entity has an ID as primary key and a deleted attribute. The find methods of the API are defined in such a way that they return only objects, where the deleted attribute is false. So if data is deleted, it is only marked with a deleted flag and will not be found again. If data is created, then the necessary references are generated, such as the associated product or the selected user. These attributes are comparable with foreign keys and are located in the AddData classes. The UpdateData classes contain attributes of the respective entity, which can be changed by the API in the later course. 
 
-    \begin{figure}[h]
+    \begin{figure*}[t]
         \centering
-        \includegraphics[width=7cm]{classdiagram-v1.png}
-        \caption{Class diagram}
+        \includegraphics[width=\textwidth]{entities-v5.png}
+        \caption{Data model}
         \label{fig: classdiagram}
-    \end{figure}
+    \end{figure*}
 
     \subsubsection*{Entity relationship diagram} % optional o machen im diagram
     The entity-relationship model [see Fig. \ref{fig: erDiagram} on page~\pageref{fig: erDiagram}] has a simpler structure like the class diagram. It consists of the exact entities that are used in the interface and API. Since this is only the data store, the classes are not structured in three subclasses. One table is reserved in the database for the entire object. Since the objects of the API and the database are not identical, these must be converted with each write and read process. The database entities are mapped to tables with TypeORM. 
 
-    \begin{figure}[h]
+    \begin{figure*}[t]
         \centering
-        \includegraphics[width=7cm]{erDiagram-v1.png}
+        \includegraphics[width=\textwidth]{erDiagram-v1.png}
         \caption{Entity relationship diagram}
         \label{fig: erDiagram}
-    \end{figure}
+    \end{figure*}
 
     \subsection*{Function model} 
     The functions implemented in the API allows to create, read, update and delete data. This would not even require a graphical user interface. All functions offered by the API are called via HTTP requests. These requests can also be made via the console or other software such as Postman or Swagger. Thus, the functional model in combination with the data model is the foundation of this application. The API is built with nest.js. One rest entity contains of controller, service and module. In operation, an HTTP request is performed in the frontend. The data flows from the respective view via a request manager to a rest method, where the respective Axios request is triggered. In the backend, the nest controller receives the request and sends it on to the nest service. The nest service implements the necessary API methods to make changes to the data. These functions are all asynchronous and have a Promise as return value. After processing, the result is returned. This tunnel is provided with various permission checks to verify that the user or product member has the permission to perform this action. The interface in the common package controls the communication between frontend and backend. In the nest service the methods find, add, get, update, delete and convert are available. The convert method parses the received database object back into an object that can be further processed by the software.
@@ -89,10 +89,9 @@
         \item getUser(id: string)
         \item updateUser(id: string, data: UserUpdateData, file?: File)
         \item deleteUser(id: string)
-        \item convert(user: UserEntity)
     \end{itemize}
 
-    The findUsers method searches for all users of the system from the database. It can be searched either via a query by user name or via the product id. The parameters query and productId are optional. Depending on which parameter is specified, the search process runs differently. The users found in the database are converted into user objects with the convert method, pushed into an array and returned. For the addUser method the transfer parameter is needed, which contains the information about the new user. The second parameter holds the profile picture and is optional. The UserAddData object is generated in normal operation via the User settings view and sent to the backend. GetUser searches for a specific user based on the userId and returns the object after conversion. UpdateUser needs the userId, the UserUpdateData object and optionally a file containing a profile picture. DeleteUser sets the deleted flag of the particular user to true. The get and find methods are implemented that way, to search for objects that are not deleted. The convert method is in each class and parses the database entities back into objects for further processing.
+    The \texttt{findUsers} method searches for all users of the system from the database. It can be searched either via a query by user name or via the product id. The parameters query and productId are optional. Depending on which parameter is specified, the search process runs differently. The users found in the database are converted into user objects with the convert method, pushed into an array and returned. For the addUser method the transfer parameter is needed, which contains the information about the new user. The second parameter holds the profile picture and is optional. The UserAddData object is generated in normal operation via the User settings view and sent to the backend. GetUser searches for a specific user based on the userId and returns the object after conversion. UpdateUser needs the userId, the UserUpdateData object and optionally a file containing a profile picture. DeleteUser sets the deleted flag of the particular user to true. The get and find methods are implemented that way, to search for objects that are not deleted. The convert method is in each class and parses the database entities back into objects for further processing.
 
     \subsubsection*{Product management}
     This part of the API provides methods to make modifications to product objects. Here products can be created, modified and deleted. The following bullet points show the methods that are available for interacting with products:

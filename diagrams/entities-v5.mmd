@@ -1,62 +1,75 @@
 classDiagram
-    direction TB
+    direction LR
 
     class User {
-        id: string <readOnly>
+        id: string &lcub;readOnly&rcub;
+        deleted: boolean
         name: string 
         email: string
-        role: string
+        password: string
+        userManager: boolean
+        productManager: boolean
+    }
+    class Image {
+        id: string &lcub;readOnly&rcub;
     }
     class Product {
-        id: string <readOnly>
+        id: string &lcub;readOnly&rcub;
+        deleted: boolean
         name: string
         description: string
     }
     class Member {
-        id: string <readOnly>
-        role: string
+        id: string &lcub;readOnly&rcub;
+        deleted: boolean
+        role: 'manager' | 'engineer' | 'customer'
     }
     class Version {
-        id: string <readOnly>
-        time: string <readOnly>
+        id: string &lcub;readOnly&rcub;
+        deleted: boolean
+        time: timestamp &lcub;readOnly&rcub;
         major: number
         minor: number
         patch: number
-        description: string <markDown>
+        description: string &lcub;markDown&rcub;
     }
     class Model {
-        id: string <readOnly>
+        id: string &lcub;readOnly&rcub;
     }
     class Node {
-        type: string <readOnly>
-        name: string <readOnly>
+        type: string &lcub;readOnly&rcub;
+        name: string &lcub;readOnly&rcub;
     }
     class Group {
     
     }
     class Mesh {
-        geometry: Geometry <readOnly>
-        material: Material <readOnly>
+        geometry: Geometry &lcub;readOnly&rcub;
+        material: Material &lcub;readOnly&rcub;
     }
     class Reference {
-        path: string <readOnly>
+        path: string &lcub;readOnly&rcub;
     }
     class Issue {
-        id: string <readOnly>
-        time: date <readOnly>
+        id: string &lcub;readOnly&rcub;
+        deleted: boolean
+        time: timestamp &lcub;readOnly&rcub;
         label: string
-        state: string
-        description: string <markDown>
+        description: string &lcub;markDown&rcub;
+        state: 'open' | 'closed'
     }
     class Comment {
-        id: string <readOnly>
-        time: string <readOnly>
-        text: string <markDown>
+        id: string &lcub;readOnly&rcub;
+        deleted: boolean
+        time: timestamp &lcub;readOnly&rcub;
+        text: string &lcub;markDown&rcub;
+        action: 'none' | 'close' | 'reopen'
     }
     class Milestone {
-        id: string <readOnly>
+        id: string &lcub;readOnly&rcub;
+        deleted: boolean
         start: date
-        ende: date
+        end: date
         label: string
         description: string
     }
@@ -69,6 +82,7 @@ classDiagram
     <<Entity>> Comment
     <<Entity>> Milestone
 
+    <<File>> Image
     <<File>> Model
     <<Data>> Node
     <<Data>> Group
@@ -76,33 +90,34 @@ classDiagram
 
     <<Data>> Reference
 
-    User <.. Member : references <readOnly>
-    Member --* Product : contains
+    User "1" <.. "*" Member : references <br> {readOnly}
 
-    Issue "1" *-- "*" Comment : contains
+    Member "*" --* "1" Product : contains
+
+
+    User "1" <.. "*" Product : created by <br> {readOnly}
+    User "1" <.. "*" Version : created by <br> {readOnly}
+    User "1" <.. "1" Image : contains
+    User "1" <.. "*" Issue : created by <br> {readOnly}
+    User "*" <.. "*" Issue : assigned to
+    User "1" <.. "*" Comment : created by <br> {readOnly}
+    User "1" <.. "*" Milestone : created by <br> {readOnly}
+    
+    Product "1" *-- "*" Milestone : contains
     Product "1" *-- "*" Issue : contains
 
-    User "1" <.. "*" Product : created by <readOnly>
-    User "1" <.. "*" Version : created by <readOnly>
-    User "1" <.. "*" Issue : created by <readOnly>
-    User "1" <.. "*" Comment : created by <readOnly>
-    User "1" <.. "*" Milestone : created by <readOnly>
-    
-    Product "1" *-- "*" Version : contains
-    Product "1" *-- "*" Milestone : contains
-
     Node <|-- Group
+    Node "*" --* "1" Group : contains <br> {readOnly}
     Node <|-- Mesh
-    Group "1" *-- "*" Node : contains <readOnly>
-    Model "1" *-- "1" Node : contains <readOnly>
+    Model "1" *-- "1" Node : contains <br> {readOnly}
+    Node "1" <.. "*" Reference : references <br> {readOnly}
 
-    Mesh "1" <.. "*" Reference : references <readOnly>
-    
-    Version "1" *-- "1" Model : contains <readOnly>
-    Version "1" ..> "*" Version : based on <readOnly>
+    Version "*" --* "1" Product : contains
+    Version "1" *-- "1" Model : contains <br> {readOnly}
+    Version "1" ..> "*" Version : based on <br> {readOnly}
     Version "*" *-- "*" Reference : contains
-    
+
     Issue "*" ..> "0..1" Milestone : assigned to
-    Issue "*" ..> "*" User : assigned to
     Issue "*" *-- "*" Reference : contains
+    Issue "1" *-- "*" Comment : contains
     Comment "*" *-- "*" Reference : contains

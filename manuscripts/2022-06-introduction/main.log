@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.6.20)  15 AUG 2022 16:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.6.20)  17 AUG 2022 13:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -165,154 +165,196 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 
 
 ]) (./text/2_oursolution.tex
-<./graphics//packages-v2.png, id=10, 786.94pt x 565.11125pt>
-File: ./graphics//packages-v2.png Graphic file (type png)
-<use ./graphics//packages-v2.png>
-Package pdftex.def Info: ./graphics//packages-v2.png  used on input line 13.
-(pdftex.def)             Requested size: 199.16928pt x 143.01929pt.
- [2 <./graphics//packages-v2.png>]
+<./graphics//packages-v3.png, id=10, 374.39874pt x 474.77374pt>
+File: ./graphics//packages-v3.png Graphic file (type png)
+<use ./graphics//packages-v3.png>
+Package pdftex.def Info: ./graphics//packages-v3.png  used on input line 13.
+(pdftex.def)             Requested size: 252.0pt x 319.56013pt.
+ [2 <./graphics//packages-v3.png>]
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 49.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 49.
  [3]
-<./graphics//classdiagram-v1.png, id=20, 1911.14pt x 1786.675pt>
-File: ./graphics//classdiagram-v1.png Graphic file (type png)
-<use ./graphics//classdiagram-v1.png>
-Package pdftex.def Info: ./graphics//classdiagram-v1.png  used on input line 65.
-(pdftex.def)             Requested size: 199.16928pt x 186.17513pt.
+<./graphics//entities-v5.png, id=20, 1911.14pt x 1120.185pt>
+File: ./graphics//entities-v5.png Graphic file (type png)
+<use ./graphics//entities-v5.png>
+Package pdftex.def Info: ./graphics//entities-v5.png  used on input line 65.
+(pdftex.def)             Requested size: 516.0pt x 302.4369pt.
 <./graphics//erDiagram-v1.png, id=21, 1198.4775pt x 1423.3175pt>
 File: ./graphics//erDiagram-v1.png Graphic file (type png)
 <use ./graphics//erDiagram-v1.png>
 Package pdftex.def Info: ./graphics//erDiagram-v1.png  used on input line 75.
-(pdftex.def)             Requested size: 199.16928pt x 236.53127pt.
- [4 <./graphics//classdiagram-v1.png> <./graphics//erDiagram-v1.png>] [5]
-<./graphics//userlevelpermissions.JPG, id=28, 373.395pt x 165.61874pt>
+(pdftex.def)             Requested size: 516.0pt x 612.81818pt.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 94.
+ (c:/texlive/2022/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+) [4] [5 <./graphics//entities-v5.png>]
+<./graphics//userlevelpermissions.JPG, id=29, 373.395pt x 165.61874pt>
 File: ./graphics//userlevelpermissions.JPG Graphic file (type jpg)
 <use ./graphics//userlevelpermissions.JPG>
-Package pdftex.def Info: ./graphics//userlevelpermissions.JPG  used on input line 188.
+Package pdftex.def Info: ./graphics//userlevelpermissions.JPG  used on input line 187.
 (pdftex.def)             Requested size: 199.16928pt x 88.34106pt.
-<./graphics//memberlevelpermissions.JPG, id=29, 405.01312pt x 594.72188pt>
-File: ./graphics//memberlevelpermissions.JPG Graphic file (type jpg)
-<use ./graphics//memberlevelpermissions.JPG>
-Package pdftex.def Info: ./graphics//memberlevelpermissions.JPG  used on input line 198.
-(pdftex.def)             Requested size: 199.16928pt x 292.46893pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<./graphics//startpage.JPG, id=30, 1445.4pt x 464.4853pt>
+<./graphics//memberlevelpermissions.JPG, id=30, 405.01312pt x 594.72188pt>
+File: ./graphics//memberlevelpermissions.JPG Graphic file (type jpg)
+<use ./graphics//memberlevelpermissions.JPG>
+Package pdftex.def Info: ./graphics//memberlevelpermissions.JPG  used on input line 197.
+(pdftex.def)             Requested size: 199.16928pt x 292.46893pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//startpage.JPG, id=31, 1445.4pt x 464.4853pt>
 File: ./graphics//startpage.JPG Graphic file (type jpg)
 <use ./graphics//startpage.JPG>
-Package pdftex.def Info: ./graphics//startpage.JPG  used on input line 211.
+Package pdftex.def Info: ./graphics//startpage.JPG  used on input line 210.
 (pdftex.def)             Requested size: 199.16928pt x 63.99982pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<./graphics//newproductview.JPG, id=31, 1443.14156pt x 727.96968pt>
+<./graphics//newproductview.JPG, id=32, 1443.14156pt x 727.96968pt>
 File: ./graphics//newproductview.JPG Graphic file (type jpg)
 <use ./graphics//newproductview.JPG>
-Package pdftex.def Info: ./graphics//newproductview.JPG  used on input line 218.
+Package pdftex.def Info: ./graphics//newproductview.JPG  used on input line 217.
 (pdftex.def)             Requested size: 199.16928pt x 100.45992pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[6 <./graphics//userlevelpermissions.JPG> <./graphics//memberlevelpermissions.JPG>]
-<./graphics//usermanagement.JPG, id=35, 1444.64719pt x 438.8897pt>
+<./graphics//usermanagement.JPG, id=33, 1444.64719pt x 438.8897pt>
 File: ./graphics//usermanagement.JPG Graphic file (type jpg)
 <use ./graphics//usermanagement.JPG>
-Package pdftex.def Info: ./graphics//usermanagement.JPG  used on input line 228.
+Package pdftex.def Info: ./graphics//usermanagement.JPG  used on input line 227.
 (pdftex.def)             Requested size: 199.16928pt x 60.50656pt.
-<./graphics//usersettingsview.JPG, id=36, 1445.4pt x 634.62094pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//usersettingsview.JPG, id=34, 1445.4pt x 634.62094pt>
 File: ./graphics//usersettingsview.JPG Graphic file (type jpg)
 <use ./graphics//usersettingsview.JPG>
-Package pdftex.def Info: ./graphics//usersettingsview.JPG  used on input line 235.
+Package pdftex.def Info: ./graphics//usersettingsview.JPG  used on input line 234.
 (pdftex.def)             Requested size: 199.16928pt x 87.44221pt.
-<./graphics//versionview.JPG, id=37, 1445.4pt x 732.48656pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[6]
+<./graphics//versionview.JPG, id=38, 1445.4pt x 732.48656pt>
 File: ./graphics//versionview.JPG Graphic file (type jpg)
 <use ./graphics//versionview.JPG>
-Package pdftex.def Info: ./graphics//versionview.JPG  used on input line 245.
-(pdftex.def)             Requested size: 199.16928pt x 100.92677pt.
-<./graphics//versionsettingsview.JPG, id=38, 1445.4pt x 733.23938pt>
-File: ./graphics//versionsettingsview.JPG Graphic file (type jpg)
-<use ./graphics//versionsettingsview.JPG>
-Package pdftex.def Info: ./graphics//versionsettingsview.JPG  used on input line 252.
-(pdftex.def)             Requested size: 199.16928pt x 101.0305pt.
-<./graphics//issueview.JPG, id=39, 1445.4pt x 732.48656pt>
-File: ./graphics//issueview.JPG Graphic file (type jpg)
-<use ./graphics//issueview.JPG>
-Package pdftex.def Info: ./graphics//issueview.JPG  used on input line 262.
+Package pdftex.def Info: ./graphics//versionview.JPG  used on input line 244.
 (pdftex.def)             Requested size: 199.16928pt x 100.92677pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<./graphics//issuesettingsview.JPG, id=40, 1445.4pt x 728.7225pt>
+<./graphics//versionsettingsview.JPG, id=39, 1445.4pt x 733.23938pt>
+File: ./graphics//versionsettingsview.JPG Graphic file (type jpg)
+<use ./graphics//versionsettingsview.JPG>
+Package pdftex.def Info: ./graphics//versionsettingsview.JPG  used on input line 251.
+(pdftex.def)             Requested size: 199.16928pt x 101.0305pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//issueview.JPG, id=40, 1445.4pt x 732.48656pt>
+File: ./graphics//issueview.JPG Graphic file (type jpg)
+<use ./graphics//issueview.JPG>
+Package pdftex.def Info: ./graphics//issueview.JPG  used on input line 261.
+(pdftex.def)             Requested size: 199.16928pt x 100.92677pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//issuesettingsview.JPG, id=41, 1445.4pt x 728.7225pt>
 File: ./graphics//issuesettingsview.JPG Graphic file (type jpg)
 <use ./graphics//issuesettingsview.JPG>
-Package pdftex.def Info: ./graphics//issuesettingsview.JPG  used on input line 269.
+Package pdftex.def Info: ./graphics//issuesettingsview.JPG  used on input line 268.
 (pdftex.def)             Requested size: 199.16928pt x 100.40814pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[7 <./graphics//startpage.JPG> <./graphics//newproductview.JPG> <./graphics//usermanagement.JPG> <./graphics//usersettingsview.JPG> <./graphics//versionview.JPG> <./graphics//versionsettingsview.JPG>]
-<./graphics//commentview.JPG, id=45, 1443.89438pt x 726.46407pt>
+<./graphics//commentview.JPG, id=42, 1443.89438pt x 726.46407pt>
 File: ./graphics//commentview.JPG Graphic file (type jpg)
 <use ./graphics//commentview.JPG>
-Package pdftex.def Info: ./graphics//commentview.JPG  used on input line 279.
+Package pdftex.def Info: ./graphics//commentview.JPG  used on input line 278.
 (pdftex.def)             Requested size: 199.16928pt x 100.19672pt.
-<./graphics//commentselectedpartview.JPG, id=46, 1445.4pt x 729.47531pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//commentselectedpartview.JPG, id=43, 1445.4pt x 729.47531pt>
 File: ./graphics//commentselectedpartview.JPG Graphic file (type jpg)
 <use ./graphics//commentselectedpartview.JPG>
-Package pdftex.def Info: ./graphics//commentselectedpartview.JPG  used on input line 286.
+Package pdftex.def Info: ./graphics//commentselectedpartview.JPG  used on input line 285.
 (pdftex.def)             Requested size: 199.16928pt x 100.51186pt.
-<./graphics//milestoneview.JPG, id=47, 1445.4pt x 730.98094pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//milestoneview.JPG, id=44, 1445.4pt x 730.98094pt>
 File: ./graphics//milestoneview.JPG Graphic file (type jpg)
 <use ./graphics//milestoneview.JPG>
-Package pdftex.def Info: ./graphics//milestoneview.JPG  used on input line 296.
+Package pdftex.def Info: ./graphics//milestoneview.JPG  used on input line 295.
 (pdftex.def)             Requested size: 199.16928pt x 100.71931pt.
-<./graphics//sprintview.JPG, id=48, 1443.89438pt x 727.21687pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//sprintview.JPG, id=45, 1443.89438pt x 727.21687pt>
 File: ./graphics//sprintview.JPG Graphic file (type jpg)
 <use ./graphics//sprintview.JPG>
-Package pdftex.def Info: ./graphics//sprintview.JPG  used on input line 303.
+Package pdftex.def Info: ./graphics//sprintview.JPG  used on input line 302.
 (pdftex.def)             Requested size: 199.16928pt x 100.30055pt.
-<./graphics//milestonesettingsview.JPG, id=49, 1445.4pt x 722.7pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//milestonesettingsview.JPG, id=46, 1445.4pt x 722.7pt>
 File: ./graphics//milestonesettingsview.JPG Graphic file (type jpg)
 <use ./graphics//milestonesettingsview.JPG>
-Package pdftex.def Info: ./graphics//milestonesettingsview.JPG  used on input line 310.
+Package pdftex.def Info: ./graphics//milestonesettingsview.JPG  used on input line 309.
 (pdftex.def)             Requested size: 199.16928pt x 99.57831pt.
- [8 <./graphics//issueview.JPG> <./graphics//issuesettingsview.JPG> <./graphics//commentview.JPG> <./graphics//commentselectedpartview.JPG> <./graphics//milestoneview.JPG> <./graphics//sprintview.JPG> <./graphics//milestonesettingsview.JPG>]
-<./graphics//memberview.JPG, id=53, 1445.4pt x 730.22812pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//memberview.JPG, id=47, 1445.4pt x 730.22812pt>
 File: ./graphics//memberview.JPG Graphic file (type jpg)
 <use ./graphics//memberview.JPG>
-Package pdftex.def Info: ./graphics//memberview.JPG  used on input line 320.
+Package pdftex.def Info: ./graphics//memberview.JPG  used on input line 319.
 (pdftex.def)             Requested size: 199.16928pt x 100.61559pt.
-<./graphics//membersettingsview.JPG, id=54, 1440.13031pt x 732.48656pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//membersettingsview.JPG, id=48, 1440.13031pt x 732.48656pt>
 File: ./graphics//membersettingsview.JPG Graphic file (type jpg)
 <use ./graphics//membersettingsview.JPG>
-Package pdftex.def Info: ./graphics//membersettingsview.JPG  used on input line 327.
+Package pdftex.def Info: ./graphics//membersettingsview.JPG  used on input line 326.
 (pdftex.def)             Requested size: 199.16928pt x 101.29561pt.
-<./graphics//productsettingsview.JPG, id=55, 1438.6247pt x 727.96968pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//productsettingsview.JPG, id=49, 1438.6247pt x 727.96968pt>
 File: ./graphics//productsettingsview.JPG Graphic file (type jpg)
 <use ./graphics//productsettingsview.JPG>
-Package pdftex.def Info: ./graphics//productsettingsview.JPG  used on input line 336.
+Package pdftex.def Info: ./graphics//productsettingsview.JPG  used on input line 335.
 (pdftex.def)             Requested size: 199.16928pt x 100.78204pt.
-) (./text/3_finalpart.tex) [9 <./graphics//memberview.JPG> <./graphics//membersettingsview.JPG> <./graphics//productsettingsview.JPG>] (./main.bbl) [10
+) (./text/3_finalpart.tex
 
-] (./main.aux) ) 
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \vbox (badness 2080) has occurred while \output is active []
+
+ [7]) (./main.bbl) [8] [9 <./graphics//erDiagram-v1.png>] [10 <./graphics//userlevelpermissions.JPG> <./graphics//memberlevelpermissions.JPG> <./graphics//startpage.JPG> <./graphics//newproductview.JPG> <./graphics//usermanagement.JPG> <./graphics//usersettingsview.JPG> <./graphics//versionview.JPG> <./graphics//versionsettingsview.JPG> <./graphics//issueview.JPG>] [11 <./graphics//issuesettingsview.JPG> <./graphics//commentview.JPG> <./graphics//commentselectedpartview.JPG> <./graphics//milestoneview.JPG> <./graphics//sprintview.JPG> <./graphics//milestonesettingsview.JPG> <./graphics//memberview.JPG> <./graphics//membersettingsview.JPG> <./graphics//productsettingsview.JPG>] (./main.aux) ) 
 Here is how much of TeX's memory you used:
- 2347 strings out of 478038
- 45084 string characters out of 5843069
- 358635 words of memory out of 5000000
- 20781 multiletter control sequences out of 15000+600000
- 500840 words of font info for 78 fonts, out of 8000000 for 9000
+ 2384 strings out of 478038
+ 45571 string characters out of 5843069
+ 369219 words of memory out of 5000000
+ 20813 multiletter control sequences out of 15000+600000
+ 501355 words of font info for 80 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,7n,62p,2866b,223s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}<c:/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (10 pages, 2517897 bytes).
+{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}<c:/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (11 pages, 2412601 bytes).
 PDF statistics:
- 86 PDF objects out of 1000 (max. 8388607)
- 41 compressed objects within 1 object stream
+ 94 PDF objects out of 1000 (max. 8388607)
+ 46 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  106 words of extra memory for PDF output out of 10000 (max. 10000000)
 
