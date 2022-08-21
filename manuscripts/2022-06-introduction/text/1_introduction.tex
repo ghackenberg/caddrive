@@ -1,5 +1,15 @@
 \begin{abstract}
-    Project management is facing new challenges as a result of the demand for increasingly individualized products in small batch sizes. The digitization of processes is an enabler for agile management. If product development is viewed separately from project management, many engineering artifacts are lost. This makes aspects such as scheduling, priority planning or the definition of new requirements difficult. A platform that combines product development with project management provides an overview of the entire project and gives the customer a transparent view of the progress. This article describes the development of such a platform and evaluates its benefits and drawbacks. For the development of the software, tools from web development were used to create a cross-platform user experience built on a client server architecture. The focus was on making the software lightweight and intuitive to use. The software was continuously tested during the development and showed potential to add value to the project management of products. It offers many possibilities for further development to expand the field of application. The software will be further developed in follow-up projects to make it ready for practical use and to extend its functions. There are already plans to extend the software in the direction of a simulation tool and virtual reality.
+    Product development is facing new challenges as a result of the demand for increasingly individualized products in small batch sizes and short time to markets. 
+    By providing software tools, digitalization is an enabler for agile product development. Stakeholders such as the customer, the project manager, the requirement manager and the solution manager can develop the product together and react quickly to each other's demands.
+    The individual aspects of product development are often considered separately. Each stakeholder uses its own platform to generate outputs. As a result, the connection between the components of product development is missing. Without a common context between the different departments, valuable information and work results are lost.
+    This complicates aspects such as scheduling, priority planning or the definition of new requirements as there is no common basis of information.
+    To solve these issues, we have developed an open source platform on which all relevant results can be managed.
+    Our platform combines project management, requirements engineering and solution engineering to offer a transparent insight into the progress of product development. 
+    For the development of the software, tools from web development were used to create a cross-platform user experience built on a client server architecture. The focus was on making the software lightweight and intuitive to use. 
+    The software was continuously tested during the development process and showed potential to add value to the project management of products. Nevertheless, important adjustments still need to be made to create a solid user experience.
+    This article describes the development of such a platform and evaluates its benefits, drawbacks and what lessons we have learned. 
+    In the Future the software will be further developed in follow-up projects to make it ready for practical use and to extend its functions. 
+    There are already plans to extend the software in the direction of a simulation tool and virtual reality.
 
     ~\cite{Hackenberg2014}~\cite{Legat2014}~\cite{Teufl2015}
 \end{abstract}
@@ -7,16 +17,55 @@
 \section{Introduction}
     \label{sec:introduction}
 
-    \subsection*{Context}
-    %engineer to order und losgröße1 individualisierung
-    Over time, customers demand more and more specific products at small batch sizes. Product cycles are becoming even shorter and the customer wants to get to his product in an agile and cost-efficient way. Engineer to order is a part of the production chain in which a product is produced and customized according to exact specifications. It is becoming increasingly important to involve the customer in the project management process in order to develop precise solutions for him. 
-    % agilität
-    An important part of this individual production consists of regular meetings. Through constant exchange, customer requirements can be discussed and specified. Agile product management makes it possible to adjust the product in the developing process if necessary. 
-    % digitalisierung als enabler für die agilität 
-    The digitization of development processes serves as an enabler for agility. It makes it possible to create a common basis for project management regardless of location. Customers can follow and evaluate the processes digitally. Through constant feedback, it is possible to react to customer wishes in order to reflect their interests. Agile product management is often supported by digital tools. With the help of spreadsheets and databases, the customer is involved in the development process. Project management and product development are not mapped together in such tools. Thus, depending on the product to be developed, it is difficult to give the customer a full overview of the progress.
+    % \subsection*{Context}
+    % %engineer to order und losgröße1 individualisierung
+    % Over time, customers demand more and more specific products at small batch sizes. Product cycles are becoming even shorter and the customer wants to get to his product in an agile and cost-efficient way. Engineer to order is a part of the production chain in which a product is produced and customized according to exact specifications. It is becoming increasingly important to involve the customer in the project management process in order to develop precise solutions. 
+    % % agilität
+    % An important part of this individual production consists of regular meetings. Through constant exchange, customer requirements can be discussed and specified. Agile product management makes it possible to adjust the product in the developing process if necessary. 
+    % % digitalisierung als enabler für die agilität 
+    % The digitization of development processes serves as an enabler for agility. It makes it possible to create a common basis for project management regardless of location. Customers can follow and evaluate the processes digitally. Through constant feedback, it is possible to react to customer wishes in order to reflect their interests. Agile product management is often supported by digital tools. With the help of spreadsheets and databases, the customer is involved in the development process. Project management and product development are not mapped together in such tools. Thus, depending on the product to be developed, it is difficult to give the customer a full overview of the progress.
+
+
+
+    \subsection*{Context and motivation}
+    %3
+    % Jeder engineering design Prozess startet mit dem definieren der needs, die durch das resultierende produkt abgedeckt werden sollen. Um erfolgreich am Produkt entwickeln zu könnenist es wichtig die kundenwünsche exakt und effektiv einzufangen. 
+    Every engineering design process starts with defining the needs to be covered in the resulting product. In order to successfully develop the product, it is important to capture the customer's needs precisely and effectively. 
+
+    %1
+    % Der Trend geht dahin, dass Produkte immer Komplexer werden und die time to market zeit immer kleiner wird. 
+    % Um den heutigen Herausforderungen gewachsen zu sein müssen unternehmen die cycle time  von neuen produkten kürzen, die verwendeten resourcen reduzieren und gleichzeitig die qualität des produktes steigern. Um die geschäftsziele zu erreichen müssen die unternemen umfangreich und effektiv requirements sammeln, analysieren und anwenden.
+    The trend is for products to become increasingly complex and shorter time to markets.
+    To meet today's challenges, companies must shorten the cycle time of new products, reduce the resources used, increase the quality of the product. To meet this business goals, companies need to collect, analyze and apply requirements extensively and effectively.
+
+    %9 
+    % Requirement Engineering spielt dabei als Disziplin dine wichtige Rolle und birgt viele Challenges. Eindeutige Anforderungen und der Fokus auf den Enduser mit management support machen die Hälfte des Erfolgs der späteren Produkt entwicklung aus. 
+    Requirement engineering plays an important role as a discipline and holds many challenges. Clear requirements and a focus on the end user with management support represent half of the success of future product development. 
+
+    % 2 
+    % Im competativen Business umfeld kann so durch das treffen der richtigen Requirements in weniger Zeit ein Produkt mit höherer Qualität entwickelt werden weil weniger Iterationen benötigt werden. Dabei wird die Kundenzufriedenheit erhöht und durch eine saubere Dokumention ist es möglich Teile des Prozesses für andere Produkte wiederzuverwenden.
+    Through proper requirement management, a product with higher quality can be developed in less time by meeting the right requirements because fewer iterations are required. The customer satisfaction is increased and through a clean documentation it is possible to reuse parts of the process for other products.
+
+    % 7
+    % Durch das Sammeln der Informationen und durch mögliche Änderungen der Kundenwünsche kommen sehr viele Daten zusammen, die es erschweren einen Überblick über den Produktentwicklungsprozess zu behalten. Es ist schwierig die vielen Daten zu verwalten wegen der kognitiven Kapazität des Menschen. Project Mangeement Tools helfen dabei mit Visualisierungen in Form von Dashboards eine Übersicht über den Projektfortschritt zu erhalten. 
+    By collecting the information and by possible changes of the customer requirements, a lot of data comes up, which makes it difficult to keep an overview of the product development process. It is difficult to manage the large amount of data because of the cognitive capacity of humans. Project management tools help to get an overview of the project progress with visualizations in the form of dashboards. 
+
+    %11 
+    % Solch soll Tool muss die Dynamik der Requirements im Entwicklungsprozess berücksichtigen und einen Support für colloborative und interdisziplinäre cooperation bieten. Dabei sollen die Engineering Aktivitäten in Sprints aufgeteilt werden können.
+    Such a tool must take into account the dynamics of the requirements in the development process and provide support for collaborative and interdisciplinary cooperation. It should be possible to divide the engineering activities into sprints.
+
+    % selbst
+    % Da solche Tools nicht alle wesentlichen Aspekte wie das Project Management, das Requirement engineering und das solution engineering abdeckten wollen wir im Zuge dieses Artikels die Entwicklung einer solchen Software beschreiben und diese evaluieren. Die Software betrachtet die Produktentwicklung als Gesamtkonzept. Dadurch erhalten die Stakeholder einen transperenten und interdisziplinären Überblick über den Projektvortschritt.
+    Since such tools do not cover all essential aspects such as project management, requirement engineering and solution engineering, we want to describe the development of such software and evaluate it in the course of this article. The software considers product development as an overall concept. This gives the stakeholders a transparent and interdisciplinary overview of the project progress and enables agile product development.
+    
+
+
+
+
+
 
     \subsection*{Problem}
-    Requirements management is complicated by the fact that CAD data and documentation are kept separate. Because the customer does not have all of these necessary documents available in a clear manner, it is hard to follow the progress of the project. Requirement engineering task planning and scheduling are therefore difficult. By keeping the documentation in Excel lists or other documents, some engineering artifacts are lost. This lack of transparency in product development makes it difficult to implement agile product management. If the customer has no access to the development progress, there is no possibility of prioritizing times and requirements. He also cannot participate in design decisions and shape the product according to his wishes.
+    Product development is complicated by the fact that CAD data and documentation are kept separate. Because the customer does not have all of these necessary documents available in a clear manner, it is hard to follow the progress of the project. Requirement engineering task planning and scheduling are therefore difficult. By keeping the documentation in Excel lists or other documents, some engineering artifacts are lost. This lack of transparency in product development makes it difficult to implement agile product management. If the customer has no access to the development progress, there is no possibility of prioritizing times and requirements. He also cannot participate in design decisions and shape the product according to his wishes.
 
     \subsection*{Solution}
     To address these issues, we developed a product development platform. The platform offers user management, member management project management and provides a 3D view for the uploaded CAD models. On our platform, users can create different products. For each product, members, versions, issues, comments and milestones can then be added and edited. As in GitHub, different versions can be created. Each version of the product contain a 3D CAD model that can be viewed like in a 3D CAD software. Members can be registered for a product which possess different permissions. With the help of the customer member role, the customer can participate in agile project management and track the current status of product development. Issues, Comments and Milestones serve as project management tools. Milestones are filled with issues that can be open or closed. A milestone is considered complete when all associated issues are closed. Each issue contains a communication channel where the respective task can be evaluated. On the platform, the CAD model can be viewed in a 3D view and is connected to the integrated product management tools.
@@ -40,8 +89,13 @@
     % papers: titel in google schoolar eingeben 
 
     % paper,github,onshape
-    The search term requirement engineering results in 5 million entries on google schoolar. We scanned the first page of results and found many articles in the field of software development. On ScienceDirect, the search for requirement engineering returned over 900 000 entries. Here we found a broader range of use cases. Using the search term requirement management and product development we were able to find more specific articles on the topic on google schoolar. Project management is a huge subject, and it is difficult to specify specific issues. We have looked at some papers and consider the idea of combining project management with product development as new and important.
+    % The search term requirement engineering results in 5 million entries on google schoolar. We scanned the first page of results and found many articles in the field of software development. On ScienceDirect, the search for requirement engineering returned over 900 000 entries. Here we found a broader range of use cases. Using the search term requirement management and product development we were able to find more specific articles on the topic on google schoolar. Project management is a huge subject, and it is difficult to specify specific issues. We have looked at some papers and consider the idea of combining project management with product development as new and important.
 
-    A great representative and the model for this software is the platform GitHub. The difference is that GitHub is purely about the management of software. We want to create a broader application area with our app. 
+    % A great representative and the model for this software is the platform GitHub. The difference is that GitHub is purely about the management of software. We want to create a broader application area with our app. 
 
-    Another software that already exists on the market is Onshape. This software also combines product development with project management and offers a wide range of functions. We only discovered this software in the course of developing our own software. 
+    % Another software that already exists on the market is Onshape. This software also combines product development with project management and offers a wide range of functions. We only discovered this software in the course of developing our own software. 
+
+
+    \subsection*{Scientific approach}
+    % software heavy, keine eigenenn tools
+    \subsection*{Commercial approach}

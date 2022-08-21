@@ -1,8 +1,8 @@
 \section{Our solution}
-    \label{sec:contribution}
+    \label{sec:contribution} 
     For the implementation of the project, the requirements for the software are defined first. The requirements are still general in this, first section and become more concrete during the development of the design. Following the requirement definitions a detailed solution is compiled step by step. The most important concepts of this software are thereby the software architecture, the data model, the function model, the permission model and the user interface. Thus, the software can be developed according to the defined concepts and evaluated afterwards.
 
-    \subsection*{Requirement specifications}
+    \subsection*{Conception}
     The goal to be achieved is to combine project management with CAD data to create a compact and lightweight solution. Customers and companies can evaluate and control the development status on a common basis. For this purpose, the platform GIT was considered as a reference, which already offers a similar solution in the area of software development. Following this example, a platform is to be developed that combines the design process, project management and communication with the customer. For this purpose, clear user roles with corresponding permissions must be defined. For example, the app needs a user administration with an associated login function. At the top level, it must be possible to define which users are allowed to create products and edit the list of users. The person who creates a product is both owner and manager and can add product members who have different permissions. Depending on the distributed rights, members can add versions to the respective product. Each added version contains a new CAD model with version number, previous version and description. For each product it should be possible to create issues, which are filtered by open and closed issues. In each issue there is a communication channel in which the issues can be discussed. Furthermore, specific components of the model can be selected and referenced, and an issue can be closed or reopened. Another level of product management is built by the milestones. Milestones can be created, and different issues can be added to them. A list of open and closed issues as well as a chart show the progress of each milestone. Finally, the platform must provide settings for each product to define the member list and the product properties. All data generated on the platform should be stored in a database. The software should be as lightweight as possible and intuitive to use. The customer should be in the foreground and the user interface should be built from the user's point of view. In this way, a platform can be created that clearly combines product development, product management and communication with the customer.
 
     \subsection*{Architecture}
@@ -33,48 +33,18 @@
     
     \subsubsection*{Toolkit}
     The toolkit package provides functionality to fill the database with test data. Based on the classes defined in the interface, the respective objects are instantiated here. These objects are filled with fictitious data to test the functionality of the app. After the objects are instantiated, they are loaded into the database. For this purpose asynchronous function calls are executed.
-    
-    % \subsubsection*{Worker}
-    % This package is not used yet. It is used to parallelize processes for later extensions of the software.
-    
-    % \subsubsection*{Broker}
-    % This package is not used yet. It is used to send routing messages between different services for later extensions of the software.
 
     \subsection*{Data model}
     The core of the software is in the backend. Via the API, the data can be manipulated using CRUD methods. This section describes the data model of the app. The necessary classes and entities are based on the interfaces in the common package. The difference between the data in the backend and in the database is that each entity class in the backend is divided into update, add and the base class. In the database, the classes are not divided. For example, the class product is mapped to a table in the database.
     
-    \subsubsection*{Entities}
-    The data model contains the entities [see Fig. \ref{fig: erDiagram} on page~\pageref{fig: erDiagram}]:
-    \begin{itemize}
-        \item User
-        \item Product
-        \item Version
-        \item Issue
-        \item Comment
-        \item Milestone
-        \item Member
-    \end{itemize}
-
-    The primary key of each entity is its Id. At the top level of the data model is the user, who can create multiple products if he has the permission to do so. For each product versions, issues, comments, milestones and members can be created. The entity User has personal attributes like the profile picture name, email, password and the two permissions to create and change users or to create products. Finally, like any other entity, the user has a deleted flag. If a delete method is executed, this is set to true. The find and get methods of the API are implemented to search only for objects that are not deleted. When deleting, care must be taken which dependencies must also be set to deleted. If a user is deleted, no further data is removed from him. The user is only marked as deleted on the user interface. All data generated by the user will remain. All other entities are linked to the product entity. The product itself does not provide much information, because it will be filled with information later by other references. If a product is deleted, all versions, issues, comments, milestones, and members must also be set to deleted. The versions contain important information and the 3D CAD model. To create a versioning, the attributes major, minor and patch are specified for a version. the baseVersionIds are used to identify the previous version. By knowing the current version and previous version, a graphical overview can be built on the UI. Multiple issues can be added for each project. Label and text contain information about the issue. The state distinguishes between open and closed issues. So it is possible to filter for completed and not completed issues. The attribute assigneeId is a string array. Here the userIds of the users are specified who have the task to solve the issue. The milestoneId can be used to add the issue to a milestone. For each issue one or more comments can be created. These comments have a text, an author and a corresponding issue as well as the time of the post. With the attribute action an issue can be closed or reopened by the comment. For each product one or more milestones can be defined. These have a label and clear start and end dates. UserId and productId serve as foreign keys. Later it can be counted how many issues per milestone are still open or already closed. This can be used to display a graphical representation of the project progress in the frontend. For each product one or more members can be added. These members have the foreign keys productId and userId. The attribute role can have three states: manager, engineer, customer. Depending on the role, the corresponding product member has different permissions to interact with the respective product.
-
-    \subsubsection*{Class diagram}
-    The following figure [see Fig. \ref{fig: classdiagram} on page~\pageref{fig: classdiagram}] shows the data model of the developed API in the backend. In order to clearly define which data of a class is changed, added and constant, each class is divided into three subclasses that inherit from each other. Thus, the classes are divided into UpdateData, AddData and the entity itself. AddData inherits from UpdateData and the Entity inherits again from AddData. The respective Entity subclasses serve as passing parameters for the API methods. Each entity has an ID as primary key and a deleted attribute. The find methods of the API are defined in such a way that they return only objects, where the deleted attribute is false. So if data is deleted, it is only marked with a deleted flag and will not be found again. If data is created, then the necessary references are generated, such as the associated product or the selected user. These attributes are comparable with foreign keys and are located in the AddData classes. The UpdateData classes contain attributes of the respective entity, which can be changed by the API in the later course. 
+    \subsubsection*{Entities} % hier noch von den diagramm texten was raus nehmen
+    The data model contains following entities [see Fig. \ref{fig: datamodel} on page~\pageref{fig: datamodel}]: User, Product, Version, Issue, Comment, Milestone, Member. At the top level of the data model is the user, who can create multiple products if he has the permission to do so. For each product versions, issues, comments, milestones and members can be created. The entity User has personal attributes like the profile picture name, email, password and the two permissions to create and change users or to create products. Finally, like any other entity, the user has a deleted flag. If a delete method is executed, this is set to true. The find and get methods of the API are implemented to search only for objects that are not deleted. When deleting, care must be taken which dependencies must also be set to deleted. If a user is deleted, no further data is removed from him. The user is only marked as deleted on the user interface. All data generated by the user will remain. All other entities are linked to the product entity. The product itself does not provide much information, because it will be filled with information later by other references. If a product is deleted, all versions, issues, comments, milestones, and members must also be set to deleted. The versions contain important information and the 3D CAD model. To create a versioning, the attributes major, minor and patch are specified for a version. the baseVersionIds are used to identify the previous version. By knowing the current version and previous version, a graphical overview can be built on the UI. Multiple issues can be added for each project. Label and text contain information about the issue. The state distinguishes between open and closed issues. So it is possible to filter for completed and not completed issues. The attribute assigneeId is a string array. Here the userIds of the users are specified who have the task to solve the issue. The milestoneId can be used to add the issue to a milestone. For each issue one or more comments can be created. These comments have a text, an author and a corresponding issue as well as the time of the post. With the attribute action an issue can be closed or reopened by the comment. For each product one or more milestones can be defined. These have a label and clear start and end dates. UserId and productId serve as foreign keys. Later it can be counted how many issues per milestone are still open or already closed. This can be used to display a graphical representation of the project progress in the frontend. For each product one or more members can be added. These members have the foreign keys productId and userId. The attribute role can have three states: manager, engineer, customer. Depending on the role, the corresponding product member has different permissions to interact with the respective product.
 
     \begin{figure*}[t]
         \centering
         \includegraphics[width=\textwidth]{entities-v5.png}
         \caption{Data model}
-        \label{fig: classdiagram}
-    \end{figure*}
-
-    \subsubsection*{Entity relationship diagram} % optional o machen im diagram
-    The entity-relationship model [see Fig. \ref{fig: erDiagram} on page~\pageref{fig: erDiagram}] has a simpler structure like the class diagram. It consists of the exact entities that are used in the interface and API. Since this is only the data store, the classes are not structured in three subclasses. One table is reserved in the database for the entire object. Since the objects of the API and the database are not identical, these must be converted with each write and read process. The database entities are mapped to tables with TypeORM. 
-
-    \begin{figure*}[t]
-        \centering
-        \includegraphics[width=\textwidth]{erDiagram-v1.png}
-        \caption{Entity relationship diagram}
-        \label{fig: erDiagram}
+        \label{fig: datamodel}
     \end{figure*}
 
     \subsection*{Function model} 
@@ -135,7 +105,6 @@
     The findIssues method can search for issues in the database in several ways. An issue is always connected to a product. Thus, the productId must always be passed. Aditionally, the milestoneId parameters can be given to the method to search for issues that belongs to a specific milestone. The state parameter allows to filter the issues by closed and open. This is especially useful to be able to filter for completed or uncompleted tasks for  the purpose of product management. When deleting issues, all comments belonging to the respective issue must also be deleted.
 
     \subsubsection*{Comment management}
-    % comments select parts Datenmodell
     The following list shows the methods that can be performed to interact with the comment objects:
     \begin{itemize}
         \item findComments(issueId: string)
@@ -184,7 +153,7 @@
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{userlevelpermissions.JPG}
+        \includegraphics[width=\columnwidth]{userlevelpermissions.JPG}
         \caption{Permissions on user level}
         \label{tab: userlevelpermissions}
     \end{figure}
@@ -194,7 +163,7 @@
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{memberlevelpermissions.JPG}
+        \includegraphics[width=\columnwidth]{memberlevelpermissions.JPG}
         \caption{Permissions on member level}
         \label{tab: memberlevelpermissions}
     \end{figure}
@@ -207,14 +176,14 @@
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{startpage.JPG}
+        \includegraphics[width=\columnwidth]{startpage.JPG}
         \caption{Startpage}
         \label{fig: startpage}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{newproductview.JPG}
+        \includegraphics[width=\columnwidth]{newproductview.JPG}
         \caption{Add new product}
         \label{fig: newproductview}
     \end{figure}
@@ -224,14 +193,14 @@
     
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{usermanagement.JPG}
+        \includegraphics[width=\columnwidth]{usermanagement.JPG}
         \caption{User management}
         \label{fig: usermanagement}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{usersettingsview.JPG}
+        \includegraphics[width=\columnwidth]{usersettingsview.JPG}
         \caption{User settings}
         \label{fig: usersettingsview}
     \end{figure}
@@ -241,14 +210,14 @@
     
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{versionview.JPG}
+        \includegraphics[width=\columnwidth]{versionview.JPG}
         \caption{Version view}
         \label{fig: versionview}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{versionsettingsview.JPG}
+        \includegraphics[width=\columnwidth]{versionsettingsview.JPG}
         \caption{Versionsettings view}
         \label{fig: versionsettingsview}
     \end{figure}
@@ -258,14 +227,14 @@
     
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{issueview.JPG}
+        \includegraphics[width=\columnwidth]{issueview.JPG}
         \caption{Issue view}
         \label{fig: issueview}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{issuesettingsview.JPG}
+        \includegraphics[width=\columnwidth]{issuesettingsview.JPG}
         \caption{Issuesettings view}
         \label{fig: issuesettingsview}
     \end{figure}
@@ -275,14 +244,14 @@
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{commentview.JPG}
+        \includegraphics[width=\columnwidth]{commentview.JPG}
         \caption{Comment view}
         \label{fig: commentview}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{commentselectedpartview.JPG}
+        \includegraphics[width=\columnwidth]{commentselectedpartview.JPG}
         \caption{Selected part}
         \label{fig: commentselectedpartview}
     \end{figure}
@@ -292,21 +261,21 @@
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{milestoneview.JPG}
+        \includegraphics[width=\columnwidth]{milestoneview.JPG}
         \caption{Milestone view}
         \label{fig: milestoneview}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{sprintview.JPG}
+        \includegraphics[width=\columnwidth]{sprintview.JPG}
         \caption{Sprint view}
         \label{fig: sprintview}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{milestonesettingsview.JPG}
+        \includegraphics[width=\columnwidth]{milestonesettingsview.JPG}
         \caption{Milestone Settings view}
         \label{fig: milestonesettingsview}
     \end{figure}
@@ -316,14 +285,14 @@
     
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{memberview.JPG}
+        \includegraphics[width=\columnwidth]{memberview.JPG}
         \caption{Member view}
         \label{fig: memberview}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{membersettingsview.JPG}
+        \includegraphics[width=\columnwidth]{membersettingsview.JPG}
         \caption{Membersettings view}
         \label{fig: membersettingsview}
     \end{figure}
@@ -332,7 +301,7 @@
     In this view the attributes Name and Description of the selected product can be changed [see Fig. \ref{fig: productsettingsview} on page~\pageref{fig: productsettingsview}]. After clicking the Save button the changes are visible in the product overview
     \begin{figure}[h]
         \centering
-        \includegraphics[width=7cm]{productsettingsview.JPG}
+        \includegraphics[width=\columnwidth]{productsettingsview.JPG}
         \caption{Productsettings view}
         \label{fig: productsettingsview}
     \end{figure}
