@@ -10,8 +10,6 @@
     This article describes the development of such a platform and evaluates its benefits, drawbacks and what lessons we have learned. 
     In the Future the software will be further developed in follow-up projects to make it ready for practical use and to extend its functions. 
     There are already plans to extend the software in the direction of a simulation tool and virtual reality.
-
-    ~\cite{Hackenberg2014}~\cite{Legat2014}~\cite{Teufl2015}
 \end{abstract}
 
 \section{Introduction}
@@ -30,33 +28,34 @@
     \subsection*{Context and motivation}
     %3
     % Jeder engineering design Prozess startet mit dem definieren der needs, die durch das resultierende produkt abgedeckt werden sollen. Um erfolgreich am Produkt entwickeln zu könnenist es wichtig die kundenwünsche exakt und effektiv einzufangen. 
-    Every engineering design process starts with defining the needs to be covered in the resulting product. In order to successfully develop the product, it is important to capture the customer's needs precisely and effectively. 
+    Every engineering design process starts with defining the needs to be covered in the resulting product. In order to successfully develop the product, it is important to capture the customer's needs precisely and effectively.~\cite{liu2012scenario}
 
     %1
     % Der Trend geht dahin, dass Produkte immer Komplexer werden und die time to market zeit immer kleiner wird. 
     % Um den heutigen Herausforderungen gewachsen zu sein müssen unternehmen die cycle time  von neuen produkten kürzen, die verwendeten resourcen reduzieren und gleichzeitig die qualität des produktes steigern. Um die geschäftsziele zu erreichen müssen die unternemen umfangreich und effektiv requirements sammeln, analysieren und anwenden.
     The trend is for products to become increasingly complex and shorter time to markets.
-    To meet today's challenges, companies must shorten the cycle time of new products, reduce the resources used, increase the quality of the product. To meet this business goals, companies need to collect, analyze and apply requirements extensively and effectively.
+    To meet today's challenges, companies must shorten the cycle time of new products, reduce the resources used, increase the quality of the product. To meet this business goals, companies need to collect, analyze and apply requirements extensively and effectively.~\cite{Ahti2005}
 
     %9 
     % Requirement Engineering spielt dabei als Disziplin dine wichtige Rolle und birgt viele Challenges. Eindeutige Anforderungen und der Fokus auf den Enduser mit management support machen die Hälfte des Erfolgs der späteren Produkt entwicklung aus. 
-    Requirement engineering plays an important role as a discipline and holds many challenges. Clear requirements and a focus on the end user with management support represent half of the success of future product development. 
+    Requirement engineering plays an important role as a discipline and holds many challenges. Clear requirements and a focus on the end user with management support represent half of the success of future product development.~\cite{6226784}
 
     % 2 
     % Im competativen Business umfeld kann so durch das treffen der richtigen Requirements in weniger Zeit ein Produkt mit höherer Qualität entwickelt werden weil weniger Iterationen benötigt werden. Dabei wird die Kundenzufriedenheit erhöht und durch eine saubere Dokumention ist es möglich Teile des Prozesses für andere Produkte wiederzuverwenden.
-    Through proper requirement management, a product with higher quality can be developed in less time by meeting the right requirements because fewer iterations are required. The customer satisfaction is increased and through a clean documentation it is possible to reuse parts of the process for other products.
+    Through proper requirement management, a product with higher quality can be developed in less time by meeting the right requirements because fewer iterations are required. The customer satisfaction is increased and through a clean documentation it is possible to reuse parts of the process for other products.~\cite{BAXTER2008585}
 
     % 7
     % Durch das Sammeln der Informationen und durch mögliche Änderungen der Kundenwünsche kommen sehr viele Daten zusammen, die es erschweren einen Überblick über den Produktentwicklungsprozess zu behalten. Es ist schwierig die vielen Daten zu verwalten wegen der kognitiven Kapazität des Menschen. Project Mangeement Tools helfen dabei mit Visualisierungen in Form von Dashboards eine Übersicht über den Projektfortschritt zu erhalten. 
-    By collecting the information and by possible changes of the customer requirements, a lot of data comes up, which makes it difficult to keep an overview of the product development process. It is difficult to manage the large amount of data because of the cognitive capacity of humans. Project management tools help to get an overview of the project progress with visualizations in the form of dashboards. 
+    By collecting the information and by possible changes of the customer requirements, a lot of data comes up, which makes it difficult to keep an overview of the product development process. It is difficult to manage the large amount of data because of the cognitive capacity of humans. Project management tools help to get an overview of the project progress with visualizations in the form of dashboards.~\cite{RICHTER2020271}
 
     %11 
     % Solch soll Tool muss die Dynamik der Requirements im Entwicklungsprozess berücksichtigen und einen Support für colloborative und interdisziplinäre cooperation bieten. Dabei sollen die Engineering Aktivitäten in Sprints aufgeteilt werden können.
-    Such a tool must take into account the dynamics of the requirements in the development process and provide support for collaborative and interdisciplinary cooperation. It should be possible to divide the engineering activities into sprints.
+    Such a tool must take into account the dynamics of the requirements in the development process and provide support for collaborative and interdisciplinary cooperation. It should be possible to divide the engineering activities into sprints.~\cite{liu2012scenario}
 
     % selbst
     % Da solche Tools nicht alle wesentlichen Aspekte wie das Project Management, das Requirement engineering und das solution engineering abdeckten wollen wir im Zuge dieses Artikels die Entwicklung einer solchen Software beschreiben und diese evaluieren. Die Software betrachtet die Produktentwicklung als Gesamtkonzept. Dadurch erhalten die Stakeholder einen transperenten und interdisziplinären Überblick über den Projektvortschritt.
-    Since such tools do not cover all essential aspects such as project management, requirement engineering and solution engineering, we want to describe the development of such software and evaluate it in the course of this article. The software considers product development as an overall concept. This gives the stakeholders a transparent and interdisciplinary overview of the project progress and enables agile product development.
+    Since tools to support product development do not cover all essential aspects such as project management, requirement engineering and solution engineering, we want to describe the development of such software and evaluate it in the course of this article. The software considers product development as an overall concept. This gives the stakeholders a transparent and interdisciplinary overview of the project progress and enables agile product development.
+    % das hier ev weg
     
 
 
@@ -65,7 +64,59 @@
 
 
     \subsection*{Problem}
-    Product development is complicated by the fact that CAD data and documentation are kept separate. Because the customer does not have all of these necessary documents available in a clear manner, it is hard to follow the progress of the project. Requirement engineering task planning and scheduling are therefore difficult. By keeping the documentation in Excel lists or other documents, some engineering artifacts are lost. This lack of transparency in product development makes it difficult to implement agile product management. If the customer has no access to the development progress, there is no possibility of prioritizing times and requirements. He also cannot participate in design decisions and shape the product according to his wishes.
+    % Product development is complicated by the fact that CAD data and documentation are kept separate. Because the customer does not have all of these necessary documents available in a clear manner, it is hard to follow the progress of the project. Requirement engineering task planning and scheduling are therefore difficult. By keeping the documentation in Excel lists or other documents, some engineering artifacts are lost. This lack of transparency in product development makes it difficult to implement agile product management. If the customer has no access to the development progress, there is no possibility of prioritizing times and requirements. He also cannot participate in design decisions and shape the product according to his wishes.
+
+    %8 2.1 o
+    % Die Entwicklung von komplexen und nachhaltigen Produkten produziert viele Herausforderungen für das Requirement Management. 
+    %8 2.1 u
+    % Requirment management ist ein effort wo Daten von verschiedenen stakeholdern zusammenkommen. 
+    % Das Ändern von Requirements im einen Bereich wirkt sich auch auf andere Domänen aus. 
+    % Viele Tools existieren bereits um das Requirement Management in den einzelnen Bereichen zu unterstützen.
+    % Durch das Auteilen auf mehrere Tools haben Stakeholder während der produkt entwicklungs phase oft schwierigkeiten damit prioritäten zu definieren, weil diese keinen Überblick über das Gesamtbild haben.
+    % Commerciale Tools können meist für die Unterstützung von Requirement Engineering und den Project management process eingestzt werden. Sind diese Tools seperate applikationen und folgen verschiedenen prozessen, so wird die zusammenführung der daten eine große herausforderung. Durch das Auteilen in verschiedene Systeme kommt ein unterschied in terminologie und concepten zustande und im process entstehen kommunikationsprobleme. 
+
+    The development of complex and sustainable products produces many challenges for requirement management. Requirement management is an effort where data from different stakeholders merge. 
+    Changing requirements in one domain also affects other domains. Many tools already exist to support requirement management in the different domains. Due to the distribution of tools, stakeholders often have difficulty defining priorities during the product development phase because they do not have an overview of the big picture. Commercial tools can mostly be used to support requirement engineering and the project management process. If these tools are separate applications and follow different processes, merging the data becomes a major challenge. The division into different systems leads to differences in terminology and concepts, which causes communication problems.~\cite{Jorma2014} 
+
+
+
+    %7
+    % Die Beziehung zwischen effort und benefit bei einem software tool muss auch berücksichtigt werden. Es muss einbezogen werden welchen maximalen effort die stakeholder bereit sind in das benutzen der Software zu investieren. in ein Tool dass nicht verständlich aufgebaut ist und schwer zu lernen ist wird nicht viel effort investiert werden und es kann dadurch kein mehrwert generiert werden.
+
+    The relationship between effort and benefit in a software tool must also be considered. It must be taken into account what maximum effort the stakeholders are willing to invest to use the software. In a tool that is not comprehensibly structured and difficult to learn, not much effort will be invested, and no added value can be generated.~\cite{RICHTER2020271}
+
+    % selbst
+    % Selbst bei einem Tool, dass requirement engineering und project management abdeckt gehen viele arbeitsergebnisse verloren, da das produkt nicht selbst mit einbezogen wird. Dadurch, dass CAD Daten und documentationen oft seperat vom management betrachtet werden geht der Zusammenhang verloren. 
+
+    Even with a tool that covers requirements engineering and project management, many work results are lost because not all aspects of product development are included. Because CAD data and documentation are often considered separately from management, the context is lost. 
+    Requirement engineering task planning and scheduling are therefore difficult.
+    This lack of transparency in product development makes it hard to implement agile product management. If the customer has no access to the development progress, there is no possibility of prioritizing times and requirements. He also cannot participate in design decisions and shape the product according to his ideas.
+
+
+
+
+
+
+    %1 scatterd accross multible sites
+
+    %3 poorunderstanding of the customer requirements may mislead designers into developing a wrong product epresented as a list of product requirements are lacking a formal and structural representation. That is the reason why relatively little progress has been made in providing computer-based assistance for engineering requirements management.
+
+    %4 Was macht neue
+    % Produktentwicklung (NPD) und der
+    % damit verbundenen Prozess des Requirements Engineering (RE) schwierig zu handhaben ist
+    % dass die Quellen der Unsicherheit
+    % dem Blick von Managern oder Analysten weitgehend verborgen sind, eingebettet in aufgabenbezogene Interaktionen innerhalb komplexer
+    % sozialen Netzwerken von voneinander abhängigen
+    % organisatorischen Rollen. .
+     
+    %8 viele gute infos (rot) 4.3 perfekt 5.3 auch
+
+    % 16 analyze of software tools 
+    % A major challenge for designing such systems lies in mastering the complexity of the organization and the implication of its requirements.
+    % Over the years many different Systems Engineering (SE) approaches have been developed. The different SE approaches focus on their own disciplines rather than on the universal transdisciplinary usage that should characterize SE
+
+
+
 
     \subsection*{Solution}
     To address these issues, we developed a product development platform. The platform offers user management, member management project management and provides a 3D view for the uploaded CAD models. On our platform, users can create different products. For each product, members, versions, issues, comments and milestones can then be added and edited. As in GitHub, different versions can be created. Each version of the product contain a 3D CAD model that can be viewed like in a 3D CAD software. Members can be registered for a product which possess different permissions. With the help of the customer member role, the customer can participate in agile project management and track the current status of product development. Issues, Comments and Milestones serve as project management tools. Milestones are filled with issues that can be open or closed. A milestone is considered complete when all associated issues are closed. Each issue contains a communication channel where the respective task can be evaluated. On the platform, the CAD model can be viewed in a 3D view and is connected to the integrated product management tools.
@@ -97,5 +148,71 @@
 
 
     \subsection*{Scientific approach}
-    % software heavy, keine eigenenn tools
+    % Für die Recherche nach geeigneter Literatur wurde Google Scholar mit folgenden Suchbegriffe in verschiedenen Kombinationen verwendet: Requirements Engineering, Anforderungsmanagement, Computer Aided Design, Produktentwicklung, Maschinenbau, mechanische Konstruktion, Industriedesign, traceability, integration, product lifecycle management, software tools, agile project management. Bei jeder gesuchten Kombination wurden die ersten 30 Einträge durchgeschaut und die wesentlichen Artikel als state of the art herangezogen.
+    Google Scholar was used to search for appropriate literature using the following search terms in various combinations: Requirements Engineering, requirements management, computer aided design, product development, mechanical engineering, mechanical design, industrial design, traceability, integration, product lifecycle management, software tools, agile project management. For each combination searched, the first 30 entries were looked through, and the most relevant articles were used as state-of-the-art references. 
+
+    % Dabei konzentrieren sich die meisten Artikel auf das Requirement Management und beschreiben deren theoretischen Aspekte. So wird in diesen Artikeln auch auf die Wichtigkeit eines gut durchgeführten Requirement Managements hingewiesen und welche Herausforderungen dabei entstehen. Es wird immer wieder erwähnt, dass das Requirement Engineering einen großteil des Erfolgs ausmacht.
+    Most of the articles focus on requirement management and describe its theoretical aspects. These articles also point out the importance of well-executed requirement management and the challenges that occur in the process. It is mentioned again and again that requirement engineering is a major part of success.
+
+    % Wir fanden Artikel die das Requirement Management, die das Requirement Management in Unterkategorien und Phasen unterteilen und jeden einzelnen Aspekt für das Entwickeln von neuer Produkte in einem high tech unternehmen beschreiben. [1]
+    We found articles that divide requirement management into subcategories and phases, describing each aspect of developing new products in a high-tech company.~\cite{Ahti2005}
+
+    % In der Produktentwicklung ist es wichtig das generierte wissen wiederverwenden zu können. Ein Artikel beschrieb dabei ein framework um das requirement management mit dem engineering design zu verbinden und wiederverwendbar zu machen. Das resultierende Design reuse system besteht dabei aus den drei key elements Prozess, Aufgaben und Produkt knowledge. [2]
+    In product development, it is important to be able to reuse the knowledge generated. One article described a framework for combining requirements management with engineering design and making it reusable. The resulting design reuse system consists of three key elements: process knowledge, task knowledge and product knowledge.~\cite{BAXTER2008585}
+
+    % Ein Artikel liefert einen scenario based approach zur identifikation, elaboration und spezifikation von engineering designe requirements mithife eines drei phasen modells. [3]
+    An article provides a scenario based approach for the identification, elaboration and specification of engineering design requirements using a three-phase model.~\cite{liu2012scenario}
+
+
+    % Ein Artikel liefert eine Literature Review um mithilfe von Guidlines for Requirement Management process improvement aufzuzeigen wie das requirement engineering weiter verbessert werden kann. [5]
+    Another article provides a literature review to show how requirements engineering can be further enhanced with the help of guidelines for requirement management process improvement.~\cite{Kauppinen2005}
+
+    % Computer aided software engineering tools helfen dabei den development prozess zu unterstützen. In einem Artikel wurde ein solches CASE Tool als Eclipse plugin entwicklet welches traceability und accessibility von der planungs bis zur coding phase ermöglicht. Diese Quelle fokusiert sich dabei auf die Entwicklung von Software Produkten. [6]
+    Computer aided software engineering tools help to support the development process. In one article such a CASE tool was developed as an Eclipse plugin which enables traceability and accessibility from the planning to the coding phase. This work focuses on the development of software products.~\cite{6976693}
+
+    % Ein artikel zeigt die wichtigkeit für das requirement engineering visualisierungstools zu verwenden um stakeholdern zu helfen. Sie beschreiben verschiedene Elemente zur visualisierung und möchten auf grund ihrere Ergebnisse später ein software tool implementieren. [7]
+    An article shows the importance for requirements engineering to use visualization tools to help stakeholders catch data. They describe different elements for visualization and want to implement a software tool based on their results later.~\cite{RICHTER2020271}
+
+    % Ein Artikel zeigt was bei methoden und tools wichtig ist um requirement engineering mit project mangement verbinden zu können und wie wichtig es ist die beiden felder als gesamtkonzept zu sehen. Es wird herausgarbeitet welche herausforderungen das requirement engineering und project mangagement in verschiedenen contexten vorfinden. Es wird ein framework entwickelt, welches das requirement management und das projekt management verbindet um so die qualität und effektivität von multidomain development prozessen zu steigern. [8]
+    An article points out what methods and tools are important for combining requirements engineering with project management and how important it is to see the two fields as an overall concept. The challenges of requirements engineering and project management in different contexts are highlighted. A framework is developed that combines requirements management and project management to increase the quality and effectiveness of multidomain development processes.~\cite{Jorma2014}
+
+    % Ein weiterer Beitrag ist die Implementierung eines tools für model based requirement engineering für das agile product development. Das Konzept des Tools ist das product requirement mit dem development task und dem dazugehörigen test case zu verbinden. Auf dessen Basis wurde ein Dashboard gebaut welches positive Rückmeldungen erhalten hat und weiter ausgebaut wird. [11]
+    Another contribution is the implementation of a tool for model based requirement engineering for agile product development. The concept of the tool is to connect the product requirement with the development task and the corresponding test case. Based on this a dashboard was built which received positive feedback and will be further developed.~\cite{WINDISCH2022550}
+
+
+    % Weiteres wurde in einer Arbeit Tool mit Hilfe von Web development tools wie Angular.js und node.js gebaut um die produkt entwicklung zu unterstützen. The tool supports the business, operational and technical aspects for service-oriented software. [14]
+    In addition, a tool was built using web development tools such as Angular.js and Node.js to support product development. The tool supports the business, operational and technical aspects for service-oriented software.~\cite{belfadel2022requirements}
+
+
+    % Ein anderes paper verglich verschiedene software tools for enhanced Demand Compliant Design auf basis von verschiedenen Kriterien. Bei der Analyse kommt zum Vorschein wie wichtig es ist das richtige Tool zu verwenden und dass die meisten Tools den Fokus nur auf die eigene Disziplin legen und eher ein universaler und transdisciplinärer Ansatz gewählt werden sollte. [16]
+    Another paper compared different software tools for enhanced demand compliant design based on different criteria. The analysis shows how important it is to use the right tool and that most tools focus only on the own discipline and rather a universal and transdisciplinary approach should be chosen.~\cite{9447081}
+
+    % In einem artikel wird auf die Bedeutsamkeit von Requirement Engineering eingegangen und darauf aufmerksam gemacht, dass die meisten sutdien und reswarch work, die verfügbar über viele stragegien verfügen, jedoch keine reale impemention haben. [12]
+    In one article, the importance of requirement engineering is discussed and attention is drawn to the fact that most studies and research work that is available has many strategies but no real implementation.~\cite{kumar2022requirements}
+
+
+
+
     \subsection*{Commercial approach}
+    % github mit fußnote
+    % oneshape mit fußnote
+
+    % Bei den kommerziellen Tools haben wir Github und Onshape als Lösungen gefunden, die das definierte Problem ansatzweise lösen. 
+
+    \subsubsection*{GitHub}
+    % Github ist ein Dienst zur Versionsverwaltung von Software Projekten. Hier wird ein Repository hochgeladen. Vom Repository können mehrere Versionen hochgeladen werden und in der Issues Section können Aufgaben verteilt, in Meilensteine unterteilt und diskutiert werden. Diese Funktionalitäten decken lösen nur einen kleinen Teil der oben definierten Probleme. GitHub ist dabei aber nur ausschließlich für Software Produkte ausgelegt und unterstützt keine CAD Dateien. So kann das Solution Engineering von mechanischen Systemen nicht mit eingebunden werden. Wir finden GitHub als ausgezeichnete Platform für die Software Entwicklung und wollen im Zuge dieses Artikels eine Platform schaffen, welche ähnliche Tools anbietet, jedoch für 3D CAD Modelle geeigent ist. [https://github.com/]
+    It is a service for version management of software projects. Repositories are uploaded and managed here. Multiple versions can be uploaded from the repository and tasks can be distributed, divided into milestones and discussed in the issues section. These functionalities solve some problems defined above. However, GitHub is only designed for software products and does not support CAD files. Thus, solution engineering of mechanical systems cannot be included. We find GitHub to be an excellent platform for software development and in the course of this article we want to create a platform that offers similar tools, but is suitable for 3D CAD models. [https://github.com/]
+
+    \subsubsection*{Onshape}
+    % Onshape ist eine Premium Software, von der Firma PTC, die Produktentwicklung, die CAD, Datenmanagement, Zusammenarbeit und Echtzeit Analysen miteinander kombiniert. Das Tool bietete einen riesigen Funktionsumfang an. Es bietet allen Projektbeteiligten einen sicheren Cloud-Arbeitsbereich an und das Entwicklungsteam kann gemeinsam am Design des Produktes arbeiten. Das Tool ermöglicht mehrere parallele Designiterationen und ein colloboratives Arbeiten in Echtzeit und bietet noch viele weitere Funktionan an. 
+    The tool onshape is a premium software, from the company PTC, which combines product development, the CAD, data management, collaboration and real-time analysis. The tool offers a huge range of features. It provides a secure cloud workspace for all project stakeholders and the development team can work together on the design of the product. The tool enables multiple parallel design iterations and real-time collaborative work, and offers many more features. 
+
+    % Leider bietet die Software durch den riesigen scope an funktionen und durch die Bindung an das Unternehmen auch Nachteile gegenüber leichtgewichtiger open source software. Wird bei einem agilen Projektentwicklungs prozess der kunde mit einbezogen, hat dieser eine hohe einstiegshürde beim erlernen des programms. Der Kunde kann sich dabei im Tool verlieren und die eigentlichen Aspekte des zu entwickelten Produktes können dabei untergehn. Um das Tool konsistent mit realen Projektfortschritt zu halten muss dieses stetig aktualisiert werden. Durch die hohe Anzahl an Daten im Tool können die Stakeholder und speziell der Kunde den Überblick verlieren. Der Kunde tut sich beim finden von Entscheidungen leichter Exporte von Produktversionen zu sehen als das gesamte System un das Unternehmen muss keine Konstruktionsdetail offen legen. Durch die tiefe Integration von Onshape in die Welt von PTC ist man gezwungenerweise in dieser gefangen. 
+    Unfortunately, the software also has disadvantages compared to lightweight open source software due to the huge scope of functions and the binding to one company. If the customer is involved in an agile project development process, he has a high entry hurdle when learning the program. The customer can get lost in the tool and the actual aspects of the product to be developed can be lost in the process. In order to keep the tool consistent with real project progress, it must be constantly updated. Due to the high amount of data in the tool, the stakeholders and especially the customer can lose the overview. For the customer, it is easier to see exports of product versions than the entire system when making decisions, and the company does not have to disclose design details. The deep integration of Onshape into the world of PTC forces you to be caught in it. 
+
+    % Hier wollen wir den Anatz einer open source software gehen, die mit 3D CAD Exporten arbeitet. Weiters soll die Software intuitiv zu bedienen und leicht zu erlernen sein. Dadurch dass in unserem Tool nicht der gesamte Entwicklungsprozess stattfindet sondern nur Exporte hochgeladen werden ergeben sich auch Freiheiten mit welchen Daten die Platform gefüttert wird und was der Kunde zu sehen bekommt. Dieser soll anhand von bereitgestellten Produktversionen an der Produktentwicklung teilnehmen können ohne dass dieser komplexte Konstruktionsdetails zu sehen bekommt.
+    Here we want to go the approach of an open source software that works with 3D CAD exports. Furthermore, the software should be intuitive to use and easy to learn. Because the entire development process does not take place in our tool, but only exports are uploaded, there is also freedom with which data the platform is fed and what the customer gets to see. The customer should be able to participate in the product development on the basis of the product versions provided without having to see complex design details.  [https://www.onshape.com/]
+
+    \subsubsection*{Conclusion}
+    % Die meisten Paper die wir durch die Recherche gefunden haben beleuchten vom Prozess der Produkt entwicklung den bereich des requirement engineering besonders genau. Sie liefern viele theoretische Konzepte um auf die Wichtigkeit, die Herausforderungen und auf Methoden zur Verbesserung aufmerksam zu machen. Nur wenige Artikel beschreiben eine konkrete Implementierung, welche aber nur das Requirement Engineering abdecken und nicht den ganzen Produkt Entwicklungs Prozess. Die beiden Kommerziellen Lösungen GitHub und Onshape sind ausgezeichnete Tools in ihrer Domäne sind aber unserer Meinung nicht dafür geeignet den agilen Produkt entwicklungsprozess zu unterstützen. Im Fall von GitHub liegt es daran, dass keine Konstruktionszeichnungen unterstützt werden und die Software Oneshape ist ein expertentool, welches einen riesigen Funktionsumfang liefert, wodurch dem Kunden der Überblick verloren gehen kann und auf alle Konstruktionsdetails zugreifen kann. Nach unserer Recherche sind wir zu dem Schluss gekommen, dass unser Forschungsfeld neu und wichtig ist und der Markt noch frei ist mit Tools welche eine leichtgewichtigen Support zur Porduktentwicklung liefern.
+    Most of the papers we have found through research highlight the area of requirements engineering from the product development process in particular. They provide many theoretical concepts to point out the importance, challenges and methods for improvement. Only a few articles describe a concrete implementation, but these only cover requirements engineering and not the entire product development process. The two commercial solutions GitHub and Onshape are excellent tools in their domain but in our opinion are not suitable to support the agile product development process with close customer collaboration. In the case of GitHub, it's because it doesn't support design drawings and oneshape software is an expert tool that delivers a huge feature set, which can make the customer lose track by access all the design details of the product. After our research we came to the conclusion that our field of research is new and important and the market is by far not yet saturated with tools that provide lightweight support for product development.

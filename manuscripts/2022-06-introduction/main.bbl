@@ -1,25 +1,90 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
-\bibitem{Hackenberg2014}
-Georg Hackenberg, Christoph Richter, and Michael~F. Zäh.
-\newblock A multi-disciplinary modeling technique for requirements management
-  in mechatronic systems engineering.
-\newblock {\em Procedia Technology}, 15:5--16, 2014.
-\newblock 2nd International Conference on System-Integrated Intelligence:
-  Challenges for Product and Production Engineering.
+\bibitem{6226784}
+PC~Anitha and Beena Prabhu.
+\newblock Integrating requirements engineering and user experience design in
+  product life cycle management.
+\newblock In {\em 2012 First International Workshop on Usability and
+  Accessibility Focused Requirements Engineering (UsARE)}, pages 12--17, June
+  2012.
 
-\bibitem{Legat2014}
-Christoph Legat, Jakob Mund, Alarico Campetelli, Georg Hackenberg, Jens Folmer,
-  Daniel Schütz, Manfred Broy, and Birgit Vogel-Heuser.
-\newblock Interface behavior modeling for automatic verification of industrial
-  automation systems' functional conformance.
-\newblock {\em at - Automatisierungstechnik}, 62(11):815--825, 2014.
+\bibitem{BAXTER2008585}
+David Baxter, James Gao, Keith Case, Jenny Harding, Bob Young, Sean Cochrane,
+  and Shilpa Dani.
+\newblock A framework to integrate design knowledge reuse and requirements
+  management in engineering design.
+\newblock {\em Robotics and Computer-Integrated Manufacturing}, 24(4):585--593,
+  2008.
+\newblock ICMR2005: Third International Conference on Manufacturing Research.
 
-\bibitem{Teufl2015}
-Sabine Teufl and Georg Hackenberg.
-\newblock Efficient impact analysis of changes in the requirements of
-  manufacturing automation systems.
-\newblock {\em IFAC-PapersOnLine}, 48(3):1482--1489, 2015.
-\newblock 15th IFAC Symposium onInformation Control Problems inManufacturing.
+\bibitem{belfadel2022requirements}
+Abdelhadi Belfadel, Jannik Laval, Chantal Bonner~Cherifi, and Nejib Moalla.
+\newblock Requirements engineering and enterprise architecture-based software
+  discovery and reuse.
+\newblock {\em Innovations in Systems and Software Engineering}, pages 1--22,
+  2022.
+
+\bibitem{6976693}
+Rodrigo Goncalves~de Branco, Maria~Istela Cagnin, and Debora~Maria
+  Barroso~Paiva.
+\newblock Acctrace: Accessibility in phases of requirements engineering,
+  design, and coding software.
+\newblock In {\em 2014 14th International Conference on Computational Science
+  and Its Applications}, pages 225--228, June 2014.
+
+\bibitem{Kauppinen2005}
+Marjo Kauppinen.
+\newblock {\em {Introducing requirements engineering into product development :
+  towards systematic user requirements definition}}.
+\newblock Doctoral thesis, 2005.
+
+\bibitem{kumar2022requirements}
+Brijesh Kumar and HOD Dr~Dhirendra Pandey.
+\newblock Requirements engineering process model add-on for software
+  development.
+\newblock 2022.
+
+\bibitem{liu2012scenario}
+Ze-Lin Liu, Zhinan Zhang, and Yong Chen.
+\newblock A scenario-based approach for requirements management in engineering
+  design.
+\newblock {\em Concurrent Engineering}, 20(2):99--109, 2012.
+
+\bibitem{9447081}
+Marian Mistler, Nadine Schlueter, and Manuel Löwer.
+\newblock Analysis of software tools for model-based generic systems
+  engineering for organizations based on e-decode.
+\newblock In {\em 2021 IEEE International Systems Conference (SysCon)}, pages
+  1--8, April 2021.
+
+\bibitem{Jorma2014}
+Jorma Papinniemi, Lea Hannola, and Michael Maletz.
+\newblock Challenges in integrating requirements management with plm.
+\newblock {\em International Journal of Production Research},
+  52(15):4412--4423, 2014.
+
+\bibitem{RICHTER2020271}
+Thilo~O. Richter, André Felber, Peter~M. Troester, Albert Albers, and Kamran
+  Behdinan.
+\newblock Visualization of requirements engineering data to analyse the current
+  product maturity in the early phase of product development.
+\newblock {\em Procedia CIRP}, 91:271--277, 2020.
+\newblock Enhancing design through the 4th Industrial Revolution Thinking.
+
+\bibitem{Ahti2005}
+Ahti Salo and Timo~K. Kakola.
+\newblock Groupware support for requirements management in new product
+  development.
+\newblock {\em Journal of Organizational Computing and Electronic Commerce},
+  15(4):253--284, 2005.
+
+\bibitem{WINDISCH2022550}
+Emily Windisch, Constantin Mandel, Simon Rapp, Nikola Bursac, and Albert
+  Albers.
+\newblock Approach for model-based requirements engineering for the planning of
+  engineering generations in the agile development of mechatronic systems.
+\newblock {\em Procedia CIRP}, 109:550--555, 2022.
+\newblock 32nd CIRP Design Conference (CIRP Design 2022) - Design in a changing
+  world.
 
 \end{thebibliography}

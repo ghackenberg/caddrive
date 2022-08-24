@@ -3,44 +3,47 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: plain.bst
 Database file #1: main.bib
-You've used 3 entries,
+Warning--empty school in Kauppinen2005
+Warning--empty journal in kumar2022requirements
+You've used 12 entries,
             2118 wiz_defined-function locations,
-            522 strings with 4871 characters,
-and the built_in function-call counts, 1222 in all, are:
-= -- 116
-> -- 74
-< -- 0
-+ -- 30
-- -- 26
-* -- 104
-:= -- 217
-add.period$ -- 11
-call.type$ -- 3
-change.case$ -- 22
+            580 strings with 6981 characters,
+and the built_in function-call counts, 4537 in all, are:
+= -- 433
+> -- 235
+< -- 4
++ -- 94
+- -- 80
+* -- 336
+:= -- 755
+add.period$ -- 39
+call.type$ -- 12
+change.case$ -- 76
 chr.to.int$ -- 0
-cite$ -- 3
-duplicate$ -- 33
-empty$ -- 80
-format.name$ -- 26
-if$ -- 241
+cite$ -- 14
+duplicate$ -- 164
+empty$ -- 334
+format.name$ -- 80
+if$ -- 951
 int.to.chr$ -- 0
-int.to.str$ -- 3
-missing$ -- 3
-newline$ -- 20
-num.names$ -- 6
-pop$ -- 14
+int.to.str$ -- 12
+missing$ -- 11
+newline$ -- 66
+num.names$ -- 24
+pop$ -- 73
 preamble$ -- 1
-purify$ -- 19
+purify$ -- 64
 quote$ -- 0
-skip$ -- 22
+skip$ -- 120
 stack$ -- 0
-substring$ -- 80
-swap$ -- 3
-text.length$ -- 0
+substring$ -- 274
+swap$ -- 40
+text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 12
-warning$ -- 0
-while$ -- 10
-width$ -- 4
-write$ -- 39
+type$ -- 48
+warning$ -- 2
+while$ -- 40
+width$ -- 14
+write$ -- 137
+(There were 2 warnings)

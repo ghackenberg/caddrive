@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex main"] 1661106537 "main.aux" "main.bbl" "main" 1661106859
+["bibtex main"] 1661366774 "main.aux" "main.bbl" "main" 1661366777
   "c:/texlive/2022/texmf-dist/bibtex/bst/base/plain.bst" 1655733609 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1661106858 4165 3d4a22aa99c1827f05b6c946962cc8ce "pdflatex"
-  "main.bib" 1655809637 5061 c4b57d7f8c040bca9647b663483b2f29 ""
+  "main.aux" 1661366776 4830 f69d3af042e2529e9f453d7c3a6c57b2 "pdflatex"
+  "main.bib" 1661366498 21095 6974550d753d9d066dfa8be4bd0d83c0 ""
   (generated)
   "main.bbl"
   "main.blg"
-["pdflatex"] 1661106857 "c:/Users/DFrue/productboard/manuscripts/2022-06-introduction/main.tex" "main.pdf" "main" 1661106859
+["pdflatex"] 1661366775 "c:/Users/DFrue/productboard/manuscripts/2022-06-introduction/main.tex" "main.pdf" "main" 1661366777
   "c:/Users/DFrue/productboard/manuscripts/2022-06-introduction/main.tex" 1660329510 898 6629ed17b7cb0446194ea8e295b337f9 ""
   "c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc" 1655734824 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "c:/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1655735439 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -70,11 +70,11 @@
   "graphics//usersettingsview.JPG" 1660216999 71160 cbbad030d4e0371955cff9eb39a9bf37 ""
   "graphics//versionsettingsview.JPG" 1660216999 83151 a11fd121b48ecbd0575501766c37b85c ""
   "graphics//versionview.JPG" 1660216999 137776 9cfd15eb6e562d51ce73889513f70ab9 ""
-  "main.aux" 1661106858 4165 3d4a22aa99c1827f05b6c946962cc8ce "pdflatex"
-  "main.bbl" 1661106537 1081 bb506e12a66a8fe70e898e7e56f71529 "bibtex main"
+  "main.aux" 1661366776 4830 f69d3af042e2529e9f453d7c3a6c57b2 "pdflatex"
+  "main.bbl" 1661366775 3546 f1a930d624e9f80e9f216eb88357be4f "bibtex main"
   "main.tex" 1660329510 898 6629ed17b7cb0446194ea8e295b337f9 ""
-  "text/1_introduction.tex" 1661106855 13219 2a111f2ca8d65aa7bef408e6d5f21a46 ""
-  "text/2_oursolution.tex" 1661071571 35447 cf5db7e622765204984114f03f2874a5 ""
+  "text/1_introduction.tex" 1661366770 34805 1655e21a5d640b0bb6ff96a476162dea ""
+  "text/2_oursolution.tex" 1661364475 35104 4813f4b63d17ef6d073591cc8a9b62b7 ""
   "text/3_finalpart.tex" 1660572261 5823 254cf3937add252d53169eecde5e8411 ""
   (generated)
   "main.aux"
