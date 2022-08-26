@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.6.20)  24 AUG 2022 20:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.6.20)  26 AUG 2022 11:05
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -120,41 +120,46 @@ File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen162
 \Gin@req@width=\dimen163
+) (c:/texlive/2022/texmf-dist/tex/latex/endnotes/endnotes.sty
+Package: endnotes 2020-01-02 endnotes package
+\c@endnote=\count266
+\endnotesep=\dimen164
+\@enotes=\write3
 ) (c:/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-04-20 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count266
+\l__color_backend_stack_int=\count267
 \l__pdf_internal_box=\box53
 ) (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
 
 -- Lines per column: 58 (exact).
 (c:/texlive/2022/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count267
-\scratchdimen=\dimen164
+\scratchcounter=\count268
+\scratchdimen=\dimen165
 \scratchbox=\box54
-\nofMPsegments=\count268
-\nofMParguments=\count269
+\nofMPsegments=\count269
+\nofMParguments=\count270
 \everyMPshowfont=\toks18
-\MPscratchCnt=\count270
-\MPscratchDim=\dimen165
-\MPnumerator=\count271
-\makeMPintoPDFobject=\count272
+\MPscratchCnt=\count271
+\MPscratchDim=\dimen166
+\MPnumerator=\count272
+\makeMPintoPDFobject=\count273
 \everyMPtoPDFconversion=\toks19
 ) (c:/texlive/2022/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -164,9 +169,16 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 )) (./text/1_introduction.tex [1{c:/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
-] [2]) (./text/2_oursolution.tex
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
+]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 67.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 67.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 67.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 67.
+ [2]) (./text/2_oursolution.tex
 <./graphics//packages-v3.png, id=13, 374.39874pt x 474.77374pt>
 File: ./graphics//packages-v3.png Graphic file (type png)
 <use ./graphics//packages-v3.png>
@@ -176,16 +188,15 @@ Package pdftex.def Info: ./graphics//packages-v3.png  used on input line 13.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[3] [4 <./graphics//packages-v3.png>]
+[3]
+Underfull \vbox (badness 2197) has occurred while \output is active []
+
+ [4 <./graphics//packages-v3.png>]
 <./graphics//entities-v5.png, id=22, 1911.14pt x 1120.185pt>
 File: ./graphics//entities-v5.png Graphic file (type png)
 <use ./graphics//entities-v5.png>
 Package pdftex.def Info: ./graphics//entities-v5.png  used on input line 45.
 (pdftex.def)             Requested size: 516.0pt x 302.4369pt.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 57.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 57.
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 64.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
@@ -216,20 +227,23 @@ File: ./graphics//usermanagement.JPG Graphic file (type jpg)
 <use ./graphics//usermanagement.JPG>
 Package pdftex.def Info: ./graphics//usermanagement.JPG  used on input line 190.
 (pdftex.def)             Requested size: 252.0pt x 76.55235pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 <./graphics//usersettingsview.JPG, id=40, 1445.4pt x 634.62094pt>
 File: ./graphics//usersettingsview.JPG Graphic file (type jpg)
 <use ./graphics//usersettingsview.JPG>
 Package pdftex.def Info: ./graphics//usersettingsview.JPG  used on input line 197.
 (pdftex.def)             Requested size: 252.0pt x 110.64394pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 <./graphics//versionview.JPG, id=41, 1445.4pt x 732.48656pt>
 File: ./graphics//versionview.JPG Graphic file (type jpg)
 <use ./graphics//versionview.JPG>
 Package pdftex.def Info: ./graphics//versionview.JPG  used on input line 207.
 (pdftex.def)             Requested size: 252.0pt x 127.70645pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <./graphics//versionsettingsview.JPG, id=42, 1445.4pt x 733.23938pt>
 File: ./graphics//versionsettingsview.JPG Graphic file (type jpg)
 <use ./graphics//versionsettingsview.JPG>
@@ -238,7 +252,7 @@ Package pdftex.def Info: ./graphics//versionsettingsview.JPG  used on input line
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[8 <./graphics//startpage.JPG> <./graphics//newproductview.JPG> <./graphics//usermanagement.JPG> <./graphics//usersettingsview.JPG>]
+[8 <./graphics//startpage.JPG> <./graphics//newproductview.JPG> <./graphics//usermanagement.JPG> <./graphics//usersettingsview.JPG> <./graphics//versionview.JPG>]
 <./graphics//issueview.JPG, id=46, 1445.4pt x 732.48656pt>
 File: ./graphics//issueview.JPG Graphic file (type jpg)
 <use ./graphics//issueview.JPG>
@@ -249,10 +263,6 @@ File: ./graphics//issuesettingsview.JPG Graphic file (type jpg)
 <use ./graphics//issuesettingsview.JPG>
 Package pdftex.def Info: ./graphics//issuesettingsview.JPG  used on input line 231.
 (pdftex.def)             Requested size: 252.0pt x 127.0502pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <./graphics//commentview.JPG, id=48, 1443.89438pt x 726.46407pt>
 File: ./graphics//commentview.JPG Graphic file (type jpg)
 <use ./graphics//commentview.JPG>
@@ -263,50 +273,69 @@ File: ./graphics//commentselectedpartview.JPG Graphic file (type jpg)
 <use ./graphics//commentselectedpartview.JPG>
 Package pdftex.def Info: ./graphics//commentselectedpartview.JPG  used on input line 248.
 (pdftex.def)             Requested size: 252.0pt x 127.18146pt.
-[9 <./graphics//versionview.JPG> <./graphics//versionsettingsview.JPG> <./graphics//issueview.JPG> <./graphics//issuesettingsview.JPG> <./graphics//commentview.JPG> <./graphics//commentselectedpartview.JPG>]
-<./graphics//milestoneview.JPG, id=53, 1445.4pt x 730.98094pt>
+<./graphics//milestoneview.JPG, id=50, 1445.4pt x 730.98094pt>
 File: ./graphics//milestoneview.JPG Graphic file (type jpg)
 <use ./graphics//milestoneview.JPG>
 Package pdftex.def Info: ./graphics//milestoneview.JPG  used on input line 258.
 (pdftex.def)             Requested size: 252.0pt x 127.44395pt.
-<./graphics//sprintview.JPG, id=54, 1443.89438pt x 727.21687pt>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//sprintview.JPG, id=51, 1443.89438pt x 727.21687pt>
 File: ./graphics//sprintview.JPG Graphic file (type jpg)
 <use ./graphics//sprintview.JPG>
 Package pdftex.def Info: ./graphics//sprintview.JPG  used on input line 265.
 (pdftex.def)             Requested size: 252.0pt x 126.90976pt.
-<./graphics//milestonesettingsview.JPG, id=55, 1445.4pt x 722.7pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<./graphics//milestonesettingsview.JPG, id=52, 1445.4pt x 722.7pt>
 File: ./graphics//milestonesettingsview.JPG Graphic file (type jpg)
 <use ./graphics//milestonesettingsview.JPG>
 Package pdftex.def Info: ./graphics//milestonesettingsview.JPG  used on input line 272.
 (pdftex.def)             Requested size: 252.0pt x 126.0002pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[9 <./graphics//versionsettingsview.JPG> <./graphics//issueview.JPG> <./graphics//issuesettingsview.JPG> <./graphics//commentview.JPG> <./graphics//commentselectedpartview.JPG>]
 <./graphics//memberview.JPG, id=56, 1445.4pt x 730.22812pt>
 File: ./graphics//memberview.JPG Graphic file (type jpg)
 <use ./graphics//memberview.JPG>
 Package pdftex.def Info: ./graphics//memberview.JPG  used on input line 282.
 (pdftex.def)             Requested size: 252.0pt x 127.31271pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 <./graphics//membersettingsview.JPG, id=57, 1440.13031pt x 732.48656pt>
 File: ./graphics//membersettingsview.JPG Graphic file (type jpg)
 <use ./graphics//membersettingsview.JPG>
 Package pdftex.def Info: ./graphics//membersettingsview.JPG  used on input line 289.
 (pdftex.def)             Requested size: 252.0pt x 128.1647pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 <./graphics//productsettingsview.JPG, id=58, 1438.6247pt x 727.96968pt>
 File: ./graphics//productsettingsview.JPG Graphic file (type jpg)
 <use ./graphics//productsettingsview.JPG>
 Package pdftex.def Info: ./graphics//productsettingsview.JPG  used on input line 298.
 (pdftex.def)             Requested size: 252.0pt x 127.50768pt.
-) (./text/3_finalpart.tex [10 <./graphics//milestoneview.JPG> <./graphics//sprintview.JPG> <./graphics//milestonesettingsview.JPG> <./graphics//memberview.JPG> <./graphics//membersettingsview.JPG> <./graphics//productsettingsview.JPG>]) (./main.bbl [11]) [12
+) (./text/3_finalpart.tex
 
-] (./main.aux) ) 
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[10 <./graphics//milestoneview.JPG> <./graphics//sprintview.JPG> <./graphics//milestonesettingsview.JPG> <./graphics//memberview.JPG>] [11 <./graphics//membersettingsview.JPG> <./graphics//productsettingsview.JPG>]) (./main.bbl) [12] (./main.aux) ) 
 Here is how much of TeX's memory you used:
- 2383 strings out of 478038
- 45432 string characters out of 5843069
- 358601 words of memory out of 5000000
- 20813 multiletter control sequences out of 15000+600000
- 501355 words of font info for 80 fonts, out of 8000000 for 9000
+ 2460 strings out of 478038
+ 46741 string characters out of 5843069
+ 359670 words of memory out of 5000000
+ 20878 multiletter control sequences out of 15000+600000
+ 504763 words of font info for 88 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,7n,62p,2992b,252s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 55i,8n,62p,2992b,221s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}<c:/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (12 pages, 2297598 bytes).
+Output written on main.pdf (12 pages, 2300412 bytes).
 PDF statistics:
  96 PDF objects out of 1000 (max. 8388607)
  48 compressed objects within 1 object stream
