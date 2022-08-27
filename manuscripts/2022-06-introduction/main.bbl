@@ -1,5 +1,25 @@
 \begin{thebibliography}{10}
 
+\bibitem{liu2012scenario}
+Ze-Lin Liu, Zhinan Zhang, and Yong Chen.
+\newblock A scenario-based approach for requirements management in engineering
+  design.
+\newblock {\em Concurrent Engineering}, 20(2):99--109, 2012.
+
+\bibitem{Ahti2005}
+Ahti Salo and Timo~K. Kakola.
+\newblock Groupware support for requirements management in new product
+  development.
+\newblock {\em Journal of Organizational Computing and Electronic Commerce},
+  15(4):253--284, 2005.
+
+\bibitem{HEIMICKE2021786}
+Jonas Heimicke, Katharina Dühr, Madita Krüger, Gha-Leng Ng, and Albert
+  Albers.
+\newblock A framework for generating agile methods for product development.
+\newblock {\em Procedia CIRP}, 100:786--791, 2021.
+\newblock 31st CIRP Design Conference 2021 (CIRP Design 2021).
+
 \bibitem{6226784}
 PC~Anitha and Beena Prabhu.
 \newblock Integrating requirements engineering and user experience design in
@@ -17,12 +37,36 @@ David Baxter, James Gao, Keith Case, Jenny Harding, Bob Young, Sean Cochrane,
   2008.
 \newblock ICMR2005: Third International Conference on Manufacturing Research.
 
-\bibitem{belfadel2022requirements}
-Abdelhadi Belfadel, Jannik Laval, Chantal Bonner~Cherifi, and Nejib Moalla.
-\newblock Requirements engineering and enterprise architecture-based software
-  discovery and reuse.
-\newblock {\em Innovations in Systems and Software Engineering}, pages 1--22,
-  2022.
+\bibitem{RICHTER2020271}
+Thilo~O. Richter, André Felber, Peter~M. Troester, Albert Albers, and Kamran
+  Behdinan.
+\newblock Visualization of requirements engineering data to analyse the current
+  product maturity in the early phase of product development.
+\newblock {\em Procedia CIRP}, 91:271--277, 2020.
+\newblock Enhancing design through the 4th Industrial Revolution Thinking.
+
+\bibitem{ozkan2019agile}
+Deniz {\"O}zkan and Alok Mishra.
+\newblock Agile project management tools: A brief comprative view.
+\newblock {\em Cybernetics and Information Technologies}, 19(4):17--25, 2019.
+
+\bibitem{MarionTucker}
+Tucker~J. Marion and Sebastian~K. Fixson.
+\newblock The transformation of the innovation process: How digital tools are
+  changing work, collaboration, and organizations in new product development*.
+\newblock {\em Journal of Product Innovation Management}, 38(1):192--215, 2021.
+
+\bibitem{Jorma2014}
+Jorma Papinniemi, Lea Hannola, and Michael Maletz.
+\newblock Challenges in integrating requirements management with plm.
+\newblock {\em International Journal of Production Research},
+  52(15):4412--4423, 2014.
+
+\bibitem{Kauppinen2005}
+Marjo Kauppinen.
+\newblock {\em {Introducing requirements engineering into product development :
+  towards systematic user requirements definition}}.
+\newblock Doctoral thesis, 2005.
 
 \bibitem{6976693}
 Rodrigo Goncalves~de Branco, Maria~Istela Cagnin, and Debora~Maria
@@ -32,52 +76,6 @@ Rodrigo Goncalves~de Branco, Maria~Istela Cagnin, and Debora~Maria
 \newblock In {\em 2014 14th International Conference on Computational Science
   and Its Applications}, pages 225--228, June 2014.
 
-\bibitem{Kauppinen2005}
-Marjo Kauppinen.
-\newblock {\em {Introducing requirements engineering into product development :
-  towards systematic user requirements definition}}.
-\newblock Doctoral thesis, 2005.
-
-\bibitem{kumar2022requirements}
-Brijesh Kumar and HOD Dr~Dhirendra Pandey.
-\newblock Requirements engineering process model add-on for software
-  development.
-\newblock 2022.
-
-\bibitem{liu2012scenario}
-Ze-Lin Liu, Zhinan Zhang, and Yong Chen.
-\newblock A scenario-based approach for requirements management in engineering
-  design.
-\newblock {\em Concurrent Engineering}, 20(2):99--109, 2012.
-
-\bibitem{9447081}
-Marian Mistler, Nadine Schlueter, and Manuel Löwer.
-\newblock Analysis of software tools for model-based generic systems
-  engineering for organizations based on e-decode.
-\newblock In {\em 2021 IEEE International Systems Conference (SysCon)}, pages
-  1--8, April 2021.
-
-\bibitem{Jorma2014}
-Jorma Papinniemi, Lea Hannola, and Michael Maletz.
-\newblock Challenges in integrating requirements management with plm.
-\newblock {\em International Journal of Production Research},
-  52(15):4412--4423, 2014.
-
-\bibitem{RICHTER2020271}
-Thilo~O. Richter, André Felber, Peter~M. Troester, Albert Albers, and Kamran
-  Behdinan.
-\newblock Visualization of requirements engineering data to analyse the current
-  product maturity in the early phase of product development.
-\newblock {\em Procedia CIRP}, 91:271--277, 2020.
-\newblock Enhancing design through the 4th Industrial Revolution Thinking.
-
-\bibitem{Ahti2005}
-Ahti Salo and Timo~K. Kakola.
-\newblock Groupware support for requirements management in new product
-  development.
-\newblock {\em Journal of Organizational Computing and Electronic Commerce},
-  15(4):253--284, 2005.
-
 \bibitem{WINDISCH2022550}
 Emily Windisch, Constantin Mandel, Simon Rapp, Nikola Bursac, and Albert
   Albers.
@@ -86,5 +84,38 @@ Emily Windisch, Constantin Mandel, Simon Rapp, Nikola Bursac, and Albert
 \newblock {\em Procedia CIRP}, 109:550--555, 2022.
 \newblock 32nd CIRP Design Conference (CIRP Design 2022) - Design in a changing
   world.
+
+\bibitem{belfadel2022requirements}
+Abdelhadi Belfadel, Jannik Laval, Chantal Bonner~Cherifi, and Nejib Moalla.
+\newblock Requirements engineering and enterprise architecture-based software
+  discovery and reuse.
+\newblock {\em Innovations in Systems and Software Engineering}, pages 1--22,
+  2022.
+
+\bibitem{9447081}
+Marian Mistler, Nadine Schlueter, and Manuel Löwer.
+\newblock Analysis of software tools for model-based generic systems
+  engineering for organizations based on e-decode.
+\newblock In {\em 2021 IEEE International Systems Conference (SysCon)}, pages
+  1--8, April 2021.
+
+\bibitem{Jassawalla}
+Avan~R. Jassawalla and Hemant~C. Sashittal.
+\newblock An examination of collaboration in high-technology new product
+  development processes.
+\newblock {\em Journal of Product Innovation Management}, 15(3):237--254, 1998.
+
+\bibitem{kumar2022requirements}
+Brijesh Kumar and HOD Dr~Dhirendra Pandey.
+\newblock Requirements engineering process model add-on for software
+  development.
+\newblock 2022.
+
+\bibitem{marion_fixson_2019}
+Tucker Marion and Sebastian Fixson.
+\newblock The influence of collaborative information technology tool usage on
+  npd.
+\newblock {\em Proceedings of the Design Society: International Conference on
+  Engineering Design}, 1(1):219–228, 2019.
 
 \end{thebibliography}

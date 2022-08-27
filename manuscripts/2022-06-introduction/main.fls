@@ -187,13 +187,13 @@ INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmmi6.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmr7t.tfm
+INPUT ./text/2_oursolution.tex
+INPUT text/2_oursolution.tex
+INPUT ./text/2_oursolution.tex
+INPUT text/2_oursolution.tex
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf
-INPUT ./text/2_oursolution.tex
-INPUT text/2_oursolution.tex
-INPUT ./text/2_oursolution.tex
-INPUT text/2_oursolution.tex
 INPUT ./graphics//packages-v3.png
 INPUT ./graphics//packages-v3.png
 INPUT ./graphics//packages-v3.png
