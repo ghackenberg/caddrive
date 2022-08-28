@@ -56,6 +56,13 @@ Tucker~J. Marion and Sebastian~K. Fixson.
   changing work, collaboration, and organizations in new product development*.
 \newblock {\em Journal of Product Innovation Management}, 38(1):192--215, 2021.
 
+\bibitem{houshmand2010collaborative}
+Mahmoud Houshmand and Omid~Fatahi Valilai.
+\newblock Collaborative information system architecture for cad/cam in new
+  product development based on step standard.
+\newblock In {\em Proceedings of the World Congress on Engineering and Computer
+  Science}, volume~2, pages 1072--1080, 2010.
+
 \bibitem{Jorma2014}
 Jorma Papinniemi, Lea Hannola, and Michael Maletz.
 \newblock Challenges in integrating requirements management with plm.
@@ -76,6 +83,12 @@ Rodrigo Goncalves~de Branco, Maria~Istela Cagnin, and Debora~Maria
 \newblock In {\em 2014 14th International Conference on Computational Science
   and Its Applications}, pages 225--228, June 2014.
 
+\bibitem{sanchez2003flexibility}
+AM~Sanchez and Manuela~P P{\'e}rez.
+\newblock Flexibility in new product development: a survey of practices and its
+  relationship with the product's technological complexity.
+\newblock {\em Technovation}, 23(2):139--145, 2003.
+
 \bibitem{WINDISCH2022550}
 Emily Windisch, Constantin Mandel, Simon Rapp, Nikola Bursac, and Albert
   Albers.
@@ -84,6 +97,13 @@ Emily Windisch, Constantin Mandel, Simon Rapp, Nikola Bursac, and Albert
 \newblock {\em Procedia CIRP}, 109:550--555, 2022.
 \newblock 32nd CIRP Design Conference (CIRP Design 2022) - Design in a changing
   world.
+
+\bibitem{buyukozkan2004survey}
+G{\"u}l{\c{c}}{\.I}n B{\"u}y{\"u}K{\"o}zkan, T{\"u}rkay Derel{\.I}, and
+  Ad{\.I}l Baykaso{\u{g}}lu.
+\newblock A survey on the methods and tools of concurrent new product
+  development and agile manufacturing.
+\newblock {\em Journal of Intelligent Manufacturing}, 15(6):731--751, 2004.
 
 \bibitem{belfadel2022requirements}
 Abdelhadi Belfadel, Jannik Laval, Chantal Bonner~Cherifi, and Nejib Moalla.
@@ -98,6 +118,14 @@ Marian Mistler, Nadine Schlueter, and Manuel Löwer.
   engineering for organizations based on e-decode.
 \newblock In {\em 2021 IEEE International Systems Conference (SysCon)}, pages
   1--8, April 2021.
+
+\bibitem{DURMUSOGLU2011321}
+Serdar~S. Durmuşoğlu and Gloria Barczak.
+\newblock The use of information technology tools in new product development
+  phases: Analysis of effects on new product innovativeness, quality, and
+  market performance.
+\newblock {\em Industrial Marketing Management}, 40(2):321--330, 2011.
+\newblock Special issue on Service-Dominant Logic in Business Markets.
 
 \bibitem{Jassawalla}
 Avan~R. Jassawalla and Hemant~C. Sashittal.
