@@ -14,6 +14,15 @@ packages/backend/uploads/*.jpg
 packages/backend/uploads/*.png
 !packages/backend/uploads/demo-*.png
 
+manuscripts/*/*.aux
+manuscripts/*/*.bbl
+manuscripts/*/*.blg
+manuscripts/*/*.fdb_latexmk
+manuscripts/*/*.fls
+manuscripts/*/*.log
+manuscripts/*/*.pdf
+manuscripts/*/*.synctex.gz
+
 public
 
 bin
