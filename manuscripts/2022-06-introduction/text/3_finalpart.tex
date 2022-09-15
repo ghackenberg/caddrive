@@ -1,12 +1,18 @@
 \section{Critical evaluation}
 \label{sec:evaluation}
-To solve the issues defined at the beginning of the article, we have developed the software ProductBoard. The software has not yet reached its final state but already meets a wide range of required issues. We have noticed a few points that are still insufficiently covered in the current software version or are still open questions.
+To solve the issues defined at the beginning of the article, we have developed the software ProductBoard. The software has not yet reached its final state but already meets a wide range of requirement. We have noticed a few points that are still insufficiently covered in the current software version or are still open questions.
 
 \subsection*{Support for multiple file types}
-At this stage, the tool only supports 3D CAD files in .GLB format. For more interdisciplinary use cases, the software needs to be modified to read and display exports in different formats. The software can also be extended to include image files, video files, or simulations. To do this, the reference mechanism in the data model must be modified so that the node can point to multiple models. For this we have already planned to let the data reference node inherit from other nodes that contain further file formats and will be implemented at a later time.
+At this stage, the tool only supports 3D CAD files in .GLB format. To be able to support other disciplines than the design of 3d CAD models, the software needs to be modified to read and display exports in different formats. The software can also be extended to include image files, video files, or simulations like FEM, CFD, MBS and DES. 
+Due to the extension to different data formats, our software can be used for the most diverse development processes. 
+2D plans can be used for example for construction drawings, electrical drawings and building floor plans to support mechanical engineering, electrical engineering or architects in various domains.
+By sharing images, videos and documents, the platform can be used even more flexibly to support product development.
+If different data formats are supported, it should also be possible to mark parts in these data for disscussions.
+For example, it should be possible to mark image areas in 2D formats such as construction drawings, circuit diagrams, PDFs or images. 
+In audio and video files, it should be possible to mark time segments.
 
 \subsection*{Bind management tools on products or versions}
-During the test phase, we asked ourselves whether it is better for mechanical designs to tie the issues, comments and milestones to the respective product or to a product version. Both approaches have different advantages and disadvantages. Like the GitHub platform, our implementation binds the issues, comments and milestones to the respective product. This has the advantage that there is a better overall view of the product and the product can be managed version-independently. The disadvantage is that it can happen with the comments that components are referenced that no longer exist in the current product progress. The conversion, that the issues, comments and milestones are linked to the version would require the entire software to be rebuilt and is not planned after discussions.
+During the test phase, we asked ourselves whether it is better for mechanical designs to tie the issues and comments to the respective product or to a product version. Both approaches have different advantages and disadvantages. Like the GitHub platform, our implementation binds the issues and comments to the respective product. This has the advantage that there is a better overall view of the product and the product can be managed version-independently. The disadvantage is that it can happen with the comments that components are referenced that no longer exist in the current product progress. The conversion, that the issues, comments and milestones are linked to the version would require the entire software to be rebuilt and is not planned after discussions.
 
 \subsection*{Referencing components across multiple versions}
 In the comments section, different components of the CAD model can be referenced in text and get highlighted. The problem is that it is possible that in the course of a discussion, components of different versions are referenced because the product changes in the course of the project. In the communication channel, however, only one version of the product is visible and thus only the components that have been referenced in this version can be seen. In the test phase it turned out that this is not a good solution. Here an overview must be built in the user interface, which can display all versions with the respective references so that the progress of the product is traceable.
@@ -49,4 +55,3 @@ Another extension we would like to work on is calculating the deltas between the
 
 \subsection*{Virtual Reality}
 Virtual reality has a huge potential to display the CAD models even better. Through VR, the communication between the stackholders can be further improved because the work results can be better presented. Furthermore, the customer has the possibility to freely view complex components in the virtual environment and thus to better follow the product development and to better evaluate the progress.
-
