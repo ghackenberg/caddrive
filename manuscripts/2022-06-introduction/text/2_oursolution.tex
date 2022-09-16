@@ -65,8 +65,9 @@
     Unlike user management, a file must be specified when a version is created. 
     This CAD model can be exchanged when updating the version so that these can still be changed afterwards. The base versions cannot be changed later on.
     Since the versions are linked to a product, only the product ID can be used to search for it.
-   \texttt{ \subsubsection*{Issue management} 
+   \subsubsection*{Issue management} 
     These methods are available to create, read, find, update and delete issues:
+    \texttt{ 
     \begin{itemize}
         \item addIssue(userId: string, productId: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string)
         \item updateIssue(id: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string)
@@ -99,11 +100,11 @@
     \subsubsection*{Milestone management}
     Milestones are a container that can be filled with issues by reference. The CRUD methods are listed below:
    \texttt{ \begin{itemize}
-        \item findMilestones(productId: string)
-        \item addMilestone(userId: string, productId: string, label: string, start: timestamp, end: timestamp)
-        \item getMilestone(id: string)
-        \item updateMilestone(id: string, label: string, start: timestamp, end: timestamp)
-        \item deleteMilestone(id: string)
+    \item addMilestone(userId: string, productId: string, label: string, start: timestamp, end: timestamp)
+    \item updateMilestone(id: string, label: string, start: timestamp, end: timestamp)
+    \item deleteMilestone(id: string)
+    \item findMilestones(productId: string)
+    \item getMilestone(id: string)
     \end{itemize}}
 
     The methods have analogous purposes as already with the other data objects. When deleting a milestone, it must be ensured that the references to the linked issues are removed.
