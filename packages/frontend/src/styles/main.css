@@ -345,10 +345,10 @@ body > div > main span.state {
     color: white;
 }
 body > div > main span.state.open {
-    background-color: green;
+    background-color: red;
 }
 body > div > main span.state.closed {
-    background-color: red;
+    background-color: green;
 }
 
 body > div > main > main div.widget.thread {
@@ -526,10 +526,10 @@ body > div > main > main div.widget.thread > div > div.note > div.text > a > spa
     border-radius: 1em;
 }
 body > div > main > main div.widget.thread > div > div.note.action.close > div.text > a > span {
-    background-color: red;
+    background-color: green;
 }
 body > div > main > main div.widget.thread > div > div.note.action.reopen > div.text > a > span {
-    background-color: green;
+    background-color: red;
 }
 body > div > main > main div.widget.thread > div > div.note > div.text > a > span > img {
     display: block;

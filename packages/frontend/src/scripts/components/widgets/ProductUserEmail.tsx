@@ -6,17 +6,19 @@ export const ProductUserEmailWidget = (props: { user: User, members: Member[] })
     return (
         <Fragment>
             {props.user.deleted ? (
-                <del style={{opacity: 0.5}}>
-                    {props.user.email}
-                </del>
+                <React.Fragment>
+                    &lt;<del style={{opacity: 0.5}}>{props.user.email}</del>&gt;
+                </React.Fragment>
             ) : (
                 <Fragment>
                     {props.members.map(member => member.userId).includes(props.user.id) ? (
-                        props.user.email
+                        <React.Fragment>
+                            &lt;{props.user.email}&gt;
+                        </React.Fragment>
                     ) : (
-                        <del>
-                            {props.user.email}
-                        </del>
+                        <React.Fragment>
+                            &lt;<del>{props.user.email}</del>&gt;
+                        </React.Fragment>
                     )}
                 </Fragment>
             )}

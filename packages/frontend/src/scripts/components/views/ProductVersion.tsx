@@ -205,8 +205,10 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                     <div className="text">
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                            <span className="user"> {vers.id in users && members ? <ProductUserNameWidget user={users[vers.id]} members={members}/> : '?'}  </span>
-                                                            <span className="user"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span>
+                                                            <span className="user">
+                                                                <span className="name"> {vers.id in users && members ? <ProductUserNameWidget user={users[vers.id]} members={members}/> : '?'}  </span>
+                                                                <span className="email"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span>
+                                                            </span>
                                                         </div>
                                                         <div>
                                                             <span className="description">{vers.description}</span>
