@@ -1,58 +1,61 @@
 \begin{abstract}
-    Product development is facing new challenges as a result of the demand for increasingly individualized products in small batch sizes and short time to markets. 
-    By providing software tools, digitalization is an enabler for agile product development. Stakeholders such as the customer, the project manager, the requirement engineer and the product designer can develop the product together and react quickly to each other's demands.
-    Today, each stakeholder uses its own platform to manage work results like product designs, requirements or associated tasks.
-    This complicates aspects such as scheduling, priority planning or the definition of new requirements as there is no common basis of information.
+    Product development is facing new challenges as a result of the demand for increasingly complex and individualized products in small batch sizes and short time to markets. 
+    By providing software tools, digitalization is an enabler for agile product development.
+    Stakeholders such as customers, project managers, requirement engineers and product designers can develop the product together and react quickly to each other's demands.
+    Today, each stakeholder uses his/her own platform to manage artifacts like product designs, requirements or schedules.
+    The array of platforms complicates the information flow and frequently yields inaccuracies and inconsistencies.
     To solve these issues, we have developed an open source platform on which all relevant results can be managed.
-    Our platform combines project management, requirements engineering and offers the possibility to upload 3D CAD models to provide a transparent insight into the progress of product development. 
-    The focus was on making the software lightweight and intuitive to use. 
-    This article describes the development of such a platform and evaluates its benefits, drawbacks and what lessons we have learned.
+    Our platform provides the means for storing product design revisions as well as design tasks and project schedules through an integrated data model.
+    We complement this data model with a function model describing possible change operations on the data as well as a role-based permission model limiting the access to these operations.
+    Finally, we propose an interface model through which the end users can access the design, task, and schedule data and execute the available operations.
 \end{abstract}
+
+\begin{IEEEkeywords}
+    Product development, computer-aided design, requirements engineering, project management
+\end{IEEEkeywords}
 
 \section{Introduction}
     \label{sec:introduction}
-    \subsection*{Context}
-    The trend is for products to become increasingly complex and have shorter time to markets. ~\cite{Ahti2005}.
-    Customer wishes are becoming more and more individual and often cannot be fully expressed at the beginning due to the complexity of some products.
-    Clear requirements and a focus on the end user with management support represent half of the success of future product development~\cite{6226784}.
-    To meet these challenges, agile methods are introduced into the development process which are leading to more speed, efficiency and influences the quality of the products~\cite{ozkan2019agile}. 
-    The majority of agile approaches come from software development~\cite{HEIMICKE2021786}.
-    For software development, there are already some platforms, such as GitHub\footnote{https://www.github.com/}, that make it possible to define requirements, manage tasks and communicate with other stakeholders.
-    Due to the complexity, dynamics and uncertainty involved in the development of mechanical products, the tools of software development cannot be applied that easily~\cite{HEIMICKE2021786}.
-    There are also suitable software solutions for the development of mechanical products. However, most of these tools are specialized for a specific task and very few tools offer a multifunctional solution.~\cite{MarionTucker}. 
-    So, for the development of mechanical products, many different software tools are used, which cover the particular area of application, such as project management, requirements engineering or product design.
-    Because of the number of different tools used to develop products, isolated artifacts are generated, which makes collaborative product development very difficult ~\cite{houshmand2010collaborative}.
-    Merging the data from separate applications becomes a major challenge because they do not have a common database. This leads to differences in terminology and concepts, which causes communication problems~\cite{Jorma2014}.
-    Many projects are very expensive because there is no platform that provides clean communication and an integrated data model with a transparent view of the data. 
+
+    Today, customers across industries demand increasingly complex and individualized products with higher quality and shorter time to markets~\cite{Ahti2005}.
+    At the same time, engineers need to deal with (partially) vague requirements specifications and customers expect flexibility with respect to change requests -- all due to uncertainties that cannot be resolved at the beginning of product development.
+    Studies show that systematic requirements engineering with early stakeholder involvement and dedicated tool support represents half of the success of future product development~\cite{6226784}.
+    To meet these challenges, agile methods have been proposed which increase the chances of delivering products with better quality in shorter time and with lower cost~\cite{ozkan2019agile}. 
+    The majority of agile methods originate from the domain of software development, where traditional development methods frequently led to unsuccessful projects~\cite{HEIMICKE2021786}.
+    In this domain, today established platforms exist -- such as GitHub\footnote{https://www.github.com/} -- which provide dedicated support for agile projects with high stakeholder involvement based on an integrated view on requirements, schedules, and deliverables.
+    Unfortunately, due to the nature of the deliverables (mainly source code, binaries, and documentation), these platforms cannot be applied to product development directly~\cite{HEIMICKE2021786}. 
+    During the development of physical products, typically various independent software tools are used for different activities, such as project management, requirements engineering, and product design~\cite{MarionTucker}.
+    Because of the independence of these software tools, isolated artifacts are generated, which lack a common and integrated data model~\cite{houshmand2010collaborative}.
+    The lack of a common and integrated data model, in turn, hinders the information flow between stakeholders and can cause inaccuracies and inconsistencies~\cite{Jorma2014}.
+    These inaccuracies and inconsistencies finally lead to inefficiencies in product development, which cause unnecessary cost and project delays.
+    This observation leads us to the following research questions.
     
-    \subsection*{Problem}
-    Typically, project managers, requirements engineers, and product designers work with different tools that do not have a consistent and integrated database.
-    Due to this inconsistency in data models, project plans, requirements, change requests, and the CAD models are isolated from each other.
-    The more complex a project becomes, the harder it is to keep track of it, which causes finding information to take a long time or information to be overlooked entirely.  
-    As a result, problems with communication and decision making occur, resulting in unnecessary product development costs due to unnecessary iterations.
+    \subsection*{Research questions}
+    How can we improve the information flow between project managers, requirements engineers, and product designers in agile product development?
+    How can we better integrate the available information about requirements, schedules, and deliverables in agile product development?
+    How can we translate the ideas from established software development platforms such as GitHub to product development?
+    Which elements of these platforms can we reuse and which elements do we need to adapt to support product development activities?
+    To answer these questions, we worked on a number of scientific contributions.
 
-    \subsection*{Solution}
-    We take an integrated view of time management, task management and version management. In this case this article describes the implementation and of such a software and provide an evaluation of our findings.
-    The software considers product development as an overall concept. This gives the stakeholders a transparent and traceable overview of the project progress and enables agile product development.
-    On our platform, users can create different products. For each product, members, versions, issues and milestones can then be added and edited. Each version of the product contains a 3D CAD model that can be viewed like in a 3D CAD software. Members can be registered for a product which possess different permissions. 
-    With the help of the customer member role, the customer can participate in agile project management.
-    He is able to track the current status of product development, create tasks and discuss them.
-    Issues are part of the requirements management and milestones form the core concept for project management.
-    Milestones are filled with issues that can be open or closed. A milestone is considered complete when all associated issues are closed.
-    To provide a connection between requirements management and the model revisions, parts of the 3D model can be marked and referenced in from within issues.
-    Each issue contains a communication channel where the respective requirement can be discussed. This allows the customer to be involved in the process and to clarify questions at an early stages.
+    \subsection*{Scientific contributions}
+    We first provide an integrated data model of requirements, schedules, and deliverables, which supports management of CAD model revisions, linking of requirements to parts and assemblies of CAD models, asynchronous discussion about and clarification of requirements, as well as prioritization and scheduling of requirements in sprints.
+    Then, we provide an abstract function model, which explains the operations that stakeholders can perform on top of the integrated data model during execution of agile product development projects.
+    Furthermore, we provide a role-based permission model, which limits the functions that project managers, engineers, and customers can execute.
+    Finally, we provide an interface model, which we derived from GitHub, but which required substantial changes to support the underlying data, function, and permission models properly.
+    In this article we describe each of the contributions as outlined in the following.
 
-    \subsection*{Outline}
-    This article is structured as follows:
-    In Section~\ref{sec:differentiation} we discuss related work on the problem defined previously.
-    In Section~\ref{sec:contribution} we present our original solution to the problem at hand.
-    Then, in Section~\ref{sec:evaluation} we evaluate our solution with respect to different criteria.
+    \subsection*{Article outline}
+    In Section~\ref{sec:differentiation} we first discuss related work on requirements engineering and data integration in agile product development.
+    In Section~\ref{sec:contribution} we present the integrated data model, the abstract function model, the role-based permission model, and the interface model as summarized previously.
+    Then, in Section~\ref{sec:evaluation} we evaluate our models with respect to different criteria and unveil weaknesses, which need to be addressed eventually to be widely applicable.
     Finally, in Section~\ref{sec:conclusion} we summarize our learnings and provide an outlook on future work.
     
     \section{Related work}
     \label{sec:differentiation}
+    In the following, we look at related work on requirements engineering and data integration for agile product development. Therefore, first we summarize related approaches, which have been published by the scientific community in recent years. Then, we summarize related commercial approaches, which are available on the market today. Finally, we draw our conclusions on the state of the art.
 
     \subsection*{Scientific approaches}
+    \label{sec:scientific}
     Google Scholar was used to search for appropriate literature using the following search terms in various combinations: Requirements Engineering, requirements management, computer aided design, product development, mechanical engineering, mechanical design, industrial design, traceability, integration, product lifecycle management, software tools, agile project management, new product development, collaboration, collaborative information technology. For each combination searched, the first 30 entries were looked through, and the most relevant articles were used as state-of-the-art references. 
     
     Most of the articles focus on requirement management and describe its theoretical aspects. These articles also point out the importance of well-executed requirement management and the challenges that occur in the process. It is mentioned again and again that requirement engineering is a major part of success.
@@ -74,10 +77,12 @@
     A paper compared two projects were compared with each other to evaluate the impact of collaborative information technology tools. Project A used software for communication, tasks and data storage. Project B divided these parts among three tools and experienced significant delays and cost overruns. The manager of project A noted the benefit of a single place for communication and product iteration~\cite{marion_fixson_2019}.
 
     \subsection*{Commercial approaches}
-    \subsubsection*{GitHub}
-    It is a service for project management of software projects. Repositories are created and managed here. Multiple project versions can be uploaded to the repository and requirements can be collected, divided into milestones and discussed in the issues section. These functionalities solve some problems defined above. However, GitHub is only designed for software products and does not support CAD files. Thus, solution engineering of mechanical systems cannot be included. We find GitHub to be an excellent platform for software development and in the course of this article we want to create a platform that offers similar tools, but is suitable for 3D CAD models.
+    \label{sec:commercial}
 
-    \subsubsection*{Onshape\footnote{https://www.onshape.com/}}
+    \subsubsection*{GitHub}
+    GitHub is a service for the management of agile software projects. Repositories are created and managed here. Multiple project versions can be uploaded to the repository and requirements can be collected, divided into milestones and discussed in the issues section. These functionalities solve some problems defined above. However, GitHub is only designed for software products and does not support CAD files. Thus, solution engineering of mechanical systems cannot be included. We find GitHub to be an excellent platform for software development and in the course of this article we want to create a platform that offers similar tools, but is suitable for 3D CAD models.
+
+    \subsubsection*{PTC Onshape\footnote{https://www.onshape.com/}}
     The tool onshape is a premium software, from the company PTC, which combines product development, the CAD, data management, collaboration and real-time analysis. The tool offers a huge range of features. It provides a secure cloud workspace for all project stakeholders and the development team can work together on the design of the product. The tool enables multiple parallel design iterations and real-time collaborative work, and offers many more features. 
     Unfortunately, the software also has disadvantages compared to lightweight open source software due to the huge scope of functions and the binding to one company. If the customer is involved in an agile project development process, he has a high entry hurdle when learning the program.  In order to keep the tool consistent with real project progress, it must be constantly updated. Due to the high amount of data in the tool, the stakeholders and especially the customer can lose the overview. For the customer, it is easier to see exports of product versions than the entire system when making decisions, and the company does not have to disclose design details. The deep integration of Onshape into the world of PTC forces you to be caught in it. 
     Here we want to go the approach of an open source software that works with 3D CAD exports. Furthermore, the software should be intuitive to use and easy to learn. Because the entire solution engineering process does not take place in our tool, but only exports are uploaded, there is also freedom with which data the platform is fed and what the customer gets to see. The customer should be able to participate in the product development on the basis of the product versions provided without having to see complex design details.

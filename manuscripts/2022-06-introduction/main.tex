@@ -1,12 +1,50 @@
-\documentclass{IEEEtran}
+\documentclass[conference]{IEEEtran}
+
 \usepackage{graphicx}
 \usepackage{endnotes}
-\graphicspath{ {./graphics/} }
+\usepackage{hyperref}
 
-\title{Collaborative and integrated model, task, and time management for agile CAD}
-\author{Dominik Frühwirth}
+\graphicspath{
+    {./graphics/}
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\title{Integrated requirement, schedule and deliverable management for agile product development}
+
+\author{
+    \IEEEauthorblockN{Dominik Frühwirth}
+    \IEEEauthorblockA{
+        School of Engineering, University of \\
+        Applied Sciences Upper Austria \\
+        4600 Wels, Upper Austria, Austria \\
+        \href{mailto:dominik.fruewirth@fh-wels.at}{dominik.fruewirth@fh-wels.at}
+    }
+    \and
+    \IEEEauthorblockN{Georg Hackenberg}
+    \IEEEauthorblockA{
+        School of Engineering, University of \\
+        Applied Sciences Upper Austria \\
+        4600 Wels, Upper Austria, Austria \\
+        \href{mailto:georg.hackenberg@fh-wels.at}{georg.hackenberg@fh-wels.at}
+    }
+    \and
+    \IEEEauthorblockN{Christian Zehetner}
+    \IEEEauthorblockA{
+        School of Engineering, University of \\
+        Applied Sciences Upper Austria \\
+        4600 Wels, Upper Austria, Austria \\
+        \href{mailto:christian.zehetner@fh-wels.at}{christian.zehetner@fh-wels.at}
+    }
+}
 
 \begin{document}
+
     \maketitle
 
     \input{text/1_introduction.tex}

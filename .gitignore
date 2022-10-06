@@ -22,6 +22,7 @@ manuscripts/*/*.fls
 manuscripts/*/*.log
 manuscripts/*/*.pdf
 manuscripts/*/*.synctex.gz
+manuscripts/*/*.out
 
 public
 

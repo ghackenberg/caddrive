@@ -8,12 +8,10 @@
         \label{fig: datamodel}
     \end{figure*}
 
-    \subsection*{Requirements}
     The goal to be achieved is to combine requirement engineering, project management and solution engineering with the corresponding CAD data to create a compact and lightweight tool to support product development. Customers and companies can evaluate and control the development status on a common basis. For this purpose, the platform GitHub was considered as a reference, which already offers a similar solution in the area of software development. The tool we are developing should be able to run platform independently on different devices. To involve the customer in the development process clear user roles with corresponding permissions must be defined. Each added version of a product contains a new CAD model with version number, base version and description. For each product it should be possible to create issues, which are filtered by open and closed issues. 
     In each issue there should be a communication channel in which the issues can be discussed. 
     Here, the user schould be able to select and reference specific components to the text and open and close the corresponding issues. 
     Another level of product management is built by the milestones. Milestones can be created, and different issues can be added to them. A list of open and closed issues as well as a chart show the progress of each milestone. Finally, the platform must provide settings for each product to define the member list and the product properties. All data generated on the platform should be stored in a database.
-
 
     \subsection*{Data model}
     The core of the software is in the backend. Via the API, the data can be manipulated using CRUD methods. This section describes the data model of the software. The necessary classes and entities are based on the interfaces in the common package.
