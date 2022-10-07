@@ -1,15 +1,29 @@
-\section{Tool requirements}
+\section{Tool goals and requirements}
     \label{sec:requirements} 
 
-    The goal to be achieved is to integrate project manager, requirements engineers, and product designers with the corresponding CAD data to create a compact and lightweight tool to support product development. Customers and companies can evaluate and control the development status on a common basis. For this purpose, the platform GitHub was considered as a reference, which already offers a similar solution in the area of software development. The tool we are developing should be able to run platform independently on different devices. To involve the customer in the development process clear user roles with corresponding permissions must be defined. Each added version of a product contains a new CAD model with version number, base version and description. For each product it should be possible to create issues, which are filtered by open and closed issues. 
-    In each issue there should be a communication channel in which the issues can be discussed. 
-    Here, the user should be able to select and reference specific components to the text and open and close the corresponding issues. 
-    Another level of product management is built by the milestones. Milestones can be created, and different issues can be added to them. A list of open and closed issues as well as a chart show the progress of each milestone. Finally, the platform must provide settings for each product to define the member list and the product properties. All data generated on the platform should be stored in a database.
+    Our main goal is to improve the information flow between customers, project managers, requirements engineers, and product designers, and to reduce inaccuracies and inconsistencies in product development.
+    In particular, we want to make it easier for the customers to participate in product development processes, to understand the current state of running projects, and to provide valuable feedback for validation.
+    At the same time we want to make it easier for project managers, requirements engineers, and product designers to share and validate their individual view points and, hence, build a mutual understanding faster.
+
+    In a first step, we translated these rather abstract goals into more concrete functional and non-functional requirements:
+    \begin{description}
+        \item[RQ1] The tool we are developing should be able to run platform independently on different devices.
+        \item[RQ2] To involve the customer in the development process clear user roles with corresponding permissions must be defined.
+        \item[RQ3] Each added version of a product contains a new CAD model with version number, base version and description.
+        \item[RQ4] For each product it should be possible to create issues, which are filtered by open and closed issues.
+        \item[RQ5] In each issue there should be a communication channel in which the issues can be discussed.
+        \item[RQ6] Here, the user should be able to select and reference specific components to the text and open and close the corresponding issues.
+        \item[RQ7] Another level of product management is built by the milestones. Milestones can be created, and different issues can be added to them.
+        \item[RQ8] A list of open and closed issues as well as a chart show the progress of each milestone.
+        \item[RQ9] Finally, the platform must provide settings for each product to define the member list and the product properties. 
+        \item[RQ10] All data generated on the platform should be stored in a database. 
+    \end{description}
+    In a second step, we derived a concrete tool design from the previous list of requirements.
 
 \section{Tool design}
     \label{sec:contribution}
 
-    In the following, we present our tool design consisting of four models: An integrated data model, a function model, a permission model, and an interface model.
+    As explained previously, our tool design comprises four models: An integrated \textbf{data model}, a \textbf{function model}, a \textbf{permission model}, and an \textbf{interface model}.
     The integrated data model describes the representation of CAD model revisions, design tasks, and project schedules.
     The function model explains the change operations stakeholders can perform on top of the data model.
     The permission model outlines which functions can be used by which stakeholder depending on his/her role.
@@ -29,7 +43,7 @@
     For each product one or more milestones can be defined. These have a label and start and end dates. For each product one or more members can be added. The attribute \textit{role} can have three states: \textit{manager, engineer, customer}. Depending on the role, the corresponding product member has different permissions to interact with the respective product  as defined in the persmission model in Section~\ref{subsec:permissionModel}. 
 
     \subsection*{Function model} 
-    The functions implemented in the API allow to create, read, update, search and delete data to interact with the data model. This would not even require a graphical user interface. All functions offered by the API are called via HTTP requests. These requests can also be made via the console or other software such as Postman\footnote{https://www.postman.com/} or Swagger\footnote{https://swagger.io}. Thus, the functional model in combination with the data model is the foundation of this application. 
+    The functions implemented in the API allow to create, read, update, search and delete data to interact with the data model. This would not even require a graphical user interface. All functions offered by the API are called via HTTP requests. Thus, the functional model in combination with the data model is the foundation of this application. 
     By triggering a function in the API, various permission checks are executed to verify if the active user has the permission for performing this action as specified in the permission model in Section~\ref{subsec:permissionModel}. 
 
     \subsubsection*{User management}
