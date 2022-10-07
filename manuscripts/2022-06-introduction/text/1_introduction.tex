@@ -22,7 +22,7 @@
     Studies show that systematic requirements engineering with early stakeholder involvement and dedicated tool support represents half of the success of future product development~\cite{6226784}.
     To meet these challenges, agile methods have been proposed which increase the chances of delivering products with better quality in shorter time and with lower cost~\cite{ozkan2019agile}. 
     The majority of agile methods originate from the domain of software development, where traditional development methods frequently led to unsuccessful projects~\cite{HEIMICKE2021786}.
-    In this domain, today established platforms exist -- such as GitHub\footnote{https://www.github.com/} -- which provide dedicated support for agile projects with high stakeholder involvement based on an integrated view on requirements, schedules, and deliverables.
+    In this domain, today established platforms exist -- such as GitHub\footnote{\url{https://www.github.com/}} -- which provide dedicated support for agile projects with high stakeholder involvement based on an integrated view on requirements, schedules, and deliverables.
     Unfortunately, due to the nature of the deliverables (mainly source code, binaries, and documentation), these platforms cannot be applied to product development directly~\cite{HEIMICKE2021786}. 
     During the development of physical products, typically various independent software tools are used for different activities, such as project management, requirements engineering, and product design~\cite{MarionTucker}.
     Because of the independence of these software tools, isolated artifacts are generated, which lack a common and integrated data model~\cite{houshmand2010collaborative}.
@@ -45,50 +45,90 @@
     In this article we describe and discuss each of the contributions as outlined in the following.
 
     \subsection*{Article outline}
-    In Section~\ref{sec:differentiation} we first discuss related work on requirements engineering and data integration in agile product development.
-    Then, in Section~\ref{sec:contribution} we present our integrated data model, the function model, the permission model, and the interface model as explained in the previous section.
-    Thereafter, in Section~\ref{sec:evaluation} we evaluate our models with respect to different criteria and unveil weaknesses, which need to be addressed eventually to be widely applicable.
+    In Section~\ref{sec:differentiation} we first discuss related work on requirements engineering and data integration in the context of agile product development.
+    Then, in Section~\ref{sec:requirements} we summarize the requirements we believe an integration approach to project management, requirements engineering, and product design must fulfill.
+    Thereafter, in Section~\ref{sec:contribution} we present the integrated data model, the function model, the permission model, and the interface model as explained in the previous section.
+    Afterwards, in Section~\ref{sec:evaluation} we evaluate our models with respect to different criteria and unveil weaknesses, which need to be addressed eventually to be widely applicable.
     Finally, in Section~\ref{sec:conclusion} we summarize our learnings and provide an outlook on future work.
     
     \section{Related work}
     \label{sec:differentiation}
-    In the following, we look at related work on requirements engineering and data integration for agile product development. Therefore, first we summarize related approaches, which have been published by the scientific community in recent years. Then, we summarize related commercial approaches, which are available on the market today. Finally, we draw our conclusions on the state of the art.
-
-    \subsection*{Scientific approaches}
-    \label{sec:scientific}
-    Google Scholar was used to search for appropriate literature using the following search terms in various combinations: Requirements Engineering, requirements management, computer aided design, product development, mechanical engineering, mechanical design, industrial design, traceability, integration, product lifecycle management, software tools, agile project management, new product development, collaboration, collaborative information technology. For each combination searched, the first 30 entries were looked through, and the most relevant articles were used as state-of-the-art references. 
+    We used Google Scholar\footnote{\url{https://scholar.google.com/}} to find related literature using the following keywords in various combinations:
+    \begin{itemize}
+        \item \textit{requirements} and (\textit{engineering} or \textit{management} or \textit{analysis} or \textit{specification})
+        \item ((\textit{computer-aided} or \textit{mechanical} or \textit{industrial} or \textit{engineering} or \textit{product}) and \textit{design}) or (\textit{product} and \textit{development})
+        \item \textit{agile} and (\textit{approach} or \textit{method} or \textit{methodology} or \textit{process} or (\textit{project} and \textit{management}))
+        \item (\textit{product} and (\textit{lifecycle} or \textit{data}) and \textit{management}) or \textit{traceability}
+    \end{itemize}
+    Subsequently, we discuss the most relevant search results, which have been selected by title and abstract.
     
-    Most of the articles focus on requirement management and describe its theoretical aspects. These articles also point out the importance of well-executed requirement management and the challenges that occur in the process. It is mentioned again and again that requirement engineering is a major part of success.
-    We found an article that divides requirement management into subcategories and phases, describing each aspect of developing new products in a high-tech company~\cite{Ahti2005}.
-    In product development, it is important to be able to reuse the knowledge generated. One article described a framework for combining requirements management with engineering design and making it reusable. The resulting design reuse system consists of three key elements: process knowledge, task knowledge and product knowledge~\cite{BAXTER2008585}.
-    An article provides a scenario based approach for the identification, elaboration and specification of engineering design requirements using a three-phase model~\cite{liu2012scenario}.
-    Another article provides a literature review to show how requirements engineering can be further enhanced with the help of guidelines for requirement management process improvement~\cite{Kauppinen2005}.
-    Computer aided software engineering tools help to support the development process. In one article such a CASE tool was developed as an Eclipse plugin which enables traceability and accessibility from the planning to the coding phase. This work focuses on the development of software products~\cite{6976693}.
-    A survey evaluated the use of individual practices and cooperation activities for new product development depending on firm size and complexity of the products~\cite{sanchez2003flexibility}.
-    An article shows the importance for requirements engineering to use visualization tools to help stakeholders catch data. They describe different elements for visualization and want to implement a software tool based on their results later~\cite{RICHTER2020271}.
-    An article points out what methods and tools are important for combining requirements engineering with project management and how important it is to see the two fields as an overall concept. The challenges of requirements engineering and project management in different contexts are highlighted. A framework is developed that combines requirements management and project management to increase the quality and effectiveness of multidomain development processes. The integration of CAD data is not covered~\cite{Jorma2014}.
-    Another contribution is the implementation of a tool for model based requirement engineering for agile product development. The concept of the tool is to connect the product requirement with the development task and the corresponding test case. Based on this a dashboard was built which received positive feedback and will be further developed~\cite{WINDISCH2022550}.
-    One paper deals with concepts for concurrent new product development to implement agile manufacturing. The most important tools and concepts are presented and discussed in how far they enable agile manufacturing~\cite{buyukozkan2004survey}.
-    A tool was built using web development tools such as Angular.js and Node.js to support product development. The tool supports the business, operational and technical aspects for service-oriented software~\cite{belfadel2022requirements}.
-    Another paper compared different software tools for enhanced demand compliant design based on different criteria. The analysis shows how important it is to use the right tool and that most tools focus only on the own discipline and rather a universal and transdisciplinary approach should be chosen~\cite{9447081}.
-    We have found a study that provides empirical evidence that tools for new product development have a positive impact on efficiency. They suggest three measures of effectiveness: innovativeness, new product quality and market performance. most tools do not cover all three aspects, as they are often very specific to one use case~\cite{DURMUSOGLU2011321}.
-    An article presents a framework to improve cross-functional collaboration in a new product development process. They emphasize that innovative and structural mechanisms increase the level of integration and effective management~\cite{Jassawalla}.
-    In one article, the importance of requirement engineering is discussed and attention is drawn to the fact that most studies and research work that is available has many strategies but no real implementation~\cite{kumar2022requirements}.
-    A paper compared two projects were compared with each other to evaluate the impact of collaborative information technology tools. Project A used software for communication, tasks and data storage. Project B divided these parts among three tools and experienced significant delays and cost overruns. The manager of project A noted the benefit of a single place for communication and product iteration~\cite{marion_fixson_2019}.
+    \subsection*{Industry studies}
+    Jassawalla and Sashittal~\cite{Jassawalla} study the importance of interdisciplinary collaboration in product development including customers and suppliers.
+    Furthermore, the authors propose a collaboration framework based on principles such as shared responsibility as well as synergy between disciplines.
+    Also, the authors stress success factors such as trust between project partners and support from top management.
 
-    \subsection*{Commercial approaches}
-    \label{sec:commercial}
+    Sanchez and P{\'e}rez~\cite{sanchez2003flexibility} also show the importance of collaboration in interdisciplinary teams for product development.
+    Therefore, the authors study practices in the automotive industry, while distinguishing between size of company and complexity of product.
+    A main outcome is that strong collaboration within project teams results in better time-to-market and lower cost independent of company size and product complexity.
+    
+    B{\"u}y{\"u}K{\"o}zkan et al.~\cite{buyukozkan2004survey} highlight the importance of concurrent engineering and data integration in the agile manufacturing era.
+    The authors summarize existing tools, while distinguishing between collaboration, modeling and analysis, design synthesis and optimization, knowledge-based tools.
+    Finally, they conclude with the operations, that the tools must be improved with respect to integration and agility.
+    
+    Durmuşoğlu and Barczak~\cite{DURMUSOGLU2011321} provide empirical evidence that software tools improve the effectiveness of product development projects.
+    They use three measures to assess effectiveness of projects: innovativeness, product quality, and market performance.
+    The study suggests that the support for agile practices such as early stakeholder involvement should be improved in today's landscape.
+    
+    Marion and Fixson~\cite{marion_fixson_2019} have a deeper look into the tool landscape used during product development.
+    The authors find that in general software tools help to share information and knowledge across team members, which applies specifically to virtual teams.
+    However, the authors also suggest that general purpose tools might be easier to adopt by project teams than specialized solutions.
+    
+    \subsection*{Abstract frameworks}
+    Kauppinen~\cite{Kauppinen2005} proposes a framework for integrating requirements engineering effectively into organizations.
+    Besides a high-level process model the framework considers the cultural change as a major factor in improving organizational practices.
+    While the author shows how requirements engineering practices can be improved effectively, the author again does not deliver concrete data models and tools.
+    
+    Baxter et al.~\cite{BAXTER2008585} stress the importance of reusing knowledge generated in product development projects.
+    Furthermore, the authors propose a framework for integrating requirements engineering with engineering design based on process, task, and product knowledge.
+    However, the framework remains rather high-level and still does not provide information about a concrete technical realization of their ideas.
 
-    \subsubsection*{GitHub}
-    GitHub is a service for the management of agile software projects. Repositories are created and managed here. Multiple project versions can be uploaded to the repository and requirements can be collected, divided into milestones and discussed in the issues section. These functionalities solve some problems defined above. However, GitHub is only designed for software products and does not support CAD files. Thus, solution engineering of mechanical systems cannot be included. We find GitHub to be an excellent platform for software development and in the course of this article we want to create a platform that offers similar tools, but is suitable for 3D CAD models.
+    Papinniemi et al.~\cite{Jorma2014} propose a framework for better integrating requirements management into product lifecycle management tools.
+    Their approach discusses the relation between customer requirements and product designs as well as the challenges for adapting existing practices in industry.
+    However, the authors do not explain how their ideas can be implemented practically into existing tool landscapes.
 
-    \subsubsection*{PTC Onshape\footnote{https://www.onshape.com/}}
-    The tool onshape is a premium software, from the company PTC, which combines product development, the CAD, data management, collaboration and real-time analysis. The tool offers a huge range of features. It provides a secure cloud workspace for all project stakeholders and the development team can work together on the design of the product. The tool enables multiple parallel design iterations and real-time collaborative work, and offers many more features. 
-    Unfortunately, the software also has disadvantages compared to lightweight open source software due to the huge scope of functions and the binding to one company. If the customer is involved in an agile project development process, he has a high entry hurdle when learning the program.  In order to keep the tool consistent with real project progress, it must be constantly updated. Due to the high amount of data in the tool, the stakeholders and especially the customer can lose the overview. For the customer, it is easier to see exports of product versions than the entire system when making decisions, and the company does not have to disclose design details. The deep integration of Onshape into the world of PTC forces you to be caught in it. 
-    Here we want to go the approach of an open source software that works with 3D CAD exports. Furthermore, the software should be intuitive to use and easy to learn. Because the entire solution engineering process does not take place in our tool, but only exports are uploaded, there is also freedom with which data the platform is fed and what the customer gets to see. The customer should be able to participate in the product development on the basis of the product versions provided without having to see complex design details.
+    Richter et al.~\cite{RICHTER2020271} propose a framework for visualizing the state and progress of product development projects.
+    They summarize requirements of different stakeholders and propose a library of visualization techniques for different aspects of project progress.
+    However, the authors do not provide ideas on how to store requirements, link requirements to product designs, and derive process information practically.
 
-    \subsection*{Conclusion}
-    Most of the papers we have found through research highlight the area of requirements engineering in particular or provide concepts for new product development. They provide many theoretical concepts to point out the importance, challenges and methods for improvement. 
-    Only a few articles describe a concrete implementation, but these only cover requirements engineering and project management or a combination of these two disciplines. None of these solutions included the possibility to additionally integrate CAD data to cover the entire product development process. The two commercial solutions GitHub and Onshape are excellent tools in their own domain but in our opinion are not suitable to support the agile product development process with close customer collaboration because of various reasons. 
-    In the case of GitHub, it's because it doesn't support design drawings. 
-    Oneshape software is an expert tool that delivers a huge feature set and discloses confidential enineering data. Customer and other stakeholders can easily lose track by access all the design details of the product. After our research we came to the conclusion that there is a need for a lightweight software tool that covers requirement engineering, project management and offers the possibility to integrate 3D CAD models. This field of research is new and important and the market is by far not yet saturated with tools that provide support for product development.
+    \subsection*{Concrete tools for product development}
+    Salo and Kakola~\cite{Ahti2005} evaluate the effectiveness of online collaboration platforms for requirements management in product development.
+    Furthermore, the authors summarize the requirements for such platforms and propose a design, which is tested across several large-scale projects.
+    However, the authors do not consider the integration of requirements with project schedules and design revisions.
+    
+    Liu et al.~\cite{liu2012scenario} provide a scenario based approach for the elicitation, decomposition, and formalization of engineering design requirements.
+    Their approach tries to increase the quality of requirements specifications in the context of product development.
+    While their approach provides better guidance on how to express requirements, their approach still lacks integration with project schedules and design revisions.
+    
+    Windisch et al.~\cite{WINDISCH2022550} propose a model-based approach for expressing requirements in mechatronic product development.
+    Their approach is based on an activity-based view of design and verification tasks, which need to be carried out by product engineers.
+    Through integration into agile project management tools, the requirements can be linked to project schedules, but the link to product design revisions is missing.
+    
+    \subsection*{Concrete tools for other domains}
+    Goncalves de Branco et al.~\cite{6976693} propose a computer-aided software engineering (CASE) tool which helps to build accessible products.
+    Their approach is based on an ontology, that allows one to describe technical implementations of accessibility requirements and, hence, enables traceability.
+    Their approach is well suited for the software domain and accessibility, but cannot be used directly in product development.
+    
+    Belfadel et al.~\cite{belfadel2022requirements} propose a framework and tool for matching customer requirements with existing enterprise capabilities.
+    Their approach is based on a multi-layer model of the enterprise architecture as well as patterns of customer requirements.
+    The tool supports discovery of feasible capabilities and effectively fosters reuse, but its application to agile product development remains unclear.
+    
+    Mistler et al.~\cite{9447081} propose a modeling technique and select appropriate tooling for matching business requirements with organizational structures.
+    To select appropriate tooling, the authors collect requirements that must be fulfilled in order for the tooling to be applicable.
+    Again, the approach helps in arranging and combining enterprise capabilities, but its application to product development remains unclear.
+
+    \subsection*{Literature summary}
+    Most papers we have found stress the importance of requirements engineering and data integration for successful product development.
+    Some papers provide abstract frameworks for integrating requirements engineering deeper into the product development process.
+    Only few articles describe concrete data models and tools to deliver  integrated support for project managers, requirements engineers, and product designers.
+    In the software domain, this data model and tool-based integration across disciplines has been established more deeply.
+    For product development, however, a complete integration of the disciplines still is missing.

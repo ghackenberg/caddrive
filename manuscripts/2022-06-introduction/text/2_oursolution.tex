@@ -1,21 +1,31 @@
-\section{Our solution}
-    \label{sec:contribution} 
+\section{Tool requirements}
+    \label{sec:requirements} 
 
-    \begin{figure*}[t]
+    The goal to be achieved is to integrate project manager, requirements engineers, and product designers with the corresponding CAD data to create a compact and lightweight tool to support product development. Customers and companies can evaluate and control the development status on a common basis. For this purpose, the platform GitHub was considered as a reference, which already offers a similar solution in the area of software development. The tool we are developing should be able to run platform independently on different devices. To involve the customer in the development process clear user roles with corresponding permissions must be defined. Each added version of a product contains a new CAD model with version number, base version and description. For each product it should be possible to create issues, which are filtered by open and closed issues. 
+    In each issue there should be a communication channel in which the issues can be discussed. 
+    Here, the user should be able to select and reference specific components to the text and open and close the corresponding issues. 
+    Another level of product management is built by the milestones. Milestones can be created, and different issues can be added to them. A list of open and closed issues as well as a chart show the progress of each milestone. Finally, the platform must provide settings for each product to define the member list and the product properties. All data generated on the platform should be stored in a database.
+
+\section{Tool design}
+    \label{sec:contribution}
+
+    In the following, we present our tool design consisting of four models: An integrated data model, a function model, a permission model, and an interface model.
+    The integrated data model describes the representation of CAD model revisions, design tasks, and project schedules.
+    The function model explains the change operations stakeholders can perform on top of the data model.
+    The permission model outlines which functions can be used by which stakeholder depending on his/her role.
+    Finally, an interface model demonstrates how the previous models can be put into action practically.
+
+    \subsection*{Data model}
+
+    \begin{figure*}[ht]
         \centering
         \includegraphics[width=\textwidth]{entities-v5.png}
         \caption{Data model}
         \label{fig: datamodel}
     \end{figure*}
 
-    The goal to be achieved is to combine requirement engineering, project management and solution engineering with the corresponding CAD data to create a compact and lightweight tool to support product development. Customers and companies can evaluate and control the development status on a common basis. For this purpose, the platform GitHub was considered as a reference, which already offers a similar solution in the area of software development. The tool we are developing should be able to run platform independently on different devices. To involve the customer in the development process clear user roles with corresponding permissions must be defined. Each added version of a product contains a new CAD model with version number, base version and description. For each product it should be possible to create issues, which are filtered by open and closed issues. 
-    In each issue there should be a communication channel in which the issues can be discussed. 
-    Here, the user schould be able to select and reference specific components to the text and open and close the corresponding issues. 
-    Another level of product management is built by the milestones. Milestones can be created, and different issues can be added to them. A list of open and closed issues as well as a chart show the progress of each milestone. Finally, the platform must provide settings for each product to define the member list and the product properties. All data generated on the platform should be stored in a database.
-
-    \subsection*{Data model}
     The core of the software is in the backend. Via the API, the data can be manipulated using CRUD methods. This section describes the data model of the software. The necessary classes and entities are based on the interfaces in the common package.
-    The data model contains the following entities [see Fig. \ref{fig: datamodel} on page~\pageref{fig: datamodel}]: \textit{User, Product, Version, Issue, Comment, Milestone, Member}. At the top level of the data model is the user, who can create multiple products if he has the permission to do so. For each product versions, issues, milestones and members can be created. The entity \textit{user} User has personal attributes like name, email, password and the two permissions to create and change users or to create products. Finally, like any other entity, the user has a \textit{deleted} flag. If the deletes an entity this is set to true. All other entities like \textit{Version, Issue, Comment, Milestone and Member} are linked to the product entity. The product itself does not provide much information, because the information is primarily in the linked entities. The versions of a product contain important information and the 3D CAD model in the format GLB\footnote{https://docs.fileformat.com/3d/glb/}. This data format can be rendered well in web applications and runs very performant in the browser.  To create a semantic versioning, the attributes major, minor and patch are specified for a version. By knowing the current version and previous version, a version history can be implemented. Multiple issues can be added for each product. The \textit{state} attribute distinguishes between \textit{open} and \textit{closed} issues. So it is possible to filter for completed and not completed issues. For each issue one or more comments can be created. With the attribute \textit{action} an issue can be closed or reopened by the comment. The text in a comment is compatible with markdown
+    The data model contains the following entities as shown in Figure~\ref{fig: datamodel}: \textit{User, Product, Version, Issue, Comment, Milestone, Member}. At the top level of the data model is the user, who can create multiple products if he has the permission to do so. For each product versions, issues, milestones and members can be created. The entity \textit{user} User has personal attributes like name, email, password and the two permissions to create and change users or to create products. Finally, like any other entity, the user has a \textit{deleted} flag. If the deletes an entity this is set to true. All other entities like \textit{Version, Issue, Comment, Milestone and Member} are linked to the product entity. The product itself does not provide much information, because the information is primarily in the linked entities. The versions of a product contain important information and the 3D CAD model in the format glTF\footnote{\url{https://www.khronos.org/gltf/}}. This data format can be rendered well in web applications and runs very performant in the browser.  To create a semantic versioning, the attributes major, minor and patch are specified for a version. By knowing the current version and previous version, a version history can be implemented. Multiple issues can be added for each product. The \textit{state} attribute distinguishes between \textit{open} and \textit{closed} issues. So it is possible to filter for completed and not completed issues. For each issue one or more comments can be created. With the attribute \textit{action} an issue can be closed or reopened by the comment. The text in a comment is compatible with markdown
     For each product one or more milestones can be defined. These have a label and start and end dates. For each product one or more members can be added. The attribute \textit{role} can have three states: \textit{manager, engineer, customer}. Depending on the role, the corresponding product member has different permissions to interact with the respective product  as defined in the persmission model in Section~\ref{subsec:permissionModel}. 
 
     \subsection*{Function model} 
@@ -39,40 +49,46 @@
 
     \subsubsection*{Product management}
     This part of the API provides methods to interact with product objects. Here products can be created, modified, searched and deleted. The following list shows the methods that are available for interacting with products:
-  \texttt{  \begin{itemize}
-        \item addProduct(userId: string, name: string, description: string)
-        \item updateProduct(id: string, name: string, description: string)
-        \item deleteProduct(id: string)
-        \item findProducts()
-        \item getProduct(id: string)
-    \end{itemize}}
+    \texttt{
+        \begin{itemize}
+            \item addProduct(userId: string, name: string, description: string)
+            \item updateProduct(id: string, name: string, description: string)
+            \item deleteProduct(id: string)
+            \item findProducts()
+            \item getProduct(id: string)
+        \end{itemize}
+    }
 
     The methods work according to the same principle as in user management. It is searched with the corresponding product ID for the object or its attributes get changed. When deleting a product, it must be ensured that all objects that are attached to a product are also deleted. So if a product is deleted, all versions, issues, milestones and members must also be deleted.
     The \texttt{findProducts} method searches in the database for all products that are not deleted. For this no passing parameter is necessary.
     
     \subsubsection*{Version management}
     Again, the API provides CRUD methods to interact with versions:
-   \texttt{ \begin{itemize}
-        \item addVersion(userId: string, productId: string, baseVersionIds: string[], time: timestamp, major: number, minor: number, patch: number, description: string, file: File)
-        \item updateVersion(id: string, major: number, minor: number, patch: number, description: string, file?: File)
-        \item deleteVersion(id: string)
-        \item findVersions(productId: string)
-        \item getVersion(id: string)
-    \end{itemize}}
+   \texttt{
+        \begin{itemize}
+            \item addVersion(userId: string, productId: string, baseVersionIds: string[], time: timestamp, major: number, minor: number, patch: number, description: string, file: File)
+            \item updateVersion(id: string, major: number, minor: number, patch: number, description: string, file?: File)
+            \item deleteVersion(id: string)
+            \item findVersions(productId: string)
+            \item getVersion(id: string)
+        \end{itemize}
+    }
 
     Unlike user management, a file must be specified when a version is created. 
     This CAD model can be exchanged when updating the version so that these can still be changed afterwards. The base versions cannot be changed later on.
     Since the versions are linked to a product, only the product ID can be used to search for it.
-   \subsubsection*{Issue management} 
+
+    \subsubsection*{Issue management} 
     These methods are available to create, read, find, update and delete issues:
     \texttt{ 
-    \begin{itemize}
-        \item addIssue(userId: string, productId: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string)
-        \item updateIssue(id: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string)
-        \item deleteIssue(id: string)
-        \item findIssues(productId: string, milestoneId?: string, state?: 'open' or 'closed')
-        \item getIssue(id: string)
-    \end{itemize}}
+        \begin{itemize}
+            \item addIssue(userId: string, productId: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string)
+            \item updateIssue(id: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string)
+            \item deleteIssue(id: string)
+            \item findIssues(productId: string, milestoneId?: string, state?: 'open' or 'closed')
+            \item getIssue(id: string)
+        \end{itemize}
+    }
 
     The \texttt{updateIssue} method is mainly used to update the list of assignees, change which milestones the issue belongs to and to close and reopen an issue.
     When deleting issues, all comments belonging to the respective issue must also be deleted.
@@ -81,41 +97,45 @@
     
     \subsubsection*{Comment management}
     The following list shows the methods that can be performed to interact with the comment objects:
-   \texttt{ \begin{itemize}
-        \item addComment(userId: string, issueId: string, time: timestamp, text: string, action: 'none' or 'close' or 'reopen')
-        \item updateComment(id: string, text: string, action: 'none' or 'close' or 'reopen')
-        \item deleteComment(id: string)
-        \item findComments(issueId: string)
-        \item getComment(id: string)
-    \end{itemize}}
+    \texttt{
+        \begin{itemize}
+            \item addComment(userId: string, issueId: string, time: timestamp, text: string, action: 'none' or 'close' or 'reopen')
+            \item updateComment(id: string, text: string, action: 'none' or 'close' or 'reopen')
+            \item deleteComment(id: string)
+            \item findComments(issueId: string)
+            \item getComment(id: string)
+        \end{itemize}
+    }
 
     The \texttt{addComment} method creates a comment with the given attributes. The user can define the action of the comment to interact with the corresponding issue. For example, if a comment is created with the action \textit{close}, the associated issue will be closed by triggering the \texttt{updateIssue} method which modifies the state of the issue. An issue can also be reopened in the same way by passing the according action. The action \textit{none} does not change the state of the issue. 
     With \texttt{updateComment} it is possible to modify the text or the action of an existing comment.
     The \texttt{deleteComment} method only deletes the corresponding Comment. Nothing else on the platform is deleted in the process. The actions of the comment remain until another comment performs another action. 
 
-
-
     \subsubsection*{Milestone management}
     Milestones are a container that can be filled with issues by reference. The CRUD methods are listed below:
-   \texttt{ \begin{itemize}
-    \item addMilestone(userId: string, productId: string, label: string, start: timestamp, end: timestamp)
-    \item updateMilestone(id: string, label: string, start: timestamp, end: timestamp)
-    \item deleteMilestone(id: string)
-    \item findMilestones(productId: string)
-    \item getMilestone(id: string)
-    \end{itemize}}
+    \texttt{
+        \begin{itemize}
+            \item addMilestone(userId: string, productId: string, label: string, start: timestamp, end: timestamp)
+            \item updateMilestone(id: string, label: string, start: timestamp, end: timestamp)
+            \item deleteMilestone(id: string)
+            \item findMilestones(productId: string)
+            \item getMilestone(id: string)
+        \end{itemize}
+    }
 
     The methods have analogous purposes as already with the other data objects. When deleting a milestone, it must be ensured that the references to the linked issues are removed.
 
     \subsubsection*{Member management}
     The API provides the following methods for member management:
-    \texttt{\begin{itemize}
-        \item addMember(productId: string, userId: string, role: 'manager' or 'engineer' or 'customer')
-        \item updateMember(id: string, role: 'manager' or 'engineer' or 'customer')
-        \item deleteMember(id: string)
-        \item findMembers(productId: string, userId?: string)
-        \item getMember(id: string)
-    \end{itemize}}
+    \texttt{
+        \begin{itemize}
+            \item addMember(productId: string, userId: string, role: 'manager' or 'engineer' or 'customer')
+            \item updateMember(id: string, role: 'manager' or 'engineer' or 'customer')
+            \item deleteMember(id: string)
+            \item findMembers(productId: string, userId?: string)
+            \item getMember(id: string)
+        \end{itemize}
+    }
 
     The \texttt{addMember} method creates new members for an existing product. With the input parameter \textit{role} different user roles can be distributed. If a combination of product and user already exists and is created a second time, they have different IDs compared to the original ones and are therefore independent. 
     The user ID can be used to find one specific member. Then the \texttt{findMembers} method returns an array of members. The other methods are similar to those of the other entities.
@@ -129,8 +149,7 @@
     The \textit{User} entity has the two attributes \textit{user management permission} and \textit{product management permission}. Only a user who has the user management permission can create or edit users. On the other hand every user can edit his own personal data. With the product management permission it is possible to create new products. If a new product is created, the respective user is automatically also a product member and receives the member role \textit{manager}. The permissions of each user can be adjusted afterwards. So it is possible to give multiple users the permissions for user management and product management. For example, a user and product manager can exist for each department. 
 
     \subsubsection*{Product level}
-    For permission management at product level, three member roles are provided. These roles are: \textit{manager, engineer and customer}. The manager is the one who created the product and has the permission to add more members. So he can add more managers, who in turn have all the rights over the management of the product. This is useful when the product development covers several departments. The second role is the engineer. He is involved in the product development process. He has no rights to change the product description or its members. However, he can freely create and edit versions, issues and comments. The last role is the customer who has the possibility to observe the product development process. He can create issues and comments and so participate in the product development process. In the current version of the software the rights of the customer are still very strict. The permission system is implemented in such a way that it can be changed with few adjustments. If the customer needs writing permissions, this can be easily changed. 
-    
+    For permission management at product level, three member roles are provided. These roles are: \textit{manager, engineer and customer}. The manager is the one who created the product and has the permission to add more members. So he can add more managers, who in turn have all the rights over the management of the product. This is useful when the product development covers several departments. The second role is the engineer. He is involved in the product development process. He has no rights to change the product description or its members. However, he can freely create and edit versions, issues and comments. The last role is the customer who has the possibility to observe the product development process. He can create issues and comments and so participate in the product development process. In the current version of the software the rights of the customer are still very strict. The permission system is implemented in such a way that it can be changed with few adjustments. If the customer needs writing permissions, this can be easily changed.
     
     \subsection*{Interface model} 
     The user interface provides a convenient way to interact with the functional model to display and modify data. The user interface offers a consistent design, which runs through the entire system.
@@ -144,7 +163,6 @@
         \caption{Product view}
         \label{fig: startpage}
     \end{figure}
-
 
     \subsubsection*{ProductVersion view}
     Clicking on a product takes you to the ProductVersion view. You can also use the toolbar to jump to other pages such as issues, milestones members or settings. The left side of the view shows the created versions. On the left side there is a tree structure similar to GitHub. This tree structure results from the chronological arrangement of the product versions. The lines of the structure show how the product versions are in relation to the respective base versions. In the middle is the corresponding version number with the owner of the version inclusive email and a short description. Each version offers a preview. By clicking on the respective version, the 3D view on the right side also changes and shows the selected model. The 3D view allows to rotate, move and zoom the model. 
