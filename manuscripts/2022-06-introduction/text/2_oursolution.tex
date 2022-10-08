@@ -37,9 +37,48 @@
         \label{fig: datamodel}
     \end{figure*}
 
-    The core of the software is in the backend. Via the API, the data can be manipulated using CRUD methods. This section describes the data model of the software. The necessary classes and entities are based on the interfaces in the common package.
-    The data model contains the following entities as shown in Figure~\ref{fig: datamodel}: \textit{User, Product, Version, Issue, Comment, Milestone, Member}. At the top level of the data model is the user, who can create multiple products if he has the permission to do so. For each product versions, issues, milestones and members can be created. The entity \textit{user} User has personal attributes like name, email, password and the two permissions to create and change users or to create products. Finally, like any other entity, the user has a \textit{deleted} flag. If the deletes an entity this is set to true. All other entities like \textit{Version, Issue, Comment, Milestone and Member} are linked to the product entity. The product itself does not provide much information, because the information is primarily in the linked entities. The versions of a product contain important information and the 3D CAD model in the format glTF\footnote{\url{https://www.khronos.org/gltf/}}. This data format can be rendered well in web applications and runs very performant in the browser.  To create a semantic versioning, the attributes major, minor and patch are specified for a version. By knowing the current version and previous version, a version history can be implemented. Multiple issues can be added for each product. The \textit{state} attribute distinguishes between \textit{open} and \textit{closed} issues. So it is possible to filter for completed and not completed issues. For each issue one or more comments can be created. With the attribute \textit{action} an issue can be closed or reopened by the comment. The text in a comment is compatible with markdown
-    For each product one or more milestones can be defined. These have a label and start and end dates. For each product one or more members can be added. The attribute \textit{role} can have three states: \textit{manager, engineer, customer}. Depending on the role, the corresponding product member has different permissions to interact with the respective product  as defined in the persmission model in Section~\ref{subsec:permissionModel}. 
+    This section describes the integrated data model as shown in Figure~\ref{fig: datamodel}.
+    The data model contains the following entities: \textit{User}, \textit{Product}, \textit{Version}, \textit{Issue}, \textit{Comment}, \textit{Milestone}, and \textit{Member}.
+    Note that all entities share a common identifier attribute, which is used for referencing and linking entities.
+    Furthermore, all entities share a common deleted attribute, which is used to hide entities from the users after removal.
+
+    % User
+    The \textit{User} entity represents the individual stakeholders, who access the tool during product development.
+    The entity defines attributes like name, email, and password, which are used for authentication purposes.
+    Furthermore, the entity defines a user manager and a product manager flag, which is used for permission control.
+    Note that these flags can be assigned independently of each other, i.e. a user manager must not be a product manager and vice versa.
+    
+    % Product
+    The \textit{Product} entity represents the individual products or product development projects managed with the tool.
+    The entity is always linked to a \textit{User} entity, representing stakeholder who created the product.
+    Then, the entity defines a name attribute, which is used to identify the product in a human-readable manner.
+    Furthermore, the entity defines a description attribute, which is used to explain the purpose of the product only briefly.
+
+    % Member
+    For each product one or more members can be added.
+    The attribute \textit{role} can have three states: \textit{manager, engineer, customer}.
+    Depending on the role, the corresponding product member has different permissions to interact with the respective product as defined in the permission model in Section~\ref{subsec:permissionModel}. 
+
+    % Version
+    To create a semantic versioning, the attributes major, minor and patch are specified for a version.
+    By knowing the current version and previous version, a version history can be implemented.
+
+    % Model
+    The versions of a product contain important information and the 3D CAD model in the format glTF\footnote{\url{https://www.khronos.org/gltf/}}.
+    This data format can be rendered well in web applications and runs very performant in the browser.
+
+    % Milestone
+    For each product one or more milestones can be defined.
+    These have a label and start and end dates.
+
+    % Issue
+    Multiple issues can be added for each product.
+    The \textit{state} attribute distinguishes between \textit{open} and \textit{closed} issues.
+    So it is possible to filter for completed and not completed issues. For each issue one or more comments can be created.
+
+    % Comment
+    The text in a comment is compatible with markdown.
+    With the attribute \textit{action} an issue can be closed or reopened by the comment.
 
     \subsection*{Function model} 
     The functions implemented in the API allow to create, read, update, search and delete data to interact with the data model. This would not even require a graphical user interface. All functions offered by the API are called via HTTP requests. Thus, the functional model in combination with the data model is the foundation of this application. 
