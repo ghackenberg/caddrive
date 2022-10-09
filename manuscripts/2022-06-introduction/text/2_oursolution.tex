@@ -44,16 +44,14 @@
 
     % User
     The \textit{User} entity represents the individual stakeholders, who access the tool during product development.
-    The entity defines attributes like name, email, and password, which are used for authentication purposes.
-    Furthermore, the entity defines a user manager and a product manager flag, which is used for permission control.
-    Note that these flags can be assigned independently of each other, i.e. a user manager must not be a product manager and vice versa.
-
-    % Image
-    TODO
+    The entity defines an email and a password attribute, which are used for authentication purposes.
+    Additionally, the entity defines a name attribute, which is used for a human-readable identification of stakeholders.
+    Similarly, the entity links an \textit{Image} file, which provides a human-interpretable visual representation of stakeholders (i.e.\ a profile picture).
+    Furthermore, the entity defines a user manager and a product manager flag, which are used for permission control as explained later.
     
     % Product
     The \textit{Product} entity represents the individual products or product development projects managed with the tool.
-    The entity is always linked to a \textit{User} entity, representing stakeholder who created the product.
+    The entity is always linked to a \textit{User} entity, representing the stakeholder who created the product in the first place.
     Then, the entity defines a name attribute, which is used to identify the product in a human-readable manner.
     Furthermore, the entity defines a description attribute, which is used to explain the purpose of the product only briefly.
 
@@ -61,15 +59,28 @@
     The \textit{Member} entity represents the permission to access certain product data through the tool.
     Consequently, the entity is linked to a \textit{Product} entity, representing the product for which access is granted.
     Also, the entity is linked to a \textit{User} entity, representing the stakeholder who is granted product access.
-    Finally, the entity defines a \textit{role} attribute, which controls the permission level and can have one of three values: \textit{manager}, \textit{engineer}, or \textit{customer}.
+    Finally, the entity defines a \textit{role} attribute, which controls the permission level as explained later, and which can have one of three values: \textit{manager}, \textit{engineer}, or \textit{customer}.
 
     % Version
-    To create a semantic versioning, the attributes major, minor and patch are specified for a version.
-    By knowing the current version and previous version, a version history can be implemented.
-
-    % Model/Node/Mesh/Group
-    The versions of a product contain important information and the 3D CAD model in the format glTF\footnote{\url{https://www.khronos.org/gltf/}}.
-    This data format can be rendered well in web applications and runs very performant in the browser.
+    The \textit{Version} entity represents a revision of the product design created by a product designer.
+    The entity is linked to a \textit{Product} entity to identify the product, for which the design revision was created.
+    Similarly, the entity is linked to a \textit{User} entity to identify the product designer, who was responsible for creating the design revision.
+    Furthermore, the entity is linked to previous \textit{Version} entities to document the history of design revisions including version branching and merging.
+    Then, the entity defines a major, a minor, and a patch number, which together represent a version number according to semantic versioning\footnote{\url{https://semver.org/}} practices.
+    Also, the entity defined a description, which provides a human-readable explanation of the design changes that have been applied.
+    Finally, the entity links a \textit{Model} file, which represents the actual design data including assembly and part structures as well as geometry and material information.
+    
+    % Model
+    We work with a generic representation of \textit{Model} files, which is independent of the CAD tool vendor and data format used.
+    We assume a model contains \textit{Node} objects, which carry all the engineering information created by the product designer.
+    Furthermore, we assume a node defines a name attribute, which can be used as for human-readable identification of nodes.
+    Additionally, we assume a node provides a type attribute, which can be used to distinguish different types of nodes.
+    At the moment, we distinguish two types of nodes, namely \textit{Group} nodes and \textit{Mesh} nodes.
+    Groups represent the assembly structures and provide links to child nodes being assembled, which can be both groups and meshes.
+    Meshes, on the other hand, represent the atomic parts of the product design such as screws or rivets, and carry geometry and material information.
+    Technically, we work with the glTF\footnote{\url{https://www.khronos.org/gltf/}} format for representing models including their node structures as well as their geometry and material information.
+    However, the STEP\footnote{\url{https://www.iso.org/standard/66654.html}} format or the COLLADA\footnote{\url{https://www.khronos.org/collada/}} format could be used equally well, since they follow the same principles.
+    In fact, even a vendor-specific data format could be used as long as appropriate parsers are available.
 
     % Milestone
     For each product one or more milestones can be defined.
