@@ -83,20 +83,33 @@
     In fact, even a vendor-specific data format could be used as long as appropriate parsers are available.
 
     % Milestone
-    For each product one or more milestones can be defined.
-    These have a label and start and end dates.
+    The \textit{Milestone} entity essentially represents project schedules including deadlines for the realization of design tasks.
+    The entity always links a \textit{Product} entity to identify the product or project the milestone belongs to.
+    Furthermore, the entity links a \textit{User} entity to identify the product manager, who created the milestone.
+    Finally, the entity defines a start and an end date, which represent the time frame for working on the milestone and achieving its goals.
 
     % Issue
-    Multiple issues can be added for each product.
-    The \textit{state} attribute distinguishes between \textit{open} and \textit{closed} issues.
-    So it is possible to filter for completed and not completed issues. For each issue one or more comments can be created.
+    The \textit{Issue} entity represents design tasks, which have to be performed by product designers during product development projects.
+    The entity is always linked to a \textit{Product} entity to identify the product or project the issue belongs to.
+    Furthermore, the entity is linked to multiple \textit{User} entities to identify the one stakeholder, who reported the issue in the first place, and to identify the product designers, who are responsible for issue resolution.
+    Moreover, the entity can be linked to a \textit{Milestone} entity to identify the time frame, within which the issue should be resolved.
+    Then, the entity defines a time attribute, which records the point in time when the issue was reported originally.
+    Also, the entity defines a label attribute, which provides a human-readable summary of the issue.
+    Additionally, the entity defines a text attribute, which provides a more detailed explanation of the design task including markdown-based\footnote{\url{https://www.markdownguide.org/}} \textit{Reference} objects as explained later.
+    Finally, the entity defines a state attribute, which enables us to distinguish between open and closed design tasks.
 
     % Comment
-    The text in a comment is compatible with markdown.
-    With the attribute \textit{action} an issue can be closed or reopened by the comment.
+    The \textit{Comment} entity represents discussions between stakeholders on issues or design tasks respectively.
+    The entity links an \textit{Issue} entity to identify the issue or design task the comment belongs to.
+    Furthermore, the entity links a \textit{User} entity to identify the stakeholder, who posted the comment.
+    Then, the entity defines a time attribute, which records the point in time when the comment was posted.
+    Additionally, the entity defines a text attribute, which contains the actual content of the comment including markdown-based \textit{Reference} objects as explained later.
+    Finally, the entity defines an action attribute, which can be used to close or reopen an issue by posting a comment.
 
     % Reference
-    TODO
+    As explained previously, we work with a markdown-based representation of \textit{Reference} objects, which can be contained in the description of \textit{Issue} entities as well as \textit{Comment} entities.
+    These references can be used to refer to \textit{Node} objects, that are contained in the CAD models of design revisions for a particular product or project.
+    Consequently, the specification and discussion of design tasks can be enriched with links to assembly structures and parts, which have been designed and delivered previously.
 
     \subsection*{Function model} 
     The functions implemented in the API allow to create, read, update, search and delete data to interact with the data model. This would not even require a graphical user interface. All functions offered by the API are called via HTTP requests. Thus, the functional model in combination with the data model is the foundation of this application. 
