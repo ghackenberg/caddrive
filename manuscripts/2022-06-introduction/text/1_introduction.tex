@@ -6,7 +6,7 @@
     The array of platforms complicates the information flow and frequently yields inaccuracies and inconsistencies.
     To solve these issues, we have developed an open source platform on which all relevant results can be managed.
     Our platform provides the means for storing product design revisions as well as design tasks and project schedules through an integrated data model.
-    We complement this data model with a function model describing possible change operations on the data as well as a role-based permission model limiting the access to these operations.
+    We complement this data model with a role-based permission model restricting the changes each stakeholder can perform to the underlying data model.
     Finally, we propose an interface model through which the end users can access the design, task, and schedule data and execute the available operations.
 \end{abstract}
 
@@ -39,8 +39,7 @@
 
     \subsection*{Scientific contributions}
     We first provide an integrated \textbf{data model} of requirements, schedules, and deliverables, which supports management of CAD model revisions, linking of requirements to parts and assemblies of CAD model revisions, asynchronous discussion about and clarification of requirements, as well as prioritization and scheduling of requirements through milestones with fixed start and end dates.
-    Then, we provide a \textbf{function model}, which explains the operations that stakeholders can perform on top of the data model during execution of agile product development projects.
-    Furthermore, we provide a \textbf{permission model}, which limits the functions that project managers, engineers, and customers can execute based on their role in the project.
+    Then, we provide a \textbf{permission model}, which limits the changes that project managers, engineers, and customers can perform on top of the integrated data model based on their role in the project.
     Finally, we provide an \textbf{interface model}, which we derived from GitHub, but which required substantial changes to support the underlying data, function, and permission models properly.
     In this article we describe and discuss each of the contributions as outlined in the following.
 

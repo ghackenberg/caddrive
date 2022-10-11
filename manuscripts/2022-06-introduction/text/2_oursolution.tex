@@ -22,11 +22,10 @@
 \section{Tool design}
     \label{sec:contribution}
 
-    As explained previously, our tool design comprises four models: An integrated \textbf{data model}, a \textbf{function model}, a \textbf{permission model}, and an \textbf{interface model}.
-    The integrated data model describes the representation of CAD model revisions, design tasks, and project schedules.
-    The function model explains the change operations stakeholders can perform on top of the data model.
-    The permission model outlines which functions can be used by which stakeholder depending on his/her role.
-    Finally, an interface model demonstrates how the previous models can be put into action practically.
+    As explained previously, our tool design comprises three models: An integrated \textbf{data model}, a \textbf{permission model}, and an \textbf{interface model}.
+    The integrated data model describes our representation of stakeholders, roles, CAD model revisions, design tasks, and project schedules.
+    The permission model explains which changes the individual stakeholders can perform on top of the data model depending on his/her role.
+    Finally, the interface model demonstrates how the previous models can be put into action practically.
 
     \subsection*{Data model}
 
@@ -110,99 +109,6 @@
     As explained previously, we work with a markdown-based representation of \textit{Reference} objects, which can be contained in the description of \textit{Issue} entities as well as \textit{Comment} entities.
     These references can be used to refer to \textit{Node} objects, that are contained in the CAD models of design revisions for a particular product or project.
     Consequently, the specification and discussion of design tasks can be enriched with links to assembly structures and parts, which have been designed and delivered previously.
-
-    \subsection*{Function model} 
-    The functions implemented in the API allow to create, read, update, search and delete data to interact with the data model. This would not even require a graphical user interface. All functions offered by the API are called via HTTP requests. Thus, the functional model in combination with the data model is the foundation of this application. 
-    By triggering a function in the API, various permission checks are executed to verify if the active user has the permission for performing this action as specified in the permission model in Section~\ref{subsec:permissionModel}. 
-
-    \subsubsection*{User management}
-    Users can be found, created, modified and deleted. Permissions can be assigned to allow the new user to create and edit other users and to create products. For this the two flags \textit{user management permission (ump)} and \textit{product management permission (pmp)} must be set. The API offers the following methods for interaction with user objects:
-    \begin{itemize} 
-        \item \texttt{addUser(email: string, name: string, pwd: string, ump: boolean, pmp: boolean, image?: File): User}
-        \item \texttt{updateUser(id: string, email: string, name: string, pwd: string, ump: boolean, pmp: boolean, image?: File): User}
-        \item \texttt{deleteUser(id: string): User}
-        \item \texttt{findUsers(query?: string, productId?: string): User[]}
-        \item \texttt{getUser(id: string): User}
-    \end{itemize}
-     For the \texttt{addUser} method the input parameter is needed, which contains the information about the new user. The second parameter holds the profile picture and is optional.  \texttt{UpdateUser} needs the user ID, the new data and optionally a file containing a profile picture. \texttt{DeleteUser} sets the \textit{deleted} flag of the particular user to true. 
-     The \texttt{findUsers} method searches for all users of the system from the database. It can be searched either via a query by username or via the product ID. The parameters \textit{query} and \textit{productId} are optional.
-     \texttt{GetUser} searches for a specific user based on the user ID and returns the object.
-     The \texttt{GetUser} and \texttt{addUser} methods are implemented that way, to search for objects that are not deleted.
-
-    \subsubsection*{Product management}
-    This part of the API provides methods to interact with product objects. Here products can be created, modified, searched and deleted. The following list shows the methods that are available for interacting with products:
-    \begin{itemize}
-        \item \texttt{addProduct(userId: string, name: string, description: string): Product}
-        \item \texttt{updateProduct(id: string, name: string, description: string): Product}
-        \item \texttt{deleteProduct(id: string): Product}
-        \item \texttt{findProducts(): Product[]}
-        \item \texttt{getProduct(id: string): Product}
-    \end{itemize}
-    The methods work according to the same principle as in user management. It is searched with the corresponding product ID for the object or its attributes get changed. When deleting a product, it must be ensured that all objects that are attached to a product are also deleted. So if a product is deleted, all versions, issues, milestones and members must also be deleted.
-    The \texttt{findProducts} method searches in the database for all products that are not deleted. For this no passing parameter is necessary.
-
-    \subsubsection*{Member management}
-    The API provides the following methods for member management:
-    \begin{itemize}
-        \item \texttt{addMember(productId: string, userId: string, role: 'manager' or 'engineer' or 'customer'): Member}
-        \item \texttt{updateMember(id: string, role: 'manager' or 'engineer' or 'customer'): Member}
-        \item \texttt{deleteMember(id: string): Member}
-        \item \texttt{findMembers(productId: string, userId?: string): Member[]}
-        \item \texttt{getMember(id: string): Member}
-    \end{itemize}
-    The \texttt{addMember} method creates new members for an existing product. With the input parameter \textit{role} different user roles can be distributed. If a combination of product and user already exists and is created a second time, they have different IDs compared to the original ones and are therefore independent. 
-    The user ID can be used to find one specific member. Then the \texttt{findMembers} method returns an array of members. The other methods are similar to those of the other entities.
-    
-    \subsubsection*{Version management}
-    Again, the API provides CRUD methods to interact with versions:
-    \begin{itemize}
-        \item \texttt{addVersion(userId: string, productId: string, baseVersionIds: string[], time: timestamp, major: number, minor: number, patch: number, description: string, model: File): Version}
-        \item \texttt{updateVersion(id: string, major: number, minor: number, patch: number, description: string, model?: File): Version}
-        \item \texttt{deleteVersion(id: string): Version}
-        \item \texttt{findVersions(productId: string): Version[]}
-        \item \texttt{getVersion(id: string): Version}
-    \end{itemize}
-    Unlike user management, a file must be specified when a version is created. 
-    This CAD model can be exchanged when updating the version so that these can still be changed afterwards. The base versions cannot be changed later on.
-    Since the versions are linked to a product, only the product ID can be used to search for it.
-
-    \subsubsection*{Milestone management}
-    Milestones are a container that can be filled with issues by reference. The CRUD methods are listed below:
-    \begin{itemize}
-        \item \texttt{addMilestone(userId: string, productId: string, label: string, start: timestamp, end: timestamp): Milestone}
-        \item \texttt{updateMilestone(id: string, label: string, start: timestamp, end: timestamp): Milestone}
-        \item \texttt{deleteMilestone(id: string): Milestone}
-        \item \texttt{findMilestones(productId: string): Milestone[]}
-        \item \texttt{getMilestone(id: string): Milestone}
-    \end{itemize}
-    The methods have analogous purposes as already with the other data objects. When deleting a milestone, it must be ensured that the references to the linked issues are removed.
-
-    \subsubsection*{Issue management} 
-    These methods are available to create, read, find, update and delete issues:
-    \begin{itemize}
-        \item \texttt{addIssue(userId: string, productId: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string): Issue}
-        \item \texttt{updateIssue(id: string, time: timestamp, label: string, text: string, state: 'open' or 'closed', assigneeIds: string[], milestoneId?: string): Issue}
-        \item \texttt{deleteIssue(id: string): Issue}
-        \item \texttt{findIssues(productId: string, milestoneId?: string, state?: 'open' or 'closed'): Issue[]}
-        \item \texttt{getIssue(id: string): Issue}
-    \end{itemize}
-    The \texttt{updateIssue} method is mainly used to update the list of assignees, change which milestones the issue belongs to and to close and reopen an issue.
-    When deleting issues, all comments belonging to the respective issue must also be deleted.
-    The \texttt{findIssues} method can search for issues in the database in several ways depending on the input parameters. Issues can be found by the product ID, the corresponding milestones or by the \textit{state} attribute to filter by open and closed issues.
-    To filter by open and closed issues is especially useful to be able to filter for completed or uncompleted tasks for the purpose of product management. 
-    
-    \subsubsection*{Comment management}
-    The following list shows the methods that can be performed to interact with the comment objects:
-    \begin{itemize}
-        \item \texttt{addComment(userId: string, issueId: string, time: timestamp, text: string, action: 'none' or 'close' or 'reopen'): Comment}
-        \item \texttt{updateComment(id: string, text: string, action: 'none' or 'close' or 'reopen'): Comment}
-        \item \texttt{deleteComment(id: string): Comment}
-        \item \texttt{findComments(issueId: string): Comment[]}
-        \item \texttt{getComment(id: string): Comment}
-    \end{itemize}
-    The \texttt{addComment} method creates a comment with the given attributes. The user can define the action of the comment to interact with the corresponding issue. For example, if a comment is created with the action \textit{close}, the associated issue will be closed by triggering the \texttt{updateIssue} method which modifies the state of the issue. An issue can also be reopened in the same way by passing the according action. The action \textit{none} does not change the state of the issue. 
-    With \texttt{updateComment} it is possible to modify the text or the action of an existing comment.
-    The \texttt{deleteComment} method only deletes the corresponding Comment. Nothing else on the platform is deleted in the process. The actions of the comment remain until another comment performs another action.
 
     \subsection*{Permission model}
     \label{subsec:permissionModel}
