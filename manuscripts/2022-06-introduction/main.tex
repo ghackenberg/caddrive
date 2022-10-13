@@ -1,8 +1,16 @@
-\documentclass[conference]{IEEEtran}
+\documentclass{ICED-Paper}
 
+\usepackage{subfig}
 \usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{ragged2e}
 \usepackage{endnotes}
 \usepackage{hyperref}
+\usepackage{etoolbox}
+\usepackage[authoryear]{natbib}
+
+\apptocmd{\thebibliography}{\justifying}{}{}
 
 \graphicspath{
     {./graphics/}
@@ -15,43 +23,16 @@
     urlcolor=blue
 }
 
-\title{GitHub for CAD -- How could that look like?}
-
-\author{
-    \IEEEauthorblockN{Dominik Frühwirth}
-    \IEEEauthorblockA{
-        School of Engineering, University of \\
-        Applied Sciences Upper Austria \\
-        4600 Wels, Upper Austria, Austria \\
-        \href{mailto:dominik.fruewirth@fh-wels.at}{dominik.fruewirth@fh-wels.at}
-    }
-    \and
-    \IEEEauthorblockN{Georg Hackenberg}
-    \IEEEauthorblockA{
-        School of Engineering, University of \\
-        Applied Sciences Upper Austria \\
-        4600 Wels, Upper Austria, Austria \\
-        \href{mailto:georg.hackenberg@fh-wels.at}{georg.hackenberg@fh-wels.at}
-    }
-    \and
-    \IEEEauthorblockN{Christian Zehetner}
-    \IEEEauthorblockA{
-        School of Engineering, University of \\
-        Applied Sciences Upper Austria \\
-        4600 Wels, Upper Austria, Austria \\
-        \href{mailto:christian.zehetner@fh-wels.at}{christian.zehetner@fh-wels.at}
-    }
-}
-
 \begin{document}
 
-    \maketitle
+    \input{parts/1_introduction.tex}
+    \input{parts/2_related_work.tex}
+    \input{parts/3_tool_goals_and_requirements.tex}
+    \input{parts/4_tool_design.tex}
+    \input{parts/5_tool_evaluation.tex}
+    \input{parts/6_conclusion.tex}
 
-    \input{text/1_introduction.tex}
-    \input{text/2_oursolution.tex}
-    \input{text/3_finalpart.tex}
-
-    \bibliographystyle{unsrt}
+    \bibliographystyle{icedharvard}
     \bibliography{main}
 
 \end{document}

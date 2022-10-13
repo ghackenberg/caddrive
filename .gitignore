@@ -23,6 +23,8 @@ manuscripts/*/*.log
 manuscripts/*/*.pdf
 manuscripts/*/*.synctex.gz
 manuscripts/*/*.out
+manuscripts/*/reviews
+manuscripts/*/templates
 
 public
 
