@@ -138,11 +138,10 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
             // Reset
             this.timeout = undefined
         }
-        if (this.div.current.firstChild == this.renderer.domElement) {
-            this.div.current.removeChild(this.renderer.domElement)
-            if (this.props.vr) {
-                this.div.current.removeChild(this.button)
-            }
+
+        // Remove all active WebGl contexts
+        while(this.div.current.childElementCount > 0) {
+            this.div.current.removeChild(this.div.current.lastChild)
         }
     }
 
