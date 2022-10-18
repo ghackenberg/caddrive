@@ -138,6 +138,12 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
             // Reset
             this.timeout = undefined
         }
+        if (this.div.current.firstChild == this.renderer.domElement) {
+            this.div.current.removeChild(this.renderer.domElement)
+            if (this.props.vr) {
+                this.div.current.removeChild(this.button)
+            }
+        }
     }
 
     private highlight_cache: {[uuid: string]: Material | Material[]}
@@ -421,6 +427,7 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
     
     override render() {
         return <div className="widget scene_view" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
+        
     }
     
 }
