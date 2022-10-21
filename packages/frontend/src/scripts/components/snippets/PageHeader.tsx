@@ -25,7 +25,7 @@ export const PageHeader = () => {
                         </span>
                     )}
                     <span>
-                        <NavLink to={`/users/${user.id}/settings`}><img className='' src={`/rest/files/${user.pictureId}.jpg`}/></NavLink>
+                        { user.pictureId != undefined &&  <NavLink to={`/users/${user.id}/settings`}><img className='' src={`/rest/files/${user.pictureId}.jpg`}/></NavLink> }
                     </span>
                 </div>
             )}

@@ -21,7 +21,7 @@ export const VersionView3D = (props: { version: Version, mouse: boolean, highlig
 
     // EFFECTS
     
-    useEffect(() => { props.version && setLoad(true) }, [props.version])
+    useEffect(() => { !model && props.version && setLoad(true) }, [props.version])
     useEffect(() => { props.version && setPath(`${props.version.id}.glb`) }, [props.version])
     useEffect(() => { path && FileManager.getFile(path).then(setFile) }, [path])
     useEffect(() => { file && new GLTFLoader().parse(file, path, model => { setModel(model); setLoad(false) }) }, [file])
@@ -33,7 +33,7 @@ export const VersionView3D = (props: { version: Version, mouse: boolean, highlig
             {load ? (
                 <img className='load' src={LoadIcon}/>
             ) : (
-                <Fragment>
+                <Fragment>               
                     {model && <SceneView3D model={model} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/> }
                 </Fragment>
             )}
