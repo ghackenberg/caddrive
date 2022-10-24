@@ -39,7 +39,7 @@ export const FileInput = (props: {class?: string, label: string, change?: (value
                         accept={props.accept}
                         placeholder={props.placeholder}
                         ref={fileInput}
-                        onChange={event => {props.change(event.currentTarget.files.length > 0 ? event.currentTarget.files[0] : undefined), setFileName(event.currentTarget.files[0].name)}}
+                        onChange={event => {props.change(event.currentTarget.files.length > 0 ? event.currentTarget.files[0] : undefined), setFileName(event.currentTarget.files.length > 0 ? event.currentTarget.files[0].name : '')}}
                         disabled={props.disabled}
                         style={{display: 'none'}}/>
                 </Fragment>

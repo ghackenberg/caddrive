@@ -5,7 +5,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void }> {
+export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
     private timeout: NodeJS.Timeout
@@ -32,7 +32,7 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
 
     private fullscreen = false
 
-    constructor(props: { model: GLTF, mouse: boolean, vr: boolean, click?: (object: Object3D) => void }) {
+    constructor(props: { model: GLTF, mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }) {
         super(props)
         // Create
         this.div = React.createRef()
@@ -421,6 +421,11 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
         // Render
         if (this.scene && this.camera) {
             this.renderer.render(this.scene, this.camera)
+            if (this.props.frame) {
+                const canvas: HTMLCanvasElement = this.div.current.childNodes[0] as HTMLCanvasElement         
+                canvas.toBlob(this.props.frame)
+            }
+            
         }
     }
     

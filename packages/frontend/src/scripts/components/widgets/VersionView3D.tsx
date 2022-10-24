@@ -26,6 +26,8 @@ export const VersionView3D = (props: { version: Version, mouse: boolean, highlig
     useEffect(() => { path && FileManager.getFile(path).then(setFile) }, [path])
     useEffect(() => { file && new GLTFLoader().parse(file, path, model => { setModel(model); setLoad(false) }) }, [file])
 
+   
+
     // RETURN
 
     return (
