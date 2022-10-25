@@ -23,9 +23,9 @@ class VersionManagerImpl implements VersionREST<VersionAddData, File, Blob> {
         return Object.keys(this.productIndex[productId]).map(id => this.versionIndex[id])
     }
 
-    async addVersion(data: VersionAddData, model: File, image: Blob): Promise<Version> {
+    async addVersion(data: VersionAddData, files: {model: File, image: Blob}): Promise<Version> {
         // Call backend
-        const version = await VersionClient.addVersion(data, model, image)
+        const version = await VersionClient.addVersion(data, files)
         // Update version index
         this.versionIndex[version.id] = version
         // Update product index
@@ -51,7 +51,7 @@ class VersionManagerImpl implements VersionREST<VersionAddData, File, Blob> {
         return this.versionIndex[id]
     }
 
-    async updateVersion(id: string, data: VersionUpdateData, model?: File, image?: Blob): Promise<Version> {
+    async updateVersion(id: string, data: VersionUpdateData, files?: {model: File, image: Blob}): Promise<Version> {
         // Update product index
         if (id in this.versionIndex) {
             const version = this.versionIndex[id]
@@ -61,7 +61,7 @@ class VersionManagerImpl implements VersionREST<VersionAddData, File, Blob> {
             }
         }
         // Call backend
-        const version = await VersionClient.updateVersion(id, data, model, image)
+        const version = await VersionClient.updateVersion(id, data, files)
         // Update version index
         this.versionIndex[id] = version
         // Update product index

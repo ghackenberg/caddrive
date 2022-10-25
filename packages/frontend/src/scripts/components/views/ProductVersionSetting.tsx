@@ -73,7 +73,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     useEffect(() => { file && file.arrayBuffer().then(setArrayBuffer) }, [file])
     useEffect(() => { arrayBuffer && new GLTFLoader().parse(arrayBuffer, undefined, model => { setModel(model); setLoad(false) }) }, [arrayBuffer])
 
-    useEffect(() => { console.log(image) }, [image])
+    //useEffect(() => { console.log(image) }, [image])
 
 
     // FUNCTIONS
@@ -89,9 +89,9 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     async function submit(event: FormEvent) {
         event.preventDefault()
         if (versionId == 'new') {
-            await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, file, image)
+            await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, {model: file, image})
         } else {
-            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, file, image)
+            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, {model: file, image})
         }
         history.goBack()
     }

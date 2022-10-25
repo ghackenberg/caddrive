@@ -25,9 +25,9 @@ export interface ProductREST {
 
 export interface VersionREST<D, M, I> {
     findVersions(productId: string): Promise<Version[]>
-    addVersion(data: D, model: M, image: I): Promise<Version>
+    addVersion(data: D, files: { model: M, image: I }): Promise<Version>
     getVersion(id: string): Promise<Version>
-    updateVersion(id: string, data: D, model?: M, image?: I): Promise<Version>
+    updateVersion(id: string, data: D, files?: {model: M, image: I}): Promise<Version>
     deleteVersion(id: string): Promise<Version>
 }
 

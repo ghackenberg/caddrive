@@ -7,7 +7,7 @@ import { VersionEntity, VersionRepository } from 'productboard-database'
 import { FindOptionsWhere } from 'typeorm'
 
 @Injectable()
-export class VersionService implements VersionREST<VersionAddData, Express.Multer.File> {
+export class VersionService implements VersionREST<VersionAddData, Express.Multer.File[], Express.Multer.File[]> {
     async findVersions(productId: string) : Promise<Version[]> {
         var where: FindOptionsWhere<VersionEntity>
         if (productId)
@@ -18,14 +18,21 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         return result
     }
  
-    async addVersion(data: VersionAddData, file: Express.Multer.File): Promise<Version> {
+    async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
         const version = await VersionRepository.save({ id: shortid(), deleted: false, ...data })
-        if (file && file.originalname.endsWith('.glb')) {
+        if (files.model[0] && files.model[0].originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
-            fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
+            fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
         }
+        if (files.image[0] && files.image[0].mimetype.endsWith('/png')) {
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
+        }
+        
         return this.convert(version)
     }
 
@@ -34,17 +41,23 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         return this.convert(version)
     }
 
-    async updateVersion(id: string, data: VersionUpdateData, file?: Express.Multer.File): Promise<Version> {
+    async updateVersion(id: string, data: VersionUpdateData, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
         const version = await VersionRepository.findOneByOrFail({ id })
         version.major = data.major
         version.minor = data.minor
         version.patch = data.patch
         version.description = data.description
-        if (file && file.originalname.endsWith('.glb')) {
+        if (files.model[0] && files.model[0].originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
-            fs.writeFileSync(`./uploads/${version.id}.glb`, file.buffer)
+            fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
+        }
+        if (files.image[0] && files.image[0].mimetype.endsWith('/png')) {
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
         }
         await VersionRepository.save(version)
         return this.convert(version)

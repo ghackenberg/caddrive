@@ -8,21 +8,23 @@ class VersionClientImpl implements VersionREST<VersionAddData, File, Blob> {
     async findVersions(product: string): Promise<Version[]> {
         return (await axios.get<Version[]>('/rest/versions', { params: { product }, auth } )).data
     }
-    async addVersion(data: VersionAddData, model: File, image: Blob): Promise<Version> {
+    async addVersion(data: VersionAddData, files: {model: File, image: Blob}): Promise<Version> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
-        body.append('model', model)
-        body.append('image', image)
+        body.append('model', files.model)
+        body.append('image', files.image)
         return (await axios.post<Version>('/rest/versions', body, { auth })).data
     }
     async getVersion(id: string): Promise<Version> {
         return (await axios.get<Version>(`/rest/versions/${id}`, { auth })).data
     }
-    async updateVersion(id: string, data: VersionUpdateData, model?: File, image?: Blob): Promise<Version> {
+    async updateVersion(id: string, data: VersionUpdateData, files?: {model: File, image: Blob}): Promise<Version> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
-        body.append('model', model)
-        body.append('image', image)
+        if (files) {
+            body.append('model', files.model)
+            body.append('image', files.image)
+        }
         return (await axios.put<Version>(`/rest/versions/${id}`, body, { auth })).data
     }
     async deleteVersion(id: string): Promise<Version> {
