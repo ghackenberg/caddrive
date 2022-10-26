@@ -30,12 +30,12 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     }
 
     @Post()
-    @UseInterceptors(FileFieldsInterceptor([{name: 'model'},{name: 'image'}]))
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 }, { name: 'image', maxCount: 1 }]))
     @ApiBody({ type: VersionAddData, required: true })
     @ApiResponse({ type: Version })
     async addVersion(
         @Body('data') data: string,
-        @UploadedFiles() files: {model: Express.Multer.File[], image: Express.Multer.File[]}
+        @UploadedFiles() files: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<Version> {
         const dataParsed = <VersionAddData> JSON.parse(data)
         await canCreateVersionOrFail((<User> this.request.user).id, dataParsed.productId)
@@ -53,14 +53,14 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     }
 
     @Put(':id')
-    @UseInterceptors(FileFieldsInterceptor([{name: 'model'},{name: 'image'}]))
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 }, { name: 'image', maxCount: 1 }]))
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiBody({ type: Version, required: true })
     @ApiResponse({ type: Version })
     async updateVersion(
         @Param('id') id: string,
         @Body('data') data: string,
-        @UploadedFiles() files?: {model: Express.Multer.File[], image: Express.Multer.File[]}
+        @UploadedFiles() files?: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<Version> {
         await canUpdateVersionOrFail((<User> this.request.user).id, id)
         return this.versionService.updateVersion(id, JSON.parse(data), files)

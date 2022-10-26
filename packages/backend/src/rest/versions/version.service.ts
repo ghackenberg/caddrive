@@ -20,13 +20,13 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
  
     async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
         const version = await VersionRepository.save({ id: shortid(), deleted: false, ...data })
-        if (files.model[0] && files.model[0].originalname.endsWith('.glb')) {
+        if (files && files.model && files.model.length == 1 && files.model[0].originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
             fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
         }
-        if (files.image[0] && files.image[0].mimetype.endsWith('/png')) {
+        if (files && files.image && files.image.length == 1 && files.image[0].mimetype.endsWith('/png')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
@@ -47,13 +47,13 @@ export class VersionService implements VersionREST<VersionAddData, Express.Multe
         version.minor = data.minor
         version.patch = data.patch
         version.description = data.description
-        if (files.model[0] && files.model[0].originalname.endsWith('.glb')) {
+        if (files && files.model && files.model.length == 1 && files.model[0].originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
             fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
         }
-        if (files.image[0] && files.image[0].mimetype.endsWith('/png')) {
+        if (files && files.image && files.image.length == 1 && files.image[0].mimetype.endsWith('/png')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
