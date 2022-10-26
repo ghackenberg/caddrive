@@ -18,8 +18,8 @@ async function bootstrap() {
     })
 
     const config = new DocumentBuilder()
-        .setTitle('FHOOE Virtual Engineering Platform')
-        .setDescription('The FHOOE Virtual Engineering Platform provides a free and open source solution to collaborative product audits over the Web and in virtual reality (VR).')
+        .setTitle('ProductBoard')
+        .setDescription('ProductBoard provides a free and open source solution to agile product design.')
         .setVersion('1.0.0')
         .addBasicAuth()
         .build()
