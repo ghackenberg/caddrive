@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import * as shortid from 'shortid'
+import { FindOptionsWhere } from 'typeorm'
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 import { MemberEntity, MemberRepository, ProductRepository, UserRepository } from 'productboard-database'
-import { FindOptionsWhere } from 'typeorm'
 
 @Injectable()
 export class MemberService implements MemberREST {

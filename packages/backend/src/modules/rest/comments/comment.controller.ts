@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
 import { CommentService } from './comment.service'
-import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../permission'
+import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../../functions/permission'
 
 @Controller('rest/comments')
 @UseGuards(AuthGuard('basic'))

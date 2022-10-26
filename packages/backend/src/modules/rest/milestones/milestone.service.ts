@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
-import { IssueRepository, MilestoneEntity, MilestoneRepository } from 'productboard-database'
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
+import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+import { IssueRepository, MilestoneEntity, MilestoneRepository } from 'productboard-database'
 
 @Injectable()
 export class MilestoneService implements MilestoneREST {

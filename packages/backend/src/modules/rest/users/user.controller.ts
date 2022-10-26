@@ -6,7 +6,7 @@ import { ApiBasicAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery,
 import { Request } from 'express'
 import 'multer'
 import { User, UserAddData, UserREST, UserUpdateData } from 'productboard-common'
-import { canFindUserOrFail, canCreateUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../permission'
+import { canFindUserOrFail, canCreateUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
 import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})

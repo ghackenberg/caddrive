@@ -4,8 +4,8 @@ import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
+import { canReadProductOrFail, canUpdateProductOrFail, canDeleteProductOrFail, canCreateProductOrFail } from '../../../functions/permission'
 import { ProductService } from './product.service'
-import { canReadProductOrFail, canUpdateProductOrFail, canDeleteProductOrFail, canCreateProductOrFail } from '../../permission'
 
 @Controller('rest/products')
 @UseGuards(AuthGuard('basic'))

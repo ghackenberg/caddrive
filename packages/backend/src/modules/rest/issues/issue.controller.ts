@@ -4,8 +4,8 @@ import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/
 import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
+import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail } from '../../../functions/permission'
 import { IssueService } from './issue.service'
-import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail } from '../../permission'
 
 @Controller('rest/issues')
 @UseGuards(AuthGuard('basic'))

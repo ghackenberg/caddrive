@@ -6,8 +6,8 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { Request } from 'express'
 import 'multer'
 import { User, Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
+import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../../functions/permission'
 import { VersionService } from './version.service'
-import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../permission'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))

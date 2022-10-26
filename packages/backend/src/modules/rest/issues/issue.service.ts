@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { FindOptionsWhere } from 'typeorm'
 import * as shortid from 'shortid'
+import { FindOptionsWhere } from 'typeorm'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-database'
 

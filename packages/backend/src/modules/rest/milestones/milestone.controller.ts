@@ -4,8 +4,8 @@ import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/
 import { AuthGuard } from '@nestjs/passport'
 import { Request } from 'express'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
+import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../../functions/permission'
 import { MilestoneService } from './milestone.service'
-import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../permission'
 
 @Controller('rest/milestones')
 @UseGuards(AuthGuard('basic'))
