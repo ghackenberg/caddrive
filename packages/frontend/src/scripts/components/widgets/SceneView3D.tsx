@@ -1,9 +1,10 @@
 import * as React from 'react'
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight, Box3, Vector3 } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
+import { createCamera } from '../../functions/render'
 
 export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }> {
 
@@ -241,16 +242,8 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
             this.scene.add(this.props.model.scene)
-            // Camera parameters
-            const bound = new Box3().setFromObject(this.props.model.scene)
-            const center = bound.getCenter(new Vector3())
-            const size = bound.getSize(new Vector3())
-            const position = center.clone().add(size.clone().multiplyScalar(20))
-            const max = Math.max(size.x, size.y, size.z)
-            // Camera object
-            this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, max * 100)
-            this.camera.position.set(position.z, position.y, position.x)
-            this.camera.lookAt(center)
+            // Camera
+            this.camera = createCamera(this.props.model.scene, this.div.current.offsetWidth, this.div.current.offsetHeight)
             // Orbit
             if (this.props.mouse) {
                 this.orbit.object = this.camera
@@ -285,7 +278,7 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
             // Camera
             if (this.camera) {
                 this.camera.aspect = width / height
-                this.camera.updateProjectionMatrix()           
+                this.camera.updateProjectionMatrix()
             }
             // Renderer
             this.renderer.setSize(width, height)

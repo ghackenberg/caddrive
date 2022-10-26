@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
+import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // Commons
 import { Product, Version } from 'productboard-common'
 // Managers
@@ -9,20 +10,24 @@ import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
 // Contexts
 import { UserContext } from '../../contexts/User'
+// Functions
+import { render } from '../../functions/render'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Inputs
+import { GenericInput } from '../inputs/GenericInput'
 import { FileInput } from '../inputs/FileInput'
 import { NumberInput } from '../inputs/NumberInput'
 import { TextInput } from '../inputs/TextInput'
 // Widgets
 import { VersionView3D } from '../widgets/VersionView3D'
+import { SceneView3D } from '../widgets/SceneView3D'
 // Images
 import * as EmptyIcon from '/src/images/empty.png'
-import { GenericInput } from '../inputs/GenericInput'
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as LoadIcon from '/src/images/load.png'
-import { SceneView3D } from '../widgets/SceneView3D'
+
+const PREVIEW_WIDTH = 1000
+const PREVIEW_HEIGHT = 1000
 
 export const ProductVersionSettingView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
@@ -51,10 +56,8 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const [description, setDescription] = useState<string>('')
     const [file, setFile] = useState<File>()
 
-    const [load, setLoad] = useState<boolean>(true)
-    const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>()
+    const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
     const [model, setModel] = useState<GLTF>(null)
-
     const [image, setImage] = useState<Blob>(null) 
 
     // EFFECTS
@@ -69,12 +72,13 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     useEffect(() => { version && setPatch(version.patch) }, [version])
     useEffect(() => { version && setDescription(version.description) }, [version])
 
-    useEffect(() => { file && setLoad(true) }, [file])
+    useEffect(() => { setArrayBuffer(null)}, [file])
+    useEffect(() => { setModel(null) }, [arrayBuffer])
+    useEffect(() => { setImage(null) }, [model])
+
     useEffect(() => { file && file.arrayBuffer().then(setArrayBuffer) }, [file])
-    useEffect(() => { arrayBuffer && new GLTFLoader().parse(arrayBuffer, undefined, model => { setModel(model); setLoad(false) }) }, [arrayBuffer])
-
-    //useEffect(() => { console.log(image) }, [image])
-
+    useEffect(() => { arrayBuffer && new GLTFLoader().parse(arrayBuffer, undefined, setModel) }, [arrayBuffer])
+    useEffect(() => { model && render(model.scene.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(setImage) }, [model])
 
     // FUNCTIONS
 
@@ -89,9 +93,9 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     async function submit(event: FormEvent) {
         event.preventDefault()
         if (versionId == 'new') {
-            await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, {model: file, image})
+            await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, { model: file, image })
         } else {
-            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, {model: file, image})
+            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image })
         }
         history.goBack()
     }
@@ -131,7 +135,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         <div>
                                             <div />
                                             <div>
-                                                <input type='submit' value='Save' />
+                                                <input type='submit' value='Save' disabled={image == null} />
                                             </div>
                                         </div>
                                     </form>
@@ -141,18 +145,16 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         <VersionView3D version={version} mouse={true} vr={true} />
                                     ) : (
                                         <div className="widget model_view">
-                                            {file ? (
+                                            {!file ? (
+                                                <img className='empty' src={EmptyIcon} />
+                                            ) : (
                                                 <Fragment>
-                                                    {load ? (
+                                                    {!model ? (
                                                         <img className='load' src={LoadIcon} />
                                                     ) : (
-                                                        <Fragment>
-                                                            {model && <SceneView3D model={model} mouse={false} vr={false} highlighted={[]} marked={[]} selected={[]} frame = {setImage} />}
-                                                        </Fragment>
+                                                        <SceneView3D model={model} mouse={false} vr={false} highlighted={[]} marked={[]} selected={[]}/>
                                                     )}
                                                 </Fragment>
-                                            ) : (
-                                                <img className='empty' src={EmptyIcon} />
                                             )}
                                         </div>
                                     )}
