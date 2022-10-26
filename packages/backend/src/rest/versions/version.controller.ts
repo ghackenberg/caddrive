@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth, ApiConsumes } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { Request } from 'express'
@@ -31,7 +31,31 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
 
     @Post()
     @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 }, { name: 'image', maxCount: 1 }]))
-    @ApiBody({ type: VersionAddData, required: true })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'object',
+                    properties: {
+                        userId: { type: 'string' },
+                        productId: { type: 'string' },
+                        baseVersionIds: { type: 'array', items: { type: 'string' } },
+                        time: { type: 'string' },
+                        major: { type: 'number' },
+                        minor: { type: 'number' },
+                        patch: { type: 'number' },
+                        description: { type: 'string' }
+                    },
+                    required: ['userId', 'productId', 'baseVersionIds', 'time', 'major', 'minor', 'patch', 'description']
+                },
+                model: { type: 'string', format: 'binary' },
+                image: { type: 'string', format: 'binary' }
+            },
+            required: ['data', 'model', 'image']
+        }
+    })
     @ApiResponse({ type: Version })
     async addVersion(
         @Body('data') data: string,
@@ -55,7 +79,26 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     @Put(':id')
     @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 }, { name: 'image', maxCount: 1 }]))
     @ApiParam({ name: 'id', type: 'string', required: true })
-    @ApiBody({ type: Version, required: true })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'object',
+                    properties: {
+                        major: { type: 'number' },
+                        minor: { type: 'number' },
+                        patch: { type: 'number' },
+                        description: { type: 'string' }
+                    }
+                },
+                model: { type: 'string', format: 'binary' },
+                image: { type: 'string', format: 'binary' }
+            },
+            required: ['data']
+        }
+    })
     @ApiResponse({ type: Version })
     async updateVersion(
         @Param('id') id: string,
