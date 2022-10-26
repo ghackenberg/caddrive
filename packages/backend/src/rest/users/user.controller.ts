@@ -2,16 +2,17 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, 
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiBasicAuth, ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { ApiBasicAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 import { Request } from 'express'
 import 'multer'
-import { User, UserREST } from 'productboard-common'
+import { User, UserAddData, UserREST, UserUpdateData } from 'productboard-common'
 import { canFindUserOrFail, canCreateUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../permission'
 import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(AuthGuard('basic'))
 @ApiBasicAuth()
+@ApiExtraModels(UserAddData, UserUpdateData)
 export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
@@ -44,17 +45,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         schema: {
             type: 'object',
             properties: {
-                data: {
-                    type: 'object',
-                    properties: {
-                        email: { type: 'string' },
-                        name: { type: 'string' },
-                        password: { type: 'string' },
-                        userManagementPermission: { type: 'boolean' },
-                        productManagementPermission: { type: 'boolean' }
-                    },
-                    required: ['email', 'name', 'password', 'userManagementPermission', 'productManagementPermission']
-                },
+                data: { $ref: getSchemaPath(UserAddData) },
                 file: { type: 'string', format: 'binary' }
             },
             required: ['data', 'file']
@@ -87,17 +78,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         schema: {
             type: 'object',
             properties: {
-                data: {
-                    type: 'object',
-                    properties: {
-                        email: { type: 'string' },
-                        name: { type: 'string' },
-                        password: { type: 'string' },
-                        userManagementPermission: { type: 'boolean' },
-                        productManagementPermission: { type: 'boolean' }
-                    },
-                    required: ['email', 'name', 'password', 'userManagementPermission', 'productManagementPermission']
-                },
+                data: { $ref: getSchemaPath(UserUpdateData) },
                 file: { type: 'string', format: 'binary' }
             },
             required: ['data']

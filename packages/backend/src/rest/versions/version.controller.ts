@@ -1,17 +1,18 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth, ApiConsumes } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth, ApiConsumes, getSchemaPath, ApiExtraModels } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { Request } from 'express'
 import 'multer'
-import { User, Version, VersionAddData, VersionREST } from 'productboard-common'
+import { User, Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
 import { VersionService } from './version.service'
 import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../permission'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard('basic'))
 @ApiBasicAuth()
+@ApiExtraModels(VersionAddData, VersionUpdateData)
 export class VersionController implements VersionREST<string, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         private versionService: VersionService,
@@ -36,20 +37,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         schema: {
             type: 'object',
             properties: {
-                data: {
-                    type: 'object',
-                    properties: {
-                        userId: { type: 'string' },
-                        productId: { type: 'string' },
-                        baseVersionIds: { type: 'array', items: { type: 'string' } },
-                        time: { type: 'string' },
-                        major: { type: 'number' },
-                        minor: { type: 'number' },
-                        patch: { type: 'number' },
-                        description: { type: 'string' }
-                    },
-                    required: ['userId', 'productId', 'baseVersionIds', 'time', 'major', 'minor', 'patch', 'description']
-                },
+                data: { $ref: getSchemaPath(VersionAddData) },
                 model: { type: 'string', format: 'binary' },
                 image: { type: 'string', format: 'binary' }
             },
@@ -84,15 +72,7 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
         schema: {
             type: 'object',
             properties: {
-                data: {
-                    type: 'object',
-                    properties: {
-                        major: { type: 'number' },
-                        minor: { type: 'number' },
-                        patch: { type: 'number' },
-                        description: { type: 'string' }
-                    }
-                },
+                data: { $ref: getSchemaPath(VersionUpdateData) },
                 model: { type: 'string', format: 'binary' },
                 image: { type: 'string', format: 'binary' }
             },
