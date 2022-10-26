@@ -2,10 +2,10 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, 
 import { REQUEST } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { ApiBasicAuth, ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Request } from 'express'
 import 'multer'
-import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
+import { User, UserREST } from 'productboard-common'
 import { canFindUserOrFail, canCreateUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../permission'
 import { UserService } from './user.service'
 
@@ -39,7 +39,27 @@ export class UserController implements UserREST<string, Express.Multer.File> {
   
     @Post()
     @UseInterceptors(FileInterceptor('file'))
-    @ApiBody({ type: UserAddData, required: true })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'object',
+                    properties: {
+                        email: { type: 'string' },
+                        name: { type: 'string' },
+                        password: { type: 'string' },
+                        userManagementPermission: { type: 'boolean' },
+                        productManagementPermission: { type: 'boolean' }
+                    },
+                    required: ['email', 'name', 'password', 'userManagementPermission', 'productManagementPermission']
+                },
+                file: { type: 'string', format: 'binary' }
+            },
+            required: ['data', 'file']
+        }
+    })
     @ApiResponse({ type: User })
     async addUser(
         @Body('data') data: string,
@@ -62,7 +82,27 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     @Put(':id')
     @UseInterceptors(FileInterceptor('file'))
     @ApiParam({ name: 'id', type: 'string', required: true })
-    @ApiBody({ type: UserUpdateData, required: true })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: {
+                    type: 'object',
+                    properties: {
+                        email: { type: 'string' },
+                        name: { type: 'string' },
+                        password: { type: 'string' },
+                        userManagementPermission: { type: 'boolean' },
+                        productManagementPermission: { type: 'boolean' }
+                    },
+                    required: ['email', 'name', 'password', 'userManagementPermission', 'productManagementPermission']
+                },
+                file: { type: 'string', format: 'binary' }
+            },
+            required: ['data']
+        }
+    })
     @ApiResponse({ type: User })
     async updateUser(
         @Param('id') id: string,
