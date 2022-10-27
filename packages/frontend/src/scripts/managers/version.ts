@@ -1,7 +1,7 @@
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { VersionClient } from '../clients/rest/version'
 
-class VersionManagerImpl implements VersionREST<VersionAddData, File, Blob> {
+class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob> {
     private versionIndex: {[id: string]: Version} = {}
     private productIndex: {[id: string]: {[id: string]: boolean}} = {}
 

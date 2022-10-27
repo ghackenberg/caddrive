@@ -1,7 +1,7 @@
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { IssueClient } from '../clients/rest/issue'
 
-class IssueManagerImpl implements IssueREST {
+class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
     private issueIndex: {[id: string]: Issue} = {}
     private productIndex: {[id: string]: {[id: string]: boolean}} = {}
 
@@ -26,9 +26,9 @@ class IssueManagerImpl implements IssueREST {
         return Object.keys(this.productIndex[productId]).map(id => this.issueIndex[id])
     }
 
-    async addIssue(data: IssueAddData): Promise<Issue> {
+    async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
         // Call backend
-        const issue = await IssueClient.addIssue(data)
+        const issue = await IssueClient.addIssue(data, files)
         // Update issue index
         this.issueIndex[issue.id] = issue
         // Update product index
@@ -54,7 +54,7 @@ class IssueManagerImpl implements IssueREST {
         return this.issueIndex[id]
     }
 
-    async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
+    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
         if (id in this.issueIndex) {
             const issue = this.issueIndex[id]
             // Update product index
@@ -63,7 +63,7 @@ class IssueManagerImpl implements IssueREST {
             }
         }
         // Call backend
-        const issue = await IssueClient.updateIssue(id, data)
+        const issue = await IssueClient.updateIssue(id, data, files)
         // Update issue index
         this.issueIndex[issue.id] = issue
         // Update product index

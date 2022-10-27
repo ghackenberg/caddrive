@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
-import { REQUEST } from '@nestjs/core'
-import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth, ApiConsumes, getSchemaPath, ApiExtraModels } from '@nestjs/swagger'
-import { AuthGuard } from '@nestjs/passport'
-import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { Request } from 'express'
 import 'multer'
+import { REQUEST } from '@nestjs/core'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { FileFieldsInterceptor } from '@nestjs/platform-express'
+import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth, ApiConsumes, getSchemaPath, ApiExtraModels } from '@nestjs/swagger'
 import { User, Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
 import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../../functions/permission'
 import { VersionService } from './version.service'
@@ -13,7 +13,7 @@ import { VersionService } from './version.service'
 @UseGuards(AuthGuard('basic'))
 @ApiBasicAuth()
 @ApiExtraModels(VersionAddData, VersionUpdateData)
-export class VersionController implements VersionREST<string, Express.Multer.File[], Express.Multer.File[]> {
+export class VersionController implements VersionREST<string, string, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         private versionService: VersionService,
         @Inject(REQUEST)
@@ -31,7 +31,12 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     }
 
     @Post()
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 }, { name: 'image', maxCount: 1 }]))
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'model', maxCount: 1 },
+            { name: 'image', maxCount: 1 }
+        ])
+    )
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -42,7 +47,8 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
                 image: { type: 'string', format: 'binary' }
             },
             required: ['data', 'model', 'image']
-        }
+        },
+        required: true
     })
     @ApiResponse({ type: Version })
     async addVersion(
@@ -65,7 +71,12 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
     }
 
     @Put(':id')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'model', maxCount: 1 }, { name: 'image', maxCount: 1 }]))
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'model', maxCount: 1 },
+            { name: 'image', maxCount: 1 }
+        ])
+    )
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiConsumes('multipart/form-data')
     @ApiBody({
@@ -77,7 +88,8 @@ export class VersionController implements VersionREST<string, Express.Multer.Fil
                 image: { type: 'string', format: 'binary' }
             },
             required: ['data']
-        }
+        },
+        required: true
     })
     @ApiResponse({ type: Version })
     async updateVersion(

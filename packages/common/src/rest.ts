@@ -1,5 +1,5 @@
-import { Comment, CommentAddData, CommentUpdateData } from './data/comment'
-import { Issue, IssueAddData, IssueUpdateData } from './data/issue'
+import { Comment } from './data/comment'
+import { Issue } from './data/issue'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
 import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
 import { Product, ProductAddData, ProductUpdateData } from './data/product'
@@ -23,27 +23,27 @@ export interface ProductREST {
     deleteProduct(id: string): Promise<Product>
 }
 
-export interface VersionREST<D, M, I> {
+export interface VersionREST<DA, DU, M, I> {
     findVersions(productId: string): Promise<Version[]>
-    addVersion(data: D, files: { model: M, image: I }): Promise<Version>
+    addVersion(data: DA, files: { model: M, image: I }): Promise<Version>
     getVersion(id: string): Promise<Version>
-    updateVersion(id: string, data: D, files?: {model: M, image: I}): Promise<Version>
+    updateVersion(id: string, data: DU, files?: {model: M, image: I}): Promise<Version>
     deleteVersion(id: string): Promise<Version>
 }
 
-export interface IssueREST {
+export interface IssueREST<DA, DU, A> {
     findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed'): Promise<Issue[]>
-    addIssue(data: IssueAddData): Promise<Issue>
+    addIssue(data: DA, files: { audio?: A }): Promise<Issue>
     getIssue(id: string): Promise<Issue>
-    updateIssue(id: string, data: IssueUpdateData): Promise<Issue>
+    updateIssue(id: string, data: DU, files?: { audio?: A }): Promise<Issue>
     deleteIssue(id: string): Promise<Issue>
 }
 
-export interface CommentREST {
+export interface CommentREST<DA, DU, A> {
     findComments(issueId: string): Promise<Comment[]>
-    addComment(data: CommentAddData): Promise<Comment>
+    addComment(data: DA, files: { audio?: A }): Promise<Comment>
     getComment(id: string): Promise<Comment>
-    updateComment(id: string, data: CommentUpdateData): Promise<Comment>
+    updateComment(id: string, data: DU, files?: { audio?: A }): Promise<Comment>
     deleteComment(id: string): Promise<Comment>
 }
 

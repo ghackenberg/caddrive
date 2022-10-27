@@ -1,7 +1,7 @@
 import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 import { CommentClient } from '../clients/rest/comment'
 
-class CommentManagerImpl implements CommentREST {
+class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {
     private commentIndex: {[id: string]: Comment} = {}
     private issueIndex: {[id: string]: {[id: string]: boolean}} = {}
     
@@ -23,9 +23,9 @@ class CommentManagerImpl implements CommentREST {
         return Object.keys(this.issueIndex[issueId]).map(id => this.commentIndex[id])
     }
 
-    async addComment(data: CommentAddData): Promise<Comment> {
+    async addComment(data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
         // Call backend
-        const comment = await CommentClient.addComment(data)
+        const comment = await CommentClient.addComment(data, files)
         // Update comment index
         this.commentIndex[comment.id] = comment
         // Update issue index
@@ -51,7 +51,7 @@ class CommentManagerImpl implements CommentREST {
         return this.commentIndex[id]
     }
 
-    async updateComment(id: string, data: CommentUpdateData): Promise<Comment> {
+    async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }): Promise<Comment> {
         if (id in this.commentIndex) {
             const comment = this.commentIndex[id]
             // Update issue index
@@ -60,7 +60,7 @@ class CommentManagerImpl implements CommentREST {
             }
         }
         // Call backend
-        const comment = await CommentClient.updateComment(id, data)
+        const comment = await CommentClient.updateComment(id, data, files)
         // Update comment index
         this.commentIndex[id] = comment
         // Update issue index

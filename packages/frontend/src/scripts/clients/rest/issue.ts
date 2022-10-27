@@ -4,18 +4,30 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 // Globals
 import { auth } from '../auth'
 
-class IssueClientImpl implements IssueREST {
+class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
     async findIssues(product: string, milestone?: string, state?: string): Promise<Issue[]> {
         return (await axios.get<Issue[]>(`/rest/issues`, { params: { product, milestone, state }, auth })).data
     }
-    async addIssue(data: IssueAddData): Promise<Issue> {
-        return (await axios.post<Issue>('/rest/issues', data, { auth })).data
+    async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
+        const body = new FormData()
+        body.append('data', JSON.stringify(data))
+        if (files.audio) {
+            body.append('audio', files.audio)
+        }
+        return (await axios.post<Issue>('/rest/issues', body, { auth })).data
     }
     async getIssue(id: string): Promise<Issue> {
         return (await axios.get<Issue>(`/rest/issues/${id}`, { auth })).data
     }
-    async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
-        return (await axios.put<Issue>(`/rest/issues/${id}`, data, { auth })).data
+    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
+        const body = new FormData()
+        body.append('data', JSON.stringify(data))
+        if (files) {
+            if (files.audio) {
+                body.append('audio', files.audio)
+            }
+        }
+        return (await axios.put<Issue>(`/rest/issues/${id}`, body, { auth })).data
     }
     async deleteIssue(id: string): Promise<Issue> {
         return (await axios.delete<Issue>(`/rest/issues/${id}`, { auth })).data

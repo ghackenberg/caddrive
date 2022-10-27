@@ -5,7 +5,7 @@ import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'product
 import { CommentEntity, CommentRepository } from 'productboard-database'
 
 @Injectable()
-export class CommentService implements CommentREST { 
+export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> { 
     async findComments(issueId: string): Promise<Comment[]> {
         var where: FindOptionsWhere<CommentEntity>
         if (issueId)
@@ -16,7 +16,7 @@ export class CommentService implements CommentREST {
         return result
     }
 
-    async addComment(data: CommentAddData): Promise<Comment> {
+    async addComment(data: CommentAddData, _files: { audio?: Express.Multer.File[] }): Promise<Comment> {
         const comment = await CommentRepository.save({ id: shortid(), deleted: false, ...data })
         return this.convert(comment)
     }
@@ -26,7 +26,7 @@ export class CommentService implements CommentREST {
         return this.convert(comment)
     }
 
-    async updateComment(id: string, data: CommentUpdateData): Promise<Comment> {
+    async updateComment(id: string, data: CommentUpdateData, _files?: { audio?: Express.Multer.File[] }): Promise<Comment> {
         const comment = await CommentRepository.findOneByOrFail({ id })
         comment.action = data.action
         comment.text = data.text

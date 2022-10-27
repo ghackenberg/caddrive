@@ -4,7 +4,7 @@ import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'product
 // Globals
 import { auth } from '../auth'
 
-class VersionClientImpl implements VersionREST<VersionAddData, File, Blob> {
+class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob> {
     async findVersions(product: string): Promise<Version[]> {
         return (await axios.get<Version[]>('/rest/versions', { params: { product }, auth } )).data
     }

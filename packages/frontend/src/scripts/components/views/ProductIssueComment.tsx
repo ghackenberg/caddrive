@@ -170,7 +170,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'none' })
+            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'none' }, {})
             setComments([...comments, comment])
             setText('')
         }
@@ -179,7 +179,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     async function submitCommentAndClose(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'close' })
+            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'close' }, {})
             setComments([...comments, comment])
             setText('')
             setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed', assigneeIds: issue.assigneeIds }))
@@ -189,7 +189,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     async function submitCommentAndReopen(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'reopen' })
+            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'reopen' }, {})
             setComments([...comments, comment])
             setText('')
             setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds }))

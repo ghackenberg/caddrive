@@ -5,7 +5,7 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-database'
 
 @Injectable()
-export class IssueService implements IssueREST {
+export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
         var where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
@@ -22,7 +22,7 @@ export class IssueService implements IssueREST {
         return result
     }
   
-    async addIssue(data: IssueAddData): Promise<Issue> {
+    async addIssue(data: IssueAddData, _files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const issue = await IssueRepository.save({ id: shortid(), deleted: false, ...data })
         return this.convert(issue)
     }
@@ -32,7 +32,7 @@ export class IssueService implements IssueREST {
         return this.convert(issue)
     }
 
-    async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
+    async updateIssue(id: string, data: IssueUpdateData, _files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const issue = await IssueRepository.findOneByOrFail({ id })
         issue.assigneeIds = data.assigneeIds
         issue.label = data.label
