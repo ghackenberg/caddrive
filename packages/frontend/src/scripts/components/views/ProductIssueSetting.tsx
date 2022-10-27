@@ -13,6 +13,8 @@ import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
 // Functions
 import { collectParts, Part } from '../../functions/markdown'
+// Services
+import { AudioRecorder } from '../../services/recorder'
 // Contexts
 import { UserContext } from '../../contexts/User'
 // Snippets
@@ -52,9 +54,11 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // - Values
     const [label, setLabel] = useState<string>('')
     const [text, setText] = useState<string>('')
+    const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(queryMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>([])
     // - Interactions
+    const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>([])
 
     // EFFECTS
@@ -89,6 +93,18 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     
     // FUNCTIONS
 
+    async function startRecordAudio(_event: React.MouseEvent<HTMLButtonElement>) {
+        const recorder = new AudioRecorder()
+        await recorder.start()
+        setRecorder(recorder)
+    }
+
+    async function stopRecordAudio(_event: React.MouseEvent<HTMLButtonElement>) {
+        const data = await recorder.stop()
+        setAudio(data)
+        setRecorder(null)
+    }
+
     async function selectObject(version: Version, object: Object3D) {
         const markdown = `[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`
         if (document.activeElement == textReference.current) {
@@ -110,7 +126,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, {})
+                const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 history.replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
@@ -177,6 +193,27 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                 </div>
                                                 <div>
                                                     <textarea ref={textReference} className='fill' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div>
+                                                    Audio:
+                                                </div>
+                                                <div>
+                                                    {recorder ? (
+                                                        <button onClick={stopRecordAudio}>Stop recording</button>
+                                                    ) : (
+                                                        <Fragment>
+                                                            {audio ? (
+                                                                <Fragment>
+                                                                    <audio src={URL.createObjectURL(audio)} controls></audio>
+                                                                    <button onClick={() => setAudio(null)}>Remove recording</button>
+                                                                </Fragment>
+                                                            ) : (
+                                                                <button onClick={startRecordAudio}>Start recording</button>
+                                                            )}
+                                                        </Fragment>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div>
