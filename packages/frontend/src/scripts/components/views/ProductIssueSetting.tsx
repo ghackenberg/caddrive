@@ -94,12 +94,14 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // FUNCTIONS
 
     async function startRecordAudio(_event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
         const recorder = new AudioRecorder()
         await recorder.start()
         setRecorder(recorder)
     }
 
     async function stopRecordAudio(_event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
         setRecorder(null)
@@ -131,7 +133,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
             }
         } else {
             if (label && text) {
-                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null })
+                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
                 history.goBack()    
             }
         }
