@@ -329,6 +329,9 @@ body > div > main > main div.widget.version_tree > div > div.text > div > span.l
 }
 body > div > main > main div.widget.version_tree > div > div.model {
     width: 10em;
+    height: 10em;
+    background-position: center;
+    background-size: cover;
 }
 body > div > main > main div.widget.version_tree > div:first-child > div.model * {
     border-top-right-radius: 1em;

@@ -61,6 +61,12 @@ body > div > main table *.left {
 body > div > main table *.center {
     text-align: center;
 }
+body > div > main table *.model {
+    width: 10em;
+    height: 10em;
+    background-position: center;
+    background-size: cover;
+}
 body > div > main table *.right {
     text-align: right;
 }

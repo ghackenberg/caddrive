@@ -13,7 +13,6 @@ import { MemberManager } from '../../managers/member'
 import { ProductsLink } from '../links/ProductsLink'
 // Widgets
 import { Column, Table } from '../widgets/Table'
-import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
@@ -29,6 +28,7 @@ export const ProductView = () => {
     const [products, setProducts] = useState<Product[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
     const [versions, setVersions] = useState<{[id: string]: number}>({})
+    const [latestVersions, setLatestVersions] = useState<{[id: string]: string}>({})
     const [issues, setIssues] = useState<{[id: string]: number}>({})
     const [members, setMembers] = useState<{[id: string]: Member[]}>({})
 
@@ -57,7 +57,18 @@ export const ProductView = () => {
                 setVersions(newVersions)
             })
         }
-    }, [products])
+    },[products])
+    useEffect(() => {
+        if (products) {
+            Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
+                const newVersions = {...latestVersions}
+                for (var index = 0; index < products.length; index++) {
+                    newVersions[products[index].id] = productVersions[index][productVersions[index].length - 1].id
+                }
+                setLatestVersions(newVersions)
+            })
+        }
+    },[products])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => IssueManager.findIssues(product.id))).then(productIssues => {
@@ -91,11 +102,11 @@ export const ProductView = () => {
     }
 
     // CONSTANTS
-
+    
     const columns: Column<Product>[] = [
         { label: 'Preview', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                <ProductView3D product={product} mouse={false} vr= {false}/>
+                {product.id in latestVersions ? <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"></div> : '?'}
             </Link>
         )},
         { label: 'Owner', class: 'left nowrap', content: product => (
