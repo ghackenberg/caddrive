@@ -41,6 +41,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [indent, setIndent] = useState<number>(0)
     // - Interactions
     const [version, setVersion] = useState<Version>()
+    const [sidebar, setSidebar] = useState<boolean>(false)
 
     // EFFECTS
 
@@ -161,7 +162,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className='sidebar'>
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
                                 <div>
                                     <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
                                         New version
@@ -222,6 +223,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                                 <div>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? 'hide' : 'show'}</button>
                                     <div className='widget product_view'>
                                         {!versions || (versions.length > 0 && !version) && (
                                             <img className='load' src={LoadIcon}/>

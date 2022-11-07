@@ -28,6 +28,8 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
     const [product, setProduct] = useState<Product>()
     const [members, setMembers] = useState<Member[]>()
     const [users, setUsers] = useState<{[id: string]: User}>({})
+    // - Interactions
+    const [sidebar, setSidebar] = useState<boolean>(false)
 
     // EFFECTS
 
@@ -95,7 +97,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
                                 <div>
                                 <Link to={`/products/${productId}/members/new/settings`} className='button green fill'>
                                         New member
@@ -104,6 +106,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                    { members && <Table columns={columns} items={members}/> }
                                 </div>
                                 <div>
+                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? 'hide' : 'show'}</button>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>

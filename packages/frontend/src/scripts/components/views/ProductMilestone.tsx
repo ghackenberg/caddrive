@@ -34,6 +34,8 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
     const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
     const [users, setUsers] = useState<{[id: string]: User}>({})
+    // - Interactions
+    const [sidebar, setSidebar] = useState<boolean>(false)
 
     // EFFECTS
 
@@ -164,7 +166,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
                                 <div>           
                                     <Link to={`/products/${productId}/milestones/new/settings`} className='button green fill'>
                                         New milestone
@@ -172,6 +174,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                     { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>
+                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? 'hide' : 'show'}</button>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
