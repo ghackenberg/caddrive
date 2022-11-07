@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import * as fs from 'fs'
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
@@ -22,8 +23,14 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         return result
     }
   
-    async addIssue(data: IssueAddData, _files: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const issue = await IssueRepository.save({ id: shortid(), deleted: false, ...data })
+        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${issue.id}.webm`, files.audio[0].buffer)
+        }
         return this.convert(issue)
     }
 
@@ -32,7 +39,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         return this.convert(issue)
     }
 
-    async updateIssue(id: string, data: IssueUpdateData, _files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const issue = await IssueRepository.findOneByOrFail({ id })
         issue.assigneeIds = data.assigneeIds
         issue.label = data.label
@@ -40,6 +47,12 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.state = data.state
         issue.text = data.text
         await IssueRepository.save(issue)
+        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${issue.id}.webm`, files.audio[0].buffer)
+        }
         return this.convert(issue)
     }
 
