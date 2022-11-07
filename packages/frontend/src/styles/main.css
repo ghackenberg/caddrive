@@ -135,12 +135,42 @@ body > div > main > main > div:nth-child(1) > a.button.fill.green {
 }
 body > div > main > main.sidebar > div:nth-child(1) {
     left: 0;
-    right: 50%;
+    width: 48em;
 }
 
 body > div > main > main.sidebar > div:nth-child(2) {
-    left: 50%;
+    left: 50em;
     right: 0;
+}
+
+body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
+    display: none;
+}
+
+@media screen and (max-width: 70em) {
+    body > div > main > main.sidebar > div:nth-child(1) {
+        width: auto;
+        right: 3em;
+    }
+    
+    body > div > main > main.sidebar > div:nth-child(2) {
+        width: calc(100% - 3em);
+        left: 100%;
+        right: auto;
+    }
+
+    body > div > main > main.sidebar.visible > div:nth-child(2) {
+        left: 3em;
+    }
+    body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
+        display: block;
+        margin-left: -4em;
+    }
+    body > div > main > main.sidebar > div:nth-child(2) > button.visible:first-child {
+        margin-left: 0;
+        left: 3em;
+    }
+
 }
 
 body > div > main > main div.widget.product_view {

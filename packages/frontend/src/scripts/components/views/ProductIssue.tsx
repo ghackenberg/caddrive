@@ -45,6 +45,8 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
     const [hightlighted, setHighlighted] = useState<Part[]>()
+    const [sidebar, setSidebar] = useState<boolean>(false)
+
 
     // EFFECTS
 
@@ -243,7 +245,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
                                 <div>
                                     <Link to={`/products/${productId}/issues/new/settings`} className='button green fill'>
                                         New issue
@@ -257,6 +259,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
                                 </div>
                             </main>
