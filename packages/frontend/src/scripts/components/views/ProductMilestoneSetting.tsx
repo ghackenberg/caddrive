@@ -47,6 +47,9 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // - Computations
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
+    // - Interactions
+    const [sidebar, setSidebar] = useState<boolean>(false)
+
    
     // EFFECTS
 
@@ -106,7 +109,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submitMilestone} onReset={() => history.goBack()}>
@@ -122,6 +125,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                     </form>
                                 </div>
                                 <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
+                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
                                  <BurndownChartWidget start= {start} end= {end} total={total} actual={actual}/>
                                 </div>
                             </main>

@@ -59,6 +59,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
     const [model, setModel] = useState<GLTF>(null)
     const [image, setImage] = useState<Blob>(null) 
+    const [sidebar, setSidebar] = useState<boolean>(false)
 
     // EFFECTS
 
@@ -111,7 +112,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                     ) : (
                         <Fragment>
                             <ProductHeader product={product} />
-                            <main className="sidebar">
+                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submit}>
@@ -141,6 +142,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                     </form>
                                 </div>
                                 <div>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
                                     {version ? (
                                         <VersionView3D version={version} mouse={true} vr={true} />
                                     ) : (

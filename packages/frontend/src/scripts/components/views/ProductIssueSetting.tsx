@@ -60,6 +60,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>([])
+    const [sidebar, setSidebar] = useState<boolean>(false)
 
     // EFFECTS
 
@@ -184,7 +185,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                         <form onSubmit={submitIssue} onReset={() => history.goBack()}>
@@ -246,6 +247,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </form>
                                 </div>
                                 <div>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
                                     <ProductView3D product={product} marked={marked} mouse={true} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
