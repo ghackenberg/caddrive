@@ -124,9 +124,12 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                             </div>
                                     </form>
                                 </div>
-                                <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
-                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
-                                 <BurndownChartWidget start= {start} end= {end} total={total} actual={actual}/>
+                                <div>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
+                                    <div className="widget product_view">
+                                        <BurndownChartWidget start= {start} end= {end} total={total} actual={actual}/>
+
+                                    </div>
                                 </div>
                             </main>
                         </Fragment>
