@@ -150,7 +150,7 @@ body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
 @media screen and (max-width: 70em) {
     body > div > main > main.sidebar > div:nth-child(1) {
         width: auto;
-        right: 3em;
+        right: 4em;
     }
     
     body > div > main > main.sidebar > div:nth-child(2) {
@@ -165,12 +165,23 @@ body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
     body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
         display: block;
         margin-left: -4em;
+        font-size: inherit;
+        border-width: 0;
+        border-style: solid;
+        border-radius: 0.5em;
+        padding: 0.5em;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+        background-color: rgb(215,215,215);
+        color: black;
     }
     body > div > main > main.sidebar > div:nth-child(2) > button.visible:first-child {
         margin-left: 0;
         left: 3em;
+        border-bottom-left-radius: 0em;
+        border-bottom-right-radius: 0em;
+        border-bottom: 0em;
     }
-
 }
 
 body > div > main > main div.widget.product_view {

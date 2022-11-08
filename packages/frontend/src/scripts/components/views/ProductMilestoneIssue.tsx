@@ -49,6 +49,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const [closedIssueCount, setClosedIssueCount] = useState<number>()
     // - Interactions
     const [state, setState] = useState('open')
+    const [sidebar, setSidebar] = useState<boolean>(false)
 
     // EFFECTS
 
@@ -218,7 +219,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button gray fill right'>
                                         Edit milestone
@@ -249,8 +250,11 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     </a>
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} />
                                 </div>
-                                <div style={{padding: '1em', backgroundColor: 'rgb(215,215,215)'}}>
-                                    <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
+                                <div>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
+                                    <div className="widget product_view">
+                                        <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
+                                    </div>
                                 </div>
                             </main>
                         </Fragment>
