@@ -15,6 +15,7 @@ import { MemberManager } from '../../managers/member'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 import { UserManager } from '../../managers/user'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -106,10 +107,10 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                    { members && <Table columns={columns} items={members}/> }
                                 </div>
                                 <div>
-                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>

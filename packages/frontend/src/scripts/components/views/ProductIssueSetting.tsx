@@ -24,6 +24,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -247,10 +248,10 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </form>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} marked={marked} mouse={true} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     ) }
                 </Fragment>

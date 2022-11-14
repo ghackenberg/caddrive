@@ -18,6 +18,7 @@ import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { IssueManager } from '../../managers/issue'
 import { CommentManager } from '../../managers/comment'
 import { calculateActual } from '../../functions/burndown'
+import { ProductFooter } from '../snippets/ProductFooter'
 // Icons
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
@@ -125,12 +126,12 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                     </form>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     <div className="widget product_view">
                                         <BurndownChartWidget start= {start} end= {end} total={total} actual={actual}/>
                                     </div>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>

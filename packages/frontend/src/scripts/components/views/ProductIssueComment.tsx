@@ -21,6 +21,7 @@ import { CommentView } from '../widgets/CommentView'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { MemberManager } from '../../managers/member'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -256,10 +257,10 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                     </div>
                                 </div>
                                 <div>
-                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     ) }
                 </Fragment>

@@ -15,7 +15,7 @@ body > div > main {
 }
 
 /* Header */
-
+body > div > main > footer,
 body > div > main > header {
     background-color: rgb(245,245,245);
     border-bottom-width: 1px;
@@ -35,10 +35,12 @@ body > div > main > header > div:nth-child(1) > span::after {
 body > div > main > header > div:nth-child(1) > span:last-child::after {
     content: "";
 }
+body > div > main > footer > div:nth-child(2)
 body > div > main > header > div:nth-child(2) {
     padding-left: 1rem;
     padding-right: 1rem;
 }
+body > div > main > footer > div:nth-child(2) > span > a,
 body > div > main > header > div:nth-child(2) > span > a {
     display: inline-block;
     padding-left: 1em;
@@ -46,13 +48,27 @@ body > div > main > header > div:nth-child(2) > span > a {
     padding-bottom: 0.75em;
     color: black;
 }
+
+body > div > main > footer > div:nth-child(2) > span > img {
+    vertical-align: middle;
+}
+
 body > div > main > header > div:nth-child(2) > span > a.active {
     font-weight: bold;
-    border-bottom-width: 2px;
+    border-bottom-width: 4px;
     border-bottom-style: solid;
     border-bottom-color: orange;
-    padding-bottom: calc(0.75em - 1px);
+    padding-bottom: calc(0.75em - 2px);
     margin-bottom: -1px;
+}
+
+body > div > main > footer > div:nth-child(2) > span > a.active {
+    font-weight: bold;
+    border-top-width: 4px;
+    border-top-style: solid;
+    border-top-color: orange;
+    padding-top: calc(0.75em - 1px);
+    margin-top: -1px;
 }
 
 /* Main */
@@ -147,11 +163,6 @@ body > div > main > footer {
     display: none;
 }
 
-body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
-        display: none;
-        /* zum screenshots machen button ausblenden, zeilen müssen dann wieder weg */
-      
-    }
 
 @media screen and (max-width: 70em) {
     body > div > main > main.sidebar > div:nth-child(1) {
@@ -170,34 +181,23 @@ body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
     body > div > main > main.sidebar.visible > div:nth-child(2) {
         left: 0;
     }
-    /* body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
-        display: block;
-        margin-left: -4em;
-        font-size: inherit;
-        border-width: 0;
-        border-style: solid;
-        border-radius: 0.5em;
-        padding: 0.5em;
-        padding-left: 0.75em;
-        padding-right: 0.75em;
-        background-color: rgb(215,215,215);
-        color: black;
-    }
-    body > div > main > main.sidebar > div:nth-child(2) > button.visible:first-child {
-        margin-left: 0;
-        left: 3em;
-        border-bottom-left-radius: 0em;
-        border-bottom-right-radius: 0em;
-        border-bottom: 0em;
-    } */
 
     body > div > main > footer {
-        display: block;
+        display: inline-block;
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
+
+        border-top-width: 1px;
+        border-top-style: solid;
+        border-top-color: rgb(215,215,215);
+
+        /* padding-top: 0.5em; */
+        height: 3em;
+       
     }
+    
 
 }
 

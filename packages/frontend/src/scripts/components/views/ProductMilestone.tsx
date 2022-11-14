@@ -18,6 +18,7 @@ import * as DeleteIcon from '/src/images/delete.png'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { MemberManager } from '../../managers/member'
 import { UserManager } from '../../managers/user'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -174,10 +175,10 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                     { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>
-                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>  

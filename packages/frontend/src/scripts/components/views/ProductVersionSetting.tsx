@@ -25,6 +25,7 @@ import { SceneView3D } from '../widgets/SceneView3D'
 // Images
 import * as EmptyIcon from '/src/images/empty.png'
 import * as LoadIcon from '/src/images/load.png'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
@@ -142,7 +143,6 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                     </form>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     {version ? (
                                         <VersionView3D version={version} mouse={true} vr={true} />
                                     ) : (
@@ -162,6 +162,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                     )}
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     )}
                 </Fragment>

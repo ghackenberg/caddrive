@@ -14,6 +14,7 @@ import { ProductHeader } from '../snippets/ProductHeader'
 import { TextInput } from '../inputs/TextInput'
 // Widgets
 import { ProductView3D } from '../widgets/ProductView3D'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 export const ProductSettingView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -34,6 +35,9 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // - Values
     const [name, setName] = useState<string>('')
     const [description, setDescription] = useState<string>('')
+    // - Interactions
+    const [sidebar, setSidebar] = useState<boolean>(false)
+
 
     // EFFECTS
 
@@ -70,7 +74,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submit}>
@@ -88,6 +92,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     )}
                 </Fragment>

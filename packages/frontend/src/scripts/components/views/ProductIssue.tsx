@@ -14,6 +14,7 @@ import { MemberManager } from '../../managers/member'
 import { collectParts, Part } from '../../functions/markdown'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
+import { ProductFooter } from '../snippets/ProductFooter'
 // Widgets
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -262,11 +263,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
                                 </div>
                             </main>
-                            <footer>
-                                    <button onClick={() => {setSidebar(false)}}>list view</button>
-                                    <button onClick={() => {setSidebar(true)}}>3D view</button>
-                                
-                            </footer>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>     

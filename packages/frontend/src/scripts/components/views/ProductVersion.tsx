@@ -18,6 +18,7 @@ import * as EmptyIcon from '/src/images/empty.png'
 import { MemberManager } from '../../managers/member'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -223,7 +224,6 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? '>' : '<'}</button>
                                     <div className='widget product_view'>
                                         {!versions || (versions.length > 0 && !version) && (
                                             <img className='load' src={LoadIcon}/>
@@ -235,6 +235,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
                         </Fragment>
                     )}
                 </Fragment>
