@@ -174,7 +174,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                     { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>
-                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? 'hide' : 'show'}</button>
+                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>

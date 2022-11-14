@@ -247,7 +247,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </form>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} marked={marked} mouse={true} click={selectObject} vr= {true}/>
                                 </div>
                             </main>

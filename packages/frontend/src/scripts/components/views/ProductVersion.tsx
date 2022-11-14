@@ -223,7 +223,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? 'hide' : 'show'}</button>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? '>' : '<'}</button>
                                     <div className='widget product_view'>
                                         {!versions || (versions.length > 0 && !version) && (
                                             <img className='load' src={LoadIcon}/>

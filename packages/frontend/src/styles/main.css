@@ -143,26 +143,34 @@ body > div > main > main.sidebar > div:nth-child(2) {
     right: 0;
 }
 
-body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
+body > div > main > footer {
     display: none;
 }
+
+body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
+        display: none;
+        /* zum screenshots machen button ausblenden, zeilen müssen dann wieder weg */
+      
+    }
 
 @media screen and (max-width: 70em) {
     body > div > main > main.sidebar > div:nth-child(1) {
         width: auto;
-        right: 4em;
+        bottom: 3em;
+        right: 0;
     }
     
     body > div > main > main.sidebar > div:nth-child(2) {
-        width: calc(100% - 3em);
+        width: 100%;
+        bottom: 3em;
         left: 100%;
         right: auto;
     }
 
     body > div > main > main.sidebar.visible > div:nth-child(2) {
-        left: 3em;
+        left: 0;
     }
-    body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
+    /* body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
         display: block;
         margin-left: -4em;
         font-size: inherit;
@@ -181,7 +189,16 @@ body > div > main > main.sidebar > div:nth-child(2) > button:first-child {
         border-bottom-left-radius: 0em;
         border-bottom-right-radius: 0em;
         border-bottom: 0em;
+    } */
+
+    body > div > main > footer {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
     }
+
 }
 
 body > div > main > main div.widget.product_view {

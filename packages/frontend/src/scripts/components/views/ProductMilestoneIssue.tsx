@@ -251,7 +251,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} />
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     <div className="widget product_view">
                                         <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
                                     </div>

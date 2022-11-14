@@ -106,7 +106,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                    { members && <Table columns={columns} items={members}/> }
                                 </div>
                                 <div>
-                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? 'hide' : 'show'}</button>
+                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}} >{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>

@@ -142,7 +142,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                     </form>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
+                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden' }`} onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     {version ? (
                                         <VersionView3D version={version} mouse={true} vr={true} />
                                     ) : (

@@ -259,10 +259,14 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
-                                    <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? 'hide' : 'show'}</button>
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
                                 </div>
                             </main>
+                            <footer>
+                                    <button onClick={() => {setSidebar(false)}}>list view</button>
+                                    <button onClick={() => {setSidebar(true)}}>3D view</button>
+                                
+                            </footer>
                         </Fragment>
                     )}
                  </Fragment>     

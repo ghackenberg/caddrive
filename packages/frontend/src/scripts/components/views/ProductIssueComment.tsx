@@ -58,6 +58,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     // - Interactions
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
+    const [sidebar, setSidebar] = useState<boolean>(false)
 
     // EFFECTS
 
@@ -207,7 +208,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
                                 <div>
                                     <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button gray fill right'>
                                         Edit issue
@@ -255,6 +256,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                     </div>
                                 </div>
                                 <div>
+                                <button className={`sidebar ${sidebar ? 'visible' : 'hidden'}` } onClick={() => {setSidebar(!sidebar)}}>{sidebar ? '>' : '<'}</button>
                                     <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
