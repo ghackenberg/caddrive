@@ -11,14 +11,16 @@ import { VersionManager } from '../../managers/version'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { VersionView3D } from '../widgets/VersionView3D'
+//import { VersionView3D } from '../widgets/VersionView3D'
 // Images
 import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
 import { MemberManager } from '../../managers/member'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
-import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
+//import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductView3D } from '../widgets/ProductView3D'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -207,9 +209,12 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                     <div className="text">
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
+                                                            <a> { version && version.userId in users && members ? <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/> : '?' } </a>
+                                                            {console.table(users[vers.userId])}
                                                             <span className="user">
                                                                 <span className="name"> {vers.id in users && members ? <ProductUserNameWidget user={users[vers.id]} members={members}/> : '?'}  </span>
-                                                                <span className="email"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span>
+                                                                {/* Email temporär ausgeblendet */}
+                                                                {/* <span className="email"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span> */}
                                                             </span>
                                                         </div>
                                                         <div>
@@ -231,7 +236,8 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        {version && <VersionView3D version={version} mouse={true} vr= {true}/>}
+                                        {/* {version && <VersionView3D version={version} mouse={true} vr= {true}/>} */}
+                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} />
                                     </div>
                                 </div>
                             </main>

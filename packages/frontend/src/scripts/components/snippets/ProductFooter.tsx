@@ -8,7 +8,6 @@ type SetPropType = {
 }
 
 export const ProductFooter = ({sidebar ,setSidebar }: SetPropType) => {
-    console.log(sidebar)
     return(
         <footer>
             <div></div>
