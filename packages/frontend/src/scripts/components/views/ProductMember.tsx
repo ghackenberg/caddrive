@@ -110,11 +110,10 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Members','image':'user'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
                         </Fragment>
                     )}
-                 </Fragment>
-                
+                 </Fragment>    
             )}
         </main>
     )

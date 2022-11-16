@@ -257,7 +257,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Milestone-Issues','image':'issue'}} item2={{'text':'Burndown-Chart','image':'chart'}}></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>     

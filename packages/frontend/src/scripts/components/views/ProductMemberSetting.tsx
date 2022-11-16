@@ -16,6 +16,7 @@ import { MemberManager } from '../../managers/member'
 import { Column, Table } from '../widgets/Table'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import { ProductFooter } from '../snippets/ProductFooter'
 
 
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
@@ -41,6 +42,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const [role, setRole] = useState<MemberRole>('customer')
     // - Interactions
     const [query, setQuery] = useState<string>('')
+    const [sidebar, setSidebar] = useState<boolean>(false)
     
     // EFFECTS
    
@@ -133,7 +135,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className="sidebar">
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submitMember}>
@@ -181,6 +183,8 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Member-Settings','image':'user'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
+
                         </Fragment>
                     )}
                  </Fragment>

@@ -263,7 +263,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Issues','image':'issue'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>     

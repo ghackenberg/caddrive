@@ -131,7 +131,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Milestone-Settings','image':'milestone'}} item2={{'text':'Burndown-Chart','image':'chart'}}></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>

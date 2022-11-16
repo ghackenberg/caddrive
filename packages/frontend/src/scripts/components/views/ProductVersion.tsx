@@ -240,7 +240,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Versions','image':'version'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
                         </Fragment>
                     )}
                 </Fragment>
