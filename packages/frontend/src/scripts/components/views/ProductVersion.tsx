@@ -236,8 +236,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        {/* {version && <VersionView3D version={version} mouse={true} vr= {true}/>} */}
-                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} />
+                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} change = {setVersion} />
                                     </div>
                                 </div>
                             </main>
