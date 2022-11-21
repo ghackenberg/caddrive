@@ -3,10 +3,18 @@ import { CommentClient } from '../clients/rest/comment'
 
 class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {
     private commentIndex: {[id: string]: Comment} = {}
-    private issueIndex: {[id: string]: {[id: string]: boolean}} = {}
+    private findIndex: {[id: string]: {[id: string]: boolean}} = {}
+
+    findCommentsFromCache(issueId: string) { 
+        if (issueId in this.findIndex) { 
+            return Object.keys(this.findIndex[issueId]).map(id => this.commentIndex[id])
+        } else { 
+            return undefined 
+        } 
+    }
     
     async findComments(issueId: string): Promise<Comment[]> {
-        if (!(issueId in this.issueIndex)) {
+        if (!(issueId in this.findIndex)) {
             // Call backend
             const comments = await CommentClient.findComments(issueId)
             // Upate comment index
@@ -14,13 +22,13 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
                 this.commentIndex[comment.id] = comment
             }
             // Update issue index
-            this.issueIndex[issueId] = {}
+            this.findIndex[issueId] = {}
             for (const comment of comments) {
-                this.issueIndex[issueId][comment.id] = true
+                this.findIndex[issueId][comment.id] = true
             }
         }
         // Return comments
-        return Object.keys(this.issueIndex[issueId]).map(id => this.commentIndex[id])
+        return Object.keys(this.findIndex[issueId]).map(id => this.commentIndex[id])
     }
 
     async addComment(data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
@@ -29,8 +37,8 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         // Update comment index
         this.commentIndex[comment.id] = comment
         // Update issue index
-        if (comment.issueId in this.issueIndex) {
-            this.issueIndex[comment.issueId][comment.id] = true
+        if (comment.issueId in this.findIndex) {
+            this.findIndex[comment.issueId][comment.id] = true
         }
         // Return comment
         return comment
@@ -43,8 +51,8 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
             // Update comment index
             this.commentIndex[id] = comment
             // Update issue index
-            if (comment.issueId in this.issueIndex) {
-                this.issueIndex[comment.issueId][id] = true
+            if (comment.issueId in this.findIndex) {
+                this.findIndex[comment.issueId][id] = true
             }
         }
         // Return comment
@@ -55,8 +63,8 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         if (id in this.commentIndex) {
             const comment = this.commentIndex[id]
             // Update issue index
-            if (comment.issueId in this.issueIndex) {
-                delete this.issueIndex[comment.issueId][id]
+            if (comment.issueId in this.findIndex) {
+                delete this.findIndex[comment.issueId][id]
             }
         }
         // Call backend
@@ -64,8 +72,8 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         // Update comment index
         this.commentIndex[id] = comment
         // Update issue index
-        if (comment.issueId in this.issueIndex) {
-            this.issueIndex[comment.issueId][id] = true
+        if (comment.issueId in this.findIndex) {
+            this.findIndex[comment.issueId][id] = true
         }
         // Return comment
         return comment
@@ -77,8 +85,8 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         // Update comment index
         this.commentIndex[id] = comment
         // Update issue index
-        if (comment.issueId in this.issueIndex) {
-            delete this.issueIndex[comment.issueId][id]
+        if (comment.issueId in this.findIndex) {
+            delete this.findIndex[comment.issueId][id]
         }
         // Return comment
         return comment

@@ -31,15 +31,38 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const productId = props.match.params.product
     const milestoneId = props.match.params.milestone
 
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMilestone = milestoneId == 'new' ? undefined : MilestoneManager.getMilestoneFromCache(milestoneId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialIssues = milestoneId == 'new' ? undefined: IssueManager.findIssuesFromCache(productId, milestoneId)
+    const initialComments: {[id: string]: Comment[]} = {}
+    for (const issue of initialIssues || []) {
+        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
+    } 
+    const initialUsers: {[id: string]: User} = {}
+    for (const issue of initialIssues || []) {
+        const user = UserManager.getUserFromCache(issue.userId)
+        if (user) {
+            initialUsers[user.id] = user
+        }
+        for (const comment of initialComments[issue.id] || []) {
+            const otherUser = UserManager.getUserFromCache(comment.userId)
+            if (otherUser) {
+                initialUsers[otherUser.id] = otherUser
+            }
+        }
+    } 
+    
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [milestone, setMilestone] = useState<Milestone>()
-    const [members, setMembers] = useState<Member[]>()
-    const [issues, setIssues] = useState<Issue[]>()
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [milestone, setMilestone] = useState<Milestone>(initialMilestone)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [issues, setIssues] = useState<Issue[]>(initialIssues)
+    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
     const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})

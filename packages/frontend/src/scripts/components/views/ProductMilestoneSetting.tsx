@@ -33,18 +33,31 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
 
     const productId = props.match.params.product
     const milestoneId = props.match.params.milestone
+
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMilestone = milestoneId == 'new' ? undefined : MilestoneManager.getMilestoneFromCache(milestoneId)
+    const initialIssues = milestoneId == 'new' ? undefined: IssueManager.findIssuesFromCache(productId, milestoneId)
+    const initialComments: {[id: string]: Comment[]} = {}
+    for (const issue of initialIssues || []) {
+        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
+    } 
+    const initialLabel = initialMilestone ? initialMilestone.label : ''
+    const initialStart = initialMilestone ? new Date(initialMilestone.start) : new Date(new Date().setHours(0,0,0,0))
+    const initialEnd = initialMilestone ? new Date(initialMilestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
+
  
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [milestone, setMilstone] = useState<Milestone>()
-    const [issues, setIssues] = useState<Issue[]>()
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [milestone, setMilstone] = useState<Milestone>(initialMilestone)
+    const [issues, setIssues] = useState<Issue[]>(initialIssues)
+    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     // - Values
-    const [label, setLabel] = useState<string>('')
-    const [start, setStart] = useState<Date>(new Date(new Date().setHours(0,0,0,0)))
-    const [end, setEnd] = useState<Date>(new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14))
+    const [label, setLabel] = useState<string>(initialLabel)
+    const [start, setStart] = useState<Date>(initialStart)
+    const [end, setEnd] = useState<Date>(initialEnd)
     // - Computations
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])

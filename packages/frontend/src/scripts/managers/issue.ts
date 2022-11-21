@@ -14,6 +14,15 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         } 
     }
 
+    findIssuesFromCache(productId: string, milestoneId?: string, state?: string) {
+        const key = `${productId}-${milestoneId}-${state}`
+        if (key in this.findIndex) { 
+            return Object.keys(this.findIndex[key]).map(id => this.issueIndex[id])
+        } else { 
+            return undefined 
+        } 
+    }
+
     async findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]> {
         const key = `${productId}-${milestoneId}-${state}`
         if (!(key in this.findIndex)) {

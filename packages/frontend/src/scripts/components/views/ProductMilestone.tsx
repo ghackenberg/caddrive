@@ -25,16 +25,37 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // PARAMS
 
     const productId = props.match.params.product
+
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
+    const initialOpenIssues: {[id: string]: number} = {}
+    for (const milestone of initialMilestones || []) {
+        initialOpenIssues[milestone.id] = IssueManager.getIssueCount(productId, milestone.id, 'open')
+    } 
+    const initialClosedIssues: {[id: string]: number} = {}
+    for (const milestone of initialMilestones || []) {
+        initialClosedIssues[milestone.id] = IssueManager.getIssueCount(productId, milestone.id, 'closed')
+    } 
+    const initialUsers: {[id: string]: User} = {}
+    for (const milestone of initialMilestones || []) {
+        initialUsers[milestone.userId] = UserManager.getUserFromCache(milestone.userId)
+    } 
+
+    
+
+
    
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [milestones, setMilestones] = useState<Milestone[]>()
-    const [openIssues, setOpenIssues] = useState<{[id: string]: number}>({})
-    const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>({})
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [milestones, setMilestones] = useState<Milestone[]>(initialMilestones)
+    const [openIssues, setOpenIssues] = useState<{[id: string]: number}>(initialOpenIssues)
+    const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>(initialClosedIssues)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Interactions
     const [sidebar, setSidebar] = useState<boolean>(false)
 
@@ -111,7 +132,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const columns: Column<Milestone>[] = [
         { label: 'Reporter', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                { milestone.userId in users && members ? <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/> : '?' }
+                {  users[milestone.userId] && members ? <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/> : '?' }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (
