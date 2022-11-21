@@ -5,11 +5,23 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
     private issueIndex: {[id: string]: Issue} = {}
     private productIndex: {[id: string]: {[id: string]: boolean}} = {}
 
+    getIssueCount(productId: string) { 
+        if (productId in this.productIndex) { 
+            return Object.keys(this.productIndex[productId]).length 
+        } else { 
+            return undefined 
+        } 
+    }
+
     async findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]> {
         // TODO fix
-        delete this.productIndex[productId]
+        // delete this.productIndex[productId]
 
-        if (!(productId in this.productIndex)) {
+
+        const key = `${productId}-${milestoneId}-${state}`
+   
+
+        if (!(key in this.productIndex)) {
             // Call backend
             const issues = await IssueClient.findIssues(productId, milestoneId, state)
             // Update issue index
@@ -17,13 +29,13 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
                 this.issueIndex[issue.id] = issue
             }
             // Update product index
-            this.productIndex[productId] = {}
+            this.productIndex[key] = {}
             for (const issue of issues) {
-                this.productIndex[productId][issue.id] = true
+                this.productIndex[key][issue.id] = true
             }
         }
         // Return issues
-        return Object.keys(this.productIndex[productId]).map(id => this.issueIndex[id])
+        return Object.keys(this.productIndex[key]).map(id => this.issueIndex[id])
     }
 
     async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {

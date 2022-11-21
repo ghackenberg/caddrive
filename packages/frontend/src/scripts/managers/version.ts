@@ -5,6 +5,15 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
     private versionIndex: {[id: string]: Version} = {}
     private productIndex: {[id: string]: {[id: string]: boolean}} = {}
 
+    getVersionCount(productId: string) { 
+        if (productId in this.productIndex) { 
+            return Object.keys(this.productIndex[productId]).length 
+        } else { 
+            return undefined 
+        } 
+    }
+
+
     async findVersions(productId: string): Promise<Version[]> {
         if (!(productId in this.productIndex)) {
             // Contact backend
@@ -22,6 +31,7 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         // Return versions
         return Object.keys(this.productIndex[productId]).map(id => this.versionIndex[id])
     }
+
 
     async addVersion(data: VersionAddData, files: {model: File, image: Blob}): Promise<Version> {
         // Call backend

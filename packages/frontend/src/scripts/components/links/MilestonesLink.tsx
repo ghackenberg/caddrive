@@ -12,7 +12,7 @@ export const MilestonesLink = (props: {product: Product}) => {
 
     // STATES
 
-    const [count, setCount] = useState<number>()
+    const [count, setCount] = useState<number>(MilestoneManager.getMilestoneCount(props.product.id))
 
     // EFFECTS
 

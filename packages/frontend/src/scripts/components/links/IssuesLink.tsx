@@ -12,7 +12,7 @@ export const IssuesLink = (props: {product: Product}) => {
 
     // STATES
 
-    const [count, setCount] = useState<number>()
+    const [count, setCount] = useState<number>(IssueManager.getIssueCount(props.product.id))
 
     // EFFECTS
 
