@@ -28,18 +28,24 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     const productId = props.match.params.product
     const memberId = props.match.params.member
-    
+
+    // INITIAL STATES
+
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMember = memberId == 'new' ? undefined : MemberManager.getMemberFromCache(memberId)
+    const initialRole = initialMember ? initialMember.role : 'customer'
+
     // STATES
     
     // - Entities
-    const [product, setProduct] = useState<Product>()
+    const [product, setProduct] = useState<Product>(initialProduct)
     const [users, setUsers] = useState<User[]>()
     const [selectedUser, setSelectedUser] = useState<User>()
-    const [member, setMember] = useState<Member>()
+    const [member, setMember] = useState<Member>(initialMember)
     // - Computations
     const [names, setNames] = useState<React.ReactNode[]>()
     // - Values
-    const [role, setRole] = useState<MemberRole>('customer')
+    const [role, setRole] = useState<MemberRole>(initialRole)
     // - Interactions
     const [query, setQuery] = useState<string>('')
     const [sidebar, setSidebar] = useState<boolean>(false)

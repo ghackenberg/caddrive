@@ -5,6 +5,8 @@ class ProductManagerImpl implements ProductREST {
     private productIndex: {[id: string]: Product} = {}
     private productSet: {[id: string]: boolean}
 
+    
+
     async findProducts(): Promise<Product[]> {
         if (!this.productSet) {
             // Call backend
@@ -34,6 +36,14 @@ class ProductManagerImpl implements ProductREST {
         }
         // Return product
         return product
+    }
+
+    getProductFromCache(productId: string) { 
+        if (productId in this.productIndex) { 
+            return this.productIndex[productId]
+        } else { 
+            return undefined 
+        } 
     }
 
     async getProduct(id: string): Promise<Product> {

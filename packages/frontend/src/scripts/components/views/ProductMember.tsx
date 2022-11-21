@@ -23,12 +23,24 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
 
     const productId = props.match.params.product
 
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialUsers : {[id: string]: User} = {}
+    for (const member of initialMembers || []) {
+        const user = UserManager.getUserFromCache(member.userId)
+        if (user) {
+            initialUsers[member.id] = user
+        }
+    }
+
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Interactions
     const [sidebar, setSidebar] = useState<boolean>(false)
 

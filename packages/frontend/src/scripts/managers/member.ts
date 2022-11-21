@@ -6,6 +6,22 @@ class MemberManagerImpl implements MemberREST {
     private productIndex: {[id: string]: {[id: string]: boolean}} = {}
     private userIndex: {[id: string]: {[id: string]: {[id: string]: boolean}}} = {}
 
+    getMemberCount(productId: string) { 
+        if (productId in this.productIndex) { 
+            return Object.keys(this.productIndex[productId]).length 
+        } else { 
+            return undefined 
+        } 
+    }
+
+    findMembersFromCache(productId: string) { 
+        if (productId in this.productIndex) { 
+            return Object.keys(this.productIndex[productId]).map(id => this.memberIndex[id])
+        } else { 
+            return undefined 
+        } 
+    }
+
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         if (userId) {
             if (!(productId in this.userIndex && userId in this.userIndex[productId])) {
@@ -59,6 +75,14 @@ class MemberManagerImpl implements MemberREST {
         }
         // Return member
         return member
+    }
+
+    getMemberFromCache(memberId: string) { 
+        if (memberId in this.memberIndex) { 
+            return this.memberIndex[memberId]
+        } else { 
+            return undefined 
+        } 
     }
 
     async getMember(id: string): Promise<Member> {

@@ -28,13 +28,19 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     const productId = props.match.params.product
 
+    // INITIAL STATES
+
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialName = initialProduct ? initialProduct.name : ''
+    const initialDescription = initialProduct ? initialProduct.description : ''
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
+    const [product, setProduct] = useState<Product>(initialProduct)
     // - Values
-    const [name, setName] = useState<string>('')
-    const [description, setDescription] = useState<string>('')
+    const [name, setName] = useState<string>(initialName)
+    const [description, setDescription] = useState<string>(initialDescription)
     // - Interactions
     const [sidebar, setSidebar] = useState<boolean>(false)
 

@@ -2,26 +2,21 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 import { IssueClient } from '../clients/rest/issue'
 
 class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
-    private issueIndex: {[id: string]: Issue} = {}
-    private productIndex: {[id: string]: {[id: string]: boolean}} = {}
+    private issueIndex: {[issueId: string]: Issue} = {}
+    private findIndex: {[key: string]: {[issueId: string]: boolean}} = {}
 
-    getIssueCount(productId: string) { 
-        if (productId in this.productIndex) { 
-            return Object.keys(this.productIndex[productId]).length 
+    getIssueCount(productId: string, milestoneId?: string, state?: string) {
+        const key = `${productId}-${milestoneId}-${state}`
+        if (key in this.findIndex) { 
+            return Object.keys(this.findIndex[key]).length 
         } else { 
             return undefined 
         } 
     }
 
     async findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]> {
-        // TODO fix
-        // delete this.productIndex[productId]
-
-
         const key = `${productId}-${milestoneId}-${state}`
-   
-
-        if (!(key in this.productIndex)) {
+        if (!(key in this.findIndex)) {
             // Call backend
             const issues = await IssueClient.findIssues(productId, milestoneId, state)
             // Update issue index
@@ -29,13 +24,13 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
                 this.issueIndex[issue.id] = issue
             }
             // Update product index
-            this.productIndex[key] = {}
+            this.findIndex[key] = {}
             for (const issue of issues) {
-                this.productIndex[key][issue.id] = true
+                this.findIndex[key][issue.id] = true
             }
         }
         // Return issues
-        return Object.keys(this.productIndex[key]).map(id => this.issueIndex[id])
+        return Object.keys(this.findIndex[key]).map(id => this.issueIndex[id])
     }
 
     async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
@@ -44,9 +39,7 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         // Update issue index
         this.issueIndex[issue.id] = issue
         // Update product index
-        if (issue.productId in this.productIndex) {
-            this.productIndex[issue.productId][issue.id] = true
-        }
+        this.addToFindIndex(issue)
         // Return issue
         return issue
     }
@@ -57,31 +50,19 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
             const issue = await IssueClient.getIssue(id)
             // Update issue index
             this.issueIndex[issue.id] = issue
-            // Update product index
-            if (issue.productId in this.productIndex) {
-                this.productIndex[issue.productId][id] = true
-            }
         }
         // Return issue
         return this.issueIndex[id]
     }
 
     async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
-        if (id in this.issueIndex) {
-            const issue = this.issueIndex[id]
-            // Update product index
-            if (issue.productId in this.productIndex) {
-                delete this.productIndex[issue.productId][id]
-            }
-        }
         // Call backend
         const issue = await IssueClient.updateIssue(id, data, files)
         // Update issue index
         this.issueIndex[issue.id] = issue
         // Update product index
-        if (issue.productId in this.productIndex) {
-            this.productIndex[issue.productId][id] = true
-        }
+        this.removeFromFindIndex(issue)
+        this.addToFindIndex(issue)
         // Return issue
         return issue
     }
@@ -92,11 +73,32 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         // Update issue index
         this.issueIndex[issue.id] = issue
         // Update product index
-        if (issue.productId in this.productIndex) {
-            delete this.productIndex[issue.productId][id]
-        }
+        this.removeFromFindIndex(issue)
         // Return issue
         return issue
+    }
+
+    private addToFindIndex(issue: Issue) {
+        if (`${issue.productId}-${undefined}-${undefined}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${undefined}-${undefined}`][issue.id] = true
+        }
+        if (`${issue.productId}-${issue.milestoneId}-${undefined}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${issue.milestoneId}-${undefined}`][issue.id] = true
+        }
+        if (`${issue.productId}-${undefined}-${issue.state}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${undefined}-${issue.state}`][issue.id] = true
+        }
+        if (`${issue.productId}-${issue.milestoneId}-${issue.state}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${issue.milestoneId}-${issue.state}`][issue.id] = true
+        }
+    }
+
+    private removeFromFindIndex(issue: Issue) { 	
+        for (const key of Object.keys(this.findIndex)) {
+            if (issue.id in this.findIndex[key]) {
+                delete this.findIndex[key][issue.id]
+            }
+        }
     }
 }
 
