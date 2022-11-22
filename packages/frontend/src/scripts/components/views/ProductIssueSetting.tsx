@@ -44,14 +44,28 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const productId = props.match.params.product
     const issueId = props.match.params.issue
 
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialUsers: {[id: string]: User} = {}
+    for (const member of initialMembers || []) {
+        const user = UserManager.getUserFromCache(member.userId)
+        if (user) {
+            initialUsers[member.id] = user
+        }
+    } 
+    const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
+    const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
+
+    
     // STATES
     
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [users, setUsers] = useState<{[id: string]: User}>({})
-    const [issue, setIssue] = useState<Issue>()
-    const [milestones, setMilstones] = useState<Milestone[]>()
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+    const [issue, setIssue] = useState<Issue>(initialIssue)
+    const [milestones, setMilstones] = useState<Milestone[]>(initialMilestones)
     // - Values
     const [label, setLabel] = useState<string>('')
     const [text, setText] = useState<string>('')
@@ -62,7 +76,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>([])
     const [sidebar, setSidebar] = useState<boolean>(false)
-
+    console.log(users)
     // EFFECTS
 
     // - Entities

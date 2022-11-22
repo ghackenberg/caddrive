@@ -53,6 +53,14 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         return issue
     }
 
+    getIssueFromCache(issueId: string) { 
+        if (issueId in this.issueIndex) { 
+            return this.issueIndex[issueId]
+        } else { 
+            return undefined 
+        } 
+    }
+
     async getIssue(id: string): Promise<Issue> {
         if (!(id in this.issueIndex)) {
             // Call backend
