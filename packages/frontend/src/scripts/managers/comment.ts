@@ -6,15 +6,17 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
 
     findCommentsFromCache(issueId: string) { 
-        if (issueId in this.findIndex) { 
-            return Object.keys(this.findIndex[issueId]).map(id => this.commentIndex[id])
+        const key = `${issueId}`
+        if (key in this.findIndex) { 
+            return Object.keys(this.findIndex[key]).map(id => this.commentIndex[id])
         } else { 
             return undefined 
         } 
     }
     
     async findComments(issueId: string): Promise<Comment[]> {
-        if (!(issueId in this.findIndex)) {
+        const key = `${issueId}`
+        if (!(key in this.findIndex)) {
             // Call backend
             const comments = await CommentClient.findComments(issueId)
             // Upate comment index
@@ -22,13 +24,13 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
                 this.commentIndex[comment.id] = comment
             }
             // Update issue index
-            this.findIndex[issueId] = {}
+            this.findIndex[key] = {}
             for (const comment of comments) {
-                this.findIndex[issueId][comment.id] = true
+                this.findIndex[key][comment.id] = true
             }
         }
         // Return comments
-        return Object.keys(this.findIndex[issueId]).map(id => this.commentIndex[id])
+        return Object.keys(this.findIndex[key]).map(id => this.commentIndex[id])
     }
 
     async addComment(data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
@@ -36,10 +38,8 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         const comment = await CommentClient.addComment(data, files)
         // Update comment index
         this.commentIndex[comment.id] = comment
-        // Update issue index
-        if (comment.issueId in this.findIndex) {
-            this.findIndex[comment.issueId][comment.id] = true
-        }
+        // Update find index
+        this.addToFindIndex(comment)
         // Return comment
         return comment
     }
@@ -50,10 +50,8 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
             const comment = await CommentClient.getComment(id)
             // Update comment index
             this.commentIndex[id] = comment
-            // Update issue index
-            if (comment.issueId in this.findIndex) {
-                this.findIndex[comment.issueId][id] = true
-            }
+            // Update find index
+            this.addToFindIndex(comment)
         }
         // Return comment
         return this.commentIndex[id]
@@ -72,9 +70,7 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         // Update comment index
         this.commentIndex[id] = comment
         // Update issue index
-        if (comment.issueId in this.findIndex) {
-            this.findIndex[comment.issueId][id] = true
-        }
+        this.addToFindIndex(comment)
         // Return comment
         return comment
     }
@@ -85,12 +81,29 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         // Update comment index
         this.commentIndex[id] = comment
         // Update issue index
-        if (comment.issueId in this.findIndex) {
-            delete this.findIndex[comment.issueId][id]
-        }
+        this.removeFromFindIndex(comment)
         // Return comment
         return comment
     }
+
+    private addToFindIndex(comment: Comment) {
+        if (`${comment.issueId}` in this.findIndex) {
+            this.findIndex[`${comment.issueId}`][comment.id] = true
+        }
+    }
+
+    private removeFromFindIndex(comment: Comment) { 
+        for (const key of Object.keys(this.findIndex)) {
+            if (comment.id in this.findIndex[key]) {
+                delete this.findIndex[key][comment.id]
+            }
+        }
+
+    }
+
+
 }
+
+
 
 export const CommentManager = new CommentManagerImpl()
