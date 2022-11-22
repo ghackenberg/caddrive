@@ -13,6 +13,13 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         } 
     }
 
+    findVersionsFromCache(productId: string) { 
+        if (productId in this.productIndex) { 
+            return Object.keys(this.productIndex[productId]).map(id => this.versionIndex[id])
+        } else { 
+            return undefined 
+        } 
+    }
 
     async findVersions(productId: string): Promise<Version[]> {
         if (!(productId in this.productIndex)) {

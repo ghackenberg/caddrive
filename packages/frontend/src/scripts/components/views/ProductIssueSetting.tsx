@@ -76,7 +76,6 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>([])
     const [sidebar, setSidebar] = useState<boolean>(false)
-    console.log(users)
     // EFFECTS
 
     // - Entities

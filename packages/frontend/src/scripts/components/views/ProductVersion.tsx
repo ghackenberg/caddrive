@@ -27,14 +27,28 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     // PARAMS
 
     const productId = props.match.params.product
-    
+
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
+    const initialUsers : {[id: string]: User} = {}
+    for (const version of initialVersions || []) {
+        const user = UserManager.getUserFromCache(version.userId)
+        if (user) {
+            initialUsers[version.id] = user
+        }
+    }
+
+    // TODO states vom Tree berechnen in externer Funktion, dann im useeffekt und initial aufrufen
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [versions, setVersions] = useState<Version[]>()
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [versions, setVersions] = useState<Version[]>(initialVersions)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
     const [children, setChildren] = useState<{[id: string]: Version[]}>({})
     const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>({})
@@ -210,7 +224,6 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
                                                             <a> { version && version.userId in users && members ? <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/> : '?' } </a>
-                                                            {console.table(users[vers.userId])}
                                                             <span className="user">
                                                                 <span className="name"> {vers.id in users && members ? <ProductUserNameWidget user={users[vers.id]} members={members}/> : '?'}  </span>
                                                                 {/* Email temporär ausgeblendet */}

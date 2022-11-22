@@ -40,13 +40,34 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const productId = props.match.params.product
     const issueId = props.match.params.issue
 
+    // INITIAL STATES
+
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
+    const initialComments = issueId == 'new' ? undefined : CommentManager.findCommentsFromCache(issueId)
+    // const initialUsers: {[id: string]: User} = {}
+    // const user = UserManager.getUserFromCache(issueId)
+    // if (user) {
+    //     initialUsers[user.id] = user
+    // for (const comment of initialComments || []) {
+    //     const user = UserManager.getUserFromCache(comment.userId)
+    //     if (user) {
+    //         initialUsers[user.id] = user
+    //     }
+    // } 
+    // console.log(initialUsers)
+
+
+
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMember] = useState<Member[]>()
-    const [issue, setIssue] = useState<Issue>()
-    const [comments, setComments] = useState<Comment[]>()
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMember] = useState<Member[]>(initialMembers)
+    const [issue, setIssue] = useState<Issue>(initialIssue)
+    const [comments, setComments] = useState<Comment[]>(initialComments)
     const [users, setUsers] = useState<{[id: string]: User}>({})
     // - Values
     const [text, setText] = useState<string>('')
@@ -60,6 +81,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
     const [sidebar, setSidebar] = useState<boolean>(false)
+    console.table(users)
 
     // EFFECTS
 
