@@ -21,8 +21,9 @@ import { BurndownChartWidget } from '../widgets/BurndownChart'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
 import { calculateActual } from '../../functions/burndown'
-import { collectParts, Part } from '../../functions/markdown'
+import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { countParts } from '../../functions/counter'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
 
@@ -53,6 +54,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
             }
         }
     } 
+    const initialIssueParts = collectIssueParts(initialIssues)
+    const initialCommentParts = collectCommentParts(initialComments)
+    const initialPartsCount = countParts(initialIssues, initialComments, initialIssueParts, initialCommentParts)
     
     // STATES
 
@@ -64,9 +68,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
-    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
-    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
-    const [partsCount, setPartsCount] = useState<{[id: string]: number}>({})
+    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
+    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
+    const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
     const [openIssueCount, setOpenIssueCount] = useState<number>()
@@ -123,46 +127,13 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     // - Computations
     useEffect(() => {
-        if (issues) {
-            const issuePartsNew: { [id: string]: Part[] } = {...issueParts}
-            for (const issue of issues) {
-                const parts: Part[] = []
-                collectParts(issue.text, parts)
-                issuePartsNew[issue.id] = parts
-            }
-            setIssueParts(issuePartsNew)
-        }
+        setIssueParts(collectIssueParts(issues))
     }, [issues])
     useEffect(() => {
-        if (comments) {
-            const commentPartsNew = {...commentParts}
-            for (const issueId of Object.keys(comments)) {
-                for (const comment of comments[issueId]) {
-                    const parts: Part[] = []
-                    collectParts(comment.text, parts)
-                    commentPartsNew[comment.id] = parts
-                }
-            }
-            setCommentParts(commentPartsNew)
-        }
+        setCommentParts(collectCommentParts(comments)) 
     }, [comments])
     useEffect(() => {
-        if (issueParts && commentParts && issues && comments) {
-            const partsCountNew = {... partsCount}
-            for(const issue of issues) {
-                if(issue.id in issueParts) {
-                    partsCountNew[issue.id] = issueParts[issue.id].length
-                    if (issue.id in comments) {
-                        for ( const comment of comments[issue.id]) {
-                            if(comment.id in commentParts ) {
-                                partsCountNew[issue.id] += commentParts[comment.id].length
-                            }
-                        }
-                    }
-                }
-            }
-            setPartsCount(partsCountNew)
-        }
+        setPartsCount(countParts(issues, comments, issueParts, commentParts))
     }, [issueParts, commentParts])
     useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
     useEffect(() => {
