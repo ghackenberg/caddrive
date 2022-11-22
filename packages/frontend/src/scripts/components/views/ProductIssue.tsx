@@ -28,20 +28,45 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     const productId = props.match.params.product
 
+    // INITIAL STATES   
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialIssues = productId == 'new' ? undefined : IssueManager.findIssuesFromCache(productId)
+    const initialComments: {[id: string]: Comment[]} = {}
+    for (const issue of initialIssues || []) {
+        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
+    } 
+    const initialUsers: {[id: string]: User} = {}
+    for (const issue of initialIssues || []) {
+        const user = UserManager.getUserFromCache(issue.userId)
+        if (user) {
+            initialUsers[user.id] = user
+        }
+        for (const comment of initialComments[issue.id] || []) {
+            const otherUser = UserManager.getUserFromCache(comment.userId)
+            if (otherUser) {
+                initialUsers[otherUser.id] = otherUser
+            }
+        }
+    } 
+   const initialOpenIssues = productId == 'new' ? undefined : IssueManager.getIssueCount(productId, undefined, 'open')
+   const initialClosedIssues = productId == 'new' ? undefined : IssueManager.getIssueCount(productId, undefined, 'closed')
+
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [issues, setIssues] = useState<Issue[]>()
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [issues, setIssues] = useState<Issue[]>(initialIssues)
     const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
     const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
     const [partsCount, setPartsCount] = useState<{[id: string]: number}>({})
-    const [openIssueCount, setOpenIssueCount] = useState<number>()
-    const [closedIssueCount, setClosedIssueCount] = useState<number>()
+    const [openIssueCount, setOpenIssueCount] = useState<number>(initialOpenIssues)
+    const [closedIssueCount, setClosedIssueCount] = useState<number>(initialClosedIssues)
     // - Interactions
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
