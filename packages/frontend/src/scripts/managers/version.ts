@@ -53,6 +53,14 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         return version
     }
 
+    getVersionFromCache(versionId: string) { 
+        if (versionId in this.versionIndex) { 
+            return this.versionIndex[versionId]
+        } else { 
+            return undefined 
+        } 
+    }
+
     async getVersion(id: string): Promise<Version> {
         if (!(id in this.versionIndex)) {
             // Call backend
