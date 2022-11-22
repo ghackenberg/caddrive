@@ -15,6 +15,7 @@ import { ProductsLink } from '../links/ProductsLink'
 import { Column, Table } from '../widgets/Table'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import * as LoadIcon from '/src/images/load.png'
 import { UserContext } from '../../contexts/User'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
@@ -111,7 +112,7 @@ export const ProductView = () => {
         )},
         { label: 'Owner', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                { product.userId in users && members[product.id] ? <ProductUserPictureWidget user={users[product.userId]} members={members[product.id]} class='big'/> : '?' }
+                { product.userId in users && members[product.id] ? <ProductUserPictureWidget user={users[product.userId]} members={members[product.id]} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
             </Link>
         )},
         { label: 'Name', class: 'left nowrap', content: product => (

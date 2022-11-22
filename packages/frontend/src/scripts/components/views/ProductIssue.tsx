@@ -21,6 +21,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import * as LoadIcon from '/src/images/load.png'
 import { countParts } from '../../functions/counter'
 
 export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
@@ -196,7 +197,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : '?' }
+                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: issue => (
@@ -208,7 +209,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
-                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : '?' }
+                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
                     </Fragment>
                 ))}
             </Link>

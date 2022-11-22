@@ -14,6 +14,7 @@ import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 // Images
+import * as LoadIcon from '/src/images/load.png'
 import * as DeleteIcon from '/src/images/delete.png'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { MemberManager } from '../../managers/member'
@@ -132,7 +133,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const columns: Column<Milestone>[] = [
         { label: 'Reporter', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {  users[milestone.userId] && members ? <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/> : '?' }
+                {  users[milestone.userId] && members ? <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: milestone => (

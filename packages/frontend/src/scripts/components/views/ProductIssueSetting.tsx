@@ -25,6 +25,8 @@ import { Column, Table } from '../widgets/Table'
 // Inputs
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter } from '../snippets/ProductFooter'
+// Images
+import * as LoadIcon from '/src/images/load.png'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -174,7 +176,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                 <Link to={`/users/${users[member.id].id}/settings`}>
                     <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big'/>
                 </Link>
-             ) : '?'
+             ) : <a> <img src={LoadIcon} className='big load' /> </a>
         )},
         {label: 'Member', class: 'fill left nowrap', content: member => (
             member.id in users ? (

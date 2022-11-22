@@ -19,6 +19,7 @@ import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 // Images
+import * as LoadIcon from '/src/images/load.png'
 import * as DeleteIcon from '/src/images/delete.png'
 import { calculateActual } from '../../functions/burndown'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
@@ -169,7 +170,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : '?' }
+                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: issue => (
@@ -181,7 +182,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
-                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : '?' }
+                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
                     </Fragment>
                 ))}
             </Link>
