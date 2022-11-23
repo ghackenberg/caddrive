@@ -76,7 +76,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
         if (issues) {
             Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
                 const newComments = {...comments}
-                for (var index = 0; index < issues.length; index++) {
+                for (let index = 0; index < issues.length; index++) {
                     newComments[issues[index].id] = issueComments[index]
                 }
                 setComments(newComments)

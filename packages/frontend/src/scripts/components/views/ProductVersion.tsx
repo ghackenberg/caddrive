@@ -71,7 +71,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
         if (versions) {
             Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
                 const newUsers: {[id: string]: User} = {}
-                for (var index = 0; index < versions.length; index++) {
+                for (let index = 0; index < versions.length; index++) {
                     newUsers[versions[index].id] = versionUsers[index]
                 }
                 setUsers(newUsers)
@@ -102,10 +102,10 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                 siblings[version.id] = []
             }
 
-            for (var outerIndex = versions.length - 1; outerIndex >= 0; outerIndex--) {
+            for (let outerIndex = versions.length - 1; outerIndex >= 0; outerIndex--) {
                 const outerVersion = versions[outerIndex]
                 const baseVersionIds = [...outerVersion.baseVersionIds]
-                for (var innerIndex = outerIndex - 1; innerIndex >= 0; innerIndex--) {
+                for (let innerIndex = outerIndex - 1; innerIndex >= 0; innerIndex--) {
                     const innerVersion = versions[innerIndex]
                     const baseIndex = baseVersionIds.indexOf(innerVersion.id)
                     if (baseIndex != -1) {
@@ -122,16 +122,16 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             // Calculate indents
             const indents: {[id: string]: number} = {}
 
-            var next = 0
+            let next = 0
 
             for (const version of versions) {
                 if (!(version.id in indents)) {
-                    var indent = version.baseVersionIds.length > 0 ? indents[version.baseVersionIds[0]] : next
+                    const indent = version.baseVersionIds.length > 0 ? indents[version.baseVersionIds[0]] : next
                 
                     indents[version.id] = indent
                 }
 
-                for (var index = 0; index < children[version.id].length; index++) {
+                for (let index = 0; index < children[version.id].length; index++) {
                     const child = children[version.id][index]
                     if (!(child.id in indents)) {
                         if (index == 0) {
@@ -151,8 +151,8 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             const childrenMax: {[id: string]: number} = {}
 
             for (const version of versions) {
-                var min = indents[version.id]
-                var max = 0
+                let min = indents[version.id]
+                let max = 0
 
                 for (const child of children[version.id]) {
                     min = Math.min(min, indents[child.id])

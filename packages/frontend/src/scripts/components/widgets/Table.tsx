@@ -7,8 +7,12 @@ export interface Column <T,> {
 }
 
 export const Table = <T,> (props: {columns: Column<T>[], items: T[], onMouseOver?: (item: T) => void, onMouseOut?: (item: T) => void}) => {
-    const onMouseOver = props.onMouseOver || (() => {})
-    const onMouseOut = props.onMouseOut || (() => {})
+    const onMouseOver = props.onMouseOver || (() => {
+        // empty
+    })
+    const onMouseOut = props.onMouseOut || (() => {
+        // empty
+    })
     return (
         <table>
             <thead>

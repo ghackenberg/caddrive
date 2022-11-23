@@ -22,8 +22,8 @@ export function calculateActual(milestone: Milestone, issues: Issue[], comments:
     const end = new Date(milestone.end).getTime()
     // Calculate actual
     const actual: { time: number, actual: number }[] = []
-    var lastCount = 0
-    var lastTime = 0
+    let lastCount = 0
+    let lastTime = 0
     for (const delta of deltas) {
         if (lastTime != 0 && lastTime < start && delta.time > start) {
             actual.push({ time: start, actual: lastCount })

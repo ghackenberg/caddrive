@@ -70,7 +70,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
         if (milestones) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
                 const newMilestones = {...openIssues}
-                for (var index = 0; index < milestones.length; index++) {
+                for (let index = 0; index < milestones.length; index++) {
                     newMilestones[milestones[index].id] = issueMilestones[index].length
                 }
                 setOpenIssues(newMilestones)
@@ -81,7 +81,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
         if (milestones) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
                 const newMilestones = {...closedIssues}
-                for (var index = 0; index < milestones.length; index++) {
+                for (let index = 0; index < milestones.length; index++) {
                     newMilestones[milestones[index].id] = issueMilestones[index].length
                 }
                 setClosedIssues(newMilestones)
@@ -92,7 +92,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
         if (milestones) {
             Promise.all(milestones.map(milestone => UserManager.getUser(milestone.userId))).then(milestoneUsers => {
                 const newUsers = {...users}
-                for (var index = 0; index < milestones.length; index++) {
+                for (let index = 0; index < milestones.length; index++) {
                     newUsers[milestones[index].userId] = milestoneUsers[index]
                 }
                 setUsers(newUsers)

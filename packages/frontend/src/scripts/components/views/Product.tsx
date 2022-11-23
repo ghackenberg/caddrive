@@ -41,7 +41,7 @@ export const ProductView = () => {
         if (products) {
             Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {
                 const newUsers = {...users}
-                for (var index = 0; index < products.length; index++) {
+                for (let index = 0; index < products.length; index++) {
                     newUsers[products[index].id] = productUsers[index]
                 }
                 setUsers(newUsers)
@@ -52,7 +52,7 @@ export const ProductView = () => {
         if (products) {
             Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
                 const newVersions = {...versions}
-                for (var index = 0; index < products.length; index++) {
+                for (let index = 0; index < products.length; index++) {
                     newVersions[products[index].id] = productVersions[index].length
                 }
                 setVersions(newVersions)
@@ -63,7 +63,7 @@ export const ProductView = () => {
         if (products) {
             Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
                 const newVersions = {...latestVersions}
-                for (var index = 0; index < products.length; index++) {
+                for (let index = 0; index < products.length; index++) {
                     newVersions[products[index].id] = productVersions[index][productVersions[index].length - 1].id
                 }
                 setLatestVersions(newVersions)
@@ -74,7 +74,7 @@ export const ProductView = () => {
         if (products) {
             Promise.all(products.map(product => IssueManager.findIssues(product.id))).then(productIssues => {
                 const newIssues = {...issues}
-                for (var index = 0; index < products.length; index++) {
+                for (let index = 0; index < products.length; index++) {
                     newIssues[products[index].id] = productIssues[index].length
                 }
                 setIssues(newIssues)
@@ -85,7 +85,7 @@ export const ProductView = () => {
         if (products) {
             Promise.all(products.map(product => MemberManager.findMembers(product.id))).then(productMembers => {
                 const newMembers = {...members}
-                for (var index = 0; index < products.length; index++) {
+                for (let index = 0; index < products.length; index++) {
                     newMembers[products[index].id] = productMembers[index]
                 }
                 setMembers(newMembers)

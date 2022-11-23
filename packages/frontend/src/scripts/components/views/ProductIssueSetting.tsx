@@ -89,7 +89,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
                 const newUsers = {...users}
-                for (var index = 0; index < members.length; index++) {
+                for (let index = 0; index < members.length; index++) {
                     newUsers[members[index].id] = memberUsers[index]
                 }
                 setUsers(newUsers)

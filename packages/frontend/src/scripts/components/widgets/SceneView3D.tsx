@@ -286,10 +286,10 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
     }
 
     normalizeMousePosition(position: { clientX: number, clientY: number }) {
-        var x = position.clientX
-        var y = position.clientY
+        let x = position.clientX
+        let y = position.clientY
 
-        var i: HTMLElement = this.div.current
+        let i: HTMLElement = this.div.current
 
         while (i) {
             x -= i.offsetLeft

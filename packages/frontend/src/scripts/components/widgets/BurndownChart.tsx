@@ -16,8 +16,8 @@ export const BurndownChartWidget = (props: { start: Date, end: Date, total: numb
     // - Computations
     useEffect(() => {
         if (props.start && props.end && props.actual) {
-            var min = Math.min(props.start.getTime(), props.end.getTime())
-            var max = Math.max(props.start.getTime(), props.end.getTime())
+            let min = Math.min(props.start.getTime(), props.end.getTime())
+            let max = Math.max(props.start.getTime(), props.end.getTime())
 
             for (const data of props.actual) {
                 min = Math.min(min, data.time)
@@ -33,8 +33,8 @@ export const BurndownChartWidget = (props: { start: Date, end: Date, total: numb
             const target: { time: number, target: number }[] = []
             const days = (max - min) / (1000 * 60 * 60 * 24)
             const delta = props.total / days
-            var value = props.total
-            for (var iterator = min; iterator <= max; iterator += 1000 * 60 * 60 * 24) {
+            let value = props.total
+            for (let iterator = min; iterator <= max; iterator += 1000 * 60 * 60 * 24) {
                 target.push({ time: iterator, target: value })
                 value -= delta
             }
