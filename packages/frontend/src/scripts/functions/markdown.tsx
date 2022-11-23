@@ -5,6 +5,7 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { unified } from "unified"
 import { Parent } from 'mdast'
+import { Issue, Comment } from 'productboard-common'
 
 const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
@@ -15,6 +16,28 @@ export interface Part {
 }
 
 type Handler = (event: MouseEvent<HTMLAnchorElement>, part: Part) => void
+
+export function collectIssueParts(issues: Issue[]) {
+    const issuePartsNew: { [id: string]: Part[] } = {}
+    for (const issue of issues || []) {
+        const parts: Part[] = []
+        collectParts(issue.text, parts)
+        issuePartsNew[issue.id] = parts
+    }
+    return issuePartsNew
+}
+
+export function collectCommentParts(comments: {[id: string]: Comment[]}) {
+    const commentPartsNew: {[id: string]: Part[]} = {}
+    for (const issueId of Object.keys(comments || {})) {
+        for (const comment of comments[issueId] || []) {
+            const parts: Part[] = []
+            collectParts(comment.text, parts)
+            commentPartsNew[comment.id] = parts
+        }
+    }
+    return commentPartsNew
+}
 
 export function collectParts(text: string, parts: Part[]) {
     collectPartsInternal(unified().use(remarkParse).parse(text), parts)

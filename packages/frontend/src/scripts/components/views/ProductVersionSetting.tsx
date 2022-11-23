@@ -43,12 +43,17 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const productId = props.match.params.product
     const versionId = props.match.params.version
 
+        // INITIAL STATES
+        const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+        const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
+        const initialVersion = versionId == 'new' ? undefined : VersionManager.getVersionFromCache(versionId)
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [versions, setVersions] = useState<Version[]>()
-    const [version, setVersion] = useState<Version>()
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [versions, setVersions] = useState<Version[]>(initialVersions)
+    const [version, setVersion] = useState<Version>(initialVersion)
     // - Values
     const [major, setMajor] = useState<number>(0)
     const [minor, setMinor] = useState<number>(0)
@@ -162,7 +167,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                     )}
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Version-Settings','image':'version'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
                         </Fragment>
                     )}
                 </Fragment>

@@ -3,7 +3,7 @@ import { UserClient } from '../clients/rest/user'
 
 class UserManagerImpl implements UserREST<UserAddData, File> {
     private userIndex: {[id: string]: User} = {}
-    private userSet: {[id: string]: boolean}
+    private findResult: {[id: string]: boolean}
 
     async checkUser(): Promise<User> {
         // Call backend
@@ -15,9 +15,10 @@ class UserManagerImpl implements UserREST<UserAddData, File> {
     }
 
     async findUsers(query?: string, product?: string): Promise<User[]> {
-        // TODO fix me!!
-        this.userSet = undefined
-        if (!this.userSet) {
+        if (query || product) {
+            return await UserClient.findUsers(query, product)
+        }
+        if (!this.findResult) {
             // Call backend
             const users = await UserClient.findUsers(query, product)
             // Update user index
@@ -25,13 +26,13 @@ class UserManagerImpl implements UserREST<UserAddData, File> {
                 this.userIndex[user.id] = user
             }
             // Update user set
-            this.userSet = {}
+            this.findResult = {}
             for (const user of users) {
-                this.userSet[user.id] = true
+                this.findResult[user.id] = true
             }
         }
         // Return users
-        return Object.keys(this.userSet).map(id => this.userIndex[id])
+        return Object.keys(this.findResult).map(id => this.userIndex[id])
     }
 
     async addUser(data: UserAddData, file?: File): Promise<User> {
@@ -40,11 +41,19 @@ class UserManagerImpl implements UserREST<UserAddData, File> {
         // Update user index
         this.userIndex[user.id] = user
         // Update user set
-        if (this.userSet) {
-            this.userSet[user.id] = true
+        if (this.findResult) {
+            this.findResult[user.id] = true
         }
         // Return user
         return user
+    }
+
+    getUserFromCache(userId: string) { 
+        if (userId in this.userIndex) { 
+            return this.userIndex[userId]
+        } else { 
+            return undefined 
+        } 
     }
 
     async getUser(id: string): Promise<User> {
@@ -53,10 +62,6 @@ class UserManagerImpl implements UserREST<UserAddData, File> {
             const user = await UserClient.getUser(id)
             // Update user index
             this.userIndex[id] = user
-            // Update user set
-            if (this.userSet) {
-                this.userSet[id] = true
-            }
         }
         // Return user
         return this.userIndex[id]
@@ -67,10 +72,6 @@ class UserManagerImpl implements UserREST<UserAddData, File> {
         const user = await UserClient.updateUser(id, data, file)
         // Update user index
         this.userIndex[id] = user
-        // Update user set
-        if (this.userSet) {
-            this.userSet[id] = true
-        }
         // Return user
         return user
     }
@@ -81,8 +82,8 @@ class UserManagerImpl implements UserREST<UserAddData, File> {
         // Update user index
         this.userIndex[id] = user
         // Update user set
-        if (this.userSet) {
-            delete this.userSet[id]
+        if (this.findResult) {
+            delete this.findResult[id]
         }
         // Return user
         return user

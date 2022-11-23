@@ -11,28 +11,44 @@ import { VersionManager } from '../../managers/version'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 // Widgets
-import { VersionView3D } from '../widgets/VersionView3D'
+//import { VersionView3D } from '../widgets/VersionView3D'
 // Images
 import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
 import { MemberManager } from '../../managers/member'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
-import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
+//import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductView3D } from '../widgets/ProductView3D'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
     // PARAMS
 
     const productId = props.match.params.product
-    
+
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
+    const initialUsers : {[id: string]: User} = {}
+    for (const version of initialVersions || []) {
+        const user = UserManager.getUserFromCache(version.userId)
+        if (user) {
+            initialUsers[version.id] = user
+        }
+    }
+
+    // TODO states vom Tree berechnen in externer Funktion, dann im useeffekt und initial aufrufen
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [versions, setVersions] = useState<Version[]>()
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [versions, setVersions] = useState<Version[]>(initialVersions)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
     const [children, setChildren] = useState<{[id: string]: Version[]}>({})
     const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>({})
@@ -192,24 +208,26 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                             <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                         ))}
                                                         {vers.id in childrenMin && vers.id in childrenMax && (
-                                                            <span className='line horizontal parent' style={{top: 'calc(1.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
+                                                            <span className='line horizontal parent' style={{top: 'calc(2.2em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
                                                         )}
                                                         {vers.id in children && children[vers.id].map(child => (
-                                                            <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(1.5em + 1px)'}}/>
+                                                            <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.2em + 1px)'}}/>
                                                         ))}
                                                         {vers.id in indents && (
-                                                            <span className='line vertical parent' style={{top: 'calc(1.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                            <span className='line vertical parent' style={{top: 'calc(2em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                         )}
                                                         {vers.id in indents && (
-                                                            <span className='dot parent' style={{top: '0.75em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
+                                                            <span className='dot parent' style={{top: '1.45em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
                                                         )}
                                                     </div>
                                                     <div className="text">
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
+                                                            <a> { version && version.userId in users && members ? <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> } </a>
                                                             <span className="user">
                                                                 <span className="name"> {vers.id in users && members ? <ProductUserNameWidget user={users[vers.id]} members={members}/> : '?'}  </span>
-                                                                <span className="email"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span>
+                                                                {/* Email temporär ausgeblendet */}
+                                                                {/* <span className="email"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span> */}
                                                             </span>
                                                         </div>
                                                         <div>
@@ -231,11 +249,11 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        {version && <VersionView3D version={version} mouse={true} vr= {true}/>}
+                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} change = {setVersion} />
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Versions','image':'version'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
                         </Fragment>
                     )}
                 </Fragment>

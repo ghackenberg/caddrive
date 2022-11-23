@@ -27,6 +27,12 @@ body a > img.big {
     height: 3em;
     border-radius: 50%;
 }
+body a > img.big.load {
+    width:1em;
+    height:1em;
+    padding: 1em;
+    background-color:rgb(215,215,215);
+}
 
 body img.load {
     animation-name: spin;

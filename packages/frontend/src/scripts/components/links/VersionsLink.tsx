@@ -12,7 +12,7 @@ export const VersionsLink = (props: {product: Product}) => {
 
     // STATES
 
-    const [count, setCount] = useState<number>()
+    const [count, setCount] = useState<number>(VersionManager.getVersionCount(props.product.id))
 
     // EFFECTS
 

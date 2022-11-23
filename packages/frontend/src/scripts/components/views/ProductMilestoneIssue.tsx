@@ -19,10 +19,12 @@ import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 // Images
+import * as LoadIcon from '/src/images/load.png'
 import * as DeleteIcon from '/src/images/delete.png'
 import { calculateActual } from '../../functions/burndown'
-import { collectParts, Part } from '../../functions/markdown'
+import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { countParts } from '../../functions/counter'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
 
@@ -31,19 +33,45 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const productId = props.match.params.product
     const milestoneId = props.match.params.milestone
 
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMilestone = milestoneId == 'new' ? undefined : MilestoneManager.getMilestoneFromCache(milestoneId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialIssues = milestoneId == 'new' ? undefined: IssueManager.findIssuesFromCache(productId, milestoneId)
+    const initialComments: {[id: string]: Comment[]} = {}
+    for (const issue of initialIssues || []) {
+        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
+    } 
+    const initialUsers: {[id: string]: User} = {}
+    for (const issue of initialIssues || []) {
+        const user = UserManager.getUserFromCache(issue.userId)
+        if (user) {
+            initialUsers[user.id] = user
+        }
+        for (const comment of initialComments[issue.id] || []) {
+            const otherUser = UserManager.getUserFromCache(comment.userId)
+            if (otherUser) {
+                initialUsers[otherUser.id] = otherUser
+            }
+        }
+    } 
+    const initialIssueParts = collectIssueParts(initialIssues)
+    const initialCommentParts = collectCommentParts(initialComments)
+    const initialPartsCount = countParts(initialIssues, initialComments, initialIssueParts, initialCommentParts)
+    
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [milestone, setMilestone] = useState<Milestone>()
-    const [members, setMembers] = useState<Member[]>()
-    const [issues, setIssues] = useState<Issue[]>()
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [milestone, setMilestone] = useState<Milestone>(initialMilestone)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [issues, setIssues] = useState<Issue[]>(initialIssues)
+    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
-    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
-    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
-    const [partsCount, setPartsCount] = useState<{[id: string]: number}>({})
+    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
+    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
+    const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
     const [openIssueCount, setOpenIssueCount] = useState<number>()
@@ -100,46 +128,13 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     // - Computations
     useEffect(() => {
-        if (issues) {
-            const issuePartsNew: { [id: string]: Part[] } = {...issueParts}
-            for (const issue of issues) {
-                const parts: Part[] = []
-                collectParts(issue.text, parts)
-                issuePartsNew[issue.id] = parts
-            }
-            setIssueParts(issuePartsNew)
-        }
+        setIssueParts(collectIssueParts(issues))
     }, [issues])
     useEffect(() => {
-        if (comments) {
-            const commentPartsNew = {...commentParts}
-            for (const issueId of Object.keys(comments)) {
-                for (const comment of comments[issueId]) {
-                    const parts: Part[] = []
-                    collectParts(comment.text, parts)
-                    commentPartsNew[comment.id] = parts
-                }
-            }
-            setCommentParts(commentPartsNew)
-        }
+        setCommentParts(collectCommentParts(comments)) 
     }, [comments])
     useEffect(() => {
-        if (issueParts && commentParts && issues && comments) {
-            const partsCountNew = {... partsCount}
-            for(const issue of issues) {
-                if(issue.id in issueParts) {
-                    partsCountNew[issue.id] = issueParts[issue.id].length
-                    if (issue.id in comments) {
-                        for ( const comment of comments[issue.id]) {
-                            if(comment.id in commentParts ) {
-                                partsCountNew[issue.id] += commentParts[comment.id].length
-                            }
-                        }
-                    }
-                }
-            }
-            setPartsCount(partsCountNew)
-        }
+        setPartsCount(countParts(issues, comments, issueParts, commentParts))
     }, [issueParts, commentParts])
     useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
     useEffect(() => {
@@ -175,7 +170,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : '?' }
+                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: issue => (
@@ -187,7 +182,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
-                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : '?' }
+                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
                     </Fragment>
                 ))}
             </Link>
@@ -257,7 +252,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Milestone-Issues','image':'issue'}} item2={{'text':'Burndown-Chart','image':'chart'}}></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>     

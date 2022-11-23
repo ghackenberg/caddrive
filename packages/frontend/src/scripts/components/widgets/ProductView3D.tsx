@@ -17,7 +17,7 @@ interface Part {
     objectName: string
 }
 
-export const ProductView3D = (props: { product?: Product, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean }) => {
+export const ProductView3D = (props: { product?: Product, version?: Version, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean, change?: (version: Version) => void }  ) => {
 
     // STATES
 
@@ -25,26 +25,42 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
     const [versions, setVersions] = useState<Version[]>(null)
 
     const [version, setVersion] = useState<Version>(null)
-    const [selectedVersion, setSelectedVersion] = useState<Version>(null)
+    const [selectedVersion, setSelectedVersion] = useState<Version>(props.version)
 
     const [highlighted, setHighlighted] = useState<string[]>([])
     const [marked, setMarked] = useState<string[]>([])
     const [selected, setSelected] = useState<string[]>([])
+
+    
 
     // EFFECTS
     
     useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props])
 
     useEffect(() => { !selectedVersion && versions && versions.length > 0 && setVersion(versions[versions.length - 1]) }, [versions])
-    useEffect(() => { selectedVersion && setVersion(selectedVersion)  }, [selectedVersion, versions])
+    useEffect(() => { selectedVersion && setVersion(selectedVersion) }, [selectedVersion, versions])
+    useEffect(() => { setSelectedVersion(props.version) }, [props.version])
+
+
+
 
     useEffect(() => { setHighlighted((props.highlighted || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.highlighted])
     useEffect(() => { setMarked((props.marked || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.marked])
     useEffect(() => { setSelected((props.selected || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.selected])
     
+
+    function changeVersion(versionId: string) {
+        const version = versions.filter((version) => version.id == versionId)[0]
+        setSelectedVersion(version)
+        if (props.change) {
+            props.change(version)
+        }
+    }
+
     // RETURN
 
-    //console.log(selectedVersion)
+
+   
 
     return (
         <div className="widget product_view">
@@ -55,7 +71,7 @@ export const ProductView3D = (props: { product?: Product, mouse: boolean, highli
                     { versions && versions.length > 0 ? (
                         <Fragment>
                             <header>
-                                <select value={version.id} onChange={event => setSelectedVersion(versions.filter(version => version.id == event.currentTarget.value)[0])}>
+                                <select value={version.id} onChange={ event => changeVersion(event.target.value)}>
                                    { versions.map((version) => <option key={version.id} value={version.id}>{version.major +'.' + version.minor  +'.'+ version.patch + ': ' + version.description}</option> )}
                                 </select>
                             </header>

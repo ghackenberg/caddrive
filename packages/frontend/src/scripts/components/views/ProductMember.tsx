@@ -14,6 +14,7 @@ import { Column, Table } from '../widgets/Table'
 import { MemberManager } from '../../managers/member'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import * as LoadIcon from '/src/images/load.png'
 import { UserManager } from '../../managers/user'
 import { ProductFooter } from '../snippets/ProductFooter'
 
@@ -23,12 +24,24 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
 
     const productId = props.match.params.product
 
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialUsers : {[id: string]: User} = {}
+    for (const member of initialMembers || []) {
+        const user = UserManager.getUserFromCache(member.userId)
+        if (user) {
+            initialUsers[member.id] = user
+        }
+    }
+
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Interactions
     const [sidebar, setSidebar] = useState<boolean>(false)
 
@@ -64,9 +77,9 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
         { label: 'Picture', content: member => (
             member.id in users ? (
                 <Link to={`/products/${productId}/members/${member.id}/settings`}>
-                    <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big' />
+                    <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big'/>
               </Link> 
-            ) : '?'
+            ) : <a> <img src={LoadIcon} className='big load' /> </a>
         )},
         { label: 'User', class: 'left nowrap', content: (
             member => member.id in users ? (
@@ -110,11 +123,10 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Members','image':'user'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
                         </Fragment>
                     )}
-                 </Fragment>
-                
+                 </Fragment>    
             )}
         </main>
     )

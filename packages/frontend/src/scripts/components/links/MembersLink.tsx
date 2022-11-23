@@ -12,7 +12,7 @@ export const MembersLink = (props: {product: Product}) => {
 
     // STATES
 
-    const [count, setCount] = useState<number>()
+    const [count, setCount] = useState<number>(MemberManager.getMemberCount(props.product.id))
 
     // EFFECTS
 

@@ -11,7 +11,7 @@ import { IssueManager } from '../../managers/issue'
 import { CommentManager } from '../../managers/comment'
 import { MemberManager } from '../../managers/member'
 // Functions
-import { collectParts, Part } from '../../functions/markdown'
+import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 // Snippets
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductFooter } from '../snippets/ProductFooter'
@@ -21,6 +21,8 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 // Images
 import * as DeleteIcon from '/src/images/delete.png'
+import * as LoadIcon from '/src/images/load.png'
+import { countParts } from '../../functions/counter'
 
 export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -28,20 +30,47 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     const productId = props.match.params.product
 
+    // INITIAL STATES   
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialIssues = productId == 'new' ? undefined : IssueManager.findIssuesFromCache(productId)
+    const initialComments: {[id: string]: Comment[]} = {}
+    for (const issue of initialIssues || []) {
+        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
+    } 
+    const initialUsers: {[id: string]: User} = {}
+    for (const issue of initialIssues || []) {
+        const user = UserManager.getUserFromCache(issue.userId)
+        if (user) {
+            initialUsers[user.id] = user
+        }
+        for (const comment of initialComments[issue.id] || []) {
+            const otherUser = UserManager.getUserFromCache(comment.userId)
+            if (otherUser) {
+                initialUsers[otherUser.id] = otherUser
+            }
+        }
+    } 
+    const initialIssueParts = collectIssueParts(initialIssues)
+    const initialCommentParts = collectCommentParts(initialComments)
+    const initialPartsCount = countParts(initialIssues, initialComments, initialIssueParts, initialCommentParts)
+    const initialOpenIssueCount = initialIssues ? initialIssues.filter(issue => issue.state == 'open').length : undefined
+    const initialClosedIssueCount = initialIssues ? initialIssues.filter(issue => issue.state == 'closed').length : undefined
+
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>()
-    const [members, setMembers] = useState<Member[]>()
-    const [issues, setIssues] = useState<Issue[]>()
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>({})
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [product, setProduct] = useState<Product>(initialProduct) 
+    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [issues, setIssues] = useState<Issue[]>(initialIssues)
+    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
-    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>({})
-    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>({})
-    const [partsCount, setPartsCount] = useState<{[id: string]: number}>({})
-    const [openIssueCount, setOpenIssueCount] = useState<number>()
-    const [closedIssueCount, setClosedIssueCount] = useState<number>()
+    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
+    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
+    const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
+    const [openIssueCount, setOpenIssueCount] = useState<number>(initialOpenIssueCount)
+    const [closedIssueCount, setClosedIssueCount] = useState<number>(initialClosedIssueCount)
     // - Interactions
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
@@ -92,49 +121,16 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     }, [issues])
 
     // - Computations
-    useEffect(() => {
-        if (issues) {
-            const issuePartsNew: { [id: string]: Part[] } = {...issueParts}
-            for (const issue of issues) {
-                const parts: Part[] = []
-                collectParts(issue.text, parts)
-                issuePartsNew[issue.id] = parts
-            }
-            setIssueParts(issuePartsNew)
-        }
+    useEffect(() => { 
+        setIssueParts(collectIssueParts(issues))
         updateHightlighted()
     }, [issues])
     useEffect(() => {
-        if (comments) {
-            const commentPartsNew = {...commentParts}
-            for (const issueId of Object.keys(comments)) {
-                for (const comment of comments[issueId]) {
-                    const parts: Part[] = []
-                    collectParts(comment.text, parts)
-                    commentPartsNew[comment.id] = parts
-                }
-            }
-            setCommentParts(commentPartsNew)
-        }
+        setCommentParts(collectCommentParts(comments))   
         updateHightlighted()
     }, [comments])
     useEffect(() => {
-        if (issueParts && commentParts && issues && comments) {
-            const partsCountNew = {... partsCount}
-            for(const issue of issues) {
-                if(issue.id in issueParts) {
-                    partsCountNew[issue.id] = issueParts[issue.id].length
-                    if (issue.id in comments) {
-                        for ( const comment of comments[issue.id]) {
-                            if(comment.id in commentParts ) {
-                                partsCountNew[issue.id] += commentParts[comment.id].length
-                            }
-                        }
-                    }
-                }
-            }
-            setPartsCount(partsCountNew)
-        }
+        setPartsCount(countParts(issues, comments, issueParts, commentParts))
     }, [issueParts, commentParts])
     useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
     useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
@@ -201,7 +197,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : '?' }
+                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: issue => (
@@ -213,14 +209,14 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
-                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : '?' }
+                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
                     </Fragment>
                 ))}
             </Link>
         )},
         { label: 'Comments', class: 'center', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.id in comments ? comments[issue.id].length : '?'}
+                {issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'}
             </Link>
         )},
         { label: 'Parts', class: 'center', content: issue => (
@@ -252,10 +248,10 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                         New issue
                                     </Link>
                                     <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
-                                        Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
+                                        Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
                                     </a>
                                     <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
-                                        Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
+                                        Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
                                     </a>
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
@@ -263,7 +259,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} ></ProductFooter>
+                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Issues','image':'issue'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
                         </Fragment>
                     )}
                  </Fragment>     
