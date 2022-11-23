@@ -25,4 +25,3 @@ export class User extends UserAddData {
     @ApiProperty()
     pictureId: string
 }
-

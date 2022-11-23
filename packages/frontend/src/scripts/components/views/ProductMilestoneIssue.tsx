@@ -86,9 +86,6 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MilestoneManager.getMilestone(milestoneId).then(setMilestone) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-
-    
-
     useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues)}, [props, milestoneId])
     useEffect(() => {
         if (issues) {
@@ -164,7 +161,6 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
         setState('open')
     }
     
-
     // CONSTANTS
 
     const columns: Column<Issue>[] = [

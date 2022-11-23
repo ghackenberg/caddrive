@@ -4,7 +4,6 @@ import { Fragment } from 'react'
 import * as DiagonalIcon from '/src/images/diagonal.png'
 import * as RemovedUserIcon from '/src/images/removedUser.png'
 
-
 export const ProductUserPictureWidget = (props: { user: User, members: Member[], class?: string }) => {
     return (
         <Fragment>

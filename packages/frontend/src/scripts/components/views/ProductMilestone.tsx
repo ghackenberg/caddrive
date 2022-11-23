@@ -42,12 +42,8 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const initialUsers: {[id: string]: User} = {}
     for (const milestone of initialMilestones || []) {
         initialUsers[milestone.userId] = UserManager.getUserFromCache(milestone.userId)
-    } 
-
+    }
     
-
-
-   
     // STATES
 
     // - Entities

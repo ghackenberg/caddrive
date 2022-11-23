@@ -69,8 +69,6 @@ class MilestoneManagerImpl implements MilestoneREST {
         const milestone = await MilestoneClient.updateMilestone(id, data)
         this.milestoneIndex[id] = milestone
         return milestone
-
-       
     }
     async deleteMilestone(id: string): Promise<Milestone> {
         const milestone = await MilestoneClient.deleteMilestone(id)

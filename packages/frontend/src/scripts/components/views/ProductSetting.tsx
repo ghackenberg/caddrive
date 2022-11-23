@@ -43,8 +43,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     const [description, setDescription] = useState<string>(initialDescription)
     // - Interactions
     const [sidebar, setSidebar] = useState<boolean>(false)
-
-
+    
     // EFFECTS
 
     // - Entities

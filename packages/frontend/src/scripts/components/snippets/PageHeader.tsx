@@ -6,8 +6,6 @@ import { UserContext } from '../../contexts/User'
 import * as AppIcon from '/src/images/app.png'
 import * as UserIcon from '/src/images/user.png'
 
-
-
 export const PageHeader = () => {
     const user = useContext(UserContext)
     return (

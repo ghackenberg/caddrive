@@ -38,8 +38,7 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         // Return versions
         return Object.keys(this.findIndex[productId]).map(id => this.versionIndex[id])
     }
-
-
+    
     async addVersion(data: VersionAddData, files: {model: File, image: Blob}): Promise<Version> {
         // Call backend
         const version = await VersionClient.addVersion(data, files)

@@ -31,23 +31,17 @@ export const ProductView3D = (props: { product?: Product, version?: Version, mou
     const [marked, setMarked] = useState<string[]>([])
     const [selected, setSelected] = useState<string[]>([])
 
-    
-
     // EFFECTS
     
     useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props])
-
     useEffect(() => { !selectedVersion && versions && versions.length > 0 && setVersion(versions[versions.length - 1]) }, [versions])
     useEffect(() => { selectedVersion && setVersion(selectedVersion) }, [selectedVersion, versions])
     useEffect(() => { setSelectedVersion(props.version) }, [props.version])
-
-
-
-
     useEffect(() => { setHighlighted((props.highlighted || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.highlighted])
     useEffect(() => { setMarked((props.marked || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.marked])
     useEffect(() => { setSelected((props.selected || []).filter(part => version && part.versionId == version.id).map(part => part.objectName)) }, [version, props.selected])
-    
+
+    // FUNCTIONS
 
     function changeVersion(versionId: string) {
         const version = versions.filter((version) => version.id == versionId)[0]
@@ -58,10 +52,7 @@ export const ProductView3D = (props: { product?: Product, version?: Version, mou
     }
 
     // RETURN
-
-
-   
-
+    
     return (
         <div className="widget product_view">
             { load ? (

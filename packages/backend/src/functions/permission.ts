@@ -2,7 +2,6 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common'
 import { In } from 'typeorm'
 import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getUserOrFail, getVersionOrFail } from 'productboard-database'
 
-
 // USER
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

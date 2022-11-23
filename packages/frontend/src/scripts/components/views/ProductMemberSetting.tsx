@@ -18,7 +18,6 @@ import { Column, Table } from '../widgets/Table'
 import * as DeleteIcon from '/src/images/delete.png'
 import { ProductFooter } from '../snippets/ProductFooter'
 
-
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
     const history = useHistory()
@@ -51,8 +50,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const [sidebar, setSidebar] = useState<boolean>(false)
     
     // EFFECTS
-   
-    
+
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
@@ -127,9 +125,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
             </a>
         )}
     ]
-
-   
-
+    
     // RETURN
 
     return (

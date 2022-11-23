@@ -34,8 +34,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
             initialUsers[member.id] = user
         }
     }
-
-
+    
     // STATES
 
     // - Entities

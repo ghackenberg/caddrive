@@ -77,7 +77,6 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     const [hightlighted, setHighlighted] = useState<Part[]>()
     const [sidebar, setSidebar] = useState<boolean>(false)
 
-
     // EFFECTS
 
     // - Entities
@@ -134,9 +133,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     }, [issueParts, commentParts])
     useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
     useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
-
-
-
+    
     // - Interactions
     useEffect(() => {
         updateHightlighted()

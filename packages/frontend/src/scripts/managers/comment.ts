@@ -100,10 +100,6 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         }
 
     }
-
-
 }
-
-
 
 export const CommentManager = new CommentManagerImpl()

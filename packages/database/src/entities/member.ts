@@ -3,7 +3,6 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
-
 @Entity()
 export class MemberEntity extends Member {
     @PrimaryColumn({ nullable: false })

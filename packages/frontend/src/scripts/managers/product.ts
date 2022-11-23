@@ -4,9 +4,7 @@ import { ProductClient } from '../clients/rest/product'
 class ProductManagerImpl implements ProductREST {
     private productIndex: {[id: string]: Product} = {}
     private productSet: {[id: string]: boolean}
-
     
-
     async findProducts(): Promise<Product[]> {
         if (!this.productSet) {
             // Call backend

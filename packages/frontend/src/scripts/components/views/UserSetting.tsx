@@ -67,10 +67,6 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
         }
         history.goBack() 
     }
-
-   
-
-
     function encrypt(password: string): string {
         return hash.sha256().update(password).digest('hex')
     }

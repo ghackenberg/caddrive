@@ -46,7 +46,6 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     const initialStart = initialMilestone ? new Date(initialMilestone.start) : new Date(new Date().setHours(0,0,0,0))
     const initialEnd = initialMilestone ? new Date(initialMilestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
 
- 
     // STATES
 
     // - Entities
@@ -64,7 +63,6 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // - Interactions
     const [sidebar, setSidebar] = useState<boolean>(false)
 
-   
     // EFFECTS
 
     // - Entities
@@ -83,8 +81,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
             })
         }
     }, [issues])
-
-
+    
     // - Values
     useEffect(() => { milestone && setLabel(milestone.label) }, [milestone])
     useEffect(() => { milestone && setStart(new Date(milestone.start)) }, [milestone])
