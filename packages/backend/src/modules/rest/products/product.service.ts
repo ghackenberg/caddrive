@@ -17,6 +17,7 @@ export class ProductService implements ProductREST {
         let where: FindOptionsWhere<ProductEntity>
         // eslint-disable-next-line no-constant-condition
         if (true)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             where = { members: [ { userId: (<User> (<any> this.request).user).id, deleted: false } ], deleted: false }
         const result: Product[] = []
         for (const product of await ProductRepository.find({ where }))

@@ -16,7 +16,9 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         return result
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async addComment(data: CommentAddData, _files: { audio?: Express.Multer.File[] }): Promise<Comment> {
+        // TODO save audio file and remove eslint comment
         const comment = await CommentRepository.save({ id: shortid(), deleted: false, ...data })
         return this.convert(comment)
     }
@@ -26,7 +28,9 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         return this.convert(comment)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async updateComment(id: string, data: CommentUpdateData, _files?: { audio?: Express.Multer.File[] }): Promise<Comment> {
+        // TODO update audio file and remove eslint comment
         const comment = await CommentRepository.findOneByOrFail({ id })
         comment.action = data.action
         comment.text = data.text

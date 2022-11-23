@@ -5,6 +5,7 @@ import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, 
 
 // USER
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function canFindUserOrFail(userId: string, _query: string, _productId: string) {
     await getUserOrFail({id: userId, deleted: false, userManagementPermission: true}, ForbiddenException)
 }
@@ -83,15 +84,19 @@ export async function canDeleteVersionOrFail(userId: string, versionId: string) 
 
 // FILE
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function canCreateFileOrFail(_userId: string, _fileId: string) {
     // empty
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function canReadFileOrFail(_userId: string, _fileId: string) {
     // empty
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function canUpdateFileOrFail(_userId: string, _fileId: string) {
     // empty
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function canDeleteFileOrFail(_userId: string, _fileId: string) {
     // empty
 }
