@@ -47,6 +47,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const issueId = props.match.params.issue
 
     // INITIAL STATES
+
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialUsers: {[id: string]: User} = {}
@@ -58,7 +59,6 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     } 
     const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
     const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
-
     
     // STATES
     
@@ -78,6 +78,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>([])
     const [sidebar, setSidebar] = useState<boolean>(false)
+
     // EFFECTS
 
     // - Entities
@@ -110,14 +111,14 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     
     // FUNCTIONS
 
-    async function startRecordAudio(_event: React.MouseEvent<HTMLButtonElement>) {
+    async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         const recorder = new AudioRecorder()
         await recorder.start()
         setRecorder(recorder)
     }
 
-    async function stopRecordAudio(_event: React.MouseEvent<HTMLButtonElement>) {
+    async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
@@ -166,7 +167,6 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         }
         setAssigneeIds(newAssignees)
     }
-
 
     // CONSTANTS
 

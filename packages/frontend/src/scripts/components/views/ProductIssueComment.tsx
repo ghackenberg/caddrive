@@ -165,11 +165,13 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
         setSelected([part])
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, _part: Part) {
         event.preventDefault()
         setSelected(undefined)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function handleClick(event: MouseEvent<HTMLAnchorElement>, _part: Part) {
         event.preventDefault()
     }

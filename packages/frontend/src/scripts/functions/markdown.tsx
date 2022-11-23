@@ -64,6 +64,7 @@ function collectPartsInternal(parent: Parent, parts: Part[]) {
 export function createProcessor(parts: Part[], handleMouseOver: Handler, handleMouseOut: Handler, handleClick: Handler) {
     return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
         createElement, components: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             a: (props: any) => {
                 const match = regex.exec(props.href || '')
                 if (match) {

@@ -23,7 +23,10 @@ export class AudioRecorder {
     }
 
     public async stop() {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise<Blob>((resolve, _reject) => {
+            // TODO handle error and remove eslint comment
+
             // Stop recorder
             this.recorder.addEventListener('stop', () => {
                 // Merge slices

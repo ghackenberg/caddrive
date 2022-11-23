@@ -12,9 +12,11 @@ const client = mqtt.connect(url)
 console.log(client)
 
 class TestClient implements TestMQTT {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async a(_data: string) {
         //client.publish('a', data)
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async b(_data: string) {
         //client.publish('b', data)
     }

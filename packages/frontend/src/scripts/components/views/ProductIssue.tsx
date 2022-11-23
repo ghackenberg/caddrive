@@ -171,6 +171,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         setHovered(issue)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function handleMouseOut(_issue: Issue) {
         setHovered(undefined)
     }

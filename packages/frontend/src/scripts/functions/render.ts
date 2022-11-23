@@ -25,7 +25,10 @@ const directional_light = new DirectionalLight(0xffffff, 1)
 const webgl_renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true })
 
 export function render(model: Group, width: number, height: number): Promise<Blob> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return new Promise<Blob>((resolve, _reject) => {
+        // TODO handle error and remove eslint comment
+
         // Scene
         const scene = new Scene()
         scene.add(ambient_light)

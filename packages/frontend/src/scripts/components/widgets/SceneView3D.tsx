@@ -383,6 +383,7 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleMouseUp(_event: React.MouseEvent) {
         if (this.position_start && this.position_end) {
             if (this.calculateDistance() <= 1) {
@@ -402,6 +403,7 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
         this.position_end = event.touches[0]
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleTouchEnd(_event: React.TouchEvent) {
         if (this.calculateDistance() <= 1) {
             this.updateSelected(this.position_end)
