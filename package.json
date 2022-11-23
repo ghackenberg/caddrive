@@ -46,7 +46,9 @@
         "start": "docker-compose -f ./compositions/production.yml up -d && workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run start",
         "devel": "docker-compose -f ./compositions/development.yml up -d && workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run devel",
         "toolkit-start": "docker-compose -f ./compositions/production.yml up -d && workspaces-run --only=\"productboard-toolkit\" -- npm run start",
-        "toolkit-devel": "docker-compose -f ./compositions/production.yml up -d && workspaces-run --only=\"productboard-toolkit\" -- npm run devel"
+        "toolkit-devel": "docker-compose -f ./compositions/production.yml up -d && workspaces-run --only=\"productboard-toolkit\" -- npm run devel",
+        "lint": "workspaces-run -- npm run lint",
+        "loc": "workspaces-run -- npm run loc"
     },
     "dependencies": {
         "workspaces-run": "^1.0.1"

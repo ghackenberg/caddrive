@@ -35,13 +35,19 @@
         "clean": "rm -rf public",
         "build": "webpack --mode=production",
         "start": "http-server -p 3002 -s",
-        "devel": "webpack serve --mode=development"
+        "devel": "webpack serve --mode=development",
+        "lint": "eslint src",
+        "loc": "sloc src"
     },
     "dependencies": {
         "http-server": "^14.1.0",
         "productboard-common": "^0.0.1"
     },
     "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.44.0",
+        "@typescript-eslint/parser": "^5.44.0",
+        "eslint": "^8.28.0",
+        "sloc": "^0.2.1",
         "ts-loader": "^9.2.3",
         "typescript": "^4.3.2",
         "webpack": "^5.38.1",
