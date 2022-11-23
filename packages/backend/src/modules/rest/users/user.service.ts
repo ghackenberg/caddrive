@@ -13,7 +13,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
-        var where: FindOptionsWhere<UserEntity>
+        let where: FindOptionsWhere<UserEntity>
         if (query && productId)
             where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`), deleted: false }
         else

@@ -7,7 +7,7 @@ import { CommentEntity, CommentRepository } from 'productboard-database'
 @Injectable()
 export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> { 
     async findComments(issueId: string): Promise<Comment[]> {
-        var where: FindOptionsWhere<CommentEntity>
+        let where: FindOptionsWhere<CommentEntity>
         if (issueId)
             where = { issueId, deleted: false }
         const result: Comment[] = []

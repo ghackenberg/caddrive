@@ -7,7 +7,7 @@ import { MemberEntity, MemberRepository, ProductRepository, UserRepository } fro
 @Injectable()
 export class MemberService implements MemberREST {
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
-        var where: FindOptionsWhere<MemberEntity>
+        let where: FindOptionsWhere<MemberEntity>
         if (productId && userId) 
             where = { productId, userId, deleted: false }
         else if (productId)

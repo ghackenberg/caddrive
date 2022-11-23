@@ -9,7 +9,7 @@ import { VersionEntity, VersionRepository } from 'productboard-database'
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
     async findVersions(productId: string) : Promise<Version[]> {
-        var where: FindOptionsWhere<VersionEntity>
+        let where: FindOptionsWhere<VersionEntity>
         if (productId)
             where = { productId, deleted: false }
         const result: Version[] = []

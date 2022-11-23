@@ -84,16 +84,16 @@ export async function canDeleteVersionOrFail(userId: string, versionId: string) 
 // FILE
 
 export async function canCreateFileOrFail(_userId: string, _fileId: string) {
-
+    // empty
 }
 export async function canReadFileOrFail(_userId: string, _fileId: string) {
-
+    // empty
 }
 export async function canUpdateFileOrFail(_userId: string, _fileId: string) {
-
+    // empty
 }
 export async function canDeleteFileOrFail(_userId: string, _fileId: string) {
-
+    // empty
 }
 
 // ISSUE

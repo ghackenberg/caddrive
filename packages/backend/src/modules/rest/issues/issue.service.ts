@@ -8,7 +8,7 @@ import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-da
 @Injectable()
 export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
-        var where: FindOptionsWhere<IssueEntity>
+        let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
             where = { productId, milestoneId, state, deleted: false }
         else if (productId && milestoneId)

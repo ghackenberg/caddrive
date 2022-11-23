@@ -14,7 +14,8 @@ export class ProductService implements ProductREST {
     ) {}
     
     async findProducts() : Promise<Product[]> {
-        var where: FindOptionsWhere<ProductEntity>
+        let where: FindOptionsWhere<ProductEntity>
+        // eslint-disable-next-line no-constant-condition
         if (true)
             where = { members: [ { userId: (<User> (<any> this.request).user).id, deleted: false } ], deleted: false }
         const result: Product[] = []

@@ -7,7 +7,7 @@ import { IssueRepository, MilestoneEntity, MilestoneRepository } from 'productbo
 @Injectable()
 export class MilestoneService implements MilestoneREST {
     async findMilestones(productId: string): Promise<Milestone[]> {
-        var where: FindOptionsWhere<MilestoneEntity>
+        let where: FindOptionsWhere<MilestoneEntity>
         if (productId)
             where = { productId, deleted: false }
         const result: Milestone[] = []
