@@ -1,9 +1,11 @@
-import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router' 
 import { Link, RouteComponentProps } from 'react-router-dom'
+
 import { Object3D } from 'three'
+
+import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'

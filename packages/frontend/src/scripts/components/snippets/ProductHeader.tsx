@@ -1,7 +1,8 @@
-import { Product } from 'productboard-common'
 import * as React from 'react'
 import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
+
+import { Product } from 'productboard-common'
 
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'

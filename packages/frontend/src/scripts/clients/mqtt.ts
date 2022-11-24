@@ -1,5 +1,5 @@
 import * as mqtt from 'mqtt'
-// Commons
+
 import { TestMQTT } from 'productboard-common'
 
 const protocol = window.location.protocol == 'http:' ? 'ws:' : 'wss:'

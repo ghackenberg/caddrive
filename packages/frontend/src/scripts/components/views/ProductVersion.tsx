@@ -1,8 +1,9 @@
-import { Member, Product, User, Version } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
+
+import { Member, Product, User, Version } from 'productboard-common'
 
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'

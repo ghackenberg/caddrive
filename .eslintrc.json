@@ -31,7 +31,7 @@
                 ],
                 "pathGroupsExcludedImportTypes": [
                     "@nestjs/common", "@nestjs/core", "@nestjs/passport", "@nestjs/platform-express", "@nestjs/swagger",
-                    "react", "react-dom", "react-router-dom", "react-helmet",
+                    "react", "react-dom", "react-router", "react-router-dom", "react-helmet",
                     "productboard-common", "productboard-database"
                 ]
             }

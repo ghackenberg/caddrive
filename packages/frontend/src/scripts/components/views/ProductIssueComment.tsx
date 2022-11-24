@@ -1,9 +1,11 @@
-import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
 import { Redirect } from 'react-router' 
 import { Link, RouteComponentProps } from 'react-router-dom'
+
 import { Object3D } from 'three'
+
+import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'

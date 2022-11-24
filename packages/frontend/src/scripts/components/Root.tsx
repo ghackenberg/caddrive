@@ -1,7 +1,8 @@
-import { User } from 'productboard-common'
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
+
+import { User } from 'productboard-common'
 
 import { auth } from '../clients/auth'
 import { UserContext } from '../contexts/User'

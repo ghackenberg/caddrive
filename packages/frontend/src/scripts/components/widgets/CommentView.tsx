@@ -1,6 +1,7 @@
-import { Comment, Issue, Member, User } from 'productboard-common'
 import * as React from 'react'
 import { useContext, ReactElement, MouseEvent } from 'react'
+
+import { Comment, Issue, Member, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { ProductUserPictureWidget } from './ProductUserPicture'

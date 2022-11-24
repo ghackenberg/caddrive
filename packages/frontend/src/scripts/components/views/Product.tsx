@@ -1,7 +1,8 @@
-import { Member, Product, User } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
+
+import { Member, Product, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { IssueManager } from '../../managers/issue'

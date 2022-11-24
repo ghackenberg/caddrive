@@ -1,8 +1,10 @@
-import { Version } from 'productboard-common'
 import * as React from 'react'
 import { useEffect, useState, Fragment } from 'react'
+
 import { Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+
+import { Version } from 'productboard-common'
 
 import { FileManager } from '../../managers/file'
 import { SceneView3D } from './SceneView3D'

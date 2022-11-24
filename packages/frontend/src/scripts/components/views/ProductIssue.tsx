@@ -1,8 +1,9 @@
-import { Comment, Issue, Member, Product, User } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
+
+import { Comment, Issue, Member, Product, User } from 'productboard-common'
 
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'

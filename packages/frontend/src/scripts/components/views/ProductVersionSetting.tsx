@@ -1,9 +1,11 @@
-import { Product, Version } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
+
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+
+import { Product, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { render } from '../../functions/render'

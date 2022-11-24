@@ -1,7 +1,9 @@
-import { Product, Version } from 'productboard-common'
 import * as React from 'react'
 import { useEffect, useState, Fragment } from 'react'
+
 import { Object3D } from 'three'
+
+import { Product, Version } from 'productboard-common'
 
 import { VersionManager } from '../../managers/version'
 import { VersionView3D } from './VersionView3D'

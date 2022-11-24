@@ -1,6 +1,7 @@
-import { Member, User } from 'productboard-common'
 import * as React from 'react'
 import { Fragment } from 'react'
+
+import { Member, User } from 'productboard-common'
 
 export const ProductUserNameWidget = (props: { user: User, members: Member[] }) => {
     return (

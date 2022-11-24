@@ -1,7 +1,8 @@
-import { User } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+
+import { User } from 'productboard-common'
 
 import { UserManager } from '../../managers/user'
 import { UsersLink } from '../links/UsersLink'

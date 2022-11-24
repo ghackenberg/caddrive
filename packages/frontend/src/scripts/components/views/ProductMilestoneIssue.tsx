@@ -1,8 +1,9 @@
-import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
+
+import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
 
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'

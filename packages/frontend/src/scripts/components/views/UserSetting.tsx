@@ -1,9 +1,11 @@
-import * as hash from 'hash.js'
-import { User } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, Fragment, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
+
+import * as hash from 'hash.js'
+
+import { User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { UserManager } from '../../managers/user'
