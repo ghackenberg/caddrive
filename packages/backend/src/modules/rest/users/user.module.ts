@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
+
 import { AuthStrategy } from './auth.strategy'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'

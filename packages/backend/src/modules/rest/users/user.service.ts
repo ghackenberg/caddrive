@@ -1,10 +1,11 @@
-import 'multer'
 import * as fs from 'fs'
+
+import 'multer'
 import { Injectable } from '@nestjs/common'
-import * as shortid from 'shortid'
-import { FindOptionsWhere, Raw } from 'typeorm'
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
 import { getMemberOrFail, MemberRepository, UserEntity, UserRepository } from 'productboard-database'
+import * as shortid from 'shortid'
+import { FindOptionsWhere, Raw } from 'typeorm'
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {

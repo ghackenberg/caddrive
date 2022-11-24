@@ -1,7 +1,8 @@
-import { BasicStrategy } from 'passport-http'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
+import { BasicStrategy } from 'passport-http'
 import { User } from 'productboard-common'
+
 import { UserService } from './user.service'
 
 @Injectable()

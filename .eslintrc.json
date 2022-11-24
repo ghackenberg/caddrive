@@ -15,6 +15,16 @@
         ],
         "import/no-unresolved": [
             "error", { "ignore": ["\\.png", "\\.css"] }
+        ],
+        "import/order": [
+            "error", {
+                "groups": ["builtin", "external", "internal", ["sibling", "parent"], "index", "unknown"],
+                "newlines-between": "always",
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true
+                }
+            }
         ]
     },
     "parser": "@typescript-eslint/parser",

@@ -1,6 +1,6 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common'
-import { In } from 'typeorm'
 import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getUserOrFail, getVersionOrFail } from 'productboard-database'
+import { In } from 'typeorm'
 
 // USER
 
