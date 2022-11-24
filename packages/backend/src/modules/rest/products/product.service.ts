@@ -1,10 +1,12 @@
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
+
 import { Request } from 'express'
-import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
+
+import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
+import { CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {

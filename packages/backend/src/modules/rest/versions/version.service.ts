@@ -1,11 +1,13 @@
 import * as fs from 'fs'
 
-import 'multer'
 import { Injectable } from '@nestjs/common'
-import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
-import { VersionEntity, VersionRepository } from 'productboard-database'
+
+import 'multer'
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
+
+import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
+import { VersionEntity, VersionRepository } from 'productboard-database'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {

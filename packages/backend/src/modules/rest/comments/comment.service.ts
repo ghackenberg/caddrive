@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
-import { CommentEntity, CommentRepository } from 'productboard-database'
+
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
+
+import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
+import { CommentEntity, CommentRepository } from 'productboard-database'
 
 @Injectable()
 export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> { 

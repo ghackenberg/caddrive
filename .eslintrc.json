@@ -23,7 +23,17 @@
                 "alphabetize": {
                     "order": "asc",
                     "caseInsensitive": true
-                }
+                },
+                "pathGroups": [
+                    { "pattern": "@nestjs/*", "group": "external", "position": "before" },
+                    { "pattern": "react*", "group": "external", "position": "before" },
+                    { "pattern": "productboard-*", "group": "external", "position": "after" }
+                ],
+                "pathGroupsExcludedImportTypes": [
+                    "@nestjs/common", "@nestjs/core", "@nestjs/passport", "@nestjs/platform-express", "@nestjs/swagger",
+                    "react", "react-dom", "react-router-dom", "react-helmet",
+                    "productboard-common", "productboard-database"
+                ]
             }
         ]
     },

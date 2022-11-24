@@ -1,10 +1,12 @@
 import * as fs from 'fs'
 
 import { Injectable } from '@nestjs/common'
-import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
-import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-database'
+
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
+
+import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
+import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-database'
 
 @Injectable()
 export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
