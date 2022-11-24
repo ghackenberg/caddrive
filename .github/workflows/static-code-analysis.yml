@@ -27,6 +27,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build sources
-        run: npm build
+        run: npm run build
       - name: Lint sources
-        run: npm lint
+        run: npm run lint
