@@ -26,8 +26,8 @@ The comments view enables discussion between stakeholders and engineers around i
 
 ProductBoard requires the following tools:
 
-- node@^14.15.0
-- npm@^7.20.0
+- node@^16
+- npm@^8
 
 ## Scripts
 

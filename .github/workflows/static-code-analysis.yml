@@ -1,0 +1,32 @@
+name: Static Code Analysis
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout GIT repository
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Update NPM
+        run: npm install -g npm@latest
+      - name: Install dependencies
+        run: npm install
+      - name: Build sources
+        run: npm build
+      - name: Lint sources
+        run: npm lint
