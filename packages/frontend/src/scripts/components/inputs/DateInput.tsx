@@ -1,5 +1,5 @@
 import * as React from 'react'
-// Inputs
+
 import { GenericInput } from './GenericInput'
 
 export const DateInput = (props: {class?: string, label: string, change: (value: Date) => void, value: Date, placeholder?: string, disabled?: boolean, required?: boolean}) => (

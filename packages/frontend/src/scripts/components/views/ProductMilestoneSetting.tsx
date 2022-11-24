@@ -1,25 +1,20 @@
+import { Comment, Issue, Milestone, Product } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { RouteComponentProps } from 'react-router-dom'
 import { Redirect, useHistory } from 'react-router'
-// Commons
-import { Comment, Issue, Milestone, Product } from 'productboard-common'
-// Contexts
+import { RouteComponentProps } from 'react-router-dom'
+
 import { UserContext } from '../../contexts/User'
-// Managers
-import { ProductManager } from '../../managers/product'
-import { MilestoneManager } from '../../managers/milestone'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
-// Widgets
-import { TextInput } from '../inputs/TextInput'
-import { DateInput } from '../inputs/DateInput'
-import { BurndownChartWidget } from '../widgets/BurndownChart'
-import { IssueManager } from '../../managers/issue'
-import { CommentManager } from '../../managers/comment'
 import { calculateActual } from '../../functions/burndown'
+import { CommentManager } from '../../managers/comment'
+import { IssueManager } from '../../managers/issue'
+import { MilestoneManager } from '../../managers/milestone'
+import { ProductManager } from '../../managers/product'
+import { DateInput } from '../inputs/DateInput'
+import { TextInput } from '../inputs/TextInput'
 import { ProductFooter } from '../snippets/ProductFooter'
-// Icons
+import { ProductHeader } from '../snippets/ProductHeader'
+import { BurndownChartWidget } from '../widgets/BurndownChart'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     

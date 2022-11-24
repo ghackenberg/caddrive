@@ -1,14 +1,12 @@
+import * as hash from 'hash.js'
 import * as React from 'react'
 import { useContext, useEffect, useState } from 'react'
-import * as hash from 'hash.js'
-// Clients
+
 import { auth } from '../../clients/auth'
-// Managers
+import { UserContext } from '../../contexts/User'
 import { UserManager } from '../../managers/user'
-// Inputs
 import { EmailInput } from '../inputs/EmailInput'
 import { PasswordInput } from '../inputs/PasswordInput'
-import { UserContext } from '../../contexts/User'
 
 export const LoginView = () => {
 

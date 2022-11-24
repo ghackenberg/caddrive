@@ -1,5 +1,5 @@
 import * as React from 'react'
-// Inputs
+
 import { GenericInput } from './GenericInput'
 
 export const EmailInput = (props: {class?: string, label: string, change?: (value: string) => void, value: string, placeholder?: string, disabled?: boolean}) => (

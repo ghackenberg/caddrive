@@ -1,5 +1,5 @@
 import * as React from 'react'
-// Inputs
+
 import { GenericInput } from './GenericInput'
 
 export const CheckboxInput = (props: {class?: string, label: string, change?: (value: boolean) => void, value?: string, checked?: boolean, placeholder?: string, disabled?: boolean}) => (

@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { Object3D } from 'three'
-// Widgets
+
 import { NodeList } from './NodeList'
-// Images
+
 import * as BoneIcon from '/src/images/types/Bone.png'
 import * as GroupIcon from '/src/images/types/Group.png'
 import * as MeshIcon from '/src/images/types/Mesh.png'

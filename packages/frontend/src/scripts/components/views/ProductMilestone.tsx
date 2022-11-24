@@ -1,25 +1,22 @@
+import { Member, Milestone, Product, User } from 'productboard-common'
 import  * as React from 'react'
 import { Fragment, useEffect, useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
-// Commons
-import { Member, Milestone, Product, User } from 'productboard-common'
-// Managers
-import { ProductManager } from '../../managers/product'
-import { MilestoneManager } from '../../managers/milestone'
+
 import { IssueManager } from '../../managers/issue'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
-// Widgets
-import { ProductView3D } from '../widgets/ProductView3D'
-import { Column, Table } from '../widgets/Table'
-// Images
-import * as LoadIcon from '/src/images/load.png'
-import * as DeleteIcon from '/src/images/delete.png'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { MemberManager } from '../../managers/member'
+import { MilestoneManager } from '../../managers/milestone'
+import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductHeader } from '../snippets/ProductHeader'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { ProductView3D } from '../widgets/ProductView3D'
+import { Column, Table } from '../widgets/Table'
+
+import * as LoadIcon from '/src/images/load.png'
+import * as DeleteIcon from '/src/images/delete.png'
 
 export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
 

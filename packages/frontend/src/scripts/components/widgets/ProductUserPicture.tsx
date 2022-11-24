@@ -1,6 +1,7 @@
 import { Member, User } from 'productboard-common'
 import * as React from 'react'
 import { Fragment } from 'react'
+
 import * as DiagonalIcon from '/src/images/diagonal.png'
 import * as RemovedUserIcon from '/src/images/removedUser.png'
 

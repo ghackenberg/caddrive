@@ -1,5 +1,5 @@
 import * as React from 'react'
-// Inputs
+
 import { GenericInput } from './GenericInput'
 
 export const NumberInput = (props: {class?: string, label: string, change: (value: number) => void, value: number, placeholder?: string, disabled?: boolean}) => (

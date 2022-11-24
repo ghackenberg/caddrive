@@ -1,26 +1,21 @@
+import { Member, Product, User, Version } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
-// Commons
-import { Member, Product, User, Version } from 'productboard-common'
-// Managers
-import { UserManager } from '../../managers/user'
+
+import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
+import { UserManager } from '../../managers/user'
 import { VersionManager } from '../../managers/version'
-// Snippets
+import { ProductFooter } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
-// Widgets
-//import { VersionView3D } from '../widgets/VersionView3D'
-// Images
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { ProductView3D } from '../widgets/ProductView3D'
+
 import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
-import { MemberManager } from '../../managers/member'
-import { ProductUserNameWidget } from '../widgets/ProductUserName'
-//import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
-import { ProductFooter } from '../snippets/ProductFooter'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 

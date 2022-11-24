@@ -1,21 +1,18 @@
+import * as hash from 'hash.js'
+import { User } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, Fragment, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
-import * as hash from 'hash.js'
-// Commons
-import { User } from 'productboard-common'
-// Managers
-import { UserManager } from '../../managers/user'
-// Snippets
-import { UserHeader } from '../snippets/UserHeader'
-// Inputs
-import { TextInput } from '../inputs/TextInput'
-import { EmailInput } from '../inputs/EmailInput'
-import { PasswordInput } from '../inputs/PasswordInput'
-import { CheckboxInput } from '../inputs/CheckboxInput'
-import { FileInput } from '../inputs/FileInput'
+
 import { UserContext } from '../../contexts/User'
+import { UserManager } from '../../managers/user'
+import { CheckboxInput } from '../inputs/CheckboxInput'
+import { EmailInput } from '../inputs/EmailInput'
+import { FileInput } from '../inputs/FileInput'
+import { PasswordInput } from '../inputs/PasswordInput'
+import { TextInput } from '../inputs/TextInput'
+import { UserHeader } from '../snippets/UserHeader'
 
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     

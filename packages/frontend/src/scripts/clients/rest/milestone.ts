@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+
 import { auth } from '../auth'
 
 class MilestoneClientImpl implements MilestoneREST {

@@ -1,4 +1,5 @@
 import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
+
 import { CommentClient } from '../clients/rest/comment'
 
 class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {

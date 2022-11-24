@@ -1,28 +1,24 @@
+import { Comment, Issue, Member, Product, User } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
-// Commons
-import { Comment, Issue, Member, Product, User } from 'productboard-common'
-// Managers
-import { UserManager } from '../../managers/user'
-import { ProductManager } from '../../managers/product'
-import { IssueManager } from '../../managers/issue'
+import { Link, RouteComponentProps } from 'react-router-dom'
+
 import { CommentManager } from '../../managers/comment'
+import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
-// Functions
+import { ProductManager } from '../../managers/product'
+import { UserManager } from '../../managers/user'
+import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductFooter } from '../snippets/ProductFooter'
-// Widgets
+import { ProductHeader } from '../snippets/ProductHeader'
 import { Column, Table } from '../widgets/Table'
-import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
-// Images
+import { ProductView3D } from '../widgets/ProductView3D'
+
 import * as DeleteIcon from '/src/images/delete.png'
 import * as LoadIcon from '/src/images/load.png'
-import { countParts } from '../../functions/counter'
 
 export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
 

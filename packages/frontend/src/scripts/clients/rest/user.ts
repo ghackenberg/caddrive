@@ -1,7 +1,6 @@
 import axios from 'axios'
-// Commons
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
-// Globals
+
 import { auth } from '../auth'
 
 class UserClientImpl implements UserREST<UserAddData, File> {

@@ -1,7 +1,6 @@
 import axios from 'axios'
-// Commons
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
-// Globals
+
 import { auth } from '../auth'
 
 class MemberClientImpl implements MemberREST {

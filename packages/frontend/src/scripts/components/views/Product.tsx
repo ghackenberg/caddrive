@@ -1,23 +1,20 @@
+import { Member, Product, User } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
-// Commons
-import { Member, Product, User } from 'productboard-common'
-// Managers
-import { UserManager } from '../../managers/user'
-import { ProductManager } from '../../managers/product'
-import { VersionManager } from '../../managers/version'
+
+import { UserContext } from '../../contexts/User'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
-// Links
+import { ProductManager } from '../../managers/product'
+import { VersionManager } from '../../managers/version'
+import { UserManager } from '../../managers/user'
 import { ProductsLink } from '../links/ProductsLink'
-// Widgets
 import { Column, Table } from '../widgets/Table'
-// Images
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+
 import * as DeleteIcon from '/src/images/delete.png'
 import * as LoadIcon from '/src/images/load.png'
-import { UserContext } from '../../contexts/User'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 export const ProductView = () => {
     

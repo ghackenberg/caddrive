@@ -1,27 +1,22 @@
+import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
 import { Redirect } from 'react-router' 
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Object3D } from 'three'
-// Commons
-import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
-// Managers
-import { UserManager } from '../../managers/user'
-import { ProductManager } from '../../managers/product'
-import { IssueManager } from '../../managers/issue'
-import { CommentManager } from '../../managers/comment'
-// Functions
-import { collectParts, createProcessor, Part } from '../../functions/markdown'
-// Contexts
+
 import { UserContext } from '../../contexts/User'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
-// Widgets
-import { CommentView } from '../widgets/CommentView'
-import { ProductView3D } from '../widgets/ProductView3D'
+import { collectParts, createProcessor, Part } from '../../functions/markdown'
+import { CommentManager } from '../../managers/comment'
+import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
-import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { ProductManager } from '../../managers/product'
+import { UserManager } from '../../managers/user'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductHeader } from '../snippets/ProductHeader'
+import { CommentView } from '../widgets/CommentView'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { ProductView3D } from '../widgets/ProductView3D'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 

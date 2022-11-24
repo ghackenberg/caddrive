@@ -1,13 +1,11 @@
+import { Product, Version } from 'productboard-common'
 import * as React from 'react'
 import { useEffect, useState, Fragment } from 'react'
 import { Object3D } from 'three'
-// Types
-import { Product, Version } from 'productboard-common'
-// Managers
+
 import { VersionManager } from '../../managers/version'
-// Widgets
 import { VersionView3D } from './VersionView3D'
-// Images
+
 import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
 

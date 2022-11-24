@@ -1,4 +1,5 @@
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
+
 import { IssueClient } from '../clients/rest/issue'
 
 class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {

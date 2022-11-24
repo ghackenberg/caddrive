@@ -1,7 +1,6 @@
 import axios from 'axios'
-// Commons
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
-// Globals
+
 import { auth } from '../auth'
 
 class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {

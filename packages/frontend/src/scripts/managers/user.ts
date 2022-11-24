@@ -1,4 +1,5 @@
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
+
 import { UserClient } from '../clients/rest/user'
 
 class UserManagerImpl implements UserREST<UserAddData, File> {

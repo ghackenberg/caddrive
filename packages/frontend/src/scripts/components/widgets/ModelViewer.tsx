@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-// Widgets
+
 import { SceneGraph } from './SceneGraph'
 import { SceneView3D } from './SceneView3D'
 

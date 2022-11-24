@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Fragment } from 'react'
-// Inputs
+
 import { GenericInput } from './GenericInput'
 import { TextInput } from './TextInput'
 
@@ -24,7 +24,7 @@ export const FileInput = (props: {class?: string, label: string, change?: (value
     // RETURN
 
     return (
-        <React.Fragment>
+        <Fragment>
             <TextInput class={props.class} label={props.label} value={fileName} placeholder={'No file selected yet'} required = {props.required}/>
             <GenericInput>
                 <Fragment>
@@ -44,6 +44,6 @@ export const FileInput = (props: {class?: string, label: string, change?: (value
                         style={{display: 'none'}}/>
                 </Fragment>
             </GenericInput>
-        </React.Fragment>
+        </Fragment>
     )  
 }

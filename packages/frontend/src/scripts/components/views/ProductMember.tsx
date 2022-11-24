@@ -1,22 +1,19 @@
+import { Member, Product, User } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, Fragment } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
-// Commons
-import { Member, Product, User } from 'productboard-common'
-// Managers
-import { ProductManager } from '../../managers/product'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
-// Widgets
-import { ProductView3D } from '../widgets/ProductView3D'
-import { Column, Table } from '../widgets/Table'
+import { Link, RouteComponentProps } from 'react-router-dom'
+
 import { MemberManager } from '../../managers/member'
-// Images
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LoadIcon from '/src/images/load.png'
+import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductHeader } from '../snippets/ProductHeader'
+import { ProductView3D } from '../widgets/ProductView3D'
+import { Column, Table } from '../widgets/Table'
+
+import * as DeleteIcon from '/src/images/delete.png'
+import * as LoadIcon from '/src/images/load.png'
 
 export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
 

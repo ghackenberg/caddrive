@@ -1,11 +1,10 @@
+import { Product } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-// Commons
-import { Product } from 'productboard-common'
-// Managers
+
 import { MemberManager } from '../../managers/member'
-// Images
+
 import * as MemberIcon from '/src/images/user.png'
 
 export const MembersLink = (props: {product: Product}) => {

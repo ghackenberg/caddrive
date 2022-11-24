@@ -1,14 +1,13 @@
+import { Version } from 'productboard-common'
 import * as React from 'react'
 import { useEffect, useState, Fragment } from 'react'
 import { Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-// Commons
-import { Version } from 'productboard-common'
-// Widgets
-import { SceneView3D } from './SceneView3D'
-// Images
-import * as LoadIcon from '/src/images/load.png'
+
 import { FileManager } from '../../managers/file'
+import { SceneView3D } from './SceneView3D'
+
+import * as LoadIcon from '/src/images/load.png'
 
 export const VersionView3D = (props: { version: Version, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void, vr: boolean}) => {
 

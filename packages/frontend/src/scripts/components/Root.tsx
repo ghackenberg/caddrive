@@ -1,33 +1,29 @@
+import { User } from 'productboard-common'
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
-// Commons
-import { User } from 'productboard-common'
-// Clients
+
 import { auth } from '../clients/auth'
-// Contexts
 import { UserContext } from '../contexts/User'
-// Snippets
 import { PageHeader } from './snippets/PageHeader'
-// Views
 import { LoginView } from './views/Login'
-import { UserView } from './views/User'
-import { UserSettingView } from './views/UserSetting'
 import { ProductView } from './views/Product'
-import { ProductVersionView } from './views/ProductVersion'
-import { ProductVersionSettingView } from './views/ProductVersionSetting'
 import { ProductIssueView } from './views/ProductIssue'
-import { ProductIssueSettingView } from './views/ProductIssueSetting'
 import { ProductIssueCommentView } from './views/ProductIssueComment'
-import { ProductMilestoneView } from './views/ProductMilestone'
-import { ProductMilestoneSettingView } from './views/ProductMilestoneSetting'
-import { ProductMilestoneIssueView } from './views/ProductMilestoneIssue'
+import { ProductIssueSettingView } from './views/ProductIssueSetting'
 import { ProductMemberView } from './views/ProductMember'
 import { ProductMemberSettingView } from './views/ProductMemberSetting'
+import { ProductMilestoneView } from './views/ProductMilestone'
+import { ProductMilestoneIssueView } from './views/ProductMilestoneIssue'
+import { ProductMilestoneSettingView } from './views/ProductMilestoneSetting'
 import { ProductSettingView } from './views/ProductSetting'
-// Images
-import * as AppIcon from '/src/images/app.png'
+import { ProductVersionView } from './views/ProductVersion'
+import { ProductVersionSettingView } from './views/ProductVersionSetting'
 import { MissingView } from './views/Missing'
+import { UserView } from './views/User'
+import { UserSettingView } from './views/UserSetting'
+
+import * as AppIcon from '/src/images/app.png'
 
 export const Root = () => {
 

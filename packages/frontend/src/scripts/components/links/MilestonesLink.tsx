@@ -1,11 +1,10 @@
+import { Product } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-// Commons
-import { Product } from 'productboard-common'
-// Managers
+
 import { MilestoneManager } from '../../managers/milestone'
-// Images
+
 import * as MilestoneIcon from '/src/images/milestone.png'
 
 export const MilestonesLink = (props: {product: Product}) => {

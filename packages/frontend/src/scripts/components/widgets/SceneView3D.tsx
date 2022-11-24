@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
-import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
+import { VRButton } from 'three/examples/jsm/webxr/VRButton'
+import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
+
 import { createCamera } from '../../functions/render'
 
 export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }> {

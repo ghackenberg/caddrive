@@ -1,4 +1,5 @@
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+
 import { MilestoneClient } from '../clients/rest/milestone'
 
 class MilestoneManagerImpl implements MilestoneREST {

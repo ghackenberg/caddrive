@@ -1,4 +1,5 @@
 import { Comment, Issue } from 'productboard-common' 
+
 import { Part } from './markdown'
 
 export function countParts(issues: Issue[], comments: {[id: string]: Comment[]}, issueParts: { [id: string]: Part[] }, commentParts: { [id: string]: Part[] }) {

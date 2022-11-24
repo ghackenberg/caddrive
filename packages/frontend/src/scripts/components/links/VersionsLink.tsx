@@ -1,11 +1,10 @@
+import { Product } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-// Commons
-import { Product } from 'productboard-common'
-// Managers
+
 import { VersionManager } from '../../managers/version'
-// Images
+
 import * as VersionIcon from '/src/images/version.png'
 
 export const VersionsLink = (props: {product: Product}) => {

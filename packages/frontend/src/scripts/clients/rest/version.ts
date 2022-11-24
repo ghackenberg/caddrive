@@ -1,7 +1,6 @@
 import axios from 'axios'
-// Commons
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
-// Globals
+
 import { auth } from '../auth'
 
 class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob> {

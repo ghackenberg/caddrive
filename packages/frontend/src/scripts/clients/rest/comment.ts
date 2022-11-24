@@ -1,7 +1,6 @@
 import axios from 'axios'
-// Commons
 import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
-// Globals
+
 import { auth } from '../auth'
 
 class CommentClientImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {

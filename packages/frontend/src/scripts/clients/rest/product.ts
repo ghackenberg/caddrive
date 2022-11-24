@@ -1,7 +1,6 @@
 import axios from 'axios'
-// Commons
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
-// Globals
+
 import { auth } from '../auth'
 
 class ProductClientImpl implements ProductREST {

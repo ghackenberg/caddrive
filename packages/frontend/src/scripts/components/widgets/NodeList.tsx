@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Object3D } from 'three'
-// Widgets
+
 import { NodeItem } from './NodeItem'
 
 export const NodeList = (props: { list: Object3D[], click?: (object: Object3D) => void }) => (

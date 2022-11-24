@@ -1,9 +1,8 @@
+import { Issue, Product } from 'productboard-common'
 import * as React from 'react'
 import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
-// Commons
-import { Issue, Product } from 'productboard-common'
-// Links
+
 import { IssuesLink } from './IssuesLink'
 
 export const IssueLink = (props: { product: Product, issue?: Issue }) => (

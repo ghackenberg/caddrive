@@ -1,7 +1,6 @@
 import axios from 'axios'
-// Commons
 import { FileREST } from 'productboard-common'
-// Globals
+
 import { auth } from '../auth'
 
 class FileClientImpl implements FileREST<string | ArrayBuffer> {

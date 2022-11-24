@@ -1,4 +1,5 @@
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+
 import { MemberClient } from '../clients/rest/member'
 
 class MemberManagerImpl implements MemberREST {

@@ -1,20 +1,15 @@
+import { Product } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
-// Commons
-import { Product } from 'productboard-common'
-// Managers
-import { ProductManager } from '../../managers/product'
-// Contexts
+
 import { UserContext } from '../../contexts/User'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
-// Inputs
+import { ProductManager } from '../../managers/product'
 import { TextInput } from '../inputs/TextInput'
-// Widgets
-import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductHeader } from '../snippets/ProductHeader'
+import { ProductView3D } from '../widgets/ProductView3D'
 
 export const ProductSettingView = (props: RouteComponentProps<{product: string}>) => {
 

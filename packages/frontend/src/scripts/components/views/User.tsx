@@ -1,15 +1,12 @@
+import { User } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-// Commons
-import { User } from 'productboard-common'
-// Managers
+
 import { UserManager } from '../../managers/user'
-// Links
 import { UsersLink } from '../links/UsersLink'
-// Widgets
 import { Column, Table } from '../widgets/Table'
-// Images
+
 import * as DeleteIcon from '/src/images/delete.png'
 
 export const UserView = () => {

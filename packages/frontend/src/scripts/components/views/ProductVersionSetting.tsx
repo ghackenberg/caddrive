@@ -1,31 +1,25 @@
+import { Product, Version } from 'productboard-common'
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-// Commons
-import { Product, Version } from 'productboard-common'
-// Managers
+
+import { UserContext } from '../../contexts/User'
+import { render } from '../../functions/render'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
-// Contexts
-import { UserContext } from '../../contexts/User'
-// Functions
-import { render } from '../../functions/render'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
-// Inputs
-import { GenericInput } from '../inputs/GenericInput'
 import { FileInput } from '../inputs/FileInput'
+import { GenericInput } from '../inputs/GenericInput'
 import { NumberInput } from '../inputs/NumberInput'
 import { TextInput } from '../inputs/TextInput'
-// Widgets
-import { VersionView3D } from '../widgets/VersionView3D'
+import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductHeader } from '../snippets/ProductHeader'
 import { SceneView3D } from '../widgets/SceneView3D'
-// Images
+import { VersionView3D } from '../widgets/VersionView3D'
+
 import * as EmptyIcon from '/src/images/empty.png'
 import * as LoadIcon from '/src/images/load.png'
-import { ProductFooter } from '../snippets/ProductFooter'
 
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000

@@ -1,31 +1,24 @@
+import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router' 
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { Object3D } from 'three'
-// Commons
-import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
-// Managers
+
+import { UserContext } from '../../contexts/User'
+import { collectParts, Part } from '../../functions/markdown'
+import { TextInput } from '../inputs/TextInput'
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
-// Functions
-import { collectParts, Part } from '../../functions/markdown'
-// Services
 import { AudioRecorder } from '../../services/recorder'
-// Contexts
-import { UserContext } from '../../contexts/User'
-// Snippets
-import { ProductHeader } from '../snippets/ProductHeader'
-// Widgets
-import { ProductView3D } from '../widgets/ProductView3D'
-import { Column, Table } from '../widgets/Table'
-// Inputs
-import { TextInput } from '../inputs/TextInput'
 import { ProductFooter } from '../snippets/ProductFooter'
-// Images
+import { ProductHeader } from '../snippets/ProductHeader'
+import { Column, Table } from '../widgets/Table'
+import { ProductView3D } from '../widgets/ProductView3D'
+
 import * as LoadIcon from '/src/images/load.png'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {

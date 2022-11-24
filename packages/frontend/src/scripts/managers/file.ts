@@ -1,4 +1,5 @@
 import { FileREST } from 'productboard-common'
+
 import { FileClient } from '../clients/rest/file'
 
 class FileManagerImpl implements FileREST<string | ArrayBuffer> {

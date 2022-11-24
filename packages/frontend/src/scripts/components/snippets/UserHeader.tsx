@@ -1,10 +1,9 @@
+import { User } from 'productboard-common'
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
-// Commons
-import { User } from 'productboard-common'
-// Links
+
 import { UserLink } from '../links/UserLink'
-// Images
+
 import * as SettingIcon from '/src/images/setting.png'
 
 export const UserHeader = (props: {user?: User}) => (

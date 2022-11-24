@@ -1,4 +1,5 @@
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
+
 import { ProductClient } from '../clients/rest/product'
 
 class ProductManagerImpl implements ProductREST {

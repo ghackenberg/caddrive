@@ -1,15 +1,14 @@
+import { Comment, Issue, Member, User } from 'productboard-common'
 import * as React from 'react'
 import { useContext, ReactElement, MouseEvent } from 'react'
-// Commons
-import { Comment, Issue, Member, User } from 'productboard-common'
-// Contexts
+
 import { UserContext } from '../../contexts/User'
-// Icons
+import { ProductUserPictureWidget } from './ProductUserPicture'
+import { ProductUserNameWidget } from './ProductUserName'
+
 import * as PartIcon from '/src/images/part.png'
 import * as CloseIcon from '/src/images/close.png'
 import * as ReopenIcon from '/src/images/reopen.png'
-import { ProductUserPictureWidget } from './ProductUserPicture'
-import { ProductUserNameWidget } from './ProductUserName'
 
 interface Part {
     productId: string

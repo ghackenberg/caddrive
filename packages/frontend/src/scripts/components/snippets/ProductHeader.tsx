@@ -1,16 +1,15 @@
+import { Product } from 'productboard-common'
 import * as React from 'react'
 import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
-// Commons
-import { Product } from 'productboard-common'
-// Links
-import { ProductLink } from '../links/ProductLink'
-import { VersionsLink } from '../links/VersionsLink'
+
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
-// Images
-import * as SettingIcon from '/src/images/setting.png'
 import { MilestonesLink } from '../links/MilestonesLink'
+import { ProductLink } from '../links/ProductLink'
+import { VersionsLink } from '../links/VersionsLink'
+
+import * as SettingIcon from '/src/images/setting.png'
 
 export const ProductHeader = (props: {product?: Product}) => (
     <header>

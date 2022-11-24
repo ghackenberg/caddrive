@@ -1,30 +1,26 @@
+import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
 import { Redirect } from 'react-router'
-// Commons
-import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
-// Managers
-import { UserManager } from '../../managers/user'
-import { ProductManager } from '../../managers/product'
-import { MilestoneManager } from '../../managers/milestone'
-import { IssueManager } from '../../managers/issue'
+import { Link, RouteComponentProps } from 'react-router-dom'
+
+import { calculateActual } from '../../functions/burndown'
+import { countParts } from '../../functions/counter'
+import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { CommentManager } from '../../managers/comment'
+import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
-// Functions
-// Snippets
+import { MilestoneManager } from '../../managers/milestone'
+import { ProductManager } from '../../managers/product'
+import { UserManager } from '../../managers/user'
+import { ProductFooter } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
-// Widgets
-import { Column, Table } from '../widgets/Table'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
-// Images
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { Column, Table } from '../widgets/Table'
+
 import * as LoadIcon from '/src/images/load.png'
 import * as DeleteIcon from '/src/images/delete.png'
-import { calculateActual } from '../../functions/burndown'
-import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
-import { ProductFooter } from '../snippets/ProductFooter'
-import { countParts } from '../../functions/counter'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
 
