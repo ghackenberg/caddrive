@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm'
+
 import { CommentEntity } from './entities/comment'
 import { IssueEntity } from './entities/issue'
 import { MemberEntity } from './entities/member'

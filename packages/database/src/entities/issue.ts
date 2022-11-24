@@ -1,5 +1,6 @@
 import { Issue } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
+
 import { CommentEntity } from './comment'
 import { MilestoneEntity } from './milestone'
 import { ProductEntity } from './product'

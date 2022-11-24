@@ -1,5 +1,6 @@
 import { User } from 'productboard-common'
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+
 import { CommentEntity } from './comment'
 import { IssueEntity } from './issue'
 import { MemberEntity } from './member'
