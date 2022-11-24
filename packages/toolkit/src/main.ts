@@ -1,4 +1,5 @@
 import * as hash from 'hash.js'
+
 import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
 import { AppDataSource, CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductRepository, UserRepository, VersionRepository } from 'productboard-database'
 
