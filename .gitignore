@@ -2,6 +2,8 @@
 
 node_modules
 
+package-lock.json
+
 packages/backend/uploads/*.glb
 !packages/backend/uploads/demo-*.glb
 
