@@ -1,7 +1,8 @@
-import * as net from 'net'
 import * as http from 'http'
-import * as websocket from 'websocket-stream'
+import * as net from 'net'
+
 import aedes from 'aedes'
+import * as websocket from 'websocket-stream'
 
 const handler = aedes()
 
