@@ -1,5 +1,6 @@
-import { Member, MemberRole } from 'productboard-common'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+
+import { Member, MemberRole } from 'productboard-common'
 
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
