@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
@@ -8,6 +9,9 @@ import { MemberEntity, MemberRepository, ProductRepository, UserRepository } fro
 
 @Injectable()
 export class MemberService implements MemberREST {
+    @Client({ transport: Transport.MQTT })
+    private client: ClientProxy
+
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         let where: FindOptionsWhere<MemberEntity>
         if (productId && userId) 
@@ -24,6 +28,7 @@ export class MemberService implements MemberREST {
         const product = await ProductRepository.findOneByOrFail({ id: data.productId })
         const user = await UserRepository.findOneByOrFail({ id: data.userId })
         const member = await MemberRepository.save({ id: shortid(), deleted: false, product, user, ...data })
+        await this.client.emit(`/api/v1/members/${member.id}/create`, this.convert(member))
         return this.convert(member)
     }
 
@@ -36,6 +41,7 @@ export class MemberService implements MemberREST {
         const member = await MemberRepository.findOneByOrFail({ id })
         member.role = _data.role
         await MemberRepository.save(member)
+        await this.client.emit(`/api/v1/members/${member.id}/update`, this.convert(member))
         return this.convert(member)
     }
     
@@ -43,6 +49,7 @@ export class MemberService implements MemberREST {
         const member = await MemberRepository.findOneByOrFail({ id })
         member.deleted = true
         await MemberRepository.save(member)
+        await this.client.emit(`/api/v1/members/${member.id}/delete`, this.convert(member))
         return this.convert(member)
     }
 

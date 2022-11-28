@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
@@ -7,7 +8,10 @@ import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'product
 import { CommentEntity, CommentRepository } from 'productboard-database'
 
 @Injectable()
-export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> { 
+export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> {
+    @Client({ transport: Transport.MQTT })
+    private client: ClientProxy
+
     async findComments(issueId: string): Promise<Comment[]> {
         let where: FindOptionsWhere<CommentEntity>
         if (issueId)
@@ -22,6 +26,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     async addComment(data: CommentAddData, _files: { audio?: Express.Multer.File[] }): Promise<Comment> {
         // TODO save audio file and remove eslint comment
         const comment = await CommentRepository.save({ id: shortid(), deleted: false, ...data })
+        await this.client.emit(`/api/v1/comments/${comment.id}/create`, this.convert(comment))
         return this.convert(comment)
     }
 
@@ -37,6 +42,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         comment.action = data.action
         comment.text = data.text
         await CommentRepository.save(comment)
+        await this.client.emit(`/api/v1/comments/${comment.id}/update`, this.convert(comment))
         return this.convert(comment)
     }
 
@@ -44,6 +50,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         const comment = await CommentRepository.findOneByOrFail({ id })
         comment.deleted = true
         await CommentRepository.save(comment)
+        await this.client.emit(`/api/v1/comments/${comment.id}/delete`, this.convert(comment))
         return this.convert(comment)
     }
 

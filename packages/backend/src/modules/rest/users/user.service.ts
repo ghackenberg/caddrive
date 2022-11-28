@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 
 import { Injectable } from '@nestjs/common'
+import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import 'multer'
 import * as shortid from 'shortid'
@@ -11,6 +12,9 @@ import { getMemberOrFail, MemberRepository, UserEntity, UserRepository } from 'p
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {
+    @Client({ transport: Transport.MQTT })
+    private client: ClientProxy
+
     async checkUser(): Promise<User> {
         return null
     }
@@ -43,6 +47,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
             }
             fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
+        await this.client.emit(`/api/v1/users/${user.id}/create`, this.convert(user))
         return this.convert(user)
     }
 
@@ -66,6 +71,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
             fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
         await UserRepository.save(user)
+        await this.client.emit(`/api/v1/users/${user.id}/update`, this.convert(user))
         return this.convert(user)
     }
 
@@ -74,6 +80,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         await MemberRepository.update({ userId: user.id }, { deleted: true })
         user.deleted = true
         await UserRepository.save(user)
+        await this.client.emit(`/api/v1/users/${user.id}/delete`, this.convert(user))
         return this.convert(user)
     }
 
