@@ -12,14 +12,14 @@ import * as DeleteIcon from '/src/images/delete.png'
 
 export const UserView = () => {
 
+    // INITIAL STATES
+
+    const initialUsers = UserManager.findUsersFromCache()
+
     // STATES
 
     // - Entities
-    const [users, setUsers] = useState<User[]>()
-
-    //
-
-    //TODO use initial state 
+    const [users, setUsers] = useState<User[]>(initialUsers)
 
     // EFFECTS
 
