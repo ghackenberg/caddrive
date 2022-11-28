@@ -141,9 +141,21 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                     <div className="text">
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                            <a> { version && version.userId in users && members ? <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> } </a>
+                                                            <a>
+                                                                { version && version.userId in users && members ? (
+                                                                    <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/>
+                                                                ) : (
+                                                                    <img src={LoadIcon} className='big load' /> 
+                                                                )}
+                                                            </a>
                                                             <span className="user">
-                                                                <span className="name"> {vers.id in users && members ? <ProductUserNameWidget user={users[vers.id]} members={members}/> : '?'}  </span>
+                                                                <span className="name">
+                                                                    {vers.id in users && members ? (
+                                                                        <ProductUserNameWidget user={users[vers.id]} members={members}/>
+                                                                    ) : (
+                                                                        '?'
+                                                                    )}
+                                                                </span>
                                                                 {/* Email temporär ausgeblendet */}
                                                                 {/* <span className="email"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span> */}
                                                             </span>
@@ -153,6 +165,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         </div>
                                                     </div>
                                                     <div style={ { backgroundImage: `url("/rest/files/${vers.id}.png")` } } className="model">
+                                                        {/* empty */}
                                                     </div>
                                                 </div>
                                             </Fragment>

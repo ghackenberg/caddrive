@@ -10,8 +10,7 @@ export const ProductUserPictureWidget = (props: { user: User, members: Member[],
     return (
         <Fragment>
             {props.user.deleted ? (
-                <img src={RemovedUserIcon} 
-                className={props.class}/>
+                <img src={RemovedUserIcon}  className={props.class}/>
             ) : (
                 <Fragment>
                     {props.members.map(member => member.userId).includes(props.user.id) ? (

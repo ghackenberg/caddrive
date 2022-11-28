@@ -14,6 +14,7 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
     // MQTT
 
     create(user: User): void {
+        console.log(`User created ${user}`)
         this.userIndex[user.id] = user
         if (this.findResult) {
             this.findResult[user.id] = true
@@ -21,10 +22,12 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
     }
 
     update(user: User): void {
+        console.log(`User updated ${user}`)
         this.userIndex[user.id] = user
     }
 
     delete(user: User): void {
+        console.log(`User deleted ${user}`)
         this.userIndex[user.id] = user
         if (this.findResult) {
             delete this.findResult[user.id]
