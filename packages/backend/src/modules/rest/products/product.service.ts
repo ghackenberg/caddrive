@@ -1,5 +1,6 @@
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
+import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import { Request } from 'express'
 import * as shortid from 'shortid'
@@ -10,6 +11,9 @@ import { CommentRepository, IssueRepository, MemberRepository, MilestoneReposito
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
+    @Client({ transport: Transport.MQTT })
+    private client: ClientProxy
+
     public constructor(
         @Inject(REQUEST)
         private readonly request: Request,
@@ -30,6 +34,7 @@ export class ProductService implements ProductREST {
     async addProduct(data: ProductAddData) {
         const product = await ProductRepository.save({ id: shortid(), deleted: false, ...data })
         await MemberRepository.save({ id: shortid(), productId: product.id, userId: product.userId, role: 'manager' })
+        await this.client.emit(`/api/v1/products/${product.id}/create`, this.convert(product))
         return this.convert(product)
     }
 
@@ -43,6 +48,7 @@ export class ProductService implements ProductREST {
         product.name = data.name
         product.description = data.description
         await ProductRepository.save(product)
+        await this.client.emit(`/api/v1/products/${product.id}/update`, this.convert(product))
         return this.convert(product)
     }
 
@@ -55,6 +61,7 @@ export class ProductService implements ProductREST {
         await CommentRepository.update({ issue: { productId: product.id } }, { deleted: true })
         product.deleted = true
         await ProductRepository.save(product)
+        await this.client.emit(`/api/v1/products/${product.id}/delete`, this.convert(product))
         return this.convert(product)
     }
 

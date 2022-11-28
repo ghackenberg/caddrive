@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
@@ -8,6 +9,9 @@ import { IssueRepository, MilestoneEntity, MilestoneRepository } from 'productbo
 
 @Injectable()
 export class MilestoneService implements MilestoneREST {
+    @Client({ transport: Transport.MQTT })
+    private client: ClientProxy
+
     async findMilestones(productId: string): Promise<Milestone[]> {
         let where: FindOptionsWhere<MilestoneEntity>
         if (productId)
@@ -20,6 +24,7 @@ export class MilestoneService implements MilestoneREST {
 
     async addMilestone(data: MilestoneAddData): Promise<Milestone> {   
         const milestone = await MilestoneRepository.save({ id: shortid(), deleted: false, ...data })
+        await this.client.emit(`/api/v1/milestones/${milestone.id}/create`, this.convert(milestone))
         return this.convert(milestone)
     }
 
@@ -34,6 +39,7 @@ export class MilestoneService implements MilestoneREST {
         milestone.start = data.start
         milestone.end = data.end
         await MilestoneRepository.save(milestone)
+        await this.client.emit(`/api/v1/milestones/${milestone.id}/update`, this.convert(milestone))
         return this.convert(milestone)
     }
 
@@ -42,6 +48,7 @@ export class MilestoneService implements MilestoneREST {
         await IssueRepository.update({ milestoneId: milestone.id }, { milestoneId: null })
         milestone.deleted = true
         await MilestoneRepository.save(milestone)
+        await this.client.emit(`/api/v1/milestones/${milestone.id}/delete`, this.convert(milestone))
         return this.convert(milestone)
     }
 

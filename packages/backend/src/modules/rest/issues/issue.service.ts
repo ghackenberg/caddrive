@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 
 import { Injectable } from '@nestjs/common'
+import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
@@ -10,6 +11,9 @@ import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-da
 
 @Injectable()
 export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
+    @Client({ transport: Transport.MQTT })
+    private client: ClientProxy
+
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
         let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
@@ -34,6 +38,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             }
             fs.writeFileSync(`./uploads/${issue.id}.webm`, files.audio[0].buffer)
         }
+        await this.client.emit(`/api/v1/issues/${issue.id}/create`, this.convert(issue))
         return this.convert(issue)
     }
 
@@ -56,6 +61,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             }
             fs.writeFileSync(`./uploads/${issue.id}.webm`, files.audio[0].buffer)
         }
+        await this.client.emit(`/api/v1/issues/${issue.id}/update`, this.convert(issue))
         return this.convert(issue)
     }
 
@@ -64,6 +70,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         await CommentRepository.update({ issueId: issue.id }, { deleted: true })
         issue.deleted = true
         await IssueRepository.save(issue)
+        await this.client.emit(`/api/v1/issues/${issue.id}/delete`, this.convert(issue))
         return this.convert(issue)
     }
 

@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 
 import { Injectable } from '@nestjs/common'
+import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import 'multer'
 import * as shortid from 'shortid'
@@ -11,6 +12,9 @@ import { VersionEntity, VersionRepository } from 'productboard-database'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
+    @Client({ transport: Transport.MQTT })
+    private client: ClientProxy
+
     async findVersions(productId: string) : Promise<Version[]> {
         let where: FindOptionsWhere<VersionEntity>
         if (productId)
@@ -35,7 +39,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
             }
             fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
         }
-        
+        await this.client.emit(`/api/v1/versions/${version.id}/create`, this.convert(version))
         return this.convert(version)
     }
 
@@ -63,6 +67,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
             fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
         }
         await VersionRepository.save(version)
+        await this.client.emit(`/api/v1/versions/${version.id}/update`, this.convert(version))
         return this.convert(version)
     }
 
@@ -70,6 +75,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const version = await VersionRepository.findOneByOrFail({ id })
         version.deleted = true
         await VersionRepository.save(version)
+        await this.client.emit(`/api/v1/versions/${version.id}/delete`, this.convert(version))
         return this.convert(version)
     }
 
