@@ -19,7 +19,6 @@ class TestClient extends AbstractClient<TestDownMQTT> implements TestUpMQTT {
         })
         // Handle
         client.on('message', (topic, message) => {
-            console.log('MQTT client message', topic, message)
             if (topic == "c") {
                 for (const handler of this.handlers) {
                     handler.c(message.toString())

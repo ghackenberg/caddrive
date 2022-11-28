@@ -24,7 +24,7 @@ aedes.on('unsubscribe', (unsubscriptions, client) => {
     console.log('Client unsubscribe', client.id, unsubscriptions)
 })
 aedes.on('publish', (packet, client) => {
-    console.log('Client publish', client.id, packet.topic)
+    console.log('Client publish', client ? client.id : null, packet.topic)
 })
 
 // Handle TCP connections

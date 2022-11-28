@@ -7,25 +7,24 @@ class UserClient extends AbstractClient<UserDownMQTT> implements UserUpMQTT {
     constructor() {
         super()
         // Subscribe
-        client.subscribe("/api/v1/users/#/create", error => {
+        client.subscribe("/api/v1/users/+/create", error => {
             if (error) {
                 console.error('MQTT client subscribe error', error)
             }
         })
-        client.subscribe("/api/v1/users/#/update", error => {
+        client.subscribe("/api/v1/users/+/update", error => {
             if (error) {
                 console.error('MQTT client subscribe error', error)
             }
         })
-        client.subscribe("/api/v1/users/#/delete", error => {
+        client.subscribe("/api/v1/users/+/delete", error => {
             if (error) {
                 console.error('MQTT client subscribe error', error)
             }
         })
         // Handle
         client.on('message', (topic, message) => {
-            console.log('MQTT client message', topic, message)
-            if (topic.startsWith('api/v1/users')) {
+            if (topic.startsWith('/api/v1/users')) {
                 const user = JSON.parse(message.toString()) as User
                 if (topic.endsWith('create')) {
                     for (const handler of this.handlers) {

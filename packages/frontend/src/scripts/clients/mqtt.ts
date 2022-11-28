@@ -9,7 +9,7 @@ export const client = mqtt.connect(url)
 
 client.on('connect', () => {
     console.log('MQTT client connected')
-    client.subscribe('*', error => {
+    client.subscribe('#', error => {
         if (error) {
             console.error(error)
         }
