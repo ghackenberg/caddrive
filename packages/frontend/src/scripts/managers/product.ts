@@ -5,6 +5,14 @@ import { ProductClient } from '../clients/rest/product'
 class ProductManagerImpl implements ProductREST {
     private productIndex: {[id: string]: Product} = {}
     private productSet: {[id: string]: boolean}
+
+    findProductsFromCache() { 
+        if (this.productSet) { 
+            return Object.keys(this.productSet).map(id => this.productIndex[id])
+        } else { 
+            return undefined 
+        } 
+    }
     
     async findProducts(): Promise<Product[]> {
         if (!this.productSet) {
