@@ -42,6 +42,14 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         return user
     }
 
+    findUsersFromCache() { 
+        if (this.findResult) { 
+            return Object.keys(this.findResult).map(id => this.userIndex[id])
+        } else { 
+            return undefined 
+        } 
+    }
+
     async findUsers(query?: string, product?: string): Promise<User[]> {
         if (query || product) {
             return await UserClient.findUsers(query, product)

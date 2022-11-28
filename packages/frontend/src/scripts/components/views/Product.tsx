@@ -21,15 +21,54 @@ export const ProductView = () => {
     
     const contextUser = useContext(UserContext)
 
+    // INITIAL STATES
+    const initialProducts = ProductManager.findProductsFromCache()
+    const initialUsers: {[id: string]: User} = {}
+    for (const product of initialProducts || []) {
+        const user = UserManager.getUserFromCache(product.userId)
+        if (user) {
+            initialUsers[product.id] = user
+        }
+    }
+    const initialVersions: {[id: string]: number} = {}
+    for (const product of initialProducts || []) {
+        const versions = VersionManager.getVersionCount(product.id)
+        if (versions) {
+            initialVersions[product.id] = versions
+        }
+    }
+    const initialLatestVersions: {[id: string]: string} = {}
+    for (const product of initialProducts || []) {
+        const versions = VersionManager.findVersionsFromCache(product.id)
+        if (versions) {
+            const latestVersion = versions[versions.length -1]
+            initialLatestVersions[product.id] = latestVersion.id
+        }
+    }
+    const initialIssues: {[id: string]: number} = {}
+    for (const product of initialProducts || []) {
+        const issues = IssueManager.getIssueCount(product.id, undefined, undefined)
+        if (issues) {
+            initialIssues[product.id] = issues
+        }
+    }
+    const initialMembers: {[id: string]: Member[]} = {}
+    for (const product of initialProducts || []) {
+        const members = MemberManager.findMembersFromCache(product.id) 
+        if (members) {
+            initialMembers[product.id] = members
+        }
+    }
+    
     // STATES
 
     // - Entities
-    const [products, setProducts] = useState<Product[]>()
-    const [users, setUsers] = useState<{[id: string]: User}>({})
-    const [versions, setVersions] = useState<{[id: string]: number}>({})
-    const [latestVersions, setLatestVersions] = useState<{[id: string]: string}>({})
-    const [issues, setIssues] = useState<{[id: string]: number}>({})
-    const [members, setMembers] = useState<{[id: string]: Member[]}>({})
+    const [products, setProducts] = useState<Product[]>(initialProducts)
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+    const [versions, setVersions] = useState<{[id: string]: number}>(initialVersions)
+    const [latestVersions, setLatestVersions] = useState<{[id: string]: string}>(initialLatestVersions)
+    const [issues, setIssues] = useState<{[id: string]: number}>(initialIssues)
+    const [members, setMembers] = useState<{[id: string]: Member[]}>(initialMembers)
 
     // EFFECTS
 
