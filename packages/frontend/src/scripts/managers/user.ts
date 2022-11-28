@@ -1,10 +1,37 @@
-import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
+import { User, UserAddData, UserUpdateData, UserREST, UserDownMQTT } from 'productboard-common'
 
+import { UserAPI } from '../clients/mqtt/user'
 import { UserClient } from '../clients/rest/user'
 
-class UserManagerImpl implements UserREST<UserAddData, File> {
+class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
     private userIndex: {[id: string]: User} = {}
     private findResult: {[id: string]: boolean}
+
+    constructor() {
+        UserAPI.register(this)
+    }
+
+    // MQTT
+
+    create(user: User): void {
+        this.userIndex[user.id] = user
+        if (this.findResult) {
+            this.findResult[user.id] = true
+        }
+    }
+
+    update(user: User): void {
+        this.userIndex[user.id] = user
+    }
+
+    delete(user: User): void {
+        this.userIndex[user.id] = user
+        if (this.findResult) {
+            delete this.findResult[user.id]
+        }
+    }
+
+    // REST
 
     async checkUser(): Promise<User> {
         // Call backend
