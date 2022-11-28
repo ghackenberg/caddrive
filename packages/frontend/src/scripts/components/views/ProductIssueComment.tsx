@@ -23,7 +23,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     // CONSTANTS
-
+    
     // REFERENCES
 
     const textReference = useRef<HTMLTextAreaElement>()
@@ -43,18 +43,20 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
     const initialComments = issueId == 'new' ? undefined : CommentManager.findCommentsFromCache(issueId)
-    // const initialUsers: {[id: string]: User} = {}
-    // const user = UserManager.getUserFromCache(issueId)
-    // if (user) {
-    //     initialUsers[user.id] = user
-    // for (const comment of initialComments || []) {
-    //     const user = UserManager.getUserFromCache(comment.userId)
-    //     if (user) {
-    //         initialUsers[user.id] = user
-    //     }
-    // } 
-    // console.log(initialUsers)
-    
+
+    const initialUsers: {[id: string]: User} = {}
+    const user = UserManager.getUserFromCache(issueId)
+    if (user) {
+        initialUsers[user.id] = user
+        for (const comment of initialComments || []) {
+            const user = UserManager.getUserFromCache(comment.userId)
+            if (user) {
+                initialUsers[user.id] = user
+            }
+        } 
+    }
+    console.log(initialUsers)
+
     // STATES
 
     // - Entities
@@ -62,7 +64,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const [members, setMember] = useState<Member[]>(initialMembers)
     const [issue, setIssue] = useState<Issue>(initialIssue)
     const [comments, setComments] = useState<Comment[]>(initialComments)
-    const [users, setUsers] = useState<{[id: string]: User}>({})
+    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Values
     const [text, setText] = useState<string>('')
     // - Computations

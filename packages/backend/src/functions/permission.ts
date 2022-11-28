@@ -110,8 +110,9 @@ export async function canFindIssuenOrFail(userId: string, productId: string) {
 export async function canCreateIssueOrFail(userId: string, productId: string) {
     await getMemberOrFail({ userId: userId, product: { id: productId, deleted: false }, role: In(['manager', 'engineer', 'customer']), deleted: false}, ForbiddenException)
 }
-export async function canReadIssueOrFail(userId: string, productId: string) {
-    await getMemberOrFail({ userId: userId, product: { id: productId, deleted: false }, role: In(['manager', 'engineer', 'customer']), deleted: false}, ForbiddenException)
+export async function canReadIssueOrFail(userId: string, issueId: string) {
+    const issue = await getIssueOrFail({ id: issueId, deleted: false }, NotFoundException)
+    await getMemberOrFail({ userId: userId, product: { id: issue.productId, deleted: false }, role: In(['manager', 'engineer', 'customer']), deleted: false}, ForbiddenException)
 }
 export async function canUpdateIssueOrFail(userId: string, issueId: string) {
     const issue = await getIssueOrFail({ id: issueId, deleted: false }, NotFoundException)
