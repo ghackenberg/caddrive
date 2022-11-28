@@ -23,6 +23,9 @@ aedes.on('subscribe', (subscriptions, client) => {
 aedes.on('unsubscribe', (unsubscriptions, client) => {
     console.log('Client unsubscribe', client.id, unsubscriptions)
 })
+aedes.on('publish', (packet, client) => {
+    console.log('Client publish', client.id, packet.topic)
+})
 
 // Handle TCP connections
 const tcp = net.createServer()
