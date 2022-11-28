@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { Member, Product, User, Version } from 'productboard-common'
 
+import { computeTree } from '../../functions/tree'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
@@ -35,8 +36,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             initialUsers[version.id] = user
         }
     }
-
-    // TODO states vom Tree berechnen in externer Funktion, dann im useeffekt und initial aufrufen
+    const initialTree = computeTree(initialVersions)
 
     // STATES
 
@@ -46,12 +46,12 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [versions, setVersions] = useState<Version[]>(initialVersions)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
-    const [children, setChildren] = useState<{[id: string]: Version[]}>({})
-    const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>({})
-    const [childrenMax, setChildrenMax] = useState<{[id: string]: number}>({})
-    const [siblings, setSiblings] = useState<{[id: string]: Version[]}>({})
-    const [indents, setIndents] = useState<{[id: string]: number}>({})
-    const [indent, setIndent] = useState<number>(0)
+    const [children, setChildren] = useState<{[id: string]: Version[]}>(initialTree.children)
+    const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>(initialTree.childrenMin)
+    const [childrenMax, setChildrenMax] = useState<{[id: string]: number}>(initialTree.childrenMax)
+    const [siblings, setSiblings] = useState<{[id: string]: Version[]}>(initialTree.siblings)
+    const [indents, setIndents] = useState<{[id: string]: number}>(initialTree.indents)
+    const [indent, setIndent] = useState<number>(initialTree.indent)
     // - Interactions
     const [version, setVersion] = useState<Version>()
     const [sidebar, setSidebar] = useState<boolean>(false)
@@ -76,92 +76,14 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     }, [versions])
 
     // - Computations
-    useEffect(() => {
-        if (versions && versions.length > 0) {
-            // Calculate children
-            const children: {[id: string]: Version[]} = {}
-    
-            for (const version of versions) {
-                children[version.id] = []
-                for (const baseVersionId of version.baseVersionIds) {
-                    children[baseVersionId].push(version)
-                }
-            }
-
-            setChildren(children)
-
-            // Calculate siblings
-
-            const siblings: {[id: string]: Version[]} = {}
-
-            for (const version of versions) {
-                siblings[version.id] = []
-            }
-
-            for (let outerIndex = versions.length - 1; outerIndex >= 0; outerIndex--) {
-                const outerVersion = versions[outerIndex]
-                const baseVersionIds = [...outerVersion.baseVersionIds]
-                for (let innerIndex = outerIndex - 1; innerIndex >= 0; innerIndex--) {
-                    const innerVersion = versions[innerIndex]
-                    const baseIndex = baseVersionIds.indexOf(innerVersion.id)
-                    if (baseIndex != -1) {
-                        baseVersionIds.splice(baseIndex, 1)
-                    }
-                    if (baseVersionIds.length > 0) {
-                        siblings[innerVersion.id].push(outerVersion)
-                    }
-                }
-            }
-
-            setSiblings(siblings)
-
-            // Calculate indents
-            const indents: {[id: string]: number} = {}
-
-            let next = 0
-
-            for (const version of versions) {
-                if (!(version.id in indents)) {
-                    const indent = version.baseVersionIds.length > 0 ? indents[version.baseVersionIds[0]] : next
-                
-                    indents[version.id] = indent
-                }
-
-                for (let index = 0; index < children[version.id].length; index++) {
-                    const child = children[version.id][index]
-                    if (!(child.id in indents)) {
-                        if (index == 0) {
-                            indents[child.id] = indents[version.id]
-                        } else {
-                            indents[child.id] = ++next
-                        }
-                    }
-                }
-            }
-
-            setIndents(indents)
-            setIndent(next + 1)
-
-            // Calculate min/max
-            const childrenMin: {[id: string]: number} = {}
-            const childrenMax: {[id: string]: number} = {}
-
-            for (const version of versions) {
-                let min = indents[version.id]
-                let max = 0
-
-                for (const child of children[version.id]) {
-                    min = Math.min(min, indents[child.id])
-                    max = Math.max(max, indents[child.id])
-                }
-
-                childrenMin[version.id] = min
-                childrenMax[version.id] = max
-            }
-
-            setChildrenMin(childrenMin)
-            setChildrenMax(childrenMax)
-        }
+    useEffect(() => { 
+        const tree = computeTree(versions)
+        setChildren(tree.children)
+        setSiblings(tree.siblings)
+        setIndents(tree.indents)
+        setIndent(tree.indent)
+        setChildrenMin(tree.childrenMin)
+        setChildrenMax(tree.childrenMax)
     }, [versions])
 
     // RETURN

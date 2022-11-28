@@ -39,10 +39,10 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const productId = props.match.params.product
     const versionId = props.match.params.version
 
-        // INITIAL STATES
-        const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-        const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
-        const initialVersion = versionId == 'new' ? undefined : VersionManager.getVersionFromCache(versionId)
+    // INITIAL STATES
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
+    const initialVersion = versionId == 'new' ? undefined : VersionManager.getVersionFromCache(versionId)
 
     // STATES
 

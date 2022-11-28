@@ -17,6 +17,10 @@ export const UserView = () => {
     // - Entities
     const [users, setUsers] = useState<User[]>()
 
+    //
+
+    //TODO use initial state 
+
     // EFFECTS
 
     // - Entities
