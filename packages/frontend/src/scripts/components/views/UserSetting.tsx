@@ -27,10 +27,14 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
 
     const userId = props.match.params.user
 
+    // INITIAL STATES
+    
+    const initialUser = userId == 'new' ? undefined : UserManager.getUserFromCache(userId)
+
     // STATES
     
     // - Entities
-    const [user, setUser] = useState<User>()
+    const [user, setUser] = useState<User>(initialUser)
     // - Values
     const [email, setEmail] = useState<string>('')
     const [name, setName] = useState<string>('')
@@ -46,8 +50,8 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     // - Values
     useEffect(() => { user && setEmail(user.email) }, [user])
     useEffect(() => { user && setName(user.name) }, [user])
-    useEffect(() => {user && setUserManagementPermission(user.userManagementPermission)}, [user])
-    useEffect(() => {user && setProductManagementPermission(user.productManagementPermission)}, [user])
+    useEffect(() => { user && setUserManagementPermission(user.userManagementPermission)}, [user])
+    useEffect(() => { user && setProductManagementPermission(user.productManagementPermission)}, [user])
 
     // FUNCTIONS 
     async function submit(event: FormEvent){
