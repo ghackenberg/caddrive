@@ -24,7 +24,7 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
             for (const comment of comments) {
                 this.commentIndex[comment.id] = comment
             }
-            // Update issue index
+            // Update find index
             this.findIndex[key] = {}
             for (const comment of comments) {
                 this.findIndex[key][comment.id] = true
@@ -51,26 +51,18 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
             const comment = await CommentClient.getComment(id)
             // Update comment index
             this.commentIndex[id] = comment
-            // Update find index
-            this.addToFindIndex(comment)
         }
         // Return comment
         return this.commentIndex[id]
     }
 
     async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }): Promise<Comment> {
-        if (id in this.commentIndex) {
-            const comment = this.commentIndex[id]
-            // Update issue index
-            if (comment.issueId in this.findIndex) {
-                delete this.findIndex[comment.issueId][id]
-            }
-        }
         // Call backend
         const comment = await CommentClient.updateComment(id, data, files)
         // Update comment index
         this.commentIndex[id] = comment
-        // Update issue index
+        // Update find index
+        this.removeFromFindIndex(comment)
         this.addToFindIndex(comment)
         // Return comment
         return comment
