@@ -4,18 +4,18 @@ import { ProductClient } from '../clients/rest/product'
 
 class ProductManagerImpl implements ProductREST {
     private productIndex: {[id: string]: Product} = {}
-    private productSet: {[id: string]: boolean}
+    private findResult: {[id: string]: boolean}
 
     findProductsFromCache() { 
-        if (this.productSet) { 
-            return Object.keys(this.productSet).map(id => this.productIndex[id])
+        if (this.findResult) { 
+            return Object.keys(this.findResult).map(id => this.productIndex[id])
         } else { 
             return undefined 
         } 
     }
     
     async findProducts(): Promise<Product[]> {
-        if (!this.productSet) {
+        if (!this.findResult) {
             // Call backend
             const products = await ProductClient.findProducts()
             // Update product index
@@ -23,13 +23,13 @@ class ProductManagerImpl implements ProductREST {
                 this.productIndex[product.id] = product
             }
             // Update product set
-            this.productSet = {}
+            this.findResult = {}
             for (const product of products) {
-                this.productSet[product.id] = true
+                this.findResult[product.id] = true
             }
         }
         // Return products
-        return Object.keys(this.productSet).map(id => this.productIndex[id])
+        return Object.keys(this.findResult).map(id => this.productIndex[id])
     }
 
     async addProduct(data: ProductAddData): Promise<Product> {
@@ -38,9 +38,7 @@ class ProductManagerImpl implements ProductREST {
         // Update product index
         this.productIndex[product.id] = product
         // Update product set
-        if (this.productSet) {
-            this.productSet[product.id] = true
-        }
+        this.addToFindResult(product)
         // Return product
         return product
     }
@@ -59,10 +57,6 @@ class ProductManagerImpl implements ProductREST {
             const product = await ProductClient.getProduct(id)
             // Update product index
             this.productIndex[id] = product
-            // Update product set
-            if (this.productSet) {
-                this.productSet[id] = true
-            }
         }
         // Return product
         return this.productIndex[id]
@@ -74,9 +68,8 @@ class ProductManagerImpl implements ProductREST {
         // Update product index
         this.productIndex[id] = product
         // Update product set
-        if (this.productSet) {
-            this.productSet[id] = true
-        }
+        this.removeFromFindResult(product)
+        this.addToFindResult(product)
         // Return product
         return product
     }
@@ -87,11 +80,21 @@ class ProductManagerImpl implements ProductREST {
         // Update product index
         this.productIndex[id] = product
         // Update product set
-        if (this.productSet) {
-            delete this.productSet[id]
-        }
+        this.removeFromFindResult(product)
         // Return product
         return product
+    }
+
+    private addToFindResult(product: Product) {
+        if (this.findResult) {
+            this.findResult[product.id] = true
+        }
+    }
+    
+    private removeFromFindResult(product: Product) {
+        if (this.findResult) {
+            delete this.findResult[product.id]
+        }
     }
 }
 

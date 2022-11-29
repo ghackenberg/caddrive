@@ -42,7 +42,9 @@ export const ProductView = () => {
         const versions = VersionManager.findVersionsFromCache(product.id)
         if (versions) {
             const latestVersion = versions[versions.length -1]
-            initialLatestVersions[product.id] = latestVersion.id
+            if (latestVersion) {
+                initialLatestVersions[product.id] = latestVersion.id
+            }
         }
     }
     const initialIssues: {[id: string]: number} = {}
