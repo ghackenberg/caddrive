@@ -80,9 +80,7 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         // Update user index
         this.userIndex[user.id] = user
         // Update user set
-        if (this.findResult) {
-            this.findResult[user.id] = true
-        }
+        this.addToFindResult(user)
         // Return user
         return user
     }
@@ -111,6 +109,9 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         const user = await UserClient.updateUser(id, data, file)
         // Update user index
         this.userIndex[id] = user
+        // Update find result
+        this.removeFromFindResult(user)
+        this.addToFindResult(user)
         // Return user
         return user
     }
@@ -121,11 +122,21 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         // Update user index
         this.userIndex[id] = user
         // Update user set
-        if (this.findResult) {
-            delete this.findResult[id]
-        }
+        this.removeFromFindResult(user)
         // Return user
         return user
+    }
+
+    private addToFindResult(user: User) {
+        if (this.findResult) {
+            this.findResult[user.id] = true
+        }
+    }
+    
+    private removeFromFindResult(user: User) {
+        if (this.findResult) {
+            delete this.findResult[user.id]
+        }
     }
 }
 

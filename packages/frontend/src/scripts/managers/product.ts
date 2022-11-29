@@ -67,7 +67,7 @@ class ProductManagerImpl implements ProductREST {
         const product = await ProductClient.updateProduct(id, data)
         // Update product index
         this.productIndex[id] = product
-        // Update product set
+        // Update find result
         this.removeFromFindResult(product)
         this.addToFindResult(product)
         // Return product
@@ -79,7 +79,7 @@ class ProductManagerImpl implements ProductREST {
         const product = await ProductClient.deleteProduct(id)
         // Update product index
         this.productIndex[id] = product
-        // Update product set
+        // Update find result
         this.removeFromFindResult(product)
         // Return product
         return product
