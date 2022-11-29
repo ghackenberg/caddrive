@@ -14,7 +14,7 @@ export const ProductUserPictureWidget = (props: { user: User, members: Member[],
             ) : (
                 <Fragment>
                     {props.members.map(member => member.userId).includes(props.user.id) ? (
-                        <img src={`/rest/files/${props.user.id}.jpg`} className={props.class}/>
+                        <img src={`/rest/files/${props.user.pictureId}.jpg`} className={props.class}/>
                     ) : (
                         <img src={DiagonalIcon} style={{backgroundImage: `url(/rest/files/${props.user.id}.jpg)`}} className={props.class}/>
                     )}
