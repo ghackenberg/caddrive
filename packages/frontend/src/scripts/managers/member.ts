@@ -8,16 +8,18 @@ class MemberManagerImpl implements MemberREST {
     private userIndex: {[id: string]: {[id: string]: {[id: string]: boolean}}} = {}
 
     getMemberCount(productId: string) { 
-        if (productId in this.findIndex) { 
-            return Object.keys(this.findIndex[productId]).length 
+        const key = `${productId}`
+        if (key in this.findIndex) { 
+            return Object.keys(this.findIndex[key]).length 
         } else { 
             return undefined 
         } 
     }
 
     findMembersFromCache(productId: string) { 
-        if (productId in this.findIndex) { 
-            return Object.keys(this.findIndex[productId]).map(id => this.memberIndex[id])
+        const key = `${productId}`
+        if (key in this.findIndex) { 
+            return Object.keys(this.findIndex[key]).map(id => this.memberIndex[id])
         } else { 
             return undefined 
         } 
@@ -50,7 +52,7 @@ class MemberManagerImpl implements MemberREST {
                 for (const member of members) {
                     this.memberIndex[member.id] = member
                 }
-                // Update product index
+                // Update find index
                 this.findIndex[productId] = {}
                 for (const member of members) {
                     this.findIndex[productId][member.id] = true
@@ -66,7 +68,7 @@ class MemberManagerImpl implements MemberREST {
         const member = await MemberClient.addMember(data)
         // Update member index
         this.memberIndex[member.id] = member
-        // Update product index
+        // Update find index
         if (member.productId in this.findIndex) {
             this.findIndex[member.productId][member.id] = true
         }
@@ -92,7 +94,7 @@ class MemberManagerImpl implements MemberREST {
             const member = await MemberClient.getMember(id)
             // Update member index
             this.memberIndex[id] = member
-            // Update product index
+            // Update find index
             if (member.productId in this.findIndex) {
                 this.findIndex[member.productId][id] = true
             }
@@ -108,7 +110,7 @@ class MemberManagerImpl implements MemberREST {
     async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
         if (id in this.memberIndex) {
             const member = this.memberIndex[id]
-            // Update product index
+            // Update find index
             if (member.productId in this.findIndex) {
                 delete this.findIndex[member.productId][id]
             }
@@ -121,7 +123,7 @@ class MemberManagerImpl implements MemberREST {
         const member = await MemberClient.updateMember(id, data)
         // Update member index
         this.memberIndex[member.id] = member
-        // Update product index
+        // Update find index
         if (member.productId in this.findIndex) {
             this.findIndex[member.productId][id] = true
         }
@@ -138,7 +140,7 @@ class MemberManagerImpl implements MemberREST {
         const member = await MemberClient.deleteMember(id)
         // Update member index
         this.memberIndex[member.id] = member
-        // Update product index
+        // Update find index
         if (member.productId in this.findIndex) {
             delete this.findIndex[member.productId][id]
         }

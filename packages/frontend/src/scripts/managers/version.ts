@@ -7,33 +7,36 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
 
     getVersionCount(productId: string) { 
-        if (productId in this.findIndex) { 
-            return Object.keys(this.findIndex[productId]).length 
+        const key = `${productId}`
+        if (key in this.findIndex) { 
+            return Object.keys(this.findIndex[key]).length 
         } else { 
             return undefined 
         } 
     }
 
     findVersionsFromCache(productId: string) { 
-        if (productId in this.findIndex) { 
-            return Object.keys(this.findIndex[productId]).map(id => this.versionIndex[id])
+        const key = `${productId}`
+        if (key in this.findIndex) { 
+            return Object.keys(this.findIndex[key]).map(id => this.versionIndex[id])
         } else { 
             return undefined 
         } 
     }
 
     async findVersions(productId: string): Promise<Version[]> {
-        if (!(productId in this.findIndex)) {
-            // Contact backend
+        const key = `${productId}`
+        if (!(key in this.findIndex)) {
+            // Call backend
             const versions = await VersionClient.findVersions(productId)
             // Update version index
             for (const version of versions) {
                 this.versionIndex[version.id] = version
             }
-            // Update product index
+            // Update find index
             this.findIndex[productId] = {}
             for (const version of versions) {
-                this.findIndex[productId][version.id] = true
+                this.findIndex[key][version.id] = true
             }
         }
         // Return versions
@@ -45,10 +48,8 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         const version = await VersionClient.addVersion(data, files)
         // Update version index
         this.versionIndex[version.id] = version
-        // Update product index
-        if (version.productId in this.findIndex) {
-            this.findIndex[version.productId][version.id] = true
-        }
+        // Update find index
+        this.addToFindIndex(version)
         // Return version
         return version
     }
@@ -67,32 +68,19 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
             const version = await VersionClient.getVersion(id)
             // Update version index
             this.versionIndex[id] = version
-            // Update product index
-            if (version.productId in this.findIndex) {
-                this.findIndex[version.productId][id] = true
-            }
         }
         // Return version
         return this.versionIndex[id]
     }
 
     async updateVersion(id: string, data: VersionUpdateData, files?: {model: File, image: Blob}): Promise<Version> {
-        // Update product index
-        if (id in this.versionIndex) {
-            const version = this.versionIndex[id]
-            // Update product index
-            if (version.productId in this.findIndex) {
-                delete this.findIndex[version.productId][id]
-            }
-        }
         // Call backend
         const version = await VersionClient.updateVersion(id, data, files)
         // Update version index
         this.versionIndex[id] = version
-        // Update product index
-        if (version.productId in this.findIndex) {
-            this.findIndex[version.productId][id] = true
-        }
+        // Update find index
+        this.removeFromFindIndex(version)
+        this.addToFindIndex(version)
         // Return version
         return version
     }
@@ -102,12 +90,25 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         const version = await VersionClient.deleteVersion(id)
         // Update version index
         this.versionIndex[id] = version
-        // Update product index
-        if (version.productId in this.findIndex) {
-            delete this.findIndex[version.productId][id]
-        }
+        // Update find index
+        this.removeFromFindIndex(version)
         // Return version
         return version
+    }
+
+    private addToFindIndex(version: Version) {
+        if (`${version.productId}   ` in this.findIndex) {
+            this.findIndex[`${version.productId}`][version.id] = true
+        }
+    }
+
+    private removeFromFindIndex(version: Version) { 
+        for (const key of Object.keys(this.findIndex)) {
+            if (version.id in this.findIndex[key]) {
+                delete this.findIndex[key][version.id]
+            }
+        }
+
     }
 }
 

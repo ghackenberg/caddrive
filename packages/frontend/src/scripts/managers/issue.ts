@@ -33,7 +33,7 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
             for (const issue of issues) {
                 this.issueIndex[issue.id] = issue
             }
-            // Update product index
+            // Update find index
             this.findIndex[key] = {}
             for (const issue of issues) {
                 this.findIndex[key][issue.id] = true
@@ -48,7 +48,7 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         const issue = await IssueClient.addIssue(data, files)
         // Update issue index
         this.issueIndex[issue.id] = issue
-        // Update product index
+        // Update find index
         this.addToFindIndex(issue)
         // Return issue
         return issue
@@ -78,7 +78,7 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         const issue = await IssueClient.updateIssue(id, data, files)
         // Update issue index
         this.issueIndex[issue.id] = issue
-        // Update product index
+        // Update find index
         this.removeFromFindIndex(issue)
         this.addToFindIndex(issue)
         // Return issue
@@ -90,7 +90,7 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         const issue = await IssueClient.deleteIssue(id)
         // Update issue index
         this.issueIndex[issue.id] = issue
-        // Update product index
+        // Update find index
         this.removeFromFindIndex(issue)
         // Return issue
         return issue
