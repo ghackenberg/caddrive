@@ -142,7 +142,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
                                                             <a>
-                                                                { version && version.userId in users && members ? (
+                                                                { version && version.userId in users && users[vers.id] && members ? (
                                                                     <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/>
                                                                 ) : (
                                                                     <img src={LoadIcon} className='big load' /> 
@@ -150,7 +150,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                             </a>
                                                             <span className="user">
                                                                 <span className="name">
-                                                                    {vers.id in users && members ? (
+                                                                    {vers.id in users && users[vers.id] && members ? (
                                                                         <ProductUserNameWidget user={users[vers.id]} members={members}/>
                                                                     ) : (
                                                                         '?'

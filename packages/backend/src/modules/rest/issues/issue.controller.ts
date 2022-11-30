@@ -9,7 +9,7 @@ import "multer"
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 
-import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail } from '../../../functions/permission'
+import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
 import { IssueService } from './issue.service'
 
 @Controller('rest/issues')
@@ -33,7 +33,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
-        await canReadIssueOrFail((<User> this.request.user).id, productId)
+        await canReadProductOrFail((<User> this.request.user).id, productId)
         return this.issueService.findIssues(productId, milestoneId, state)
     }
 

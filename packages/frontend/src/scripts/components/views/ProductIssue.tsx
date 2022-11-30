@@ -192,7 +192,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
+                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <img src={LoadIcon} className='big load' /> }
             </Link>
         )},
         { label: 'Label', class: 'left fill', content: issue => (
@@ -204,7 +204,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
-                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
+                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <img src={LoadIcon} className='big load' /> }
                     </Fragment>
                 ))}
             </Link>

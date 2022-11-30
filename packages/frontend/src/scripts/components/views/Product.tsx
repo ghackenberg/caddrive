@@ -40,9 +40,8 @@ export const ProductView = () => {
     const initialLatestVersions: {[id: string]: string} = {}
     for (const product of initialProducts || []) {
         const versions = VersionManager.findVersionsFromCache(product.id)
-        if (versions) {
-            const latestVersion = versions[versions.length -1]
-            initialLatestVersions[product.id] = latestVersion.id
+        if (versions && versions.length > 0) {
+            initialLatestVersions[product.id] = versions[versions.length - 1].id
         }
     }
     const initialIssues: {[id: string]: number} = {}
@@ -101,7 +100,9 @@ export const ProductView = () => {
             Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
                 const newVersions = {...latestVersions}
                 for (let index = 0; index < products.length; index++) {
-                    newVersions[products[index].id] = productVersions[index][productVersions[index].length - 1].id
+                    if (productVersions[index].length > 0) {
+                        newVersions[products[index].id] = productVersions[index][productVersions[index].length - 1].id
+                    }
                 }
                 setLatestVersions(newVersions)
             })
@@ -144,12 +145,20 @@ export const ProductView = () => {
     const columns: Column<Product>[] = [
         { label: 'Preview', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {product.id in latestVersions ? <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"></div> : '?'}
+                { product.id in latestVersions ? (
+                    <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"/>
+                ) : (
+                    '?'
+                ) }
             </Link>
         )},
         { label: 'Owner', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                { product.userId in users && members[product.id] ? <ProductUserPictureWidget user={users[product.userId]} members={members[product.id]} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
+                { product.userId in users && users[product.userId] && members[product.id] ? (
+                    <ProductUserPictureWidget user={users[product.userId]} members={members[product.id]} class='big'/>
+                ) : (
+                    <img src={LoadIcon} className='big load' />
+                ) }
             </Link>
         )},
         { label: 'Name', class: 'left nowrap', content: product => (

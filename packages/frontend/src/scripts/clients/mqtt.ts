@@ -33,6 +33,7 @@ client.on('reconnect', () => {
 client.on('error', error => {
     console.error('MQTT client error', error)
 })
-client.on('message', (topic, message) => {
-    console.log(`MQTT client message`, topic, message)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+client.on('message', (topic, _message) => {
+    console.log(`MQTT client message`, topic)
 })

@@ -1,6 +1,6 @@
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { Client, ClientProxy, Transport } from '@nestjs/microservices'
+import { ClientProxy } from '@nestjs/microservices'
 
 import { Request } from 'express'
 import * as shortid from 'shortid'
@@ -11,12 +11,11 @@ import { CommentRepository, IssueRepository, MemberRepository, MilestoneReposito
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
-    @Client({ transport: Transport.MQTT })
-    private client: ClientProxy
-
     public constructor(
         @Inject(REQUEST)
         private readonly request: Request,
+        @Inject('MQTT')
+        private readonly client: ClientProxy
     ) {}
     
     async findProducts() : Promise<Product[]> {
