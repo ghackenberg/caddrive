@@ -12,8 +12,8 @@ import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
-import { ProductFooter } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
+import { ProductFooter } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -254,7 +254,10 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Issues','image':'issue'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
+                            <ProductFooter 
+                                item1={{'text':'Issues','image':'issue', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
+                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                            />
                         </Fragment>
                     )}
                  </Fragment>     

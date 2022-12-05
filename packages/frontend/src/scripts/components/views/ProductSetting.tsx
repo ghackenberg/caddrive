@@ -93,7 +93,10 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     <ProductView3D product={product} mouse={true} vr= {true}/>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Product-Settings','image':'product'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
+                            <ProductFooter 
+                                item1={{'text':'Product settings','image':'setting', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
+                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                            />
                         </Fragment>
                     )}
                 </Fragment>

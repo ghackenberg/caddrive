@@ -280,7 +280,10 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                     <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr= {true}/>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Comments','image':'comment'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
+                            <ProductFooter 
+                                item1={{'text':'Comments','image':'comment', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
+                                item2={{'text':'3D-Modell','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                            />
                         </Fragment>
                     ) }
                 </Fragment>

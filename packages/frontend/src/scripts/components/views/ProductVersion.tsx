@@ -184,7 +184,10 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter sidebar={sidebar} setSidebar={setSidebar} item1={{'text':'Versions','image':'version'}} item2={{'text':'3D-Modell','image':'part'}}></ProductFooter>
+                            <ProductFooter 
+                                item1={{'text':'Versions','image':'version', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
+                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                            />
                         </Fragment>
                     )}
                 </Fragment>
