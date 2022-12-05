@@ -25,7 +25,7 @@ class UserClient extends AbstractClient<UserDownMQTT> implements UserUpMQTT {
         // Handle
         client.on('message', (topic, message) => {
             if (topic.startsWith('/api/v1/users')) {
-                const user = JSON.parse(message.toString()) as User
+                const user = JSON.parse(message.toString()).data as User
                 if (topic.endsWith('create')) {
                     for (const handler of this.handlers) {
                         handler.create(user)
