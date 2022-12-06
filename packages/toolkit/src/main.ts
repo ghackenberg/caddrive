@@ -13,7 +13,8 @@ const users: User[] = [
 
 const products: Product[] = [
     { id: 'demo-1', userId: 'demo-1', name: 'Lego Buggy', description: 'The Lego Buggy is a toy for children and adults of all sizes.', deleted: false },
-    { id: 'demo-2', userId: 'demo-2', name: '2 Cylinder Engine', description: 'The 2 Cylinder Engine is a motor for applications of all sizes.', deleted: false }
+    { id: 'demo-2', userId: 'demo-2', name: '2 Cylinder Engine', description: 'The 2 Cylinder Engine is a motor for applications of all sizes.', deleted: false },
+    { id: 'demo-3', userId: 'demo-4', name: 'testProduct1', description: 'test', deleted: false }
 ]
 
 const members: Member[] = [
@@ -22,6 +23,7 @@ const members: Member[] = [
     { id: 'demo-3', userId: 'demo-4', productId: "demo-1", deleted: false, role: 'manager'},
     { id: 'demo-4', userId: 'demo-4', productId: "demo-2", deleted: false, role: 'manager'},
     { id: 'demo-5', userId: 'demo-2', productId: "demo-1", deleted: false, role: 'manager'},
+    { id: 'demo-6', userId: 'demo-4', productId: "demo-3", deleted: false, role: 'manager'},
 ]
 
 const versions: Version[] = [

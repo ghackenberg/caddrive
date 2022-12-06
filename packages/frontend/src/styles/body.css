@@ -21,6 +21,11 @@ body a > img.small {
     width: 1em;
     height: 1em;
 }
+body a > img.medium {
+    vertical-align: middle;
+    width: 3em;
+    height: 3em;
+}
 body a > img.big {
     vertical-align: middle;
     width: 3em;

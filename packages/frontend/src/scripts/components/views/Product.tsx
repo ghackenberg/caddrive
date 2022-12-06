@@ -16,6 +16,7 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 import * as DeleteIcon from '/src/images/delete.png'
 import * as LoadIcon from '/src/images/load.png'
+import * as EmptyIcon from '/src/images/empty.png'
 
 export const ProductView = () => {
     
@@ -148,14 +149,29 @@ export const ProductView = () => {
                 { product.id in latestVersions ? (
                     <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"/>
                 ) : (
-                    '?'
+                    <img className='empty medium' src={EmptyIcon}/>           
                 ) }
             </Link>
         )},
         { label: 'Owner', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                { product.userId in users && users[product.userId] && members[product.id] ? (
-                    <ProductUserPictureWidget user={users[product.userId]} members={members[product.id]} class='big'/>
+
+                {console.log('users')}
+                {console.table(users)}
+                {console.log('----')}
+
+                {console.log('product')}
+                {console.table(product)}
+                {console.log('----')}
+
+                {console.log('product')}
+                {console.log(users[product.id])}
+                {console.log('----')}
+
+                {console.log('---------------')}
+
+                { users[product.id] && members[product.id] ? (
+                    <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='big'/>
                 ) : (
                     <img src={LoadIcon} className='big load' />
                 ) }
