@@ -1,10 +1,35 @@
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+import { Milestone, MilestoneAddData, MilestoneDownMQTT, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 
+import { MilestoneAPI } from '../clients/mqtt/milestone'
 import { MilestoneClient } from '../clients/rest/milestone'
 
-class MilestoneManagerImpl implements MilestoneREST {
+class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
     private milestoneIndex: {[id: string]: Milestone} = {}
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
+
+    constructor() {
+        MilestoneAPI.register(this)
+    }
+
+    // MQTT
+
+    create(milestone: Milestone): void {
+        console.log(`Milestone created ${milestone}`)
+        this.milestoneIndex[milestone.id] = milestone
+        this.addToFindIndex(milestone)
+    }
+
+    update(milestone: Milestone): void {
+        console.log(`Milestone updated ${milestone}`)
+        this.removeFromFindIndex(milestone)
+        this.addToFindIndex(milestone)
+    }
+
+    delete(milestone: Milestone): void {
+        console.log(`Milestone deleted ${milestone}`)
+        this.milestoneIndex[milestone.id] = milestone
+        this.removeFromFindIndex(milestone)
+    }
 
     getMilestoneCount(productId: string) { 
         const key = `${productId}`

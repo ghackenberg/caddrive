@@ -1,9 +1,9 @@
-import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
+import { Comment, CommentAddData, CommentUpdateData, CommentREST, CommentDownMQTT } from 'productboard-common'
 
 import { CommentAPI } from '../clients/mqtt/comment'
 import { CommentClient } from '../clients/rest/comment'
 
-class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {
+class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob>, CommentDownMQTT {
     private commentIndex: {[id: string]: Comment} = {}
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
 
