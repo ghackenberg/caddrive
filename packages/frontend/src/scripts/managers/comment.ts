@@ -1,10 +1,35 @@
 import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 
+import { CommentAPI } from '../clients/mqtt/comment'
 import { CommentClient } from '../clients/rest/comment'
 
 class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {
     private commentIndex: {[id: string]: Comment} = {}
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
+
+    constructor() {
+        CommentAPI.register(this)
+    }
+
+    // MQTT
+
+    create(comment: Comment): void {
+        console.log(`Comment created ${comment}`)
+        this.commentIndex[comment.id] = comment
+        this.addToFindIndex(comment)
+    }
+
+    update(comment: Comment): void {
+        console.log(`Comment updated ${comment}`)
+        this.removeFromFindIndex(comment)
+        this.addToFindIndex(comment)
+    }
+
+    delete(comment: Comment): void {
+        console.log(`Comment deleted ${comment}`)
+        this.commentIndex[comment.id] = comment
+        this.removeFromFindIndex(comment)
+    }
 
     findCommentsFromCache(issueId: string) { 
         const key = `${issueId}`
