@@ -16,22 +16,19 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
     create(user: User): void {
         console.log(`User created ${user}`)
         this.userIndex[user.id] = user
-        if (this.findResult) {
-            this.findResult[user.id] = true
-        }
+        this.addToFindResult(user)
     }
 
     update(user: User): void {
         console.log(`User updated ${user}`)
-        this.userIndex[user.id] = user
+        this.removeFromFindResult(user)
+        this.addToFindResult(user)
     }
 
     delete(user: User): void {
         console.log(`User deleted ${user}`)
         this.userIndex[user.id] = user
-        if (this.findResult) {
-            delete this.findResult[user.id]
-        }
+        this.removeFromFindResult(user)
     }
 
     // REST

@@ -1,10 +1,36 @@
-import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
+import { Product, ProductAddData, ProductUpdateData, ProductREST, ProductDownMQTT } from 'productboard-common'
 
+import { ProductAPI } from '../clients/mqtt/product'
 import { ProductClient } from '../clients/rest/product'
 
-class ProductManagerImpl implements ProductREST {
+class ProductManagerImpl implements ProductREST, ProductDownMQTT {
     private productIndex: {[id: string]: Product} = {}
     private findResult: {[id: string]: boolean}
+    
+    constructor() {
+        ProductAPI.register(this)
+    }
+
+    // MQTT
+
+    create(product: Product): void {
+        console.log(`Product created ${product}`)
+        this.productIndex[product.id] = product
+        this.addToFindResult(product)
+    }
+
+    update(product: Product): void {
+        console.log(`Product updated ${product}`)
+        this.productIndex[product.id] = product
+        this.removeFromFindResult(product)
+        this.addToFindResult(product)
+    }
+
+    delete(product: Product): void {
+        console.log(`Product deleted ${product}`)
+        this.productIndex[product.id] = product
+        this.removeFromFindResult(product)
+    }
 
     findProductsFromCache() { 
         if (this.findResult) { 
