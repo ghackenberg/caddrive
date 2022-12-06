@@ -1,10 +1,35 @@
-import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
+import { Version, VersionAddData, VersionUpdateData, VersionREST, VersionDownMQTT } from 'productboard-common'
 
+import { VersionAPI } from '../clients/mqtt/version'
 import { VersionClient } from '../clients/rest/version'
 
-class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob> {
+class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob>, VersionDownMQTT {
     private versionIndex: {[id: string]: Version} = {}
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
+
+    constructor() {
+        VersionAPI.register(this)
+    }
+
+    // MQTT
+
+    create(version: Version): void {
+        console.log(`User created ${version}`)
+        this.versionIndex[version.id] = version
+        this.addToFindIndex(version)
+    }
+
+    update(version: Version): void {
+        console.log(`User updated ${version}`)
+        this.removeFromFindIndex(version)
+        this.addToFindIndex(version)
+    }
+
+    delete(version: Version): void {
+        console.log(`User deleted ${version}`)
+        this.versionIndex[version.id] = version
+        this.removeFromFindIndex(version)
+    }
 
     getVersionCount(productId: string) { 
         const key = `${productId}`
