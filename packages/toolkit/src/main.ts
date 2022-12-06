@@ -1,3 +1,5 @@
+import { exit } from 'process'
+
 import * as hash from 'hash.js'
 
 import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
@@ -58,50 +60,81 @@ const comments: Comment[] = [
     { id: 'demo-8', userId: 'demo-4', issueId: 'demo-7', time: new Date('2022-04-22').toISOString(), text: 'Work in progress', action: 'none', deleted: false },
 ]
 
-async function main() {
+async function drop() {
     await AppDataSource.initialize()
+    console.log('Drop: Connected')
+    
+    await AppDataSource.dropDatabase()
+    console.log('Drop: Database dropped')
+
+    await AppDataSource.destroy()  
+    console.log('Drop: Disconnected')
+}
+
+async function fill() {
+    await AppDataSource.initialize()
+    console.log('Fill: Connected')
 
     if (await UserRepository.count() == 0) {
         for (const user of users) {
             await UserRepository.save(user)
         }
+        console.log('Fill: Users filled')
     }
 
     if (await ProductRepository.count() == 0) {
         for (const product of products) {
             await ProductRepository.save(product)
         }
+        console.log('Fill: Products filled')
     }
 
     if (await MemberRepository.count() == 0) {
         for (const member of members) {
             await MemberRepository.save(member)
         }
+        console.log('Fill: Members filled')
     }
 
     if (await VersionRepository.count() == 0) {
         for (const version of versions) {
             await VersionRepository.save(version)
         }
+        console.log('Fill: Versions filled')
     }
 
     if (await MilestoneRepository.count() == 0) {
         for (const milestone of milestones) {
             await MilestoneRepository.save(milestone)
         }
+        console.log('Fill: Milestones filled')
     }
 
     if (await IssueRepository.count() == 0) {
         for (const issue of issues) {
             await IssueRepository.save(issue)
         }
+        console.log('Fill: Issues filled')
     }
 
     if (await CommentRepository.count() == 0) {
         for (const comment of comments) {
             await CommentRepository.save(comment)
         }
+        console.log('Fill: Comments filled')
     }
+    console.log('Fill: All Entities filled')
+
+    await AppDataSource.destroy()  
+    console.log('Fill: Disconnected')
+}
+async function main() {
+    console.log('Reset Database')
+    await drop()
+    await fill()
+    console.log('All Tasks finished')
+    console.log('Exit')
+    exit()
 }
 
 main()
