@@ -122,7 +122,7 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
     }
 
     private addToFindIndex(version: Version) {
-        if (`${version.productId}   ` in this.findIndex) {
+        if (`${version.productId}` in this.findIndex) {
             this.findIndex[`${version.productId}`][version.id] = true
         }
     }

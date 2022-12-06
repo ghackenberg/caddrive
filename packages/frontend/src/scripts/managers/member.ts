@@ -1,11 +1,40 @@
-import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+import { Member, MemberAddData, MemberUpdateData, MemberREST, MemberDownMQTT } from 'productboard-common'
 
+import { MemberAPI } from '../clients/mqtt/member'
 import { MemberClient } from '../clients/rest/member'
 
-class MemberManagerImpl implements MemberREST {
+class MemberManagerImpl implements MemberREST, MemberDownMQTT {
     private memberIndex: {[id: string]: Member} = {}
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
     private userIndex: {[id: string]: {[id: string]: {[id: string]: boolean}}} = {}
+
+    constructor() {
+        MemberAPI.register(this)
+    }
+
+    // MQTT
+
+    create(member: Member): void {
+        console.log(`Member created ${member}`)
+        this.memberIndex[member.id] = member
+        this.addToFindIndex(member)
+        this.addToUserIndex(member)
+    }
+
+    update(member: Member): void {
+        console.log(`Member updated ${member}`)
+        this.removeFromFindIndex(member)
+        this.addToFindIndex(member)
+        this.removeFromUserIndex(member)
+        this.addToUserIndex(member)
+    }
+
+    delete(member: Member): void {
+        console.log(`Member deleted ${member}`)
+        this.memberIndex[member.id] = member
+        this.removeFromFindIndex(member)
+        this.removeFromUserIndex(member)
+    }
 
     getMemberCount(productId: string) { 
         const key = `${productId}`
@@ -69,13 +98,9 @@ class MemberManagerImpl implements MemberREST {
         // Update member index
         this.memberIndex[member.id] = member
         // Update find index
-        if (member.productId in this.findIndex) {
-            this.findIndex[member.productId][member.id] = true
-        }
+        this.addToFindIndex(member)
         // Update user index
-        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-            this.userIndex[member.productId][member.userId][member.id] = true
-        }
+       this.addToUserIndex(member)
         // Return member
         return member
     }
@@ -94,43 +119,22 @@ class MemberManagerImpl implements MemberREST {
             const member = await MemberClient.getMember(id)
             // Update member index
             this.memberIndex[id] = member
-            // Update find index
-            if (member.productId in this.findIndex) {
-                this.findIndex[member.productId][id] = true
-            }
-            // Update user index
-            if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-                this.userIndex[member.productId][member.userId][id] = true
-            }
         }
         // Return member
         return this.memberIndex[id]
     }
 
     async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
-        if (id in this.memberIndex) {
-            const member = this.memberIndex[id]
-            // Update find index
-            if (member.productId in this.findIndex) {
-                delete this.findIndex[member.productId][id]
-            }
-            // Update user index
-            if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-                delete this.userIndex[member.productId][member.userId][id]
-            }
-        }
         // Call backend
         const member = await MemberClient.updateMember(id, data)
         // Update member index
         this.memberIndex[member.id] = member
         // Update find index
-        if (member.productId in this.findIndex) {
-            this.findIndex[member.productId][id] = true
-        }
+        this.removeFromFindIndex(member)
+        this.addToFindIndex(member)
         // Update user index
-        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-            this.userIndex[member.productId][member.userId][id] = true
-        }
+        this.removeFromUserIndex(member)
+        this.addToUserIndex(member)
         // Return member
         return this.memberIndex[id]
     }
@@ -141,15 +145,37 @@ class MemberManagerImpl implements MemberREST {
         // Update member index
         this.memberIndex[member.id] = member
         // Update find index
-        if (member.productId in this.findIndex) {
-            delete this.findIndex[member.productId][id]
-        }
+        this.removeFromFindIndex(member)
         // Update user index
-        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-            delete this.userIndex[member.productId][member.userId][id]
-        }
+        this.removeFromUserIndex(member)
         // Return member
         return this.memberIndex[id]
+    }
+
+    private addToFindIndex(member: Member) {
+        if (`${member.productId}` in this.findIndex) {
+            this.findIndex[`${member.productId}`][member.id] = true
+        }
+    }
+
+    private removeFromFindIndex(member: Member) { 
+        for (const key of Object.keys(this.findIndex)) {
+            if (member.id in this.findIndex[key]) {
+                delete this.findIndex[key][member.id]
+            }
+        }
+    }
+
+    private addToUserIndex(member: Member) {
+        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
+            this.userIndex[member.productId][member.userId][member.id] = true
+        }
+    }
+
+    private removeFromUserIndex(member: Member) {
+        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
+            delete this.userIndex[member.productId][member.userId][member.id]
+        }
     }
 }
 
