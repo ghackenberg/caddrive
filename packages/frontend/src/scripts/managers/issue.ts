@@ -1,10 +1,35 @@
-import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST, IssueDownMQTT } from 'productboard-common'
 
+import { IssueAPI } from '../clients/mqtt/issue'
 import { IssueClient } from '../clients/rest/issue'
 
-class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
+class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>, IssueDownMQTT {
     private issueIndex: {[issueId: string]: Issue} = {}
     private findIndex: {[key: string]: {[issueId: string]: boolean}} = {}
+
+    constructor() {
+        IssueAPI.register(this)
+    }
+
+    // MQTT
+
+    create(issue: Issue): void {
+        console.log(`Issue created ${issue}`)
+        this.issueIndex[issue.id] = issue
+        this.addToFindIndex(issue)
+    }
+
+    update(issue: Issue): void {
+        console.log(`Issue updated ${issue}`)
+        this.removeFromFindIndex(issue)
+        this.addToFindIndex(issue)
+    }
+
+    delete(issue: Issue): void {
+        console.log(`Issue deleted ${issue}`)
+        this.issueIndex[issue.id] = issue
+        this.removeFromFindIndex(issue)
+    }
 
     getIssueCount(productId: string, milestoneId?: string, state?: string) {
         const key = `${productId}-${milestoneId}-${state}`

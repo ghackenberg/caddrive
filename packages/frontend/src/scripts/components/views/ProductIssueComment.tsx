@@ -55,7 +55,6 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
             }
         } 
     }
-    console.log(initialUsers)
 
     // STATES
 
@@ -77,7 +76,6 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
     const [sidebar, setSidebar] = useState<boolean>(false)
-    console.table(users)
 
     // EFFECTS
 

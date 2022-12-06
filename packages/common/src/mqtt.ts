@@ -1,4 +1,4 @@
-import { Product, User, Version } from "./main"
+import { Issue, Product, User, Version } from "./main"
 
 export interface TestUpMQTT {
     a(data: string): Promise<void>
@@ -41,6 +41,17 @@ export interface VersionDownMQTT {
     create(version: Version): void
     update(version: Version): void
     delete(version: Version): void
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface IssueUpMQTT {
+    // empty
+}
+
+export interface IssueDownMQTT {
+    create(issue: Issue): void
+    update(issue: Issue): void
+    delete(issue: Issue): void
 }
 
 // TODO Add missing MQTT interfaces

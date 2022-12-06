@@ -14,19 +14,19 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
     // MQTT
 
     create(version: Version): void {
-        console.log(`User created ${version}`)
+        console.log(`Version created ${version}`)
         this.versionIndex[version.id] = version
         this.addToFindIndex(version)
     }
 
     update(version: Version): void {
-        console.log(`User updated ${version}`)
+        console.log(`Version updated ${version}`)
         this.removeFromFindIndex(version)
         this.addToFindIndex(version)
     }
 
     delete(version: Version): void {
-        console.log(`User deleted ${version}`)
+        console.log(`Version deleted ${version}`)
         this.versionIndex[version.id] = version
         this.removeFromFindIndex(version)
     }
