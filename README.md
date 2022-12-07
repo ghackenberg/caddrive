@@ -1,6 +1,6 @@
 # ProductBoard
 
-ProductBoard provides a free and open source solution for collaborative product design.
+ProductBoard provides a free and open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help making the discussion more self-explanatory and easy to understand.
 
 ## Screenshots
 
