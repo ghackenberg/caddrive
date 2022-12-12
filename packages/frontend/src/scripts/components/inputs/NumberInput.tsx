@@ -6,6 +6,7 @@ export const NumberInput = (props: {class?: string, label: string, change: (valu
     <GenericInput label={props.label}>
         <input
             type='number'
+            min={0}
             className={props.class}
             placeholder={props.placeholder}
             value={props.value}
