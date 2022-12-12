@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, Fragment, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Member, Product, User } from 'productboard-common'
 
+import { VersionContext } from '../../contexts/ProductVersion'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
@@ -17,6 +18,10 @@ import * as DeleteIcon from '/src/images/delete.png'
 import * as LoadIcon from '/src/images/load.png'
 
 export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
+
+    // CONTEXTS
+
+    const contextVersion = useContext(VersionContext)
 
     // PARAMS
 
@@ -117,7 +122,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                    { members && <Table columns={columns} items={members}/> }
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} vr= {true}/>
+                                <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
                                 </div>
                             </main>
                             <ProductFooter 

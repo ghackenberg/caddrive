@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, useContext, Fragment, FormEvent } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Comment, Issue, Member, Product, User } from 'productboard-common'
 
+import { VersionContext } from '../../contexts/ProductVersion'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
@@ -22,6 +23,10 @@ import * as DeleteIcon from '/src/images/delete.png'
 import * as LoadIcon from '/src/images/load.png'
 
 export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
+
+    // CONTEXTS
+
+    const contextVersion = useContext(VersionContext)
 
     // PARAMS
 
@@ -251,7 +256,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr= {true}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} highlighted={hightlighted} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
                                 </div>
                             </main>
                             <ProductFooter 

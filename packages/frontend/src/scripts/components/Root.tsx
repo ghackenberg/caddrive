@@ -2,10 +2,11 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
 
-import { User } from 'productboard-common'
+import { User, Version } from 'productboard-common'
 
 import { auth } from '../clients/auth'
 import { UserContext } from '../contexts/User'
+import { VersionContext } from '../contexts/ProductVersion'
 import { PageHeader } from './snippets/PageHeader'
 import { LoginView } from './views/Login'
 import { ProductView } from './views/Product'
@@ -31,6 +32,7 @@ export const Root = () => {
     // STATES
 
     const [user, setUser] = React.useState<User>()
+    const [Version, setVersion] = React.useState<Version>()
 
     // FUNCTIONS
 
@@ -54,6 +56,10 @@ export const Root = () => {
         setUser(user)
     }
 
+    function updateVersion(version: Version) {
+        setVersion(version)
+    }
+
     // RETURN
     
     return (
@@ -63,42 +69,44 @@ export const Root = () => {
             </Helmet>
             <BrowserRouter>
                 <UserContext.Provider value={{logout, update, ...user}}>
-                    <PageHeader/>
-                    {user ? (
-                        <Switch>
-                            {/* User views */}
-                            <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => user.userManagementPermission || user.email == auth.username ? <UserSettingView {...props}/> : <MissingView/>}/>
-                            <Route path="/users" render={() => user.userManagementPermission ? <UserView/> : <MissingView/>}/>
+                    <VersionContext.Provider value={{updateVersion, ...Version}}>
+                        <PageHeader/>
+                        {user ? (
+                            <Switch>
+                                {/* User views */}
+                                <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => user.userManagementPermission || user.email == auth.username ? <UserSettingView {...props}/> : <MissingView/>}/>
+                                <Route path="/users" render={() => user.userManagementPermission ? <UserView/> : <MissingView/>}/>
 
-                            {/* Version views */}
-                            <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
-                            <Route path="/products/:product/versions" component={ProductVersionView}/>
+                                {/* Version views */}
+                                <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
+                                <Route path="/products/:product/versions" component={ProductVersionView}/>
 
-                            {/* Issue views */}
-                            <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView}/>
-                            <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView}/>
-                            <Route path="/products/:product/issues" component={ProductIssueView}/>
+                                {/* Issue views */}
+                                <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView}/>
+                                <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView}/>
+                                <Route path="/products/:product/issues" component={ProductIssueView}/>
 
-                            {/* Milestone views */}
-                            <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView}/>
-                            <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
-                            <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
+                                {/* Milestone views */}
+                                <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView}/>
+                                <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
+                                <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
 
-                            {/* Member views */}
-                            <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView}/>
-                            <Route path="/products/:product/members" component={ProductMemberView}/>
+                                {/* Member views */}
+                                <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView}/>
+                                <Route path="/products/:product/members" component={ProductMemberView}/>
 
-                            {/* Product views */}
-                            <Route path="/products/:product/settings" render={(props: RouteComponentProps<{ product: string }>) => user.productManagementPermission || props.match.params.product != 'new' ? <ProductSettingView {...props}/> : <MissingView/>}/>
-                            {/* <Route path="/products/:product/settings" component={ProductSettingView}/> */}
-                            <Route path="/products" component={ProductView}/>
+                                {/* Product views */}
+                                <Route path="/products/:product/settings" render={(props: RouteComponentProps<{ product: string }>) => user.productManagementPermission || props.match.params.product != 'new' ? <ProductSettingView {...props}/> : <MissingView/>}/>
+                                {/* <Route path="/products/:product/settings" component={ProductSettingView}/> */}
+                                <Route path="/products" component={ProductView}/>
 
-                            {/* Home view */}
-                            <Redirect to="/products"/>
-                        </Switch>
-                    ) : (
-                        <LoginView/>
-                    )}
+                                {/* Home view */}
+                                <Redirect to="/products"/>
+                            </Switch>
+                        ) : (
+                            <LoginView/>
+                            )}
+                        </VersionContext.Provider>
                 </UserContext.Provider>
             </BrowserRouter>
         </React.Fragment>

@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, useContext, Fragment } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 
 import { Member, Product, User, Version } from 'productboard-common'
 
+import { VersionContext } from '../../contexts/ProductVersion'
 import { computeTree } from '../../functions/tree'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -20,6 +21,10 @@ import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
+
+    // CONTEXTS
+
+    const contextVersion = useContext(VersionContext)
 
     // PARAMS
 
@@ -62,7 +67,8 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
-    useEffect(() => { versions && versions.length > 0 && setVersion(versions[versions.length - 1])}, [versions])
+    useEffect(() => { contextVersion.id == undefined && versions && versions.length > 0 && contextVersion.updateVersion(versions[versions.length - 1])}, [versions])
+    useEffect(() => { setVersion(contextVersion) },[contextVersion])
     useEffect(() => {
         if (versions) {
             Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
@@ -90,7 +96,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     return (
         <main className="view extended versions">
-            { product && versions && (
+            { product && versions && version && (
                 <Fragment>
                     { product && product.deleted ? (
                         <Redirect to='/'/>
@@ -120,7 +126,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         </div>
                                                     </div>
                                                 )}
-                                                <div className={`version${version == vers ? ' selected' : ''}`} onClick={() => setVersion(vers)}>
+                                                <div className={`version${version.id == vers.id ? ' selected' : ''}`} onClick={() => contextVersion.updateVersion(vers)}>
                                                     <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
                                                         {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                             <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
@@ -180,7 +186,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} change = {setVersion} />
+                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} change = {contextVersion.updateVersion} />
                                     </div>
                                 </div>
                             </main>
