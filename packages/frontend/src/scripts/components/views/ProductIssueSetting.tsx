@@ -73,6 +73,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>([])
     const [sidebar, setSidebar] = useState<boolean>(false)
+    console.log(milestoneId)
 
     // EFFECTS
 
@@ -235,7 +236,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                     Milestone:
                                                 </div>
                                                 <div>
-                                                    <select value={milestoneId} onChange={event => setMilestoneId(event.currentTarget.value)}>
+                                                    <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)}>
                                                         <option >none</option>
                                                         {milestones && milestones.map((milestone) => <option key={milestone.id} value={milestone.id}>{milestone.label}</option>)}
                                                     </select>
