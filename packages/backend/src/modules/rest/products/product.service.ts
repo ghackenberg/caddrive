@@ -7,7 +7,7 @@ import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
+import { IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
@@ -57,7 +57,6 @@ export class ProductService implements ProductREST {
         await VersionRepository.update({ productId: product.id }, { deleted: true })
         await MilestoneRepository.update({ productId: product.id }, { deleted: true })
         await IssueRepository.update({ productId: product.id }, { deleted: true })
-        await CommentRepository.update({ issue: { productId: product.id } }, { deleted: true })
         product.deleted = true
         await ProductRepository.save(product)
         await this.client.emit(`/api/v1/products/${product.id}/delete`, this.convert(product))

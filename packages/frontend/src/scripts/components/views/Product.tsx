@@ -155,21 +155,6 @@ export const ProductView = () => {
         )},
         { label: 'Owner', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-
-                {console.log('users')}
-                {console.table(users)}
-                {console.log('----')}
-
-                {console.log('product')}
-                {console.table(product)}
-                {console.log('----')}
-
-                {console.log('product')}
-                {console.log(users[product.id])}
-                {console.log('----')}
-
-                {console.log('---------------')}
-
                 { users[product.id] && members[product.id] ? (
                     <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='big'/>
                 ) : (
