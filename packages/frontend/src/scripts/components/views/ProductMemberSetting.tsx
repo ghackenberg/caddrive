@@ -98,7 +98,8 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const columns1: Column<User>[] = [
         { label: 'Picture', class: 'center', content: () => (
             <a >
-                <img src={`/rest/files/${selectedUser.id}.jpg`} className='big'/>        
+                {console.log(selectedUser.pictureId)}
+                <img src={`/rest/files/${selectedUser.pictureId}.jpg`} className='big'/>        
             </a>
         )},
         { label: 'Name', class: 'left fill', content: () => (
@@ -114,7 +115,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const columns: Column<User>[] = [
         { label: 'Picture', class: 'center', content: user => (
             <a onClick={() => selectUser(user)}>
-                <img src={`/rest/files/${user.id}.jpg`} className='big'/>
+                <img src={`/rest/files/${user.pictureId}.jpg`} className='big'/>
             </a>
         )},
         { label: 'Name', class: 'left fill', content: (user, index) => (
