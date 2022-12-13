@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Member, MemberRole, Product, User } from 'productboard-common'
 
+import { VersionContext } from '../../contexts/ProductVersion'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -20,6 +21,10 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     
     const history = useHistory()
     const roles: MemberRole[] = ['manager', 'engineer', 'customer']
+
+    // CONTEXTS
+
+    const contextVersion = useContext(VersionContext)
 
     // PARAMS
 
@@ -181,7 +186,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} vr= {true}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
                                 </div>
                             </main>
                             <ProductFooter 

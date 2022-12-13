@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { Member, Product, User } from 'productboard-common'
 
+import { VersionContext } from '../../contexts/ProductVersion'
 import { UserContext } from '../../contexts/User'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
@@ -20,6 +21,9 @@ import * as EmptyIcon from '/src/images/empty.png'
 
 export const ProductView = () => {
     
+    // CONTEXTS
+    
+    const contextVersion = useContext(VersionContext)
     const contextUser = useContext(UserContext)
 
     // INITIAL STATES
@@ -74,6 +78,7 @@ export const ProductView = () => {
 
     // - Entities
     useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
+    useEffect(() => { contextVersion.updateVersion(null) }, [])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {

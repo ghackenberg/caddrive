@@ -92,7 +92,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     </form>
                                 </div>
                                 <div>
-                                <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
                                 </div>
                             </main>
                             <ProductFooter 
