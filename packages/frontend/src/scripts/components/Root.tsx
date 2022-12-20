@@ -2,10 +2,11 @@ import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
 
-import { Auth0Provider } from '@auth0/auth0-react';
+import { Auth0Provider } from '@auth0/auth0-react'
 
 import { User, Version } from 'productboard-common'
 
+import { REACT_APP_AUTH0_DOMAIN, REACT_APP_AUTH0_CLIENT_ID } from '../env'
 import { auth } from '../clients/auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/ProductVersion'
@@ -36,6 +37,11 @@ export const Root = () => {
     const [user, setUser] = React.useState<User>()
     const [Version, setVersion] = React.useState<Version>()
 
+    // INTERACTIONS
+
+    const domain = REACT_APP_AUTH0_DOMAIN
+    const clientId = REACT_APP_AUTH0_CLIENT_ID
+
     // FUNCTIONS
 
     function logout() {
@@ -63,9 +69,6 @@ export const Root = () => {
     }
 
     // RETURN
-
-    const domain = ''
-    const clientId = ''
 
     return (
 

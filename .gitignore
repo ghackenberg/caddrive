@@ -40,3 +40,5 @@ public
 bin
 
 database.sqlite
+
+env.ts
