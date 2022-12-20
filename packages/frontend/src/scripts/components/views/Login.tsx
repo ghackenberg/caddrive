@@ -1,27 +1,24 @@
 import * as React from 'react'
-import { useContext, useEffect, useState } from 'react'
+//import { useContext, useEffect, useState } from 'react'
 
 import { useAuth0 } from '@auth0/auth0-react'
 
-import { UserContext } from '../../contexts/User'
-import { UserManager } from '../../managers/user'
+//import { UserContext } from '../../contexts/User'
+//import { UserManager } from '../../managers/user'
 import { LoginButton } from '../inputs/LoginButton' //neu
 import { LogoutButton } from '../inputs/LogoutButton' // neu
 import { Profile } from '../inputs/Profile' // neu
 
 export const LoginView = () => {
 
-    const contextUser = useContext(UserContext)
-    console.log(contextUser)
+    // const contextUser = useContext(UserContext)
+    // console.log(contextUser)
 
     const { isLoading, error } = useAuth0(); //neu
     const { user, isAuthenticated } = useAuth0();
-    //const { user1, setUser1 } = useState<User>()
 
     // STATES
-    useState
     // EFFECTS
-    //useEffect(() => {UserManager.findUsers('dominik.fruehwirth@fh-wels.at').then(set)},[user])
 
     // FUNCTIONS
 
