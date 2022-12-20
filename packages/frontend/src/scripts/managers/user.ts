@@ -101,6 +101,13 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         return this.userIndex[id]
     }
 
+    async getUserByMail(mail: string): Promise<User> {
+        // Call backend
+        const user = await UserClient.getUserByMail(mail)
+        // Return user
+        return user
+    }
+
     async updateUser(id: string, data: UserUpdateData, file?: File): Promise<User> {
         // Call backend
         const user = await UserClient.updateUser(id, data, file)

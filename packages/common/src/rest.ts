@@ -11,6 +11,7 @@ export interface UserREST<D, F> {
     findUsers(query?: string, productId?: string): Promise<User[]>
     addUser(data: D, file?: F): Promise<User>
     getUser(id: string): Promise<User>
+    getUserByMail(mail: string): Promise<User>
     updateUser(id: string, data: D, file?: F): Promise<User>
     deleteUser(id: string): Promise<User>
 }

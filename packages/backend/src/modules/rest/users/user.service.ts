@@ -55,6 +55,15 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         const user = await UserRepository.findOneByOrFail({ id })
         return this.convert(user)
     }
+    async getUserByMail(email: string): Promise<User> {
+        const user = await UserRepository.findOneBy({ email })
+        if (user) {
+            return this.convert(user)
+        } 
+        else {
+            return undefined
+        }
+    }
 
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
         const user = await UserRepository.findOneByOrFail({ id })

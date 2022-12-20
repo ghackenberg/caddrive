@@ -20,6 +20,9 @@ class UserClientImpl implements UserREST<UserAddData, File> {
     async getUser(id: string): Promise<User> {
         return (await axios.get<User>(`/rest/users/${id}`, { auth })).data
     }
+    async getUserByMail(mail: string): Promise<User> {
+        return (await axios.get<User>(`/rest/users/email/${mail}`, { auth })).data
+    }
     async updateUser(id: string, data: UserUpdateData, file?: File): Promise<User> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))

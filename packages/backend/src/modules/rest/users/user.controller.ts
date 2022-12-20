@@ -73,6 +73,15 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         return this.userService.getUser(id)
     }
 
+    @Get('/email/:email')
+    @ApiParam({ name: 'email', type: 'string', required: true })
+    @ApiResponse({ type: User })
+    async getUserByMail(
+        @Param('email') email: string
+    ): Promise<User> {
+        return this.userService.getUserByMail(email)
+    }
+
     @Put(':id')
     @UseInterceptors(FileInterceptor('file'))
     @ApiParam({ name: 'id', type: 'string', required: true })
