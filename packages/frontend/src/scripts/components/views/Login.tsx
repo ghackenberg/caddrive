@@ -4,6 +4,7 @@ import { useEffect} from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 
 import { auth } from '../../clients/auth'
+import { username, pw } from '../../env'
 import { UserManager } from '../../managers/user'
 import { LoginButton } from '../inputs/LoginButton' //neu
 import { LogoutButton } from '../inputs/LogoutButton' // neu
@@ -24,8 +25,8 @@ export const LoginView = () => {
     // TODO: Derweil sind Calls nur möglich wenn man autentifiziert ist. Das ist aber noch nicht der Fall wenn man noch nicht eigelogged ist
     // Das hier muss später weg
     useEffect(() => { 
-            auth.username = 'dominik.fruehwirth@fh-wels.at'
-            auth.password = '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'
+            auth.username = username
+            auth.password = pw
      }, [])
 
     // Test der API: einen User Per Mail aus dem Backend holen. true: User, false: undefined
