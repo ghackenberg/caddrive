@@ -113,7 +113,10 @@ export const Root = () => {
                             )}
                         </>
                     ) : (
-                        <AuthView/>
+                        <>
+                            <PageHeader/>
+                            <AuthView/>
+                        </>
                     )}
                 </>
             )}

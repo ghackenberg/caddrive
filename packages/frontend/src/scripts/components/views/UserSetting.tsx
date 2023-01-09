@@ -3,6 +3,7 @@ import { useState, useEffect, FormEvent, Fragment, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
+import { useAuth0 } from '@auth0/auth0-react'
 import * as hash from 'hash.js'
 
 import { User } from 'productboard-common'
@@ -19,8 +20,11 @@ import { UserHeader } from '../snippets/UserHeader'
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     
     const history = useHistory()
+
+    const { logout } = useAuth0()
     
     // CONTEXTS
+
     const contextUser = useContext(UserContext)
     
     // PARAMS
@@ -54,6 +58,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     useEffect(() => { user && setProductManagementPermission(user.productManagementPermission)}, [user])
 
     // FUNCTIONS 
+
     async function submit(event: FormEvent){
         event.preventDefault()
         if(userId == 'new') {
@@ -70,8 +75,14 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
         }
         history.goBack() 
     }
+
     function encrypt(password: string): string {
         return hash.sha256().update(password).digest('hex')
+    }
+
+    function click(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        logout()
     }
 
     // RETURN
@@ -101,6 +112,14 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                                                 <input type='submit' value='Save'/>
                                             </div>
                                         </div>
+                                        { contextUser.id == userId && (
+                                            <div>
+                                                <div/>
+                                                <div>
+                                                    <button onClick={click}>Leave</button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </form>
                                 </div>
                             </main>
