@@ -15,6 +15,7 @@ export const UserView = () => {
     // INITIAL STATES
 
     const initialUsers = UserManager.findUsersFromCache()
+    console.log(initialUsers)
 
     // STATES
 

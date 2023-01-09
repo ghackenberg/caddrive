@@ -1,41 +1,58 @@
 import * as React from 'react'
-import { useEffect} from 'react'
+import { useContext, useEffect, useState } from 'react'
 
-import { useAuth0 } from '@auth0/auth0-react'
+import * as hash from 'hash.js'
 
 import { auth } from '../../clients/auth'
-import { username, pw } from '../../env'
+import { UserContext } from '../../contexts/User'
 import { UserManager } from '../../managers/user'
-import { LoginButton } from '../inputs/LoginButton' //neu
-import { LogoutButton } from '../inputs/LogoutButton' // neu
-import { Profile } from '../inputs/Profile' // neu
+import { EmailInput } from '../inputs/EmailInput'
+import { PasswordInput } from '../inputs/PasswordInput' 
 
 export const LoginView = () => {
 
-    // const contextUser = useContext(UserContext)
-    // console.log(contextUser)
-
-    const { isLoading, error } = useAuth0(); 
-    const { user, isAuthenticated } = useAuth0();
+    const contextUser = useContext(UserContext)
 
     // STATES
 
-    // EFFECTS
-    
-    // TODO: Derweil sind Calls nur möglich wenn man autentifiziert ist. Das ist aber noch nicht der Fall wenn man noch nicht eigelogged ist
-    // Das hier muss später weg
-    useEffect(() => { 
-            auth.username = username
-            auth.password = pw
-     }, [])
+    const [load, setLoad] = useState<boolean>(false)
+    const [error, setError] = useState<string>()
+    const [email, setEmail] = useState<string>(localStorage.getItem('username') || '')
+    const [password, setPassword] = useState<string>(localStorage.getItem('password') || '')
 
-    // Test der API: einen User Per Mail aus dem Backend holen. true: User, false: undefined
-    // -> Dann auf usestate
-    useEffect(()=> {
-        if (auth) {
-            UserManager.getUserByMail('dominik.fruehwirth@fh-wels.at').then((res) => console.log(res))
+    // EFFECTS
+
+    useEffect(() => { check() }, [])
+
+    // FUNCTIONS
+
+    async function check() {
+        try {
+            setLoad(true)
+
+            auth.username = email
+            auth.password = password
+
+            contextUser.update(await UserManager.checkUser())
+        } catch (error1) {
+            setError('Login failed!')
+            setLoad(false)
         }
-    },[auth])
+    }
+
+    async function submit(event: React.FormEvent) {
+        event.preventDefault()
+        await check()
+    }
+
+    async function reset() {
+        setEmail('')
+        setPassword('')
+    }
+
+    function encrypt(password: string): string {
+        return hash.sha256().update(password).digest('hex')
+    }
 
     // RETURN
 
@@ -43,28 +60,18 @@ export const LoginView = () => {
         <main className="view login">
             <main>
                 <div>
-                    {/* Neu */}
-                    <h1>Auth0 Login</h1>
-                    {error && <p>Authentication Error</p>}
-                    {!error && isLoading && <p>Loading...</p>}
-                    {!error && !isLoading && (
-                        <>
-                            <LoginButton />
-                            <LogoutButton />
-                            <Profile />
-                        </>
-                    )}
-                    {isAuthenticated && (
-                        <article className='column'>
-                            {user?.picture && <img src={user.picture} alt={user?.name} />}
-                            <h2>{user?.name}</h2>
-                            <ul>
-                                {Object.keys(user).map((objKey, i) => <li key={i}>{objKey}: {user[objKey]} </li>)}
-                            </ul>
-                        </article>
-                    )}
-                    {/* Neu */}
-
+                    <h1>Login</h1>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    <form onSubmit={submit} onReset={reset} className='data-input'>
+                        <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail} />
+                        <PasswordInput label='Password' placeholder='Type password' change={password => setPassword(encrypt(password))} required={true} />
+                        <div>
+                            <div />
+                            <div>
+                                <input type='submit' value='Login' disabled={load} />
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </main>
         </main>

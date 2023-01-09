@@ -21,6 +21,7 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
 
     update(user: User): void {
         console.log(`User updated ${user}`)
+        this.userIndex[user.id] = user
         this.removeFromFindResult(user)
         this.addToFindResult(user)
     }
@@ -117,6 +118,9 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         this.removeFromFindResult(user)
         this.addToFindResult(user)
         // Return user
+        console.table(this.userIndex)
+        console.table(this.findResult)
+        console.log("--------------")
         return user
     }
 
