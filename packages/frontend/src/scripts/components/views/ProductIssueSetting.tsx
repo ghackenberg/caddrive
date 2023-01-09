@@ -216,16 +216,16 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                 </div>
                                                 <div>
                                                     {recorder ? (
-                                                        <button onClick={stopRecordAudio}>Stop recording</button>
+                                                        <input type='button' value='Stop recording' onClick={stopRecordAudio}/>
                                                     ) : (
                                                         <Fragment>
                                                             {audio ? (
                                                                 <Fragment>
                                                                     <audio src={URL.createObjectURL(audio)} controls></audio>
-                                                                    <button onClick={() => setAudio(null)}>Remove recording</button>
+                                                                    <input type='button' value='Remove recording' onClick={() => setAudio(null)}/>
                                                                 </Fragment>
                                                             ) : (
-                                                                <button onClick={startRecordAudio}>Start recording</button>
+                                                                <input type='button' value='Start recording' onClick={startRecordAudio}/>
                                                             )}
                                                         </Fragment>
                                                     )}
