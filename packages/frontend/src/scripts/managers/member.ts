@@ -23,6 +23,7 @@ class MemberManagerImpl implements MemberREST, MemberDownMQTT {
 
     update(member: Member): void {
         console.log(`Member updated ${member}`)
+        this.memberIndex[member.id] = member
         this.removeFromFindIndex(member)
         this.addToFindIndex(member)
         this.removeFromUserIndex(member)

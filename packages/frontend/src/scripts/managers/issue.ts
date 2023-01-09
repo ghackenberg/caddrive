@@ -21,6 +21,7 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
 
     update(issue: Issue): void {
         console.log(`Issue updated ${issue}`)
+        this.issueIndex[issue.id] = issue
         this.removeFromFindIndex(issue)
         this.addToFindIndex(issue)
     }

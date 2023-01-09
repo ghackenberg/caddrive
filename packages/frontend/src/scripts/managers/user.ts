@@ -118,9 +118,6 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         this.removeFromFindResult(user)
         this.addToFindResult(user)
         // Return user
-        console.table(this.userIndex)
-        console.table(this.findResult)
-        console.log("--------------")
         return user
     }
 

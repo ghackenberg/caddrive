@@ -21,6 +21,7 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
 
     update(milestone: Milestone): void {
         console.log(`Milestone updated ${milestone}`)
+        this.milestoneIndex[milestone.id] = milestone
         this.removeFromFindIndex(milestone)
         this.addToFindIndex(milestone)
     }
