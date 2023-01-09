@@ -1,4 +1,5 @@
 export const auth = {
-    username: '',
-    password: ''
+    headers: {
+        Authorization: ``
+    }
 }

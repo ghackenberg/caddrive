@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { Member, Milestone, Product, User } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/ProductVersion'
+import { VersionContext } from '../../contexts/Version'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
@@ -196,7 +196,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                     { milestones && <Table columns={columns} items={milestones}/> }
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 

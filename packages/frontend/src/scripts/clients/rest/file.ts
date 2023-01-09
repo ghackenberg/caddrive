@@ -6,7 +6,7 @@ import { auth } from '../auth'
 
 class FileClientImpl implements FileREST<string | ArrayBuffer> {
     async getFile(id: string): Promise<string | ArrayBuffer> {
-        return (await axios.get<ArrayBuffer>(`/rest/files/${id}`, { responseType: 'arraybuffer', auth })).data
+        return (await axios.get<ArrayBuffer>(`/rest/files/${id}`, { responseType: 'arraybuffer', ...auth })).data
     }
 }
 

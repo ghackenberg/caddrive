@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 
 import { Member, Product, User } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/ProductVersion'
 import { UserContext } from '../../contexts/User'
+import { VersionContext } from '../../contexts/Version'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -23,10 +23,11 @@ export const ProductView = () => {
     
     // CONTEXTS
     
-    const contextVersion = useContext(VersionContext)
     const contextUser = useContext(UserContext)
+    const contextVersion = useContext(VersionContext)
 
     // INITIAL STATES
+    
     const initialProducts = ProductManager.findProductsFromCache()
     const initialUsers: {[id: string]: User} = {}
     for (const product of initialProducts || []) {
@@ -78,7 +79,7 @@ export const ProductView = () => {
 
     // - Entities
     useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
-    useEffect(() => { contextVersion.updateVersion(null) }, [])
+    useEffect(() => { contextVersion.update(null) }, [])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {

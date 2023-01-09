@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { Member, Product, User, Version } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/ProductVersion'
+import { VersionContext } from '../../contexts/Version'
 import { computeTree } from '../../functions/tree'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -67,7 +67,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
-    useEffect(() => { contextVersion.id == undefined && versions && versions.length > 0 && contextVersion.updateVersion(versions[versions.length - 1])}, [versions])
+    useEffect(() => { contextVersion.id == undefined && versions && versions.length > 0 && contextVersion.update(versions[versions.length - 1])}, [versions])
     useEffect(() => { setVersion(contextVersion) },[contextVersion])
     useEffect(() => {
         if (versions) {
@@ -126,7 +126,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         </div>
                                                     </div>
                                                 )}
-                                                <div className={`version${version.id == vers.id ? ' selected' : ''}`} onClick={() => contextVersion.updateVersion(vers)}>
+                                                <div className={`version${version.id == vers.id ? ' selected' : ''}`} onClick={() => contextVersion.update(vers)}>
                                                     <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
                                                         {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                             <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
@@ -186,7 +186,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} change = {contextVersion.updateVersion} />
+                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} change = {contextVersion.update} />
                                     </div>
                                 </div>
                             </main>

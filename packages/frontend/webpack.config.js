@@ -42,6 +42,22 @@ module.exports = {
         alias: {
             'three': path.resolve('../../node_modules/three')
         },
+        fallback: {
+            'os': false,
+            'stream': false,
+            'http': false,
+            'https': false,
+            'zlib': false,
+            'util': false,
+            'path': false,
+            'crypto': false,
+            'zlib': false,
+            '@nestjs/core': false,
+            '@nestjs/common': false,
+            '@nestjs/mapped-types': false,
+            '@nestjs/swagger': false,
+            '@nestjs/microservices': false
+        },
         extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [

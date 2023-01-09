@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 
 import { Request } from 'express'
@@ -8,16 +7,17 @@ import { Request } from 'express'
 import { Member, MemberAddData, MemberUpdateData, MemberREST, User } from 'productboard-common'
 
 import { canReadMemberOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail, canFindMemberOrFail, canCreateMemberOrFail } from '../../../functions/permission'
+import { AuthGuard } from '../users/auth.guard'
 import { MemberService } from './member.service'
 
 @Controller('rest/members')
-@UseGuards(AuthGuard('basic'))
+@UseGuards(AuthGuard)
 @ApiBasicAuth()
 export class MemberController implements MemberREST {
     constructor(
         private readonly memberService: MemberService,
         @Inject(REQUEST)
-        private readonly request: Request
+        private readonly request: Request & { user: User }
     ) {}
 
     @Get()
@@ -28,7 +28,7 @@ export class MemberController implements MemberREST {
         @Query('product') productId: string,
         @Query('user') userId?: string
     ): Promise<Member[]> {
-        await canFindMemberOrFail((<User> this.request.user).id, productId)
+        await canFindMemberOrFail(this.request.user, productId)
         return this.memberService.findMembers(productId, userId)
     }
 
@@ -38,7 +38,7 @@ export class MemberController implements MemberREST {
     async addMember(
         @Body() data: MemberAddData
     ): Promise<Member> {
-        await canCreateMemberOrFail((<User> this.request.user).id, data.productId)
+        await canCreateMemberOrFail(this.request.user, data.productId)
         return this.memberService.addMember(data)
     }
 
@@ -48,7 +48,7 @@ export class MemberController implements MemberREST {
     async getMember(
         @Param('id') id: string
     ): Promise<Member> {
-        await canReadMemberOrFail((<User> this.request.user).id, id)
+        await canReadMemberOrFail(this.request.user, id)
         return this.memberService.getMember(id)
     }
 
@@ -60,7 +60,7 @@ export class MemberController implements MemberREST {
         @Param('id') id: string,
         @Body() data: MemberUpdateData
     ): Promise<Member> {
-        await canUpdateMemberOrFail((<User> this.request.user).id, id)
+        await canUpdateMemberOrFail(this.request.user, id)
         return this.memberService.updateMember(id,data)
     }
 
@@ -70,7 +70,7 @@ export class MemberController implements MemberREST {
     async deleteMember(
         @Param('id') id: string
     ): Promise<Member> {
-        await canDeleteMemberOrFail((<User> this.request.user).id, id)
+        await canDeleteMemberOrFail(this.request.user, id)
         return this.memberService.deleteMember(id)
     }
 }

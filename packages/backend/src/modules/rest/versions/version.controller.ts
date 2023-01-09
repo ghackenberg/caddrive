@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth, ApiConsumes, getSchemaPath, ApiExtraModels } from '@nestjs/swagger'
 
@@ -10,17 +9,18 @@ import 'multer'
 import { User, Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
 
 import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../../functions/permission'
+import { AuthGuard } from '../users/auth.guard'
 import { VersionService } from './version.service'
 
 @Controller('rest/versions')
-@UseGuards(AuthGuard('basic'))
+@UseGuards(AuthGuard)
 @ApiBasicAuth()
 @ApiExtraModels(VersionAddData, VersionUpdateData)
 export class VersionController implements VersionREST<string, string, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         private versionService: VersionService,
         @Inject(REQUEST)
-        private readonly request: Request
+        private readonly request: Request & { user: User }
     ) {}
 
     @Get()
@@ -29,7 +29,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     async findVersions(
         @Query('product') productId: string
     ): Promise<Version[]> {
-        await canFindVersionOrFail((<User> this.request.user).id, productId)
+        await canFindVersionOrFail(this.request.user, productId)
         return this.versionService.findVersions(productId)
     }
 
@@ -59,7 +59,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @UploadedFiles() files: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<Version> {
         const dataParsed = <VersionAddData> JSON.parse(data)
-        await canCreateVersionOrFail((<User> this.request.user).id, dataParsed.productId)
+        await canCreateVersionOrFail(this.request.user, dataParsed.productId)
         return this.versionService.addVersion(dataParsed, files)
     }
 
@@ -69,7 +69,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     async getVersion(
         @Param('id') id: string
     ): Promise<Version> {
-        await canReadVersionOrFail((<User> this.request.user).id, id)
+        await canReadVersionOrFail(this.request.user, id)
         return this.versionService.getVersion(id)
     }
 
@@ -100,7 +100,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @Body('data') data: string,
         @UploadedFiles() files?: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<Version> {
-        await canUpdateVersionOrFail((<User> this.request.user).id, id)
+        await canUpdateVersionOrFail(this.request.user, id)
         return this.versionService.updateVersion(id, JSON.parse(data), files)
     }
 
@@ -110,7 +110,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     async deleteVersion(
         @Param('id') id: string
     ): Promise<Version> {
-        await canDeleteVersionOrFail((<User> this.request.user).id, id)
+        await canDeleteVersionOrFail(this.request.user, id)
         return this.versionService.deleteVersion(id)
     }
 }

@@ -1,11 +1,19 @@
 import * as mqtt from 'mqtt'
 
+import { auth } from './auth'
+
 const protocol = window.location.protocol == 'http:' ? 'ws:' : 'wss:'
 const host = window.location.host
 const path = 'mqtt'
 const url =`${protocol}//${host}/${path}`
 
-export const client = mqtt.connect(url)
+// TODO create MQTT client after Auth0 login
+
+export const client = mqtt.connect(url, {
+    wsOptions: {
+        ...auth
+    }
+})
 
 client.on('connect', () => {
     console.log('MQTT client connected')

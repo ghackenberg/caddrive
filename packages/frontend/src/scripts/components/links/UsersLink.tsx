@@ -10,11 +10,13 @@ export const UsersLink = () => {
     const user = useContext(UserContext)
     return (
         <span>
-            {user.userManagementPermission && (
+            {user.userManagementPermission ? (
                 <NavLink to="/users">
                     <img src={UserIcon}/>
                     Users
                 </NavLink>
+            ) : (
+                <>Users</>
             )}
         </span>
     )

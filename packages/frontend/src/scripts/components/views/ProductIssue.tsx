@@ -5,7 +5,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Comment, Issue, Member, Product, User } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/ProductVersion'
+import { VersionContext } from '../../contexts/Version'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
@@ -256,7 +256,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} highlighted={hightlighted} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} highlighted={hightlighted} mouse={true} vr= {true} change = {contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 

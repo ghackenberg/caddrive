@@ -5,8 +5,8 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/ProductVersion'
 import { UserContext } from '../../contexts/User'
+import { VersionContext } from '../../contexts/Version'
 import { ProductManager } from '../../managers/product'
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter } from '../snippets/ProductFooter'
@@ -19,8 +19,8 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     // CONTEXTS
 
-    const contextVersion = useContext(VersionContext)
     const contextUser = useContext(UserContext)
+    const contextVersion = useContext(VersionContext)
 
     // PARAMS
 
@@ -92,7 +92,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.updateVersion}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 

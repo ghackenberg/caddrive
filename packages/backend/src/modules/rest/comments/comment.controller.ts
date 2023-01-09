@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiBasicAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
@@ -10,17 +9,18 @@ import 'multer'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
 
 import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../../functions/permission'
+import { AuthGuard } from '../users/auth.guard'
 import { CommentService } from './comment.service'
 
 @Controller('rest/comments')
-@UseGuards(AuthGuard('basic'))
+@UseGuards(AuthGuard)
 @ApiBasicAuth()
 @ApiExtraModels(CommentAddData, CommentUpdateData)
 export class CommentController implements CommentREST<string, string, Express.Multer.File[]> {
     constructor(
         private readonly commentService: CommentService,
         @Inject(REQUEST)
-        private readonly request: Request
+        private readonly request: Request & { user: User }
     ) {}
 
     @Get()
@@ -29,7 +29,7 @@ export class CommentController implements CommentREST<string, string, Express.Mu
     async findComments(
         @Query('issue') issueId: string
     ): Promise<Comment[]> {
-        await canFindCommentOrFail((<User> this.request.user).id, issueId)
+        await canFindCommentOrFail(this.request.user, issueId)
         return this.commentService.findComments(issueId)
     }
 
@@ -57,7 +57,7 @@ export class CommentController implements CommentREST<string, string, Express.Mu
         @UploadedFiles() files: { audio?: Express.Multer.File[] }
     ): Promise<Comment> {
         const parsedData = JSON.parse(data) as CommentAddData
-        await canCreateCommentOrFail((<User> this.request.user).id, parsedData.issueId)
+        await canCreateCommentOrFail(this.request.user, parsedData.issueId)
         return this.commentService.addComment(parsedData, files)
     }
 
@@ -67,7 +67,7 @@ export class CommentController implements CommentREST<string, string, Express.Mu
     async getComment(
         @Param('id') id: string
     ): Promise<Comment> {
-        await canReadCommentOrFail((<User> this.request.user).id, id)
+        await canReadCommentOrFail(this.request.user, id)
         return this.commentService.getComment(id)
     }
 
@@ -97,7 +97,7 @@ export class CommentController implements CommentREST<string, string, Express.Mu
         @UploadedFiles() files?: { audio?: Express.Multer.File[] }
     ): Promise<Comment> {
         const parsedData = JSON.parse(data) as CommentUpdateData
-        await canUpdateCommentOrFail((<User> this.request.user).id, id)
+        await canUpdateCommentOrFail(this.request.user, id)
         return this.commentService.updateComment(id, parsedData, files)
     }
 
@@ -107,7 +107,7 @@ export class CommentController implements CommentREST<string, string, Express.Mu
     async deleteComment(
         @Param('id') id: string 
     ): Promise<Comment> {
-        await canDeleteCommentOrFail((<User> this.request.user).id, id)
+        await canDeleteCommentOrFail(this.request.user, id)
         return this.commentService.deleteComment(id)
     }
 }

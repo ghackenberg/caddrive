@@ -42,3 +42,5 @@ bin
 database.sqlite
 
 env.ts
+
+certificate.pem

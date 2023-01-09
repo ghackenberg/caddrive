@@ -21,7 +21,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
 
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
         let where: FindOptionsWhere<UserEntity>
-        if (query && productId)
+        if (query)
             where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`), deleted: false }
         else
             where = { deleted: false }
@@ -54,15 +54,6 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     async getUser(id: string): Promise<User> {
         const user = await UserRepository.findOneByOrFail({ id })
         return this.convert(user)
-    }
-    async getUserByMail(email: string): Promise<User> {
-        const user = await UserRepository.findOneBy({ email })
-        if (user) {
-            return this.convert(user)
-        } 
-        else {
-            return undefined
-        }
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {

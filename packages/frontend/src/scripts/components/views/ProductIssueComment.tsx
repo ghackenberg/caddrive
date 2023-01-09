@@ -7,8 +7,8 @@ import { Object3D } from 'three'
 
 import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/ProductVersion'
 import { UserContext } from '../../contexts/User'
+import { VersionContext } from '../../contexts/Version'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
@@ -31,8 +31,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
 
     // CONTEXTS
     
-    const contextVersion = useContext(VersionContext)
     const contextUser = useContext(UserContext)
+    const contextVersion = useContext(VersionContext)
 
     // PARAMS
 
@@ -277,7 +277,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                     </div>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr= {true} change = {contextVersion.updateVersion}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr= {true} change = {contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 

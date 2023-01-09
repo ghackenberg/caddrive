@@ -8,7 +8,9 @@ import * as AppIcon from '/src/images/app.png'
 import * as UserIcon from '/src/images/user.png'
 
 export const PageHeader = () => {
+
     const user = useContext(UserContext)
+
     return (
         <header>
             <div>
@@ -24,10 +26,13 @@ export const PageHeader = () => {
                         </span>
                     )}
                     <span>
-                        { user.pictureId != undefined &&  <NavLink to={`/users/${user.id}/settings`}><img className='' src={`/rest/files/${user.pictureId}.jpg`}/></NavLink> }
+                        <NavLink to={`/users/${user.id}/settings`}>
+                            <img src={`/rest/files/${user.pictureId}.jpg`}/>
+                        </NavLink>
                     </span>
                 </div>
             )}
         </header>
     )
+    
 }

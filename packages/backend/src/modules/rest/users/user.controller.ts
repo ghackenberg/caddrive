@@ -1,8 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiBasicAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
 import { Request } from 'express'
 import 'multer'
@@ -10,23 +9,24 @@ import 'multer'
 import { User, UserAddData, UserREST, UserUpdateData } from 'productboard-common'
 
 import { canFindUserOrFail, canCreateUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
+import { AuthGuard } from './auth.guard'
 import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
-@UseGuards(AuthGuard('basic'))
-@ApiBasicAuth()
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 @ApiExtraModels(UserAddData, UserUpdateData)
 export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
         @Inject(REQUEST)
-        private readonly request: Request
+        private readonly request: Request & { user: User }
     ) {}
 
     @Get('check')
     @ApiResponse({ type: User })
     async checkUser(): Promise<User> {
-        return <User> this.request.user
+        return this.request.user
     }
 
     @Get()
@@ -37,7 +37,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         @Query('query') query?: string,
         @Query('product') product?: string
     ): Promise<User[]> {
-        await canFindUserOrFail((<User> this.request.user).id, query, product)
+        await canFindUserOrFail(this.request.user, query, product)
         return this.userService.findUsers(query, product)
     }
   
@@ -59,7 +59,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<User> {
-        await canCreateUserOrFail((<User> this.request.user).id)
+        await canCreateUserOrFail(this.request.user)
         return this.userService.addUser(JSON.parse(data), file)
     }
 
@@ -69,17 +69,8 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     async getUser(
         @Param('id') id: string
     ): Promise<User> {
-        await canReadUserOrFail((<User> this.request.user).id, id)
+        await canReadUserOrFail(this.request.user, id)
         return this.userService.getUser(id)
-    }
-
-    @Get('/email/:email')
-    @ApiParam({ name: 'email', type: 'string', required: true })
-    @ApiResponse({ type: User })
-    async getUserByMail(
-        @Param('email') email: string
-    ): Promise<User> {
-        return this.userService.getUserByMail(email)
     }
 
     @Put(':id')
@@ -102,7 +93,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<User> {
-        await canUpdateUserOrFail((<User> this.request.user).id, id)
+        await canUpdateUserOrFail(this.request.user, id)
         return this.userService.updateUser(id, JSON.parse(data), file)
     }
 
@@ -112,7 +103,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     async deleteUser(
         @Param('id') id: string
     ): Promise<User> {
-        await canDeleteUserOrFail((<User> this.request.user).id, id)
+        await canDeleteUserOrFail(this.request.user, id)
         return this.userService.deleteUser(id)
     }
 }

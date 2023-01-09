@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
 
 import { Request } from 'express'
@@ -8,16 +7,17 @@ import { Request } from 'express'
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
 
 import { canReadProductOrFail, canUpdateProductOrFail, canDeleteProductOrFail, canCreateProductOrFail } from '../../../functions/permission'
+import { AuthGuard } from '../users/auth.guard'
 import { ProductService } from './product.service'
 
 @Controller('rest/products')
-@UseGuards(AuthGuard('basic'))
+@UseGuards(AuthGuard)
 @ApiBasicAuth()
 export class ProductController implements ProductREST {
     constructor(
         private readonly productService: ProductService,
         @Inject(REQUEST)
-        private readonly request: Request
+        private readonly request: Request & { user: User }
     ) {}
 
     @Get()
@@ -32,7 +32,7 @@ export class ProductController implements ProductREST {
     async addProduct(
         @Body() data: ProductAddData
     ): Promise<Product> {
-        await canCreateProductOrFail((<User> this.request.user).id)
+        await canCreateProductOrFail(this.request.user)
         return this.productService.addProduct(data)
     }
 
@@ -42,7 +42,7 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        await canReadProductOrFail((<User> this.request.user).id, id)
+        await canReadProductOrFail(this.request.user, id)
         return this.productService.getProduct(id)
     }
 
@@ -54,7 +54,7 @@ export class ProductController implements ProductREST {
         @Param('id') id: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        await canUpdateProductOrFail((<User> this.request.user).id, id)
+        await canUpdateProductOrFail(this.request.user, id)
         return this.productService.updateProduct(id, data)
     }
 
@@ -64,7 +64,7 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('id') id: string
     ): Promise<Product> {
-        await canDeleteProductOrFail((<User> this.request.user).id, id)
+        await canDeleteProductOrFail(this.request.user, id)
         return this.productService.deleteProduct(id)
     }
 }

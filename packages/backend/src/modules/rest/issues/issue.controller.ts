@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { AuthGuard } from '@nestjs/passport'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiBasicAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
@@ -10,17 +9,18 @@ import "multer"
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 
 import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
+import { AuthGuard } from '../users/auth.guard'
 import { IssueService } from './issue.service'
 
 @Controller('rest/issues')
-@UseGuards(AuthGuard('basic'))
+@UseGuards(AuthGuard)
 @ApiBasicAuth()
 @ApiExtraModels(IssueAddData, IssueUpdateData)
 export class IssueController implements IssueREST<string, string, Express.Multer.File[]> {
     constructor(
         private readonly issueService: IssueService,
         @Inject(REQUEST)
-        private readonly request: Request
+        private readonly request: Request & { user: User }
     ) {}
 
     @Get()
@@ -33,7 +33,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed'
     ): Promise<Issue[]> {
-        await canReadProductOrFail((<User> this.request.user).id, productId)
+        await canReadProductOrFail(this.request.user, productId)
         return this.issueService.findIssues(productId, milestoneId, state)
     }
 
@@ -61,7 +61,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
         @UploadedFiles() files: { audio?: Express.Multer.File[] }
     ): Promise<Issue> {
         const parsedData = JSON.parse(data) as IssueAddData
-        await canCreateIssueOrFail((<User> this.request.user).id, parsedData.productId)
+        await canCreateIssueOrFail(this.request.user, parsedData.productId)
         return this.issueService.addIssue(parsedData, files)
     }  
 
@@ -71,7 +71,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     async getIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        await canReadIssueOrFail((<User> this.request.user).id, id)
+        await canReadIssueOrFail(this.request.user, id)
         return this.issueService.getIssue(id)
     } 
 
@@ -101,7 +101,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
         @UploadedFiles() files?: { audio?: Express.Multer.File[] }
     ): Promise<Issue> {
         const parsedData = JSON.parse(data) as IssueUpdateData
-        await canUpdateIssueOrFail((<User> this.request.user).id, id)
+        await canUpdateIssueOrFail(this.request.user, id)
         return this.issueService.updateIssue(id, parsedData, files)
     }
 
@@ -111,7 +111,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     async deleteIssue(
         @Param('id') id: string
     ): Promise<Issue> {
-        await canDeleteIssueOrFail((<User> this.request.user).id, id)
+        await canDeleteIssueOrFail(this.request.user, id)
         return this.issueService.deleteIssue(id)
     } 
 }
