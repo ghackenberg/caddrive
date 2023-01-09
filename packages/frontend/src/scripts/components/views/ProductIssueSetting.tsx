@@ -26,8 +26,8 @@ import * as LoadIcon from '/src/images/load.png'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
-    const history = useHistory()
-    const queryMilestoneId = new URLSearchParams(history.location.search).get('milestone') || ''
+    const { goBack, replace, location } = useHistory()
+    const queryMilestoneId = new URLSearchParams(location.search).get('milestone') || ''
 
     // REFERENCES
 
@@ -144,12 +144,12 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         if (issueId == 'new') {
             if (label && text) {
                 const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
-                history.replace(`/products/${productId}/issues/${issue.id}/comments`)
+                replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
                 await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
-                history.goBack()    
+                goBack()    
             }
         }
     }
@@ -201,7 +201,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                             <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
-                                        <form onSubmit={submitIssue} onReset={() => history.goBack()}>
+                                        <form onSubmit={submitIssue} onReset={goBack}>
                                             <TextInput class='fill' label='Label' placeholder='Type label' value={label} change={setLabel}/>
                                             <div>
                                                 <div>

@@ -28,7 +28,7 @@ const PREVIEW_HEIGHT = 1000
 
 export const ProductVersionSettingView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
-    const history = useHistory()
+    const { goBack } = useHistory()
 
     // CONTEXTS
 
@@ -100,7 +100,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
         } else {
             await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image })
         }
-        history.goBack()
+        goBack()
     }
 
     // RETURN

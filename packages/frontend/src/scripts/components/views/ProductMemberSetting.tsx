@@ -19,7 +19,7 @@ import * as DeleteIcon from '/src/images/delete.png'
 
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
-    const history = useHistory()
+    const { goBack } = useHistory()
     const roles: MemberRole[] = ['manager', 'engineer', 'customer']
 
     // CONTEXTS
@@ -87,7 +87,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
         if (memberId != 'new') {
             if (confirm('Do you really want to change this member?')) {
                 await MemberManager.updateMember(memberId,{...member, role: role})
-                history.goBack()       
+                goBack()       
             }
         }
     

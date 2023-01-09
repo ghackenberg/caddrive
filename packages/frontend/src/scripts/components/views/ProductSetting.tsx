@@ -15,7 +15,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 
 export const ProductSettingView = (props: RouteComponentProps<{product: string}>) => {
 
-    const history = useHistory()
+    const { replace } = useHistory()
 
     // CONTEXTS
 
@@ -57,7 +57,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
         if(productId == 'new') {
             if (name && description) {
                 const product = await ProductManager.addProduct({userId: contextUser.id, name, description})
-                history.replace(`/products/${product.id}`)
+                replace(`/products/${product.id}`)
             }
         } else {
             if (name && description) {

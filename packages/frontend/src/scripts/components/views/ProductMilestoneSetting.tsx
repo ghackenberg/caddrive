@@ -19,7 +19,7 @@ import { BurndownChartWidget } from '../widgets/BurndownChart'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
-    const history = useHistory()
+    const { goBack, replace } = useHistory()
     
     // CONTEXTS
 
@@ -96,10 +96,10 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
         event.preventDefault()
         if(milestoneId == 'new') {
             await MilestoneManager.addMilestone({userId: contextUser.id, productId: productId, label: label, start: start.toISOString(), end: end.toISOString()})
-            history.replace(`/products/${productId}/milestones/`)
+            replace(`/products/${productId}/milestones/`)
         } else {
             await MilestoneManager.updateMilestone( milestone.id, { ...milestone, label: label, start: start.toISOString(), end: end.toISOString()})
-            history.goBack()
+            goBack()
         }
     }
 
@@ -119,7 +119,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                             <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
-                                    <form onSubmit={submitMilestone} onReset={() => history.goBack()}>
+                                    <form onSubmit={submitMilestone} onReset={goBack}>
                                             <TextInput class='fill' label='Label' placeholder='Type label' value={label} change={setLabel} required />
                                             <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required />
                                             <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required />

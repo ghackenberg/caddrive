@@ -18,20 +18,20 @@ export const PageHeader = () => {
                     <NavLink to="/products"><img src={AppIcon}/>ProductBoard</NavLink>
                 </span>
             </div>
-            {user && (
-                <div>
-                    { user.userManagementPermission && (
-                        <span>
-                            <NavLink to="/users"><img src={UserIcon}/>Users</NavLink>
-                        </span>
-                    )}
+            <div>
+                { user && user.userManagementPermission && (
                     <span>
+                        <NavLink to="/users"><img src={UserIcon}/>Users</NavLink>
+                    </span>
+                )}
+                <span>
+                    { user && (
                         <NavLink to={`/users/${user.id}/settings`}>
                             <img src={`/rest/files/${user.pictureId}.jpg`}/>
                         </NavLink>
-                    </span>
-                </div>
-            )}
+                    )}
+                </span>
+            </div>
         </header>
     )
     

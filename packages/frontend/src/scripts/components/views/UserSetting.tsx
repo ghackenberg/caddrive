@@ -19,7 +19,7 @@ import { UserHeader } from '../snippets/UserHeader'
 
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     
-    const history = useHistory()
+    const { goBack } = useHistory()
 
     const { logout } = useAuth0()
     
@@ -73,7 +73,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                 }
             }
         }
-        history.goBack() 
+        goBack() 
     }
 
     function encrypt(password: string): string {
