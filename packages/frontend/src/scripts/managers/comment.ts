@@ -21,6 +21,7 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
 
     update(comment: Comment): void {
         console.log(`Comment updated ${comment}`)
+        this.commentIndex[comment.id] = comment
         this.removeFromFindIndex(comment)
         this.addToFindIndex(comment)
     }
