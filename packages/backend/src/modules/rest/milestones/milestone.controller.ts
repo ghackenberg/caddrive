@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBasicAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 
 import { Request } from 'express'
 
@@ -12,7 +12,7 @@ import { MilestoneService } from './milestone.service'
 
 @Controller('rest/milestones')
 @UseGuards(AuthGuard)
-@ApiBasicAuth()
+@ApiBearerAuth()
 export class MilestoneController implements MilestoneREST {
     constructor(
         private readonly milestoneService: MilestoneService,

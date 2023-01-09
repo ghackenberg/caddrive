@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiBasicAuth, ApiConsumes, getSchemaPath, ApiExtraModels } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiConsumes, getSchemaPath, ApiExtraModels, ApiBearerAuth } from '@nestjs/swagger'
 
 import { Request } from 'express'
 import 'multer'
@@ -14,7 +14,7 @@ import { VersionService } from './version.service'
 
 @Controller('rest/versions')
 @UseGuards(AuthGuard)
-@ApiBasicAuth()
+@ApiBearerAuth()
 @ApiExtraModels(VersionAddData, VersionUpdateData)
 export class VersionController implements VersionREST<string, string, Express.Multer.File[], Express.Multer.File[]> {
     constructor(

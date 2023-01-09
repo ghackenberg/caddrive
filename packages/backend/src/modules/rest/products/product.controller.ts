@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBody, ApiResponse, ApiParam, ApiBasicAuth } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger'
 
 import { Request } from 'express'
 
@@ -12,7 +12,7 @@ import { ProductService } from './product.service'
 
 @Controller('rest/products')
 @UseGuards(AuthGuard)
-@ApiBasicAuth()
+@ApiBearerAuth()
 export class ProductController implements ProductREST {
     constructor(
         private readonly productService: ProductService,
