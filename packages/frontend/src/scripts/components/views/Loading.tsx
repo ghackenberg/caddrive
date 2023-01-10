@@ -1,11 +1,12 @@
 import * as React from 'react'
 
+import * as LoadIcon from '/src/images/load.png'
+
 export const LoadingView = () => (
-    <main className="view loading">
+    <main className="view reduced loading">
         <main>
             <div>
-                <h1>Loading</h1>
-                <p>Please wait.</p>
+                <img className="load" src={LoadIcon}/>
             </div>
         </main>
     </main>

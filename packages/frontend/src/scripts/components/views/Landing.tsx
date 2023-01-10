@@ -9,7 +9,7 @@ export const LandingView = () => {
     // RETURN
 
     return (
-        <main className="view landing">
+        <main className="view reduced landing">
             <main>
                 <div>
                     <h1>Authentication</h1>

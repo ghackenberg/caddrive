@@ -30,6 +30,8 @@ import { ProductVersionSettingView } from './views/ProductVersionSetting'
 import { UserView } from './views/User'
 import { UserSettingView } from './views/UserSetting'
 
+import '/src/styles/root.css'
+
 export const Root = () => {
 
     const { isLoading, isAuthenticated, user, getAccessTokenSilently } = useAuth0()

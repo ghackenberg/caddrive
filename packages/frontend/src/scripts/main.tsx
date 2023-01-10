@@ -12,8 +12,6 @@ import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './env'
 
 import * as AppIcon from '/src/images/app.png'
 
-import '/src/styles/body.css'
-
 // Create root
 const root = document.createElement('div')
 // Append root

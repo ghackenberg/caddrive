@@ -1,11 +1,3 @@
-@import url(./main/anchor.css);
-@import url(./main/heading.css);
-@import url(./main/paragraph.css);
-@import url(./main/form.css);
-@import url(./main/table.css);
-@import url(./main/list.css);
-@import url(./main/search.css);
-
 body > div > main {
     position: fixed;
     top: 4em;
@@ -18,6 +10,7 @@ body > div > main {
 body > div > main > footer,
 body > div > main > header {
     background-color: rgb(245,245,245);
+
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-bottom-color: rgb(215,215,215);
@@ -79,6 +72,10 @@ body > div > main > main {
     left: 0;
     right: 0;
     bottom: 0;
+}
+
+body > div > main.reduced > main {
+    top: 0;
 }
 
 body > div > main.extended > main {
@@ -163,7 +160,6 @@ body > div > main > footer {
     display: none;
 }
 
-
 @media screen and (max-width: 70em) {
     body > div > main > main.sidebar > div:nth-child(1) {
         width: auto;
@@ -197,8 +193,6 @@ body > div > main > footer {
         height: 3em;
        
     }
-    
-
 }
 
 body > div > main > main div.widget.product_view {

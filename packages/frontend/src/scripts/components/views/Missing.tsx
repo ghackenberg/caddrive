@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 export const MissingView = () => (
-    <main className="view missing">
+    <main className="view reduced missing">
         <main>
             <div>
                 <h1>Missing</h1>
