@@ -45,7 +45,7 @@ export class AuthGuard implements CanActivate {
                 // Extract user name and email
                 const { name, email } = userinfo.data
                 // Insert user data in database
-                request.user = { ...await UserRepository.save({ id, email, name, userManagementPermission: false, productManagementPermission: false, password: '', pictureId: shortid() }), permissions }
+                request.user = { ...await UserRepository.save({ id, email, name, pictureId: shortid() }), permissions }
             }
             // Mark request as authorized
             return true
