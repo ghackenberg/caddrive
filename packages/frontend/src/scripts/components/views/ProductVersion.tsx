@@ -26,9 +26,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     // CONTEXTS
 
-    const versionContext = useContext(VersionContext)
-
-    const { contextVersion, setContextVersion } = versionContext
+    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -62,7 +60,6 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [indents, setIndents] = useState<{[id: string]: number}>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
     // - Interactions
-    const [version, setVersion] = useState<Version>()
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
@@ -72,7 +69,6 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
-    useEffect(() => { setVersion(contextVersion) }, [versionContext])
     useEffect(() => {
         if (versions) {
             Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
@@ -107,7 +103,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     return (
         <main className="view extended versions">
-            {product && versions && version && (
+            {product && versions && contextVersion && (
                 <Fragment>
                     {product && product.deleted ? (
                         <Redirect to='/'/>
@@ -135,7 +131,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         <div className="text" style={{color: 'orange'}}/>
                                                     </div>
                                                 )}
-                                                <div className={`version${version.id == vers.id ? ' selected' : ''}`} onClick={() => setContextVersion(vers)}>
+                                                <div className={`version${contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => setContextVersion(vers)}>
                                                     <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
                                                         {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                             <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
@@ -157,7 +153,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
                                                             <a>
-                                                                {version && users[vers.id] && members ? (
+                                                                {users[vers.id] && members ? (
                                                                     <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/>
                                                                 ) : (
                                                                     <img src={LoadIcon} className='big load'/> 
@@ -187,13 +183,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                 </div>
                                 <div>
                                     <div className='widget product_view'>
-                                        {!versions || (versions.length > 0 && !version) && (
+                                        {!versions || (versions.length > 0 && !contextVersion) && (
                                             <img className='load' src={LoadIcon}/>
                                         )}
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        <ProductView3D product={product} version={version} mouse={true} vr={true} change={setContextVersion}/>
+                                        <ProductView3D product={product} version={contextVersion} mouse={true} vr={true} change={setContextVersion}/>
                                     </div>
                                 </div>
                             </main>
