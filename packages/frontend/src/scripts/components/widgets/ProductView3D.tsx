@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useState, Fragment } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Object3D } from 'three'
 
@@ -17,7 +17,7 @@ interface Part {
     objectName: string
 }
 
-export const ProductView3D = (props: { product?: Product, version?: Version, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean, change?: (version: Version) => void }  ) => {
+export const ProductView3D = (props: { product?: Product, version?: Version, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean, change?: (version: Version) => void }) => {
 
     // STATES
 
@@ -55,25 +55,31 @@ export const ProductView3D = (props: { product?: Product, version?: Version, mou
     
     return (
         <div className="widget product_view">
-            { load ? (
+            {load ? (
                 <img className='load' src={LoadIcon}/>
             ) : (
-                <Fragment>
-                    { versions && versions.length > 0 ? (
-                        <Fragment>
+                <>
+                    {versions && versions.length > 0 ? (
+                        <>
                             <header>
-                                <select value={version.id} onChange={ event => changeVersion(event.target.value)}>
-                                   { versions.map((version) => <option key={version.id} value={version.id}>{version.major +'.' + version.minor  +'.'+ version.patch + ': ' + version.description}</option> )}
+                                <select value={version.id} onChange={event => changeVersion(event.target.value)}>
+                                    {versions.map(version => (
+                                        <option key={version.id} value={version.id}>
+                                            {version.major}.{version.minor}.{version.patch}: {version.description}
+                                        </option>
+                                    ))}
                                 </select>
                             </header>
                             <main>
-                                { version && <VersionView3D version={version} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(version, object))} vr= {props.vr}/> }
+                                {version && (
+                                    <VersionView3D version={version} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(version, object))} vr={props.vr}/>
+                                )}
                             </main>
-                        </Fragment>
+                        </>
                     ) : (
                         <img className='empty' src={EmptyIcon}/>
                     )}
-                </Fragment>
+                </>
             )}
         </div>
     )
