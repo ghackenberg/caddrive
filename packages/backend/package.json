@@ -53,6 +53,7 @@
         "axios": "^1.2.2",
         "hash.js": "^1.1.7",
         "jsonwebtoken": "^9.0.0",
+        "jwks-rsa": "^3.0.0",
         "mqtt": "^4.2.6",
         "productboard-common": "^0.0.1",
         "productboard-database": "^0.0.1",

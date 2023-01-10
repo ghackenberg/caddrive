@@ -26,8 +26,10 @@ jobs:
         run: npm install -g npm@latest
       - name: Install dependencies
         run: npm install
-      - name: create environment
+      - name: create frontend environment
         run: cp packages/frontend/src/scripts/env.example.ts packages/frontend/src/scripts/env.ts
+      - name: create backend environment
+        run: cp packages/backend/src/env.example.ts packages/backend/src/env.ts
       - name: Build sources
         run: npm run build
       - name: Lint sources
