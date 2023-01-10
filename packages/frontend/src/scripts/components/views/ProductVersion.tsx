@@ -11,7 +11,7 @@ import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { VersionManager } from '../../managers/version'
-import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
@@ -19,6 +19,8 @@ import { ProductView3D } from '../widgets/ProductView3D'
 
 import * as LoadIcon from '/src/images/load.png'
 import * as EmptyIcon from '/src/images/empty.png'
+import * as LeftIcon from '/src/images/version.png'
+import * as RightIcon from '/src/images/part.png'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -59,7 +61,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [indent, setIndent] = useState<number>(initialTree.indent)
     // - Interactions
     const [version, setVersion] = useState<Version>()
-    const [sidebar, setSidebar] = useState<boolean>(false)
+    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -92,6 +94,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
         setChildrenMax(tree.childrenMax)
     }, [versions])
 
+    // CONSTANTS
+
+    const items: ProductFooterItem[] = [
+        { name: 'left', text: 'Tree view', image: LeftIcon },
+        { name: 'right', text: 'Model view', image: RightIcon }
+    ]
+
     // RETURN
 
     return (
@@ -103,7 +112,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
+                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
                                 <div>
                                     <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
                                         New version
@@ -186,10 +195,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter 
-                                item1={{ text: 'Versions', image: 'version', sidebar, setSidebar, set: false }} 
-                                item2={{ text: '3D model',image: 'part', sidebar, setSidebar, set: true }} 
-                            />
+                            <ProductFooter items={items} active={active} setActive={setActive}/>
                         </Fragment>
                     )}
                 </Fragment>

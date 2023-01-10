@@ -13,9 +13,12 @@ import { MilestoneManager } from '../../managers/milestone'
 import { ProductManager } from '../../managers/product'
 import { DateInput } from '../inputs/DateInput'
 import { TextInput } from '../inputs/TextInput'
-import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
+
+import * as LeftIcon from '/src/images/setting.png'
+import * as RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
@@ -57,7 +60,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
     // - Interactions
-    const [sidebar, setSidebar] = useState<boolean>(false)
+    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -105,6 +108,11 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
 
     // CONSTANTS
 
+    const items: ProductFooterItem[] = [
+        { name: 'left', text: 'Form view', image: LeftIcon },
+        { name: 'right', text: 'Chart view', image: RightIcon }
+    ]
+
     // RETURN
 
     return (
@@ -116,7 +124,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
+                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submitMilestone} onReset={goBack}>
@@ -137,10 +145,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                     </div>
                                 </div>
                             </main>
-                            <ProductFooter 
-                                item1={{ text: 'Milestone settings', image: 'setting', sidebar, setSidebar, set: false }} 
-                                item2={{ text: 'Burndown chart', image: 'chart', sidebar, setSidebar, set: true }} 
-                            />
+                            <ProductFooter items={items} active={active} setActive={setActive}/>
                         </Fragment>
                     )}
                  </Fragment>

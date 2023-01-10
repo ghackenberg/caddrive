@@ -15,13 +15,15 @@ import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
 import { NumberInput } from '../inputs/NumberInput'
 import { TextInput } from '../inputs/TextInput'
-import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { SceneView3D } from '../widgets/SceneView3D'
 import { VersionView3D } from '../widgets/VersionView3D'
 
 import * as EmptyIcon from '/src/images/empty.png'
 import * as LoadIcon from '/src/images/load.png'
+import * as LeftIcon from '/src/images/setting.png'
+import * as RightIcon from '/src/images/part.png'
 
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
@@ -61,7 +63,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
     const [model, setModel] = useState<GLTF>(null)
     const [image, setImage] = useState<Blob>(null) 
-    const [sidebar, setSidebar] = useState<boolean>(false)
+    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -103,6 +105,13 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
         goBack()
     }
 
+    // CONSTANTS
+
+    const items: ProductFooterItem[] = [
+        { name: 'left', text: 'Form view', image: LeftIcon },
+        { name: 'right', text: 'Model view', image: RightIcon }
+    ]
+
     // RETURN
 
     return (
@@ -114,7 +123,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
+                            <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submit}>
@@ -167,10 +176,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                     )}
                                 </div>
                             </main>
-                            <ProductFooter 
-                                item1={{ text: 'Version settings', image: 'setting', sidebar , setSidebar, set: false }} 
-                                item2={{ text: '3D model', image: 'part', sidebar, setSidebar, set: true }} 
-                            />
+                            <ProductFooter items={items} active={active} setActive={setActive}/>
                         </Fragment>
                     )}
                 </Fragment>

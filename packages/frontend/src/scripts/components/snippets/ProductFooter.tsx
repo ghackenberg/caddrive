@@ -1,29 +1,24 @@
 import * as React from 'react'
 
-export const ProductFooter = (props: {
-    item1?: { text: string, image: string, sidebar: boolean, setSidebar: (sidebar: boolean) => void, set: boolean },
-    item2?: { text: string, image: string, sidebar: boolean, setSidebar: (sidebar: boolean) => void, set: boolean }
-}) => {
+export type ProductFooterItem = {
+    name: string
+    text: string
+    image: string
+}
+
+export const ProductFooter = (props: { items: ProductFooterItem[], active: string, setActive: (name: string) => void }) => {
     return(
         <footer>
             <div/>
             <div>
-                {props.item1 && (
-                    <span>
-                        <a className={`${props.item1.sidebar ? '' : 'active'}`} onClick={() => {props.item1.setSidebar(props.item1.set)}}>
-                            <img src={require(`/src/images/${props.item1.image}.png`)}/>
-                            {props.item1.text}
+                {props.items.map(item => (
+                    <span key={item.name}>
+                        <a className={item.name == props.active ? 'active' : ''} onClick={() => props.setActive(item.name)}>
+                            <img src={item.image}/>
+                            {item.text}
                         </a>
                     </span>
-                )}
-                {props.item2 && (
-                    <span>
-                        <a className={`${props.item2.sidebar ? 'active' : ''}`} onClick={() => {props.item2.setSidebar(props.item2.set)}}>
-                            <img src= {require(`/src/images/${props.item2.image}.png`)}/>
-                            {props.item2.text}
-                        </a>
-                    </span>
-                )}  
+                ))} 
             </div>
         </footer>
     )

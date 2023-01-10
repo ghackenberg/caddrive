@@ -14,7 +14,7 @@ import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
-import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
@@ -22,6 +22,8 @@ import { Column, Table } from '../widgets/Table'
 
 import * as LoadIcon from '/src/images/load.png'
 import * as DeleteIcon from '/src/images/delete.png'
+import * as LeftIcon from '/src/images/list.png'
+import * as RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
 
@@ -75,7 +77,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const [closedIssueCount, setClosedIssueCount] = useState<number>()
     // - Interactions
     const [state, setState] = useState('open')
-    const [sidebar, setSidebar] = useState<boolean>(false)
+    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -205,6 +207,11 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
         ) }
     ]
 
+    const items: ProductFooterItem[] = [
+        { name: 'left', text: 'List view', image: LeftIcon },
+        { name: 'right', text: 'Chart view', image: RightIcon }
+    ]
+
     // RETURN
 
     return (
@@ -216,7 +223,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
+                            <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button gray fill right'>
                                         Edit milestone
@@ -251,10 +258,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     </div>
                                 </div>
                             </main>                            
-                            <ProductFooter 
-                                item1={{ text: 'Milestone issues', image: 'issue', sidebar , setSidebar, set: false }} 
-                                item2={{ text: 'Burndown chart', image: 'chart', sidebar, setSidebar, set: true }} 
-                            />
+                            <ProductFooter items={items} active={active} setActive={setActive}/>
                         </Fragment>
                     )}
                  </Fragment>     

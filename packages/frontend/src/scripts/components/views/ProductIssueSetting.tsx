@@ -17,13 +17,15 @@ import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
 import { AudioRecorder } from '../../services/recorder'
-import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 import * as LoadIcon from '/src/images/load.png'
+import * as LeftIcon from '/src/images/setting.png'
+import * as RightIcon from '/src/images/part.png'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -75,7 +77,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>([])
-    const [sidebar, setSidebar] = useState<boolean>(false)
+    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -192,6 +194,11 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         ) },
     ]
 
+    const items: ProductFooterItem[] = [
+        { name: 'left', text: 'Form view', image: LeftIcon },
+        { name: 'right', text: 'Model view', image: RightIcon }
+    ]
+
     // RETURN
 
     return (
@@ -203,7 +210,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
+                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                         <form onSubmit={submitIssue} onReset={goBack}>
@@ -274,10 +281,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                     <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} marked={marked} mouse={true} click={selectObject} vr={true} change={contextVersion.update}/>
                                 </div>
                             </main>
-                            <ProductFooter 
-                                item1={{ text: 'Issue settings', image: 'setting', sidebar , setSidebar, set: false }} 
-                                item2={{ text: '3D model', image: 'part', sidebar, setSidebar, set: true }} 
-                            />
+                            <ProductFooter items={items} active={active} setActive={setActive}/>
                         </Fragment>
                     ) }
                 </Fragment>

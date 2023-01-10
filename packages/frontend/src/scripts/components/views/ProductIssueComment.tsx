@@ -15,12 +15,15 @@ import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
-import { ProductFooter } from '../snippets/ProductFooter'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { CommentView } from '../widgets/CommentView'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
+
+import * as LeftIcon from '/src/images/comment.png'
+import * as RightIcon from '/src/images/part.png'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -78,7 +81,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     // - Interactions
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
-    const [sidebar, setSidebar] = useState<boolean>(false)
+    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -219,6 +222,13 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
         }
     }
 
+    // CONSTANTS
+
+    const items: ProductFooterItem[] = [
+        { name: 'left', text: 'Thread view', image: LeftIcon },
+        { name: 'right', text: 'Model view', image: RightIcon }
+    ]
+
     // RETURN
 
     return (
@@ -230,7 +240,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
+                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button gray fill right'>
                                         Edit issue
@@ -295,10 +305,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                     <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr={true} change={contextVersion.update}/>
                                 </div>
                             </main>
-                            <ProductFooter 
-                                item1={{ text: 'Comments', image: 'comment', sidebar , setSidebar, set: false }} 
-                                item2={{ text: '3D-Modell', image: 'part', sidebar, setSidebar, set: true }} 
-                            />
+                            <ProductFooter items={items} active={active} setActive={setActive}/>
                         </Fragment>
                     ) }
                 </Fragment>
