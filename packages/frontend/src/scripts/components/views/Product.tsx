@@ -78,7 +78,7 @@ export const ProductView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => { setContextVersion(null) }, [])
+    useEffect(() => { setContextVersion(undefined) }, [])
     useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
     useEffect(() => {
         if (products) {
