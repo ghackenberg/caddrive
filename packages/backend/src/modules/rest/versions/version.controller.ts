@@ -20,7 +20,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     constructor(
         private versionService: VersionService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User }
+        private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
     @Get()

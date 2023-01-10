@@ -20,7 +20,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     constructor(
         private readonly issueService: IssueService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User }
+        private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
     @Get()

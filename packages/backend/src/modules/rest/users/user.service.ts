@@ -59,10 +59,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
         const user = await UserRepository.findOneByOrFail({ id })
         user.email = data.email
-        user.password = data.password
         user.name = data.name
-        user.userManagementPermission = data.userManagementPermission
-        user.productManagementPermission = data.productManagementPermission
         if (file && file.originalname.endsWith('.jpg')) {
             user.pictureId = shortid()
             if (!fs.existsSync('./uploads')) {
@@ -85,6 +82,6 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     private convert(user: UserEntity) {
-        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, password: user.password, pictureId: user.pictureId, userManagementPermission: user.userManagementPermission, productManagementPermission: user.productManagementPermission }
+        return { id: user.id, deleted: user.deleted, email: user.email, name: user.name, pictureId: user.pictureId }
     }
 }

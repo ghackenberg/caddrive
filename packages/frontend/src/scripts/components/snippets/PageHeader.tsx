@@ -19,7 +19,7 @@ export const PageHeader = () => {
                 </span>
             </div>
             <div>
-                { user && user.userManagementPermission && (
+                { user && user.permissions.includes('create:users') && (
                     <span>
                         <NavLink to="/users"><img src={UserIcon}/>Users</NavLink>
                     </span>

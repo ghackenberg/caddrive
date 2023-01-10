@@ -16,7 +16,7 @@ const CERTIFICATE = readFileSync('certificate.pem')
 export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext) {
-        const request = context.switchToHttp().getRequest<Request & { user: User }>()
+        const request = context.switchToHttp().getRequest<Request & { user: User & { permissions: string[] } }>()
         
         const authorization = request.header('authorization')
 
@@ -24,24 +24,26 @@ export class AuthGuard implements CanActivate {
             // Extract token
             const token = authorization.split(' ')[1]
             // Verify token
-            const payload = verify(token, CERTIFICATE) as JwtPayload
+            const { aud, sub, permissions } = verify(token, CERTIFICATE) as JwtPayload & { permissions: string[] }
             // Extract user info endpoint
-            const endpoint = payload.aud[1]
+            const endpoint = aud[1]
             // Extract user id
-            const id = payload.sub.split('|')[1]
+            const id = sub.split('|')[1]
             try {
                 // Find existing user data in database
-                request.user = await UserRepository.findOneByOrFail({ id })
+                request.user = { ...await UserRepository.findOneByOrFail({ id }), permissions }
             } catch (e) {
                 // Get user data from Auth0
                 const userinfo = await axios.get(endpoint, { headers: { authorization }})
                 // Extract user name and email
                 const { name, email } = userinfo.data
                 // Insert user data in database
-                request.user = await UserRepository.save({ id, email, name, userManagementPermission: false, productManagementPermission: false, password: '', pictureId: shortid() })
+                request.user = { ...await UserRepository.save({ id, email, name, userManagementPermission: false, productManagementPermission: false, password: '', pictureId: shortid() }), permissions }
             }
+            // Mark request as authorized
             return true
         } else {
+            // Mark request as unauthorized
             return false
         }
     }

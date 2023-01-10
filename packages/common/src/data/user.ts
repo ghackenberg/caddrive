@@ -5,12 +5,6 @@ export class UserUpdateData {
     email: string
     @ApiProperty()
     name: string
-    @ApiProperty()
-    password: string
-    @ApiProperty()
-    userManagementPermission: boolean
-    @ApiProperty()
-    productManagementPermission: boolean
 }
 
 export class UserAddData extends UserUpdateData {

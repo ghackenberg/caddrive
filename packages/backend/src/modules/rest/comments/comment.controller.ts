@@ -20,7 +20,7 @@ export class CommentController implements CommentREST<string, string, Express.Mu
     constructor(
         private readonly commentService: CommentService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User }
+        private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
     @Get()

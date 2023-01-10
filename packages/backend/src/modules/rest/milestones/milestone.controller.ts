@@ -17,7 +17,7 @@ export class MilestoneController implements MilestoneREST {
     constructor(
         private readonly milestoneService: MilestoneService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User }
+        private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
     @Get()

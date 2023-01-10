@@ -17,7 +17,7 @@ export class ProductController implements ProductREST {
     constructor(
         private readonly productService: ProductService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User }
+        private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
     @Get()

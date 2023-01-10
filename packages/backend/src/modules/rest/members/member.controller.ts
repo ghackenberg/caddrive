@@ -17,7 +17,7 @@ export class MemberController implements MemberREST {
     constructor(
         private readonly memberService: MemberService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User }
+        private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
     @Get()

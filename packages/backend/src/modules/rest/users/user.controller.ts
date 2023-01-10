@@ -20,7 +20,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User }
+        private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
     @Get('check')

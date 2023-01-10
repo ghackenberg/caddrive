@@ -211,7 +211,7 @@ export const ProductView = () => {
             </header>
             <main>
                 <div>
-                    { contextUser.productManagementPermission && (
+                    { contextUser.permissions.includes('create:products') && (
                         <Link to={`/products/new/settings`} className='button green fill'>
                             New product
                         </Link>

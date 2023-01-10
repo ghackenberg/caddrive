@@ -2,13 +2,14 @@ import * as React from 'react'
 import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
 
 import { useAuth0 } from '@auth0/auth0-react'
+import * as jose from 'jose'
 
 import { User, Version } from 'productboard-common'
 
 import { auth } from '../clients/auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
-import { AUTH0_AUDIENCE, AUTH0_SCOPE } from '../env'
+import { AUTH0_AUDIENCE } from '../env'
 import { UserManager } from '../managers/user'
 import { PageHeader } from './snippets/PageHeader'
 import { AuthView } from './views/Auth'
@@ -35,14 +36,14 @@ export const Root = () => {
     // STATES
 
     const [accessToken, setAccessToken] = React.useState<string>()
-    const [userData, setUserData] = React.useState<User>()
+    const [userData, setUserData] = React.useState<User & { permissions: string[] }>()
     const [version, setVersion] = React.useState<Version>()
 
     // EFFECTS
 
     React.useEffect(() => {
         if (user) {
-            getAccessTokenSilently({ audience: AUTH0_AUDIENCE, scope: AUTH0_SCOPE }).then(setAccessToken)
+            getAccessTokenSilently({ audience: AUTH0_AUDIENCE }).then(setAccessToken)
         } else {
             setAccessToken(undefined)
         }
@@ -51,7 +52,10 @@ export const Root = () => {
     React.useEffect(() => {
         if (accessToken) {
             auth.headers.Authorization = `Bearer ${accessToken}`
-            UserManager.getUser(user.sub.split('|')[1]).then(setUserData)
+            UserManager.getUser(user.sub.split('|')[1]).then(userData => {
+                const { permissions } = jose.decodeJwt(accessToken) as { permissions: string[] }
+                setUserData({ ...userData, permissions })
+            })
         } else {
             auth.headers.Authorization = ''
             setUserData(undefined)
@@ -74,9 +78,9 @@ export const Root = () => {
                                         <PageHeader/>
                                         <Switch>
                                             {/* User views */}
-                                            <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => userData.userManagementPermission || userData.email == user.email ? <UserSettingView {...props}/> : <MissingView/>} />
+                                            <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => userData.permissions.includes('create:users') || userData.email == user.email ? <UserSettingView {...props}/> : <MissingView/>} />
                                             <Redirect path="/users/:user" to="/users/:user/settings"/>
-                                            <Route path="/users" render={() => userData.userManagementPermission ? <UserView/> : <MissingView/>} />
+                                            <Route path="/users" render={() => userData.permissions.includes('create:users') ? <UserView/> : <MissingView/>} />
                 
                                             {/* Version views */}
                                             <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView} />
@@ -101,7 +105,7 @@ export const Root = () => {
                                             <Route path="/products/:product/members" component={ProductMemberView} />
                 
                                             {/* Product views */}
-                                            <Route path="/products/:product/settings" render={(props: RouteComponentProps<{ product: string }>) => userData.productManagementPermission || props.match.params.product != 'new' ? <ProductSettingView {...props}/> : <MissingView/>} />
+                                            <Route path="/products/:product/settings" render={(props: RouteComponentProps<{ product: string }>) => userData.permissions.includes('create:products') || props.match.params.product != 'new' ? <ProductSettingView {...props}/> : <MissingView/>} />
                                             <Redirect path="/products/:product" to="/products/:product/settings" />
                                             <Route path="/products" component={ProductView} />
                 

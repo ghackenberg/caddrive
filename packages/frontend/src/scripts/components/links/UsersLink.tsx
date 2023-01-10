@@ -10,7 +10,7 @@ export const UsersLink = () => {
     const user = useContext(UserContext)
     return (
         <span>
-            {user.userManagementPermission ? (
+            {user.permissions.includes('create:users') ? (
                 <NavLink to="/users">
                     <img src={UserIcon}/>
                     Users

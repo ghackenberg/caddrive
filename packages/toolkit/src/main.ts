@@ -1,14 +1,12 @@
 import { exit } from 'process'
 
-import * as hash from 'hash.js'
-
 import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
 import { AppDataSource, CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductRepository, UserRepository, VersionRepository } from 'productboard-database'
 
 const users: User[] = [
-    { id: 'demo-1', name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', password: hash.sha256().update('test').digest('hex'), pictureId: 'demo-1', userManagementPermission: true, productManagementPermission: true, deleted: false},
-    { id: 'demo-2', name: 'Christian Zehetner', email: 'christian.zehetner@fh-wels.at', password: hash.sha256().update('test').digest('hex'), pictureId: 'demo-2', userManagementPermission: true, productManagementPermission: true, deleted: false },
-    { id: 'demo-4', name: 'Dominik Frühwirth', email: 'dominik.fruehwirth@fh-wels.at', password: hash.sha256().update('test').digest('hex'), pictureId: 'demo-4', userManagementPermission: true, productManagementPermission: true, deleted: false }
+    { id: 'demo-1', name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', pictureId: 'demo-1', deleted: false},
+    { id: 'demo-2', name: 'Christian Zehetner', email: 'christian.zehetner@fh-wels.at', pictureId: 'demo-2', deleted: false },
+    { id: 'demo-4', name: 'Dominik Frühwirth', email: 'dominik.fruehwirth@fh-wels.at', pictureId: 'demo-4', deleted: false }
 ]
 
 const products: Product[] = [
