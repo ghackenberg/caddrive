@@ -197,47 +197,55 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <img src={LoadIcon} className='big load' /> }
+                {issue.userId in users && members ? (
+                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/>
+                ) : (
+                    <img src={LoadIcon} className='big load'/>
+                )}
             </Link>
-        )},
+        ) },
         { label: 'Label', class: 'left fill', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.label}
             </Link>
-        )},
+        ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
-                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <img src={LoadIcon} className='big load' /> }
+                        {assignedId in users && members ? (
+                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/>
+                        ) : (
+                            <img src={LoadIcon} className='big load'/>
+                        )}
                     </Fragment>
                 ))}
             </Link>
-        )},
+        ) },
         { label: 'Comments', class: 'center', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'}
             </Link>
-        )},
+        ) },
         { label: 'Parts', class: 'center', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.id in partsCount ? partsCount[issue.id] : '?'}
             </Link>
-        )},
+        ) },
         { label: '', class: 'center', content: issue => (
             <a onClick={() => deleteIssue(issue)}>
                 <img src={DeleteIcon} className='small'/>
             </a>
-        )}
+        ) }
     ]
 
     // RETURN
 
     return (
         <main className="view extended issues">
-            { issues && product && (
+            {issues && product && (
                  <Fragment>
-                    { product && product.deleted ? (
+                    {product && product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
@@ -260,8 +268,8 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Issues','image':'issue', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Issues', image: 'issue', sidebar , setSidebar, set: false }} 
+                                item2={{ text: '3D model',image: 'part', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     )}

@@ -14,14 +14,15 @@ import { ProductFooter } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { UserPictureWidget } from '../widgets/UserPicture'
 
 import * as DeleteIcon from '/src/images/delete.png'
-import * as UserIcon from '/src/images/user.png'
+
+const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
     const { goBack } = useHistory()
-    const roles: MemberRole[] = ['manager', 'engineer', 'customer']
 
     // CONTEXTS
 
@@ -36,6 +37,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMember = memberId == 'new' ? undefined : MemberManager.getMemberFromCache(memberId)
+    const initialUser = initialMember ? UserManager.getUserFromCache(initialMember.userId) : undefined
     const initialRole = initialMember ? initialMember.role : 'customer'
 
     // STATES
@@ -43,7 +45,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // - Entities
     const [product, setProduct] = useState<Product>(initialProduct)
     const [users, setUsers] = useState<User[]>()
-    const [selectedUser, setSelectedUser] = useState<User>()
+    const [user, setUser] = useState<User>(initialUser)
     const [member, setMember] = useState<Member>(initialMember)
     // - Computations
     const [names, setNames] = useState<React.ReactNode[]>()
@@ -59,7 +61,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
     useEffect(() => { memberId != 'new' && MemberManager.getMember(memberId).then(setMember) }, [props])
-    useEffect(() => { member && UserManager.getUser(member.userId).then(setSelectedUser) }, [member] )
+    useEffect(() => { member && UserManager.getUser(member.userId).then(setUser) }, [member] )
     useEffect(() => { member && setRole(member.role) }, [member] )
 
     // - Computations
@@ -81,8 +83,8 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
         event.preventDefault()
         if (memberId == 'new') {
             if (confirm('Do you really want to add this member?')) {
-                    await MemberManager.addMember({ productId, userId: selectedUser.id, role: role })
-                    setSelectedUser(null)           
+                    await MemberManager.addMember({ productId, userId: user.id, role: role })
+                    setUser(null)           
             }
         }
         if (memberId != 'new') {
@@ -96,88 +98,104 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     function selectUser(user: User) {
         setQuery('')
-        setSelectedUser(user)
+        setUser(user)
     }
 
     // CONSTANTS
 
-    const columns1: Column<User>[] = [
-        { label: 'Picture', class: 'center', content: () => (
+    const selectedUserColumns: Column<User>[] = [
+        { label: 'Picture', class: 'center', content: user => (
             <a >
-                <img src={selectedUser.pictureId ? `/rest/files/${selectedUser.pictureId}.jpg` : UserIcon } style={{backgroundColor: 'lightgray'}} className='big'/>        
+                <UserPictureWidget user={user} class='big'/>
             </a>
-        )},
-        { label: 'Name', class: 'left fill', content: () => (
+        ) },
+        { label: 'Name', class: 'left fill', content: user => (
             <a>
-                {selectedUser ? selectedUser.name : '?'}
+                {user ? user.name : '?'}
             </a>
-        )},
+        ) },
         { label: '', class: 'center', content: () => (
-            memberId == 'new' && <a onClick={() => setSelectedUser(null)}><img src={DeleteIcon} className='small'/> </a>
-        )}
+            memberId == 'new' && (
+                <a onClick={() => setUser(null)}>
+                    <img src={DeleteIcon} className='small'/>
+                </a>
+            )
+        ) }
     ]
 
-    const columns: Column<User>[] = [
+    const queriedUserColumns: Column<User>[] = [
         { label: 'Picture', class: 'center', content: user => (
             <a onClick={() => selectUser(user)}>
-                <img src={user.pictureId ? `/rest/files/${user.pictureId}.jpg` : UserIcon } style={{backgroundColor: 'lightgray'}} className='big'/>   
+                <UserPictureWidget user={user} class='big'/>
             </a>
-        )},
+        ) },
         { label: 'Name', class: 'left fill', content: (user, index) => (
             <a onClick={() => selectUser(user)}>
                 {names ? names[index] : '?'}
             </a>
-        )}
+        ) }
     ]
     
     // RETURN
 
     return (
         <main className="view extended member">
-            { product && (
+            {product && (
                  <Fragment>
-                    { product && product.deleted ? (
+                    {product && product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submitMember}>
-                                        { selectedUser ? 
-                                        <div>
+                                        {user ? (
                                             <div>
-                                                User:
+                                                <div>
+                                                    User:
+                                                </div>
+                                                <div>
+                                                    {users && user && (
+                                                        <Table items={[user]} columns={selectedUserColumns}/>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div>
-                                                { users && selectedUser && <Table items={users.slice(0,1)} columns={columns1}/> }
-                                            </div>
-                                        </div>
-                                        : <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
-                                        } { query && (
+                                        ) : (
+                                            <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
+                                        )}
+                                        {query && (
                                                 <div>
                                                     <div>
                                                         Users:
                                                     </div>
                                                     <div>
-                                                        { users && <Table items={users} columns={columns}/> }
+                                                        {users && (
+                                                            <Table items={users} columns={queriedUserColumns}/>
+                                                        )}
                                                     </div>
                                                 </div>
-                                        )} { selectedUser && (
+                                        )}
+                                        {user && (
                                             <div>
                                                 <div>
                                                     Role:
                                                 </div>
                                                 <div>
                                                     <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)}> 
-                                                        {roles.map((role) => <option key={role} value={role}>{role}</option>)}    
+                                                        {ROLES.map(role => (
+                                                            <option key={role} value={role}>
+                                                                {role}
+                                                            </option>
+                                                        ))}    
                                                     </select>
                                                 </div>
                                             </div>
-                                        )} { selectedUser && (
-                                        <div>
-                                            <div/>
+                                        )}
+                                        {user && (
+                                            <div>
+                                                <div/>
                                                 <div>
                                                     <input type='submit' value='Save'/>
                                                 </div>
@@ -186,12 +204,12 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.update}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr={true} change={contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Member settings','image':'setting', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Member settings', image:'setting', sidebar , setSidebar, set: false }} 
+                                item2={{ text: '3D model', image:'part', sidebar, setSidebar, set: true }} 
                             />                   
                         </Fragment>
                     )}

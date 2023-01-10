@@ -169,37 +169,41 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // CONSTANTS
 
     const columns: Column<Member>[] = [
-        {label: 'Picture', content: member => (
+        { label: 'Picture', content: member => (
             member.id in users ? (
                 <Link to={`/users/${users[member.id].id}/settings`}>
                     <ProductUserPictureWidget user={users[member.id]} members={members} class='big'/>
                 </Link>
-             ) : <a> <img src={LoadIcon} className='big load' /> </a>
-        )},
-        {label: 'Member', class: 'fill left nowrap', content: member => (
+            ) : (
+                <a>
+                    <img src={LoadIcon} className='big load'/>
+                </a>
+            )
+        ) },
+        { label: 'Member', class: 'fill left nowrap', content: member => (
             member.id in users ? (
                 <Link to={`/users/${users[member.id].id}/settings`}>
                     {users[member.id].name}
                 </Link>
             ) : '?'
-        )},
-        {label: 'Assignee', class: 'fill center nowrap', content: member => (
+        ) },
+        { label: 'Assignee', class: 'fill center nowrap', content: member => (
             <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>
-        )},
+        ) },
     ]
 
     // RETURN
 
     return (
         <main className='view extended issue'>
-            { (issueId == 'new' || issue) && product && (
+            {(issueId == 'new' || issue) && product && (
                 <Fragment>
-                    { issue && issue.deleted ? (
+                    {issue && issue.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                         <form onSubmit={submitIssue} onReset={goBack}>
@@ -240,7 +244,11 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                 <div>
                                                     <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)}>
                                                         <option >none</option>
-                                                        {milestones && milestones.map((milestone) => <option key={milestone.id} value={milestone.id}>{milestone.label}</option>)}
+                                                        {milestones && milestones.map((milestone) => (
+                                                            <option key={milestone.id} value={milestone.id}>
+                                                                {milestone.label}
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                             </div>
@@ -249,7 +257,9 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                     Assignees:
                                                 </div>
                                                 <div>
-                                                    { members && <Table columns={columns} items={members}/> }
+                                                    {members && (
+                                                        <Table columns={columns} items={members}/>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div>
@@ -261,12 +271,12 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} marked={marked} mouse={true} click={selectObject} vr= {true} change = {contextVersion.update}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} marked={marked} mouse={true} click={selectObject} vr={true} change={contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Issue settings','image':'setting', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Issue settings', image: 'setting', sidebar , setSidebar, set: false }} 
+                                item2={{ text: '3D model', image: 'part', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     ) }

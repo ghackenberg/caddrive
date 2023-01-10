@@ -77,7 +77,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
         
     return (
         <main className="view extended user">
-            { (userId == 'new' || user) && (
+            {(userId == 'new' || user) && (
                 <Fragment>
                     { user && user.deleted ? (
                         <Redirect to='/'/>
@@ -90,14 +90,14 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                                     <form onSubmit={submit}>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
-                                        <FileInput label='Picture' placeholder='Select .jpg file' accept='.jpg' change={setFile} required= {userId === 'new'}/>
+                                        <FileInput label='Picture' placeholder='Select JPEG file' accept='.jpg' change={setFile} required={userId === 'new'}/>
                                         <div>
                                             <div/>
                                             <div>
                                                 <input type='submit' value='Save'/>
                                             </div>
                                         </div>
-                                        { contextUser.id == userId && (
+                                        {contextUser.id == userId && (
                                             <div>
                                                 <div/>
                                                 <div>

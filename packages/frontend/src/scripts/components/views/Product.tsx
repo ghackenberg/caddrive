@@ -101,7 +101,7 @@ export const ProductView = () => {
                 setVersions(newVersions)
             })
         }
-    },[products])
+    }, [products])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
@@ -114,7 +114,7 @@ export const ProductView = () => {
                 setLatestVersions(newVersions)
             })
         }
-    },[products])
+    }, [products])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => IssueManager.findIssues(product.id))).then(productIssues => {
@@ -152,52 +152,52 @@ export const ProductView = () => {
     const columns: Column<Product>[] = [
         { label: 'Preview', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                { product.id in latestVersions ? (
+                {product.id in latestVersions ? (
                     <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"/>
                 ) : (
                     <img className='empty medium' src={EmptyIcon}/>           
-                ) }
+                )}
             </Link>
-        )},
+        ) },
         { label: 'Owner', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                { users[product.id] && members[product.id] ? (
+                {users[product.id] && members[product.id] ? (
                     <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='big'/>
                 ) : (
-                    <img src={LoadIcon} className='big load' />
-                ) }
+                    <img src={LoadIcon} className='big load'/>
+                )}
             </Link>
-        )},
+        ) },
         { label: 'Name', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.name}
             </Link>
-        )},
+        ) },
         { label: 'Description', class: 'left fill', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.description}
             </Link>
-        )},
+        ) },
         { label: 'Versions', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.id in versions ? versions[product.id] : '?'}
             </Link>
-        )},
+        ) },
         { label: 'Issues', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.id in issues ? issues[product.id] : '?'}
             </Link>
-        )},
+        ) },
         { label: 'Members', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.id in members ? members[product.id].length : '?'}
             </Link>
-        )},
+        ) },
         { label: '', content: product => (
             <a onClick={() => deleteProduct(product)}>
                 <img src={DeleteIcon} className='small'/>
             </a>
-        )}
+        ) }
     ]
 
     // RETURN
@@ -211,12 +211,12 @@ export const ProductView = () => {
             </header>
             <main>
                 <div>
-                    { contextUser.permissions.includes('create:products') && (
+                    {contextUser.permissions.includes('create:products') && (
                         <Link to={`/products/new/settings`} className='button green fill'>
                             New product
                         </Link>
-                    ) }
-                    { products && <Table columns={columns} items={products}/> }
+                    )}
+                    {products && <Table columns={columns} items={products}/>}
                 </div>
             </main>
         </main>

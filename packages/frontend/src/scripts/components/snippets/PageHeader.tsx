@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { UserContext } from '../../contexts/User'
+import { UserPictureWidget } from '../widgets/UserPicture'
 
 import * as AppIcon from '/src/images/app.png'
 import * as UserIcon from '/src/images/user.png'
@@ -19,16 +20,15 @@ export const PageHeader = () => {
                 </span>
             </div>
             <div>
-                { user && user.permissions && user.permissions.includes('create:users') && (
+                {user && user.permissions && user.permissions.includes('create:users') && (
                     <span>
                         <NavLink to="/users"><img src={UserIcon}/>Users</NavLink>
                     </span>
                 )}
                 <span>
-                    { user && user.id && (
+                    {user && user.id && (
                         <NavLink to={`/users/${user.id}/settings`}>
-                            { user.pictureId ? <img src={`/rest/files/${user.pictureId}.jpg`}/> : <img style={{backgroundColor: 'gray'}} src={UserIcon}/> }
-                            
+                            <UserPictureWidget user={user}/>
                         </NavLink>
                     )}
                 </span>

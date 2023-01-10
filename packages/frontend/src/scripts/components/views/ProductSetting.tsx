@@ -70,9 +70,9 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     return (
         <main className="view extended product">
-            { (productId == 'new' || product) && (
+            {(productId == 'new' || product) && (
                 <Fragment>
-                    { product && product.deleted ? (
+                    {product && product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
@@ -92,12 +92,12 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.update}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr={true} change={contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Product settings','image':'setting', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Product settings', image: 'setting', sidebar, setSidebar, set: false }} 
+                                item2={{ text: '3D model', image: 'part', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     )}

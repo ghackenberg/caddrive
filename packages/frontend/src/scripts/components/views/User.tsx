@@ -7,6 +7,7 @@ import { User } from 'productboard-common'
 import { UserManager } from '../../managers/user'
 import { UsersLink } from '../links/UsersLink'
 import { Column, Table } from '../widgets/Table'
+import { UserPictureWidget } from '../widgets/UserPicture'
 
 import * as DeleteIcon from '/src/images/delete.png'
 
@@ -40,24 +41,24 @@ export const UserView = () => {
     const columns: Column<User>[] = [
         { label: 'Picture', content: user => (
             <Link to={`/users/${user.id}/settings`}>
-                <img src={`/rest/files/${user.pictureId}.jpg`} className='big'/>
+                <UserPictureWidget user={user} class='big'/>
             </Link>
-        )},
+        ) },
         { label: 'Name', class: 'left nowrap', content: user => (
             <Link to={`/users/${user.id}/settings`}>
                 {user.name}
             </Link>
-        )},
+        ) },
         { label: 'Email', class: 'left nowrap', content: user => (
             <Link to={`/users/${user.id}/settings`}>
                 {user.email}
             </Link>
-        )},
+        ) },
         { label: '',class: 'fill right', content: user => (
             <a onClick={() => deleteUser(user)}>
                 <img src={DeleteIcon} className='small'/>
             </a>
-        )}
+        ) }
     ]
 
     // RETURN
@@ -74,7 +75,9 @@ export const UserView = () => {
                     <Link to={`/users/new/settings`} className='button green fill'>
                         New user
                     </Link>
-                    { users && <Table columns={columns} items={users}/> }
+                    {users && (
+                        <Table columns={columns} items={users}/>
+                    )}
                 </div>
             </main>
         </main>

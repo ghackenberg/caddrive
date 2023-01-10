@@ -136,8 +136,8 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
             setActualBurndown(calculateActual(milestone, issues, comments))
         }
     }, [milestone, issues, comments])
-    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
-    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
+    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) }, [issues])
+    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) }, [issues])
 
     // FUNCTIONS
 
@@ -163,47 +163,55 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const columns: Column<Issue>[] = [
         { label: 'Reporter', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                { issue.userId in users && members ? <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/> : <img src={LoadIcon} className='big load' /> }
+                {issue.userId in users && members ? (
+                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/>
+                ) : (
+                    <img src={LoadIcon} className='big load'/>
+                )}
             </Link>
-        )},
+        ) },
         { label: 'Label', class: 'left fill', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.label}
             </Link>
-        )},
+        ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
-                        { assignedId in users && members ? <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/> : <img src={LoadIcon} className='big load' /> }
+                        {assignedId in users && members ? (
+                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/>
+                        ) : (
+                            <img src={LoadIcon} className='big load'/>
+                        )}
                     </Fragment>
                 ))}
             </Link>
-        )},
+        ) },
         { label: 'Comments', class: 'center', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.id in comments ? comments[issue.id].length : '?'}
             </Link>
-        )},
+        ) },
         { label: 'Parts', class: 'center', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.id in partsCount ? partsCount[issue.id] : '?'}
             </Link>
-        )},
+        ) },
         { label: '', class: 'center', content: issue => (
             <a onClick={() => deleteIssue(issue)}>
                 <img src={DeleteIcon} className='small'/>
             </a>
-        )}
+        ) }
     ]
 
     // RETURN
 
     return (
         <main className="view extended issues">
-            { issues && product && milestone && (
+            {issues && product && milestone && (
                  <Fragment>
-                    { product.deleted ? (
+                    {product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
@@ -226,18 +234,16 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                             {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
                                         </em>
                                     </p>
-                            
                                     <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button green fill'>
                                         New issue
                                     </Link>
-
                                     <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
                                         Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
                                     </a>
                                     <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
                                         Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
                                     </a>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} />
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
                                 </div>
                                 <div>
                                     <div className="widget product_view">
@@ -246,8 +252,8 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                 </div>
                             </main>                            
                             <ProductFooter 
-                                item1={{'text':'Milestone issues','image':'issue', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'Burndown chart','image':'chart', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Milestone issues', image: 'issue', sidebar , setSidebar, set: false }} 
+                                item2={{ text: 'Burndown chart', image: 'chart', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     )}

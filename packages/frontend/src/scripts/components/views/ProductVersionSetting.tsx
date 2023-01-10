@@ -110,50 +110,54 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
             {(versionId == 'new' || version) && product && versions && (
                 <Fragment>
                     {version && version.deleted ? (
-                        <Redirect to='/' />
+                        <Redirect to='/'/>
                     ) : (
                         <Fragment>
-                            <ProductHeader product={product} />
+                            <ProductHeader product={product}/>
                             <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submit}>
-                                        <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor} />
-                                        <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor} />
-                                        <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch} />
+                                        <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
+                                        <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
+                                        <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
                                         {versions.length > 0 && (
                                             <GenericInput label="Base">
                                                 <Fragment>
                                                     {versions.map(version => version).reverse().map(version => (
                                                         <div key={version.id}>
-                                                            <input type="checkbox" value={version.id} onChange={update} />
-                                                            <label>{version.major}.{version.minor}.{version.patch}</label>
+                                                            <input type="checkbox" value={version.id} onChange={update}/>
+                                                            <label>
+                                                                {version.major}.{version.minor}.{version.patch}
+                                                            </label>
                                                         </div>
                                                     ))}
                                                 </Fragment>
                                             </GenericInput>
                                         )}
-                                        <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription} />
-                                        {versionId == 'new' && <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required={true} />}
+                                        <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                        {versionId == 'new' && (
+                                            <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required={true}/>
+                                        )}
                                         <div>
                                             <div />
                                             <div>
-                                                <input type='submit' value='Save' disabled={image == null} />
+                                                <input type='submit' value='Save' disabled={image == null}/>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <div>
                                     {version ? (
-                                        <VersionView3D version={version} mouse={true} vr={true} />
+                                        <VersionView3D version={version} mouse={true} vr={true}/>
                                     ) : (
                                         <div className="widget model_view">
                                             {!file ? (
-                                                <img className='empty' src={EmptyIcon} />
+                                                <img className='empty' src={EmptyIcon}/>
                                             ) : (
                                                 <Fragment>
                                                     {!model ? (
-                                                        <img className='load' src={LoadIcon} />
+                                                        <img className='load' src={LoadIcon}/>
                                                     ) : (
                                                         <SceneView3D model={model} mouse={false} vr={false} highlighted={[]} marked={[]} selected={[]}/>
                                                     )}
@@ -164,8 +168,8 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Version settings','image':'setting', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Version settings', image: 'setting', sidebar , setSidebar, set: false }} 
+                                item2={{ text: '3D model', image: 'part', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     )}

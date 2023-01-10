@@ -96,9 +96,9 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     return (
         <main className="view extended versions">
-            { product && versions && version && (
+            {product && versions && version && (
                 <Fragment>
-                    { product && product.deleted ? (
+                    {product && product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
@@ -121,9 +121,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                                 <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                             ))}
                                                         </div>
-                                                        <div className="text" style={{color: 'orange'}}>
-                                                            {/* empty */}
-                                                        </div>
+                                                        <div className="text" style={{color: 'orange'}}/>
                                                     </div>
                                                 )}
                                                 <div className={`version${version.id == vers.id ? ' selected' : ''}`} onClick={() => contextVersion.update(vers)}>
@@ -148,10 +146,10 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
                                                             <a>
-                                                                { version && users[vers.id] && members ? (
+                                                                {version && users[vers.id] && members ? (
                                                                     <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/>
                                                                 ) : (
-                                                                    <img src={LoadIcon} className='big load' /> 
+                                                                    <img src={LoadIcon} className='big load'/> 
                                                                 )}
                                                             </a>
                                                             <span className="user">
@@ -170,9 +168,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                             <span className="description">{vers.description}</span>
                                                         </div>
                                                     </div>
-                                                    <div style={ { backgroundImage: `url("/rest/files/${vers.id}.png")` } } className="model">
-                                                        {/* empty */}
-                                                    </div>
+                                                    <div style={ { backgroundImage: `url("/rest/files/${vers.id}.png")` } } className="model"/>
                                                 </div>
                                             </Fragment>
                                         ))}
@@ -186,13 +182,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        <ProductView3D product={product} version={version} mouse={true} vr= {true} change = {contextVersion.update} />
+                                        <ProductView3D product={product} version={version} mouse={true} vr={true} change={contextVersion.update}/>
                                     </div>
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Versions','image':'version', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Versions', image: 'version', sidebar, setSidebar, set: false }} 
+                                item2={{ text: '3D model',image: 'part', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     )}

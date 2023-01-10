@@ -132,34 +132,38 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const columns: Column<Milestone>[] = [
         { label: 'Reporter', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {  users[milestone.userId] && members ? <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/> : <a> <img src={LoadIcon} className='big load' /> </a> }
+                {users[milestone.userId] && members ? (
+                    <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/>
+                ) : (
+                    <img src={LoadIcon} className='big load'/>
+                )}
             </Link>
-        )},
+        ) },
         { label: 'Label', class: 'left fill', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {milestone.label}
             </Link>
-        )},
+        ) },
         { label: 'Start', class: 'nowrap center', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
             </Link>
-        )},
+        ) },
         { label: 'End', class: 'nowrap center', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
             </Link>
-        )},
+        ) },
         { label: 'Open', class: 'center', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {milestone.id in openIssues ? openIssues[milestone.id] : '?'}
             </Link>
-        )},
+        ) },
         { label: 'Closed', class: 'center', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {milestone.id in closedIssues ? closedIssues[milestone.id] : '?'}
             </Link>
-        )},
+        ) },
         { label: 'Progress', class: 'center', content: milestone => (
             <Fragment>
                 <div className='progress date'>
@@ -169,39 +173,41 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                     <div style={{width: `${calculateIssueProgress(milestone)}%` }}/>
                 </div>
             </Fragment>
-        )},
+        ) },
         { label: '', class: 'center', content: milestone => (
             <a onClick={() => deleteMilestone(milestone)}>
                 <img src={DeleteIcon} className='small'/>
             </a>
-        )}
+        ) }
     ]
 
     // RETURN
 
     return (
         <main className="view extended milestones">
-            { product && (
+            {product && (
                  <Fragment>
-                    { product && product.deleted ? (
+                    {product && product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>           
                                     <Link to={`/products/${productId}/milestones/new/settings`} className='button green fill'>
                                         New milestone
                                     </Link>
-                                    { milestones && <Table columns={columns} items={milestones}/> }
+                                    {milestones && (
+                                        <Table columns={columns} items={milestones}/>
+                                    )}
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr= {true} change = {contextVersion.update}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr={true} change={contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Milestones','image':'milestone', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D model','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Milestones', image: 'milestone', sidebar , setSidebar, set: false }} 
+                                item2={{ text: '3D model', image: 'part', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     )}

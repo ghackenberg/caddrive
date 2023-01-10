@@ -223,14 +223,14 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
 
     return (
         <main className='view extended comments'>
-            { (issueId == 'new' || issue) && product && (
+            {(issueId == 'new' || issue) && product && (
                 <Fragment>
-                    { issue && issue.deleted ? (
+                    {issue && issue.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}` }>
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button gray fill right'>
                                         Edit issue
@@ -239,21 +239,36 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                         {issue.label}
                                     </h1>
                                     <p>
-                                        <span className={`state ${issue.state}`}>{issue.state}</span> <strong>{issue.userId in users && members ? <ProductUserNameWidget user={users[issue.userId]} members={members}/> : '?'}</strong> opened issue on {issue.time.substring(0, 10)}
+                                        <span className={`state ${issue.state}`}>
+                                            {issue.state}
+                                        </span>
+                                        &nbsp;
+                                        <strong>
+                                            {issue.userId in users && members ? (
+                                                <ProductUserNameWidget user={users[issue.userId]} members={members}/>
+                                            ) : (
+                                                '?'
+                                            )}
+                                        </strong>
+                                        &nbsp;
+                                        <>
+                                            opened issue on {issue.time.substring(0, 10)}
+                                        </>
                                     </p>
                                     
                                     <div className="widget thread">
-                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users= {users} members= {members}/>
+                                        <>
+                                            <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members}/>
+                                        </>
                                         {comments && comments.map(comment => (
-                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}  users= {users} members= {members}/>
+                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members}/>
                                         ))}
                                         <div className="comment self">
                                             <div className="head">
                                                 <div className="icon">
-                                                    <a href={`/users/${contextUser.id}`}>
-                                                        {/* <img src={`/rest/files/${contextUser.id}.jpg`}/> */}
+                                                    <Link to={`/users/${contextUser.id}`}>
                                                         <ProductUserPictureWidget user={contextUser} members={members}/>
-                                                    </a>
+                                                    </Link>
                                                 </div>
                                                 <div className="text">
                                                     <p>
@@ -262,29 +277,27 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                                 </div>
                                             </div>
                                             <div className="body">
-                                                <div className="free">
-
-                                                </div>
+                                                <div className="free"/>
                                                 <div className="text">
                                                     <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)}/>
                                                     <button onClick={submitComment}>Save</button>
                                                     {issue.state == 'open' ? (
                                                         <button onClick={submitCommentAndClose}>Close</button>
-                                                        ) : (
+                                                    ) : (
                                                         <button onClick={submitCommentAndReopen}>Reopen</button>
-                                                        )}
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr= {true} change = {contextVersion.update}/>
+                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr={true} change={contextVersion.update}/>
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Comments','image':'comment', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'3D-Modell','image':'part', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Comments', image: 'comment', sidebar , setSidebar, set: false }} 
+                                item2={{ text: '3D-Modell', image: 'part', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     ) }

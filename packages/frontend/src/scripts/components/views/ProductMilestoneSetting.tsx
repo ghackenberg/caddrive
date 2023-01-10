@@ -98,7 +98,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
             await MilestoneManager.addMilestone({userId: contextUser.id, productId: productId, label: label, start: start.toISOString(), end: end.toISOString()})
             replace(`/products/${productId}/milestones/`)
         } else {
-            await MilestoneManager.updateMilestone( milestone.id, { ...milestone, label: label, start: start.toISOString(), end: end.toISOString()})
+            await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.toISOString(), end: end.toISOString()})
             goBack()
         }
     }
@@ -111,18 +111,18 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
         <main className="view extended member">
             {product && (
                  <Fragment>
-                    { product && product.deleted ? (
+                    {product && product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
                             <ProductHeader product={product}/>
-                            <main className= {`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
+                            <main className={`sidebar ${sidebar ? 'visible' : 'hidden'}`}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submitMilestone} onReset={goBack}>
-                                            <TextInput class='fill' label='Label' placeholder='Type label' value={label} change={setLabel} required />
-                                            <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required />
-                                            <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required />
+                                            <TextInput class='fill' label='Label' placeholder='Type label' value={label} change={setLabel} required/>
+                                            <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
+                                            <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
                                             <div>
                                                 <div/>
                                                 <div>
@@ -133,13 +133,13 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                 </div>
                                 <div>
                                     <div className="widget product_view">
-                                        <BurndownChartWidget start= {start} end= {end} total={total} actual={actual}/>
+                                        <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
                                     </div>
                                 </div>
                             </main>
                             <ProductFooter 
-                                item1={{'text':'Milestone settings','image':'setting', 'sidebar': sidebar , 'setSidebar': setSidebar, 'set': false }} 
-                                item2={{'text':'Burndown chart','image':'chart', 'sidebar': sidebar, 'setSidebar': setSidebar, 'set': true }} 
+                                item1={{ text: 'Milestone settings', image: 'setting', sidebar, setSidebar, set: false }} 
+                                item2={{ text: 'Burndown chart', image: 'chart', sidebar, setSidebar, set: true }} 
                             />
                         </Fragment>
                     )}
