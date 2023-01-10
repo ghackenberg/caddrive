@@ -15,6 +15,14 @@ class FileManagerImpl implements FileREST<string | ArrayBuffer> {
         // Return file
         return this.fileIndex[id]
     }
+
+    getFileFromCache(id: string) {
+        if (id in this.fileIndex) {
+            return this.fileIndex[id]
+        } else {
+            return undefined
+        }
+    }
 }
 
 export const FileManager = new FileManagerImpl()
