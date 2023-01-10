@@ -1,11 +1,10 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, useContext } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Member, Product, User } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/Version'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
@@ -21,10 +20,6 @@ import * as LeftIcon from '/src/images/list.png'
 import * as RightIcon from '/src/images/part.png'
 
 export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
-
-    // CONTEXTS
-
-    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -135,7 +130,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                     )}
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion} mouse={true} vr={true} change={setContextVersion}/>
+                                    <ProductView3D product={product} mouse={true} vr={true}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

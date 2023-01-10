@@ -1,11 +1,10 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Comment, Issue, Member, Product, User } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/Version'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
@@ -25,10 +24,6 @@ import * as LeftIcon from '/src/images/list.png'
 import * as RightIcon from '/src/images/part.png'
 
 export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
-
-    // CONTEXTS
-
-    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -271,7 +266,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion} highlighted={hightlighted} mouse={true} vr= {true} change={setContextVersion}/>
+                                    <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr={true}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

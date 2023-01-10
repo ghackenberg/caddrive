@@ -1,11 +1,10 @@
 import  * as React from 'react'
-import { Fragment, useContext, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 
 import { Member, Milestone, Product, User } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/Version'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
@@ -23,10 +22,6 @@ import * as LeftIcon from '/src/images/list.png'
 import * as RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
-
-    // CONTEXTS
-
-    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -209,7 +204,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                     )}
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion} mouse={true} vr={true} change={setContextVersion}/>
+                                    <ProductView3D product={product} mouse={true} vr={true}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

@@ -7,7 +7,6 @@ import { Object3D } from 'three'
 
 import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
 
-import { VersionContext } from '../../contexts/Version'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { TextInput } from '../inputs/TextInput'
@@ -39,7 +38,6 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
-    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -278,7 +276,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion} marked={marked} mouse={true} click={selectObject} vr={true} change={setContextVersion}/>
+                                    <ProductView3D product={product} marked={marked} mouse={true} click={selectObject} vr={true}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

@@ -68,7 +68,6 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
-    useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
     useEffect(() => {
         if (versions) {
             Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
@@ -80,6 +79,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             })
         }
     }, [versions])
+    useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
 
     // - Computations
     useEffect(() => { 
@@ -189,7 +189,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                         {versions && versions.length == 0 && (
                                             <img className='empty' src={EmptyIcon}/>
                                         )}
-                                        <ProductView3D product={product} version={contextVersion} mouse={true} vr={true} change={setContextVersion}/>
+                                        <ProductView3D product={product} mouse={true} vr={true}/>
                                     </div>
                                 </div>
                             </main>
