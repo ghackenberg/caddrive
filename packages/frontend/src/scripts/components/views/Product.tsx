@@ -78,8 +78,8 @@ export const ProductView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
     useEffect(() => { setContextVersion(null) }, [])
+    useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {
