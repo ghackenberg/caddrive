@@ -29,24 +29,20 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     // INITIAL STATES
 
     const initialVersions = props.product && VersionManager.findVersionsFromCache(props.product.id)
-
     const initialHighlighted = (props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
     const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
     const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
 
     // STATES
 
-    const [load, setLoad] = useState<boolean>(!initialVersions)
-    
     const [versions, setVersions] = useState<Version[]>(initialVersions)
-
     const [highlighted, setHighlighted] = useState<string[]>(initialHighlighted)
     const [marked, setMarked] = useState<string[]>(initialMarked)
     const [selected, setSelected] = useState<string[]>(initialSelected)
 
     // EFFECTS
     
-    useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions).then(() => setLoad(false)) }, [props.product])
+    useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions) }, [props.product])
     useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
     useEffect(() => { setHighlighted((props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)) }, [versionContext, props.highlighted])
     useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)) }, [versionContext, props.marked])
@@ -55,7 +51,7 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     // FUNCTIONS
 
     function changeVersion(versionId: string) {
-        const version = versions.filter((version) => version.id == versionId)[0]
+        const version = versions.filter(version => version.id == versionId)[0]
         setContextVersion(version)
     }
 
@@ -63,11 +59,11 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     
     return (
         <div className="widget product_view">
-            {load ? (
+            {!versions ? (
                 <img className='load' src={LoadIcon}/>
             ) : (
                 <>
-                    {versions && versions.length > 0 ? (
+                    {versions.length > 0 ? (
                         <>
                             <header>
                                 {contextVersion && (
