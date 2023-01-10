@@ -16,19 +16,25 @@ export const PageHeader = () => {
         <header>
             <div>
                 <span>
-                    <NavLink to="/products"><img src={AppIcon}/>ProductBoard</NavLink>
+                    <NavLink to="/products">
+                        <img src={AppIcon}/>
+                        ProductBoard
+                    </NavLink>
                 </span>
             </div>
             <div>
-                {user && user.permissions && user.permissions.includes('create:users') && (
-                    <span>
-                        <NavLink to="/users"><img src={UserIcon}/>Users</NavLink>
-                    </span>
-                )}
+                <span>
+                    {user && user.permissions && user.permissions.includes('create:users') && (
+                        <NavLink to="/users">
+                            <img src={UserIcon}/>
+                            Users
+                        </NavLink>
+                    )}
+                </span>
                 <span>
                     {user && user.id && (
                         <NavLink to={`/users/${user.id}/settings`}>
-                            <UserPictureWidget user={user}/>
+                            <UserPictureWidget user={user} background='gray'/>
                         </NavLink>
                     )}
                 </span>
