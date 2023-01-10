@@ -12,7 +12,8 @@ import { VersionContext } from '../contexts/Version'
 import { AUTH0_AUDIENCE } from '../env'
 import { UserManager } from '../managers/user'
 import { PageHeader } from './snippets/PageHeader'
-import { AuthView } from './views/Auth'
+import { LandingView } from './views/Landing'
+import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
 import { ProductView } from './views/Product'
 import { ProductIssueView } from './views/ProductIssue'
@@ -36,8 +37,8 @@ export const Root = () => {
     // STATES
 
     const [accessToken, setAccessToken] = React.useState<string>()
-    const [userData, setUserData] = React.useState<User & { permissions: string[] }>()
-    const [version, setVersion] = React.useState<Version>()
+    const [contextUser, setContextUser] = React.useState<User & { permissions: string[] }>()
+    const [contextVersion, setContextVersion] = React.useState<Version>()
 
     // EFFECTS
 
@@ -54,77 +55,72 @@ export const Root = () => {
             auth.headers.Authorization = `Bearer ${accessToken}`
             UserManager.getUser(user.sub.split('|')[1]).then(userData => {
                 const { permissions } = jose.decodeJwt(accessToken) as { permissions: string[] }
-                setUserData({ ...userData, permissions })
+                setContextUser({ ...userData, permissions })
             })
         } else {
             auth.headers.Authorization = ''
-            setUserData(undefined)
+            setContextUser(undefined)
         }
     }, [accessToken])
 
     // RETURN
 
     return (
-        <>
-            {isLoading ? (
-                <p>Loading...</p>
-            ) : (
-                <>
-                    {isAuthenticated ? (
-                        <>
-                            {userData && (
-                                <UserContext.Provider value={{ update: setUserData, ...userData }}>
-                                    <VersionContext.Provider value={{ update: setVersion, ...version }}>
-                                        <PageHeader/>
-                                        <Switch>
-                                            {/* User views */}
-                                            <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => userData.permissions.includes('create:users') || userData.email == user.email ? <UserSettingView {...props}/> : <MissingView/>} />
-                                            <Redirect path="/users/:user" to="/users/:user/settings"/>
-                                            <Route path="/users" render={() => userData.permissions.includes('create:users') ? <UserView/> : <MissingView/>} />
-                
-                                            {/* Version views */}
-                                            <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView} />
-                                            <Redirect path="/products/:product/versions/:version" to="/products/:product/versions/:version/settings"/>
-                                            <Route path="/products/:product/versions" component={ProductVersionView} />
-                
-                                            {/* Issue views */}
-                                            <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView} />
-                                            <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView} />
-                                            <Redirect path="/products/:product/issues/:issue" to="/products/:product/issues/:issue/settings" />
-                                            <Route path="/products/:product/issues" component={ProductIssueView} />
-                
-                                            {/* Milestone views */}
-                                            <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView} />
-                                            <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView} />
-                                            <Redirect path="/products/:product/milestones/:milestone" to="/products/:product/milestones/:milestone/settings" />
-                                            <Route path="/products/:product/milestones" component={ProductMilestoneView} />
-                
-                                            {/* Member views */}
-                                            <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView} />
-                                            <Redirect path="/products/:product/members/:member" to="/products/:product/members/:member/settings" />
-                                            <Route path="/products/:product/members" component={ProductMemberView} />
-                
-                                            {/* Product views */}
-                                            <Route path="/products/:product/settings" render={(props: RouteComponentProps<{ product: string }>) => userData.permissions.includes('create:products') || props.match.params.product != 'new' ? <ProductSettingView {...props}/> : <MissingView/>} />
-                                            <Redirect path="/products/:product" to="/products/:product/settings" />
-                                            <Route path="/products" component={ProductView} />
-                
-                                            {/* Home view */}
-                                            <Redirect to="/products"/>
-                                        </Switch>
-                                    </VersionContext.Provider>
-                                </UserContext.Provider>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            <PageHeader/>
-                            <AuthView/>
-                        </>
-                    )}
-                </>
-            )}
-        </>
+        <UserContext.Provider value={{ update: setContextUser, ...contextUser }}>
+            <VersionContext.Provider value={{ update: setContextVersion, ...contextVersion }}>
+                <PageHeader/>
+                {isLoading ? (
+                    <LoadingView/>
+                ) : (
+                    <>
+                        {isAuthenticated ? (
+                            <>
+                                {contextUser && (
+                                    <Switch>
+                                        {/* User views */}
+                                        <Route path="/users/:user/settings" render={(props: RouteComponentProps<{ user: string }>) => contextUser.permissions.includes('create:users') || contextUser.email == user.email ? <UserSettingView {...props}/> : <MissingView/>} />
+                                        <Redirect path="/users/:user" to="/users/:user/settings"/>
+                                        <Route path="/users" render={() => contextUser.permissions.includes('create:users') ? <UserView/> : <MissingView/>} />
+            
+                                        {/* Version views */}
+                                        <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView} />
+                                        <Redirect path="/products/:product/versions/:version" to="/products/:product/versions/:version/settings"/>
+                                        <Route path="/products/:product/versions" component={ProductVersionView} />
+            
+                                        {/* Issue views */}
+                                        <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView} />
+                                        <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView} />
+                                        <Redirect path="/products/:product/issues/:issue" to="/products/:product/issues/:issue/settings" />
+                                        <Route path="/products/:product/issues" component={ProductIssueView} />
+            
+                                        {/* Milestone views */}
+                                        <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView} />
+                                        <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView} />
+                                        <Redirect path="/products/:product/milestones/:milestone" to="/products/:product/milestones/:milestone/settings" />
+                                        <Route path="/products/:product/milestones" component={ProductMilestoneView} />
+            
+                                        {/* Member views */}
+                                        <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView} />
+                                        <Redirect path="/products/:product/members/:member" to="/products/:product/members/:member/settings" />
+                                        <Route path="/products/:product/members" component={ProductMemberView} />
+            
+                                        {/* Product views */}
+                                        <Route path="/products/:product/settings" render={(props: RouteComponentProps<{ product: string }>) => contextUser.permissions.includes('create:products') || props.match.params.product != 'new' ? <ProductSettingView {...props}/> : <MissingView/>} />
+                                        <Redirect path="/products/:product" to="/products/:product/settings" />
+                                        <Route path="/products" component={ProductView} />
+            
+                                        {/* Home view */}
+                                        <Redirect to="/products"/>
+                                    </Switch>
+                                )}
+                            </>
+                        ) : (
+                            <LandingView/>
+                        )}
+                    </>
+                )}
+            </VersionContext.Provider>
+        </UserContext.Provider>
     )
 
 }

@@ -19,13 +19,13 @@ export const PageHeader = () => {
                 </span>
             </div>
             <div>
-                { user && user.permissions.includes('create:users') && (
+                { user && user.permissions && user.permissions.includes('create:users') && (
                     <span>
                         <NavLink to="/users"><img src={UserIcon}/>Users</NavLink>
                     </span>
                 )}
                 <span>
-                    { user && (
+                    { user && user.id && (
                         <NavLink to={`/users/${user.id}/settings`}>
                             <img src={`/rest/files/${user.pictureId}.jpg`}/>
                         </NavLink>
