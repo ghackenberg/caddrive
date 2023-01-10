@@ -17,5 +17,5 @@ export class User extends UserAddData {
     @ApiProperty()
     deleted: boolean
     @ApiProperty()
-    pictureId: string
+    pictureId?: string
 }

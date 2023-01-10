@@ -23,7 +23,7 @@ export class UserEntity extends User {
     @Column({ nullable: false })
     override name: string
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     override pictureId: string
 
     @OneToMany(() => ProductEntity, product => product.user)
