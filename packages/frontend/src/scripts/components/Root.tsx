@@ -39,6 +39,7 @@ export const Root = () => {
     // STATES
 
     const [accessToken, setAccessToken] = React.useState<string>()
+
     const [contextUser, setContextUser] = React.useState<User & { permissions: string[] }>()
     const [contextVersion, setContextVersion] = React.useState<Version>()
 
@@ -68,8 +69,8 @@ export const Root = () => {
     // RETURN
 
     return (
-        <UserContext.Provider value={{ update: setContextUser, ...contextUser }}>
-            <VersionContext.Provider value={{ update: setContextVersion, ...contextVersion }}>
+        <UserContext.Provider value={{ contextUser, setContextUser }}>
+            <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
                 <PageHeader/>
                 {isLoading ? (
                     <LoadingView/>

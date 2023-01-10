@@ -34,7 +34,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
 
     // CONTEXTS
 
-    const contextUser = useContext(UserContext)
+    const { contextUser } = useContext(UserContext)
 
     // PARAMS
 

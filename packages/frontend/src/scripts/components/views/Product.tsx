@@ -23,8 +23,8 @@ export const ProductView = () => {
     
     // CONTEXTS
     
-    const contextUser = useContext(UserContext)
-    const contextVersion = useContext(VersionContext)
+    const { contextUser } = useContext(UserContext)
+    const { setContextVersion } = useContext(VersionContext)
 
     // INITIAL STATES
     
@@ -79,7 +79,7 @@ export const ProductView = () => {
 
     // - Entities
     useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
-    useEffect(() => { contextVersion.update(null) }, [])
+    useEffect(() => { setContextVersion(null) }, [])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {

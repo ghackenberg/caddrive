@@ -2,4 +2,9 @@ import * as React from 'react'
 
 import { User } from 'productboard-common'
 
-export const UserContext = React.createContext<User & { permissions: string[] } & { update: (user: User & { permissions: string[] }) => void }>(undefined)
+type UserContextProps = {
+    contextUser: User & { permissions: string[] }
+    setContextUser: (user: User & { permissions: string[] }) => void
+}
+
+export const UserContext = React.createContext<UserContextProps>(undefined)

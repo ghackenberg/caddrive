@@ -22,7 +22,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     
     // CONTEXTS
 
-    const contextUser = useContext(UserContext)
+    const { contextUser, setContextUser } = useContext(UserContext)
     
     // PARAMS
 
@@ -61,7 +61,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
             if (name && email) {
                 const newUser = await UserManager.updateUser(user.id, { name, email },file)
                 if (contextUser.email == newUser.email) {
-                    contextUser.update({ ...contextUser, ...newUser })
+                    setContextUser({ ...contextUser, ...newUser })
                 }
             }
         }

@@ -10,7 +10,7 @@ import * as UserIcon from '/src/images/user.png'
 
 export const PageHeader = () => {
 
-    const user = useContext(UserContext)
+    const { contextUser } = useContext(UserContext)
 
     return (
         <header>
@@ -24,7 +24,7 @@ export const PageHeader = () => {
             </div>
             <div>
                 <span>
-                    {user && user.permissions && user.permissions.includes('create:users') && (
+                    {contextUser && contextUser.permissions && contextUser.permissions.includes('create:users') && (
                         <NavLink to="/users">
                             <img src={UserIcon}/>
                             Users
@@ -32,9 +32,9 @@ export const PageHeader = () => {
                     )}
                 </span>
                 <span>
-                    {user && user.id && (
-                        <NavLink to={`/users/${user.id}/settings`}>
-                            <UserPictureWidget user={user} background='gray'/>
+                    {contextUser && (
+                        <NavLink to={`/users/${contextUser.id}/settings`}>
+                            <UserPictureWidget user={contextUser} background='gray'/>
                         </NavLink>
                     )}
                 </span>

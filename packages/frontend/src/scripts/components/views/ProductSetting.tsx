@@ -22,8 +22,8 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     // CONTEXTS
 
-    const contextUser = useContext(UserContext)
-    const contextVersion = useContext(VersionContext)
+    const { contextUser } = useContext(UserContext)
+    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -102,7 +102,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} mouse={true} vr={true} change={contextVersion.update}/>
+                                    <ProductView3D product={product} version={contextVersion} mouse={true} vr={true} change={setContextVersion}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

@@ -28,7 +28,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     // CONTEXTS
 
-    const contextVersion = useContext(VersionContext)
+    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -271,7 +271,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} version={contextVersion.id != undefined ? contextVersion : null} highlighted={hightlighted} mouse={true} vr= {true} change = {contextVersion.update}/>
+                                    <ProductView3D product={product} version={contextVersion} highlighted={hightlighted} mouse={true} vr= {true} change={setContextVersion}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>
