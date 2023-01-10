@@ -4,7 +4,6 @@ import axios from 'axios'
 import { Request } from 'express'
 import { JwtPayload, verify } from 'jsonwebtoken'
 import * as jwks from 'jwks-rsa'
-import * as shortid from 'shortid'
 
 import { User } from 'productboard-common'
 import { UserRepository } from 'productboard-database'
