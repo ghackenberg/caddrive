@@ -21,6 +21,7 @@ import { ProductFooter } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 import * as LoadIcon from '/src/images/load.png'
 
@@ -171,7 +172,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         {label: 'Picture', content: member => (
             member.id in users ? (
                 <Link to={`/users/${users[member.id].id}/settings`}>
-                    <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big'/>
+                    <ProductUserPictureWidget user={users[member.id]} members={members} class='big'/>
                 </Link>
              ) : <a> <img src={LoadIcon} className='big load' /> </a>
         )},

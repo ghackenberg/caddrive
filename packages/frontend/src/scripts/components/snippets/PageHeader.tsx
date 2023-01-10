@@ -27,7 +27,8 @@ export const PageHeader = () => {
                 <span>
                     { user && user.id && (
                         <NavLink to={`/users/${user.id}/settings`}>
-                            <img src={`/rest/files/${user.pictureId}.jpg`}/>
+                            { user.pictureId ? <img src={`/rest/files/${user.pictureId}.jpg`}/> : <img style={{backgroundColor: 'gray'}} src={UserIcon}/> }
+                            
                         </NavLink>
                     )}
                 </span>

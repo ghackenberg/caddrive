@@ -16,6 +16,7 @@ import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
 
 import * as DeleteIcon from '/src/images/delete.png'
+import * as UserIcon from '/src/images/user.png'
 
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
@@ -51,7 +52,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // - Interactions
     const [query, setQuery] = useState<string>('')
     const [sidebar, setSidebar] = useState<boolean>(false)
-    
+
     // EFFECTS
 
     // - Entities
@@ -103,8 +104,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const columns1: Column<User>[] = [
         { label: 'Picture', class: 'center', content: () => (
             <a >
-                {console.log(selectedUser.pictureId)}
-                <img src={`/rest/files/${selectedUser.pictureId}.jpg`} className='big'/>        
+                <img src={selectedUser.pictureId ? `/rest/files/${selectedUser.pictureId}.jpg` : UserIcon } style={{backgroundColor: 'lightgray'}} className='big'/>        
             </a>
         )},
         { label: 'Name', class: 'left fill', content: () => (
@@ -120,7 +120,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const columns: Column<User>[] = [
         { label: 'Picture', class: 'center', content: user => (
             <a onClick={() => selectUser(user)}>
-                <img src={`/rest/files/${user.pictureId}.jpg`} className='big'/>
+                <img src={user.pictureId ? `/rest/files/${user.pictureId}.jpg` : UserIcon } style={{backgroundColor: 'lightgray'}} className='big'/>   
             </a>
         )},
         { label: 'Name', class: 'left fill', content: (user, index) => (

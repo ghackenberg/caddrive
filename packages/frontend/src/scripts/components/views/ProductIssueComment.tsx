@@ -19,6 +19,7 @@ import { ProductFooter } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { CommentView } from '../widgets/CommentView'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
@@ -250,7 +251,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                             <div className="head">
                                                 <div className="icon">
                                                     <a href={`/users/${contextUser.id}`}>
-                                                        <img src={`/rest/files/${contextUser.id}.jpg`}/>
+                                                        {/* <img src={`/rest/files/${contextUser.id}.jpg`}/> */}
+                                                        <ProductUserPictureWidget user={contextUser} members={members}/>
                                                     </a>
                                                 </div>
                                                 <div className="text">

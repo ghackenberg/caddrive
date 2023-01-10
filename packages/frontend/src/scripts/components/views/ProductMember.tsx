@@ -13,6 +13,7 @@ import { ProductFooter } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
+import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
 import * as DeleteIcon from '/src/images/delete.png'
 import * as LoadIcon from '/src/images/load.png'
@@ -79,7 +80,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
         { label: 'Picture', content: member => (
             member.id in users ? (
                 <Link to={`/products/${productId}/members/${member.id}/settings`}>
-                    <img src={`/rest/files/${users[member.id].pictureId}.jpg`} className='big'/>
+                    <ProductUserPictureWidget user={users[member.id]} members={members} class='big'/>
               </Link> 
             ) : <a> <img src={LoadIcon} className='big load' /> </a>
         )},
