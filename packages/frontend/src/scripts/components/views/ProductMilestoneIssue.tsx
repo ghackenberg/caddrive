@@ -253,9 +253,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
                                 </div>
                                 <div>
-                                    <div className="widget product_view_3d">
-                                        <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
-                                    </div>
+                                    <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
                                 </div>
                             </main>                            
                             <ProductFooter items={items} active={active} setActive={setActive}/>

@@ -46,22 +46,24 @@ export const BurndownChartWidget = (props: { start: Date, end: Date, total: numb
     // RETURN
 
     return (
-        <ResponsiveContainer>
-            <LineChart>
-                <CartesianGrid/>
-                <XAxis name='Time' dataKey='time' type='number' domain={[min - (max - min) * 0.25, max + (max - min) * 0.25]} scale='time' tickFormatter={time => new Date(time).toLocaleString()}/>
-                <YAxis name='Open issue count' dataKey='target' domain={[0, 'dataMax + 1']} allowDecimals={false} tickFormatter={value => `${Math.round(value)}`}/>
-                <Legend/>
-                <Line name='Target burndown' data={target} dataKey='target' stroke='green' strokeDasharray='3 3' dot={false}/>
-                <ReferenceLine x={props.start.getTime()} label='Start' stroke='red' strokeDasharray='3 3'/>
-                <ReferenceLine x={props.end.getTime()} label='End' stroke='red' strokeDasharray='3 3'/>
-                { Date.now() >= props.start.getTime() && Date.now() <= props.end.getTime() && (
-                    <ReferenceLine x={Date.now()} label='Now' stroke='gray' strokeDasharray='3 3'/>
-                ) }
-                <ReferenceLine y={props.total} label='Total' stroke='orange' strokeDasharray='3 3'/>
-                <Line name='Actual burndown' data={props.actual} dataKey='actual' stroke='blue'/>
-            </LineChart>
-        </ResponsiveContainer>
+        <div className="widget burndown_chart">
+            <ResponsiveContainer>
+                <LineChart>
+                    <CartesianGrid/>
+                    <XAxis name='Time' dataKey='time' type='number' domain={[min - (max - min) * 0.25, max + (max - min) * 0.25]} scale='time' tickFormatter={time => new Date(time).toLocaleString()}/>
+                    <YAxis name='Open issue count' dataKey='target' domain={[0, 'dataMax + 1']} allowDecimals={false} tickFormatter={value => `${Math.round(value)}`}/>
+                    <Legend/>
+                    <Line name='Target burndown' data={target} dataKey='target' stroke='green' strokeDasharray='3 3' dot={false}/>
+                    <ReferenceLine x={props.start.getTime()} label='Start' stroke='red' strokeDasharray='3 3'/>
+                    <ReferenceLine x={props.end.getTime()} label='End' stroke='red' strokeDasharray='3 3'/>
+                    { Date.now() >= props.start.getTime() && Date.now() <= props.end.getTime() && (
+                        <ReferenceLine x={Date.now()} label='Now' stroke='gray' strokeDasharray='3 3'/>
+                    ) }
+                    <ReferenceLine y={props.total} label='Total' stroke='orange' strokeDasharray='3 3'/>
+                    <Line name='Actual burndown' data={props.actual} dataKey='actual' stroke='blue'/>
+                </LineChart>
+            </ResponsiveContainer>
+        </div>
     )
 
 }

@@ -19,6 +19,7 @@
 
 /* Widget specific styles */
 
+@import url(./widgets/BurndownChart.css);
 @import url(./widgets/FileView3D.css);
 @import url(./widgets/IssueThread.css);
 @import url(./widgets/ModelGraph.css);
