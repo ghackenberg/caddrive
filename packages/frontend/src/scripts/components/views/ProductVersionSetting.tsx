@@ -14,10 +14,11 @@ import { VersionManager } from '../../managers/version'
 import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
 import { NumberInput } from '../inputs/NumberInput'
+import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
-import { SceneView3D } from '../widgets/SceneView3D'
+import { ModelView3D } from '../widgets/ModelView3D'
 import { VersionView3D } from '../widgets/VersionView3D'
 
 import * as EmptyIcon from '/src/images/empty.png'
@@ -144,31 +145,26 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                                 </Fragment>
                                             </GenericInput>
                                         )}
-                                        <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                        <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                         {versionId == 'new' && (
                                             <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required={true}/>
                                         )}
-                                        <div>
-                                            <div />
-                                            <div>
-                                                <input type='submit' value='Save' disabled={image == null}/>
-                                            </div>
-                                        </div>
+                                        <SubmitInput/>
                                     </form>
                                 </div>
                                 <div>
                                     {version ? (
                                         <VersionView3D version={version} mouse={true} vr={true}/>
                                     ) : (
-                                        <div className="widget model_view">
+                                        <div className="widget version_view">
                                             {!file ? (
-                                                <img className='empty' src={EmptyIcon}/>
+                                                <img src={EmptyIcon} className='icon medium position center'/>
                                             ) : (
                                                 <Fragment>
                                                     {!model ? (
-                                                        <img className='load' src={LoadIcon}/>
+                                                        <img src={LoadIcon} className='icon small position center animation spin'/>
                                                     ) : (
-                                                        <SceneView3D model={model} mouse={false} vr={false} highlighted={[]} marked={[]} selected={[]}/>
+                                                        <ModelView3D model={model} mouse={false} vr={false} highlighted={[]} marked={[]} selected={[]}/>
                                                     )}
                                                 </Fragment>
                                             )}

@@ -1,0 +1,17 @@
+span.state {
+    display: inline-block;
+
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    
+    border-radius: 1em;
+    
+    color: white;
+}
+
+span.state.open {
+    background-color: red;
+}
+span.state.closed {
+    background-color: green;
+}

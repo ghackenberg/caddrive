@@ -192,12 +192,12 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
-        { label: 'Reporter', content: issue => (
+        { label: '👤', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.userId in users && members ? (
-                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/>
+                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
                 ) : (
-                    <img src={LoadIcon} className='big load'/>
+                    <img src={LoadIcon} className='icon medium pad animation spin'/>
                 )}
             </Link>
         ) },
@@ -211,9 +211,9 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
                         {assignedId in users && members ? (
-                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/>
+                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='icon medium round'/>
                         ) : (
-                            <img src={LoadIcon} className='big load'/>
+                            <img src={LoadIcon} className='icon medium pad animation spin'/>
                         )}
                     </Fragment>
                 ))}
@@ -229,9 +229,9 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                 {issue.id in partsCount ? partsCount[issue.id] : '?'}
             </Link>
         ) },
-        { label: '', class: 'center', content: issue => (
+        { label: '🛠️', class: 'center', content: issue => (
             <a onClick={() => deleteIssue(issue)}>
-                <img src={DeleteIcon} className='small'/>
+                <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
     ]
@@ -254,13 +254,13 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
-                                    <Link to={`/products/${productId}/issues/new/settings`} className='button green fill'>
+                                    <Link to={`/products/${productId}/issues/new/settings`} className='button fill green'>
                                         New issue
                                     </Link>
-                                    <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
+                                    <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                         Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
                                     </a>
-                                    <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
+                                    <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                         Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
                                     </a>
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>

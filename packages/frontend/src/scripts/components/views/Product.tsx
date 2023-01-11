@@ -109,6 +109,8 @@ export const ProductView = () => {
                 for (let index = 0; index < products.length; index++) {
                     if (productVersions[index].length > 0) {
                         newVersions[products[index].id] = productVersions[index][productVersions[index].length - 1].id
+                    } else {
+                        newVersions[products[index].id] = null
                     }
                 }
                 setLatestVersions(newVersions)
@@ -150,21 +152,27 @@ export const ProductView = () => {
     // CONSTANTS
     
     const columns: Column<Product>[] = [
-        { label: 'Preview', class: 'center', content: product => (
+        { label: '📷', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.id in latestVersions ? (
-                    <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"/>
+                    <>
+                        {latestVersions[product.id] ? (
+                            <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"/>
+                        ) : (
+                            <img src={EmptyIcon} className='icon medium'/>
+                        )}
+                    </>
                 ) : (
-                    <img className='empty medium' src={EmptyIcon}/>           
+                    <img src={LoadIcon} className='icon small animation spin'/>
                 )}
             </Link>
         ) },
-        { label: 'Owner', class: 'left nowrap', content: product => (
+        { label: '👤', class: 'center nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {users[product.id] && members[product.id] ? (
-                    <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='big'/>
+                    <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='icon medium round'/>
                 ) : (
-                    <img src={LoadIcon} className='big load'/>
+                    <img src={LoadIcon} className='icon small animation spin'/>
                 )}
             </Link>
         ) },
@@ -193,9 +201,9 @@ export const ProductView = () => {
                 {product.id in members ? members[product.id].length : '?'}
             </Link>
         ) },
-        { label: '', content: product => (
+        { label: '🛠️', content: product => (
             <a onClick={() => deleteProduct(product)}>
-                <img src={DeleteIcon} className='small'/>
+                <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
     ]
@@ -212,7 +220,7 @@ export const ProductView = () => {
             <main>
                 <div>
                     {contextUser.permissions.includes('create:products') && (
-                        <Link to={`/products/new/settings`} className='button green fill'>
+                        <Link to='/products/new/settings' className='button fill green'>
                             New product
                         </Link>
                     )}

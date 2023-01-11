@@ -16,13 +16,13 @@ export const UserHeader = (props: {user?: User}) => (
             <span>
                 {props.user ? (
                     <NavLink to={`/users/${props.user.id}`}>
-                        <img src={SettingIcon}/>
-                        Settings
+                        <img src={SettingIcon} className='icon small'/>
+                        <span>Settings</span>
                     </NavLink>
                 ) : (
                     <a className="active">
-                        <img src={SettingIcon}/>
-                        Settings
+                        <img src={SettingIcon} className='icon small'/>
+                        <span>Settings</span>
                     </a>
                 )}
             </span>

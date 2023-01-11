@@ -163,12 +163,12 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
-        { label: 'Reporter', content: issue => (
+        { label: '👤', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.userId in users && members ? (
-                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='big'/>
+                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
                 ) : (
-                    <img src={LoadIcon} className='big load'/>
+                    <img src={LoadIcon} className='icon medium pad animation spin'/>
                 )}
             </Link>
         ) },
@@ -182,9 +182,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
                         {assignedId in users && members ? (
-                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='big'/>
+                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='icon medium round'/>
                         ) : (
-                            <img src={LoadIcon} className='big load'/>
+                            <img src={LoadIcon} className='icon medium pad animation spin'/>
                         )}
                     </Fragment>
                 ))}
@@ -200,9 +200,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                 {issue.id in partsCount ? partsCount[issue.id] : '?'}
             </Link>
         ) },
-        { label: '', class: 'center', content: issue => (
+        { label: '🛠️', class: 'center', content: issue => (
             <a onClick={() => deleteIssue(issue)}>
-                <img src={DeleteIcon} className='small'/>
+                <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
     ]
@@ -225,7 +225,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <ProductHeader product={product}/>
                             <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
-                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button gray fill right'>
+                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
                                         Edit milestone
                                     </Link>
                                     <h1>
@@ -241,13 +241,13 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                             {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
                                         </em>
                                     </p>
-                                    <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button green fill'>
+                                    <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green'>
                                         New issue
                                     </Link>
-                                    <a onClick={showOpenIssues} className={`button blue ${state == 'open' ? 'fill' : 'stroke'}`}>
+                                    <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                         Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
                                     </a>
-                                    <a onClick={showClosedIssues} className={`button blue ${state == 'closed' ? 'fill' : 'stroke'}`}>
+                                    <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                         Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
                                     </a>
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>

@@ -29,13 +29,13 @@ export const ProductHeader = (props: {product?: Product}) => (
             <span>
                 {props.product ? (
                     <NavLink to={`/products/${props.product.id}/settings`}>
-                        <img src={SettingIcon}/>
-                        Settings
+                        <img src={SettingIcon} className='icon small'/>
+                        <span>Settings</span>
                     </NavLink>
                 ) : (
                     <a className="active">
-                        <img src={SettingIcon}/>
-                        Settings
+                        <img src={SettingIcon} className='icon small'/>
+                        <span>Settings</span>
                     </a>
                 )}
             </span>

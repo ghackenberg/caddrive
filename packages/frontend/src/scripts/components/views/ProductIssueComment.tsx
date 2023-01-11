@@ -240,7 +240,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
-                                    <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button gray fill right'>
+                                    <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
                                         Edit issue
                                     </Link>
                                     <h1>
@@ -263,11 +263,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                             opened issue on {issue.time.substring(0, 10)}
                                         </>
                                     </p>
-                                    
-                                    <div className="widget thread">
-                                        <>
-                                            <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members}/>
-                                        </>
+                                    <div className="widget issue_thread">
+                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members}/>
                                         {comments && comments.map(comment => (
                                             <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members}/>
                                         ))}
@@ -288,11 +285,13 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                                 <div className="free"/>
                                                 <div className="text">
                                                     <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)}/>
-                                                    <button onClick={submitComment}>Save</button>
+                                                    <button className='button fill blue' onClick={submitComment}>Save</button>
                                                     {issue.state == 'open' ? (
-                                                        <button onClick={submitCommentAndClose}>Close</button>
+                                                        <button className='button stroke blue' onClick={submitCommentAndClose}>
+                                                            Close
+                                                        </button>
                                                     ) : (
-                                                        <button onClick={submitCommentAndReopen}>Reopen</button>
+                                                        <button className='button stroke blue' onClick={submitCommentAndReopen}>Reopen</button>
                                                     )}
                                                 </div>
                                             </div>

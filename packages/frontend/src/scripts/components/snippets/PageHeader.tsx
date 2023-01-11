@@ -17,7 +17,7 @@ export const PageHeader = () => {
             <div>
                 <span>
                     <NavLink to="/products">
-                        <img src={AppIcon}/>
+                        <img src={AppIcon} className='icon small'/>
                         ProductBoard
                     </NavLink>
                 </span>
@@ -26,7 +26,7 @@ export const PageHeader = () => {
                 <span>
                     {contextUser && contextUser.permissions && contextUser.permissions.includes('create:users') && (
                         <NavLink to="/users">
-                            <img src={UserIcon}/>
+                            <img src={UserIcon} className='icon small'/>
                             Users
                         </NavLink>
                     )}
@@ -34,7 +34,7 @@ export const PageHeader = () => {
                 <span>
                     {contextUser && (
                         <NavLink to={`/users/${contextUser.id}/settings`}>
-                            <UserPictureWidget user={contextUser} background='gray'/>
+                            <UserPictureWidget user={contextUser} background='gray' class='icon small round'/>
                         </NavLink>
                     )}
                 </span>

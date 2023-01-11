@@ -32,7 +32,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
     // RETURN
 
     return (
-        <div key={comment.id} className={`${props.class}${comment.userId == contextUser.id ? ' self' : ''}`}>
+        <div key={comment.id} className={`${props.class} ${comment.userId == contextUser.id ? 'self' : ''}`}>
             <div className="head">
                 <div className="icon">
                     <a href={`/users/${comment.userId}`}>

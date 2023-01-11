@@ -14,8 +14,8 @@ export const ProductFooter = (props: { items: ProductFooterItem[], active: strin
                 {props.items.map(item => (
                     <span key={item.name}>
                         <a className={item.name == props.active ? 'active' : ''} onClick={() => props.setActive(item.name)}>
-                            <img src={item.image}/>
-                            {item.text}
+                            <img src={item.image} className='icon small'/>
+                            <span>{item.text}</span>
                         </a>
                     </span>
                 ))} 

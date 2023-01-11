@@ -9,8 +9,10 @@ import { User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { UserManager } from '../../managers/user'
+import { ButtonInput } from '../inputs/ButtonInput'
 import { EmailInput } from '../inputs/EmailInput'
 import { FileInput } from '../inputs/FileInput'
+import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { UserHeader } from '../snippets/UserHeader'
 
@@ -51,7 +53,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
 
     // FUNCTIONS 
 
-    async function submit(event: FormEvent){
+    async function onSubmit(event: FormEvent<HTMLFormElement>){
         event.preventDefault()
         if(userId == 'new') {
             if (name && email) {
@@ -68,7 +70,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
         goBack() 
     }
 
-    function click(event: React.MouseEvent<HTMLButtonElement>) {
+    function onClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         logout()
     }
@@ -87,23 +89,13 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                             <main>
                                 <div>
                                     <h1>Settings</h1>
-                                    <form onSubmit={submit}>
+                                    <form onSubmit={onSubmit}>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                         <FileInput label='Picture' placeholder='Select JPEG file' accept='.jpg' change={setFile} required={userId === 'new'}/>
-                                        <div>
-                                            <div/>
-                                            <div>
-                                                <input type='submit' value='Save'/>
-                                            </div>
-                                        </div>
+                                        <SubmitInput/>
                                         {contextUser.id == userId && (
-                                            <div>
-                                                <div/>
-                                                <div>
-                                                    <button onClick={click}>Leave</button>
-                                                </div>
-                                            </div>
+                                            <ButtonInput value='Leave' class='red' click={onClick}/>
                                         )}
                                     </form>
                                 </div>

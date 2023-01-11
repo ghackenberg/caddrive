@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router' 
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
@@ -9,6 +9,7 @@ import { Issue, Product, User, Member, Version, Milestone } from 'productboard-c
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
+import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { UserManager } from '../../managers/user'
 import { ProductManager } from '../../managers/product'
@@ -169,25 +170,19 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // CONSTANTS
 
     const columns: Column<Member>[] = [
-        { label: 'Picture', content: member => (
+        { label: '👤', content: member => (
             member.id in users ? (
-                <Link to={`/users/${users[member.id].id}/settings`}>
-                    <ProductUserPictureWidget user={users[member.id]} members={members} class='big'/>
-                </Link>
+                <ProductUserPictureWidget user={users[member.id]} members={members} class='icon medium round'/>
             ) : (
-                <a>
-                    <img src={LoadIcon} className='big load'/>
-                </a>
+                <img src={LoadIcon} className='icon mediumn pad animation spin'/>
             )
         ) },
-        { label: 'Member', class: 'fill left nowrap', content: member => (
+        { label: 'Name', class: 'fill left nowrap', content: member => (
             member.id in users ? (
-                <Link to={`/users/${users[member.id].id}/settings`}>
-                    {users[member.id].name}
-                </Link>
+                users[member.id].name
             ) : '?'
         ) },
-        { label: 'Assignee', class: 'fill center nowrap', content: member => (
+        { label: '🛠️', class: 'fill center nowrap', content: member => (
             <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>
         ) },
     ]
@@ -212,13 +207,13 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                 <div>
                                     <h1>Settings</h1>
                                         <form onSubmit={submitIssue} onReset={goBack}>
-                                            <TextInput class='fill' label='Label' placeholder='Type label' value={label} change={setLabel}/>
+                                            <TextInput label='Label' placeholder='Type label' value={label} change={setLabel}/>
                                             <div>
                                                 <div>
                                                     Text:
                                                 </div>
                                                 <div>
-                                                    <textarea ref={textReference} className='fill' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
+                                                    <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
                                                 </div>
                                             </div>
                                             <div>
@@ -227,16 +222,22 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                 </div>
                                                 <div>
                                                     {recorder ? (
-                                                        <input type='button' value='Stop recording' onClick={stopRecordAudio}/>
+                                                        <button onClick={stopRecordAudio} className='button fill gray'>
+                                                            Stop recording
+                                                        </button>
                                                     ) : (
                                                         <Fragment>
                                                             {audio ? (
                                                                 <Fragment>
-                                                                    <audio src={URL.createObjectURL(audio)} controls></audio>
-                                                                    <input type='button' value='Remove recording' onClick={() => setAudio(null)}/>
+                                                                    <button onClick={() => setAudio(null)} className='button fill gray'>
+                                                                        Remove recording
+                                                                    </button>
+                                                                    <audio src={URL.createObjectURL(audio)} controls/>
                                                                 </Fragment>
                                                             ) : (
-                                                                <input type='button' value='Start recording' onClick={startRecordAudio}/>
+                                                                <button onClick={startRecordAudio} className='button fill gray'>
+                                                                    Start recording
+                                                                </button>
                                                             )}
                                                         </Fragment>
                                                     )}
@@ -247,7 +248,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                     Milestone:
                                                 </div>
                                                 <div>
-                                                    <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)}>
+                                                    <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
                                                         <option >none</option>
                                                         {milestones && milestones.map((milestone) => (
                                                             <option key={milestone.id} value={milestone.id}>
@@ -267,12 +268,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                     )}
                                                 </div>
                                             </div>
-                                            <div>
-                                                <div/>
-                                                <div>
-                                                    <input type='submit' value='Save'/>
-                                                </div>
-                                            </div>
+                                            <SubmitInput/>
                                         </form>
                                 </div>
                                 <div>

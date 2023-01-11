@@ -5,7 +5,7 @@ import { Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { FileManager } from '../../managers/file'
-import { SceneView3D } from './SceneView3D'
+import { ModelView3D } from './ModelView3D'
 
 import * as LoadIcon from '/src/images/load.png'
 
@@ -51,11 +51,11 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     // RETURN
 
     return (
-        <div className="widget model_view">
+        <div className="widget file_view_3d">
             {model ? (
-                <SceneView3D model={model} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
+                <ModelView3D model={model} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
             ) : (
-                <img className='load' src={LoadIcon}/>
+                <img src={LoadIcon} className='icon medium position center animation spin'/>
             )}
         </div>
     )

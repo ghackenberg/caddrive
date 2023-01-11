@@ -11,11 +11,15 @@ export const IssueLink = (props: { product: Product, issue?: Issue }) => (
         <IssuesLink product={props.product}/>
         { props.issue ? (
             <span>
-                <NavLink to={`/products/${props.product.id}/issues/${props.issue.id}`}>{props.issue.label}</NavLink>
+                <NavLink to={`/products/${props.product.id}/issues/${props.issue.id}`}>
+                    {props.issue.label}
+                    </NavLink>
             </span>
         ) : (
             <span>
-                <NavLink to={`/products/${props.product.id}/issues/new`}>New issue</NavLink>
+                <NavLink to={`/products/${props.product.id}/issues/new`}>
+                    New issue
+                    </NavLink>
             </span>
         )}
     </Fragment>  

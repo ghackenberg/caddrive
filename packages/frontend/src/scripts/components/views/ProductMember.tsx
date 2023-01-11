@@ -74,18 +74,16 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
     // CONSTANTS
 
     const columns: Column<Member>[] = [
-        { label: 'Picture', content: member => (
+        { label: '👤', content: member => (
             member.id in users ? (
                 <Link to={`/products/${productId}/members/${member.id}/settings`}>
-                    <ProductUserPictureWidget user={users[member.id]} members={members} class='big'/>
+                    <ProductUserPictureWidget user={users[member.id]} members={members} class='icon medium round middle'/>
                 </Link> 
             ) : (
-                <a>
-                    <img src={LoadIcon} className='big load'/>
-                </a>
+                <img src={LoadIcon} className='icon medium pad animation spin'/>
             )
         ) },
-        { label: 'User', class: 'left nowrap', content: (
+        { label: 'Name', class: 'left nowrap', content: (
             member => member.id in users ? (
                 <Link to={`/products/${productId}/members/${member.id}/settings`}>
                     {users[member.id].name}
@@ -99,8 +97,10 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                 </Link>
              ) : '?'
         ) },
-        { label: '', class: 'center', content: member => (
-            <a onClick={() => deleteMember(member)}><img src={DeleteIcon} className='small'/> </a>
+        { label: '🛠️', class: 'center', content: member => (
+            <a onClick={() => deleteMember(member)}>
+                <img src={DeleteIcon} className='icon medium pad'/>
+            </a>
         ) }
     ]
 
@@ -122,7 +122,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
                                 <div>
-                                    <Link to={`/products/${productId}/members/new/settings`} className='button green fill'>
+                                    <Link to={`/products/${productId}/members/new/settings`} className='button fill green'>
                                         New member
                                     </Link>
                                     {members && (

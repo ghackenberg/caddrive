@@ -11,11 +11,15 @@ export const VersionLink = (props: {product: Product, version?: Version}) => (
         <VersionsLink product={props.product}/>
         { props.version ? (
             <span>
-                <NavLink to={`/products/${props.product.id}/versions/${props.version.id}`}>{props.version.major}.{props.version.minor}.{props.version.patch}</NavLink>
+                <NavLink to={`/products/${props.product.id}/versions/${props.version.id}`}>
+                    {props.version.major}.{props.version.minor}.{props.version.patch}
+                </NavLink>
             </span>
         ) : (
             <span>
-                <NavLink to={`/products/${props.product.id}/versions/new`}>New version</NavLink>
+                <NavLink to={`/products/${props.product.id}/versions/new`}>
+                    New version
+                </NavLink>
             </span>
         )}
     </Fragment>  

@@ -1,37 +1,46 @@
-body > div > main h1 {
+h1 {
     font-size: 200%;
+    
     line-height: 150%;
+    
     margin: 0;
+    
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-body > div > main h2 {
+h2 {
     font-size: 175%;
+    
     line-height: 150%;
+
     margin: 0;
+    
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-body > div > main h3 {
+h3 {
     font-size: 150%;
+    
     line-height: 150%;
+    
     margin: 0;
+    
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
-body > div > main h1 > a::after {
+h1 > a::after {
     content: " / ";
 }
-body > div > main h1 > a:last-child::after {
+h1 > a:last-child::after {
     content: "";
 }
 
-body > div > main h2 > a::after {
+h2 > a::after {
     content: " | ";
 }
-body > div > main h2 > a:last-child::after {
+h2 > a:last-child::after {
     content: "";
 }

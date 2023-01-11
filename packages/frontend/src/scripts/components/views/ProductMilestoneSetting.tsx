@@ -12,6 +12,7 @@ import { IssueManager } from '../../managers/issue'
 import { MilestoneManager } from '../../managers/milestone'
 import { ProductManager } from '../../managers/product'
 import { DateInput } from '../inputs/DateInput'
+import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
@@ -128,15 +129,10 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submitMilestone} onReset={goBack}>
-                                            <TextInput class='fill' label='Label' placeholder='Type label' value={label} change={setLabel} required/>
-                                            <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
-                                            <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
-                                            <div>
-                                                <div/>
-                                                <div>
-                                                    <input type='submit' value='Save'/>
-                                                </div>
-                                            </div>
+                                        <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
+                                        <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
+                                        <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
+                                        <SubmitInput/>
                                     </form>
                                 </div>
                                 <div>

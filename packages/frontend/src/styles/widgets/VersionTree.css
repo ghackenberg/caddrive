@@ -1,0 +1,116 @@
+div.widget.version_tree {
+    display: table;
+    
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    width: 100%;
+    
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+div.widget.version_tree > div {
+    display: table-row;
+}
+div.widget.version_tree > div.between {
+    height: 1px;
+}
+div.widget.version_tree > div.version {
+    cursor: pointer;
+
+    background-color: rgb(245, 245, 245);
+}
+div.widget.version_tree > div.version.selected,
+div.widget.version_tree > div.version:hover {
+    background-color: rgb(230, 230, 230);
+}
+div.widget.version_tree > div > div {
+    display: table-cell;
+
+    position: relative;
+    
+    vertical-align: top;
+}
+div.widget.version_tree > div:first-child > div.tree {
+    border-top-left-radius: 1em;
+}
+div.widget.version_tree > div:first-child > div.model {
+    border-top-right-radius: 1em;
+}
+div.widget.version_tree > div:last-child > div.tree {
+    border-bottom-left-radius: 1em;
+}
+div.widget.version_tree > div:last-child > div.model {
+    border-bottom-right-radius: 1em;
+}
+div.widget.version_tree > div > div.tree span {
+    display: block;
+
+    position: absolute;
+}
+div.widget.version_tree > div > div.tree span.line {
+    background-color: gray;
+}
+div.widget.version_tree > div > div.tree span.line.vertical {
+    width: 2px;
+}
+div.widget.version_tree > div > div.tree span.line.horizontal {
+    height: 2px;
+
+    border-top: 2px solid rgb(245,245,245);
+    border-bottom: 2px solid rgb(245,245,245);
+}
+div.widget.version_tree > div.selected > div.tree span.line.horizontal,
+div.widget.version_tree > div:hover > div.tree span.line.horizontal {
+    border-top-color: rgb(230,230,230);
+    border-bottom-color: rgb(230,230,230);
+}
+div.widget.version_tree > div > div.tree span.dot {
+    width: 1em;
+    height: 1em;
+
+    margin: 0.25em;
+    
+    border-radius: 0.5em;
+    
+    background-color: black;
+}
+div.widget.version_tree > div > div.text {
+    padding-right: 0.5em;
+}
+div.widget.version_tree > div > div.text > div:first-child {
+    margin-top: 0.75em;
+
+    font-weight: bold;
+}
+div.widget.version_tree > div > div.text > div:last-child {
+    margin-bottom: 0.75em;
+}
+div.widget.version_tree > div > div.text > div > span.label {
+    display: inline-block;
+
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+    
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    
+    border-radius: 0.25em;
+    
+    background-color: black;
+    
+    color: white;
+}
+div.widget.version_tree > div > div.model {
+    width: 10em;
+    height: 10em;
+
+    background-position: center;
+    background-size: cover;
+}
+div.widget.version_tree > div:first-child > div.model * {
+    border-top-right-radius: 1em;
+}
+div.widget.version_tree > div:last-child > div.model * {
+    border-bottom-right-radius: 1em;
+}

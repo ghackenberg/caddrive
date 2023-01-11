@@ -7,6 +7,7 @@ import { Product } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { ProductManager } from '../../managers/product'
+import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
@@ -90,13 +91,8 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     <h1>Settings</h1>
                                     <form onSubmit={submit}>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                        <TextInput class='fill' label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                        <div>
-                                            <div/>
-                                            <div>
-                                                <input type='submit' value='Save'/>
-                                            </div>
-                                        </div>
+                                        <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                        <SubmitInput/>
                                     </form>
                                 </div>
                                 <div>

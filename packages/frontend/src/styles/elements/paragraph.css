@@ -1,5 +1,6 @@
-body > div > main p {
+p {
     margin: 0;
+    
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
 }

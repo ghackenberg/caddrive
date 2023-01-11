@@ -1,0 +1,54 @@
+*.icon {
+    display: inline-block;
+
+    vertical-align: top;
+
+    width: 1.5em;
+    height: 1.5em;
+}
+
+*.icon.top {
+    vertical-align: top;
+}
+*.icon.middle {
+    vertical-align: middle;
+}
+*.icon.bottom {
+    vertical-align: bottom;
+}
+
+*.icon.small {
+    width: 1.5em;
+    height: 1.5em;
+}
+*.icon.medium {
+    width: 3em;
+    height: 3em;
+}
+*.icon.large {
+    width: 4.5em;
+    height: 4.5em;
+}
+
+*.icon.small.pad {
+    width: 1em;
+    height: 1em;
+
+    padding: 0.25em;
+}
+*.icon.medium.pad {
+    width: 1em;
+    height: 1em;
+
+    padding: 0.75em;
+}
+*.icon.large.pad {
+    width: 1em;
+    height: 1em;
+
+    padding: 1.75em;
+}
+
+*.icon.round {
+    border-radius: 50%;
+}

@@ -127,12 +127,12 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // CONSTANTS
 
     const columns: Column<Milestone>[] = [
-        { label: 'Reporter', content: milestone => (
+        { label: '👤', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {users[milestone.userId] && members ? (
-                    <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='big'/>
+                    <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='icon medium round'/>
                 ) : (
-                    <img src={LoadIcon} className='big load'/>
+                    <img src={LoadIcon} className='icon medium pad animation spin'/>
                 )}
             </Link>
         ) },
@@ -171,9 +171,9 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                 </div>
             </Fragment>
         ) },
-        { label: '', class: 'center', content: milestone => (
+        { label: '🛠️', class: 'center', content: milestone => (
             <a onClick={() => deleteMilestone(milestone)}>
-                <img src={DeleteIcon} className='small'/>
+                <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
     ]
@@ -196,7 +196,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>           
-                                    <Link to={`/products/${productId}/milestones/new/settings`} className='button green fill'>
+                                    <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
                                         New milestone
                                     </Link>
                                     {milestones && (

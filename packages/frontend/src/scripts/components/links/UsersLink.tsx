@@ -12,8 +12,8 @@ export const UsersLink = () => {
         <span>
             {contextUser.permissions.includes('create:users') ? (
                 <NavLink to="/users">
-                    <img src={UserIcon}/>
-                    Users
+                    <img src={UserIcon} className='icon small'/>
+                    <span>Users</span>
                 </NavLink>
             ) : (
                 <>Users</>

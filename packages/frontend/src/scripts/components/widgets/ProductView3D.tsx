@@ -50,40 +50,36 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
 
     // FUNCTIONS
 
-    function changeVersion(versionId: string) {
-        const version = versions.filter(version => version.id == versionId)[0]
+    function onChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        const version = versions.filter(version => version.id == event.currentTarget.value)[0]
         setContextVersion(version)
     }
 
     // RETURN
     
     return (
-        <div className="widget product_view">
+        <div className="widget product_view_3d">
             {!versions ? (
-                <img className='load' src={LoadIcon}/>
+                <img src={LoadIcon} className='icon medium position center animation spin'/>
             ) : (
                 <>
                     {versions.length > 0 ? (
                         <>
-                            <header>
-                                {contextVersion && (
-                                    <select value={contextVersion.id} onChange={event => changeVersion(event.target.value)}>
-                                        {versions.map(version => (
-                                            <option key={version.id} value={version.id}>
-                                                {version.major}.{version.minor}.{version.patch}: {version.description}
-                                            </option>
-                                        ))}
-                                    </select>
-                                )}
-                            </header>
-                            <main>
-                                {contextVersion && (
-                                    <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
-                                )}
-                            </main>
+                            {contextVersion && (
+                                <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
+                                    {versions.map(version => (
+                                        <option key={version.id} value={version.id}>
+                                            {version.major}.{version.minor}.{version.patch}: {version.description}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
+                            {contextVersion && (
+                                <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
+                            )}
                         </>
                     ) : (
-                        <img className='empty' src={EmptyIcon}/>
+                        <img src={EmptyIcon} className='icon medium position center'/>
                     )}
                 </>
             )}

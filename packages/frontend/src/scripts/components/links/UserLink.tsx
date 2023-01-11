@@ -11,11 +11,15 @@ export const UserLink = (props: {user?: User}) => (
         <UsersLink/>
         { props.user ? (
             <span>
-                <NavLink to={`/users/${props.user.id}`}>{props.user.name}</NavLink>
+                <NavLink to={`/users/${props.user.id}`}>
+                    {props.user.name}
+                </NavLink>
             </span>
         ) : (
             <span>
-                <NavLink to={`/users/new`}>New user</NavLink>
+                <NavLink to={`/users/new`}>
+                    New user
+                </NavLink>
             </span>
         )}
     </Fragment>  

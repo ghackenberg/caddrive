@@ -39,9 +39,9 @@ export const UserView = () => {
     // CONSTANTS
 
     const columns: Column<User>[] = [
-        { label: 'Picture', content: user => (
+        { label: '👤', content: user => (
             <Link to={`/users/${user.id}/settings`}>
-                <UserPictureWidget user={user} class='big'/>
+                <UserPictureWidget user={user} class='icon medium round'/>
             </Link>
         ) },
         { label: 'Name', class: 'left nowrap', content: user => (
@@ -49,14 +49,14 @@ export const UserView = () => {
                 {user.name}
             </Link>
         ) },
-        { label: 'Email', class: 'left nowrap', content: user => (
+        { label: 'Email', class: 'left nowrap fill', content: user => (
             <Link to={`/users/${user.id}/settings`}>
                 {user.email}
             </Link>
         ) },
-        { label: '',class: 'fill right', content: user => (
+        { label: '🛠️', class: 'center', content: user => (
             <a onClick={() => deleteUser(user)}>
-                <img src={DeleteIcon} className='small'/>
+                <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
     ]
@@ -72,7 +72,7 @@ export const UserView = () => {
             </header>
             <main>
                 <div>
-                    <Link to={`/users/new/settings`} className='button green fill'>
+                    <Link to={`/users/new/settings`} className='button fill green'>
                         New user
                     </Link>
                     {users && (

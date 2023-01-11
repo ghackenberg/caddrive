@@ -5,6 +5,7 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { Member, MemberRole, Product, User } from 'productboard-common'
 
+import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -76,21 +77,19 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     // FUNCTIONS
 
-    async function submitMember(event: FormEvent) {
+    async function onSubmit(event: FormEvent) {
         event.preventDefault()
         if (memberId == 'new') {
             if (confirm('Do you really want to add this member?')) {
-                    await MemberManager.addMember({ productId, userId: user.id, role: role })
-                    setUser(null)           
+                await MemberManager.addMember({ productId, userId: user.id, role: role })
+                goBack()
             }
-        }
-        if (memberId != 'new') {
+        } else {
             if (confirm('Do you really want to change this member?')) {
                 await MemberManager.updateMember(memberId,{...member, role: role})
-                goBack()       
+                goBack()
             }
         }
-    
     }
 
     function selectUser(user: User) {
@@ -101,29 +100,25 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // CONSTANTS
 
     const selectedUserColumns: Column<User>[] = [
-        { label: 'Picture', class: 'center', content: user => (
-            <a >
-                <UserPictureWidget user={user} class='big'/>
-            </a>
+        { label: '👤', class: 'center', content: user => (
+            <UserPictureWidget user={user} class='icon medium round'/>
         ) },
         { label: 'Name', class: 'left fill', content: user => (
-            <a>
-                {user ? user.name : '?'}
-            </a>
+            user ? user.name : '?'
         ) },
-        { label: '', class: 'center', content: () => (
+        { label: '🛠️', class: 'center', content: () => (
             memberId == 'new' && (
                 <a onClick={() => setUser(null)}>
-                    <img src={DeleteIcon} className='small'/>
+                    <img src={DeleteIcon} className='icon medium pad'/>
                 </a>
             )
         ) }
     ]
 
     const queriedUserColumns: Column<User>[] = [
-        { label: 'Picture', class: 'center', content: user => (
+        { label: '👤', class: 'center', content: user => (
             <a onClick={() => selectUser(user)}>
-                <UserPictureWidget user={user} class='big'/>
+                <UserPictureWidget user={user} class='icon medium round'/>
             </a>
         ) },
         { label: 'Name', class: 'left fill', content: (user, index) => (
@@ -152,7 +147,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <h1>Settings</h1>
-                                    <form onSubmit={submitMember}>
+                                    <form onSubmit={onSubmit}>
                                         {user ? (
                                             <div>
                                                 <div>
@@ -185,7 +180,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                                     Role:
                                                 </div>
                                                 <div>
-                                                    <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)}> 
+                                                    <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
                                                         {ROLES.map(role => (
                                                             <option key={role} value={role}>
                                                                 {role}
@@ -196,12 +191,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                             </div>
                                         )}
                                         {user && (
-                                            <div>
-                                                <div/>
-                                                <div>
-                                                    <input type='submit' value='Save'/>
-                                                </div>
-                                            </div>
+                                            <SubmitInput/>
                                         )}
                                     </form>
                                 </div>

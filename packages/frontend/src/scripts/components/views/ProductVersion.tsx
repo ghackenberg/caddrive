@@ -152,13 +152,11 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                     <div className="text">
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                            <a>
-                                                                {users[vers.id] && members ? (
-                                                                    <ProductUserPictureWidget user={users[vers.id]} members={members} class='big'/>
-                                                                ) : (
-                                                                    <img src={LoadIcon} className='big load'/> 
-                                                                )}
-                                                            </a>
+                                                            {users[vers.id] && members ? (
+                                                                <ProductUserPictureWidget user={users[vers.id]} members={members} class='icon medium round'/>
+                                                            ) : (
+                                                                <img src={LoadIcon} className='icon medium animation spin'/> 
+                                                            )}
                                                             <span className="user">
                                                                 <span className="name">
                                                                     {vers.id in users && users[vers.id] && members ? (
@@ -182,15 +180,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                                 <div>
-                                    <div className='widget product_view'>
-                                        {!versions || (versions.length > 0 && !contextVersion) && (
-                                            <img className='load' src={LoadIcon}/>
-                                        )}
-                                        {versions && versions.length == 0 && (
-                                            <img className='empty' src={EmptyIcon}/>
-                                        )}
-                                        <ProductView3D product={product} mouse={true} vr={true}/>
-                                    </div>
+                                    {!versions || (versions.length > 0 && !contextVersion) && (
+                                        <img src={LoadIcon} className='icon medium position center animation spin'/>
+                                    )}
+                                    {versions && versions.length == 0 && (
+                                        <img src={EmptyIcon} className='icon medium position center'/>
+                                    )}
+                                    <ProductView3D product={product} mouse={true} vr={true}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

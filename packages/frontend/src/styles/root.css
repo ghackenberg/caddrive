@@ -1,21 +1,34 @@
 /* Element specific styles */
 
+@import url(./elements/anchor.css);
 @import url(./elements/body.css);
+@import url(./elements/form.css);
 @import url(./elements/header.css);
-@import url(./elements/main.css);
-
 @import url(./elements/heading.css);
+@import url(./elements/main.css);
 @import url(./elements/paragraph.css);
 @import url(./elements/table.css);
-@import url(./elements/list.css);
 
-@import url(./elements/anchor.css);
+/* Class specific styles */
 
-@import url(./elements/form.css);
-@import url(./elements/search.css);
+@import url(./classes/animation.css);
+@import url(./classes/button.css);
+@import url(./classes/icon.css);
+@import url(./classes/position.css);
+@import url(./classes/state.css);
+
+/* Widget specific styles */
+
+@import url(./widgets/FileView3D.css);
+@import url(./widgets/IssueThread.css);
+@import url(./widgets/ModelGraph.css);
+@import url(./widgets/ModelView3D.css);
+@import url(./widgets/ProductView3D.css);
+@import url(./widgets/VersionTree.css);
+@import url(./widgets/VersionView3D.css);
 
 /* View specific styles */
 
-@import url(./views/loading.css);
 @import url(./views/landing.css);
+@import url(./views/loading.css);
 @import url(./views/missing.css);

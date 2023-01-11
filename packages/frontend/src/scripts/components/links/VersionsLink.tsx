@@ -23,8 +23,8 @@ export const VersionsLink = (props: {product: Product}) => {
     return (
         <span>
             <NavLink to={`/products/${props.product.id}/versions`}>
-                <img src={VersionIcon}/>
-                Versions ({count != undefined ? count : '?'})
+                <img src={VersionIcon} className='icon small'/>
+                <span>Versions ({count != undefined ? count : '?'})</span>
             </NavLink>
         </span>
     )

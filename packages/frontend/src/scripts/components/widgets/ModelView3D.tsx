@@ -8,7 +8,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 
 import { createCamera } from '../../functions/render'
 
-export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }> {
+export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }> {
 
     private div: React.RefObject<HTMLDivElement>
     private timeout: NodeJS.Timeout
@@ -427,7 +427,7 @@ export class SceneView3D extends React.Component<{ model: GLTF, highlighted?: st
     }
     
     override render() {
-        return <div className="widget scene_view" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
+        return <div className="widget model_view_3d" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
         
     }
     

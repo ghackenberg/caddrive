@@ -1,21 +1,30 @@
 body > div > header {
     position: fixed;
+
     z-index: 1;
+
     top: 0;
     left: 0;
     right: 0;
+
     height: 4em;
+
     background-color: black;
+
     color: white;
 }
 body > div > header > div {
     position: absolute;
+    
     top: 0;
+    
     padding: 1em;
+    
     line-height: 2em;
 }
 body > div > header > div:first-child {
     left: 0;
+    
     font-family: 'Arial Black';
 }
 body > div > header > div:last-child {
@@ -23,21 +32,26 @@ body > div > header > div:last-child {
 }
 body > div > header > div > span > a {
     text-decoration: none;
+    
     color: inherit;
 }
 body > div > header > div > span > a > img {
     filter: invert();
+    
     padding: 0.25em;
+    
     margin-right: 0;
 }
-body > div > header > div:first-child > span > a > img {
+body > div > header > div:first-child > span > a > img.icon.small {
     width: 2em;
     height: 2em;
-    margin-right: 0.5em;
+
     padding: 0;
+
+    margin-right: 0.5em;
 }
 body > div > header > div:last-child > span:last-child > a > img {
     filter: none;
-    border-radius: 50%;
+    
     margin-left: 1em;
 }
