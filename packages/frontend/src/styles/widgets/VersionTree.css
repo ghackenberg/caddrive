@@ -113,12 +113,7 @@ div.widget.version_tree > div > div.model {
     width: 10em;
     height: 10em;
 
+    background-color: rgb(215,215,215);
     background-position: center;
     background-size: cover;
-}
-div.widget.version_tree > div:first-child > div.model * {
-    border-top-right-radius: 1em;
-}
-div.widget.version_tree > div:last-child > div.model * {
-    border-bottom-right-radius: 1em;
 }

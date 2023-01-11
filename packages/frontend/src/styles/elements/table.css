@@ -69,6 +69,7 @@ table *.model {
     width: 10em;
     height: 10em;
     
+    background-color: rgb(215,215,215);
     background-position: center;
     background-size: cover;
 }
