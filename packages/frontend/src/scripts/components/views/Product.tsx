@@ -167,15 +167,6 @@ export const ProductView = () => {
                 )}
             </Link>
         ) },
-        { label: '👤', class: 'center nowrap', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {users[product.id] && members[product.id] ? (
-                    <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='icon medium round'/>
-                ) : (
-                    <img src={LoadIcon} className='icon small animation spin'/>
-                )}
-            </Link>
-        ) },
         { label: 'Name', class: 'left nowrap', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.name}
@@ -199,6 +190,15 @@ export const ProductView = () => {
         { label: 'Members', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.id in members ? members[product.id].length : '?'}
+            </Link>
+        ) },
+        { label: '👤', class: 'center', content: product => (
+            <Link to={`/products/${product.id}/versions`}>
+                {users[product.id] && members[product.id] ? (
+                    <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='icon medium round'/>
+                ) : (
+                    <img src={LoadIcon} className='icon small animation spin'/>
+                )}
             </Link>
         ) },
         { label: '🛠️', content: product => (
