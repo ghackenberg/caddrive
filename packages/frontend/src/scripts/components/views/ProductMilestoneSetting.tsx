@@ -136,7 +136,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                     </form>
                                 </div>
                                 <div>
-                                    <div className="widget product_view">
+                                    <div className="widget product_view_3d">
                                         <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
                                     </div>
                                 </div>
