@@ -93,6 +93,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
         setChildrenMax(tree.childrenMax)
     }, [versions])
 
+    // FUNCTIONS
+
+    function onClick(version: Version) {
+        setContextVersion(version)
+        setActive('right')
+    }
+
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
@@ -132,7 +139,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         <div className="text" style={{color: 'orange'}}/>
                                                     </div>
                                                 )}
-                                                <div className={`version${contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => setContextVersion(vers)}>
+                                                <div className={`version${contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
                                                     <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
                                                         {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                             <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>

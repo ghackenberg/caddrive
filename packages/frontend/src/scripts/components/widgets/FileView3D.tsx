@@ -46,7 +46,17 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
 
     // EFFECTS
     
-    useEffect(() => { props.path && getModel(props.path).then(setModel) }, [props.path])
+    useEffect(() => {
+        if (props.path) {
+            const initialModel = getModelFromCache(props.path)
+            setModel(initialModel)
+            if (!initialModel) {
+                getModel(props.path).then(setModel)
+            }
+        } else {
+            setModel(undefined)
+        }
+    }, [props.path])
     
     // RETURN
 
