@@ -67,7 +67,7 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
                         <>
                             {contextVersion && (
                                 <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
-                                    {versions.map(version => (
+                                    {versions.map(v => v).reverse().map(version => (
                                         <option key={version.id} value={version.id}>
                                             {version.major}.{version.minor}.{version.patch}: {version.description}
                                         </option>
