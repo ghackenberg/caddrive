@@ -11,6 +11,8 @@ div.widget.product_view_3d > select {
 
     top: 1em;
     left: 1em;
+    
+    max-width: calc(100% - 2em);
 
     z-index: 1;
 }

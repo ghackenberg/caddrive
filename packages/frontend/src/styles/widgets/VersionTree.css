@@ -76,21 +76,23 @@ div.widget.version_tree > div > div.tree span.dot {
     background-color: black;
 }
 div.widget.version_tree > div > div.text {
-    padding-right: 0.5em;
+    padding-right: 1em;
 }
 div.widget.version_tree > div > div.text > div:first-child {
-    margin-top: 0.75em;
+    margin-top: 1em;
+    margin-bottom: 0.75em;
 
     font-weight: bold;
 }
 div.widget.version_tree > div > div.text > div:last-child {
     margin-bottom: 0.75em;
+
+    text-align: justify;
 }
 div.widget.version_tree > div > div.text > div > span.label {
     display: inline-block;
 
-    margin-right: 0.5em;
-    margin-bottom: 0.5em;
+    margin-right: 1em;
     
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -100,6 +102,12 @@ div.widget.version_tree > div > div.text > div > span.label {
     background-color: black;
     
     color: white;
+}
+div.widget.version_tree > div > div.text > div > span.user {
+    margin-left: 1em;
+}
+div.widget.version_tree > div > div.text > div > span.user > span.email {
+    display: none;
 }
 div.widget.version_tree > div > div.model {
     width: 10em;

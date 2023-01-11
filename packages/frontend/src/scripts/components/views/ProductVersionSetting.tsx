@@ -156,7 +156,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                     {version ? (
                                         <VersionView3D version={version} mouse={true} vr={true}/>
                                     ) : (
-                                        <div className="widget version_view">
+                                        <div className="widget version_view_3d">
                                             {!file ? (
                                                 <img src={EmptyIcon} className='icon medium position center'/>
                                             ) : (

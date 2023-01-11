@@ -14,6 +14,7 @@ import { VersionManager } from '../../managers/version'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 
@@ -137,23 +138,23 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                             <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                         ))}
                                                         {vers.id in childrenMin && vers.id in childrenMax && (
-                                                            <span className='line horizontal parent' style={{top: 'calc(2.2em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
+                                                            <span className='line horizontal parent' style={{top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
                                                         )}
                                                         {vers.id in children && children[vers.id].map(child => (
-                                                            <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.2em + 1px)'}}/>
+                                                            <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)'}}/>
                                                         ))}
                                                         {vers.id in indents && (
-                                                            <span className='line vertical parent' style={{top: 'calc(2em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                            <span className='line vertical parent' style={{top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                         )}
                                                         {vers.id in indents && (
-                                                            <span className='dot parent' style={{top: '1.45em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
+                                                            <span className='dot parent' style={{top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
                                                         )}
                                                     </div>
                                                     <div className="text">
                                                         <div>
                                                             <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
                                                             {users[vers.id] && members ? (
-                                                                <ProductUserPictureWidget user={users[vers.id]} members={members} class='icon medium round'/>
+                                                                <ProductUserPictureWidget user={users[vers.id]} members={members} class='icon medium round middle'/>
                                                             ) : (
                                                                 <img src={LoadIcon} className='icon medium animation spin'/> 
                                                             )}
@@ -165,8 +166,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                                         '?'
                                                                     )}
                                                                 </span>
-                                                                {/* Email temporär ausgeblendet */}
-                                                                {/* <span className="email"> {vers.id in users && members ? <ProductUserEmailWidget user={users[vers.id]} members={members}/> : '?'}  </span> */}
+                                                                <span className="email">
+                                                                    {vers.id in users && members ? (
+                                                                        <ProductUserEmailWidget user={users[vers.id]} members={members}/>
+                                                                    ) : (
+                                                                        '?'
+                                                                    )} 
+                                                                </span>
                                                             </span>
                                                         </div>
                                                         <div>
