@@ -63,7 +63,8 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
             }
         } else {
             if (name && description) {
-                setProduct(await ProductManager.updateProduct(product.id, { name, description }))
+                await setProduct(await ProductManager.updateProduct(product.id, { name, description }))
+                replace(`/products/${product.id}`)
             }
         }
     }
