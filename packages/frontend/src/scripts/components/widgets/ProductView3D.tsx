@@ -66,16 +66,16 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
                     {versions.length > 0 ? (
                         <>
                             {contextVersion && (
-                                <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
-                                    {versions.map(v => v).reverse().map(version => (
-                                        <option key={version.id} value={version.id}>
-                                            {version.major}.{version.minor}.{version.patch}: {version.description}
-                                        </option>
-                                    ))}
-                                </select>
-                            )}
-                            {contextVersion && (
-                                <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
+                                <>
+                                    <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
+                                        {versions.map(v => v).reverse().map(version => (
+                                            <option key={version.id} value={version.id}>
+                                                {version.major}.{version.minor}.{version.patch}: {version.description}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
+                                </>
                             )}
                         </>
                     ) : (
