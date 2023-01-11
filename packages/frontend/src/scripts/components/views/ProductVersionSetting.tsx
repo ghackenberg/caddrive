@@ -19,6 +19,7 @@ import { TextInput } from '../inputs/TextInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ModelView3D } from '../widgets/ModelView3D'
+import { Column, Table } from '../widgets/Table'
 import { VersionView3D } from '../widgets/VersionView3D'
 
 import * as EmptyIcon from '/src/images/empty.png'
@@ -88,7 +89,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
 
     // FUNCTIONS
 
-    async function update(event: ChangeEvent<HTMLInputElement>) {
+    async function onChange(event: ChangeEvent<HTMLInputElement>) {
         if (event.currentTarget.checked) {
             setBaseVersionIds([...baseVersionIds, event.currentTarget.value])
         } else {
@@ -96,7 +97,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
         }
     }
 
-    async function submit(event: FormEvent) {
+    async function onSubmit(event: FormEvent) {
         event.preventDefault()
         if (versionId == 'new') {
             await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, { model: file, image })
@@ -107,6 +108,20 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     }
 
     // CONSTANTS
+
+    const columns: Column<Version>[] = [
+        { label: '📷', class: 'center', content: version => (
+            <div className='model' style={{backgroundImage: `url(/rest/files/${version.id}.png)`, width: '5em', height: '5em'}}/>
+        ) },
+        { label: 'Number', class: 'left fill', content: version => (
+            <span>
+                {version.major}.{version.minor}.{version.patch}
+            </span>
+        ) },
+        { label: '🛠️', class: 'center', content: version => (
+            <input type="checkbox" value={version.id} onChange={onChange}/>
+        ) }
+    ]
 
     const items: ProductFooterItem[] = [
         { name: 'left', text: 'Form view', image: LeftIcon },
@@ -127,22 +142,13 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                             <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <h1>Settings</h1>
-                                    <form onSubmit={submit}>
+                                    <form onSubmit={onSubmit}>
                                         <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                         <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
                                         <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
                                         {versions.length > 0 && (
                                             <GenericInput label="Base">
-                                                <Fragment>
-                                                    {versions.map(version => version).reverse().map(version => (
-                                                        <div key={version.id}>
-                                                            <input type="checkbox" value={version.id} onChange={update}/>
-                                                            <label>
-                                                                {version.major}.{version.minor}.{version.patch}
-                                                            </label>
-                                                        </div>
-                                                    ))}
-                                                </Fragment>
+                                                <Table columns={columns} items={versions.map(v => v).reverse()}/>
                                             </GenericInput>
                                         )}
                                         <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
