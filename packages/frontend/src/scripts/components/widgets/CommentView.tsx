@@ -32,7 +32,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
     // RETURN
 
     return (
-        <div key={comment.id} className={`${props.class} ${comment.userId == contextUser.id ? 'self' : ''}`}>
+        <div key={comment.id} className={`widget comment_view ${props.class} ${comment.userId == contextUser.id ? 'self' : ''}`}>
             <div className="head">
                 <div className="icon">
                     <a href={`/users/${comment.userId}`}>
@@ -42,23 +42,18 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
                 <div className="text">
                     <p>
                         <strong>{props.user ? comment.userId in users && members ? <ProductUserNameWidget user={users[comment.userId]} members={members}/> : '?' : ''}</strong> commented on {comment.time.substring(0, 10)}
-                        
                     </p>
                 </div>
             </div>
             <div className="body">
-                <div className="free">
-
-                </div>
+                <div className="free"/>
                 <div className="text">
                     {props.html}
                 </div>
             </div>
             {props.parts && props.parts.map((part, index) => (
                 <div key={index} className="note part">
-                    <div className="free">
-
-                    </div>
+                    <div className="free"/>
                     <div className="text">
                         <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectName}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
                             <span>
@@ -72,9 +67,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
             ))}
             {'action' in comment && comment.action != 'none' && (
                 <div className={`note action ${comment.action}`}>
-                    <div className="free">
-
-                    </div>
+                    <div className="free"/>
                     <div className="text">
                         <a>
                             <span>

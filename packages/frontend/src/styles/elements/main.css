@@ -92,7 +92,7 @@ body > div > main.reduced > main {
 }
 
 body > div > main.extended > main {
-    top: calc(7.25em + 1px);
+    top: calc(7.25em + 2px);
 }
 
 body > div > main > main > div {
