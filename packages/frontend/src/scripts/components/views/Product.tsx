@@ -219,12 +219,24 @@ export const ProductView = () => {
             </header>
             <main>
                 <div>
-                    {contextUser.permissions.includes('create:products') && (
-                        <Link to='/products/new/settings' className='button fill green'>
-                            New product
-                        </Link>
+                    {contextUser ? (
+                        contextUser.permissions.includes('create:products') ? (
+                            <Link to='/products/new/settings' className='button fill green'>
+                                New product
+                            </Link>
+                        ) : (
+                            <a className='button fill green'>
+                                New product (required permission)
+                            </a>
+                        )
+                    ) : (
+                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                            New product (requires login)
+                        </a>
                     )}
-                    {products && <Table columns={columns} items={products}/>}
+                    {products && (
+                        <Table columns={columns} items={products.map(p => p).reverse()}/>
+                    )}
                 </div>
             </main>
         </main>

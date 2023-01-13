@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Comment, Issue, Member, Product, User } from 'productboard-common'
 
+import { UserContext } from '../../contexts/User'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
@@ -29,7 +30,12 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     const productId = props.match.params.product
 
-    // INITIAL STATES   
+    // CONTEXTS
+
+    const { contextUser } = useContext(UserContext)
+
+    // INITIAL STATES
+
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialIssues = productId == 'new' ? undefined : IssueManager.findIssuesFromCache(productId)
@@ -149,13 +155,13 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                 })
             }
             if (hovered.id in comments) {
-                comments[hovered.id].forEach(comment => {
+                for (const comment of comments[hovered.id] || []) {
                     if (comment.id in commentParts) {
-                        commentParts[comment.id].forEach(part => {
+                        for (const part of commentParts[comment.id] || []) {
                             hightlighted.push(part)
-                        })
+                        }
                     }
-                })
+                }
             }
             setHighlighted(hightlighted)
         } else {
@@ -254,9 +260,21 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
-                                    <Link to={`/products/${productId}/issues/new/settings`} className='button fill green'>
-                                        New issue
-                                    </Link>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                            <Link to={`/products/${productId}/issues/new/settings`} className='button fill green'>
+                                                New issue
+                                            </Link>
+                                        ) : (
+                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                                New issue (requires role)
+                                            </a>
+                                        )
+                                    ) : (
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New issue (requires login)
+                                        </a>
+                                    )}
                                     <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                         Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
                                     </a>

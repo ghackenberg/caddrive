@@ -28,7 +28,7 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
 
     // INITIAL STATES
 
-    const initialVersions = props.product && VersionManager.findVersionsFromCache(props.product.id)
+    const initialVersions = props.product ? VersionManager.findVersionsFromCache(props.product.id) : []
     const initialHighlighted = (props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
     const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
     const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
@@ -62,26 +62,22 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
             {!versions ? (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             ) : (
-                <>
-                    {versions.length > 0 ? (
+                versions.length > 0 ? (
+                    contextVersion && (
                         <>
-                            {contextVersion && (
-                                <>
-                                    <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
-                                        {versions.map(v => v).reverse().map(version => (
-                                            <option key={version.id} value={version.id}>
-                                                {version.major}.{version.minor}.{version.patch}: {version.description}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
-                                </>
-                            )}
+                            <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
+                                {versions.map(v => v).reverse().map(version => (
+                                    <option key={version.id} value={version.id}>
+                                        {version.major}.{version.minor}.{version.patch}: {version.description}
+                                    </option>
+                                ))}
+                            </select>
+                            <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
                         </>
-                    ) : (
-                        <img src={EmptyIcon} className='icon medium position center'/>
-                    )}
-                </>
+                    )
+                ) : (
+                    <img src={EmptyIcon} className='icon medium position center'/>
+                )
             )}
         </div>
     )

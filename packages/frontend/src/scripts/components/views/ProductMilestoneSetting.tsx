@@ -132,7 +132,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                                         <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                         <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
                                         <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
-                                        <SubmitInput/>
+                                        <SubmitInput value='Save'/>
                                     </form>
                                 </div>
                                 <div>

@@ -28,6 +28,9 @@ export class ProductEntity extends Product {
     
     @Column({ nullable: false })
     override description: string
+
+    @Column({ nullable: false })
+    override public: boolean
     
     @OneToMany(() => VersionEntity, version => version.product)
     versions: VersionEntity[]

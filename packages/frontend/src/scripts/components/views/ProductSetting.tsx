@@ -3,10 +3,12 @@ import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { Product } from 'productboard-common'
+import { Member, Product } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
+import { BooleanInput } from '../inputs/BooleanInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -31,16 +33,20 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // INITIAL STATES
 
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
     const initialName = initialProduct ? initialProduct.name : ''
     const initialDescription = initialProduct ? initialProduct.description : ''
+    const initialPublic = initialProduct ? initialProduct.public : false
 
     // STATES
 
     // - Entities
     const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
     // - Values
     const [name, setName] = useState<string>(initialName)
     const [description, setDescription] = useState<string>(initialDescription)
+    const [_public, setPublic] = useState<boolean>(initialPublic)
     // - Interactions
     const [active, setActive] = useState<string>('left')
     
@@ -48,9 +54,11 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     // - Entities
     useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { productId != 'new' && MemberManager.findMembers(productId).then(setMembers) }, [props])
     // - Values
     useEffect(() => { product && setName(product.name) }, [product])
     useEffect(() => { product && setDescription(product.description) }, [product])
+    useEffect(() => { product && setPublic(product.public) }, [product])
 
     // FUNCTIONS
 
@@ -58,12 +66,12 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductManager.addProduct({userId: contextUser.id, name, description})
+                const product = await ProductManager.addProduct({userId: contextUser.id, name, description, public: _public})
                 replace(`/products/${product.id}`)
             }
         } else {
             if (name && description) {
-                await setProduct(await ProductManager.updateProduct(product.id, { name, description }))
+                await setProduct(await ProductManager.updateProduct(product.id, { name, description, public: _public }))
                 replace(`/products/${product.id}`)
             }
         }
@@ -80,7 +88,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     return (
         <main className="view extended product">
-            {(productId == 'new' || product) && (
+            {(productId == 'new' || product) && members && (
                 <Fragment>
                     {product && product.deleted ? (
                         <Redirect to='/'/>
@@ -93,7 +101,16 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                     <form onSubmit={submit}>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                         <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                        <SubmitInput/>
+                                        <BooleanInput label='Public' value={_public} change={setPublic}/>
+                                        {contextUser ? (
+                                            members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                                <SubmitInput value='Save'/>
+                                            ) : (
+                                                <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            )
+                                        ) : (
+                                            <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        )}
                                     </form>
                                 </div>
                                 <div>

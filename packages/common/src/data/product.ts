@@ -5,6 +5,8 @@ export class ProductUpdateData {
     name: string
     @ApiProperty()
     description: string
+    @ApiProperty()
+    public: boolean
 }
 
 export class ProductAddData extends ProductUpdateData {

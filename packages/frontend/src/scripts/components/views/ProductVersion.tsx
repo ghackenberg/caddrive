@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { Member, Product, User, Version } from 'productboard-common'
 
+import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { computeTree } from '../../functions/tree'
 import { MemberManager } from '../../managers/member'
@@ -19,7 +20,6 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 
 import * as LoadIcon from '/src/images/load.png'
-import * as EmptyIcon from '/src/images/empty.png'
 import * as LeftIcon from '/src/images/version.png'
 import * as RightIcon from '/src/images/part.png'
 
@@ -27,6 +27,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     // CONTEXTS
 
+    const { contextUser } = useContext(UserContext)
     const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
@@ -80,7 +81,6 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             })
         }
     }, [versions])
-    useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
 
     // - Computations
     useEffect(() => { 
@@ -111,7 +111,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     return (
         <main className="view extended versions">
-            {product && versions && contextVersion && (
+            {product && versions && (
                 <Fragment>
                     {product && product.deleted ? (
                         <Redirect to='/'/>
@@ -120,9 +120,21 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
                                 <div>
-                                    <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
-                                        New version
-                                    </Link>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
+                                            <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                                New version
+                                            </Link>
+                                        ) : (
+                                            <a className='button green fill' style={{fontStyle: 'italic'}}>
+                                                New version (requires role)
+                                            </a>
+                                        )
+                                    ) : (
+                                        <a className='button green fill' style={{fontStyle: 'italic'}}>
+                                            New version (requires login)
+                                        </a>
+                                    )}
                                     <div className="widget version_tree">
                                         {versions.map(version => version).reverse().map((vers, index) => (
                                             <Fragment key={vers.id}>
@@ -139,7 +151,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         <div className="text" style={{color: 'orange'}}/>
                                                     </div>
                                                 )}
-                                                <div className={`version${contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
+                                                <div className={`version${contextVersion && contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
                                                     <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
                                                         {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                             <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
@@ -193,12 +205,6 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                     </div>
                                 </div>
                                 <div>
-                                    {!versions || (versions.length > 0 && !contextVersion) && (
-                                        <img src={LoadIcon} className='icon medium position center animation spin'/>
-                                    )}
-                                    {versions && versions.length == 0 && (
-                                        <img src={EmptyIcon} className='icon medium position center'/>
-                                    )}
                                     <ProductView3D product={product} mouse={true} vr={true}/>
                                 </div>
                             </main>

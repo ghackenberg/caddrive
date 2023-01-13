@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Member, MemberRole, Product, User } from 'productboard-common'
 
+import { UserContext } from '../../contexts/User'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
@@ -31,9 +32,14 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     const productId = props.match.params.product
     const memberId = props.match.params.member
 
+    // CONTEXTS
+
+    const { contextUser } = useContext(UserContext)
+
     // INITIAL STATES
 
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
     const initialMember = memberId == 'new' ? undefined : MemberManager.getMemberFromCache(memberId)
     const initialUser = initialMember ? UserManager.getUserFromCache(initialMember.userId) : undefined
     const initialRole = initialMember ? initialMember.role : 'customer'
@@ -42,6 +48,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     
     // - Entities
     const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
     const [users, setUsers] = useState<User[]>()
     const [user, setUser] = useState<User>(initialUser)
     const [member, setMember] = useState<Member>(initialMember)
@@ -57,6 +64,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
     useEffect(() => { memberId != 'new' && MemberManager.getMember(memberId).then(setMember) }, [props])
     useEffect(() => { member && UserManager.getUser(member.userId).then(setUser) }, [member] )
@@ -137,7 +145,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     return (
         <main className="view extended member">
-            {product && (
+            {product && members && (
                  <Fragment>
                     {product && product.deleted ? (
                         <Redirect to='/'/>
@@ -191,7 +199,15 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                             </div>
                                         )}
                                         {user && (
-                                            <SubmitInput/>
+                                            contextUser ? (
+                                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                                    <SubmitInput value='Save'/>
+                                                ) : (
+                                                    <SubmitInput value='Save (requires role)' disabled={true}/>
+                                                )
+                                            ) : (
+                                                <SubmitInput value='Save (requires login)' disabled={true}/>
+                                            )
                                         )}
                                     </form>
                                 </div>

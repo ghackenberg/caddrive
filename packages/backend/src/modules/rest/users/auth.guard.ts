@@ -46,12 +46,9 @@ export class AuthGuard implements CanActivate {
                 // Insert user data in database
                 request.user = { ...await UserRepository.save({ id, email, name }), permissions }
             }
-            // Mark request as authorized
-            return true
-        } else {
-            // Mark request as unauthorized
-            return false
         }
+        
+        return true
     }
 
 }

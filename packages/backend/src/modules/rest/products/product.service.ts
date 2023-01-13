@@ -13,17 +13,17 @@ import { IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, 
 export class ProductService implements ProductREST {
     public constructor(
         @Inject(REQUEST)
-        private readonly request: Request,
+        private readonly request: Request & { user: User & { permissions: string[] }},
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {}
     
     async findProducts() : Promise<Product[]> {
         let where: FindOptionsWhere<ProductEntity>
-        // eslint-disable-next-line no-constant-condition
-        if (true)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            where = { members: [ { userId: (<User> (<any> this.request).user).id, deleted: false } ], deleted: false }
+        if (this.request.user)
+            where = { members: [ { userId: this.request.user.id, deleted: false } ], deleted: false }
+        else
+            where = { public: true, deleted: false }
         const result: Product[] = []
         for (const product of await ProductRepository.find({ where }))
             result.push(this.convert(product))
@@ -46,6 +46,7 @@ export class ProductService implements ProductREST {
         const product = await ProductRepository.findOneByOrFail({ id })
         product.name = data.name
         product.description = data.description
+        product.public = data.public
         await ProductRepository.save(product)
         await this.client.emit(`/api/v1/products/${product.id}/update`, this.convert(product))
         return this.convert(product)
@@ -64,6 +65,6 @@ export class ProductService implements ProductREST {
     }
 
     private convert(product: ProductEntity) {
-        return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description }
+        return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description, public: product.public }
     }
 }

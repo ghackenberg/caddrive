@@ -5,17 +5,19 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { Product, Version } from 'productboard-common'
+import { Member, Product, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { VersionContext } from '../../contexts/Version'
 import { render } from '../../functions/render'
+import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
 import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
 import { NumberInput } from '../inputs/NumberInput'
 import { SubmitInput } from '../inputs/SubmitInput'
-import { TextInput } from '../inputs/TextInput'
+import { TextareaInput } from '../inputs/TextareaInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ModelView3D } from '../widgets/ModelView3D'
@@ -37,6 +39,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -44,7 +47,9 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const versionId = props.match.params.version
 
     // INITIAL STATES
+
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
+    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
     const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
     const initialVersion = versionId == 'new' ? undefined : VersionManager.getVersionFromCache(versionId)
 
@@ -52,6 +57,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
 
     // - Entities
     const [product, setProduct] = useState<Product>(initialProduct)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
     const [versions, setVersions] = useState<Version[]>(initialVersions)
     const [version, setVersion] = useState<Version>(initialVersion)
     // - Values
@@ -70,8 +76,9 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
+    useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
+    useEffect(() => { productId != 'new' && MemberManager.findMembers(productId).then(setMembers) }, [props])
+    useEffect(() => { productId != 'new' && VersionManager.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => { versionId != 'new' && VersionManager.getVersion(versionId).then(setVersion) }, [props])
     // - Values
     useEffect(() => { version && setMajor(version.major) }, [version])
@@ -100,9 +107,11 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     async function onSubmit(event: FormEvent) {
         event.preventDefault()
         if (versionId == 'new') {
-            await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, { model: file, image })
+            const version = await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, { model: file, image })
+            setContextVersion(version)
         } else {
             await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image })
+            setContextVersion(version)
         }
         goBack()
     }
@@ -151,11 +160,19 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                                 <Table columns={columns} items={versions.map(v => v).reverse()}/>
                                             </GenericInput>
                                         )}
-                                        <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                        <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                         {versionId == 'new' && (
                                             <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required={true}/>
                                         )}
-                                        <SubmitInput/>
+                                        {contextUser ? (
+                                            members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
+                                                <SubmitInput value='Save'/>
+                                            ) : (
+                                                <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            )
+                                        ) : (
+                                            <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        )}
                                     </form>
                                 </div>
                                 <div>

@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useContext } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 
 import { Member, Milestone, Product, User } from 'productboard-common'
 
+import { UserContext } from '../../contexts/User'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
@@ -27,7 +28,12 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
 
     const productId = props.match.params.product
 
+    // CONTEXTS
+
+    const { contextUser } = useContext(UserContext)
+
     // INITIAL STATES
+
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
@@ -195,10 +201,22 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                         <Fragment>
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>           
-                                    <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
-                                        New milestone
-                                    </Link>
+                                <div>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                            <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
+                                                New milestone
+                                            </Link>
+                                        ) : (
+                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                                New milestone (requires role)
+                                            </a>
+                                        )
+                                    ) : (
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New milestone (requires login)
+                                        </a>
+                                    )}
                                     {milestones && (
                                         <Table columns={columns} items={milestones}/>
                                     )}

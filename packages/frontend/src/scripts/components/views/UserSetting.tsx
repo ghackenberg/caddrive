@@ -55,16 +55,10 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
 
     async function onSubmit(event: FormEvent<HTMLFormElement>){
         event.preventDefault()
-        if(userId == 'new') {
-            if (name && email) {
-                await UserManager.addUser({ name, email },file)
-            }
-        } else {
-            if (name && email) {
-                const newUser = await UserManager.updateUser(user.id, { name, email },file)
-                if (contextUser.email == newUser.email) {
-                    setContextUser({ ...contextUser, ...newUser })
-                }
+        if (name && email) {
+            const newUser = await UserManager.updateUser(user.id, { name, email },file)
+            if (contextUser.email == newUser.email) {
+                setContextUser({ ...contextUser, ...newUser })
             }
         }
         goBack() 
@@ -93,8 +87,16 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
                                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                         <FileInput label='Picture' placeholder='Select JPEG file' accept='.jpg' change={setFile} required={userId === 'new'}/>
-                                        <SubmitInput/>
-                                        {contextUser.id == userId && (
+                                        {contextUser ? (
+                                            userId == contextUser.id || contextUser.permissions.includes('create:users') ? (
+                                                <SubmitInput value='Save'/>
+                                            ) : (
+                                                <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            )
+                                        ) : (
+                                            <SubmitInput value="Save (requires login)" disabled={true}/>
+                                        )}
+                                        {contextUser && contextUser.id == userId && (
                                             <ButtonInput value='Leave' class='red' click={onClick}/>
                                         )}
                                     </form>

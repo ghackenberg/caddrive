@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, Fragment, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Member, Product, User } from 'productboard-common'
 
+import { UserContext } from '../../contexts/User'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
@@ -25,7 +26,12 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
 
     const productId = props.match.params.product
 
+    // CONTEXTS
+
+    const { contextUser } = useContext(UserContext)
+
     // INITIAL STATES
+
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialUsers : {[id: string]: User} = {}
@@ -122,9 +128,21 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
                                 <div>
-                                    <Link to={`/products/${productId}/members/new/settings`} className='button fill green'>
-                                        New member
-                                    </Link>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                            <Link to={`/products/${productId}/issues/new/settings`} className='button fill green'>
+                                                New member
+                                            </Link>
+                                        ) : (
+                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                                New member (requires role)
+                                            </a>
+                                        )
+                                    ) : (
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New member (requires login)
+                                        </a>
+                                    )}
                                     {members && (
                                         <Table columns={columns} items={members}/>
                                     )}

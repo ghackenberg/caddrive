@@ -52,6 +52,4 @@ body > div > header > div:first-child > span > a > img.icon.small {
 }
 body > div > header > div:last-child > span:last-child > a > img {
     filter: none;
-    
-    margin-left: 1em;
 }

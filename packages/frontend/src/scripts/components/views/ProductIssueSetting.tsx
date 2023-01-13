@@ -48,7 +48,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // INITIAL STATES
 
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
+    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
     const initialUsers: {[id: string]: User} = {}
     for (const member of initialMembers || []) {
         const user = UserManager.getUserFromCache(member.userId)
@@ -206,70 +206,70 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     <h1>Settings</h1>
-                                        <form onSubmit={submitIssue} onReset={goBack}>
-                                            <TextInput label='Label' placeholder='Type label' value={label} change={setLabel}/>
+                                    <form onSubmit={submitIssue} onReset={goBack}>
+                                        <TextInput label='Label' placeholder='Type label' value={label} change={setLabel}/>
+                                        <div>
                                             <div>
-                                                <div>
-                                                    Text:
-                                                </div>
-                                                <div>
-                                                    <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
-                                                </div>
+                                                Text:
                                             </div>
                                             <div>
-                                                <div>
-                                                    Audio:
-                                                </div>
-                                                <div>
-                                                    {recorder ? (
-                                                        <button onClick={stopRecordAudio} className='button fill gray'>
-                                                            Stop recording
-                                                        </button>
+                                                <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                Audio:
+                                            </div>
+                                            <div>
+                                                {recorder ? (
+                                                    <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray'/>
+                                                ) : (
+                                                    audio ? (
+                                                        <>
+                                                            <input type='button' value='Remove recording' onClick={() => setAudio(null)} className='button fill gray'/>
+                                                            <audio src={URL.createObjectURL(audio)} controls/>
+                                                        </>
                                                     ) : (
-                                                        <Fragment>
-                                                            {audio ? (
-                                                                <Fragment>
-                                                                    <button onClick={() => setAudio(null)} className='button fill gray'>
-                                                                        Remove recording
-                                                                    </button>
-                                                                    <audio src={URL.createObjectURL(audio)} controls/>
-                                                                </Fragment>
-                                                            ) : (
-                                                                <button onClick={startRecordAudio} className='button fill gray'>
-                                                                    Start recording
-                                                                </button>
-                                                            )}
-                                                        </Fragment>
-                                                    )}
-                                                </div>
+                                                        <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray'/>
+                                                    )
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                Milestone:
                                             </div>
                                             <div>
-                                                <div>
-                                                    Milestone:
-                                                </div>
-                                                <div>
-                                                    <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
-                                                        <option >none</option>
-                                                        {milestones && milestones.map((milestone) => (
-                                                            <option key={milestone.id} value={milestone.id}>
-                                                                {milestone.label}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
+                                                <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
+                                                    <option >none</option>
+                                                    {milestones && milestones.map((milestone) => (
+                                                        <option key={milestone.id} value={milestone.id}>
+                                                            {milestone.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                Assignees:
                                             </div>
                                             <div>
-                                                <div>
-                                                    Assignees:
-                                                </div>
-                                                <div>
-                                                    {members && (
-                                                        <Table columns={columns} items={members}/>
-                                                    )}
-                                                </div>
+                                                {members && (
+                                                    <Table columns={columns} items={members}/>
+                                                )}
                                             </div>
-                                            <SubmitInput/>
-                                        </form>
+                                        </div>
+                                        {contextUser ? (
+                                            members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                                <SubmitInput value='Save'/>
+                                            ) : (
+                                                <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            )
+                                        ) : (
+                                            <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        )}
+                                    </form>
                                 </div>
                                 <div>
                                     <ProductView3D product={product} marked={marked} mouse={true} click={selectObject} vr={true}/>

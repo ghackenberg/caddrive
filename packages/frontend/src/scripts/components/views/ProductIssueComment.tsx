@@ -23,6 +23,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 
 import * as LeftIcon from '/src/images/comment.png'
 import * as RightIcon from '/src/images/part.png'
+import * as UserIcon from '/src/images/user.png'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -240,9 +241,21 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                             <ProductHeader product={product}/>
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
-                                    <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
-                                        Edit issue
-                                    </Link>
+                                    {contextUser ? (
+                                        members.filter(member => member.id == contextUser.id).length == 1 ? (
+                                            <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
+                                                Edit issue
+                                            </Link>
+                                        ) : (
+                                            <a className='button fill gray right' style={{fontStyle: 'italic'}}>
+                                                Edit issue (requires role)
+                                            </a>
+                                        )
+                                    ) : (
+                                        <a className='button fill gray right' style={{fontStyle: 'italic'}}>
+                                            Edit issue (requires login)
+                                        </a>
+                                    )}
                                     <h1>
                                         {issue.label}
                                     </h1>
@@ -271,9 +284,15 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                         <div className="comment self">
                                             <div className="head">
                                                 <div className="icon">
-                                                    <Link to={`/users/${contextUser.id}`}>
-                                                        <ProductUserPictureWidget user={contextUser} members={members}/>
-                                                    </Link>
+                                                    {contextUser ? (
+                                                        <Link to={`/users/${contextUser.id}`}>
+                                                            <ProductUserPictureWidget user={contextUser} members={members}/>
+                                                        </Link>
+                                                    ) : (
+                                                        <a>
+                                                            <img src={UserIcon} className='icon small round'/>
+                                                        </a>
+                                                    )}
                                                 </div>
                                                 <div className="text">
                                                     <p>
@@ -285,13 +304,53 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                                 <div className="free"/>
                                                 <div className="text">
                                                     <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)}/>
-                                                    <button className='button fill blue' onClick={submitComment}>Save</button>
-                                                    {issue.state == 'open' ? (
-                                                        <button className='button stroke blue' onClick={submitCommentAndClose}>
-                                                            Close
-                                                        </button>
+                                                    {contextUser ? (
+                                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                                            <>
+                                                                <button className='button fill blue' onClick={submitComment}>
+                                                                    Save
+                                                                </button>
+                                                                {issue.state == 'open' ? (
+                                                                    <button className='button stroke blue' onClick={submitCommentAndClose}>
+                                                                        Close
+                                                                    </button>
+                                                                ) : (
+                                                                    <button className='button stroke blue' onClick={submitCommentAndReopen}>
+                                                                        Reopen
+                                                                    </button>
+                                                                )}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <button className='button fill blue' style={{fontStyle: 'italic'}}>
+                                                                    Save (requires role)
+                                                                </button>
+                                                                {issue.state == 'open' ? (
+                                                                    <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                        Close (requires role)
+                                                                    </button>
+                                                                ) : (
+                                                                    <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                        Reopen (requires role)
+                                                                    </button>
+                                                                )}
+                                                            </>
+                                                        )
                                                     ) : (
-                                                        <button className='button stroke blue' onClick={submitCommentAndReopen}>Reopen</button>
+                                                        <>
+                                                            <button className='button fill blue' style={{fontStyle: 'italic'}}>
+                                                                Save (requires login)
+                                                            </button>
+                                                            {issue.state == 'open' ? (
+                                                                <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                    Close (requires login)
+                                                                </button>
+                                                            ) : (
+                                                                <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                    Reopen (requires login)
+                                                                </button>
+                                                            )}
+                                                        </>
                                                     )}
                                                 </div>
                                             </div>

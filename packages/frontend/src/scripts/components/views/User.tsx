@@ -72,9 +72,6 @@ export const UserView = () => {
             </header>
             <main>
                 <div>
-                    <Link to={`/users/new/settings`} className='button fill green'>
-                        New user
-                    </Link>
                     {users && (
                         <Table columns={columns} items={users}/>
                     )}

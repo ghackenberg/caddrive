@@ -47,17 +47,18 @@ form > div > div > label::after {
 form > div > div > input[type="text"],
 form > div > div > input[type="email"],
 form > div > div > input[type="password"] {
-    width: 25em;
+    min-width: 25em;
 }
 form > div > div > input[type="number"] {
-    width: 5em;
+    min-width: 5em;
 }
 form > div > div > input[type="date"] {
-    width: 10em;
+    min-width: 10em;
 }
+form > div > div > select,
 form > div > div > input[type="submit"],
 form > div > div > input[type="button"] {
-    width: 10em;
+    min-width: 10em;
 }
 
 form > div > div > textarea {

@@ -1,10 +1,11 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
 
+import { UserContext } from '../../contexts/User'
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
@@ -32,7 +33,12 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     const productId = props.match.params.product
     const milestoneId = props.match.params.milestone
 
+    // CONTEXTS
+
+    const { contextUser } = useContext(UserContext)
+
     // INITIAL STATES
+
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMilestone = milestoneId == 'new' ? undefined : MilestoneManager.getMilestoneFromCache(milestoneId)
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
@@ -225,9 +231,21 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <ProductHeader product={product}/>
                             <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
-                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
-                                        Edit milestone
-                                    </Link>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                            <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray'>
+                                                Edit milestone
+                                            </Link>
+                                        ) : (
+                                            <a className='button fill gray' style={{fontStyle: 'italic'}}>
+                                                Edit milestone (requires role)
+                                            </a>
+                                        )
+                                    ) : (
+                                        <a className='button fill gray' style={{fontStyle: 'italic'}}>
+                                            Edit milestone (requires login)
+                                        </a>
+                                    )}
                                     <h1>
                                         {milestone.label}
                                     </h1>
@@ -241,9 +259,21 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                             {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
                                         </em>
                                     </p>
-                                    <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green'>
-                                        New issue
-                                    </Link>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                            <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green'>
+                                                New issue
+                                            </Link>
+                                        ) : (
+                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                                New issue (requires role)
+                                            </a>
+                                        )
+                                    ) : (
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New issue (requires login)
+                                        </a>
+                                    )}
                                     <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                         Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
                                     </a>
