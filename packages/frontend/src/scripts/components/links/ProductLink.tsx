@@ -17,7 +17,7 @@ export const ProductLink = (props: {product?: Product}) => (
             </span>
         ) : (
             <span>
-                <NavLink to={`/products/new`}>
+                <NavLink to={`/products/new/settings`}>
                     New product
                 </NavLink>
             </span>
