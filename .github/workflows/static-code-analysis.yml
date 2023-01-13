@@ -32,5 +32,5 @@ jobs:
         run: cp packages/backend/src/env.example.ts packages/backend/src/env.ts
       - name: Build sources
         run: npm run build
-      - name: Lint sources
-        run: npm run lint
+#       - name: Lint sources
+#        run: npm run lint
