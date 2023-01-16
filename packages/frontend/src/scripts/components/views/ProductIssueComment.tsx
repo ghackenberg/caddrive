@@ -242,8 +242,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     {contextUser ? (
-                                        members.filter(member => member.id == contextUser.id).length == 1 ? (
-                                            <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
+                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                            <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>                                             
                                                 Edit issue
                                             </Link>
                                         ) : (
