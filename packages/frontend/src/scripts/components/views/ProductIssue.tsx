@@ -262,11 +262,11 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                 <div>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                            <Link to={`/products/${productId}/issues/new/settings`} className='button fill green'>
+                                            <Link to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
                                                 New issue
                                             </Link>
                                         ) : (
-                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
                                                 New issue (requires role)
                                             </a>
                                         )

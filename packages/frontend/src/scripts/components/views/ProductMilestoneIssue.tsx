@@ -261,11 +261,11 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     </p>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                            <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green'>
+                                            <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green block-when-responsive'>
                                                 New issue
                                             </Link>
                                         ) : (
-                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
                                                 New issue (requires role)
                                             </a>
                                         )
@@ -280,7 +280,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                         Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
                                     </a>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
+                                    <Table class='issueTable' columns={columns} items={issues.filter(issue => issue.state == state)}/>
                                 </div>
                                 <div>
                                     <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>

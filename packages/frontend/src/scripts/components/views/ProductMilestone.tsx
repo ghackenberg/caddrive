@@ -218,7 +218,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                         </a>
                                     )}
                                     {milestones && (
-                                        <Table columns={columns} items={milestones}/>
+                                        <Table class='milestoneTable' columns={columns} items={milestones}/>
                                     )}
                                 </div>
                                 <div>
