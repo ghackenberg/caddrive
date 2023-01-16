@@ -166,7 +166,11 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         )}
                                         {contextUser ? (
                                             members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                                <SubmitInput value='Save'/>
+                                                image ? (
+                                                    <SubmitInput value='Save'/>
+                                                ) : (
+                                                    <SubmitInput value='Save (requires file)' disabled={true}/>
+                                                )
                                             ) : (
                                                 <SubmitInput value='Save (requires role)' disabled={true}/>
                                             )
