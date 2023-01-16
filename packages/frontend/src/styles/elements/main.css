@@ -29,6 +29,7 @@ body > div > main > header > div:nth-child(1) {
 
     white-space: nowrap;
 }
+/*
 body > div > main > header > div:nth-child(1)::after {
     content: "";
 
@@ -42,6 +43,7 @@ body > div > main > header > div:nth-child(1)::after {
 
     background-image: linear-gradient(to right, rgba(245,245,245,0), rgba(245,245,245,1));
 }
+*/
 body > div > main > header > div:nth-child(1) > span::after {
     content: "/";
 
@@ -55,10 +57,9 @@ body > div > main > header > div:nth-child(2),
 body > div > main > footer > div:nth-child(2) {
     position: relative;
 
-    overflow: hidden;
-
     white-space: nowrap;
 }
+/*
 body > div > main > header > div:nth-child(2)::after,
 body > div > main > footer > div:nth-child(2)::after {
     content: "";
@@ -73,6 +74,7 @@ body > div > main > footer > div:nth-child(2)::after {
 
     background-image: linear-gradient(to right, rgba(245,245,245,0), rgba(245,245,245,1));
 }
+*/
 body > div > main > footer > div:nth-child(2) > span > a,
 body > div > main > header > div:nth-child(2) > span > a {
     display: inline-block;
