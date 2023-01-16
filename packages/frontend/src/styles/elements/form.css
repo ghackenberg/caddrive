@@ -60,6 +60,7 @@ form > div > div > input[type="date"] {
 }
 form > div > div > select,
 form > div > div > input[type="submit"],
+form > div > div > input[type="file"],
 form > div > div > input[type="button"] {
     min-width: 10em;
 }
@@ -72,4 +73,27 @@ form > div > div > textarea {
 form > div > div > table {
     margin-top: 0;
     margin-bottom: 0;
+}
+
+@media screen and (max-width: 45em){
+    form {
+        display: block;
+    }
+    form > div {
+        display: block;
+        padding-top: 0.75em;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+        padding-bottom: 0.75em;
+    }
+    form > div > div {
+        display: block;
+    }
+
+    form > div > div > input[type="text"],
+    form > div > div > input[type="email"],
+    form > div > div > input[type="password"] {
+    min-width: 10em;
+    width: 100%;
+    }
 }
