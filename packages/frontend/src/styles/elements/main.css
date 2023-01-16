@@ -188,3 +188,9 @@ body > div > main > footer {
         height: 3em;
     }
 }
+@media screen and (max-width: 45em) {
+    body > div > main > main > div:nth-child(1) > a.button:nth-child(1) {
+        display: block;
+        width: fit-content;
+    }
+}

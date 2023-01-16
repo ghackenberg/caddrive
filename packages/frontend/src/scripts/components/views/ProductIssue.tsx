@@ -281,7 +281,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                         Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
                                     </a>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                                    <Table class={'issueTable'} columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
                                     <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr={true}/>

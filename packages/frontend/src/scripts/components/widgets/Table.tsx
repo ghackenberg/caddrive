@@ -6,7 +6,7 @@ export interface Column <T,> {
     content: (item: T, index: number) => React.ReactNode
 }
 
-export const Table = <T,> (props: {columns: Column<T>[], items: T[], onMouseOver?: (item: T) => void, onMouseOut?: (item: T) => void}) => {
+export const Table = <T,> (props: {class?: string, columns: Column<T>[], items: T[], onMouseOver?: (item: T) => void, onMouseOut?: (item: T) => void}) => {
     const onMouseOver = props.onMouseOver || (() => {
         // empty
     })
@@ -14,7 +14,7 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[], onMouseOver
         // empty
     })
     return (
-        <table>
+        <table id={props.class}>
             <thead>
                 <tr>
                     {props.columns.map((column, index) =>
