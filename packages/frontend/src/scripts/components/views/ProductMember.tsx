@@ -130,7 +130,7 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                                 <div>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                            <Link to={`/products/${productId}/issues/new/settings`} className='button fill green'>
+                                            <Link to={`/products/${productId}/members/new/settings`} className='button fill green'>
                                                 New member
                                             </Link>
                                         ) : (
