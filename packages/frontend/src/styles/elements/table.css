@@ -121,36 +121,3 @@ form table > tbody > tr > td {
 form table > tbody > tr:hover > td {
     background-color: rgb(205,205,205);
 }
-
-@media screen and (max-width: 45em){
-    table > tbody > tr > td:nth-child(2) {
-       max-width: 10em;
-       white-space: nowrap;
-       overflow: hidden;
-    }
-    #issueTable > thead > tr > th:nth-child(3),
-    #issueTable > thead > tr > th:nth-child(4),
-    #issueTable > thead > tr > th:nth-child(5) {
-        display: none;
-    }
-    #issueTable > tbody > tr > td:nth-child(3),
-    #issueTable > tbody > tr > td:nth-child(4),
-    #issueTable > tbody > tr > td:nth-child(5) {
-        display: none;
-    }
-
-    #milestoneTable > thead > tr > th:nth-child(3),
-    #milestoneTable > thead > tr > th:nth-child(4),
-    #milestoneTable > thead > tr > th:nth-child(5),
-    #milestoneTable > thead > tr > th:nth-child(6),
-    #milestoneTable > thead > tr > th:nth-child(7) {
-        display: none;
-    }
-    #milestoneTable > tbody > tr > td:nth-child(3),
-    #milestoneTable > tbody > tr > td:nth-child(4),
-    #milestoneTable > tbody > tr > td:nth-child(5),
-    #milestoneTable > tbody > tr > td:nth-child(6),
-    #milestoneTable > tbody > tr > td:nth-child(7) {
-        display: none;
-    }
-}

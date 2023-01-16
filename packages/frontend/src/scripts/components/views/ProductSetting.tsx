@@ -87,7 +87,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // RETURN
 
     return (
-        <main className="view extended product">
+        <main className="view extended product-setting">
             {(productId == 'new' || product) && members && (
                 <Fragment>
                     {product && product.deleted ? (

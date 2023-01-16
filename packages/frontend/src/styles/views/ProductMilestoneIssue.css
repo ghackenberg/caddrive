@@ -1,0 +1,12 @@
+@media screen and (max-width: 45em){
+    main.view.product-milestone-issue table > thead > tr > th:nth-child(3),
+    main.view.product-milestone-issue table > thead > tr > th:nth-child(4),
+    main.view.product-milestone-issue table > thead > tr > th:nth-child(5) {
+        display: none;
+    }
+    main.view.product-milestone-issue table > tbody > tr > td:nth-child(3),
+    main.view.product-milestone-issue table > tbody > tr > td:nth-child(4),
+    main.view.product-milestone-issue table > tbody > tr > td:nth-child(5) {
+        display: none;
+    }
+}

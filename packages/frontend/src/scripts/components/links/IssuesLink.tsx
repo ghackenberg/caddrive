@@ -24,7 +24,10 @@ export const IssuesLink = (props: {product: Product}) => {
         <span>
             <NavLink to={`/products/${props.product.id}/issues`}>
                 <img src={IssueIcon} className='icon small'/>
-                <span>Issues ({count != undefined ? count : '?'})</span>
+                <span>
+                    <span>Issues</span>
+                    <span>{count != undefined ? count : '?'}</span>
+                </span>
             </NavLink>
         </span>
     )

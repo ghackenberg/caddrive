@@ -211,7 +211,7 @@ export const ProductView = () => {
     // RETURN
 
     return (
-        <main className="view products">
+        <main className="view product">
             <header>
                 <div>
                     <ProductsLink/>

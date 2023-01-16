@@ -78,22 +78,35 @@ form > div > div > table {
 @media screen and (max-width: 45em){
     form {
         display: block;
+
+        padding-bottom: 1em;
     }
     form > div {
         display: block;
-        padding-top: 0.75em;
-        padding-left: 0.75em;
-        padding-right: 0.75em;
-        padding-bottom: 0.75em;
+
+        padding-top: 0;
+        padding-left: 1em;
+        padding-right: 1em;
+        padding-bottom: 0;
     }
     form > div > div {
         display: block;
     }
 
+    form > div > div.empty {
+        height: 1em;
+    }
+    form > div > div > label {
+        display: block;
+
+        padding-top: calc(1rem - 0.25em);
+        padding-bottom: calc(1rem - 0.25em);
+    }
+
     form > div > div > input[type="text"],
     form > div > div > input[type="email"],
     form > div > div > input[type="password"] {
-    min-width: 10em;
-    width: 100%;
+        min-width: 10em;
+        width: 100%;
     }
 }

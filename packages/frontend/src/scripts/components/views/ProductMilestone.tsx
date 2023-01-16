@@ -192,8 +192,8 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // RETURN
 
     return (
-        <main className="view extended milestones">
-            {product && (
+        <main className="view extended product-milestone">
+            {product && members && (
                  <Fragment>
                     {product && product.deleted ? (
                         <Redirect to='/'/>
@@ -218,7 +218,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                         </a>
                                     )}
                                     {milestones && (
-                                        <Table class='milestoneTable' columns={columns} items={milestones}/>
+                                        <Table columns={columns} items={milestones}/>
                                     )}
                                 </div>
                                 <div>

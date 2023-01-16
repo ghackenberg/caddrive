@@ -144,7 +144,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // RETURN
 
     return (
-        <main className="view extended member">
+        <main className="view extended product-member-setting">
             {product && members && (
                  <Fragment>
                     {product && product.deleted ? (

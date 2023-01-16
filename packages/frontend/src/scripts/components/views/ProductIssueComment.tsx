@@ -231,7 +231,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     // RETURN
 
     return (
-        <main className='view extended comments'>
+        <main className='view extended product-issue-comment'>
             {(issueId == 'new' || issue) && product && (
                 <Fragment>
                     {issue && issue.deleted ? (

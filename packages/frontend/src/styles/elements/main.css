@@ -17,17 +17,30 @@ body > div > main > header {
     border-bottom-color: rgb(215,215,215);
 }
 body > div > main > header > div:nth-child(1) {
+    position: relative;
+
     padding: 1rem;
 
     font-size: 200%;
 
     line-height: 150%;
 
-    white-space: nowrap;
-    overflow: scroll;
+    overflow: none;
 
-    -ms-overflow-style: none;  
-    scrollbar-width: none; 
+    white-space: nowrap;
+}
+body > div > main > header > div:nth-child(1)::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 1em;
+
+    background-image: linear-gradient(to right, rgba(245,245,245,0), rgba(245,245,245,1));
 }
 body > div > main > header > div:nth-child(1) > span::after {
     content: "/";
@@ -38,18 +51,27 @@ body > div > main > header > div:nth-child(1) > span::after {
 body > div > main > header > div:nth-child(1) > span:last-child::after {
     content: "";
 }
-body > div > main > footer > div:nth-child(2),
-body > div > main > header > div:nth-child(2) {
-    white-space: nowrap;
-    overflow: scroll;
+body > div > main > header > div:nth-child(2),
+body > div > main > footer > div:nth-child(2) {
+    position: relative;
 
-    -ms-overflow-style: none;  
-    scrollbar-width: none; 
-  
+    overflow: hidden;
+
+    white-space: nowrap;
 }
-body > div > main > header > div::-webkit-scrollbar,
-body > div > main > footer > div::-webkit-scrollbar {
-    display: none;
+body > div > main > header > div:nth-child(2)::after,
+body > div > main > footer > div:nth-child(2)::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 1em;
+
+    background-image: linear-gradient(to right, rgba(245,245,245,0), rgba(245,245,245,1));
 }
 body > div > main > footer > div:nth-child(2) > span > a,
 body > div > main > header > div:nth-child(2) > span > a {
@@ -64,6 +86,16 @@ body > div > main > header > div:nth-child(2) > span > a {
 
 body > div > main > footer > div:nth-child(2) > span > img {
     vertical-align: middle;
+}
+
+body > div > main > header > div:nth-child(2) > span > a > span > span:last-child {
+    margin-left: 0.25em;
+}
+body > div > main > header > div:nth-child(2) > span > a > span > span:last-child::before {
+    content: "(";
+}
+body > div > main > header > div:nth-child(2) > span > a > span > span:last-child::after {
+    content: ")";
 }
 
 body > div > main > header > div:nth-child(2) > span > a.active {
@@ -186,5 +218,20 @@ body > div > main > footer {
         border-top-color: rgb(215,215,215);
 
         height: 3em;
+    }
+}
+
+@media screen and (max-width: 45em) {
+    body > div > main > header > div:nth-child(2) > span > a > span > span:last-child {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 40em) {
+    body > div > main > header > div:nth-child(2) > span > a > span {
+        display: none;
+    }
+    body > div > main > header > div:nth-child(2) > span > a.active > span {
+        display: inline;
     }
 }

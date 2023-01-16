@@ -117,7 +117,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // RETURN
 
     return (
-        <main className="view extended member">
+        <main className="view extended product-milestone-setting">
             {product && (
                  <Fragment>
                     {product && product.deleted ? (

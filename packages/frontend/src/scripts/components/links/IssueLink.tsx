@@ -13,13 +13,13 @@ export const IssueLink = (props: { product: Product, issue?: Issue }) => (
             <span>
                 <NavLink to={`/products/${props.product.id}/issues/${props.issue.id}`}>
                     {props.issue.label}
-                    </NavLink>
+                </NavLink>
             </span>
         ) : (
             <span>
                 <NavLink to={`/products/${props.product.id}/issues/new`}>
                     New issue
-                    </NavLink>
+                </NavLink>
             </span>
         )}
     </Fragment>  

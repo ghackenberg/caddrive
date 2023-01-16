@@ -195,7 +195,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // RETURN
 
     return (
-        <main className='view extended issue'>
+        <main className='view extended product-issue-setting'>
             {(issueId == 'new' || issue) && product && (
                 <Fragment>
                     {issue && issue.deleted ? (
@@ -210,7 +210,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         <TextInput label='Label' placeholder='Type label' value={label} change={setLabel}/>
                                         <div>
                                             <div>
-                                                Text:
+                                                <label>Text:</label>
                                             </div>
                                             <div>
                                                 <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
@@ -218,7 +218,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </div>
                                         <div>
                                             <div>
-                                                Audio:
+                                                <label>Audio:</label>
                                             </div>
                                             <div>
                                                 {recorder ? (
@@ -237,7 +237,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </div>
                                         <div>
                                             <div>
-                                                Milestone:
+                                                <label>Milestone:</label>
                                             </div>
                                             <div>
                                                 <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
@@ -252,7 +252,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         </div>
                                         <div>
                                             <div>
-                                                Assignees:
+                                                <label>Assignees:</label>
                                             </div>
                                             <div>
                                                 {members && (

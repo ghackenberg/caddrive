@@ -64,7 +64,7 @@ export const UserView = () => {
     // RETURN
 
     return (
-        <main className="view users">
+        <main className="view user">
             <header>
                 <div>
                     <UsersLink/>

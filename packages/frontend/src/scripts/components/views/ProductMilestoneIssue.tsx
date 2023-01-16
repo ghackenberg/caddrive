@@ -221,7 +221,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // RETURN
 
     return (
-        <main className="view extended issues">
+        <main className="view extended product-milestone-issue">
             {issues && product && milestone && (
                  <Fragment>
                     {product.deleted ? (
@@ -280,7 +280,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                     <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                         Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
                                     </a>
-                                    <Table class='issueTable' columns={columns} items={issues.filter(issue => issue.state == state)}/>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
                                 </div>
                                 <div>
                                     <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>

@@ -140,7 +140,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     // RETURN
 
     return (
-        <main className="view extended version">
+        <main className="view extended product-version-setting">
             {(versionId == 'new' || version) && product && versions && (
                 <Fragment>
                     {version && version.deleted ? (
