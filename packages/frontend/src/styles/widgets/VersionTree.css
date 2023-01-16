@@ -1,6 +1,7 @@
 div.widget.version_tree {
     display: table;
     
+    table-layout: fixed;
     border-spacing: 0;
     border-collapse: collapse;
 
@@ -79,10 +80,29 @@ div.widget.version_tree > div > div.text {
     padding-right: 1em;
 }
 div.widget.version_tree > div > div.text > div:first-child {
+    position: relative;
+    
     margin-top: 1em;
     margin-bottom: 0.75em;
 
+    white-space: nowrap;
+    overflow: hidden;
+    
     font-weight: bold;
+}
+div.widget.version_tree > div > div.text > div:first-child::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 1em;
+    background-image: linear-gradient(to right, rgba(245,245,245,0),rgba(245,245,245,1));
+
+}
+div.widget.version_tree > div.selected > div.text > div:first-child::after,
+div.widget.version_tree > div:hover > div.text > div:first-child::after {
+    background-image: linear-gradient(to right, rgba(230,230,230,0),rgba(230,230,230,1));
 }
 div.widget.version_tree > div > div.text > div:last-child {
     margin-bottom: 0.75em;
@@ -116,4 +136,17 @@ div.widget.version_tree > div > div.model {
     background-color: rgb(215,215,215);
     background-position: center;
     background-size: cover;
+}
+
+@media screen and (max-width: 45em){
+    div.widget.version_tree > div> div.model {
+        display: none;
+    }
+
+    div.widget.version_tree > div:first-child > div.text {
+        border-top-right-radius: 1em;
+    }
+    div.widget.version_tree > div:last-child > div.text {
+        border-bottom-right-radius: 1em;
+    }
 }

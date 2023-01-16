@@ -22,6 +22,12 @@ body > div > main > header > div:nth-child(1) {
     font-size: 200%;
 
     line-height: 150%;
+
+    white-space: nowrap;
+    overflow: scroll;
+
+    -ms-overflow-style: none;  
+    scrollbar-width: none; 
 }
 body > div > main > header > div:nth-child(1) > span::after {
     content: "/";
@@ -32,10 +38,18 @@ body > div > main > header > div:nth-child(1) > span::after {
 body > div > main > header > div:nth-child(1) > span:last-child::after {
     content: "";
 }
-body > div > main > footer > div:nth-child(2)
+body > div > main > footer > div:nth-child(2),
 body > div > main > header > div:nth-child(2) {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    white-space: nowrap;
+    overflow: scroll;
+
+    -ms-overflow-style: none;  
+    scrollbar-width: none; 
+  
+}
+body > div > main > header > div::-webkit-scrollbar,
+body > div > main > footer > div::-webkit-scrollbar {
+    display: none;
 }
 body > div > main > footer > div:nth-child(2) > span > a,
 body > div > main > header > div:nth-child(2) > span > a {

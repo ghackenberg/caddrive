@@ -24,6 +24,9 @@ form {
 form input[type="file"] {
     display: none;
 }
+form audio {
+    vertical-align: middle;
+}
 
 form > div {
     display: table-row;
