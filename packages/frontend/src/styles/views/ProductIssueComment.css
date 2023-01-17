@@ -1,0 +1,12 @@
+@media screen and (max-width: 45em){
+    main.view.product-issue-comment > main.sidebar.hidden > div > div.widget.issue_thread > div.widget.comment_view.issue.self > div.body > div.text > audio,
+    main.view.product-issue-comment > main.sidebar.hidden > div > div.widget.issue_thread > div.comment.self > div.body > div.text > audio  {
+        max-width: 16em;
+        margin-top: 0.75em;
+        margin-bottom: 0.75em;
+    }
+}
+
+main.view.product-issue-comment > main.sidebar.hidden > div > div.widget.issue_thread > div.comment.self > div.body > div.text > audio  {
+    vertical-align: middle;
+}

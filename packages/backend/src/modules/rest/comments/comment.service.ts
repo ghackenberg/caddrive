@@ -1,3 +1,5 @@
+import * as fs from 'fs'
+
 import { Injectable } from '@nestjs/common'
 import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
@@ -23,9 +25,18 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async addComment(data: CommentAddData, _files: { audio?: Express.Multer.File[] }): Promise<Comment> {
-        // TODO save audio file and remove eslint comment
-        const comment = await CommentRepository.save({ id: shortid(), deleted: false, ...data })
+    async addComment(data: CommentAddData, files: { audio?: Express.Multer.File[] }): Promise<Comment> {
+        let comment: CommentEntity
+        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
+            comment = await CommentRepository.save({ id: shortid(), deleted: false, audioId: shortid(), ...data })
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
+        } else {
+            comment = await CommentRepository.save({ id: shortid(), deleted: false, ...data })
+
+        }
         await this.client.emit(`/api/v1/comments/${comment.id}/create`, this.convert(comment))
         return this.convert(comment)
     }
@@ -36,12 +47,16 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async updateComment(id: string, data: CommentUpdateData, _files?: { audio?: Express.Multer.File[] }): Promise<Comment> {
-        // TODO update audio file and remove eslint comment
-        const comment = await CommentRepository.findOneByOrFail({ id })
+    async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Comment> {        const comment = await CommentRepository.findOneByOrFail({ id })
         comment.action = data.action
         comment.text = data.text
         await CommentRepository.save(comment)
+        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
+            if (!fs.existsSync('./uploads')) {
+                fs.mkdirSync('./uploads')
+            }
+            fs.writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
+        }
         await this.client.emit(`/api/v1/comments/${comment.id}/update`, this.convert(comment))
         return this.convert(comment)
     }
@@ -55,6 +70,6 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     }
 
     private convert(comment: CommentEntity) {
-        return { id: comment.id, deleted: comment.deleted, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
+        return { id: comment.id, deleted: comment.deleted, audioId: comment.audioId, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
     }
 }

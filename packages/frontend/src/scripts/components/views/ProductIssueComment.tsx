@@ -1,6 +1,6 @@
-import  * as React from 'react'
+import * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, Fragment, ReactElement } from 'react'
-import { Redirect } from 'react-router' 
+import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { Object3D } from 'three'
@@ -14,6 +14,7 @@ import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
+import { AudioRecorder } from '../../services/recorder'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { CommentView } from '../widgets/CommentView'
@@ -25,16 +26,16 @@ import * as LeftIcon from '/src/images/comment.png'
 import * as RightIcon from '/src/images/part.png'
 import * as UserIcon from '/src/images/user.png'
 
-export const ProductIssueCommentView = (props: RouteComponentProps<{product: string, issue: string}>) => {
+export const ProductIssueCommentView = (props: RouteComponentProps<{ product: string, issue: string }>) => {
 
     // CONSTANTS
-    
+
     // REFERENCES
 
     const textReference = useRef<HTMLTextAreaElement>()
 
     // CONTEXTS
-    
+
     const { contextUser } = useContext(UserContext)
 
     // PARAMS
@@ -49,7 +50,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
     const initialComments = issueId == 'new' ? undefined : CommentManager.findCommentsFromCache(issueId)
 
-    const initialUsers: {[id: string]: User} = {}
+    const initialUsers: { [id: string]: User } = {}
     const user = UserManager.getUserFromCache(issueId)
     if (user) {
         initialUsers[user.id] = user
@@ -58,7 +59,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
             if (user) {
                 initialUsers[user.id] = user
             }
-        } 
+        }
     }
 
     // STATES
@@ -68,16 +69,18 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     const [members, setMember] = useState<Member[]>(initialMembers)
     const [issue, setIssue] = useState<Issue>(initialIssue)
     const [comments, setComments] = useState<Comment[]>(initialComments)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+    const [users, setUsers] = useState<{ [id: string]: User }>(initialUsers)
     // - Values
     const [text, setText] = useState<string>('')
+    const [audio, setAudio] = useState<Blob>()
     // - Computations
     const [issueHtml, setIssueHtml] = useState<ReactElement>()
     const [issueParts, setIssueParts] = useState<Part[]>([])
-    const [commentsHtml, setCommentsHtml] = useState<{[id: string]: ReactElement}>({})
-    const [commentsParts, setCommentsParts] = useState<{[id: string]: Part[]}>({})
+    const [commentsHtml, setCommentsHtml] = useState<{ [id: string]: ReactElement }>({})
+    const [commentsParts, setCommentsParts] = useState<{ [id: string]: Part[] }>({})
     const [highlighted, setHighlighted] = useState<Part[]>()
     // - Interactions
+    const [recorder, setRecorder] = useState<AudioRecorder>()
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
     const [active, setActive] = useState<string>('left')
@@ -104,7 +107,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
             }
         }
         Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userList => {
-            const dict = {...users}
+            const dict = { ...users }
             for (const user of userList) {
                 dict[user.id] = user
             }
@@ -122,8 +125,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     }, [issue])
     useEffect(() => {
         if (comments) {
-            const commentsHtml: {[id: string]: ReactElement} = {}
-            const commentsParts: {[id: string]: Part[]} = {}
+            const commentsHtml: { [id: string]: ReactElement } = {}
+            const commentsParts: { [id: string]: Part[] } = {}
             for (const comment of comments) {
                 const parts: Part[] = []
                 commentsHtml[comment.id] = createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(comment.text).result
@@ -159,11 +162,25 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
 
     // FUNCTIONS
 
+    async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        const recorder = new AudioRecorder()
+        await recorder.start()
+        setRecorder(recorder)
+    }
+
+    async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        const data = await recorder.stop()
+        setAudio(data)
+        setRecorder(null)
+    }
+
     function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
         setSelected([part])
     }
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, _part: Part) {
         event.preventDefault()
@@ -195,9 +212,12 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'none' }, {})
+            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'none' }, { audio })
             setComments([...comments, comment])
             setText('')
+        }
+        if (audio) {
+            setAudio(undefined)
         }
     }
 
@@ -237,24 +257,24 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
             {(issueId == 'new' || issue) && product && (
                 <Fragment>
                     {issue && issue.deleted ? (
-                        <Redirect to='/'/>
+                        <Redirect to='/' />
                     ) : (
                         <Fragment>
-                            <ProductHeader product={product}/>
+                            <ProductHeader product={product} />
                             <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                                 <div>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                            <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>                                             
+                                            <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
                                                 Edit issue
                                             </Link>
                                         ) : (
-                                            <a className='button fill gray right' style={{fontStyle: 'italic'}}>
+                                            <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
                                                 Edit issue (requires role)
                                             </a>
                                         )
                                     ) : (
-                                        <a className='button fill gray right' style={{fontStyle: 'italic'}}>
+                                        <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
                                             Edit issue (requires login)
                                         </a>
                                     )}
@@ -268,7 +288,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                         &nbsp;
                                         <strong>
                                             {issue.userId in users && members ? (
-                                                <ProductUserNameWidget user={users[issue.userId]} members={members}/>
+                                                <ProductUserNameWidget user={users[issue.userId]} members={members} />
                                             ) : (
                                                 '?'
                                             )}
@@ -279,20 +299,20 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                         </>
                                     </p>
                                     <div className="widget issue_thread">
-                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members}/>
+                                        <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
                                         {comments && comments.map(comment => (
-                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members}/>
+                                            <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
                                         ))}
                                         <div className="comment self">
                                             <div className="head">
                                                 <div className="icon">
                                                     {contextUser ? (
                                                         <Link to={`/users/${contextUser.id}`}>
-                                                            <ProductUserPictureWidget user={contextUser} members={members}/>
+                                                            <ProductUserPictureWidget user={contextUser} members={members} />
                                                         </Link>
                                                     ) : (
                                                         <a>
-                                                            <img src={UserIcon} className='icon small round'/>
+                                                            <img src={UserIcon} className='icon small round' />
                                                         </a>
                                                     )}
                                                 </div>
@@ -303,9 +323,9 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                                 </div>
                                             </div>
                                             <div className="body">
-                                                <div className="free"/>
+                                                <div className="free" />
                                                 <div className="text">
-                                                    <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)}/>
+                                                    <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
                                                     {contextUser ? (
                                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                                             <>
@@ -321,18 +341,32 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                                                         Reopen
                                                                     </button>
                                                                 )}
+
+                                                                {recorder ? (
+                                                                    <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray' />
+                                                                ) : (
+                                                                    audio ? (
+                                                                        <>
+                                                                            <input type='button' value='Remove recording' onClick={() => setAudio(null)} className='button fill gray block-when-responsive' />
+                                                                            <audio src={URL.createObjectURL(audio)} controls />
+                                                                        </>
+                                                                    ) : (
+                                                                        <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray block-when-responsive' />
+                                                                    )
+                                                                )}
                                                             </>
+
                                                         ) : (
                                                             <>
-                                                                <button className='button fill blue' style={{fontStyle: 'italic'}}>
+                                                                <button className='button fill blue' style={{ fontStyle: 'italic' }}>
                                                                     Save (requires role)
                                                                 </button>
                                                                 {issue.state == 'open' ? (
-                                                                    <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                    <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
                                                                         Close (requires role)
                                                                     </button>
                                                                 ) : (
-                                                                    <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                    <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
                                                                         Reopen (requires role)
                                                                     </button>
                                                                 )}
@@ -340,15 +374,15 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                                         )
                                                     ) : (
                                                         <>
-                                                            <button className='button fill blue' style={{fontStyle: 'italic'}}>
+                                                            <button className='button fill blue' style={{ fontStyle: 'italic' }}>
                                                                 Save (requires login)
                                                             </button>
                                                             {issue.state == 'open' ? (
-                                                                <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
                                                                     Close (requires login)
                                                                 </button>
                                                             ) : (
-                                                                <button className='button stroke blue' style={{fontStyle: 'italic'}}>
+                                                                <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
                                                                     Reopen (requires login)
                                                                 </button>
                                                             )}
@@ -360,12 +394,12 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
                                     </div>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr={true}/>
+                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr={true} />
                                 </div>
                             </main>
-                            <ProductFooter items={items} active={active} setActive={setActive}/>
+                            <ProductFooter items={items} active={active} setActive={setActive} />
                         </Fragment>
-                    ) }
+                    )}
                 </Fragment>
             )}
         </main>
