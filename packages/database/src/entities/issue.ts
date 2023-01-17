@@ -16,6 +16,9 @@ export class IssueEntity extends Issue {
     @Column({ nullable: false, default: false })
     override deleted: boolean
 
+    @Column({ nullable: true })
+    override audioId: string
+
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity

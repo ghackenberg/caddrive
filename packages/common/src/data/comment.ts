@@ -21,4 +21,6 @@ export class Comment extends CommentAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    audioId: string
 }

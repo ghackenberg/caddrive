@@ -27,4 +27,6 @@ export class Issue extends IssueAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    audioId?: string
 }
