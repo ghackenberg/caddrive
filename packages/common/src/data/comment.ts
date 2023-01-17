@@ -22,5 +22,5 @@ export class Comment extends CommentAddData {
     @ApiProperty()
     deleted: boolean
     @ApiProperty()
-    audioId: string
+    audioId?: string
 }
