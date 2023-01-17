@@ -341,9 +341,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                         Reopen
                                                                     </button>
                                                                 )}
-
                                                                 {recorder ? (
-                                                                    <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray' />
+                                                                    <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray block-when-responsive' />
                                                                 ) : (
                                                                     audio ? (
                                                                         <>
@@ -370,6 +369,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                         Reopen (requires role)
                                                                     </button>
                                                                 )}
+                                                                <input type='button' value='Start recording (requires role)' className='button fill gray block-when-responsive' />
                                                             </>
                                                         )
                                                     ) : (
@@ -386,6 +386,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                     Reopen (requires login)
                                                                 </button>
                                                             )}
+                                                            <input type='button' value='Start recording (requires login)' className='button fill gray block-when-responsive' />
                                                         </>
                                                     )}
                                                 </div>
