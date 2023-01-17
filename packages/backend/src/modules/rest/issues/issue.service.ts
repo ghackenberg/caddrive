@@ -31,12 +31,15 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
   
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
-        const issue = await IssueRepository.save({ id: shortid(), deleted: false, ...data })
+        let issue: IssueEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
+            issue = await IssueRepository.save({ id: shortid(), deleted: false, audioId: shortid(), ...data })
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
-            fs.writeFileSync(`./uploads/${issue.id}.webm`, files.audio[0].buffer)
+            fs.writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
+        } else {
+            issue = await IssueRepository.save({ id: shortid(), deleted: false, ...data })
         }
         await this.client.emit(`/api/v1/issues/${issue.id}/create`, this.convert(issue))
         return this.convert(issue)
@@ -59,7 +62,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
-            fs.writeFileSync(`./uploads/${issue.id}.webm`, files.audio[0].buffer)
+            fs.writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         }
         await this.client.emit(`/api/v1/issues/${issue.id}/update`, this.convert(issue))
         return this.convert(issue)
@@ -75,6 +78,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
 
     private convert(issue: IssueEntity) {
-        return {id: issue.id, deleted: issue.deleted, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId }
+        return {id: issue.id, deleted: issue.deleted, audioId: issue.audioId, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId}
     }
 }

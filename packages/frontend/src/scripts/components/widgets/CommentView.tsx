@@ -49,6 +49,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
                 <div className="free"/>
                 <div className="text">
                     {props.html}
+                    {props.comment.audioId && <audio src={`/rest/files/${props.comment.audioId}.webm`} controls/>}
                 </div>
             </div>
             {props.parts && props.parts.map((part, index) => (

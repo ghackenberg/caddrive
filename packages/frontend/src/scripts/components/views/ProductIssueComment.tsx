@@ -228,6 +228,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{product: str
         { name: 'right', text: 'Model view', image: RightIcon }
     ]
 
+    console.log(issue)
+
     // RETURN
 
     return (
