@@ -121,3 +121,11 @@ form table > tbody > tr > td {
 form table > tbody > tr:hover > td {
     background-color: rgb(205,205,205);
 }
+
+@media screen and (max-width: 45em){
+    form table > tbody > tr > td:nth-child(2) {
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 10em;
+    }
+}
