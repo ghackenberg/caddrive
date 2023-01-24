@@ -251,9 +251,9 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     return (
         <main className="view extended product-issue">
-            {issues && product && (
+            {product && members && issues && (
                  <Fragment>
-                    {product && product.deleted ? (
+                    {product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>
