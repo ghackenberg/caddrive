@@ -159,7 +159,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                         {user ? (
                                             <div>
                                                 <div>
-                                                    User:
+                                                    <label>User</label>
                                                 </div>
                                                 <div>
                                                     {users && user && (
@@ -173,7 +173,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                         {query && (
                                                 <div>
                                                     <div>
-                                                        Users:
+                                                        <label>User</label>
                                                     </div>
                                                     <div>
                                                         {users && (
@@ -185,7 +185,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                         {user && (
                                             <div>
                                                 <div>
-                                                    Role:
+                                                    <label>Role</label>
                                                 </div>
                                                 <div>
                                                     <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
