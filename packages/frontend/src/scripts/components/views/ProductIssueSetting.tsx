@@ -75,6 +75,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [assigneeIds, setAssigneeIds] = useState<string[]>([])
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
+    const [audioUrl, setAudioUrl] = useState<string>('')
     const [marked, setMarked] = useState<Part[]>([])
     const [active, setActive] = useState<string>('left')
 
@@ -121,7 +122,14 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
+        setAudioUrl(URL.createObjectURL(data))
         setRecorder(null)
+    }
+
+    async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        setAudio(null)
+        setAudioUrl('')
     }
 
     async function selectObject(version: Version, object: Object3D) {
@@ -226,8 +234,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                 ) : (
                                                     audio ? (
                                                         <>
-                                                            <input type='button' value='Remove recording' onClick={() => setAudio(null)} className='button fill gray'/>
-                                                            <audio src={URL.createObjectURL(audio)} controls/>
+                                                            <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray'/>
+                                                            <audio src={audioUrl} controls/>
                                                         </>
                                                     ) : (
                                                         <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray'/>
