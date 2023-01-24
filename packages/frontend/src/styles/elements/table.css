@@ -130,11 +130,3 @@ form table > tbody > tr:hover > td {
         max-width: 10em;
     }
 }
-
-/* @media screen and (max-width: 45em) {
-    *.button.block-when-responsive {
-        display: block;
-        width: fit-content;
-        margin-bottom: 0.75em;
-    }
-} */
