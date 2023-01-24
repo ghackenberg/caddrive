@@ -234,8 +234,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                                 ) : (
                                                     audio ? (
                                                         <>
-                                                            <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray'/>
                                                             <audio src={audioUrl} controls/>
+                                                            <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray'/>
                                                         </>
                                                     ) : (
                                                         <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray'/>

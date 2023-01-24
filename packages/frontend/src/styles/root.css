@@ -36,6 +36,7 @@
 @import url(./views/Product.css);
 @import url(./views/ProductIssue.css);
 @import url(./views/ProductIssueComment.css);
+@import url(./views/ProductIssueSetting.css);
 @import url(./views/ProductMember.css);
 @import url(./views/ProductMilestone.css);
 @import url(./views/ProductMilestoneIssue.css);
