@@ -30,7 +30,6 @@ import * as RightIcon from '/src/images/part.png'
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
     const { goBack, replace, location } = useHistory()
-    const queryMilestoneId = new URLSearchParams(location.search).get('milestone') || ''
 
     // REFERENCES
 
@@ -58,6 +57,14 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     } 
     const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
     const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
+
+    const initialLabel = initialIssue ? initialIssue.label : ''
+    const initialText = initialIssue ? initialIssue.text : ''
+    const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (initialIssue && initialIssue.milestoneId)
+    const initialAssigneeIds = initialIssue ? initialIssue.assigneeIds : []
+
+    const initialMarked: Part[] = []
+    collectParts(initialText, initialMarked)
     
     // STATES
     
@@ -68,15 +75,15 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [issue, setIssue] = useState<Issue>(initialIssue)
     const [milestones, setMilstones] = useState<Milestone[]>(initialMilestones)
     // - Values
-    const [label, setLabel] = useState<string>('')
-    const [text, setText] = useState<string>('')
+    const [label, setLabel] = useState<string>(initialLabel)
+    const [text, setText] = useState<string>(initialText)
     const [audio, setAudio] = useState<Blob>()
-    const [milestoneId, setMilestoneId] = useState<string>(queryMilestoneId)
-    const [assigneeIds, setAssigneeIds] = useState<string[]>([])
+    const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
+    const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [audioUrl, setAudioUrl] = useState<string>('')
-    const [marked, setMarked] = useState<Part[]>([])
+    const [marked, setMarked] = useState<Part[]>(initialMarked)
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
