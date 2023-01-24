@@ -63,6 +63,11 @@ form > div > div > input[type="submit"],
 form > div > div > input[type="file"],
 form > div > div > input[type="button"] {
     min-width: 10em;
+    
+}
+
+form > div > div > select {
+    width: 100%; 
 }
 
 form > div > div > textarea {
