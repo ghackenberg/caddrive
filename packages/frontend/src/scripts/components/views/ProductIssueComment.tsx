@@ -369,7 +369,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                         Reopen (requires role)
                                                                     </button>
                                                                 )}
-                                                                <input type='button' value='Start recording (requires role)' className='button fill gray block-when-responsive' />
+                                                                <input type='button' value='Start recording (requires role)' style={{ fontStyle: 'italic' }} className='button fill gray block-when-responsive' />
                                                             </>
                                                         )
                                                     ) : (
@@ -386,7 +386,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                     Reopen (requires login)
                                                                 </button>
                                                             )}
-                                                            <input type='button' value='Start recording (requires login)' className='button fill gray block-when-responsive' />
+                                                            <input type='button' value='Start recording (requires login)' style={{ fontStyle: 'italic' }} className='button fill gray block-when-responsive' />
                                                         </>
                                                     )}
                                                 </div>
