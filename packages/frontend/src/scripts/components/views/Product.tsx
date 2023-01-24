@@ -169,7 +169,7 @@ export const ProductView = () => {
                 )}
             </Link>
         ) },
-        { label: 'Name', class: 'left nowrap', content: product => (
+        { label: 'Name', class: 'left fill', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.name}
             </Link>

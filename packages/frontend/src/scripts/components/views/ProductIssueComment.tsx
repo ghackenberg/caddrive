@@ -81,6 +81,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     const [highlighted, setHighlighted] = useState<Part[]>()
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
+    const [audioUrl, setAudioUrl] = useState<string>('')
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
     const [active, setActive] = useState<string>('left')
@@ -173,7 +174,14 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
         event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
+        setAudioUrl(URL.createObjectURL(data))
         setRecorder(null)
+    }
+
+    async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        setAudio(null)
+        setAudioUrl('')
     }
 
     function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
@@ -247,8 +255,6 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
         { name: 'left', text: 'Thread view', image: LeftIcon },
         { name: 'right', text: 'Model view', image: RightIcon }
     ]
-
-    console.log(issue)
 
     // RETURN
 
@@ -336,8 +342,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                 ) : (
                                                                     audio ? (
                                                                         <>
-                                                                            <audio src={URL.createObjectURL(audio)} controls />
-                                                                            <button onClick={() => setAudio(null)} className='button fill gray block-when-responsive' >
+                                                                            <audio src={audioUrl} controls />
+                                                                            <button onClick={removeAudio} className='button fill gray block-when-responsive' >
                                                                                 Remove recording
                                                                             </button>
                                                                         </>
