@@ -130,6 +130,14 @@ export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: st
     }
     
     override componentWillUnmount() {
+        if (this.select_cache) {
+            this.revertSelect(this.scene)
+            this.select_cache = undefined
+        }
+        if (this.highlight_cache) {
+            this.revertHighlight(this.scene)
+            this.highlight_cache = undefined
+        }
         // Frame
         this.renderer.setAnimationLoop(null)
         // Resize
