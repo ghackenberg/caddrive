@@ -169,13 +169,22 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         }
     }
 
+    let timeout: NodeJS.Timeout
+
     function handleMouseOver(issue: Issue) {
         setHovered(issue)
+        if (timeout !== undefined) {
+            clearTimeout(timeout)
+            timeout = undefined
+        }
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function handleMouseOut(_issue: Issue) {
-        setHovered(undefined)
+        timeout = setTimeout(() => {
+            setHovered(undefined)
+            timeout = undefined
+        }, 0)
     }
 
     async function deleteIssue(issue: Issue) {
@@ -251,9 +260,9 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     return (
         <main className="view extended product-issue">
-            {issues && product && (
+            {product && members && issues && (
                  <Fragment>
-                    {product && product.deleted ? (
+                    {product.deleted ? (
                         <Redirect to='/'/>
                     ) : (
                         <Fragment>

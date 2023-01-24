@@ -141,10 +141,18 @@ export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: st
             // Reset
             this.timeout = undefined
         }
-
         // Remove all active WebGl contexts
         while(this.div.current.childElementCount > 0) {
             this.div.current.removeChild(this.div.current.lastChild)
+        }
+        // Revert material
+        if (this.select_cache) {
+            this.revertSelect(this.scene)
+            this.select_cache = undefined
+        }
+        if (this.highlight_cache) {
+            this.revertHighlight(this.scene)
+            this.highlight_cache = undefined
         }
     }
 
