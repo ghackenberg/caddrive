@@ -207,7 +207,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submitIssue} onReset={goBack}>
-                                        <TextInput label='Label' placeholder='Type label' value={label} change={setLabel}/>
+                                        <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                         <div>
                                             <div>
                                                 <label>Text</label>

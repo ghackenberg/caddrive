@@ -99,8 +99,8 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={submit}>
-                                        <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                        <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                        <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
+                                        <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
                                         <BooleanInput label='Public' value={_public} change={setPublic}/>
                                         {contextUser ? (
                                             (productId == 'new' && contextUser.permissions.includes('create:products')) || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
