@@ -329,6 +329,24 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                     {contextUser ? (
                                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                                             <>
+                                                                {recorder ? (
+                                                                    <button onClick={stopRecordAudio} className='button fill gray block-when-responsive' >
+                                                                        Stop recording
+                                                                    </button>
+                                                                ) : (
+                                                                    audio ? (
+                                                                        <>
+                                                                            <audio src={URL.createObjectURL(audio)} controls />
+                                                                            <button onClick={() => setAudio(null)} className='button fill gray block-when-responsive' >
+                                                                                Remove recording
+                                                                            </button>
+                                                                        </>
+                                                                    ) : (
+                                                                        <button onClick={startRecordAudio} className='button fill gray block-when-responsive' >
+                                                                            Start recording
+                                                                        </button>
+                                                                    )
+                                                                )}
                                                                 <button className='button fill blue' onClick={submitComment}>
                                                                     Save
                                                                 </button>
@@ -341,22 +359,13 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                         Reopen
                                                                     </button>
                                                                 )}
-                                                                {recorder ? (
-                                                                    <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray block-when-responsive' />
-                                                                ) : (
-                                                                    audio ? (
-                                                                        <>
-                                                                            <input type='button' value='Remove recording' onClick={() => setAudio(null)} className='button fill gray block-when-responsive' />
-                                                                            <audio src={URL.createObjectURL(audio)} controls />
-                                                                        </>
-                                                                    ) : (
-                                                                        <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray block-when-responsive' />
-                                                                    )
-                                                                )}
                                                             </>
 
                                                         ) : (
                                                             <>
+                                                                <button className='button fill gray block-when-responsive' style={{ fontStyle: 'italic' }} >
+                                                                    Start recording (requires role)
+                                                                </button>                                                                
                                                                 <button className='button fill blue' style={{ fontStyle: 'italic' }}>
                                                                     Save (requires role)
                                                                 </button>
@@ -369,11 +378,13 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                         Reopen (requires role)
                                                                     </button>
                                                                 )}
-                                                                <input type='button' value='Start recording (requires role)' style={{ fontStyle: 'italic' }} className='button fill gray block-when-responsive' />
                                                             </>
                                                         )
                                                     ) : (
                                                         <>
+                                                            <button className='button fill gray block-when-responsive' style={{ fontStyle: 'italic' }} >
+                                                                    Start recording (requires login)
+                                                                </button>
                                                             <button className='button fill blue' style={{ fontStyle: 'italic' }}>
                                                                 Save (requires login)
                                                             </button>
@@ -386,7 +397,6 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                                                     Reopen (requires login)
                                                                 </button>
                                                             )}
-                                                            <input type='button' value='Start recording (requires login)' style={{ fontStyle: 'italic' }} className='button fill gray block-when-responsive' />
                                                         </>
                                                     )}
                                                 </div>
