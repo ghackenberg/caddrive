@@ -8,7 +8,18 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 
 import { createCamera } from '../../functions/render'
 
-export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: string[], marked?: string[], selected?: string[], mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }> {
+interface Props {
+    model: GLTF
+    highlighted?: string[]
+    marked?: string[]
+    selected?: string[]
+    mouse: boolean
+    vr: boolean
+    click?: (object: Object3D) => void
+    frame?: (image: Blob) => void
+}
+
+export class ModelView3D extends React.Component<Props> {
 
     private div: React.RefObject<HTMLDivElement>
     private timeout: NodeJS.Timeout
@@ -35,7 +46,7 @@ export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: st
 
     private fullscreen = false
 
-    constructor(props: { model: GLTF, mouse: boolean, vr: boolean, click?: (object: Object3D) => void, frame?: (image: Blob) => void }) {
+    constructor(props: Props) {
         super(props)
         // Create
         this.div = React.createRef()
@@ -53,11 +64,11 @@ export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: st
         this.paint = this.paint.bind(this)
     }
 
-    override async componentDidUpdate() {
-        await this.reload()
+    override componentDidUpdate() {
+        this.reload()
     }
     
-    override async componentDidMount() {
+    override componentDidMount() {
         // Ambient light
         this.ambient_light = new AmbientLight(0xffffff, 0.5)
         // Directional light
@@ -126,7 +137,7 @@ export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: st
             this.resize()
         }, 100)
         // Reload
-        await this.reload()
+        this.reload()
     }
     
     override componentWillUnmount() {
@@ -244,7 +255,7 @@ export class ModelView3D extends React.Component<{ model: GLTF, highlighted?: st
         }
     }
 
-    async reload() {
+    reload() {
         if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model.scene) {
             // Cache
             this.highlight_cache = undefined
