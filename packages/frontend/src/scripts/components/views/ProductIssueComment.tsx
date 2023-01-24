@@ -62,6 +62,33 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
         }
     }
 
+    const initialIssueParts: Part[] = []
+    const initialIssueHtml = initialIssue ? createProcessor(initialIssueParts, handleMouseOver, handleMouseOut, handleClick).processSync(initialIssue.text).result : undefined
+
+    const initialCommentsParts: { [id: string]: Part[] } = {}
+    const initialCommentsHtml: { [id: string]: ReactElement } = {}
+    for (const comment of initialComments || []) {
+        const parts: Part[] = []
+        initialCommentsHtml[comment.id] = createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(comment.text).result
+        initialCommentsParts[comment.id] = parts
+    }
+
+    const initialHighlighted: Part[] = []
+    if (initialIssueParts) {
+        for (const part of initialIssueParts) {
+            initialHighlighted.push(part)
+        }
+    }
+    if (initialComments && initialCommentsParts) {
+        for (const comment of initialComments) {
+            if (comment.id in initialCommentsParts) {
+                for (const part of initialCommentsParts[comment.id]) {
+                    initialHighlighted.push(part)
+                }
+            }
+        }
+    }
+
     // STATES
 
     // - Entities
@@ -74,11 +101,11 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     const [text, setText] = useState<string>('')
     const [audio, setAudio] = useState<Blob>()
     // - Computations
-    const [issueHtml, setIssueHtml] = useState<ReactElement>()
-    const [issueParts, setIssueParts] = useState<Part[]>([])
-    const [commentsHtml, setCommentsHtml] = useState<{ [id: string]: ReactElement }>({})
-    const [commentsParts, setCommentsParts] = useState<{ [id: string]: Part[] }>({})
-    const [highlighted, setHighlighted] = useState<Part[]>()
+    const [issueHtml, setIssueHtml] = useState<ReactElement>(initialIssueHtml)
+    const [issueParts, setIssueParts] = useState<Part[]>(initialIssueParts)
+    const [commentsHtml, setCommentsHtml] = useState<{ [id: string]: ReactElement }>(initialCommentsHtml)
+    const [commentsParts, setCommentsParts] = useState<{ [id: string]: Part[] }>(initialCommentsParts)
+    const [highlighted, setHighlighted] = useState<Part[]>(initialHighlighted)
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [audioUrl, setAudioUrl] = useState<string>('')
