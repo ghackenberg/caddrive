@@ -159,7 +159,9 @@ export const ProductView = () => {
                         {latestVersions[product.id] ? (
                             <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"/>
                         ) : (
-                            <img src={EmptyIcon} className='icon medium'/>
+                            <div className="model" >
+                                <img src={EmptyIcon} className='icon medium position center'/>
+                            </div>
                         )}
                     </>
                 ) : (
