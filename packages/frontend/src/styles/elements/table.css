@@ -123,9 +123,18 @@ form table > tbody > tr:hover > td {
 }
 
 @media screen and (max-width: 45em){
+    div table > tbody > tr > td:nth-child(2),
     form table > tbody > tr > td:nth-child(2) {
         white-space: nowrap;
         overflow: hidden;
         max-width: 10em;
     }
 }
+
+/* @media screen and (max-width: 45em) {
+    *.button.block-when-responsive {
+        display: block;
+        width: fit-content;
+        margin-bottom: 0.75em;
+    }
+} */

@@ -8,6 +8,5 @@ main.view.product-issue-comment audio  {
 @media screen and (max-width: 45em){
     main.view.product-issue-comment audio  {
         max-width: 15em;
-       
     }
 }
