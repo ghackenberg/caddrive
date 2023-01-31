@@ -29,6 +29,39 @@ ProductBoard requires the following tools:
 - node@^16
 - npm@^8
 
+## Variables
+
+### **Backend** variables
+
+Copy the variables file:
+
+```
+packages/backend/src/env.example.ts -> packages/backend/src/env.ts
+```
+
+Edit the variables:
+
+```ts
+export const AUTH0_JWKS_URI = 'Your_Auth0_JWKS_URI'
+export const AUTH0_JWKS_KID = 'Your_Auth0_JWKS_KID'
+```
+
+### **Frontend** variables
+
+Copy the variables file:
+
+```
+packages/backend/src/scripts/env.example.ts -> packages/backend/src/scripts/env.ts
+```
+
+Edit the variables:
+
+```ts
+export const AUTH0_DOMAIN = 'Your_Auth0_Domain'
+export const AUTH0_CLIENT_ID = 'Your_Auth0_Client_ID'
+export const AUTH0_AUDIENCE = 'Your_Auth0_API_Audience'
+```
+
 ## Scripts
 
 The software provides the following scripts:
