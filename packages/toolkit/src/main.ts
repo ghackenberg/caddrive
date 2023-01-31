@@ -1,7 +1,7 @@
 import { exit } from 'process'
 
 import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
-import { AppDataSource, CommentRepository, IssueRepository, MemberRepository, MilestoneRepository, ProductRepository, UserRepository, VersionRepository } from 'productboard-database'
+import { Database } from 'productboard-database'
 
 const users: User[] = [
     { id: 'demo-1', name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', pictureId: 'demo-1', deleted: false},
@@ -61,71 +61,71 @@ const comments: Comment[] = [
 ]
 
 async function drop() {
-    await AppDataSource.initialize()
+    await Database.init()
     console.log('Drop: Connected')
     
-    await AppDataSource.dropDatabase()
+    await Database.get().dataSource.dropDatabase()
     console.log('Drop: Database dropped')
 
-    await AppDataSource.destroy()  
+    await Database.get().dataSource.destroy()  
     console.log('Drop: Disconnected')
 }
 
 async function fill() {
-    await AppDataSource.initialize()
+    await Database.init()
     console.log('Fill: Connected')
 
-    if (await UserRepository.count() == 0) {
+    if (await Database.get().userRepository.count() == 0) {
         for (const user of users) {
-            await UserRepository.save(user)
+            await Database.get().userRepository.save(user)
         }
         console.log('Fill: Users filled')
     }
 
-    if (await ProductRepository.count() == 0) {
+    if (await Database.get().productRepository.count() == 0) {
         for (const product of products) {
-            await ProductRepository.save(product)
+            await Database.get().productRepository.save(product)
         }
         console.log('Fill: Products filled')
     }
 
-    if (await MemberRepository.count() == 0) {
+    if (await Database.get().memberRepository.count() == 0) {
         for (const member of members) {
-            await MemberRepository.save(member)
+            await Database.get().memberRepository.save(member)
         }
         console.log('Fill: Members filled')
     }
 
-    if (await VersionRepository.count() == 0) {
+    if (await Database.get().versionRepository.count() == 0) {
         for (const version of versions) {
-            await VersionRepository.save(version)
+            await Database.get().versionRepository.save(version)
         }
         console.log('Fill: Versions filled')
     }
 
-    if (await MilestoneRepository.count() == 0) {
+    if (await Database.get().milestoneRepository.count() == 0) {
         for (const milestone of milestones) {
-            await MilestoneRepository.save(milestone)
+            await Database.get().milestoneRepository.save(milestone)
         }
         console.log('Fill: Milestones filled')
     }
 
-    if (await IssueRepository.count() == 0) {
+    if (await Database.get().issueRepository.count() == 0) {
         for (const issue of issues) {
-            await IssueRepository.save(issue)
+            await Database.get().issueRepository.save(issue)
         }
         console.log('Fill: Issues filled')
     }
 
-    if (await CommentRepository.count() == 0) {
+    if (await Database.get().commentRepository.count() == 0) {
         for (const comment of comments) {
-            await CommentRepository.save(comment)
+            await Database.get().commentRepository.save(comment)
         }
         console.log('Fill: Comments filled')
     }
     console.log('Fill: All Entities filled')
 
-    await AppDataSource.destroy()  
+    await Database.get().dataSource.destroy()  
     console.log('Fill: Disconnected')
 }
 async function main() {

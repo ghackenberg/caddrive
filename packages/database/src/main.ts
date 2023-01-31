@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { DataSource, FindOptionsWhere, Repository } from 'typeorm'
+import { DataSource, DataSourceOptions, FindOptionsWhere, Repository } from 'typeorm'
 
 import { CommentEntity } from './entities/comment'
 import { IssueEntity } from './entities/issue'
@@ -17,27 +17,80 @@ export { ProductEntity } from './entities/product'
 export { UserEntity } from './entities/user'
 export { VersionEntity } from './entities/version'
 
-export const AppDataSource = new DataSource({
-    type: "postgres",
-    host: "localhost",
-    port: 5432,
-    database: "postgres",
-    username: "postgres",
-    password: "test",
-    synchronize: true,
-    logging: false,
-    entities: [UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
-    subscribers: [],
-    migrations: [],
-})
+export class Database {
+    private static instance: Database
 
-export const UserRepository = AppDataSource.getRepository(UserEntity)
-export const ProductRepository = AppDataSource.getRepository(ProductEntity)
-export const MemberRepository = AppDataSource.getRepository(MemberEntity)
-export const VersionRepository = AppDataSource.getRepository(VersionEntity)
-export const IssueRepository = AppDataSource.getRepository(IssueEntity)
-export const CommentRepository = AppDataSource.getRepository(CommentEntity)
-export const MilestoneRepository = AppDataSource.getRepository(MilestoneEntity)
+    static async init() {
+        if (!this.instance) {
+            const type = process.env['TYPEORM_TYPE']
+
+            if (type == 'postgres') {
+                const host = process.env['TYPEORM_HOST']
+                const port = parseInt(process.env['TYPEORM_PORT'])
+                const database = process.env['TYPEORM_DATABASE']
+                const username = process.env['TYPEORM_USERNAME']
+                const password = process.env['TYPEORM_PASSWORD']
+
+                this.instance  = new Database({
+                    type,
+                    host,
+                    port,
+                    database,
+                    username,
+                    password,
+                    synchronize: true,
+                    logging: false,
+                    entities: [UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    subscribers: [],
+                    migrations: []
+                })
+            } else if (type == 'sqlite') {
+                const database = process.env['TYPEORM_DATABASE']
+
+                this.instance  = new Database({
+                    type,
+                    database,
+                    synchronize: true,
+                    logging: false,
+                    entities: [UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    subscribers: [],
+                    migrations: []
+                })
+            } else {
+                throw 'Database type not supported'
+            }
+            await this.instance.dataSource.initialize()
+        } else {
+            throw 'Already initialized'
+        }
+    }
+
+    static get() {
+        return this.instance
+    }
+
+    public readonly dataSource: DataSource
+
+    public readonly userRepository: Repository<UserEntity>
+    public readonly productRepository: Repository<ProductEntity>
+    public readonly memberRepository: Repository<MemberEntity>
+    public readonly versionRepository: Repository<VersionEntity>
+    public readonly issueRepository: Repository<IssueEntity>
+    public readonly commentRepository: Repository<CommentEntity>
+    public readonly milestoneRepository: Repository<MilestoneEntity>
+
+    private constructor(options: DataSourceOptions) {
+        this.dataSource = new DataSource(options)
+
+        this.userRepository = this.dataSource.getRepository(UserEntity)
+        this.productRepository = this.dataSource.getRepository(ProductEntity)
+        this.memberRepository = this.dataSource.getRepository(MemberEntity)
+        this.versionRepository = this.dataSource.getRepository(VersionEntity)
+        this.issueRepository = this.dataSource.getRepository(IssueEntity)
+        this.commentRepository = this.dataSource.getRepository(CommentEntity)
+        this.milestoneRepository = this.dataSource.getRepository(MilestoneEntity)
+    }
+}
 
 async function getEntityOrFail<T, E>(repository: Repository<T>, where: FindOptionsWhere<T>, ErrorType: { new(): E }) {
     try {
@@ -48,23 +101,23 @@ async function getEntityOrFail<T, E>(repository: Repository<T>, where: FindOptio
 }
 
 export async function getUserOrFail<E>(where: FindOptionsWhere<UserEntity>, ErrorType: { new(): E }) {
-    return getEntityOrFail(UserRepository, where, ErrorType)
+    return getEntityOrFail(Database.get().userRepository, where, ErrorType)
 }
 export async function getProductOrFail<E>(where: FindOptionsWhere<ProductEntity>, ErrorType: { new(): E }) {
-    return getEntityOrFail(ProductRepository, where, ErrorType)
+    return getEntityOrFail(Database.get().productRepository, where, ErrorType)
 }
 export async function getMemberOrFail<E>(where: FindOptionsWhere<MemberEntity>, ErrorType: { new(): E }) {
-    return getEntityOrFail(MemberRepository, where, ErrorType)
+    return getEntityOrFail(Database.get().memberRepository, where, ErrorType)
 }
 export async function getVersionOrFail<E>(where: FindOptionsWhere<VersionEntity>, ErrorType: { new(): E }) {
-    return getEntityOrFail(VersionRepository, where, ErrorType)
+    return getEntityOrFail(Database.get().versionRepository, where, ErrorType)
 }
 export async function getMilestoneOrFail<E>(where: FindOptionsWhere<MilestoneEntity>, ErrorType: { new(): E }) {
-    return getEntityOrFail(MilestoneRepository, where, ErrorType)
+    return getEntityOrFail(Database.get().milestoneRepository, where, ErrorType)
 }
 export async function getIssueOrFail<E>(where: FindOptionsWhere<IssueEntity>, ErrorType: { new(): E }) {
-    return getEntityOrFail(IssueRepository, where, ErrorType)
+    return getEntityOrFail(Database.get().issueRepository, where, ErrorType)
 }
 export async function getCommentOrFail<E>(where: FindOptionsWhere<CommentEntity>, ErrorType: { new(): E }) {
-    return getEntityOrFail(CommentRepository, where, ErrorType)
+    return getEntityOrFail(Database.get().commentRepository, where, ErrorType)
 }

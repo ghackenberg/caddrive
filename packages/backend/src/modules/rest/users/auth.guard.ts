@@ -6,7 +6,7 @@ import { JwtPayload, verify } from 'jsonwebtoken'
 import * as jwks from 'jwks-rsa'
 
 import { User } from 'productboard-common'
-import { UserRepository } from 'productboard-database'
+import { Database } from 'productboard-database'
 
 import { AUTH0_JWKS_KID, AUTH0_JWKS_URI } from '../../../env'
 
@@ -37,14 +37,14 @@ export class AuthGuard implements CanActivate {
             const id = sub.split('|')[1]
             try {
                 // Find existing user data in database
-                request.user = { ...await UserRepository.findOneByOrFail({ id }), permissions }
+                request.user = { ...await Database.get().userRepository.findOneByOrFail({ id }), permissions }
             } catch (e) {
                 // Get user data from Auth0
                 const userinfo = await axios.get(endpoint, { headers: { authorization }})
                 // Extract user name and email
                 const { name, email } = userinfo.data
                 // Insert user data in database
-                request.user = { ...await UserRepository.save({ id, email, name }), permissions }
+                request.user = { ...await Database.get().userRepository.save({ id, email, name }), permissions }
             }
         }
         

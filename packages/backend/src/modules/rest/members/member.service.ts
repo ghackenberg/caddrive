@@ -5,7 +5,7 @@ import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
-import { MemberEntity, MemberRepository, ProductRepository, UserRepository } from 'productboard-database'
+import { Database, MemberEntity } from 'productboard-database'
 
 @Injectable()
 export class MemberService implements MemberREST {
@@ -19,36 +19,36 @@ export class MemberService implements MemberREST {
         else if (productId)
             where = { productId, deleted: false }
         const result: Member[] = []
-        for (const member of await MemberRepository.findBy(where))
+        for (const member of await Database.get().memberRepository.findBy(where))
             result.push(this.convert(member))
         return result
     }
 
     async addMember(data: MemberAddData): Promise<Member> {
-        const product = await ProductRepository.findOneByOrFail({ id: data.productId })
-        const user = await UserRepository.findOneByOrFail({ id: data.userId })
-        const member = await MemberRepository.save({ id: shortid(), deleted: false, product, user, ...data })
+        const product = await Database.get().productRepository.findOneByOrFail({ id: data.productId })
+        const user = await Database.get().userRepository.findOneByOrFail({ id: data.userId })
+        const member = await Database.get().memberRepository.save({ id: shortid(), deleted: false, product, user, ...data })
         await this.client.emit(`/api/v1/members/${member.id}/create`, this.convert(member))
         return this.convert(member)
     }
 
     async getMember(id: string): Promise<Member> {
-       const member = await MemberRepository.findOneByOrFail({ id })
+       const member = await Database.get().memberRepository.findOneByOrFail({ id })
         return this.convert(member)
     }
 
     async updateMember(id: string, _data: MemberUpdateData): Promise<Member> {
-        const member = await MemberRepository.findOneByOrFail({ id })
+        const member = await Database.get().memberRepository.findOneByOrFail({ id })
         member.role = _data.role
-        await MemberRepository.save(member)
+        await Database.get().memberRepository.save(member)
         await this.client.emit(`/api/v1/members/${member.id}/update`, this.convert(member))
         return this.convert(member)
     }
     
     async deleteMember(id: string): Promise<Member> {
-        const member = await MemberRepository.findOneByOrFail({ id })
+        const member = await Database.get().memberRepository.findOneByOrFail({ id })
         member.deleted = true
-        await MemberRepository.save(member)
+        await Database.get().memberRepository.save(member)
         await this.client.emit(`/api/v1/members/${member.id}/delete`, this.convert(member))
         return this.convert(member)
     }

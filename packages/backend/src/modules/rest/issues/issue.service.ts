@@ -7,7 +7,7 @@ import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
-import { CommentRepository, IssueEntity, IssueRepository } from 'productboard-database'
+import { Database, IssueEntity } from 'productboard-database'
 
 @Injectable()
 export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
@@ -25,7 +25,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         else if (productId)
             where = { productId, deleted: false }
         const result: Issue[] = []
-        for (const issue of await IssueRepository.findBy(where))
+        for (const issue of await Database.get().issueRepository.findBy(where))
             result.push(this.convert(issue))
         return result
     }
@@ -33,31 +33,31 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         let issue: IssueEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            issue = await IssueRepository.save({ id: shortid(), deleted: false, audioId: shortid(), ...data })
+            issue = await Database.get().issueRepository.save({ id: shortid(), deleted: false, audioId: shortid(), ...data })
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
             fs.writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         } else {
-            issue = await IssueRepository.save({ id: shortid(), deleted: false, ...data })
+            issue = await Database.get().issueRepository.save({ id: shortid(), deleted: false, ...data })
         }
         await this.client.emit(`/api/v1/issues/${issue.id}/create`, this.convert(issue))
         return this.convert(issue)
     }
 
     async getIssue(id: string): Promise<Issue> {
-        const issue = await IssueRepository.findOneByOrFail({ id })
+        const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         return this.convert(issue)
     }
 
     async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
-        const issue = await IssueRepository.findOneByOrFail({ id })
+        const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         issue.assigneeIds = data.assigneeIds
         issue.label = data.label
         issue.milestoneId =  data.milestoneId
         issue.state = data.state
         issue.text = data.text
-        await IssueRepository.save(issue)
+        await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
@@ -69,10 +69,10 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
 
     async deleteIssue(id: string): Promise<Issue> {
-        const issue = await IssueRepository.findOneByOrFail({ id })
-        await CommentRepository.update({ issueId: issue.id }, { deleted: true })
+        const issue = await Database.get().issueRepository.findOneByOrFail({ id })
+        await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: true })
         issue.deleted = true
-        await IssueRepository.save(issue)
+        await Database.get().issueRepository.save(issue)
         await this.client.emit(`/api/v1/issues/${issue.id}/delete`, this.convert(issue))
         return this.convert(issue)
     }

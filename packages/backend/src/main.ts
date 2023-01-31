@@ -2,13 +2,13 @@ import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
-import { AppDataSource } from 'productboard-database'
+import { Database } from 'productboard-database'
 
 import { MQTTModule } from './modules/mqtt.module'
 import { RESTModule } from './modules/rest.module'
 
 async function bootstrap() {
-    await AppDataSource.initialize()
+    await Database.init()
 
     const rest = await NestFactory.create(RESTModule)
 

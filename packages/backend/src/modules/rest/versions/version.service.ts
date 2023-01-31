@@ -8,7 +8,7 @@ import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
-import { VersionEntity, VersionRepository } from 'productboard-database'
+import { Database, VersionEntity } from 'productboard-database'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
@@ -20,13 +20,13 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         if (productId)
             where = { productId, deleted: false }
         const result: Version[] = []
-        for (const version of await VersionRepository.findBy(where))
+        for (const version of await Database.get().versionRepository.findBy(where))
             result.push(this.convert(version))
         return result
     }
  
     async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
-        const version = await VersionRepository.save({ id: shortid(), deleted: false, ...data })
+        const version = await Database.get().versionRepository.save({ id: shortid(), deleted: false, ...data })
         if (files && files.model && files.model.length == 1 && files.model[0].originalname.endsWith('.glb')) {
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
@@ -44,12 +44,12 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     }
 
     async getVersion(id: string): Promise<Version> {
-        const version = await VersionRepository.findOneByOrFail({ id })
+        const version = await Database.get().versionRepository.findOneByOrFail({ id })
         return this.convert(version)
     }
 
     async updateVersion(id: string, data: VersionUpdateData, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
-        const version = await VersionRepository.findOneByOrFail({ id })
+        const version = await Database.get().versionRepository.findOneByOrFail({ id })
         version.major = data.major
         version.minor = data.minor
         version.patch = data.patch
@@ -66,15 +66,15 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
             }
             fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
         }
-        await VersionRepository.save(version)
+        await Database.get().versionRepository.save(version)
         await this.client.emit(`/api/v1/versions/${version.id}/update`, this.convert(version))
         return this.convert(version)
     }
 
     async deleteVersion(id: string): Promise<Version> {
-        const version = await VersionRepository.findOneByOrFail({ id })
+        const version = await Database.get().versionRepository.findOneByOrFail({ id })
         version.deleted = true
-        await VersionRepository.save(version)
+        await Database.get().versionRepository.save(version)
         await this.client.emit(`/api/v1/versions/${version.id}/delete`, this.convert(version))
         return this.convert(version)
     }

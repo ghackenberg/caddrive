@@ -34,8 +34,8 @@
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "ts-node src/main",
-        "devel": "ts-node-dev src/main",
+        "start": "cross-env TYPEORM_TYPE=postgres TYPEORM_HOST=localhost TYPEORM_PORT=5432 TYPEORM_DATABASE=postgres TYPEORM_USERNAME=postgres TYPEORM_PASSWORD=postgres ts-node src/main",
+        "devel": "cross-env TYPEORM_TYPE=sqlite TYPEORM_DATABASE=database.sqlite ts-node-dev src/main",
         "lint": "eslint src",
         "loc": "sloc src"
     },
@@ -51,6 +51,7 @@
         "@types/node": "^18.11.9",
         "@types/shortid": "^0.0.29",
         "axios": "^1.2.2",
+        "cross-env": "^7.0.3",
         "hash.js": "^1.1.7",
         "jsonwebtoken": "^9.0.0",
         "jwks-rsa": "^3.0.0",

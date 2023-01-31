@@ -7,7 +7,7 @@ import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
-import { IssueRepository, MemberRepository, MilestoneRepository, ProductEntity, ProductRepository, VersionRepository } from 'productboard-database'
+import { Database, ProductEntity } from 'productboard-database'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
@@ -25,41 +25,41 @@ export class ProductService implements ProductREST {
         else
             where = { public: true, deleted: false }
         const result: Product[] = []
-        for (const product of await ProductRepository.find({ where }))
+        for (const product of await Database.get().productRepository.find({ where }))
             result.push(this.convert(product))
         return result
     }
     
     async addProduct(data: ProductAddData) {
-        const product = await ProductRepository.save({ id: shortid(), deleted: false, ...data })
-        await MemberRepository.save({ id: shortid(), productId: product.id, userId: product.userId, role: 'manager' })
+        const product = await Database.get().productRepository.save({ id: shortid(), deleted: false, ...data })
+        await Database.get().memberRepository.save({ id: shortid(), productId: product.id, userId: product.userId, role: 'manager' })
         await this.client.emit(`/api/v1/products/${product.id}/create`, this.convert(product))
         return this.convert(product)
     }
 
     async getProduct(id: string): Promise<Product> {
-        const product = await ProductRepository.findOneByOrFail({ id })
+        const product = await Database.get().productRepository.findOneByOrFail({ id })
         return this.convert(product)
     }
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
-        const product = await ProductRepository.findOneByOrFail({ id })
+        const product = await Database.get().productRepository.findOneByOrFail({ id })
         product.name = data.name
         product.description = data.description
         product.public = data.public
-        await ProductRepository.save(product)
+        await Database.get().productRepository.save(product)
         await this.client.emit(`/api/v1/products/${product.id}/update`, this.convert(product))
         return this.convert(product)
     }
 
     async deleteProduct(id: string): Promise<Product> {
-        const product = await ProductRepository.findOneByOrFail({ id })
-        await MemberRepository.update({ productId: product.id }, { deleted: true })
-        await VersionRepository.update({ productId: product.id }, { deleted: true })
-        await MilestoneRepository.update({ productId: product.id }, { deleted: true })
-        await IssueRepository.update({ productId: product.id }, { deleted: true })
+        const product = await Database.get().productRepository.findOneByOrFail({ id })
+        await Database.get().memberRepository.update({ productId: product.id }, { deleted: true })
+        await Database.get().versionRepository.update({ productId: product.id }, { deleted: true })
+        await Database.get().milestoneRepository.update({ productId: product.id }, { deleted: true })
+        await Database.get().issueRepository.update({ productId: product.id }, { deleted: true })
         product.deleted = true
-        await ProductRepository.save(product)
+        await Database.get().productRepository.save(product)
         await this.client.emit(`/api/v1/products/${product.id}/delete`, this.convert(product))
         return this.convert(product)
     }
