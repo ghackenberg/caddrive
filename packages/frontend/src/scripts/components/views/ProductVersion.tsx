@@ -111,7 +111,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     return (
         <main className="view extended product-version">
-            {product && versions && (
+            {product && members && versions && (
                 <Fragment>
                     {product && product.deleted ? (
                         <Redirect to='/'/>
