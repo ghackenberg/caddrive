@@ -22,14 +22,14 @@ export class Database {
 
     static async init() {
         if (!this.instance) {
-            const type = process.env['TYPEORM_TYPE']
+            const type = process.env['TYPEORM_TYPE'] || 'sqlite'
 
             if (type == 'postgres') {
-                const host = process.env['TYPEORM_HOST']
-                const port = parseInt(process.env['TYPEORM_PORT'])
-                const database = process.env['TYPEORM_DATABASE']
-                const username = process.env['TYPEORM_USERNAME']
-                const password = process.env['TYPEORM_PASSWORD']
+                const host = process.env['TYPEORM_HOST'] || 'localhost'
+                const port = parseInt(process.env['TYPEORM_PORT'] || '5432')
+                const database = process.env['TYPEORM_DATABASE'] || 'postgres'
+                const username = process.env['TYPEORM_USERNAME'] || 'postgres'
+                const password = process.env['TYPEORM_PASSWORD'] || 'test'
 
                 this.instance  = new Database({
                     type,
@@ -45,7 +45,7 @@ export class Database {
                     migrations: []
                 })
             } else if (type == 'sqlite') {
-                const database = process.env['TYPEORM_DATABASE']
+                const database = process.env['TYPEORM_DATABASE'] || '../../database.sqlite'
 
                 this.instance  = new Database({
                     type,

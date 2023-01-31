@@ -34,8 +34,8 @@
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "cross-env TYPEORM_TYPE=postgres TYPEORM_HOST=localhost TYPEORM_PORT=5432 TYPEORM_DATABASE=postgres TYPEORM_USERNAME=postgres TYPEORM_PASSWORD=test ts-node src/main",
-        "devel": "cross-env TYPEORM_TYPE=sqlite TYPEORM_DATABASE=database.sqlite ts-node-dev src/main",
+        "start": "cross-env TYPEORM_TYPE=postgres ts-node src/main",
+        "devel": "cross-env TYPEORM_TYPE=sqlite ts-node-dev src/main",
         "lint": "eslint src",
         "loc": "sloc src"
     },
