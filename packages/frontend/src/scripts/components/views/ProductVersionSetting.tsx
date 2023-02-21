@@ -70,7 +70,8 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
 
     const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
     const [model, setModel] = useState<GLTF>(null)
-    const [image, setImage] = useState<Blob>(null) 
+    const [blob, setBlob] = useState<Blob>(null) 
+    const [dataUrl, setDataUrl] = useState<string>(null) 
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
@@ -86,13 +87,24 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     useEffect(() => { version && setPatch(version.patch) }, [version])
     useEffect(() => { version && setDescription(version.description) }, [version])
 
-    useEffect(() => { setArrayBuffer(null)}, [file])
-    useEffect(() => { setModel(null) }, [arrayBuffer])
-    useEffect(() => { setImage(null) }, [model])
-
-    useEffect(() => { file && file.arrayBuffer().then(setArrayBuffer) }, [file])
+    useEffect(() => {
+        if (file) {
+            setArrayBuffer(null)
+            setModel(null)
+            setBlob(null)
+            setDataUrl(null)
+            file.arrayBuffer().then(setArrayBuffer)
+        }
+    }, [file])
     useEffect(() => { arrayBuffer && new GLTFLoader().parse(arrayBuffer, undefined, setModel) }, [arrayBuffer])
-    useEffect(() => { model && render(model.scene.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(setImage) }, [model])
+    useEffect(() => {
+        if (model) {
+            render(model.scene.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
+                setBlob(result.blob)
+                setDataUrl(result.dataUrl)
+            })
+        }
+    }, [model])
 
     // FUNCTIONS
 
@@ -107,10 +119,10 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     async function onSubmit(event: FormEvent) {
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, { model: file, image })
+            const version = await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, { model: file, image: blob })
             setContextVersion(version)
         } else {
-            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image })
+            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image: blob })
             setContextVersion(version)
         }
         goBack()
@@ -164,9 +176,20 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         {versionId == 'new' && (
                                             <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required={true}/>
                                         )}
+                                        <GenericInput label='Preview'>
+                                            {dataUrl ? (
+                                                <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em'}}/>
+                                            ) : (
+                                                file ? (
+                                                    <em>Rendering preview...</em>
+                                                ) : (
+                                                    <em>Please select file</em>
+                                                )
+                                            )}
+                                        </GenericInput>
                                         {contextUser ? (
                                             members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                                image ? (
+                                                blob ? (
                                                     <SubmitInput value='Save'/>
                                                 ) : (
                                                     <SubmitInput value='Save (requires file)' disabled={true}/>

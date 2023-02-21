@@ -24,9 +24,9 @@ const directional_light = new DirectionalLight(0xffffff, 1)
 // WebGL renderer
 const webgl_renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true })
 
-export function render(model: Group, width: number, height: number): Promise<Blob> {
+export function render(model: Group, width: number, height: number): Promise<{ blob: Blob, dataUrl: string }> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return new Promise<Blob>((resolve, _reject) => {
+    return new Promise<{ blob: Blob, dataUrl: string }>((resolve, _reject) => {
         // TODO handle error and remove eslint comment
 
         // Scene
@@ -42,6 +42,10 @@ export function render(model: Group, width: number, height: number): Promise<Blo
         webgl_renderer.setPixelRatio(window.devicePixelRatio)
         webgl_renderer.setSize(width, height)
         webgl_renderer.render(scene, perspective_camera)
-        webgl_renderer.domElement.toBlob(resolve)
+
+        // Convert to data URL
+        const dataUrl = webgl_renderer.domElement.toDataURL()
+        // Convert to blob
+        webgl_renderer.domElement.toBlob(blob => resolve({ blob, dataUrl }))
     })
 }
