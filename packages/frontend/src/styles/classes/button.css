@@ -11,6 +11,10 @@
     line-height: inherit;
 }
 
+form *.button {
+    display: block;
+}
+
 *.button.fill {
     padding-top: calc(0.75rem - 0.25em);
     padding-left: 0.75em;

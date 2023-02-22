@@ -178,7 +178,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         )}
                                         <GenericInput label='Preview'>
                                             {dataUrl ? (
-                                                <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em'}}/>
+                                                <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>
                                             ) : (
                                                 file ? (
                                                     <em>Rendering preview...</em>
