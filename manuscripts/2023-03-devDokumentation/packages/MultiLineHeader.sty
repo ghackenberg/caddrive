@@ -1,0 +1,199 @@
+\ProvidesPackage{MultiLineHeader}[]
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%% LATEX-package for multiline header
+%%
+%% Description:
+%% This package generates a multiline header automatically.
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%
+\def\Ersteller{Dominik Schönberger}
+\def\PackageName{Multiline header}
+%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%======================================================================
+%%            Release
+%%----------------------------------------------------------------------
+\def\CurrentVersion{\textit{V1.0}}
+%%======================================================================
+%%            Variables
+%%----------------------------------------------------------------------
+%% Declarierung:
+%%
+% Length inner header
+\newlength{\LengthIHeader}%
+% Length center header
+\newlength{\LengthCHeader}%
+% Length outer header
+\newlength{\LengthOHeader}%
+% Length current header
+\newlength{\LengthHeader}%
+% Gap between inner/center/outer header
+\newlength{\HeaderGap}%
+\newlength{\HalfHeaderGap}%
+% Maximal length of the header
+\newlength{\LengthHeaderMax}%
+% Maximal length for the marks
+\newlength{\LengthHeaderpartMax}%
+% Temporal length
+\newlength{\Tmp}%
+% Zero length
+\newlength{\Zero}%
+%%----------------------------------------------------------------------
+%% Define defaultvalues:
+%%
+\HeaderGap=15pt%
+\HalfHeaderGap=0.5\HeaderGap%
+\LengthHeaderMax = \textwidth%
+\LengthHeaderpartMax = 0.33\LengthHeaderMax%
+\Zero=0.0pt%
+%%======================================================================
+%%            Commands
+%%----------------------------------------------------------------------
+% Test commands
+
+%%----------------------------------------------------------------------
+% Inputs:
+\newcommand{\@tmpIHeader}{}%
+\newcommand{\tmpIHeader}[1]%
+{%
+	\renewcommand{\@tmpIHeader}{#1}%
+}
+\newcommand{\@tmpCHeader}{}%
+\newcommand{\tmpCHeader}[1]%
+{%
+	\renewcommand{\@tmpCHeader}{#1}%
+}
+\newcommand{\@tmpOHeader}{}%
+\newcommand{\tmpOHeader}[1]%
+{%
+	\renewcommand{\@tmpOHeader}{#1}%
+}
+%%----------------------------------------------------------------------
+% Returns:
+\newcommand{\@multiIHeader}{not defined}%
+\newcommand{\multiIHeader}[1]%
+{%
+	\renewcommand{\@multiIHeader}{#1}%
+}
+\newcommand{\@multiCHeader}{not defined}%
+\newcommand{\multiCHeader}[1]%
+{%
+	\renewcommand{\@multiCHeader}{#1}%
+}
+\newcommand{\@multiOHeader}{not defined}%
+\newcommand{\multiOHeader}[1]%
+{%
+	\renewcommand{\@multiOHeader}{#1}%
+}
+%%----------------------------------------------------------------------
+\newcommand{\setHeaderGap}[1]%
+{%
+	\setlength\HeaderGap{#1}%
+	\setlength\HalfHeaderGap{0.5\HeaderGap}%
+}
+%%----------------------------------------------------------------------
+%% Calculate current lengths:
+\newcommand{\calcHeaderLengths}{%
+	\settowidth{\LengthIHeader}{\@tmpIHeader}%
+	\settowidth{\LengthCHeader}{\@tmpCHeader}%
+	\settowidth{\LengthOHeader}{\@tmpOHeader}%
+	\ifdim\LengthCHeader>\Zero\relax%
+		\setlength{\LengthHeader}{\LengthIHeader}%
+		\advance\LengthHeader by \LengthCHeader%
+		\advance\LengthHeader by \LengthOHeader%
+		\advance\LengthHeader by 2\HeaderGap%
+		\setlength{\LengthHeaderMax}{\textwidth}%
+		\advance\LengthHeaderMax by -2\HeaderGap%
+		\setlength{\LengthHeaderpartMax}{\LengthHeaderMax}%
+		\divide\LengthHeaderpartMax by 3%
+	\else%
+		\setlength{\LengthHeader}{\LengthIHeader}%
+		\advance\LengthHeader by \LengthOHeader%
+		\advance\LengthHeader by \HeaderGap%
+		\setlength{\LengthHeaderMax}{\textwidth}%
+		\advance\LengthHeaderMax by -\HeaderGap%
+		\setlength{\LengthHeaderpartMax}{\LengthHeaderMax}%
+		\divide\LengthHeaderpartMax by 2%
+	\fi%
+	\Tmp=0pt%
+}
+%%----------------------------------------------------------------------
+%% Calculation inner header
+\newcommand{\multilineIHeader}[3]%
+{%
+	\tmpIHeader{#1}%
+	\tmpCHeader{#2}%
+	\tmpOHeader{#3}%
+	\multiLine%
+	\@multiIHeader%
+}
+%%----------------------------------------------------------------------
+%% Calculation center header
+\newcommand{\multilineCHeader}[3]%
+{%
+	\tmpIHeader{#1}%
+	\tmpCHeader{#2}%
+	\tmpOHeader{#3}%
+	\multiLine%
+	\@multiCHeader%
+}
+%%----------------------------------------------------------------------
+%% Calculation outer header
+\newcommand{\multilineOHeader}[3]%
+{%
+	\tmpIHeader{#1}%
+	\tmpCHeader{#2}%
+	\tmpOHeader{#3}%
+	\multiLine%
+	\@multiOHeader%
+}
+%%----------------------------------------------------------------------
+%% Calculation header
+\newcommand{\multiLine}%
+{%
+	\calcHeaderLengths%
+	\ifdim\LengthCHeader>\Zero\relax%
+		\ifdim\LengthCHeader>\LengthHeaderpartMax\relax%
+			\multiIHeader{\parbox[b][0cm][b]{\LengthHeaderpartMax}{\@tmpIHeader}}%
+			\multiCHeader{\parbox[b][0cm][b]{\LengthHeaderpartMax}{\@tmpCHeader}}%
+			\multiOHeader{\parbox[b][0cm][b]{\LengthHeaderpartMax}{\raggedleft\@tmpOHeader}}%
+		\else%
+			\setlength{\Tmp}{\LengthHeaderMax}%
+			\advance\Tmp by -\LengthCHeader%
+			\divide\Tmp by 2%
+			\multiIHeader{\parbox[b][0cm][b]{\Tmp}{\@tmpIHeader}}%
+			\multiCHeader{\parbox[b][0cm][b]{\LengthCHeader}{\centering\@tmpCHeader}}%
+			\multiOHeader{\parbox[b][0cm][b]{\Tmp}{\raggedleft\@tmpOHeader}}%				
+		\fi%
+	\else%
+		\multiCHeader{\@tmpCHeader}%
+		\ifdim\LengthHeader>\textwidth\relax%
+			\ifdim\LengthOHeader>\LengthIHeader\relax%
+				\ifdim\LengthIHeader>\LengthHeaderpartMax\relax%
+					\multiIHeader{\parbox[b][0cm][b]{\LengthHeaderpartMax}{\@tmpIHeader}}%
+					\multiOHeader{\parbox[b][0cm][b]{\LengthHeaderpartMax}{\raggedleft\@tmpOHeader}}%
+				\else%
+					\setlength{\Tmp}{\LengthHeaderMax}%
+					\advance\Tmp by -\LengthIHeader%
+					\multiIHeader{\parbox[b][0cm][b]{\LengthIHeader}{\@tmpIHeader}}%
+					\multiOHeader{\parbox[b][0cm][b]{\Tmp}{\raggedleft\@tmpOHeader}}%
+				\fi%
+			\else%
+				\ifdim\LengthOHeader>\LengthHeaderpartMax\relax%
+					\multiIHeader{\parbox[b][0cm][b]{\LengthHeaderpartMax}{\@tmpIHeader}}%
+					\multiOHeader{\parbox[b][0cm][b]{\LengthHeaderpartMax}{\raggedleft\@tmpOHeader}}%
+				\else%
+					\setlength{\Tmp}{\LengthHeaderMax}%
+					\advance\Tmp by -\LengthOHeader%
+					\multiIHeader{\parbox[b][0cm][b]{\Tmp}{\@tmpIHeader}}%
+					\multiOHeader{\parbox[b][0cm][b]{\LengthOHeader}{\raggedleft\@tmpOHeader}}%
+				\fi%
+			\fi%
+		\else%
+			\multiIHeader{\@tmpIHeader}%
+			\multiOHeader{\@tmpOHeader}%
+		\fi%
+	\fi%
+}
+%%======================================================================
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

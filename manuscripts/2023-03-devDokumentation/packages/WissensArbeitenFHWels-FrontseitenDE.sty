@@ -1,0 +1,150 @@
+\ProvidesPackage{WissensArbeitenFHWels-FrontseitenDE}[]
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%% LATEX-PACKAGE für die Frontseiten von wissenschaftlichen Arbeiten
+%% der FH Wels
+
+%% Fachhochschule Wels
+%% Stelzhammerstraße 23
+%% 4600 Wels
+
+%% Beschreibung:
+%% Diese Packet stellt die Titelseite und die Eidesstattliche Erklärung
+%% für wissenschaftliche Arbeiten an der FH Wels zur Verfügung.
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%
+\def\Ersteller{Dominik Schönberger, 51820994}
+\def\PackageName{Frontseiten(DE) für wissenschaftliche Arbeiten an der FH Wels}
+%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%======================================================================
+%%            Version
+%%----------------------------------------------------------------------
+\def\CurrentVersionFrontpages{\textit{V2.0}}
+%%======================================================================
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%            FRONTSEITEN
+%%======================================================================
+%%            Titelseite
+%%----------------------------------------------------------------------
+\newcommand{\@datitel}{
+\begin{titlepage}
+	\vspace*{-17mm}
+	
+	\begin{center}
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=9.5cm]{Grafik/FH.png}
+		\end{figure}
+		
+		\vspace{6mm}
+	  
+	  	{\textsc{\Large \@artStgng}}
+		\vskip 2mm
+	  	{\Large \@stgng}
+		\vskip 0mm
+		\rule{15cm}{0.3mm}
+	
+		\vspace{50mm}
+		Als {\textsc \@typdoc} eingereicht
+		\vskip 2mm
+		
+		zur Erlangung des akademischen Grades
+		\vskip 6mm
+		
+		\@akaGrad 
+		\vskip 6mm
+		
+		von
+		\vskip 6mm
+		
+	  	{\textbf{\large \@author}}
+	 	\vskip 6mm
+	 	
+	  	{\@damnt\ \@dajhr}
+	  
+	  	\vskip 10mm
+	  	\rule{15cm}{0.3mm}
+	  	\vskip 5mm
+	  	Betreuung der Arbeit durch
+	  	\vskip 0mm
+		\@betreu
+		
+		\vspace{-16.3cm}
+		\doublespacing
+		\begin{minipage}[c][4cm][c]{14.5cm}
+			\centering
+			{\textbf{\LARGE \@title}}
+		\end{minipage}	
+		
+	\end{center}
+\end{titlepage}
+}
+%%======================================================================
+%%            Eidesstattliche Erklärung
+%%----------------------------------------------------------------------
+\newcommand{\@erklaerung}
+{%
+	\renewcommand*\chapterheadstartvskip{\vspace*{3.5\topskip}}
+	\chapter{Eidesstattliche Erklärung}
+	\begin{textblock*}{15cm}(3.5cm,1.25cm)
+		\begin{flushright}
+			\includegraphics[width=6.25cm]{Grafik/FH.png}
+		\end{flushright}
+		\rule{15cm}{0.1mm}
+		\vspace{-2.2cm}
+		\begin{flushright}
+			{\large \textsf{FH-OÖ-Campus Wels}}
+		\end{flushright}
+	\end{textblock*}
+	
+	\vspace{5cm}
+
+	\begin{minipage}[t]{0.33\textwidth}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.66\textwidth}
+		\noindent
+		Ich erkläre eidesstattlich, dass ich die vorliegende Arbeit selbstständig und ohne fremde Hilfe verfasst, andere als die angegebenen Quellen nicht benutzt und die den benutzten Quellen entnommenen Stellen als solche kenntlich gemacht habe.
+		\vskip 2mm
+		Die Arbeit wurde bisher in gleicher oder ähnlicher Form keiner anderen Prüfungsbehörde vorgelegt und auch nicht veröffentlicht.
+		\vskip 2mm
+		Die vorliegende Arbeit ist mit dem elektronisch übermittelten Textdokument identisch.		
+
+		\vspace{25mm}
+		\begin{minipage}[t]{7.5cm}
+			\centering \dotfill \\
+		\end{minipage}
+		\vskip 0mm
+		\@author
+		\vskip 0mm
+		\@stdort, {\@damnt\ \@dajhr}
+		% Unterschrift anzeigen:
+		\ifthenelse{\equal{\@showSig}{Yes}}
+			{%
+				\vskip \@posSigY
+				\hskip \@posSigX
+				\includegraphics[scale=\@scaleSig]{Grafik/Signature.png}%
+			}%
+			{}
+	\end{minipage}
+}
+%%======================================================================
+%%            Struktur der Frontseiten
+%%----------------------------------------------------------------------
+\newcommand{\@datitelseite}
+{
+	\@datitel
+}
+\newcommand{\titelseite}
+{
+	\@datitelseite
+}
+\newcommand{\@daerklaerung}
+{
+	\@erklaerung
+}
+\newcommand{\eidesErklaerung}
+{
+	\@daerklaerung
+}
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

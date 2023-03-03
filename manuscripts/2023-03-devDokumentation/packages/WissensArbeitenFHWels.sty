@@ -1,0 +1,606 @@
+\ProvidesPackage{WissensArbeitenFHWels}[]
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%% LATEX-VORLAGE für  die Erstellung von wissenschaftlichen Arbeiten
+%%
+%% Fachhochschule Wels
+%% Stelzhammerstraße 23
+%% 4600 Wels
+%%
+%% Beschreibung:
+%% Diese Paket legt die Einstellungen für ein Latex-Dokument für
+%% die Erstellung von wissenschaftlichen Arbeiten fest.
+%% Des weiteren schreibt es auch die Metadaten für das erstellte PDF.
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%
+\def\Ersteller{Dominik Schönberger, 51820994}
+\def\PackageName{Style-Package für wissenschaftliche Arbeiten an der FH-Wels}
+%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%======================================================================
+%%            Version
+%%----------------------------------------------------------------------
+\def\CurrentVersionStyle{\textit{V2.0}}
+%%======================================================================
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%            USEPACKAGES
+%%======================================================================
+%% Hier sind alle Usepackages angeführt!
+%% (Außer es war programmiertechnisch anders notwendig)
+%%
+%% Sprache:
+\usepackage[T1]{fontenc}						% T1-Fonts zur besseren Silbentrennung bei Umlauten etc.
+\usepackage[utf8]{inputenc}						% Sonderzeichen, Umlaute
+\usepackage{ae}									% wichtig, vermeidet Pixelfonts in PDFs
+%%
+%% Sonderzeichen
+\usepackage{textcomp}			% Sonderzeichen(Copyright, Latex-Logo,...)
+\usepackage{eurosym}			% €-Symbol
+%%
+%% Layout
+\usepackage{setspace}			% Zeilenabstand
+\usepackage{verbatim}			% Umgebung, die Latexbefehle ignoriert
+\usepackage{xcolor}				% Farbumgebung
+\usepackage{placeins}			% der Befehl \FloatBarrier kann verwendet werden
+\usepackage{url}				% zum Darstellen von URL's
+\urlstyle{sf}					% Schriftart URL's: kursiv
+\usepackage{xspace}				% dynamisches Leerzeichen
+\usepackage{scrlayer-scrpage}	% Paket zum Ändern der Kopf-/Fußzeile
+\usepackage{./packages/MultiLineHeader}	% Paket für mehrzeilige Kopfzeilen
+\usepackage{enumitem}			% Erlaubt Kontrolle über die Listen-Umgebungen																   
+\usepackage{relsize}			% Erlaubt die Schriftgröße beliebig zu wählen
+%%
+%% Mathematik
+\usepackage{amssymb}			% diverse Sonderzeichen
+\usepackage{pifont}				% weitere Sonderzeichen
+\usepackage{textgreek}			% griechische Symbole
+\usepackage{amsmath}			% Mathematik-Umgebung
+\usepackage{exscale}			% Skaliert Mathe-Modus Ausgaben in allen Umgebungen richtig
+\usepackage{amsfonts}			% Zeichen fuer die reellen, komplexen ... Zahlen (AMS Blackboard)
+\usepackage{siunitx}			% Package für SI-Einheiten
+\usepackage{bm}					% Package für Formeln in fetter Schrift
+\usepackage{leftidx}			% Erleichtert das Einfügen von Indizes links vom Zeichen
+%%
+%% Tabellen und Grafiken
+\usepackage{array}				% Zusatzpaket für Tabellen
+\usepackage{longtable}			% Zusatzpaket für Tabellen über mehrere Seiten																	 
+\usepackage{booktabs}			% Zusatzpaket für Tabellen
+\usepackage{colortbl}			% erlaubt farbige Zellen
+\usepackage{multicol}			% erlaubt verbundene Spalten
+\usepackage{multirow}			% erlaubt verbundene Zeilen
+\usepackage{arydshln}			% erlaubt strichlierte Rahmenlinien
+\usepackage{graphicx}			% Grafiken einfügen
+\usepackage[absolute]{textpos}	% ermöglicht das frei platzieren von Grafiken
+\usepackage{rotating}			% ermöglicht das Rotieren von Grafiken und Textfeldern
+\usepackage{caption}			% Erlaubt Beschriftungen
+\usepackage{subcaption}			% Erlaubt Sub-Beschriftungen
+\usepackage{overpic}			% Umgebung zum Zeichnen in Bildern
+\usepackage{wrapfig}			% Ermöglicht Abbildungen im Fließtext
+%%
+%% Zitieren
+% Defined at a later time. (see "BibStyle"-command)
+%%
+%% sonstige Pakete:
+\usepackage{todonotes}			% ToDo-Notes können eingefügt werden
+\usepackage{ifthen}				% if-then-else Befehl
+\usepackage{nomencl}			% Abkürzungsverzeichnis
+\usepackage{listings}			% Listings-Paket (für Sourc-Codes)
+\usepackage{blindtext}			% Blindtext
+%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%            DOKUMENTDATEN
+%%======================================================================
+%%            Variablen
+%%----------------------------------------------------------------------
+%% Defaultwert festlegen:
+\newcommand{\@stgng}{?? Studiengang ??}
+\newcommand{\@artStgng}{?? Art Studiengang ??}
+\newcommand{\@stdort}{?? Studienort ??}
+\newcommand{\@betreu}{?? Betreuer ??}
+\newcommand{\@damnt}{?? Monat ??}
+\newcommand{\@dajhr}{?? Jahr ??}	
+\newcommand{\@erkldat}{?? Datum der Erklärung ??}
+\newcommand{\@typdoc}{?? Typ des Dokuments ??}
+\newcommand{\@stichw}{?? Stichwoerter fuer das Dokument??}
+\newcommand{\@akaGrad}{?? Akademischer Grad ??}
+\newcommand{\@colLin}{Yes}
+\newcommand{\@showSig}{No}
+\newlength{\@posSigY}
+\newlength{\@posSigX}
+\newcommand{\@scaleSig}{1}
+\newcommand{\@docTitle}{}
+\newcommand{\@style}{FHWels}
+\newcommand{\@bibstyle}{}
+%%----------------------------------------------------------------------
+%% Studiengang:
+\newcommand{\studiengang}[1]
+{
+	\renewcommand{\@stgng}{#1}
+}
+%%----------------------------------------------------------------------
+%% Art Studiengang:
+\newcommand{\artStudiengang}[1]
+{
+	\renewcommand{\@artStgng}{#1}
+}
+%%----------------------------------------------------------------------
+%% Studienort:
+\newcommand{\studienort}[1]
+{
+	\renewcommand{\@stdort}{#1}
+}
+%%----------------------------------------------------------------------
+%% Betreuer:
+\newcommand{\betreuer}[1]
+{
+	\renewcommand{\@betreu}{#1}
+}
+%%----------------------------------------------------------------------
+%% Abgabemonat:
+\newcommand{\abgabemonat}[1]
+{
+	\renewcommand{\@damnt}{#1}
+}
+%%----------------------------------------------------------------------
+%% Abgabejahr: 
+\newcommand{\abgabejahr}[1]
+{
+	\renewcommand{\@dajhr}{#1}
+}
+%%----------------------------------------------------------------------
+%% Datum der eidesstattlichen Erklärung:
+\newcommand{\erklaerungdatum}[1]
+{
+	\renewcommand{\@erkldat}{#1}
+}
+%%----------------------------------------------------------------------
+%% Stichwörter für das Dokument:
+\newcommand{\stichwoerter}[1]
+{
+	\renewcommand{\@stichw}{#1}	
+}
+%%----------------------------------------------------------------------
+%% Typ der Arbeit:
+\newcommand{\typDokument}[1]
+{
+	\renewcommand{\@typdoc}{#1}	
+}
+%%----------------------------------------------------------------------
+%% Akademischer Grad:
+\newcommand{\akademGrad}[1]
+{
+	\renewcommand{\@akaGrad}{#1}
+}
+%%----------------------------------------------------------------------
+%% Farbige Links:
+%% (Verweise auf Bilder/Tabellen/Literatur und URL's)
+\newcommand{\ColoredLinks}[1]
+{
+	\renewcommand{\@colLin}{#1}
+}
+%%----------------------------------------------------------------------
+%% Unterschrift einfügen:
+\newcommand{\ShowSignature}[4]
+{
+	\setlength{\@posSigX}{#1}
+	\setlength{\@posSigY}{-#2}
+	\renewcommand{\@scaleSig}{#3}
+	\renewcommand{\@showSig}{#4}
+}
+%%----------------------------------------------------------------------
+%% Style der FH-Wels definieren:
+\newcommand{\Style}[1]
+{
+	\renewcommand{\@style}{#1}
+	\docTitle				% Der gesetzte Titel wird im Dokument verwendbar
+	\setHeader				% Kopf- & Fußzeile festlegen
+	\setSectioning			% Abstände vor Kapitel festlegen
+	\writeMetadatenPDF		% Metadaten ins PDF schreiben
+	\setLinkColor			% Setzt die eingestellt Farbe der Links
+}
+%%----------------------------------------------------------------------
+%% Bibliography-Style der FH-Wels definieren:
+\newcommand{\BibStyle}[1]%
+{%
+	\renewcommand{\@bibstyle}{#1}%
+	\setBibliography%
+}
+%%----------------------------------------------------------------------
+%% Titel im Dokument verfügbar machen:
+\newcommand{\docTitle}%
+{%
+	\renewcommand{\@docTitle}{\@title}%
+}
+%%======================================================================
+%%            Befehle
+%%----------------------------------------------------------------------
+%% Bachslash:
+\newcommand{\bs}{\char '134}
+%%
+%% Tabulator im Inhaltsverzeichnis
+\newcommand{\TabContent}[1]
+{
+	\RedeclareSectionCommands[tocnumwidth=#1]{section,subsection,subsubsection,paragraph}	
+}
+%%----------------------------------------------------------------------
+%% Messbox zur Kontrolle:
+\newcommand{\Messbox}[2]
+{% Parameters: #1=Breite, #2=Hoehe
+	\setlength{\unitlength}{1.0mm}%
+	\begin{picture}(#1,#2)%
+	\linethickness{0.05mm}%
+	\put(0,0)%
+	{%
+		\dashbox{0.2}(#1,#2)%
+		{%
+			\parbox{#1mm}%
+			{%
+				\centering%
+				\footnotesize% 
+				{\textbf MESSBOX / MEASUREMENT BOX}\\% 
+				Breite / Width $ = #1 {\textrm\ mm}$\\%
+				H\"ohe / Heigth $ = #2 {\textrm\ mm}$%
+			}
+		}
+	}
+	\end{picture}
+}
+%%----------------------------------------------------------------------
+%% Trennstrich
+\newcommand{\trennstrich}
+{%
+	\nopagebreak[4]%
+ 	\vskip 1.5ex%
+	\nopagebreak[4]%
+ 	\noindent%
+	\makebox[\textwidth]{\rule{4cm}{0.4pt}}%
+	\vskip 2.5ex%
+}
+%%----------------------------------------------------------------------
+% Metadaten fürs Dokument neu schreiben:
+\newcommand{\writeMetadatenPDF}
+{
+	\hypersetup
+	{
+		pdfauthor={\@author},		% Autor der Arbeit
+		pdftitle={\@typdoc},			% Typ der Arbeit
+		pdfsubject={\@title},		% Titel der Arbeit
+		pdfkeywords={\@stichw},		% Stichwörter für das Dokument
+	}
+}
+%%----------------------------------------------------------------------
+% Link-Farbe setzen
+\newcommand{\setLinkColor}
+{
+	\ifthenelse{\equal{\@colLin}{No}}%
+	{%
+		\hypersetup{colorlinks=false}
+	}%
+	% else
+	{%
+		\hypersetup{colorlinks=true}
+	}
+}
+%%----------------------------------------------------------------------
+% Tabellen:
+%% Zeilenhöhe ändern:
+\renewcommand{\arraystretch}{1.4}
+
+%% Spaltenabstand ändern:
+\setlength{\tabcolsep}{1mm}
+
+%% Zusätzliche Spaltentypen:
+\newcolumntype{M}[1]{>{\centering}m{#1}}
+%%======================================================================
+%%            Abkürzungen
+%%----------------------------------------------------------------------
+%% Deutsch:
+\newcommand{\bzw}{bzw.\@\xspace}
+\newcommand{\bzgl}{bzgl.\@\xspace}
+\newcommand{\ca}{ca.\@\xspace}
+\newcommand{\dah}{d.\thinspace{}h.\@\xspace}
+\newcommand{\Dah}{D.\thinspace{}h.\@\xspace}
+\newcommand{\ds}{d.\thinspace{}sind\@\xspace}
+\newcommand{\evtl}{evtl.\@\xspace}
+\newcommand{\ua}{u.\thinspace{}a.\@\xspace}
+\newcommand{\Ua}{U.\thinspace{}a.\@\xspace}
+\newcommand{\usw}{usw.\@\xspace}
+\newcommand{\va}{vor allem\@\xspace}
+\newcommand{\vgl}{vgl.\@\xspace}
+\newcommand{\zB}{z.\thinspace{}B.\@\xspace}
+\newcommand{\ZB}{Zum Beispiel\xspace}
+\newcommand{\sa}{s.\ auch\@\xspace}
+\newcommand{\ia}{i.\thinspace{}Allg.\@\xspace}
+\newcommand{\su}{s.\ unten\@\xspace}
+\newcommand{\uvm}{u.\thinspace{}v.\thinspace{}m.\@\xspace}
+\newcommand{\uva}{u.\thinspace{}v.\thinspace{}a.\@\xspace}
+\newcommand{\uae}{u.\thinspace{}Ä.\@\xspace}
+\newcommand{\mn}{min.\@\xspace}
+\newcommand{\mx}{max.\@\xspace}
+\newcommand{\etc}{etc.\@\xspace}
+\newcommand{\ggf}{ggf.\@\xspace}
+\newcommand{\oA}{o.\thinspace{}A.\@\xspace}
+%%
+%%----------------------------------------------------------------------
+%% Englisch:
+\newcommand{\eg}{e.g.\@\xspace}
+\newcommand{\ie}{i.\thinspace{}e.\@\xspace}
+\newcommand{\cf}{cf.\@\xspace}
+\newcommand{\Cf}{Cf.\@\xspace}
+%%
+%%----------------------------------------------------------------------
+%% Allgemein:
+\newcommand{\MeWi}{{\normalfont{\textsc{MeWi}}}}
+%%
+%%======================================================================
+%%            PDF-Metadaten
+%%----------------------------------------------------------------------
+\usepackage[plainpages=false,pdfpagelabels,pdftex]{hyperref}
+%%
+% Metainformationen:
+\hypersetup{
+	pdfauthor={\@author},		% Autor der Arbeit
+	pdftitle={\@typdoc},			% Typ der Arbeit
+	pdfsubject={\@title},		% Titel der Arbeit
+	pdfkeywords={\@stichw},		% Stichwörter für das Dokument
+	pdfproducer={MiKTeX},		% Mit welchem Programm wurde das PDF erstellt
+	bookmarksopen=true,			% Anzeige sämtlicher Lesezeichen
+	linkcolor=blue,				% Für Hyperinks in der gleichen Seite
+	pagecolor=blue,				% Für Hyperlinks auf andere Seiten
+	urlcolor=blue,				% Für Hyperlinks auf URL's
+	colorlinks=true,
+	linkbordercolor=0 0 0,
+	urlbordercolor=0 0 0,
+	pdfborder=0 0 0,  			% Keine Box um die Links!
+}
+%%======================================================================
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%%            DOKUMENTEINSTELLUNGEN
+%%======================================================================
+%%            Allgemeine Layouteinstellungen
+%%----------------------------------------------------------------------
+\frenchspacing     	  	% erzeugt normale Abstände zwischen Sätzen
+\pagestyle{headings}  	% Normale Kopfzeilen
+\onehalfspacing			% 1,5-facher Zeilenabstand
+%%
+%%======================================================================
+%%            Seitenränder
+%%----------------------------------------------------------------------
+\usepackage[left=3.50cm, right=2.50cm, top=2.5cm, bottom=3.5cm]{geometry}
+\setlength{\topmargin}{-0.5cm}
+\setlength{\footskip}{\baselinestretch\baselineskip}
+\parskip1.5ex plus0.5ex minus0.5ex	% flexibler Absatzabstand
+\raggedbottom
+%%
+%%======================================================================
+%%            Kopf- & Fußzeile
+%%----------------------------------------------------------------------
+\KOMAoptions{%
+	headsepline = true,%
+	autooneside = false,%
+	automark%
+}%
+\pagestyle{scrheadings}%
+\renewcommand{\chaptermark}[1]%
+{%
+	\ifnum\thechapter>0\relax
+		\markboth{\chaptermarkformat #1}{}
+	\else
+		\markboth{#1}{}
+	\fi
+}
+%
+\newcommand{\setHeader}%
+{%
+	\ifthenelse{\equal{\@style}{FHWels}}%
+	{%
+		\renewcommand{\chapterpagestyle}{scrheadings}%
+		\ihead[]{\multilineIHeader{\leftmark}{}{}}%
+		\chead[]{\multilineCHeader{\leftmark}{}{}}%
+		\ohead[]{\multilineOHeader{\leftmark}{}{}}%
+		\ifoot[]{}%
+		\cfoot[]{}%
+		\ofoot[\pagemark]{\pagemark}%
+	}
+	{%
+		\renewcommand{\chapterpagestyle}{plain}%
+		\ihead[]{\multilineIHeader{\rightmark}{}{\leftmark}}%
+		\chead[]{\multilineCHeader{\rightmark}{}{\leftmark}}%
+		\ohead[]{\multilineOHeader{\rightmark}{}{\leftmark}}%
+		\ifoot[]{}%
+		\cfoot[]{}%
+		\ofoot[\pagemark]{\pagemark}%
+	}
+}%
+%%
+%%======================================================================
+%%            Literaturverzeichnis
+%%----------------------------------------------------------------------
+\newcommand{\setBibliography}%
+{%
+	\ifthenelse{\equal{\@bibstyle}{FHWelsNumericBrackets}}%
+	{%
+		\PassOptionsToPackage{style=./packages/Bibliography/FHWelsISO690Numeric}{biblatex}%
+	}{}%
+
+	\ifthenelse{\equal{\@bibstyle}{FHWelsAlphabeticBrackets}}%
+	{%
+		\PassOptionsToPackage{style=./packages/Bibliography/FHWelsISO690Alphabetic}{biblatex}%
+	}{}%
+	\usepackage[backend=biber,maxcitenames=3,sorting=nyt]{biblatex}%
+	\let\oldmultinamedelim\multinamedelim
+	\let\oldfinalnamedelim\finalnamedelim
+	\renewcommand*{\multinamedelim}{/}
+	\renewcommand*{\finalnamedelim}{/}
+	\AtBeginBibliography{%
+		\renewcommand*{\multinamedelim}{\oldmultinamedelim}%
+		\renewcommand*{\finalnamedelim}{\oldfinalnamedelim}%
+	}
+}
+%%======================================================================
+%%            Gliederung
+%%----------------------------------------------------------------------
+\setcounter{secnumdepth}{4}	% Tiefe der Gliederungsnummerierung
+\setcounter{tocdepth}{4}	% Tiefe der Gliederung im Inhaltsverzeichnis
+\newcommand{\setSectioning}%
+{%
+	\RedeclareSectionCommand[%
+		indent=0pt,%
+		beforeskip=-3.5ex \@plus -1ex \@minus -.2ex,%
+		afterskip=2.3ex \@plus.2ex,%
+		tocindent=1.5em]%
+		{section}%
+	\RedeclareSectionCommand[%
+		indent=0pt,%
+		beforeskip=-3.5ex \@plus -1ex \@minus -.2ex,%
+		afterskip=0.1ex \@plus .2ex,%
+		tocindent=1.5em]%
+		{subsection}%
+	\RedeclareSectionCommand[%
+		tocindent=1.5em,%
+		beforeskip=-3.25ex\@plus -1ex \@minus -.2ex,%
+		afterskip=0.1ex \@plus .2ex,%
+		tocindent=1.5em]%
+		{subsubsection}%
+	\RedeclareSectionCommand[%
+		indent=0pt,%
+		beforeskip=-3.25ex\@plus -1ex \@minus -.2ex,%
+		afterskip=0.1ex \@plus .2ex,%
+		tocindent=1.5em]%
+		{paragraph}%
+	\RedeclareSectionCommand[%
+		indent=0pt,%
+		beforeskip=-3.25ex\@plus -1ex \@minus -.2ex,%
+		afterskip=0.1ex \@plus .2ex,%
+		tocindent=1.5em]%
+		{subparagraph}%
+		
+	\ifthenelse{\equal{\@style}{FHWels}}%
+	{%
+		\renewcommand*\chapterheadstartvskip{\vspace*{-0.8\topskip}}
+	}%
+	% else
+	{%
+	}		
+}
+
+%%	
+\newcommand{\ssc}[1]{{\normalfont{\textsc{#1}}}}
+%% mit "\scc" sind Kapitälichen in Überschrift möglich
+%%
+%%======================================================================
+%%            Einstellungen automatischer Seitenwechsel
+%%----------------------------------------------------------------------
+\renewcommand{\floatpagefraction}{.75} 	% vorher: .5
+\renewcommand{\textfraction}{.1}		% vorher: .2
+\renewcommand{\topfraction}{.8}			% vorher: .7
+\renewcommand{\bottomfraction}{.5}		% vorher: .3
+\setcounter{topnumber}{3}			 	% vorher: 2
+\setcounter{bottomnumber}{2}			% vorher: 1
+\setcounter{totalnumber}{5}				% vorher: 3
+%%
+%%======================================================================
+%%            Abkürzungsverzeichnis
+%%----------------------------------------------------------------------
+\let\abbrev\nomenclature
+\renewcommand{\nomname}{Abkürzungsverzeichnis}
+\setlength{\nomlabelwidth}{20mm}
+\renewcommand{\nomlabel}[1]{#1 \dotfill}
+\setlength{\nomitemsep}{-\parsep}
+\makenomenclature
+%%
+%%======================================================================
+%%            Source-Codes
+%%----------------------------------------------------------------------
+%%
+%% Allgemein:
+\definecolor{listinggray}{gray}{0.9}
+\definecolor{lbcolor}{rgb}{1,1,1}
+\renewcommand{\lstlistingname}{Programm}% Listing -> Algorithm
+\renewcommand{\lstlistlistingname}{Programmverzeichnis}
+%%
+%% Definition des Styles für die "FHWels"-Listings:
+\lstdefinestyle{FHWelsStyle}{
+	basicstyle=\scriptsize{},
+	backgroundcolor=\color{white},			% Hintergrundfarbe
+	frame=single, rulecolor=\color{black},	% Rahmenstyle und Farbe	
+	captionpos=t,							% Listingüberschrift
+	numbers=left, numberstyle=\tiny,		% Zeilennummerierung
+	tabsize=3,								% Anzahl der Zeichen für Tabulator
+	showtabs=false,							% legt fest, ob die Tabs angezeigt werden
+	showspaces=false,						% legt fest, ob die Leerzeichen angezeigt werden
+	showstringspaces=false,					% Leerzeichen im String werden nicht markiert 
+	upquote=true,							% legt den Style der Anführungszeichen "'` fest
+	aboveskip={0.5\baselineskip},			% legt den Abstand vor der Listing fest
+	belowskip={0.5\baselineskip},			% legt den Abstand nach der Listing fest
+	columns=fixed,							% jedes Zeichen benötigt den selben Platz
+	extendedchars=true,						% Umlaute können verwendet werden
+	breaklines=true,						% automatischer Zeilenumbruch
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	breakautoindent = true,						% umbrochene Zeile einrücken
+	identifierstyle=\ttfamily,					% Format von der "main"-Funktion
+	keywordstyle=\color[rgb]{0,0,1},			% Format von "void, while, char,..."
+	commentstyle=\color[rgb]{0,0.7,0},			% Format von Kommentaren
+	stringstyle=\color[rgb]{1,0.44,0},			% Format von Strings
+	directivestyle=\color[rgb]{0.9,0,0}			% Format von "#define"
+}
+%%
+% Default-Style auswählen:
+\lstset{language=c,style=FHWelsStyle}
+%%
+%%======================================================================
+%%            Aufzählung & Nummerierung
+%%----------------------------------------------------------------------
+%% Aufzählung:
+\renewcommand{\labelitemi}{\color{red}\textbf{--}}
+\renewcommand{\labelitemii}{\color{red}>}
+\renewcommand{\labelitemiii}{$\circ$}
+\renewcommand{\labelitemiv}{{\tiny$\blacksquare$}}
+%\renewcommand{\labelitemiv}{$\bullet$}
+%%
+%% Nummerierung:
+\renewcommand{\theenumi}{\arabic{enumi}}
+\renewcommand{\labelenumi}{\theenumi.}
+\renewcommand{\theenumii}{\alph{enumii}}
+\renewcommand{\labelenumii}{\theenumii.}
+\renewcommand{\theenumiii}{\roman{enumiii}}
+\renewcommand{\labelenumiii}{\theenumiii.}
+\renewcommand{\theenumiv}{\arabic{enumiv}}
+\renewcommand{\labelenumiv}{\theenumiv.}
+%%
+%%======================================================================
+%%            Caption-Formatierung
+%%----------------------------------------------------------------------
+% Captions mit Fontgroesse "small" und Abstand vom Seitenrand
+\captionsetup{font=small,labelfont=bf}	% Fontgröße "small" und "fett"
+\setlength{\captionmargin}{5mm}			% Abstand zum Seitenradn
+\setlength{\abovecaptionskip}{10pt}		% Abstand vor der Caption
+\setlength{\belowcaptionskip}{5pt}		% Abstand nach der Caption
+%%
+%%======================================================================
+%%            Mathematik
+%%----------------------------------------------------------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Q}{\mathbb{Q}}
+
+%% Einstellung für Einheiten
+\sisetup{
+	per-mode = symbol
+}
+
+%% Sonderzeichen
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+%%
+%%======================================================================
+%%           Fußnotenabstand
+%%----------------------------------------------------------------------
+\deffootnote[]{1.5em}{1em}{\textsuperscript{\thefootnotemark}\enskip}
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+

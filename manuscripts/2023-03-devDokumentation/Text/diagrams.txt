@@ -1,0 +1,36 @@
+flowchart TB
+    subgraph main.ts
+       rest_Object
+    end
+
+    subgraph rest.module.ts
+   rest_Object-->RESTModule
+    end
+
+    subgraph comment.module.ts
+    RESTModule-->CommentModule
+    end
+
+    subgraph issue.module.ts
+    RESTModule -->IssueModule    
+    end
+
+    subgraph version.module.ts
+    RESTModule-->VersionModule
+    end
+
+    subgraph product.module.ts
+    RESTModule-->ProductModule
+    end
+
+    subgraph member.module.ts
+    RESTModule-->MemberModule
+    end
+
+    subgraph milestone.module.ts
+    RESTModule-->MilestoneModule
+    end
+
+    subgraph user.module.ts
+    RESTModule-->UserModule
+    end

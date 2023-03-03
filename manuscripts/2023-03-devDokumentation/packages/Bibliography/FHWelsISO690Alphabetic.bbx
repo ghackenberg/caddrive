@@ -1,0 +1,21 @@
+\ProvidesFile{FHWelsISO690Alphabetic.bbx}[2018/04/15 v0.0.2 biblatex bibliography style]
+
+\RequireBibliographyStyle{./packages/Bibliography/FHWelsISO690}
+\ExecuteBibliographyOptions{labelalpha,sorting=nty}
+
+\DeclareNameAlias{author}{default}
+\DeclareNameAlias{editor}{default}
+\DeclareNameAlias{translator}{default}
+
+\defbibenvironment{bibliography}
+  {\list
+     {}%
+     {\setlength{\leftmargin}{0pt}%
+      \setlength{\itemindent}{0pt}%
+      \setlength{\itemsep}{1.5\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}%
+      \renewcommand*{\makelabel}[1]{##1\hss}}
+  {\endlist}
+  {\item}
+  
+\endinput

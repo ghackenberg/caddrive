@@ -1,0 +1,42 @@
+\ProvidesFile{FHWelsISO690Numeric.bbx}[2018/04/15 v0.0.2 biblatex bibliography style]
+
+\RequireBibliographyStyle{./packages/Bibliography/FHWelsISO690}
+\ExecuteBibliographyOptions{labelnumber,sorting=none}
+
+\DeclareFieldFormat{labelnumberwidth}{\mkbibbrackets{#1}}
+\@ifpackagelater{biblatex}{2016/03/27}
+  {\newcommand\MethodFormat{%
+     \printtext[labelnumberwidth]{%
+        \printfield{labelprefix}%
+        \printfield{labelnumber}}}}%
+  {\newcommand\MethodFormat{%
+     \printtext[labelnumberwidth]{%
+        \printfield{prefixnumber}%
+        \printfield{labelnumber}}}}%
+
+% Copy-pasted from 'numeric.bbx'
+\defbibenvironment{bibliography}
+  {\list%
+     {\MethodFormat}%
+     {\setlength{\labelwidth}{\labelnumberwidth}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \addtolength{\leftmargin}{\labelsep}%
+      \setlength{\itemsep}{1.5\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}%
+      \renewcommand*{\makelabel}[1]{\hss##1}
+      }%
+  {\endlist}%
+  {\item}%
+
+\defbibenvironment{bibliographyAlpha}
+	{\list%
+		{}%
+		{\setlength{\leftmargin}{0pt}%
+			\setlength{\itemindent}{0pt}%
+			\setlength{\itemsep}{1.5\bibitemsep}%
+			\setlength{\parsep}{\bibparsep}}%
+	\renewcommand*{\makelabel}[1]{##1\hss}}
+{\endlist}
+{\item}
+\endinput
