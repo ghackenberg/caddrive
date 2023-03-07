@@ -1,0 +1,67 @@
+%% Version
+\def\CurrentVersionMain{\textit{V2.0}}
+
+%LTeX: language=de-DE 
+
+%% Dokumentenklasse und Präambel
+\documentclass[12pt,a4paper,oneside,bibliography=totocnumbered,toc=listofnumbered]{scrbook}
+\usepackage[english,ngerman,naustrian]{babel}
+\usepackage{./packages/WissensArbeitenFHWels}
+\usepackage{./packages/WissensArbeitenFHWels-FrontseitenDE} 
+\usepackage[autostyle=true,german=quotes]{csquotes} 
+\usepackage{float} 
+\usepackage{microtype}
+
+\usepackage{listings}
+
+
+
+%% Einstellungen
+\ColoredLinks{No}	
+\Style{FHWels}				
+\BibStyle{FHWelsNumericBrackets}	
+\addbibresource{Bibliography.bib}	
+\graphicspath{{./Grafik/}}
+\TabContent{1.4cm}	
+\setlength {\marginparwidth }{2cm}
+
+%% Beginn der ARBEIT
+\begin{document}
+    \selectlanguage{naustrian}		
+
+    %% Titelseite
+    \clearpage
+    \frontmatter								
+    \pagenumbering{Roman}	
+    \input{Text/Titelseite}
+
+    %% Inhaltsverzeichnis
+    \clearpage
+    \tableofcontents
+
+    %% Einleitung
+    \clearpage
+    \mainmatter
+    \input{Text/Einleitung}
+
+    %% Hauptteil			
+    \input{Text/Architektur}
+    \input{Text/Datenmodell}
+    \input{Text/Gateway}
+    \input{Text/Frontend}
+    \input{Text/Backend}
+    \input{Text/Datenbank}
+
+    %% Zusammenfassung
+    %\clearpage
+    \input{Text/Zusammenfassung}
+
+    %% Abbildungsverzeichnis
+    \clearpage
+    \input{Text/Abbildungsverzeichnis}
+
+    
+
+
+%% Ende der ARBEIT
+\end{document}
