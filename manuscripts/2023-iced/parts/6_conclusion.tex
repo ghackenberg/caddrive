@@ -1,35 +1,9 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-The topic of product development and especially requirement engineering is very well covered by literature.
-Most articles deal with theoretical concepts on how product development can be improved.
-According to our literature research there are many excellent concepts but only few software tools that solve the problems practically.
-Thus, we have developed a software tool that covers aspects such as version, issue and milestone management to provide an integrated platform for agile CAD.
-Exports from 3D CAD models can be uploaded and managed with our version management.
-With built-in tools such as issues, comments and milestones, agile product design can be performed together with the customer.
-We have tested and critically evaluated our software.
-Thereby a few questions came up which we discuss in the following.
-
-\subsection{Model deltas}
-
-Existing platforms for software development like GitHub provide the ability to automatically detect changes that have been made to source code.
-This ability helps the software engineers to quickly understand what others have been doing and how that might affect their own work.
-It remains an open question how such techniques can be translated effectively to our tooling, especially when you don't want to share every detail with the customer.
-
-\subsection{Product variants}
-
-Then, at the moment we only deal with versions of the same product, but we do not really cover the case of variant design.
-If you want to cover the case of variant design properly, you probably need to introduce concepts like product platforms, modularization, and configuration.
-Platforms typically represent design elements which are common to all variants, while modules and their configuration represent the individual selections that have been made by the customers.
-
-\subsection{Simulation results}
-
-Furthermore, it would be interesting to include simulation results into the platform for verification and validation purposes.
-For example, product designers can use simulation results to prove certain dynamic product characteristics to the customer.
-At the same time, customers can use the simulation results to validate their requirement formulations and rephrase them in case the original formulations are incorrect or misleading.
-
-\subsection{Test automations}
-
-Finally, it would be great to have the possibility to automate certain test procedures when new CAD model revisions are uploaded.
-Consequently, the quality of the product design could be monitored more seamlessly and design flaws could be detected earlier.
-If these test automations are connected to design tasks, then the resolution of design tasks could be bound to the condition that the test automations are passed successfully.
+In this article, we summarized our progress on translating the ideas of GitHub to the domain of product development.
+Therefore, we first developed an integrated data model for requirement (or design tasks), project schedules, and CAD model revisions.
+Most importantly, we realized the integration between requirements and CAD model revisions with Markdown syntax, which proved suitable.
+Furthermore, we developed an interface model, through which product versions can be uploaded as well as issues and milestones can be managed.
+The interface model is tightly aligned with GitHub, but we made substantial changes in the revision graph and the issue view to incorporate interactive 3D models.
+In the next step, we plan -- besides others -- to conduct user tests and extend the requirement management capabilities.

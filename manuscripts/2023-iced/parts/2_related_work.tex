@@ -1,30 +1,27 @@
 \section{Related work}
 \label{sec:differentiation}
 
-We used Google Scholar\footnote{\url{https://scholar.google.com/}} to find related literature with the following keywords in various combinations:
+Subsequently, we provide an overview of the state-of-the-art on integrated project management, requirements management, and product design both from an \textbf{academic viewpoint} in Section~\ref{sec:differentiation:academic} and from an \textbf{industrial viewpoint} in Section~\ref{sec:differentiation:commercial}.
 
-\begin{itemize}
-    \item (\textit{computer-aided} OR \textit{mechanical} OR \textit{industrial} OR \textit{engineering} OR \textit{product}) AND \textit{design}
-    \item \textit{requirements} AND (\textit{engineering} OR \textit{management} OR \textit{analysis} OR \textit{specification})
-    \item \textit{agile} AND (\textit{approach} OR \textit{method} OR \textit{methodology} OR \textit{process} OR \textit{project})
-    \item \textit{product} AND (\textit{lifecycle} OR \textit{data}) AND \textit{management}
-\end{itemize}
+\subsection{Academic viewpoint}
+\label{sec:differentiation:academic}
 
-Subsequently, we discuss the most relevant search results, which have been selected by title and abstract.
+The academic viewpoint comprises, besides others, \textbf{industry studies} showing the importance of data integration (see Section~\ref{sec:differentiation:academic:industry}), \textbf{abstract frameworks} for data integration (see \ref{sec:differentiation:academic:abstract}), as well as \textbf{concrete tools} for data integration in \textbf{product development} (see Section~\ref{sec:differentiation:academic:concrete-product}) and \textbf{concrete tools} for data integration in \textbf{other domains} (see Section~\ref{sec:differentiation:academic:concrete-software}).
 
-\subsection{Industry studies}
+\subsubsection{Industry studies}
+\label{sec:differentiation:academic:industry}
 
 \cite{Jassawalla} study the importance of interdisciplinary collaboration in product development including customers and suppliers.
 Furthermore, the authors propose a collaboration framework based on principles such as shared responsibility as well as synergy between disciplines.
 Also, the authors stress success factors such as trust between project partners and support from top management.
 
-\cite{sanchez2003flexibility} also show the importance of collaboration in interdisciplinary teams for product development.
+\cite{sanchez2003flexibility} also show the importance of collaboration in interdisciplinary product development teams.
 Therefore, the authors study practices in the automotive industry, while distinguishing between size of company and complexity of product.
-A main outcome is that strong collaboration within project teams results in better time-to-market and lower cost independent of company size and product complexity.
+A main outcome is that strong collaboration results in better time-to-market and lower cost independent of company size and product complexity.
 
 \cite{buyukozkan2004survey} highlight the importance of concurrent engineering and data integration in the agile manufacturing era.
 The authors summarize existing approaches, while distinguishing between collaboration, modeling and analysis, design synthesis and optimization, knowledge-based tools.
-Finally, they conclude with the observation, that the tools must be improved with respect to integration and agility.
+Finally, they conclude that the tools must be improved with respect to integration and agility.
 
 \cite{DURMUSOGLU2011321} provide empirical evidence that software tools improve the effectiveness of product development projects.
 They use three measures to assess effectiveness of these projects: innovativeness, product quality, and market performance.
@@ -34,7 +31,8 @@ The study suggests that the support for agile practices such as early stakeholde
 The authors find that in general software tools help to share information and knowledge across team members, which applies specifically to virtual teams.
 However, the authors also suggest that general purpose tools might be easier to adopt by project teams than specialized solutions.
 
-\subsection{Abstract frameworks}
+\subsubsection{Abstract frameworks}
+\label{sec:differentiation:academic:abstract}
 
 \cite{Kauppinen2005} proposes a framework for integrating requirements engineering effectively into organizations.
 Besides a high-level process model the framework considers the cultural change as a major factor in improving organizational practices.
@@ -42,7 +40,7 @@ While the author shows how requirements engineering practices can be improved ef
 
 \cite{BAXTER2008585} stress the importance of reusing knowledge generated in product development projects.
 Furthermore, the authors propose a framework for integrating requirements engineering with engineering design based on process, task, and product knowledge.
-However, the framework remains rather high-level and still does not provide information about a concrete technical realization of their ideas.
+However, the framework remains rather high-level and still does not provide a concrete technical realization of their ideas.
 
 \cite{Jorma2014} propose a framework for better integrating requirements management into product lifecycle management tools.
 Their approach discusses the relation between customer requirements and product designs as well as the challenges for adapting existing practices in industry.
@@ -52,7 +50,8 @@ However, the authors do not explain how their ideas can be implemented practical
 They summarize requirements of different stakeholders and propose a library of visualization techniques for different aspects of project progress.
 However, the authors do not provide ideas on how to store requirements, link requirements to product designs, and derive process information practically.
 
-\subsection{Concrete tools for product development}
+\subsubsection{Concrete tools for product development}
+\label{sec:differentiation:academic:concrete-product}
 
 \cite{Ahti2005} evaluate the effectiveness of online collaboration platforms for requirements management in product development.
 Furthermore, the authors summarize the requirements for such platforms and propose a design, which is tested across several large-scale projects.
@@ -62,14 +61,15 @@ However, the authors do not consider the integration of requirements with projec
 Their approach tries to increase the quality of requirements specifications in the context of product development.
 While their approach provides better guidance on how to express requirements, their approach still lacks integration with project schedules and design revisions.
 
-\cite{WINDISCH2022550} propose a model-based approach for expressing requirements in mechatronic product development.
+\cite{WINDISCH2022550} propose a model-based approach for expressing requirements in product development.
 Their approach is based on an activity-based view of design and verification tasks, which need to be carried out by product engineers.
 Through integration into agile project management tools, the requirements can be linked to project schedules, but the link to product design revisions is missing.
 
-\subsection{Concrete tools for other domains}
+\subsubsection{Concrete tools for other domains}
+\label{sec:differentiation:academic:concrete-software}
 
 \cite{6976693} propose a computer-aided software engineering (CASE) tool which helps to build accessible products.
-Their approach is based on an ontology, that allows one to describe technical implementations of accessibility requirements and, hence, enables traceability.
+Their approach is based on an ontology, that describes technical implementations of accessibility requirements and, hence, enables traceability.
 Their approach is well suited for the software domain and accessibility, but cannot be used directly in product development.
 
 \cite{belfadel2022requirements} propose a framework and tool for matching customer requirements with existing enterprise capabilities.
@@ -77,13 +77,15 @@ Their approach is based on a multi-layer model of the enterprise architecture as
 The tool supports discovery of feasible capabilities and effectively fosters reuse, but its application to agile product development remains unclear.
 
 \cite{9447081} propose a modeling technique and select appropriate tooling for matching business requirements with organizational structures.
-To select appropriate tooling, the authors collect requirements that must be fulfilled in order for the tooling to be applicable.
+To select the tooling, the authors collect requirements that must be fulfilled in order for the tooling to be applicable.
 Again, the approach helps in arranging and combining enterprise capabilities, but its application to product development remains unclear.
 
-\subsection{Literature summary}
+\subsection{Industrial viewpoint}
+\label{sec:differentiation:commercial}
 
-Most papers we have found stress the importance of requirements engineering and data integration for successful product development.
-Some papers provide abstract frameworks for integrating requirements engineering deeper into the product development process.
-Only few articles describe concrete data models and tools to deliver  integrated support for customers, project managers, requirements engineers, and product designers.
-In the software domain, this data model and tool-based integration across disciplines has been established more deeply.
-For product development, however, a complete integration of the disciplines is still missing.
+The industrial viewpoint comprises, besides others, the platforms of the major players \textbf{Dassault Systèmes 3DEXPERIENCE}, \textbf{Siemens Teamcenter}, and \textbf{PTC Windchill/Onshape}.
+These solutions all provide an integrated data model across the entire product lifecycle from requirements analysis and planning to product disposal and recycling.
+However, besides the great innovations that have been implemented we see three major issues:
+First, the solutions are closed source limiting platform innovations driven by the research community as well as adaptability to company-specific needs backed by a broader service provider market.
+Second, the data formats are vendor-specific and the available interfaces only expose a subset of information limiting advanced tool integrations and automations across vendors.
+And third, the user interfaces typically target expert-level users inhibiting the participation of non-expert stakeholders in the product development process due to a steep learning curve.

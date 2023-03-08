@@ -1,36 +1,44 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Many researchers and practitioners including \cite{Ahti2005} already noted that customers across industries demand increasingly complex and individualized products with higher quality and shorter time-to-markets.
-At the same time, engineers need to deal with (partially) vague requirements specifications and customers expect flexibility with respect to change requests -- all due to uncertainties that cannot be resolved at the beginning of product development.
-\cite{6226784} show that systematic requirements engineering with early stakeholder involvement and dedicated tool support represents half of the success of future product development.
-To meet these challenges, amongst others \cite{ozkan2019agile} propose agile methods which increase the chances of delivering products with better quality in shorter time and with lower cost. 
-\cite{HEIMICKE2021786} argue that the majority of agile methods originate from the domain of software development, where traditional development methods frequently led to unsuccessful projects.
-In this domain, today established platforms exist -- such as GitHub\footnote{\url{https://www.github.com/}} -- which provide dedicated support for agile projects with high stakeholder involvement based on an integrated view on requirements, schedules, and deliverables.
-Unfortunately, due to the nature of the deliverables (mainly source code, binaries, and documentation), these platforms cannot be applied to product development directly. 
-\cite{MarionTucker} explain that during the development of physical products, typically various independent software tools are used for different activities, such as project management, requirements engineering, and product design.
-\cite{houshmand2010collaborative} deduct that due to the independence of these software tools, isolated artifacts are generated, which lack a common and integrated data model.
-\cite{Jorma2014} show that the lack of a common and integrated data model, in turn, hinders the information flow between stakeholders and can cause inaccuracies and inconsistencies.
-These inaccuracies and inconsistencies finally lead to inefficiencies in product development, which cause unnecessary cost and project delays.
-This observation leads us to the following research questions.
+Many researchers and practitioners including \cite{Ahti2005} already noted that companies face increasing pressure to develop products with ever better functionality, higher quality, cheaper price, and shorter time-to-market.
+At the same time, their engineers need to deal with (partially) vague requirements specifications and their customers expect flexibility with respect to change requests -- all due to uncertainties that cannot be resolved at the beginning of product development.
+\cite{Anitha2012} showed that systematic requirements engineering with early stakeholder involvement and dedicated tool support represents half of the success of future product development.
 
-\subsection{Research questions}
+For software development, today established platforms exist -- such as GitHub\footnote{\url{https://www.github.com/}} -- which enable early stakeholder involvement based on an integrated view on requirements, schedules, and deliverables.
+\cite{Tsay2014} provided evidence that such platforms actually foster discussion among internal and external stakeholders, help to elicit software requirements for upcoming software releases, and make more appropriate software design decisions.
+Similarly, \cite{Lee2016} found that within the context of open source software development such platforms support the open innovation paradigm due to encouraging decentralized decision-making.
+Unfortunately, due to the nature of the deliverables (mainly source code, binaries, and documentation), these platforms cannot be applied to product development directly.
 
-How can we improve the information flow between customers, project managers, requirements engineers, and product designers in agile product development?
-How can we better integrate the available information about requirements, schedules, and deliverables in agile product development?
-How can we maybe translate the ideas from established software development platforms such as GitHub to the domain of product development?
-Which elements of these platforms can we reuse and which elements do we need to adapt to support product development activities directly?
-To answer these questions, we worked on a number of scientific contributions.
+As \cite{TonyLiu2001} explained, in product development -- traditionally -- product data management (PDM) systems are used for storing design- and production-related product information as well as managing design and release workflows.
+Later, \cite{Grieves2005} introduced the more holistic product lifecycle management (PLM) approach, which not only covers design- and production- related information, but covers everything from initial requirements analysis and planning to product disposal and recycling.
+Still, \cite{Houshmand2010} argued that due to the independence of the various software tools being used, isolated artifacts such as project plans, requirements specifications, and computer-aided design (CAD) models are generated, which lack a properly integrated and consistent data model.
+Later, \cite{Jorma2014} discussed that commercial product lifecycle management systems did not include actual requirement management capabilities and the integration of requirement analysis with product design information remained a challenge.
+More recently, \cite{Barth2013} introduced platforms such as Dassault Systèmes 3DEXPERIENCE, which provide advanced integration of project management, requirements management, and product design activities based on an integrated vendor-specific data format, expert-level user interface, and closed source software implementation.
+Nevertheless, \cite{Marion2021} show that -- today -- many companies still reply on "classical" tool infrastructures comprising, e.g., Microsoft Project for project management, Microsoft Excel for requirements management, Dassault Systèmes Solidworks for product design, and email for team communication, while accepting tool barriers and their negative consequences.
 
-\subsection{Scientific contributions}
+\subsection{Research goal}
 
-We first provide an integrated \textbf{data model} of requirements, schedules, and deliverables, which supports management of CAD model revisions, linking of requirements to parts and assemblies of CAD model revisions, asynchronous discussion about and clarification of requirements, as well as prioritization and scheduling of requirements through milestones with fixed start and end dates.
-Additionally, we provide an \textbf{interface model}, which we derived from GitHub, but which required substantial changes to support the underlying data model, corresponding operations, as well as individual stakeholder perspectives properly.
-In this article we describe and discuss both contributions as outlined in the following.
+\textbf{To overcome the current situation, we aim at developing an \textit{open source} platform for product development based on \textit{standard data formats} with primary focus adaptability and \textit{ease-of-use}}.
+We believe that both companies and the researchers will benefit from an open source approach because researchers can develop platform innovations faster and companies can integrate the platform easier into their infrastructures.
+Furthermore, we think that the platform should be as easy-to-use as GitHub to reduce the barrier for non-expert stakeholders to participate in the product development process, even if this requires omitting functionalities.
+Finally, we are convinced that standard data formats are the best (i.e.\ most efficient and most effective) way to interface with existing tool infrastructures at today's product development companies.
+From these goals we derive the following research question.
 
-\subsection{Document contents}
+\subsection{Research question}
 
-In Section~\ref{sec:differentiation} we first discuss related work on requirements engineering and data integration in the context of agile product development and computer-aided design.
-Then, in Section~\ref{sec:requirements} we summarize the requirements we believe an integration approach to project management, requirements engineering, and product design must fulfill to be applicable in practice.
-Afterwards, in Section~\ref{sec:contribution} we present the integrated data model and the Web-based interface model as explained in the previous section.
-Finally, in Section~\ref{sec:conclusion} we evaluate the current state of the project, we summarize our learnings, and provide an outlook on future work.
+\textbf{How can we translate the ideas from established, effective, and easy-to-use software development platforms such as GitHub to the domain of product development?
+Which elements of these platforms can we reuse and which elements do we need to adapt to support product development activities directly?}
+To answer these questions, we deployed the following research methodology.
+
+\subsection{Research methodology}
+
+We first reviewed the state-of-the-art on project management, requirements management and data integration in the context of product development and computer-aided design (see Section~\ref{sec:differentiation}).
+From the results of the review as well as from informal expert discussions with Upper Austrian product development companies we derived a goal formulation and an initial set of requirements for the open source platform (see Section~\ref{sec:requirements}).
+Based on the initial set of requirements we started developing the platform in an iterative and incremental process including several informal feedback rounds with the previous experts over the course of 1.5 years with an approximate budget of 0.5 FTE (see Section~\ref{sec:contribution}).
+
+One major result highlighted in this article is an integrated \textbf{data model} of requirements, schedules, and deliverables, which supports management of CAD model revisions, linking of requirements to parts and assemblies of CAD model revisions, asynchronous discussion about and clarification of requirements, as well as prioritization and scheduling of requirements through milestones with fixed start and end dates (see Section~\ref{sec:contribution:data}).
+A second major result highlighted here is an \textbf{interface model}, which we derived from GitHub, but which required substantial changes to support the underlying data model, corresponding operations, as well as individual stakeholder perspectives properly (see Section~\ref{sec:contribution:gui}).
+
+Finally, for the various feedback rounds we prepared a minimal case study to demonstrate the capabilities of the platform based on a 3D model of a LEGO buggy, which is provided free-of-charge by the Khronos Group\footnote{\url{https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0/Buggy}}.
+Note that while the informal feedback we got from the experts is quite promising, a thorough evaluation of the platform efficiency, effectiveness and usability remains an open issue, which we intend to address with user studies in future work.
