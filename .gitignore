@@ -2,8 +2,6 @@
 
 .DS_Store
 
-.env
-
 node_modules
 
 package-lock.json
@@ -25,13 +23,19 @@ packages/backend/uploads/*.webm
 
 manuscripts/*/*.aux
 manuscripts/*/*.bbl
+manuscripts/*/*.bcf
 manuscripts/*/*.blg
 manuscripts/*/*.fdb_latexmk
 manuscripts/*/*.fls
+manuscripts/*/*.lof
 manuscripts/*/*.log
-manuscripts/*/*.pdf
-manuscripts/*/*.synctex.gz
+manuscripts/*/*.nlo
 manuscripts/*/*.out
+manuscripts/*/*.pdf
+manuscripts/*/*.run.xml
+manuscripts/*/*.synctex.gz
+manuscripts/*/*.synctex(busy)
+manuscripts/*/*.toc
 manuscripts/*/reviews
 manuscripts/*/templates
 
