@@ -3,7 +3,9 @@ import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } fro
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
+import { Group, LineSegments, LoadingManager, Mesh, Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 
 import { Member, Product, Version } from 'productboard-common'
 
@@ -31,6 +33,38 @@ import * as RightIcon from '/src/images/part.png'
 
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
+
+const manager = new LoadingManager().setURLModifier(url => {
+    if (url.indexOf('/') == -1) {
+        return `/rest/parts/${url}`
+    } else {
+        return `/rest/parts/${url.substring(url.lastIndexOf('/') + 1)}`
+    }
+})
+
+const gltfLoader = new GLTFLoader()
+const ldrawLoader = new LDrawLoader(manager)
+
+ldrawLoader.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
+    console.log('Materials loaded!')
+}).catch(error => {
+    console.error(error)
+})
+
+function tree(object: Object3D, indent = 0) {
+    if (object.type == 'Group') {
+        console.log(`${'-'.repeat(indent)} ${object.type} ${object.name} ${object.userData['constructionStep']}`)
+    } else if (object.type == 'Mesh') {
+        const mesh = object as Mesh
+        mesh.material = ldrawLoader.getMaterial(`${mesh.material}`)
+    } else if (object.type == 'LineSegments') {
+        const line = object as LineSegments
+        line.material = ldrawLoader.getMaterial(`${line.material}`)
+    }
+    for (const child of object.children) {
+        tree(child, indent + 1)
+    }
+}
 
 export const ProductVersionSettingView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
@@ -69,7 +103,9 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const [file, setFile] = useState<File>()
 
     const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
+    const [text, setText] = useState<string>(null)
     const [model, setModel] = useState<GLTF>(null)
+    const [group, setGroup] = useState<Group>(null)
     const [blob, setBlob] = useState<Blob>(null) 
     const [dataUrl, setDataUrl] = useState<string>(null) 
     const [active, setActive] = useState<string>('left')
@@ -90,21 +126,30 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     useEffect(() => {
         if (file) {
             setArrayBuffer(null)
+            setText(null)
             setModel(null)
+            setGroup(null)
             setBlob(null)
             setDataUrl(null)
-            file.arrayBuffer().then(setArrayBuffer)
+            if (file.name.endsWith('.glb')) {
+                file.arrayBuffer().then(setArrayBuffer)
+            } else if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
+                file.text().then(setText)
+            }
         }
     }, [file])
-    useEffect(() => { arrayBuffer && new GLTFLoader().parse(arrayBuffer, undefined, setModel) }, [arrayBuffer])
+    useEffect(() => { arrayBuffer && gltfLoader.parse(arrayBuffer, undefined, setModel) }, [arrayBuffer])
+    useEffect(() => { text && ldrawLoader.parse(text, setGroup) }, [text])
+    useEffect(() => { model && setGroup(model.scene) }, [model])
     useEffect(() => {
-        if (model) {
-            render(model.scene.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
+        if (group) {
+            tree(group)
+            render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
                 setBlob(result.blob)
                 setDataUrl(result.dataUrl)
             })
         }
-    }, [model])
+    }, [group])
 
     // FUNCTIONS
 
@@ -174,7 +219,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         )}
                                         <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                         {versionId == 'new' && (
-                                            <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required={true}/>
+                                            <FileInput label='File' placeholder='Select file' accept='.glb,.ldr,.mpd' change={setFile} required={true}/>
                                         )}
                                         <GenericInput label='Preview'>
                                             {dataUrl ? (
@@ -211,10 +256,10 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                                 <img src={EmptyIcon} className='icon medium position center'/>
                                             ) : (
                                                 <Fragment>
-                                                    {!model ? (
+                                                    {!group ? (
                                                         <img src={LoadIcon} className='icon small position center animation spin'/>
                                                     ) : (
-                                                        <ModelView3D model={model} mouse={false} vr={false} highlighted={[]} marked={[]} selected={[]}/>
+                                                        <ModelView3D model={group} mouse={true} vr={true} highlighted={[]} marked={[]} selected={[]}/>
                                                     )}
                                                 </Fragment>
                                             )}

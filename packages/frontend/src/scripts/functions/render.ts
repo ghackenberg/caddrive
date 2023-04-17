@@ -5,12 +5,17 @@ export function createCamera(model: Group, width: number, height: number) {
     const bound = new Box3().setFromObject(model)
     const center = bound.getCenter(new Vector3())
     const size = bound.getSize(new Vector3())
-    const position = center.clone().add(size.clone().multiplyScalar(20))
     const max = Math.max(size.x, size.y, size.z)
+    const position = center.clone().add(new Vector3(max * 15, - max * 15, max * 30))
+
+    console.log(center.x, center.y, center.z)
+    console.log(size.x, size.y, size.z)
+    console.log(position.x, position.y, position.z)
 
     // Camera
     const camera = new PerspectiveCamera(3, width / height, 0.1, max * 100)
     camera.position.set(position.z, position.y, position.x)
+    camera.up.set(0, -1, 0)
     camera.lookAt(center)
     camera.updateProjectionMatrix()
 

@@ -2,14 +2,13 @@ import * as React from 'react'
 
 import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton'
 import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 
 import { createCamera } from '../../functions/render'
 
 interface Props {
-    model: GLTF
+    model: Group
     highlighted?: string[]
     marked?: string[]
     selected?: string[]
@@ -256,15 +255,15 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     reload() {
-        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model.scene) {
+        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model) {
             // Cache
             this.highlight_cache = undefined
             this.select_cache = undefined
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
-            this.scene.add(this.props.model.scene)
+            this.scene.add(this.props.model)
             // Camera
-            this.camera = createCamera(this.props.model.scene, this.div.current.offsetWidth, this.div.current.offsetHeight)
+            this.camera = createCamera(this.props.model, this.div.current.offsetWidth, this.div.current.offsetHeight)
             // Orbit
             if (this.props.mouse) {
                 this.orbit.object = this.camera
