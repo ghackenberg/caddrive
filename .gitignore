@@ -41,6 +41,8 @@ manuscripts/*/templates
 
 public
 
+ldraw
+
 bin
 
 database.sqlite
