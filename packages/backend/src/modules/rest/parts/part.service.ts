@@ -86,7 +86,6 @@ export class PartService {
     }
 
     public async getPart(name: string): Promise<ReadStream> {
-        console.log(`Getting ${name}`)
         if (name in this.paths) {
             return createReadStream(this.paths[name])
         } else {

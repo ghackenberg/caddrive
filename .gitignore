@@ -6,20 +6,28 @@ node_modules
 
 package-lock.json
 
+public
+
+ldraw
+
+bin
+
+database.sqlite
+
+env.ts
+
+# Models
 packages/backend/uploads/*.glb
-!packages/backend/uploads/demo-*.glb
+packages/backend/uploads/*.ldr
+packages/backend/uploads/*.mpd
 
+# Images
 packages/backend/uploads/*.gif
-!packages/backend/uploads/demo-*.gif
-
 packages/backend/uploads/*.jpg
-!packages/backend/uploads/demo-*.jpg
-
 packages/backend/uploads/*.png
-!packages/backend/uploads/demo-*.png
 
+# Audios
 packages/backend/uploads/*.webm
-!packages/backend/uploads/demo-*.webm
 
 manuscripts/*/*.aux
 manuscripts/*/*.bbl
@@ -38,15 +46,3 @@ manuscripts/*/*.synctex(busy)
 manuscripts/*/*.toc
 manuscripts/*/reviews
 manuscripts/*/templates
-
-public
-
-ldraw
-
-bin
-
-database.sqlite
-
-env.ts
-
-certificate.pem

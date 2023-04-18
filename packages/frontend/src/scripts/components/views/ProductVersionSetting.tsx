@@ -3,9 +3,8 @@ import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } fro
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { Group, LineSegments, LoadingManager, Mesh, Object3D } from 'three'
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
+import { Group } from 'three'
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { Member, Product, Version } from 'productboard-common'
 
@@ -15,6 +14,8 @@ import { render } from '../../functions/render'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
+import { parseGLTFModel } from '../../loaders/gltf'
+import { parseLDrawModel } from '../../loaders/ldraw'
 import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
 import { NumberInput } from '../inputs/NumberInput'
@@ -33,38 +34,6 @@ import * as RightIcon from '/src/images/part.png'
 
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
-
-const manager = new LoadingManager().setURLModifier(url => {
-    if (url.indexOf('/') == -1) {
-        return `/rest/parts/${url}`
-    } else {
-        return `/rest/parts/${url.substring(url.lastIndexOf('/') + 1)}`
-    }
-})
-
-const gltfLoader = new GLTFLoader()
-const ldrawLoader = new LDrawLoader(manager)
-
-ldrawLoader.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
-    console.log('Materials loaded!')
-}).catch(error => {
-    console.error(error)
-})
-
-function tree(object: Object3D, indent = 0) {
-    if (object.type == 'Group') {
-        console.log(`${'-'.repeat(indent)} ${object.type} ${object.name} ${object.userData['constructionStep']}`)
-    } else if (object.type == 'Mesh') {
-        const mesh = object as Mesh
-        mesh.material = ldrawLoader.getMaterial(`${mesh.material}`)
-    } else if (object.type == 'LineSegments') {
-        const line = object as LineSegments
-        line.material = ldrawLoader.getMaterial(`${line.material}`)
-    }
-    for (const child of object.children) {
-        tree(child, indent + 1)
-    }
-}
 
 export const ProductVersionSettingView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
@@ -138,17 +107,14 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
             }
         }
     }, [file])
-    useEffect(() => { arrayBuffer && gltfLoader.parse(arrayBuffer, undefined, setModel) }, [arrayBuffer])
-    useEffect(() => { text && ldrawLoader.parse(text, group => { group.rotation.x = Math.PI; setGroup(group) }) }, [text])
+    useEffect(() => { arrayBuffer && parseGLTFModel(arrayBuffer).then(setModel) }, [arrayBuffer])
+    useEffect(() => { text && parseLDrawModel(text).then(setGroup) }, [text])
     useEffect(() => { model && setGroup(model.scene) }, [model])
     useEffect(() => {
-        if (group) {
-            tree(group)
-            render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
-                setBlob(result.blob)
-                setDataUrl(result.dataUrl)
-            })
-        }
+        group && render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
+            setBlob(result.blob)
+            setDataUrl(result.dataUrl)
+        })
     }, [group])
 
     // FUNCTIONS
