@@ -6,6 +6,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel } from '../../loaders/ldraw'
+import { computePath } from '../../functions/path'
 import { ModelGraph } from './ModelGraph'
 import { ModelView3D } from './ModelView3D'
 
@@ -31,6 +32,15 @@ async function getLDrawModel(path: string) {
 
 export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
 
+    // CONSTANTS
+
+    const over = props.over || function(object) {
+        setSelected([computePath(object)])
+    }
+    const out = props.out || function() {
+        setSelected([])
+    }
+
     // INITIAL STATES
 
     let initialGroup: Group = undefined
@@ -44,6 +54,7 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     // STATES
     
     const [group, setGroup] = useState<Group>(initialGroup)
+    const [selected, setSelected] = useState<string[]>(props.selected)
 
     // EFFECTS
     
@@ -59,6 +70,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
             setGroup(undefined)
         }
     }, [props.path])
+
+    useEffect(() => { setSelected(props.selected) }, [props.selected])
     
     // RETURN
 
@@ -66,8 +79,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         <div className="widget file_view_3d">
             {group ? (
                 <>
-                    <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>
-                    <ModelView3D model={group} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>
+                    <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    <ModelView3D model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
                 </>
             ) : (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
