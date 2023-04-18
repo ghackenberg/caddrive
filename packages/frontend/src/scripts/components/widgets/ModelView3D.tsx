@@ -285,6 +285,8 @@ export class ModelView3D extends React.Component<Props> {
             } else {
                 console.error('Material type not supported', typeof mesh.material)
             }
+        } else if (object.type == 'LineSegments') {
+            // ignore
         } else {
             console.error('Object type not supported', object.type)
         }
