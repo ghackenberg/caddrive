@@ -230,12 +230,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     async function selectObject(version: Version, object: Object3D) {
         let iterator = object
         let path = ''
-        while (iterator) {
-            if (iterator.parent) {
-                path = path ? `${iterator.parent.children.indexOf(iterator)}-${path}` : `${iterator.parent.children.indexOf(iterator)}`
-            } else {
-                path = path ? `0-${path}` : '0'
-            }
+        while (iterator.parent.type != 'Scene') {
+            path = path ? `${iterator.parent.children.indexOf(iterator)}-${path}` : `${iterator.parent.children.indexOf(iterator)}`
             iterator = iterator.parent
         }
         const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`

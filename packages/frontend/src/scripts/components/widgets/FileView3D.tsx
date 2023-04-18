@@ -6,6 +6,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel } from '../../loaders/ldraw'
+import { ModelGraph } from './ModelGraph'
 import { ModelView3D } from './ModelView3D'
 
 import * as LoadIcon from '/src/images/load.png'
@@ -28,7 +29,7 @@ async function getLDrawModel(path: string) {
     return LDRAW_MODEL_CACHE[path]
 }
 
-export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
+export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
 
     // INITIAL STATES
 
@@ -64,7 +65,10 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     return (
         <div className="widget file_view_3d">
             {group ? (
-                <ModelView3D model={group} mouse={props.mouse} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
+                <>
+                    <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>
+                    <ModelView3D model={group} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>
+                </>
             ) : (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             )}

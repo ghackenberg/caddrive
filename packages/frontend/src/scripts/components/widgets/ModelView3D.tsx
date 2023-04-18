@@ -10,7 +10,8 @@ interface Props {
     highlighted?: string[]
     marked?: string[]
     selected?: string[]
-    mouse: boolean
+    over?: (object: Object3D) => void
+    out?: (object: Object3D) => void
     click?: (object: Object3D) => void
 }
 
@@ -93,7 +94,7 @@ export class ModelView3D extends React.Component<Props> {
 
     private highlight_cache: {[uuid: string]: Material | Material[]}
 
-    setHighlight(object: Object3D, path = '0') {
+    setHighlight(object: Object3D, path: string) {
         // Process object
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
@@ -139,7 +140,7 @@ export class ModelView3D extends React.Component<Props> {
 
     private select_cache: {[uuid: string]: Material | Material[]}
 
-    setSelect(object: Object3D, path = '0') {
+    setSelect(object: Object3D, path: string) {
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.select_cache[mesh.uuid] = mesh.material
@@ -195,20 +196,32 @@ export class ModelView3D extends React.Component<Props> {
         }
         // Highlight and select
         if (this.select_cache) {
-            this.revertSelect(this.scene)
+            for (let index = 0; index < this.props.model.children.length; index++) {
+                const child = this.props.model.children[index]
+                this.revertSelect(child)
+            }
             this.select_cache = undefined
         }
         if (this.highlight_cache) {
-            this.revertHighlight(this.scene)
+            for (let index = 0; index < this.props.model.children.length; index++) {
+                const child = this.props.model.children[index]
+                this.revertHighlight(child)
+            }
             this.highlight_cache = undefined
         }
         if ((this.props.highlighted && this.props.highlighted.length > 0) || (this.props.marked && this.props.marked.length > 0)) {
             this.highlight_cache = {}
-            this.setHighlight(this.scene)
+            for (let index = 0; index < this.props.model.children.length; index++) {
+                const child = this.props.model.children[index]
+                this.setHighlight(child, `${index}`)
+            }
         }
         if (this.props.selected && this.props.selected.length > 0) {
             this.select_cache = {}
-            this.setSelect(this.scene)
+            for (let index = 0; index < this.props.model.children.length; index++) {
+                const child = this.props.model.children[index]
+                this.setSelect(child, `${index}`)
+            }
         }
         // Resize
         this.resize()
@@ -267,33 +280,31 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     updateHovered(position: { clientX: number, clientY: number }) {
-        if (this.props.mouse) {
-            if (this.hovered && this.hovered != this.selected) {
-                this.updateMaterial(this.hovered, 0)
-                this.hovered = null
-            }
-            
-            this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
-            const intersections = this.raycaster.intersectObjects(this.scene.children, true)
+        if (this.hovered && this.hovered != this.selected) {
+            this.updateMaterial(this.hovered, 0)
+            this.hovered = null
+        }
+        
+        this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
+        const intersections = this.raycaster.intersectObjects(this.scene.children, true)
 
-            if (intersections.length > 0) {
-                let iterator = intersections[0].object
-                while (iterator && !iterator.name) {
-                    iterator = iterator.parent
-                }
-                this.hovered = iterator
-                if (iterator) {
-                    this.updateMaterial(this.hovered, 0.1)
-                    this.div.current.title = iterator.name
-                    this.div.current.style.cursor = 'pointer'
-                } else {
-                    this.div.current.title = ''
-                    this.div.current.style.cursor = 'default'
-                }
+        if (intersections.length > 0) {
+            let iterator = intersections[0].object
+            while (iterator && !iterator.name) {
+                iterator = iterator.parent
+            }
+            this.hovered = iterator
+            if (iterator) {
+                this.updateMaterial(this.hovered, 0.1)
+                this.div.current.title = iterator.name
+                this.div.current.style.cursor = 'pointer'
             } else {
                 this.div.current.title = ''
                 this.div.current.style.cursor = 'default'
             }
+        } else {
+            this.div.current.title = ''
+            this.div.current.style.cursor = 'default'
         }
     }
 

@@ -6,3 +6,31 @@ div.widget.file_view_3d {
     
     background-color: rgb(215,215,215);
 }
+
+div.widget.file_view_3d > div:first-child {
+    position: absolute;
+
+    box-sizing: border-box;
+    
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 20em;
+
+    background-color: white;
+    
+    overflow: auto;
+}
+
+div.widget.file_view_3d > div:last-child {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 20em;
+    bottom: 0;
+
+    width: auto;
+    height: auto;
+}
