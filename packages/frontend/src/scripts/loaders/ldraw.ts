@@ -24,10 +24,12 @@ LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
 function fixMaterials(object: Object3D, indent = 0) {
     if (object.type == 'Mesh') {
         const mesh = object as Mesh
-        mesh.material = LDRAW_LOADER.getMaterial(`${mesh.material}`)
+        const material = LDRAW_LOADER.getMaterial(`${mesh.material}`)
+        mesh.material = material.clone()
     } else if (object.type == 'LineSegments') {
         const line = object as LineSegments
-        line.material = LDRAW_LOADER.getMaterial(`${line.material}`)
+        const material = LDRAW_LOADER.getMaterial(`${line.material}`)
+        line.material = material.clone()
     }
     for (const child of object.children) {
         fixMaterials(child, indent + 1)
