@@ -53,7 +53,11 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
 
     // STATES
     
+    // Entities
     const [group, setGroup] = useState<Group>(initialGroup)
+    
+    // Interactions
+    const [toggle, setToggle] = useState(false)
     const [selected, setSelected] = useState<string[]>(props.selected)
 
     // EFFECTS
@@ -76,11 +80,14 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     // RETURN
 
     return (
-        <div className="widget file_view_3d">
+        <div className={`widget file_view_3d ${toggle ? 'toggle' : ''}`}>
             {group ? (
                 <>
                     <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
                     <ModelView3D model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    <a onClick={() => setToggle(!toggle)} className='button fill lightgray'>
+                        <span/>
+                    </a>
                 </>
             ) : (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>

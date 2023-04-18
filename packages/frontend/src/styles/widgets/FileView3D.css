@@ -7,7 +7,7 @@ div.widget.file_view_3d {
     background-color: rgb(215,215,215);
 }
 
-div.widget.file_view_3d > div:first-child {
+div.widget.file_view_3d > div.model_graph {
     position: absolute;
 
     box-sizing: border-box;
@@ -17,14 +17,20 @@ div.widget.file_view_3d > div:first-child {
     bottom: 0;
 
     width: 20em;
+    max-width: 100%;
 
     background-color: white;
     
     overflow: auto;
 }
+div.widget.file_view_3d.toggle > div.model_graph {
+    z-index: 2;
+}
 
-div.widget.file_view_3d > div:last-child {
+div.widget.file_view_3d > div.model_view_3d {
     position: absolute;
+
+    z-index: 0;
 
     top: 0;
     left: 0;
@@ -33,4 +39,63 @@ div.widget.file_view_3d > div:last-child {
 
     width: auto;
     height: auto;
+}
+
+div.widget.file_view_3d > a {
+    display: none;
+
+    position: absolute;
+
+    z-index: 2;
+
+    top: 1em;
+    right: 1em;
+
+    width: 2em;
+    height: 2em;
+
+    padding: 0;
+
+    border-radius: 1em;
+}
+div.widget.file_view_3d > a > span {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    background-image: url(../../images/tree.png);
+    background-repeat: no-repeat;
+    background-size: 1em 1em;
+    background-position: center center;
+}
+div.widget.file_view_3d.toggle > a > span {
+    background-image: url(../../images/delete.png);
+}
+
+@media screen and (max-width: 100em) {
+    div.widget.file_view_3d > div.model_view_3d {
+        right: 0;
+    }
+    div.widget.file_view_3d > a {
+        display: block;
+    }
+}
+
+@media screen and (max-width: 70em) {
+    div.widget.file_view_3d > div.model_view_3d {
+        right: 20em;
+    }
+    div.widget.file_view_3d > a {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 50em) {
+    div.widget.file_view_3d > div.model_view_3d {
+        right: 0;
+    }
+    div.widget.file_view_3d > a {
+        display: block;
+    }
 }
