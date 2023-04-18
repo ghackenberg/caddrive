@@ -21,15 +21,6 @@ LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
     console.error(error)
 })
 
-function fixNames(object: Object3D, name: string = undefined) {
-    if (!object.name) {
-        object.name = name ? `${name} - ${object.type}` : object.type
-    }
-    for (const child of object.children) {
-        fixNames(child, object.name || name)
-    }
-}
-
 function fixMaterials(object: Object3D, indent = 0) {
     if (object.type == 'Mesh') {
         const mesh = object as Mesh
@@ -55,8 +46,6 @@ export async function parseLDrawModel(data: string) {
         LDRAW_LOADER.parse(data, group => {
             // Fix coordinates
             group.rotation.x = Math.PI
-            // Fix names
-            fixNames(group)
             // Fix materials
             fixMaterials(group)
             // Resolve

@@ -259,10 +259,9 @@ export class ModelView3D extends React.Component<Props> {
             } else {
                 console.error('Material type not supported', typeof mesh.material)
             }
-        } else if (object.type == 'LineSegments') {
-            // ignore
-        } else {
-            console.error('Object type not supported', object.type)
+        }
+        for (const child of object.children) {
+            this.updateMaterial(child, scalar)
         }
     }
 
@@ -277,10 +276,19 @@ export class ModelView3D extends React.Component<Props> {
             const intersections = this.raycaster.intersectObjects(this.scene.children, true)
 
             if (intersections.length > 0) {
-                this.hovered = intersections[0].object
-                this.updateMaterial(this.hovered, 0.1)
-                this.div.current.title = this.hovered.name || this.hovered.type
-                this.div.current.style.cursor = 'pointer'
+                let iterator = intersections[0].object
+                while (iterator && !iterator.name) {
+                    iterator = iterator.parent
+                }
+                this.hovered = iterator
+                if (iterator) {
+                    this.updateMaterial(this.hovered, 0.1)
+                    this.div.current.title = iterator.name
+                    this.div.current.style.cursor = 'pointer'
+                } else {
+                    this.div.current.title = ''
+                    this.div.current.style.cursor = 'default'
+                }
             } else {
                 this.div.current.title = ''
                 this.div.current.style.cursor = 'default'
