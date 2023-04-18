@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 const scene = initializeScene()
 const camera = initializeCamera()
 const renderer = initializeRenderer()
-const orbiter = initializeOrbiter(camera, renderer)
+const orbit = initializeOrbit(camera, renderer)
 
 export function initializeScene() {
     const ambient_light = new AmbientLight(0xffffff, 0.5)
@@ -18,7 +18,7 @@ export function initializeScene() {
     return scene
 }
 
-export function initializeCamera(aspect = 1, near = 0.1, far = 1000) {
+export function initializeCamera(aspect = 1, near = 1, far = 1) {
     const camera = new PerspectiveCamera(45, aspect, near, far)
 
     return camera
@@ -35,24 +35,28 @@ export function initializeRenderer(width = 1, height = 1, loop: XRAnimationLoopC
     return renderer
 }
 
-export function initializeOrbiter(camera: PerspectiveCamera, renderer: WebGLRenderer) {
+export function initializeOrbit(camera: PerspectiveCamera, renderer: WebGLRenderer) {
     const orbiter = new OrbitControls(camera, renderer.domElement)
     orbiter.enableDamping = true
 
     return orbiter
 }
 
-export function resetOrbiter(model: Group, orbiter: OrbitControls) {
+export function reset(model: Group, camera: PerspectiveCamera, orbit: OrbitControls) {
     // Analyze
     const box = new Box3().setFromObject(model)
     const center = box.getCenter(new Vector3())
     const size = box.getSize(new Vector3())
     const radius = Math.max(size.x, Math.max(size.y, size.z)) * 0.75
 
+    // Camera
+    camera.near = radius * 0.01
+    camera.far = radius * 100
+
     // Orbit
-    orbiter.target0.copy(center)
-    orbiter.position0.set(-2.3, 1, 2).multiplyScalar(radius).add(center)
-    orbiter.reset()
+    orbit.target0.copy(center)
+    orbit.position0.set(-2.3, 1, 2).multiplyScalar(radius).add(center)
+    orbit.reset()
 }
 
 export function render(model: Group, width: number, height: number): Promise<{ blob: Blob, dataUrl: string }> {
@@ -65,7 +69,7 @@ export function render(model: Group, width: number, height: number): Promise<{ b
         camera.aspect = width / height
 
         // Prepare
-        resetOrbiter(model, orbiter)
+        reset(model, camera, orbit)
 
         // Renderer
         renderer.setSize(width, height)
