@@ -93,13 +93,13 @@ export class ModelView3D extends React.Component<Props> {
 
     private highlight_cache: {[uuid: string]: Material | Material[]}
 
-    setHighlight(object: Object3D) {
+    setHighlight(object: Object3D, path = '0') {
         // Process object
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.highlight_cache[mesh.uuid] = mesh.material
-            const highlighted = this.props.highlighted.indexOf(object.name) != -1
-            const marked = this.props.marked.indexOf(object.name) != -1
+            const highlighted = this.props.highlighted.filter(prefix => path.startsWith(prefix)).length > 0
+            const marked = this.props.marked.filter(prefix => path.startsWith(prefix)).length > 0
             if (highlighted && marked) {
                 mesh.material = new MeshStandardMaterial({
                     color: 0x0000ff
@@ -119,8 +119,9 @@ export class ModelView3D extends React.Component<Props> {
             }
         }
         // Process children
-        for (const child of object.children) {
-            this.setHighlight(child)
+        for (let index = 0; index < object.children.length; index++) {
+            const child = object.children[index]
+            this.setHighlight(child, `${path}-${index}`)
         }
     }
 
