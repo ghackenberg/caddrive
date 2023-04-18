@@ -40,15 +40,24 @@ div.widget.model_graph li:last-child::before {
 div.widget.model_graph a {
     color: gray;
 }
+div.widget.model_graph a.selected {
+    color: lightgray;
+}
 div.widget.model_graph a.marked {
     color: green;
+}
+div.widget.model_graph a.marked.selected {
+    color: lightgreen;
 }
 div.widget.model_graph a.highlighted {
     color: red;
 }
-div.widget.model_graph a.selected {
-    color: orange;
+div.widget.model_graph a.highlighted.selected {
+    color: lightcoral;
 }
 div.widget.model_graph a.marked.highlighted {
     color: blue;
+}
+div.widget.model_graph a.marked.highlighted.selected {
+    color: lightblue;
 }

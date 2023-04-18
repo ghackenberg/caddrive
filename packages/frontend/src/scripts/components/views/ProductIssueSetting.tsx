@@ -9,6 +9,7 @@ import { Issue, Product, User, Member, Version, Milestone } from 'productboard-c
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
+import { computePath } from '../../functions/path'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { UserManager } from '../../managers/user'
@@ -83,6 +84,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [audioUrl, setAudioUrl] = useState<string>('')
+    const [selected, setSelected] = useState<Part[]>([])
     const [marked, setMarked] = useState<Part[]>(initialMarked)
     const [active, setActive] = useState<string>('left')
 
@@ -139,13 +141,17 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         setAudioUrl('')
     }
 
-    async function selectObject(version: Version, object: Object3D) {
-        let iterator = object
-        let path = ''
-        while (iterator.parent.type != 'Scene') {
-            path = path ? `${iterator.parent.children.indexOf(iterator)}-${path}` : `${iterator.parent.children.indexOf(iterator)}`
-            iterator = iterator.parent
-        }
+    function overObject(version: Version, object: Object3D) {
+        const path = computePath(object)
+        setSelected([{ productId: version.productId, versionId: version.id, objectPath: path, objectName: object.name }])
+    }
+    
+    function outObject() {
+        setSelected([])
+    }
+
+    function selectObject(version: Version, object: Object3D) {
+        const path = computePath(object)
         const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
         if (document.activeElement == textReference.current) {
             const before = text.substring(0, textReference.current.selectionStart)
@@ -293,7 +299,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} marked={marked} mouse={true} click={selectObject}/>
+                                    <ProductView3D product={product} selected={selected} marked={marked} mouse={true} over={overObject} out={outObject} click={selectObject}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

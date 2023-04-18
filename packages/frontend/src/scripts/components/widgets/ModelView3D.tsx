@@ -83,18 +83,18 @@ export class ModelView3D extends React.Component<Props> {
         }
         // Revert material
         if (this.select_cache) {
-            this.revertSelect(this.scene)
+            this.revertSelect(this.props.model)
             this.select_cache = undefined
         }
         if (this.highlight_cache) {
-            this.revertHighlight(this.scene)
+            this.revertHighlight(this.props.model)
             this.highlight_cache = undefined
         }
     }
 
     private highlight_cache: {[uuid: string]: Material | Material[]}
 
-    setHighlight(object: Object3D, path: string) {
+    setHighlight(object: Object3D, path = '0') {
         // Process object
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
@@ -140,7 +140,7 @@ export class ModelView3D extends React.Component<Props> {
 
     private select_cache: {[uuid: string]: Material | Material[]}
 
-    setSelect(object: Object3D, path: string) {
+    setSelect(object: Object3D, path = '0') {
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.select_cache[mesh.uuid] = mesh.material
@@ -196,32 +196,20 @@ export class ModelView3D extends React.Component<Props> {
         }
         // Highlight and select
         if (this.select_cache) {
-            for (let index = 0; index < this.props.model.children.length; index++) {
-                const child = this.props.model.children[index]
-                this.revertSelect(child)
-            }
+            this.revertSelect(this.props.model)
             this.select_cache = undefined
         }
         if (this.highlight_cache) {
-            for (let index = 0; index < this.props.model.children.length; index++) {
-                const child = this.props.model.children[index]
-                this.revertHighlight(child)
-            }
+            this.revertHighlight(this.props.model)
             this.highlight_cache = undefined
         }
         if ((this.props.highlighted && this.props.highlighted.length > 0) || (this.props.marked && this.props.marked.length > 0)) {
             this.highlight_cache = {}
-            for (let index = 0; index < this.props.model.children.length; index++) {
-                const child = this.props.model.children[index]
-                this.setHighlight(child, `${index}`)
-            }
+            this.setHighlight(this.props.model)
         }
         if (this.props.selected && this.props.selected.length > 0) {
             this.select_cache = {}
-            for (let index = 0; index < this.props.model.children.length; index++) {
-                const child = this.props.model.children[index]
-                this.setSelect(child, `${index}`)
-            }
+            this.setSelect(this.props.model)
         }
         // Resize
         this.resize()
