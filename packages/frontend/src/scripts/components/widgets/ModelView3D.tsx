@@ -139,11 +139,11 @@ export class ModelView3D extends React.Component<Props> {
 
     private select_cache: {[uuid: string]: Material | Material[]}
 
-    setSelect(object: Object3D) {
+    setSelect(object: Object3D, path = '0') {
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.select_cache[mesh.uuid] = mesh.material
-            if (this.props.selected.indexOf(mesh.name) != -1) {
+            if (this.props.selected.filter(prefix => path.startsWith(prefix)).length > 0) {
                 if (Array.isArray(mesh.material)) {
                     const array: Material[] = []
                     for (const material of mesh.material) {
@@ -165,8 +165,9 @@ export class ModelView3D extends React.Component<Props> {
                 }
             }
         }
-        for (const child of object.children) {
-            this.setSelect(child)
+        for (let index = 0; index < object.children.length; index++) {
+            const child = object.children[index]
+            this.setSelect(child, `${path}-${index}`)
         }
     }
 
