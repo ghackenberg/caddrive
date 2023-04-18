@@ -40,7 +40,11 @@ const NodeItem = (props: { path: string, object: Object3D, highlighted: string[]
                 {object.name ? (
                     <span>{object.name}</span>
                 ) : (
-                    <em>Anonymous</em>
+                    object.parent && object.parent.type != "Scene" ? (
+                        <em>Anonymous</em>
+                    ) : (
+                        <span>Model</span>
+                    )
                 )}
             </a>
             <NodeList path={path} list={props.object.children} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>
@@ -53,7 +57,7 @@ const NodeList = (props: { path: string, list: Object3D[], highlighted: string[]
     return (
         <div>
             <ul>
-                {props.list.map((child, index) => (
+                {props.list.filter(child => !!child.name).map((child, index) => (
                     <li key={index}>
                         <NodeItem path={`${path}-${index}`} object={child} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>
                     </li>
