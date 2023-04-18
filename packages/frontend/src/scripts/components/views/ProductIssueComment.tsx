@@ -438,7 +438,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                     </div>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr={true} />
+                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive} />

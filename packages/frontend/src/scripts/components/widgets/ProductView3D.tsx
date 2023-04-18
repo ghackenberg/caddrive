@@ -18,7 +18,7 @@ interface Part {
     objectName: string
 }
 
-export const ProductView3D = (props: { product: Product, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean }) => {
+export const ProductView3D = (props: { product: Product, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void }) => {
 
     // CONTEXTS
 
@@ -72,7 +72,7 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
                                     </option>
                                 ))}
                             </select>
-                            <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
+                            <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))}/>
                         </>
                     )
                 ) : (

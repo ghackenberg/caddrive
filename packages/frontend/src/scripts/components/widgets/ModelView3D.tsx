@@ -2,8 +2,6 @@ import * as React from 'react'
 
 import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { VRButton } from 'three/examples/jsm/webxr/VRButton'
-import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 
 import { createCamera } from '../../functions/render'
 
@@ -13,7 +11,6 @@ interface Props {
     marked?: string[]
     selected?: string[]
     mouse: boolean
-    vr: boolean
     click?: (object: Object3D) => void
     frame?: (image: Blob) => void
 }
@@ -23,19 +20,13 @@ export class ModelView3D extends React.Component<Props> {
     private div: React.RefObject<HTMLDivElement>
     private timeout: NodeJS.Timeout
 
-    private factory = new XRControllerModelFactory()
     private ambient_light: AmbientLight
     private directional_light: DirectionalLight
     private renderer: WebGLRenderer
     private orbit: OrbitControls
     private raycaster: Raycaster
-    private controller1: Group
-    private controller2: Group
-    private grip1: Group
-    private grip2: Group
     private scene: Scene
     private camera: PerspectiveCamera
-    private button: HTMLElement
 
     private position_start: {clientX: number, clientY: number}
     private position_end: {clientX: number, clientY: number}
@@ -79,49 +70,16 @@ export class ModelView3D extends React.Component<Props> {
         this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize(this.div.current.offsetWidth, this.div.current.offsetHeight)
         this.renderer.setAnimationLoop(this.paint)
-        // Controller 1
-        this.controller1 = this.renderer.xr.getController(0)
-        this.controller1.addEventListener('selectstart', console.log)
-        this.controller1.addEventListener('selectend', console.log)
-        this.controller1.addEventListener('connected', console.log)
-        this.controller1.addEventListener('disconnected', console.log)
-        // Controller 2
-        this.controller2 = this.renderer.xr.getController(1)
-        this.controller2.addEventListener('selectstart', console.log)
-        this.controller2.addEventListener('selectend', console.log)
-        this.controller2.addEventListener('connected', console.log)
-        this.controller2.addEventListener('disconnected', console.log)
-        // Controller grip 1
-        this.grip1 = this.renderer.xr.getControllerGrip(0)
-        this.grip1.add(this.factory.createControllerModel(this.grip1))
-        // Controller grip 2
-        this.grip2 = this.renderer.xr.getControllerGrip(1)
-        this.grip2.add(this.factory.createControllerModel(this.grip2))
         // Scene
         this.scene = new Scene()
         this.scene.add(this.ambient_light)
         this.scene.add(this.directional_light)
-        this.scene.add(this.controller1)
-        this.scene.add(this.controller2)
-        this.scene.add(this.grip1)
-        this.scene.add(this.grip2)
         this.scene.add(new Object3D())
         // Camera
         this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
         this.camera.position.z = 5
-        // Button
-        if (this.props.vr) {
-            this.button = VRButton.createButton(this.renderer)
-            this.button.addEventListener('click', () => {
-                this.fullscreen = !this.fullscreen
-                this.resize()
-            })
-        }
         // Append
         this.div.current.appendChild(this.renderer.domElement)
-        if (this.props.vr) {
-            this.div.current.appendChild(this.button)
-        }
         // Raycaster
         this.raycaster = new Raycaster()
         // Orbit

@@ -34,7 +34,7 @@ async function getModel(path: string) {
     }
 }
 
-export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void, vr: boolean }) => {
+export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
 
     // INITIAL STATES
 
@@ -63,7 +63,7 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     return (
         <div className="widget file_view_3d">
             {model ? (
-                <ModelView3D model={model.scene} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
+                <ModelView3D model={model.scene} mouse={props.mouse} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
             ) : (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             )}

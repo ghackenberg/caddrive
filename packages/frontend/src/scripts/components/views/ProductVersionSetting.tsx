@@ -249,7 +249,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                 </div>
                                 <div>
                                     {version ? (
-                                        <VersionView3D version={version} mouse={true} vr={true}/>
+                                        <VersionView3D version={version} mouse={true}/>
                                     ) : (
                                         <div className="widget version_view_3d">
                                             {!file ? (
@@ -259,7 +259,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                                     {!group ? (
                                                         <img src={LoadIcon} className='icon small position center animation spin'/>
                                                     ) : (
-                                                        <ModelView3D model={group} mouse={true} vr={true} highlighted={[]} marked={[]} selected={[]}/>
+                                                        <ModelView3D model={group} mouse={true} highlighted={[]} marked={[]} selected={[]}/>
                                                     )}
                                                 </Fragment>
                                             )}

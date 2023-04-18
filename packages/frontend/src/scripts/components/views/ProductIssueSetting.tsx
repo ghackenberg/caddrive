@@ -287,7 +287,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                     </form>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} marked={marked} mouse={true} click={selectObject} vr={true}/>
+                                    <ProductView3D product={product} marked={marked} mouse={true} click={selectObject}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>
