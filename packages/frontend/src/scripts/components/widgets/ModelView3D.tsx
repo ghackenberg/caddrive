@@ -12,14 +12,11 @@ interface Props {
     selected?: string[]
     mouse: boolean
     click?: (object: Object3D) => void
-    dataUrl?: (image: string) => void
-    blob?: (image: Blob) => void
 }
 
 export class ModelView3D extends React.Component<Props> {
 
     private div: React.RefObject<HTMLDivElement>
-    private timeout: NodeJS.Timeout
 
     private scene: Scene
     private camera: PerspectiveCamera
@@ -32,8 +29,6 @@ export class ModelView3D extends React.Component<Props> {
     
     private hovered: Object3D
     private selected: Object3D
-
-    private fullscreen = false
 
     constructor(props: Props) {
         super(props)
@@ -72,13 +67,6 @@ export class ModelView3D extends React.Component<Props> {
         this.div.current.appendChild(this.renderer.domElement)
         // Listen
         window.addEventListener('resize', this.resize)
-        // Resize
-        this.timeout = setTimeout(() => {
-            // Reset
-            this.timeout = undefined
-            // Call
-            this.resize()
-        }, 100)
         // Reload
         this.reload()
     }
@@ -88,13 +76,6 @@ export class ModelView3D extends React.Component<Props> {
         this.renderer.setAnimationLoop(null)
         // Resize
         window.removeEventListener('resize', this.resize)
-        // Timeout
-        if (this.timeout) {
-            // Clear
-            clearTimeout(this.timeout)
-            // Reset
-            this.timeout = undefined
-        }
         // Remove all active WebGl contexts
         while(this.div.current.childElementCount > 0) {
             this.div.current.removeChild(this.div.current.lastChild)
@@ -199,6 +180,7 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     reload() {
+        // Update
         if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model) {
             // Cache
             this.highlight_cache = undefined
@@ -232,13 +214,12 @@ export class ModelView3D extends React.Component<Props> {
 
     resize() {
         if (this.div.current) {
-            const width = this.fullscreen ? window.innerWidth : this.div.current.offsetWidth
-            const height = this.fullscreen ? window.innerHeight : this.div.current.offsetHeight
+            // Size
+            const width = this.div.current.offsetWidth
+            const height = this.div.current.offsetHeight
             // Camera
-            if (this.camera) {
-                this.camera.aspect = width / height
-                this.camera.updateProjectionMatrix()
-            }
+            this.camera.aspect = width / height
+            this.camera.updateProjectionMatrix()
             // Renderer
             this.renderer.setSize(width, height)
         }
@@ -344,8 +325,7 @@ export class ModelView3D extends React.Component<Props> {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handleMouseUp(_event: React.MouseEvent) {
+    handleMouseUp() {
         if (this.position_start && this.position_end) {
             if (this.calculateDistance() <= 1) {
                  this.updateSelected(this.position_end)
@@ -364,8 +344,7 @@ export class ModelView3D extends React.Component<Props> {
         this.position_end = event.touches[0]
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handleTouchEnd(_event: React.TouchEvent) {
+    handleTouchEnd() {
         if (this.calculateDistance() <= 1) {
             this.updateSelected(this.position_end)
         }
@@ -374,24 +353,11 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     paint() {
-        // Render
-        if (this.scene && this.camera) {
-            this.renderer.render(this.scene, this.camera)
-            if (this.props.dataUrl) {
-                const canvas: HTMLCanvasElement = this.div.current.childNodes[0] as HTMLCanvasElement  
-                this.props.dataUrl(canvas.toDataURL())
-            }
-            if (this.props.blob) {
-                const canvas: HTMLCanvasElement = this.div.current.childNodes[0] as HTMLCanvasElement         
-                canvas.toBlob(this.props.blob)
-            }
-            
-        }
+        this.renderer.render(this.scene, this.camera)
     }
     
     override render() {
-        return <div className="widget model_view_3d" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
-        
+        return <div className="widget model_view_3d" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>   
     }
     
 }
