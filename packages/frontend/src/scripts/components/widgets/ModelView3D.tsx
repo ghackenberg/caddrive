@@ -1,9 +1,9 @@
 import * as React from 'react'
 
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, ACESFilmicToneMapping } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-import { createCamera } from '../../functions/render'
+import { ambient_light, directional_light, prepare } from '../../functions/render'
 
 interface Props {
     model: Group
@@ -12,7 +12,8 @@ interface Props {
     selected?: string[]
     mouse: boolean
     click?: (object: Object3D) => void
-    frame?: (image: Blob) => void
+    dataUrl?: (image: string) => void
+    blob?: (image: Blob) => void
 }
 
 export class ModelView3D extends React.Component<Props> {
@@ -20,8 +21,6 @@ export class ModelView3D extends React.Component<Props> {
     private div: React.RefObject<HTMLDivElement>
     private timeout: NodeJS.Timeout
 
-    private ambient_light: AmbientLight
-    private directional_light: DirectionalLight
     private renderer: WebGLRenderer
     private orbit: OrbitControls
     private raycaster: Raycaster
@@ -59,31 +58,26 @@ export class ModelView3D extends React.Component<Props> {
     }
     
     override componentDidMount() {
-        // Ambient light
-        this.ambient_light = new AmbientLight(0xffffff, 0.5)
-        // Directional light
-        this.directional_light = new DirectionalLight(0xffffff, 1)
         // Renderer
-        this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true })
-        this.renderer.xr.enabled = true
+        this.renderer = new WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true })
         this.renderer.outputEncoding = sRGBEncoding
+        this.renderer.toneMapping = ACESFilmicToneMapping
         this.renderer.setPixelRatio(window.devicePixelRatio)
         this.renderer.setSize(this.div.current.offsetWidth, this.div.current.offsetHeight)
         this.renderer.setAnimationLoop(this.paint)
+        this.div.current.appendChild(this.renderer.domElement)
         // Scene
         this.scene = new Scene()
-        this.scene.add(this.ambient_light)
-        this.scene.add(this.directional_light)
+        this.scene.add(ambient_light)
+        this.scene.add(directional_light)
         this.scene.add(new Object3D())
         // Camera
-        this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
-        this.camera.position.z = 5
-        // Append
-        this.div.current.appendChild(this.renderer.domElement)
+        this.camera = new PerspectiveCamera(45, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
         // Raycaster
         this.raycaster = new Raycaster()
         // Orbit
-        this.orbit = this.props.mouse && new OrbitControls(this.camera, this.renderer.domElement)
+        this.orbit = new OrbitControls(this.camera, this.renderer.domElement)
+        this.orbit.enableDamping = true
         // Listen
         window.addEventListener('resize', this.resize)
         // Resize
@@ -220,13 +214,8 @@ export class ModelView3D extends React.Component<Props> {
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
             this.scene.add(this.props.model)
-            // Camera
-            this.camera = createCamera(this.props.model, this.div.current.offsetWidth, this.div.current.offsetHeight)
             // Orbit
-            if (this.props.mouse) {
-                this.orbit.object = this.camera
-                this.orbit.update()
-            }
+            prepare(this.props.model, this.orbit)
         }
         // Highlight and select
         if (this.select_cache) {
@@ -394,9 +383,13 @@ export class ModelView3D extends React.Component<Props> {
         // Render
         if (this.scene && this.camera) {
             this.renderer.render(this.scene, this.camera)
-            if (this.props.frame) {
+            if (this.props.dataUrl) {
+                const canvas: HTMLCanvasElement = this.div.current.childNodes[0] as HTMLCanvasElement  
+                this.props.dataUrl(canvas.toDataURL())
+            }
+            if (this.props.blob) {
                 const canvas: HTMLCanvasElement = this.div.current.childNodes[0] as HTMLCanvasElement         
-                canvas.toBlob(this.props.frame)
+                canvas.toBlob(this.props.blob)
             }
             
         }

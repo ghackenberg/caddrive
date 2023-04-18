@@ -139,7 +139,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
         }
     }, [file])
     useEffect(() => { arrayBuffer && gltfLoader.parse(arrayBuffer, undefined, setModel) }, [arrayBuffer])
-    useEffect(() => { text && ldrawLoader.parse(text, setGroup) }, [text])
+    useEffect(() => { text && ldrawLoader.parse(text, group => { group.rotation.x = Math.PI; setGroup(group) }) }, [text])
     useEffect(() => { model && setGroup(model.scene) }, [model])
     useEffect(() => {
         if (group) {
