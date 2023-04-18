@@ -10,7 +10,8 @@ interface Props {
     highlighted?: string[]
     marked?: string[]
     selected?: string[]
-    mouse: boolean
+    over?: (object: Object3D) => void
+    out?: (object: Object3D) => void
     click?: (object: Object3D) => void
 }
 
@@ -28,7 +29,6 @@ export class ModelView3D extends React.Component<Props> {
     private position_end: {clientX: number, clientY: number}
     
     private hovered: Object3D
-    private selected: Object3D
 
     constructor(props: Props) {
         super(props)
@@ -46,10 +46,6 @@ export class ModelView3D extends React.Component<Props> {
         this.handleTouchEnd = this.handleTouchEnd.bind(this)
 
         this.paint = this.paint.bind(this)
-    }
-
-    override componentDidUpdate() {
-        this.reload()
     }
     
     override componentDidMount() {
@@ -70,6 +66,10 @@ export class ModelView3D extends React.Component<Props> {
         // Reload
         this.reload()
     }
+
+    override componentDidUpdate() {
+        this.reload()
+    }
     
     override componentWillUnmount() {
         // Frame
@@ -82,11 +82,11 @@ export class ModelView3D extends React.Component<Props> {
         }
         // Revert material
         if (this.select_cache) {
-            this.revertSelect(this.scene)
+            this.revertSelect(this.props.model)
             this.select_cache = undefined
         }
         if (this.highlight_cache) {
-            this.revertHighlight(this.scene)
+            this.revertHighlight(this.props.model)
             this.highlight_cache = undefined
         }
     }
@@ -195,20 +195,20 @@ export class ModelView3D extends React.Component<Props> {
         }
         // Highlight and select
         if (this.select_cache) {
-            this.revertSelect(this.scene)
+            this.revertSelect(this.props.model)
             this.select_cache = undefined
         }
         if (this.highlight_cache) {
-            this.revertHighlight(this.scene)
+            this.revertHighlight(this.props.model)
             this.highlight_cache = undefined
         }
         if ((this.props.highlighted && this.props.highlighted.length > 0) || (this.props.marked && this.props.marked.length > 0)) {
             this.highlight_cache = {}
-            this.setHighlight(this.scene)
+            this.setHighlight(this.props.model)
         }
         if (this.props.selected && this.props.selected.length > 0) {
             this.select_cache = {}
-            this.setSelect(this.scene)
+            this.setSelect(this.props.model)
         }
         // Resize
         this.resize()
@@ -246,70 +246,37 @@ export class ModelView3D extends React.Component<Props> {
         return new Vector2(x / w * 2 - 1, - y / h * 2 + 1)
     }
 
-    updateMaterial(object: Object3D, scalar: number) {
-        if (object.type == 'Mesh') {
-            const mesh = object as Mesh
-            if (typeof mesh.material == 'object') {
-                const material = mesh.material as Material
-                if (material.type == 'MeshStandardMaterial') {
-                    const msm = material as MeshStandardMaterial
-                    msm.emissive.setScalar(scalar)
-                } else {
-                    console.error('Material type not supported', material.type)
-                }
-            } else {
-                console.error('Material type not supported', typeof mesh.material)
-            }
-        }
-        for (const child of object.children) {
-            this.updateMaterial(child, scalar)
-        }
-    }
-
     updateHovered(position: { clientX: number, clientY: number }) {
-        if (this.props.mouse) {
-            if (this.hovered && this.hovered != this.selected) {
-                this.updateMaterial(this.hovered, 0)
-                this.hovered = null
-            }
-            
-            this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
-            const intersections = this.raycaster.intersectObjects(this.scene.children, true)
-
-            if (intersections.length > 0) {
-                let iterator = intersections[0].object
-                while (iterator && !iterator.name) {
-                    iterator = iterator.parent
-                }
-                this.hovered = iterator
-                if (iterator) {
-                    this.updateMaterial(this.hovered, 0.1)
-                    this.div.current.title = iterator.name
-                    this.div.current.style.cursor = 'pointer'
-                } else {
-                    this.div.current.title = ''
-                    this.div.current.style.cursor = 'default'
-                }
-            } else {
-                this.div.current.title = ''
-                this.div.current.style.cursor = 'default'
-            }
+        if (this.hovered) {
+            this.props.out && this.props.out(this.hovered)
+            this.hovered = null
         }
+        
+        this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
+        const intersections = this.raycaster.intersectObjects(this.scene.children, true)
+
+        if (intersections.length > 0) {
+            let iterator = intersections[0].object
+            while (iterator && !iterator.name) {
+                iterator = iterator.parent
+            }
+            this.hovered = iterator
+        }
+            
+        if (this.hovered) {
+            this.div.current.title = this.hovered.name
+            this.div.current.style.cursor = 'pointer'
+        } else {
+            this.div.current.title = ''
+            this.div.current.style.cursor = 'default'
+        }
+
+        this.props.over && this.props.over(this.hovered)
     }
 
     updateSelected(position: { clientX: number, clientY: number }) {
         this.updateHovered(position)
-        if (this.selected && this.selected != this.hovered) {
-            this.updateMaterial(this.selected, 0)
-            this.selected = null
-        }
-        if (this.hovered) {
-            if (this.props.click) {
-                this.selected = this.hovered
-                this.updateMaterial(this.selected, 0.2)
-                this.props.click(this.selected)
-            }
-        }
+        this.props.click && this.props.click(this.hovered)
     }
 
     calculateDistance() {

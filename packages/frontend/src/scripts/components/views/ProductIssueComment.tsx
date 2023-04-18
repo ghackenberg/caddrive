@@ -9,6 +9,7 @@ import { Comment, Issue, Member, Product, User, Version } from 'productboard-com
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'
+import { computePath } from '../../functions/path'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
@@ -216,28 +217,26 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
         setSelected([part])
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>, _part: Part) {
+    function handleMouseOut(event: MouseEvent<HTMLAnchorElement>) {
         event.preventDefault()
         setSelected(undefined)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function handleClick(event: MouseEvent<HTMLAnchorElement>, _part: Part) {
+    function handleClick(event: MouseEvent<HTMLAnchorElement>) {
         event.preventDefault()
     }
 
-    async function selectObject(version: Version, object: Object3D) {
-        let iterator = object
-        let path = ''
-        while (iterator) {
-            if (iterator.parent) {
-                path = path ? `${iterator.parent.children.indexOf(iterator)}-${path}` : `${iterator.parent.children.indexOf(iterator)}`
-            } else {
-                path = path ? `0-${path}` : '0'
-            }
-            iterator = iterator.parent
-        }
+    function overObject(version: Version, object: Object3D) {
+        const path = computePath(object)
+        setSelected([{ productId: version.productId, versionId: version.id, objectPath: path, objectName: object.name }])
+    }
+    
+    function outObject() {
+        setSelected([])
+    }
+
+    function selectObject(version: Version, object: Object3D) {
+        const path = computePath(object)
         const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
         if (document.activeElement == textReference.current) {
             const before = text.substring(0, textReference.current.selectionStart)
@@ -448,7 +447,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                     </div>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject}/>
+                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} over={overObject} out={outObject} click={selectObject}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive} />

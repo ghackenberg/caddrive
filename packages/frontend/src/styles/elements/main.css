@@ -7,7 +7,8 @@ body > div > main {
     bottom: 0;
 }
 
-/* Header */
+/* Header and footer */
+
 body > div > main > footer,
 body > div > main > header {
     background-color: rgb(245,245,245);
@@ -29,21 +30,6 @@ body > div > main > header > div:nth-child(1) {
 
     white-space: nowrap;
 }
-/*
-body > div > main > header > div:nth-child(1)::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    right: 0;
-    bottom: 0;
-
-    width: 1em;
-
-    background-image: linear-gradient(to right, rgba(245,245,245,0), rgba(245,245,245,1));
-}
-*/
 body > div > main > header > div:nth-child(1) > span::after {
     content: "/";
 
@@ -59,22 +45,6 @@ body > div > main > footer > div:nth-child(2) {
 
     white-space: nowrap;
 }
-/*
-body > div > main > header > div:nth-child(2)::after,
-body > div > main > footer > div:nth-child(2)::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    right: 0;
-    bottom: 0;
-
-    width: 1em;
-
-    background-image: linear-gradient(to right, rgba(245,245,245,0), rgba(245,245,245,1));
-}
-*/
 body > div > main > footer > div:nth-child(2) > span > a,
 body > div > main > header > div:nth-child(2) > span > a {
     display: inline-block;

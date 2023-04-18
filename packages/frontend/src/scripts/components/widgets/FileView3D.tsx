@@ -6,6 +6,8 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel } from '../../loaders/ldraw'
+import { computePath } from '../../functions/path'
+import { ModelGraph } from './ModelGraph'
 import { ModelView3D } from './ModelView3D'
 
 import * as LoadIcon from '/src/images/load.png'
@@ -28,7 +30,16 @@ async function getLDrawModel(path: string) {
     return LDRAW_MODEL_CACHE[path]
 }
 
-export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
+export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
+
+    // CONSTANTS
+
+    const over = props.over || function(object) {
+        setSelected([computePath(object)])
+    }
+    const out = props.out || function() {
+        setSelected([])
+    }
 
     // INITIAL STATES
 
@@ -42,7 +53,12 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
 
     // STATES
     
+    // Entities
     const [group, setGroup] = useState<Group>(initialGroup)
+    
+    // Interactions
+    const [toggle, setToggle] = useState(false)
+    const [selected, setSelected] = useState<string[]>(props.selected)
 
     // EFFECTS
     
@@ -58,13 +74,21 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
             setGroup(undefined)
         }
     }, [props.path])
+
+    useEffect(() => { setSelected(props.selected) }, [props.selected])
     
     // RETURN
 
     return (
-        <div className="widget file_view_3d">
+        <div className={`widget file_view_3d ${toggle ? 'toggle' : ''}`}>
             {group ? (
-                <ModelView3D model={group} mouse={props.mouse} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
+                <>
+                    <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    <ModelView3D model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    <a onClick={() => setToggle(!toggle)} className='button fill lightgray'>
+                        <span/>
+                    </a>
+                </>
             ) : (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             )}

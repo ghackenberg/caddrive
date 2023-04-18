@@ -225,7 +225,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                                     {!group ? (
                                                         <img src={LoadIcon} className='icon small position center animation spin'/>
                                                     ) : (
-                                                        <ModelView3D model={group} mouse={true} highlighted={[]} marked={[]} selected={[]}/>
+                                                        <ModelView3D model={group} highlighted={[]} marked={[]} selected={[]}/>
                                                     )}
                                                 </Fragment>
                                             )}
