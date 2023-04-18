@@ -29,7 +29,6 @@ export class ModelView3D extends React.Component<Props> {
     private position_end: {clientX: number, clientY: number}
     
     private hovered: Object3D
-    private selected: Object3D
 
     constructor(props: Props) {
         super(props)
@@ -48,10 +47,6 @@ export class ModelView3D extends React.Component<Props> {
 
         this.paint = this.paint.bind(this)
     }
-
-    override componentDidUpdate() {
-        this.reload()
-    }
     
     override componentDidMount() {
         // Scene
@@ -69,6 +64,10 @@ export class ModelView3D extends React.Component<Props> {
         // Listen
         window.addEventListener('resize', this.resize)
         // Reload
+        this.reload()
+    }
+
+    override componentDidUpdate() {
         this.reload()
     }
     
@@ -247,29 +246,9 @@ export class ModelView3D extends React.Component<Props> {
         return new Vector2(x / w * 2 - 1, - y / h * 2 + 1)
     }
 
-    updateMaterial(object: Object3D, scalar: number) {
-        if (object.type == 'Mesh') {
-            const mesh = object as Mesh
-            if (typeof mesh.material == 'object') {
-                const material = mesh.material as Material
-                if (material.type == 'MeshStandardMaterial') {
-                    const msm = material as MeshStandardMaterial
-                    msm.emissive.setScalar(scalar)
-                } else {
-                    console.error('Material type not supported', material.type)
-                }
-            } else {
-                console.error('Material type not supported', typeof mesh.material)
-            }
-        }
-        for (const child of object.children) {
-            this.updateMaterial(child, scalar)
-        }
-    }
-
     updateHovered(position: { clientX: number, clientY: number }) {
-        if (this.hovered && this.hovered != this.selected) {
-            this.updateMaterial(this.hovered, 0)
+        if (this.hovered) {
+            this.props.out && this.props.out(this.hovered)
             this.hovered = null
         }
         
@@ -282,33 +261,22 @@ export class ModelView3D extends React.Component<Props> {
                 iterator = iterator.parent
             }
             this.hovered = iterator
-            if (iterator) {
-                this.updateMaterial(this.hovered, 0.1)
-                this.div.current.title = iterator.name
-                this.div.current.style.cursor = 'pointer'
-            } else {
-                this.div.current.title = ''
-                this.div.current.style.cursor = 'default'
-            }
+        }
+            
+        if (this.hovered) {
+            this.div.current.title = this.hovered.name
+            this.div.current.style.cursor = 'pointer'
         } else {
             this.div.current.title = ''
             this.div.current.style.cursor = 'default'
         }
+
+        this.props.over && this.props.over(this.hovered)
     }
 
     updateSelected(position: { clientX: number, clientY: number }) {
         this.updateHovered(position)
-        if (this.selected && this.selected != this.hovered) {
-            this.updateMaterial(this.selected, 0)
-            this.selected = null
-        }
-        if (this.hovered) {
-            if (this.props.click) {
-                this.selected = this.hovered
-                this.updateMaterial(this.selected, 0.2)
-                this.props.click(this.selected)
-            }
-        }
+        this.props.click && this.props.click(this.hovered)
     }
 
     calculateDistance() {
