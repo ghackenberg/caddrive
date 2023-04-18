@@ -279,7 +279,7 @@ export class ModelView3D extends React.Component<Props> {
             if (intersections.length > 0) {
                 this.hovered = intersections[0].object
                 this.updateMaterial(this.hovered, 0.1)
-                this.div.current.title = this.hovered.name
+                this.div.current.title = this.hovered.name || this.hovered.type
                 this.div.current.style.cursor = 'pointer'
             } else {
                 this.div.current.title = ''
