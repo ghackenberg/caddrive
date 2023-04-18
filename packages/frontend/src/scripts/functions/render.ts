@@ -1,30 +1,48 @@
-import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
+import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, XRAnimationLoopCallback, sRGBEncoding } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-// Ambient light
-export const ambient_light = new AmbientLight(0xffffff, 0.5)
-// Directional light
-export const directional_light = new DirectionalLight(0xffffff, 1)
+const scene = initializeScene()
+const camera = initializeCamera()
+const renderer = initializeRenderer()
+const orbiter = initializeOrbiter(camera, renderer)
 
-// Scene
-const scene = new Scene()
-scene.add(ambient_light)
-scene.add(directional_light)
-scene.add(new Object3D())
+export function initializeScene() {
+    const ambient_light = new AmbientLight(0xffffff, 0.5)
+    const directional_light = new DirectionalLight(0xffffff, 1)
 
-// Camera
-const camera = new PerspectiveCamera(45, 1, 0.1, 1000)
+    const scene = new Scene()
+    scene.add(ambient_light)
+    scene.add(directional_light)
+    scene.add(new Object3D())
 
-// WebGL renderer
-const renderer = new WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true })
-renderer.outputEncoding = sRGBEncoding
-renderer.toneMapping = ACESFilmicToneMapping
-//renderer.setPixelRatio(window.devicePixelRatio)
+    return scene
+}
 
-// Orbit
-const orbit = new OrbitControls(camera, renderer.domElement)
+export function initializeCamera(aspect = 1, near = 0.1, far = 1000) {
+    const camera = new PerspectiveCamera(45, aspect, near, far)
 
-export function prepare(model: Group, orbit: OrbitControls) {
+    return camera
+}
+
+export function initializeRenderer(width = 1, height = 1, loop: XRAnimationLoopCallback = undefined) {
+    const renderer = new WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true })
+    renderer.outputEncoding = sRGBEncoding
+    renderer.toneMapping = ACESFilmicToneMapping
+    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setSize(width, height)
+    renderer.setAnimationLoop(loop)
+
+    return renderer
+}
+
+export function initializeOrbiter(camera: PerspectiveCamera, renderer: WebGLRenderer) {
+    const orbiter = new OrbitControls(camera, renderer.domElement)
+    orbiter.enableDamping = true
+
+    return orbiter
+}
+
+export function resetOrbiter(model: Group, orbiter: OrbitControls) {
     // Analyze
     const box = new Box3().setFromObject(model)
     const center = box.getCenter(new Vector3())
@@ -32,9 +50,9 @@ export function prepare(model: Group, orbit: OrbitControls) {
     const radius = Math.max(size.x, Math.max(size.y, size.z)) * 0.75
 
     // Orbit
-    orbit.target0.copy(center)
-    orbit.position0.set(-2.3, 1, 2).multiplyScalar(radius).add(center)
-    orbit.reset()
+    orbiter.target0.copy(center)
+    orbiter.position0.set(-2.3, 1, 2).multiplyScalar(radius).add(center)
+    orbiter.reset()
 }
 
 export function render(model: Group, width: number, height: number): Promise<{ blob: Blob, dataUrl: string }> {
@@ -47,7 +65,7 @@ export function render(model: Group, width: number, height: number): Promise<{ b
         camera.aspect = width / height
 
         // Prepare
-        prepare(model, orbit)
+        resetOrbiter(model, orbiter)
 
         // Renderer
         renderer.setSize(width, height)

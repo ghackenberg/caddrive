@@ -1,9 +1,9 @@
 import * as React from 'react'
 
-import { Scene, PerspectiveCamera, WebGLRenderer, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, ACESFilmicToneMapping } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-import { ambient_light, directional_light, prepare } from '../../functions/render'
+import { initializeCamera, initializeOrbiter, initializeRenderer, initializeScene, resetOrbiter } from '../../functions/render'
 
 interface Props {
     model: Group
@@ -21,11 +21,11 @@ export class ModelView3D extends React.Component<Props> {
     private div: React.RefObject<HTMLDivElement>
     private timeout: NodeJS.Timeout
 
-    private renderer: WebGLRenderer
-    private orbit: OrbitControls
-    private raycaster: Raycaster
     private scene: Scene
     private camera: PerspectiveCamera
+    private renderer: WebGLRenderer
+    private orbiter: OrbitControls
+    private raycaster: Raycaster
 
     private position_start: {clientX: number, clientY: number}
     private position_end: {clientX: number, clientY: number}
@@ -58,26 +58,18 @@ export class ModelView3D extends React.Component<Props> {
     }
     
     override componentDidMount() {
-        // Renderer
-        this.renderer = new WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true })
-        this.renderer.outputEncoding = sRGBEncoding
-        this.renderer.toneMapping = ACESFilmicToneMapping
-        this.renderer.setPixelRatio(window.devicePixelRatio)
-        this.renderer.setSize(this.div.current.offsetWidth, this.div.current.offsetHeight)
-        this.renderer.setAnimationLoop(this.paint)
-        this.div.current.appendChild(this.renderer.domElement)
         // Scene
-        this.scene = new Scene()
-        this.scene.add(ambient_light)
-        this.scene.add(directional_light)
-        this.scene.add(new Object3D())
+        this.scene = initializeScene()
         // Camera
-        this.camera = new PerspectiveCamera(45, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
+        this.camera = initializeCamera(this.div.current.offsetWidth / this.div.current.offsetHeight)
+        // Renderer
+        this.renderer = initializeRenderer(this.div.current.offsetWidth, this.div.current.offsetHeight, this.paint)
+        // Orbit
+        this.orbiter = initializeOrbiter(this.camera, this.renderer)
         // Raycaster
         this.raycaster = new Raycaster()
-        // Orbit
-        this.orbit = new OrbitControls(this.camera, this.renderer.domElement)
-        this.orbit.enableDamping = true
+        // Append
+        this.div.current.appendChild(this.renderer.domElement)
         // Listen
         window.addEventListener('resize', this.resize)
         // Resize
@@ -215,7 +207,7 @@ export class ModelView3D extends React.Component<Props> {
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
             this.scene.add(this.props.model)
             // Orbit
-            prepare(this.props.model, this.orbit)
+            resetOrbiter(this.props.model, this.orbiter)
         }
         // Highlight and select
         if (this.select_cache) {
