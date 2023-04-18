@@ -363,6 +363,7 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     paint() {
+        this.orbit.update()
         this.renderer.render(this.scene, this.camera)
     }
     

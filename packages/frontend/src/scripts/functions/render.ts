@@ -36,10 +36,10 @@ export function initializeRenderer(width = 1, height = 1, loop: XRAnimationLoopC
 }
 
 export function initializeOrbit(camera: PerspectiveCamera, renderer: WebGLRenderer) {
-    const orbiter = new OrbitControls(camera, renderer.domElement)
-    orbiter.enableDamping = true
+    const orbit = new OrbitControls(camera, renderer.domElement)
+    orbit.enableDamping = true
 
-    return orbiter
+    return orbit
 }
 
 export function reset(model: Group, camera: PerspectiveCamera, orbit: OrbitControls) {
