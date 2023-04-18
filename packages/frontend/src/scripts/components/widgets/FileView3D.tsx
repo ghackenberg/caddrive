@@ -1,60 +1,61 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 
-import { Object3D } from 'three'
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { Group, Object3D } from 'three'
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { FileManager } from '../../managers/file'
+import { loadGLTFModel } from '../../loaders/gltf'
+import { loadLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from './ModelView3D'
 
 import * as LoadIcon from '/src/images/load.png'
 
-const LOADER = new GLTFLoader()
+const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
+const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
 
-const CACHE: {[path: string]: GLTF} = {}
+async function getGLTFModel(path: string) {
+    if (!(path in GLTF_MODEL_CACHE)) {
+        GLTF_MODEL_CACHE[path] = await loadGLTFModel(path)
+    }
+    return GLTF_MODEL_CACHE[path]
 
-function getModelFromCache(path: string) {
-    if (path in CACHE) {
-        return CACHE[path]
-    } else {
-        return undefined
-    }
-}
-async function getModel(path: string) {
-    if (path in CACHE) {
-        return CACHE[path]
-    } else {
-        const file = await FileManager.getFile(path)
-        return new Promise<GLTF>((resolve, reject) => {
-            LOADER.parse(file, path, model => {
-                CACHE[path] = model
-                resolve(model)
-            }, reject)
-        })
-    }
 }
 
-export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void, vr: boolean }) => {
+async function getLDrawModel(path: string) {
+    if (!(path in LDRAW_MODEL_CACHE)) {
+        LDRAW_MODEL_CACHE[path] = await loadLDrawModel(path)
+    }
+    return LDRAW_MODEL_CACHE[path]
+}
+
+export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], click?: (object: Object3D) => void }) => {
 
     // INITIAL STATES
 
-    const initialModel = getModelFromCache(props.path)
+    let initialGroup: Group = undefined
+
+    if (props.path.endsWith('.glb')) {
+        initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
+    } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
+        initialGroup = LDRAW_MODEL_CACHE[props.path]
+    }
 
     // STATES
-
-    const [model, setModel] = useState<GLTF>(initialModel)
+    
+    const [group, setGroup] = useState<Group>(initialGroup)
 
     // EFFECTS
     
     useEffect(() => {
         if (props.path) {
-            const initialModel = getModelFromCache(props.path)
-            setModel(initialModel)
-            if (!initialModel) {
-                getModel(props.path).then(setModel)
+            setGroup(undefined)
+            if (props.path.endsWith('.glb')) {
+                getGLTFModel(props.path).then(gltfModel => setGroup(gltfModel.scene))
+            } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
+                getLDrawModel(props.path).then(setGroup)
             }
         } else {
-            setModel(undefined)
+            setGroup(undefined)
         }
     }, [props.path])
     
@@ -62,8 +63,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
 
     return (
         <div className="widget file_view_3d">
-            {model ? (
-                <ModelView3D model={model} mouse={props.mouse} vr={props.vr} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
+            {group ? (
+                <ModelView3D model={group} mouse={props.mouse} highlighted={props.highlighted} marked={props.marked} selected={props.selected} click={props.click}/>
             ) : (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             )}

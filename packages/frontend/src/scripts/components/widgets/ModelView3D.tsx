@@ -1,50 +1,34 @@
 import * as React from 'react'
 
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, sRGBEncoding, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, DirectionalLight } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
-import { VRButton } from 'three/examples/jsm/webxr/VRButton'
-import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 
-import { createCamera } from '../../functions/render'
+import { initializeCamera, initializeOrbit, initializeRenderer, initializeScene, reset } from '../../functions/render'
 
 interface Props {
-    model: GLTF
+    model: Group
     highlighted?: string[]
     marked?: string[]
     selected?: string[]
     mouse: boolean
-    vr: boolean
     click?: (object: Object3D) => void
-    frame?: (image: Blob) => void
 }
 
 export class ModelView3D extends React.Component<Props> {
 
     private div: React.RefObject<HTMLDivElement>
-    private timeout: NodeJS.Timeout
 
-    private factory = new XRControllerModelFactory()
-    private ambient_light: AmbientLight
-    private directional_light: DirectionalLight
+    private scene: Scene
+    private camera: PerspectiveCamera
     private renderer: WebGLRenderer
     private orbit: OrbitControls
     private raycaster: Raycaster
-    private controller1: Group
-    private controller2: Group
-    private grip1: Group
-    private grip2: Group
-    private scene: Scene
-    private camera: PerspectiveCamera
-    private button: HTMLElement
 
     private position_start: {clientX: number, clientY: number}
     private position_end: {clientX: number, clientY: number}
     
     private hovered: Object3D
     private selected: Object3D
-
-    private fullscreen = false
 
     constructor(props: Props) {
         super(props)
@@ -69,73 +53,20 @@ export class ModelView3D extends React.Component<Props> {
     }
     
     override componentDidMount() {
-        // Ambient light
-        this.ambient_light = new AmbientLight(0xffffff, 0.5)
-        // Directional light
-        this.directional_light = new DirectionalLight(0xffffff, 1)
-        // Renderer
-        this.renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, alpha: true })
-        this.renderer.xr.enabled = true
-        this.renderer.outputEncoding = sRGBEncoding
-        this.renderer.setPixelRatio(window.devicePixelRatio)
-        this.renderer.setSize(this.div.current.offsetWidth, this.div.current.offsetHeight)
-        this.renderer.setAnimationLoop(this.paint)
-        // Controller 1
-        this.controller1 = this.renderer.xr.getController(0)
-        this.controller1.addEventListener('selectstart', console.log)
-        this.controller1.addEventListener('selectend', console.log)
-        this.controller1.addEventListener('connected', console.log)
-        this.controller1.addEventListener('disconnected', console.log)
-        // Controller 2
-        this.controller2 = this.renderer.xr.getController(1)
-        this.controller2.addEventListener('selectstart', console.log)
-        this.controller2.addEventListener('selectend', console.log)
-        this.controller2.addEventListener('connected', console.log)
-        this.controller2.addEventListener('disconnected', console.log)
-        // Controller grip 1
-        this.grip1 = this.renderer.xr.getControllerGrip(0)
-        this.grip1.add(this.factory.createControllerModel(this.grip1))
-        // Controller grip 2
-        this.grip2 = this.renderer.xr.getControllerGrip(1)
-        this.grip2.add(this.factory.createControllerModel(this.grip2))
         // Scene
-        this.scene = new Scene()
-        this.scene.add(this.ambient_light)
-        this.scene.add(this.directional_light)
-        this.scene.add(this.controller1)
-        this.scene.add(this.controller2)
-        this.scene.add(this.grip1)
-        this.scene.add(this.grip2)
-        this.scene.add(new Object3D())
+        this.scene = initializeScene()
         // Camera
-        this.camera = new PerspectiveCamera(3, this.div.current.offsetWidth / this.div.current.offsetHeight, 0.1, 1000)
-        this.camera.position.z = 5
-        // Button
-        if (this.props.vr) {
-            this.button = VRButton.createButton(this.renderer)
-            this.button.addEventListener('click', () => {
-                this.fullscreen = !this.fullscreen
-                this.resize()
-            })
-        }
-        // Append
-        this.div.current.appendChild(this.renderer.domElement)
-        if (this.props.vr) {
-            this.div.current.appendChild(this.button)
-        }
+        this.camera = initializeCamera(this.div.current.offsetWidth / this.div.current.offsetHeight)
+        // Renderer
+        this.renderer = initializeRenderer(this.div.current.offsetWidth, this.div.current.offsetHeight, this.paint)
+        // Orbit
+        this.orbit = initializeOrbit(this.camera, this.renderer)
         // Raycaster
         this.raycaster = new Raycaster()
-        // Orbit
-        this.orbit = this.props.mouse && new OrbitControls(this.camera, this.renderer.domElement)
+        // Append
+        this.div.current.appendChild(this.renderer.domElement)
         // Listen
         window.addEventListener('resize', this.resize)
-        // Resize
-        this.timeout = setTimeout(() => {
-            // Reset
-            this.timeout = undefined
-            // Call
-            this.resize()
-        }, 100)
         // Reload
         this.reload()
     }
@@ -145,13 +76,6 @@ export class ModelView3D extends React.Component<Props> {
         this.renderer.setAnimationLoop(null)
         // Resize
         window.removeEventListener('resize', this.resize)
-        // Timeout
-        if (this.timeout) {
-            // Clear
-            clearTimeout(this.timeout)
-            // Reset
-            this.timeout = undefined
-        }
         // Remove all active WebGl contexts
         while(this.div.current.childElementCount > 0) {
             this.div.current.removeChild(this.div.current.lastChild)
@@ -169,13 +93,13 @@ export class ModelView3D extends React.Component<Props> {
 
     private highlight_cache: {[uuid: string]: Material | Material[]}
 
-    setHighlight(object: Object3D) {
+    setHighlight(object: Object3D, path = '0') {
         // Process object
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.highlight_cache[mesh.uuid] = mesh.material
-            const highlighted = this.props.highlighted.indexOf(object.name) != -1
-            const marked = this.props.marked.indexOf(object.name) != -1
+            const highlighted = this.props.highlighted.filter(prefix => path.startsWith(prefix)).length > 0
+            const marked = this.props.marked.filter(prefix => path.startsWith(prefix)).length > 0
             if (highlighted && marked) {
                 mesh.material = new MeshStandardMaterial({
                     color: 0x0000ff
@@ -195,8 +119,9 @@ export class ModelView3D extends React.Component<Props> {
             }
         }
         // Process children
-        for (const child of object.children) {
-            this.setHighlight(child)
+        for (let index = 0; index < object.children.length; index++) {
+            const child = object.children[index]
+            this.setHighlight(child, `${path}-${index}`)
         }
     }
 
@@ -214,11 +139,11 @@ export class ModelView3D extends React.Component<Props> {
 
     private select_cache: {[uuid: string]: Material | Material[]}
 
-    setSelect(object: Object3D) {
+    setSelect(object: Object3D, path = '0') {
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.select_cache[mesh.uuid] = mesh.material
-            if (this.props.selected.indexOf(mesh.name) != -1) {
+            if (this.props.selected.filter(prefix => path.startsWith(prefix)).length > 0) {
                 if (Array.isArray(mesh.material)) {
                     const array: Material[] = []
                     for (const material of mesh.material) {
@@ -240,8 +165,9 @@ export class ModelView3D extends React.Component<Props> {
                 }
             }
         }
-        for (const child of object.children) {
-            this.setSelect(child)
+        for (let index = 0; index < object.children.length; index++) {
+            const child = object.children[index]
+            this.setSelect(child, `${path}-${index}`)
         }
     }
 
@@ -256,20 +182,16 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     reload() {
-        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model.scene) {
+        // Update
+        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model) {
             // Cache
             this.highlight_cache = undefined
             this.select_cache = undefined
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
-            this.scene.add(this.props.model.scene)
-            // Camera
-            this.camera = createCamera(this.props.model.scene, this.div.current.offsetWidth, this.div.current.offsetHeight)
+            this.scene.add(this.props.model)
             // Orbit
-            if (this.props.mouse) {
-                this.orbit.object = this.camera
-                this.orbit.update()
-            }
+            reset(this.props.model, this.camera, this.orbit)
         }
         // Highlight and select
         if (this.select_cache) {
@@ -294,13 +216,12 @@ export class ModelView3D extends React.Component<Props> {
 
     resize() {
         if (this.div.current) {
-            const width = this.fullscreen ? window.innerWidth : this.div.current.offsetWidth
-            const height = this.fullscreen ? window.innerHeight : this.div.current.offsetHeight
+            // Size
+            const width = this.div.current.offsetWidth
+            const height = this.div.current.offsetHeight
             // Camera
-            if (this.camera) {
-                this.camera.aspect = width / height
-                this.camera.updateProjectionMatrix()
-            }
+            this.camera.aspect = width / height
+            this.camera.updateProjectionMatrix()
             // Renderer
             this.renderer.setSize(width, height)
         }
@@ -339,8 +260,9 @@ export class ModelView3D extends React.Component<Props> {
             } else {
                 console.error('Material type not supported', typeof mesh.material)
             }
-        } else {
-            console.error('Object type not supported', object.type)
+        }
+        for (const child of object.children) {
+            this.updateMaterial(child, scalar)
         }
     }
 
@@ -355,10 +277,19 @@ export class ModelView3D extends React.Component<Props> {
             const intersections = this.raycaster.intersectObjects(this.scene.children, true)
 
             if (intersections.length > 0) {
-                this.hovered = intersections[0].object
-                this.updateMaterial(this.hovered, 0.1)
-                this.div.current.title = this.hovered.name
-                this.div.current.style.cursor = 'pointer'
+                let iterator = intersections[0].object
+                while (iterator && !iterator.name) {
+                    iterator = iterator.parent
+                }
+                this.hovered = iterator
+                if (iterator) {
+                    this.updateMaterial(this.hovered, 0.1)
+                    this.div.current.title = iterator.name
+                    this.div.current.style.cursor = 'pointer'
+                } else {
+                    this.div.current.title = ''
+                    this.div.current.style.cursor = 'default'
+                }
             } else {
                 this.div.current.title = ''
                 this.div.current.style.cursor = 'default'
@@ -404,8 +335,7 @@ export class ModelView3D extends React.Component<Props> {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handleMouseUp(_event: React.MouseEvent) {
+    handleMouseUp() {
         if (this.position_start && this.position_end) {
             if (this.calculateDistance() <= 1) {
                  this.updateSelected(this.position_end)
@@ -424,8 +354,7 @@ export class ModelView3D extends React.Component<Props> {
         this.position_end = event.touches[0]
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handleTouchEnd(_event: React.TouchEvent) {
+    handleTouchEnd() {
         if (this.calculateDistance() <= 1) {
             this.updateSelected(this.position_end)
         }
@@ -434,20 +363,12 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     paint() {
-        // Render
-        if (this.scene && this.camera) {
-            this.renderer.render(this.scene, this.camera)
-            if (this.props.frame) {
-                const canvas: HTMLCanvasElement = this.div.current.childNodes[0] as HTMLCanvasElement         
-                canvas.toBlob(this.props.frame)
-            }
-            
-        }
+        this.orbit.update()
+        this.renderer.render(this.scene, this.camera)
     }
     
     override render() {
-        return <div className="widget model_view_3d" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>
-        
+        return <div className="widget model_view_3d" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>   
     }
     
 }

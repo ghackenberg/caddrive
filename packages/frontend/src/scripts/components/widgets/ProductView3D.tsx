@@ -15,10 +15,11 @@ import * as EmptyIcon from '/src/images/empty.png'
 interface Part {
     productId: string
     versionId: string
+    objectPath: string
     objectName: string
 }
 
-export const ProductView3D = (props: { product: Product, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void, vr: boolean }) => {
+export const ProductView3D = (props: { product: Product, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], click?: (version: Version, object: Object3D) => void }) => {
 
     // CONTEXTS
 
@@ -29,9 +30,9 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     // INITIAL STATES
 
     const initialVersions = props.product ? VersionManager.findVersionsFromCache(props.product.id) : []
-    const initialHighlighted = (props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
-    const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
-    const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)
+    const initialHighlighted = (props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
+    const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
+    const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
 
     // STATES
 
@@ -44,9 +45,9 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     
     useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions) }, [props.product])
     useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
-    useEffect(() => { setHighlighted((props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)) }, [versionContext, props.highlighted])
-    useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)) }, [versionContext, props.marked])
-    useEffect(() => { setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectName)) }, [versionContext, props.selected])
+    useEffect(() => { setHighlighted((props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.highlighted])
+    useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.marked])
+    useEffect(() => { setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.selected])
 
     // FUNCTIONS
 
@@ -72,7 +73,7 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
                                     </option>
                                 ))}
                             </select>
-                            <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))} vr={props.vr}/>
+                            <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} click={props.click && (object => props.click(contextVersion, object))}/>
                         </>
                     )
                 ) : (

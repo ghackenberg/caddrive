@@ -222,7 +222,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                                     )}
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} vr={true}/>
+                                    <ProductView3D product={product} mouse={true}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

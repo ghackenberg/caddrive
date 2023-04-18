@@ -26,4 +26,8 @@ export class Version extends VersionAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    modelType: 'glb' | 'ldr' | 'mpd'
+    @ApiProperty()
+    imageType: 'png'
 }

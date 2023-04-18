@@ -14,6 +14,7 @@ import * as ReopenIcon from '/src/images/reopen.png'
 interface Part {
     productId: string
     versionId: string
+    objectPath: string
     objectName: string
 }
 
@@ -56,7 +57,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
                 <div key={index} className="note part">
                     <div className="free"/>
                     <div className="text">
-                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectName}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
+                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
                             <span>
                                 <img src={PartIcon}/>
                             </span>

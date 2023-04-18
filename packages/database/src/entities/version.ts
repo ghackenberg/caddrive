@@ -45,4 +45,10 @@ export class VersionEntity extends Version {
 
     @Column({ nullable: false })
     override description: string
+
+    @Column({ nullable: false })
+    override modelType: 'glb' | 'ldr' | 'mpd'
+
+    @Column({ nullable: false })
+    override imageType: 'png'
 }

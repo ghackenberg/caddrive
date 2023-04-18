@@ -228,7 +228,17 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function selectObject(version: Version, object: Object3D) {
-        const markdown = `[${object.name}](/products/${product.id}/versions/${version.id}/objects/${object.name})`
+        let iterator = object
+        let path = ''
+        while (iterator) {
+            if (iterator.parent) {
+                path = path ? `${iterator.parent.children.indexOf(iterator)}-${path}` : `${iterator.parent.children.indexOf(iterator)}`
+            } else {
+                path = path ? `0-${path}` : '0'
+            }
+            iterator = iterator.parent
+        }
+        const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
         if (document.activeElement == textReference.current) {
             const before = text.substring(0, textReference.current.selectionStart)
             const after = text.substring(textReference.current.selectionEnd)
@@ -438,7 +448,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                     </div>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject} vr={true} />
+                                    <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} click={selectObject}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive} />

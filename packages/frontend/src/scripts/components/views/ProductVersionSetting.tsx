@@ -3,7 +3,8 @@ import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } fro
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { Group } from 'three'
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { Member, Product, Version } from 'productboard-common'
 
@@ -13,6 +14,8 @@ import { render } from '../../functions/render'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
+import { parseGLTFModel } from '../../loaders/gltf'
+import { parseLDrawModel } from '../../loaders/ldraw'
 import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
 import { NumberInput } from '../inputs/NumberInput'
@@ -69,7 +72,9 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     const [file, setFile] = useState<File>()
 
     const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
+    const [text, setText] = useState<string>(null)
     const [model, setModel] = useState<GLTF>(null)
+    const [group, setGroup] = useState<Group>(null)
     const [blob, setBlob] = useState<Blob>(null) 
     const [dataUrl, setDataUrl] = useState<string>(null) 
     const [active, setActive] = useState<string>('left')
@@ -90,21 +95,27 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     useEffect(() => {
         if (file) {
             setArrayBuffer(null)
+            setText(null)
             setModel(null)
+            setGroup(null)
             setBlob(null)
             setDataUrl(null)
-            file.arrayBuffer().then(setArrayBuffer)
+            if (file.name.endsWith('.glb')) {
+                file.arrayBuffer().then(setArrayBuffer)
+            } else if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
+                file.text().then(setText)
+            }
         }
     }, [file])
-    useEffect(() => { arrayBuffer && new GLTFLoader().parse(arrayBuffer, undefined, setModel) }, [arrayBuffer])
+    useEffect(() => { arrayBuffer && parseGLTFModel(arrayBuffer).then(setModel) }, [arrayBuffer])
+    useEffect(() => { text && parseLDrawModel(text).then(setGroup) }, [text])
+    useEffect(() => { model && setGroup(model.scene) }, [model])
     useEffect(() => {
-        if (model) {
-            render(model.scene.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
-                setBlob(result.blob)
-                setDataUrl(result.dataUrl)
-            })
-        }
-    }, [model])
+        group && render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
+            setBlob(result.blob)
+            setDataUrl(result.dataUrl)
+        })
+    }, [group])
 
     // FUNCTIONS
 
@@ -174,7 +185,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                         )}
                                         <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                         {versionId == 'new' && (
-                                            <FileInput label='File' placeholder='Select file' accept='.glb' change={setFile} required={true}/>
+                                            <FileInput label='File' placeholder='Select file' accept='.glb,.ldr,.mpd' change={setFile} required={true}/>
                                         )}
                                         <GenericInput label='Preview'>
                                             {dataUrl ? (
@@ -204,17 +215,17 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                                 </div>
                                 <div>
                                     {version ? (
-                                        <VersionView3D version={version} mouse={true} vr={true}/>
+                                        <VersionView3D version={version} mouse={true}/>
                                     ) : (
                                         <div className="widget version_view_3d">
                                             {!file ? (
                                                 <img src={EmptyIcon} className='icon medium position center'/>
                                             ) : (
                                                 <Fragment>
-                                                    {!model ? (
+                                                    {!group ? (
                                                         <img src={LoadIcon} className='icon small position center animation spin'/>
                                                     ) : (
-                                                        <ModelView3D model={model} mouse={false} vr={false} highlighted={[]} marked={[]} selected={[]}/>
+                                                        <ModelView3D model={group} mouse={true} highlighted={[]} marked={[]} selected={[]}/>
                                                     )}
                                                 </Fragment>
                                             )}

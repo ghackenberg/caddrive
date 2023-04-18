@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { Injectable } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
 import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
 import 'multer'
@@ -15,6 +15,12 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     @Client({ transport: Transport.MQTT })
     private client: ClientProxy
 
+    constructor() {
+        if (!fs.existsSync('./uploads')) {
+            fs.mkdirSync('./uploads')
+        }
+    }
+
     async findVersions(productId: string) : Promise<Version[]> {
         let where: FindOptionsWhere<VersionEntity>
         if (productId)
@@ -26,19 +32,13 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     }
  
     async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
-        const version = await Database.get().versionRepository.save({ id: shortid(), deleted: false, ...data })
-        if (files && files.model && files.model.length == 1 && files.model[0].originalname.endsWith('.glb')) {
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
-        }
-        if (files && files.image && files.image.length == 1 && files.image[0].mimetype.endsWith('/png')) {
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
-        }
+        const id = shortid()
+        const deleted = false
+        const modelType = getModelType(null, files)
+        const imageType = getImageType(null, files)
+        const version = await Database.get().versionRepository.save({ id, deleted, modelType, imageType, ...data })
+        saveModel(version, files)
+        saveImage(version, files)
         await this.client.emit(`/api/v1/versions/${version.id}/create`, this.convert(version))
         return this.convert(version)
     }
@@ -54,19 +54,11 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.minor = data.minor
         version.patch = data.patch
         version.description = data.description
-        if (files && files.model && files.model.length == 1 && files.model[0].originalname.endsWith('.glb')) {
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
-        }
-        if (files && files.image && files.image.length == 1 && files.image[0].mimetype.endsWith('/png')) {
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
-        }
+        version.modelType = getModelType(version, files)
+        version.imageType = getImageType(version, files)
         await Database.get().versionRepository.save(version)
+        saveModel(version, files)
+        saveImage(version, files)
         await this.client.emit(`/api/v1/versions/${version.id}/update`, this.convert(version))
         return this.convert(version)
     }
@@ -80,6 +72,81 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     }
 
     private convert(version: VersionEntity) {
-        return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description }
+        return { id: version.id, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, time: version.time, description: version.description, modelType: version.modelType, imageType: version.imageType }
+    }
+}
+
+function getModelType(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
+    if (files && files.model) {
+        if (files.model.length == 1) {
+            if (files.model[0].originalname.endsWith('.glb')) {
+                return 'glb'
+            } else if (files.model[0].originalname.endsWith('.ldr')) {
+                return 'ldr'
+            } else if (files.model[0].originalname.endsWith('.mpd')) {
+                return 'mpd'
+            } else {
+                throw new HttpException('Model file type not supported.', 400)
+            }
+        } else {
+            throw new HttpException('Only one model file supported.', 400)
+        }
+    } else {
+        if (version) {
+            return version.modelType
+        } else {
+            throw new HttpException('Model file must be provided.', 400)
+        }
+    }
+}
+function getImageType(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
+    if (files && files.image) {
+        if (files.image.length == 1) {
+            if (files.image[0].mimetype.endsWith('/png')) {
+                return 'png'
+            } else {
+                throw new HttpException('Image file type not supported.', 400)
+            }
+        } else {
+            throw new HttpException('Only one image file supported.', 400)
+        }
+    } else {
+        if (version) {
+            return version.imageType
+        } else {
+            throw new HttpException('Image file must be provided.', 400)
+        }
+    }
+}
+
+function saveModel(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
+    if (files && files.model) {
+        if (files.model.length == 1) {
+            if (files.model[0].originalname.endsWith('.glb')) {
+                fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
+            } else if (files.model[0].originalname.endsWith('.ldr')) {
+                fs.writeFileSync(`./uploads/${version.id}.ldr`, files.model[0].buffer)
+            } else if (files.model[0].originalname.endsWith('.mpd')) {
+                fs.writeFileSync(`./uploads/${version.id}.mpd`, files.model[0].buffer)
+            } else {
+                throw new HttpException('Model file type not supported.', 400)
+            }
+        } else {
+            throw new HttpException('Only one model file supported.', 400)
+        }
+    }
+}
+
+function saveImage(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
+    if (files && files.image) {
+        if (files.image.length == 1) {
+            if (files.image[0].mimetype.endsWith('/png')) {
+                fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
+            } else {
+                throw new HttpException('Image file type not supported.', 400)
+            }
+        } else {
+            throw new HttpException('Only one image file supported.', 400)
+        }
     }
 }

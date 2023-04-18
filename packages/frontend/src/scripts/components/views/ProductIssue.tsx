@@ -293,7 +293,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                     <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                                 </div>
                                 <div>
-                                    <ProductView3D product={product} highlighted={hightlighted} mouse={true} vr={true}/>
+                                    <ProductView3D product={product} highlighted={hightlighted} mouse={true}/>
                                 </div>
                             </main>
                             <ProductFooter items={items} active={active} setActive={setActive}/>

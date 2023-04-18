@@ -15,6 +15,7 @@ const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 export interface Part {
     productId: string
     versionId: string
+    objectPath: string
     objectName: string
 }
 
@@ -53,8 +54,9 @@ function collectPartsInternal(parent: Parent, parts: Part[]) {
             if (match) {
                 const productId = match[1]
                 const versionId = match[2]
-                const objectName = match[3]
-                const part = { productId, versionId, objectName }
+                const objectPath = match[3]
+                const objectName = child.children.length == 1 && child.children[0].type == 'text' && child.children[0].value
+                const part = { productId, versionId, objectPath, objectName }
                 parts.push(part)
             }
         }
@@ -73,8 +75,9 @@ export function createProcessor(parts: Part[], handleMouseOver: Handler, handleM
                 if (match) {
                     const productId = match[1]
                     const versionId = match[2]
-                    const objectName = match[3]
-                    const part = { productId, versionId, objectName }
+                    const objectPath = match[3]
+                    const objectName = props.children[0]
+                    const part = { productId, versionId, objectPath, objectName }
                     parts.push(part)
                     return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
                 } else {
