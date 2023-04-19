@@ -198,7 +198,9 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                             <span className="description">{vers.description}</span>
                                                         </div>
                                                     </div>
-                                                    <div style={ { backgroundImage: `url("/rest/files/${vers.id}.png")` } } className="model"/>
+                                                    <div className="model">
+                                                        <img src={`/rest/files/${vers.id}.png`}/>
+                                                    </div>
                                                 </div>
                                             </Fragment>
                                         ))}
