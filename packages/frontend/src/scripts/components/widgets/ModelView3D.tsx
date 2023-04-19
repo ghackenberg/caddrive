@@ -271,12 +271,12 @@ export class ModelView3D extends React.Component<Props> {
             this.div.current.style.cursor = 'default'
         }
 
-        this.props.over && this.props.over(this.hovered)
+        this.hovered && this.props.over && this.props.over(this.hovered)
     }
 
     updateSelected(position: { clientX: number, clientY: number }) {
         this.updateHovered(position)
-        this.props.click && this.props.click(this.hovered)
+        this.hovered && this.props.click && this.props.click(this.hovered)
     }
 
     calculateDistance() {
