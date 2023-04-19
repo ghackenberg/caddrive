@@ -3,6 +3,7 @@ import * as React from 'react'
 import { Scene, PerspectiveCamera, WebGLRenderer, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
+import { comparePath } from '../../functions/path'
 import { initializeCamera, initializeOrbit, initializeRenderer, initializeScene, reset } from '../../functions/render'
 
 interface Props {
@@ -98,8 +99,8 @@ export class ModelView3D extends React.Component<Props> {
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.highlight_cache[mesh.uuid] = mesh.material
-            const highlighted = this.props.highlighted.filter(prefix => path.startsWith(prefix)).length > 0
-            const marked = this.props.marked.filter(prefix => path.startsWith(prefix)).length > 0
+            const highlighted = this.props.highlighted.filter(prefix => comparePath(prefix, path)).length > 0
+            const marked = this.props.marked.filter(prefix => comparePath(prefix, path)).length > 0
             if (highlighted && marked) {
                 mesh.material = new MeshStandardMaterial({
                     color: 0x0000ff
@@ -143,7 +144,7 @@ export class ModelView3D extends React.Component<Props> {
         if (object.type == 'Mesh') {
             const mesh = object as Mesh
             this.select_cache[mesh.uuid] = mesh.material
-            if (this.props.selected.filter(prefix => path.startsWith(prefix)).length > 0) {
+            if (this.props.selected.filter(prefix => comparePath(prefix, path)).length > 0) {
                 if (Array.isArray(mesh.material)) {
                     const array: Material[] = []
                     for (const material of mesh.material) {

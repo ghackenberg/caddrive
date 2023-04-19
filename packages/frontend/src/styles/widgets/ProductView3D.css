@@ -6,13 +6,32 @@ div.widget.product_view_3d {
     
     background-color: rgb(215,215,215);
 }
+
 div.widget.product_view_3d > select {
     position: absolute;
 
     top: 1em;
     left: 1em;
     
-    max-width: calc(100% - 2em);
+    max-width: calc(100% - 22em);
 
     z-index: 1;
+}
+
+@media screen and (max-width: 100em) {
+    div.widget.product_view_3d > select {
+        max-width: calc(100% - 5em);
+    }
+}
+
+@media screen and (max-width: 70em) {
+    div.widget.product_view_3d > select {
+        max-width: calc(100% - 22em);
+    }
+}
+
+@media screen and (max-width: 50em) {
+    div.widget.product_view_3d > select {
+        max-width: calc(100% - 5em);
+    }
 }
