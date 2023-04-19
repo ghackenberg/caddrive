@@ -19,7 +19,7 @@ export class IssueAddData extends IssueUpdateData {
     @ApiProperty()
     productId: string
     @ApiProperty()
-    time: string
+    creationDate: string
 }
 
 export class Issue extends IssueAddData {

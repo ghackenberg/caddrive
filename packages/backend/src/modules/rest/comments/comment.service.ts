@@ -71,6 +71,6 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     }
 
     private convert(comment: CommentEntity) {
-        return { id: comment.id, deleted: comment.deleted, audioId: comment.audioId, userId: comment.userId, issueId: comment.issueId, time: comment.time, text: comment.text, action: comment.action }
+        return { id: comment.id, deleted: comment.deleted, audioId: comment.audioId, userId: comment.userId, issueId: comment.issueId, creationDate: comment.creationDate, text: comment.text, action: comment.action }
     }
 }

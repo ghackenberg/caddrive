@@ -13,7 +13,7 @@ export class CommentAddData extends CommentUpdateData {
     @ApiProperty()
     issueId: string
     @ApiProperty()
-    time: string
+    creationDate: string
 }
 
 export class Comment extends CommentAddData {

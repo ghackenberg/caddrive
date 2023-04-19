@@ -40,36 +40,36 @@ const milestones: Milestone[] = [
 ]
 
 const issues: Issue[] = [
-    { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), name: 'Design vehicle that can be used in summer and winter.', description: '**Description**\n\n* In winter, the vehicle has to deal with cold temperatures and icy roads.\n* In summer, the vehicle has to deal with warm temperatures, rain, and mud.\n\n**Validation**\n\nWe plan to conduct test drives under winter and summer conditions to validate the product design.', state: 'closed', deleted: false, assigneeIds: ['demo-4', 'demo-2'], milestoneId: 'demo-1' },
-    { id: 'demo-2', userId: 'demo-2', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), name: 'Use different wheel profile in winter version.', description: 'Please change the wheel profile (see [body_115_instance_2](/products/demo-1/versions/demo-3/objects/body_115_instance_2)). We need a stronger profile to handle winter conditions properly.', state: 'closed', deleted: false ,assigneeIds: ['demo-4'], milestoneId: 'demo-1' },
-    { id: 'demo-3', userId: 'demo-4', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), name: 'Use blue helmet for driver.', description: 'Please change the helmet color (see [technic_driver_helmet_p_SOLIDS_1_1](/products/demo-1/versions/demo-3/objects/technic_driver_helmet_p_SOLIDS_1_1)). We want a blue helmet because it fits better to our corporate design standards.', state: 'closed', deleted: false ,assigneeIds: ['demo-2'], milestoneId: 'demo-1' },
-    { id: 'demo-4', userId: 'demo-4', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), name: 'Install car radio for music.', description: 'Please install a car radio, so the driver can listen to music and news.', state: 'closed', deleted: false ,assigneeIds: ['demo-1', 'demo-2'], milestoneId: 'demo-1' },
-    { id: 'demo-5', userId: 'demo-4', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), name: 'Provide a possibility to mount a roof.', description: 'Please provide a mount to give possibility to hang up a roof in rainy days', state: 'closed', deleted: false ,assigneeIds: ['demo-1'], milestoneId: 'demo-1' },
-    { id: 'demo-6', userId: 'demo-1', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), name: 'Install seat belt for driver.', description: 'Please install a seat belt for safety', state: 'closed', deleted: false ,assigneeIds: ['demo-2', 'demo-4'], milestoneId: 'demo-1' },
-    { id: 'demo-7', userId: 'demo-2', productId: 'demo-1', time: new Date('2022-04-10').toISOString(), name: 'Add frontlight and backlight.', description: 'Please provide frontlights and backlights for driving in the dark', state: 'open', deleted: false ,assigneeIds: ['demo-1', 'demo-4'], milestoneId: 'demo-1' },
+    { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', creationDate: new Date('2022-04-10').toISOString(), name: 'Design vehicle that can be used in summer and winter.', description: '**Description**\n\n* In winter, the vehicle has to deal with cold temperatures and icy roads.\n* In summer, the vehicle has to deal with warm temperatures, rain, and mud.\n\n**Validation**\n\nWe plan to conduct test drives under winter and summer conditions to validate the product design.', state: 'closed', deleted: false, assigneeIds: ['demo-4', 'demo-2'], milestoneId: 'demo-1' },
+    { id: 'demo-2', userId: 'demo-2', productId: 'demo-1', creationDate: new Date('2022-04-10').toISOString(), name: 'Use different wheel profile in winter version.', description: 'Please change the wheel profile (see [body_115_instance_2](/products/demo-1/versions/demo-3/objects/body_115_instance_2)). We need a stronger profile to handle winter conditions properly.', state: 'closed', deleted: false ,assigneeIds: ['demo-4'], milestoneId: 'demo-1' },
+    { id: 'demo-3', userId: 'demo-4', productId: 'demo-1', creationDate: new Date('2022-04-10').toISOString(), name: 'Use blue helmet for driver.', description: 'Please change the helmet color (see [technic_driver_helmet_p_SOLIDS_1_1](/products/demo-1/versions/demo-3/objects/technic_driver_helmet_p_SOLIDS_1_1)). We want a blue helmet because it fits better to our corporate design standards.', state: 'closed', deleted: false ,assigneeIds: ['demo-2'], milestoneId: 'demo-1' },
+    { id: 'demo-4', userId: 'demo-4', productId: 'demo-1', creationDate: new Date('2022-04-10').toISOString(), name: 'Install car radio for music.', description: 'Please install a car radio, so the driver can listen to music and news.', state: 'closed', deleted: false ,assigneeIds: ['demo-1', 'demo-2'], milestoneId: 'demo-1' },
+    { id: 'demo-5', userId: 'demo-4', productId: 'demo-1', creationDate: new Date('2022-04-10').toISOString(), name: 'Provide a possibility to mount a roof.', description: 'Please provide a mount to give possibility to hang up a roof in rainy days', state: 'closed', deleted: false ,assigneeIds: ['demo-1'], milestoneId: 'demo-1' },
+    { id: 'demo-6', userId: 'demo-1', productId: 'demo-1', creationDate: new Date('2022-04-10').toISOString(), name: 'Install seat belt for driver.', description: 'Please install a seat belt for safety', state: 'closed', deleted: false ,assigneeIds: ['demo-2', 'demo-4'], milestoneId: 'demo-1' },
+    { id: 'demo-7', userId: 'demo-2', productId: 'demo-1', creationDate: new Date('2022-04-10').toISOString(), name: 'Add frontlight and backlight.', description: 'Please provide frontlights and backlights for driving in the dark', state: 'open', deleted: false ,assigneeIds: ['demo-1', 'demo-4'], milestoneId: 'demo-1' },
 ]
 
 const comments: Comment[] = [
-    { id: 'demo-1', userId: 'demo-1', issueId: 'demo-2', time: new Date('2022-04-12').toISOString(), text: 'Ok, can you provide a profile specification?', action: 'close', deleted: false },
-    { id: 'demo-2', userId: 'demo-1', issueId: 'demo-3', time: new Date('2022-04-13').toISOString(), text: 'Ok, can you provide a RAL code?', action: 'none', deleted: false },
-    { id: 'demo-3', userId: 'demo-2', issueId: 'demo-3', time: new Date('2022-04-14').toISOString(), text: 'I will search for a RAL code', action: 'close', deleted: false },
-    { id: 'demo-4', userId: 'demo-2', issueId: 'demo-1', time: new Date('2022-04-15').toISOString(), text: 'Done', action: 'close', deleted: false },
-    { id: 'demo-5', userId: 'demo-2', issueId: 'demo-4', time: new Date('2022-04-17').toISOString(), text: 'Done', action: 'close', deleted: false },
-    { id: 'demo-6', userId: 'demo-1', issueId: 'demo-5', time: new Date('2022-04-20').toISOString(), text: 'Done', action: 'close', deleted: false },
-    { id: 'demo-7', userId: 'demo-4', issueId: 'demo-6', time: new Date('2022-04-21').toISOString(), text: 'Done', action: 'close', deleted: false },
-    { id: 'demo-8', userId: 'demo-4', issueId: 'demo-7', time: new Date('2022-04-22').toISOString(), text: 'Work in progress', action: 'none', deleted: false },
+    { id: 'demo-1', userId: 'demo-1', issueId: 'demo-2', creationDate: new Date('2022-04-12').toISOString(), text: 'Ok, can you provide a profile specification?', action: 'close', deleted: false },
+    { id: 'demo-2', userId: 'demo-1', issueId: 'demo-3', creationDate: new Date('2022-04-13').toISOString(), text: 'Ok, can you provide a RAL code?', action: 'none', deleted: false },
+    { id: 'demo-3', userId: 'demo-2', issueId: 'demo-3', creationDate: new Date('2022-04-14').toISOString(), text: 'I will search for a RAL code', action: 'close', deleted: false },
+    { id: 'demo-4', userId: 'demo-2', issueId: 'demo-1', creationDate: new Date('2022-04-15').toISOString(), text: 'Done', action: 'close', deleted: false },
+    { id: 'demo-5', userId: 'demo-2', issueId: 'demo-4', creationDate: new Date('2022-04-17').toISOString(), text: 'Done', action: 'close', deleted: false },
+    { id: 'demo-6', userId: 'demo-1', issueId: 'demo-5', creationDate: new Date('2022-04-20').toISOString(), text: 'Done', action: 'close', deleted: false },
+    { id: 'demo-7', userId: 'demo-4', issueId: 'demo-6', creationDate: new Date('2022-04-21').toISOString(), text: 'Done', action: 'close', deleted: false },
+    { id: 'demo-8', userId: 'demo-4', issueId: 'demo-7', creationDate: new Date('2022-04-22').toISOString(), text: 'Work in progress', action: 'none', deleted: false },
 ]
 
-async function drop() {
-    await Database.init()
-    console.log('Drop: Connected')
+// async function drop() {
+//     await Database.init()
+//     console.log('Drop: Connected')
     
-    await Database.get().dataSource.dropDatabase()
-    console.log('Drop: Database dropped')
+//     await Database.get().dataSource.dropDatabase()
+//     console.log('Drop: Database dropped')
 
-    await Database.get().dataSource.destroy()  
-    console.log('Drop: Disconnected')
-}
+//     await Database.get().dataSource.destroy()  
+//     console.log('Drop: Disconnected')
+// }
 
 async function fill() {
     await Database.init()
@@ -130,7 +130,7 @@ async function fill() {
 }
 async function main() {
     console.log('Reset Database')
-    await drop()
+    //await drop()
     await fill()
     console.log('All Tasks finished')
     console.log('Exit')

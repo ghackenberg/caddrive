@@ -31,7 +31,7 @@ export class CommentEntity extends Comment {
     override issueId: string
 
     @Column({ nullable: false })
-    override time: string
+    override creationDate: string
 
     @Column({ nullable: false })
     override text: string

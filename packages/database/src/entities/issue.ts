@@ -44,7 +44,7 @@ export class IssueEntity extends Issue {
     override assigneeIds: string[]
 
     @Column({ nullable: false })
-    override time: string
+    override creationDate: string
 
     @Column({nullable: false})
     override name: string

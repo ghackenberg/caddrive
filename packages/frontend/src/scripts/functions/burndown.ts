@@ -4,13 +4,13 @@ export function calculateActual(milestone: Milestone, issues: Issue[], comments:
     // Calculate detlas
     const deltas: { time: number, delta: number }[] = []
     for (const issue of issues) {
-        deltas.push({ time: new Date(issue.time).getTime(), delta: 1 })
+        deltas.push({ time: new Date(issue.creationDate).getTime(), delta: 1 })
         if (issue.id in comments) {
             for (const comment of comments[issue.id]) {
                 if (comment.action == 'close') {
-                    deltas.push({ time: new Date(comment.time).getTime(), delta: -1 })
+                    deltas.push({ time: new Date(comment.creationDate).getTime(), delta: -1 })
                 } else if (comment.action == 'reopen') {
-                    deltas.push({ time: new Date(comment.time).getTime(), delta: 1 })
+                    deltas.push({ time: new Date(comment.creationDate).getTime(), delta: 1 })
                 }
             }
         }
