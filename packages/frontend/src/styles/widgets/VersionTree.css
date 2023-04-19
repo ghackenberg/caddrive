@@ -9,6 +9,9 @@ div.widget.version_tree {
     
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
 }
 div.widget.version_tree > div {
     display: table-row;
@@ -31,6 +34,10 @@ div.widget.version_tree > div > div {
     position: relative;
     
     vertical-align: top;
+}
+div.widget.version_tree > div:first-child {
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
 }
 div.widget.version_tree > div:first-child > div.tree {
     border-top-left-radius: 1em;
@@ -136,6 +143,11 @@ div.widget.version_tree > div > div.model {
     background-color: rgb(215,215,215);
     background-position: center;
     background-size: cover;
+
+    vertical-align: middle;
+}
+div.widget.version_tree > div > div.model > img {
+    width: 100%;
 }
 
 @media screen and (max-width: 45em){
