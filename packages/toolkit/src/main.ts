@@ -25,10 +25,10 @@ const members: Member[] = [
 ]
 
 const versions: Version[] = [
-    { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Platform design completed. Tank and engine installed.', deleted: false },
-    { id: 'demo-2', userId: 'demo-1', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 1, patch: 0, description: 'Winter version of the vehicle. Lighting is installed and vehicle is heatable.', deleted: false },
-    { id: 'demo-3', userId: 'demo-2', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 2, patch: 0, description: 'Summer version of the vehicle. Air conditioning, electric windows and convertible roof installed.', deleted: false },
-    { id: 'demo-4', userId: 'demo-2', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Initial commit.', deleted: false }
+    { id: 'demo-1', userId: 'demo-1', productId: 'demo-1', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Platform design completed. Tank and engine installed.', modelType: 'glb', imageType: 'png', deleted: false },
+    { id: 'demo-2', userId: 'demo-1', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 1, patch: 0, description: 'Winter version of the vehicle. Lighting is installed and vehicle is heatable.', modelType: 'glb', imageType: 'png', deleted: false },
+    { id: 'demo-3', userId: 'demo-2', productId: 'demo-1', baseVersionIds: ['demo-1'], time: new Date().toISOString(), major: 1, minor: 2, patch: 0, description: 'Summer version of the vehicle. Air conditioning, electric windows and convertible roof installed.', modelType: 'glb', imageType: 'png', deleted: false },
+    { id: 'demo-4', userId: 'demo-2', productId: 'demo-2', baseVersionIds: [], time: new Date().toISOString(), major: 1, minor: 0, patch: 0, description: 'Initial commit.', modelType: 'glb', imageType: 'png', deleted: false }
 ]
 
 const milestones: Milestone[] = [
