@@ -42,15 +42,21 @@ div.widget.model_graph a {
 }
 div.widget.model_graph a.selected {
     color: lightgray;
+
+    font-weight: bold;
 }
 div.widget.model_graph a.marked {
     color: green;
+    
+    font-weight: bold;
 }
 div.widget.model_graph a.marked.selected {
     color: lightgreen;
 }
 div.widget.model_graph a.highlighted {
     color: red;
+    
+    font-weight: bold;
 }
 div.widget.model_graph a.highlighted.selected {
     color: lightcoral;

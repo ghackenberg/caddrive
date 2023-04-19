@@ -2,6 +2,8 @@ import * as React from 'react'
 
 import { Group, Object3D } from 'three'
 
+import { comparePath } from '../../functions/path'
+
 import * as ObjectIcon from '/src/images/types/Object.png'
 import * as GroupIcon from '/src/images/types/Group.png'
 import * as LineIcon from '/src/images/types/Line.png'
@@ -27,9 +29,9 @@ const NodeItem = (props: { path: string, object: Object3D, highlighted: string[]
     const out = props.out || function() {/*empty*/}
     const click = props.click || function() {/*empty*/}
 
-    const highlighted = props.highlighted.filter(prefix => path.startsWith(prefix)).length != 0
-    const marked = props.marked.filter(prefix => path.startsWith(prefix)).length != 0
-    const selected = props.selected.filter(prefix => path.startsWith(prefix)).length != 0
+    const highlighted = props.highlighted.filter(prefix => comparePath(prefix, path)).length != 0
+    const marked = props.marked.filter(prefix => comparePath(prefix, path)).length != 0
+    const selected = props.selected.filter(prefix => comparePath(prefix, path)).length != 0
 
     const classes = [highlighted && 'highlighted', marked && 'marked', selected && 'selected'].filter(v => !!v).join(' ')
 
