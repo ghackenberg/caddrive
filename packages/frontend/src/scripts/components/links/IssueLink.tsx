@@ -12,7 +12,7 @@ export const IssueLink = (props: { product: Product, issue?: Issue }) => (
         { props.issue ? (
             <span>
                 <NavLink to={`/products/${props.product.id}/issues/${props.issue.id}`}>
-                    {props.issue.label}
+                    {props.issue.name}
                 </NavLink>
             </span>
         ) : (

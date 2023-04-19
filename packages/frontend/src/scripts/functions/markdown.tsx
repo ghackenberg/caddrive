@@ -25,7 +25,7 @@ export function collectIssueParts(issues: Issue[]) {
     const issuePartsNew: { [id: string]: Part[] } = {}
     for (const issue of issues || []) {
         const parts: Part[] = []
-        collectParts(issue.text, parts)
+        collectParts(issue.description, parts)
         issuePartsNew[issue.id] = parts
     }
     return issuePartsNew

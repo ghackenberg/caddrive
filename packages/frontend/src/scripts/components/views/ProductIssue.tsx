@@ -218,7 +218,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
             <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.label}
+                {issue.name}
             </Link>
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (

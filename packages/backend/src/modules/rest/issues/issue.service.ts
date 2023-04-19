@@ -53,10 +53,10 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         issue.assigneeIds = data.assigneeIds
-        issue.label = data.label
+        issue.name = data.name
         issue.milestoneId =  data.milestoneId
         issue.state = data.state
-        issue.text = data.text
+        issue.description = data.description
         await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             if (!fs.existsSync('./uploads')) {
@@ -78,6 +78,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
 
     private convert(issue: IssueEntity) {
-        return {id: issue.id, deleted: issue.deleted, audioId: issue.audioId, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId}
+        return {id: issue.id, deleted: issue.deleted, audioId: issue.audioId, userId: issue.userId, productId: issue.productId, time: issue.time, name: issue.name, description: issue.description, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId}
     }
 }

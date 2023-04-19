@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class IssueUpdateData {
     @ApiProperty()
-    label: string
+    name: string
     @ApiProperty()
-    text: string
+    description: string
     @ApiProperty()
     state: 'open' | 'closed'
     @ApiProperty()

@@ -47,10 +47,10 @@ export class IssueEntity extends Issue {
     override time: string
 
     @Column({nullable: false})
-    override label: string
+    override name: string
 
     @Column({nullable: false})
-    override text: string
+    override description: string
 
     @Column({nullable: false, default: 'open'})
     override state: 'open' | 'closed'

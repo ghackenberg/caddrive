@@ -59,8 +59,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
     const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
 
-    const initialLabel = initialIssue ? initialIssue.label : ''
-    const initialText = initialIssue ? initialIssue.text : ''
+    const initialLabel = initialIssue ? initialIssue.name : ''
+    const initialText = initialIssue ? initialIssue.description : ''
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (initialIssue && initialIssue.milestoneId)
     const initialAssigneeIds = initialIssue ? initialIssue.assigneeIds : []
 
@@ -107,8 +107,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         }
     }, [members])
     // - Values
-    useEffect(() => { issue && setLabel(issue.label) }, [issue])
-    useEffect(() => { issue && setText(issue.text) }, [issue])
+    useEffect(() => { issue && setLabel(issue.name) }, [issue])
+    useEffect(() => { issue && setText(issue.description) }, [issue])
     useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
     // - Computations
@@ -172,12 +172,12 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, time: new Date().toISOString(), name: label, description: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
-                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
+                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
                 goBack()    
             }
         }
