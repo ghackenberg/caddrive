@@ -1,4 +1,4 @@
-import { Group, LineSegments, LoadingManager, Mesh, Object3D } from "three"
+import { Group, LoadingManager } from "three"
 import { LDrawLoader } from "three/examples/jsm/loaders/LDrawLoader"
 
 import { FileManager } from "../managers/file"
@@ -21,21 +21,6 @@ LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
     console.error(error)
 })
 
-function fixMaterials(object: Object3D, indent = 0) {
-    if (object.type == 'Mesh') {
-        const mesh = object as Mesh
-        const material = LDRAW_LOADER.getMaterial(`${mesh.material}`)
-        mesh.material = material.clone()
-    } else if (object.type == 'LineSegments') {
-        const line = object as LineSegments
-        const material = LDRAW_LOADER.getMaterial(`${line.material}`)
-        line.material = material.clone()
-    }
-    for (const child of object.children) {
-        fixMaterials(child, indent + 1)
-    }
-}
-
 export async function loadLDrawModel(path: string) {
     const file = await FileManager.getFile(path)
     return parseLDrawModel(TEXT_DECODER.decode(file))
@@ -43,11 +28,10 @@ export async function loadLDrawModel(path: string) {
 
 export async function parseLDrawModel(data: string) {
     return new Promise<Group>(resolve => {
-        LDRAW_LOADER.parse(data, group => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (LDRAW_LOADER as any).parse(data, (group: Group) => {
             // Fix coordinates
             group.rotation.x = Math.PI
-            // Fix materials
-            fixMaterials(group)
             // Resolve
             resolve(group)
         })
