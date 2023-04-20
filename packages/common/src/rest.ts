@@ -1,5 +1,5 @@
 import { Comment } from './data/comment'
-import { Issue } from './data/issueEntities/issue'
+import { Issue } from './data/issue'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
 import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
 import { Product, ProductAddData, ProductUpdateData } from './data/product'
