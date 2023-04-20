@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class IssueTypeHierarchyUpdateData {
     @ApiProperty()
-    parentIssueId: string
+    parentIssueTypeId: string
     @ApiProperty()
-    childIssueId: string
+    childIssueTypeId: string
 }
 
 export class IssueTypeHierarchyAddData extends IssueTypeHierarchyUpdateData {

@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
-import { Tag } from 'productboard-common'
+import { IssueTypeHierarchy } from 'productboard-common'
 
 @Entity()
-export class TagEntity extends Tag {
+export class IssueTypeHierarchyEntity extends IssueTypeHierarchy {
 
     @PrimaryColumn({ nullable: false })
     override id: string
@@ -11,9 +11,9 @@ export class TagEntity extends Tag {
     @Column({ nullable: false, default: false })
     override deleted: boolean
 
-    @Column({ nullable: false })
-    override name: string
+    @Column({nullable: false})
+    override parentIssueTypeId: string
 
     @Column({nullable: false})
-    override color: string
+    override childIssueTypeId: string
 }

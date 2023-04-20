@@ -7,6 +7,8 @@ export class TransitionUpdateData {
     sourceStateId: string
     @ApiProperty()
     targetStateId: string
+    @ApiProperty()
+    description: string
 }
 
 export class TransitionAddData extends TransitionUpdateData {

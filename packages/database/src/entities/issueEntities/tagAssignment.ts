@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
-import { Tag } from 'productboard-common'
+import { TagAssignment } from 'productboard-common'
 
 @Entity()
-export class TagEntity extends Tag {
+export class TagAssignmentEntity extends TagAssignment {
 
     @PrimaryColumn({ nullable: false })
     override id: string
@@ -12,8 +12,8 @@ export class TagEntity extends Tag {
     override deleted: boolean
 
     @Column({ nullable: false })
-    override name: string
+    override tagId: string
 
     @Column({nullable: false})
-    override color: string
+    override issueId: string
 }

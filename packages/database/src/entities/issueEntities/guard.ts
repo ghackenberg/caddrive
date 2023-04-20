@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
-import { Tag } from 'productboard-common'
+import { Guard } from 'productboard-common'
 
 @Entity()
-export class TagEntity extends Tag {
+export class GuardEntity extends Guard {
 
     @PrimaryColumn({ nullable: false })
     override id: string
@@ -11,9 +11,15 @@ export class TagEntity extends Tag {
     @Column({ nullable: false, default: false })
     override deleted: boolean
 
-    @Column({ nullable: false })
+    @Column({nullable: false})
+    override transitionId: string
+
+    @Column({nullable: false})
     override name: string
 
     @Column({nullable: false})
-    override color: string
+    override type: string
+
+    @Column({nullable: false})
+    override configuration: JSON
 }
