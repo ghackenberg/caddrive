@@ -5,7 +5,7 @@ import { Request } from 'express'
 import { JwtPayload, verify } from 'jsonwebtoken'
 import * as jwks from 'jwks-rsa'
 
-import { User } from 'productboard-common'
+import { User, Member } from 'productboard-common'
 import { Database } from 'productboard-database'
 
 import { AUTH0_JWKS_KID, AUTH0_JWKS_URI } from '../../../env'
@@ -45,10 +45,22 @@ export class AuthGuard implements CanActivate {
                 const { name, email } = userinfo.data
                 // Insert user data in database
                 request.user = { ...await Database.get().userRepository.save({ id, email, name }), permissions }
+                // Register new user as member in all demo products
+                await registerNewUserAsMemberForDemo(id)
             }
         }
         
         return true
     }
+}
 
+ function registerNewUserAsMemberForDemo(id: string) {
+    const members: Member[] = [
+        { id: 'demo-7', userId: id, productId: "demo-1", deleted: false, role: 'manager'},
+        { id: 'demo-8', userId: id, productId: "demo-2", deleted: false, role: 'manager'},
+        { id: 'demo-9', userId: id, productId: "demo-3", deleted: false, role: 'manager'},
+    ]
+    for (const member of members) {
+        Database.get().memberRepository.save(member)
+    }
 }
