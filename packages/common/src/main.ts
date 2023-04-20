@@ -1,5 +1,5 @@
 export * from './data/comment'
-export * from './data/issue'
+export * from './data/issueEntities/issue'
 export * from './data/member'
 export * from './data/product'
 export * from './data/user'
