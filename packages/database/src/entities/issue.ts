@@ -57,4 +57,25 @@ export class IssueEntity extends Issue {
 
     @OneToMany(() => CommentEntity, comment => comment.issue)
     comments: CommentEntity[]
+
+    @Column({ nullable: true })
+    override parentIssueId: string
+
+    @Column({ nullable: false })
+    override stateId: string
+
+    @Column({ nullable: false })
+    override issueTypeId: string
+
+    @Column({ nullable: false })
+    override modificationDate: string
+
+    @Column({ nullable: false })
+    override priority: string
+
+    @Column({ nullable: true })
+    override storypoints: number
+
+    @Column({ nullable: true })
+    override progress: number
 }

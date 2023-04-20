@@ -78,6 +78,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
 
     private convert(issue: IssueEntity) {
-        return {id: issue.id, deleted: issue.deleted, audioId: issue.audioId, userId: issue.userId, productId: issue.productId, creationDate: issue.creationDate, name: issue.name, description: issue.description, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId}
+        return {id: issue.id, deleted: issue.deleted, parentIssueId: issue.parentIssueId, stateId: issue.stateId, issueTypeId: issue.issueTypeId, modificationDate: issue.modificationDate, priority: issue.priority, storypoints: issue.storypoints, process: issue.progress, audioId: issue.audioId, userId: issue.userId, productId: issue.productId, creationDate: issue.creationDate, name: issue.name, description: issue.description, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId}
     }
 }

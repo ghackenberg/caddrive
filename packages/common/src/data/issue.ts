@@ -11,6 +11,20 @@ export class IssueUpdateData {
     assigneeIds: string[]
     @ApiProperty()
     milestoneId?: string
+    @ApiProperty()
+    parentIssueId?: string
+    @ApiProperty()
+    stateId: string
+    @ApiProperty()
+    issueTypeId: string
+    @ApiProperty()
+    modificationDate: string
+    @ApiProperty()
+    priority: string
+    @ApiProperty()
+    storypoints?: number
+    @ApiProperty()
+    progress?: number
 }
 
 export class IssueAddData extends IssueUpdateData {

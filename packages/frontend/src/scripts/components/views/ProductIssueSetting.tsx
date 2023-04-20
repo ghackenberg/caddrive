@@ -172,12 +172,30 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, creationDate: new Date().toISOString(), name: label, description: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                const issue = await IssueManager.addIssue({ 
+                    userId: contextUser.id, 
+                    productId, 
+                    creationDate: new Date().toISOString(), 
+                    modificationDate: new Date().toISOString(), 
+                    name: label, 
+                    parentIssueId: 'demo1',
+                    stateId: 'demo1',
+                    issueTypeId: 'demo1',
+                    priority: 'demo1',
+                    storypoints: 4,
+                    progress: 4,
+                    description: text, 
+                    state: 'open', 
+                    assigneeIds, 
+                    milestoneId: milestoneId ? milestoneId : null 
+                    }, 
+                    { audio }
+                )
                 replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
-                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
+                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 goBack()    
             }
         }

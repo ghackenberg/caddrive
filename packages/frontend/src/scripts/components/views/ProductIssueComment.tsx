@@ -271,7 +271,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
             const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, creationDate: new Date().toISOString(), text: text, action: 'close' }, {})
             setComments([...comments, comment])
             setText('')
-            setIssue(await IssueManager.updateIssue(issueId, { name: issue.name, description: issue.description, state: 'closed', assigneeIds: issue.assigneeIds }))
+            setIssue(await IssueManager.updateIssue(issueId, { ...issue, state: 'closed' }))
         }
     }
 
@@ -281,7 +281,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
             const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, creationDate: new Date().toISOString(), text: text, action: 'reopen' }, {})
             setComments([...comments, comment])
             setText('')
-            setIssue(await IssueManager.updateIssue(issueId, { name: issue.name, description: issue.description, state: 'open', assigneeIds: issue.assigneeIds }))
+            setIssue(await IssueManager.updateIssue(issueId, { ...issue, state: 'open'}))
         }
     }
 
