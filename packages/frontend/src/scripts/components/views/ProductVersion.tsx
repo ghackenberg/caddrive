@@ -7,6 +7,7 @@ import { Member, Product, User, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
+import { VersionAPI } from '../../clients/mqtt/version'
 import { computeTree } from '../../functions/tree'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -81,6 +82,34 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             })
         }
     }, [versions])
+
+    // - Events
+    useEffect(() =>  {
+        return VersionAPI.register({
+            create(version) {
+                if (version.productId == productId) {
+                    setVersions([...versions, version])
+                }
+            },
+            update(version) {
+                setVersions(versions.map(other => other.id != version.id ? other : version))
+                if (contextVersion.id == version.id) {
+                    setContextVersion(version)
+                }
+            },
+            delete(version) {
+                setVersions(versions.filter(other => other.id != version.id))
+                if (contextVersion.id == version.id) {
+                    const rest = versions.filter(other => other.id != version.id)
+                    if (rest.length > 0) {
+                        setContextVersion(rest[rest.length - 1])
+                    } else {
+                        setContextVersion(undefined)
+                    }
+                }
+            },
+        })
+    })
 
     // - Computations
     useEffect(() => { 
