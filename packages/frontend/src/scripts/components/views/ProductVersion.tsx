@@ -89,6 +89,9 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             create(version) {
                 if (version.productId == productId) {
                     setVersions([...versions, version])
+                    if (!contextVersion) {
+                        setContextVersion(version)
+                    }
                 }
             },
             update(version) {

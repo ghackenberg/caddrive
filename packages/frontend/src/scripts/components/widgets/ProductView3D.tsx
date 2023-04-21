@@ -5,6 +5,7 @@ import { Object3D } from 'three'
 
 import { Product, Version } from 'productboard-common'
 
+import { VersionAPI } from '../../clients/mqtt/version'
 import { VersionContext } from '../../contexts/Version'
 import { VersionManager } from '../../managers/version'
 import { VersionView3D } from './VersionView3D'
@@ -48,6 +49,22 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     useEffect(() => { setHighlighted((props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.highlighted])
     useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.marked])
     useEffect(() => { setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.selected])
+
+    useEffect(() =>  {
+        return VersionAPI.register({
+            create(version) {
+                if (version.productId == props.product.id && versions.filter(other => other.id == version.id).length == 0) {
+                    setVersions([...versions, version])
+                }
+            },
+            update(version) {
+                setVersions(versions.map(other => other.id != version.id ? other : version))
+            },
+            delete(version) {
+                setVersions(versions.filter(other => other.id != version.id))
+            },
+        })
+    })
 
     // FUNCTIONS
 
