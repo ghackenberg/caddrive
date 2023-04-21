@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common'
-import { Client, ClientProxy, Transport } from '@nestjs/microservices'
+import { Inject, Injectable } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
@@ -9,8 +9,12 @@ import { Database, MemberEntity } from 'productboard-database'
 
 @Injectable()
 export class MemberService implements MemberREST {
-    @Client({ transport: Transport.MQTT })
-    private client: ClientProxy
+    constructor(
+        @Inject('MQTT')
+        private readonly client: ClientProxy
+    ) {
+
+    }
 
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         let where: FindOptionsWhere<MemberEntity>

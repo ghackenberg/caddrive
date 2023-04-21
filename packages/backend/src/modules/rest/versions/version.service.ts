@@ -2,7 +2,7 @@ import * as fs from 'fs'
 
 import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { Client, ClientProxy, Transport } from '@nestjs/microservices'
+import { ClientProxy } from '@nestjs/microservices'
 
 import { Request } from 'express'
 import 'multer'
@@ -14,12 +14,11 @@ import { Database, VersionEntity } from 'productboard-database'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
-    @Client({ transport: Transport.MQTT })
-    private client: ClientProxy
-
     constructor(
         @Inject(REQUEST)
         private readonly request: Request & { user: User & { permissions: string[] }},
+        @Inject('MQTT')
+        private readonly client: ClientProxy
     ) {
         if (!fs.existsSync('./uploads')) {
             fs.mkdirSync('./uploads')
@@ -37,6 +36,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     }
  
     async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
+        console.log('Adding!')
         const id = shortid()
         const deleted = false
         const userId = this.request.user.id
@@ -121,7 +121,8 @@ function getImageType(version: Version, files?: {model: Express.Multer.File[], i
         if (version) {
             return version.imageType
         } else {
-            throw new HttpException('Image file must be provided.', 400)
+            return 'png'
+            // TODO throw new HttpException('Image file must be provided.', 400)
         }
     }
 }

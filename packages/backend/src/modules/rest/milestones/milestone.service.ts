@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { Client, ClientProxy, Transport } from '@nestjs/microservices'
+import { ClientProxy } from '@nestjs/microservices'
 
 import { Request } from 'express'
 import * as shortid from 'shortid'
@@ -11,12 +11,11 @@ import { Database, MilestoneEntity } from 'productboard-database'
 
 @Injectable()
 export class MilestoneService implements MilestoneREST {
-    @Client({ transport: Transport.MQTT })
-    private client: ClientProxy
-
     constructor(
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } }
+        private readonly request: Request & { user: User & { permissions: string[] } },
+        @Inject('MQTT')
+        private readonly client: ClientProxy
     ) {
 
     }

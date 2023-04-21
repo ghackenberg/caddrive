@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 
-import { Injectable } from '@nestjs/common'
-import { Client, ClientProxy, Transport } from '@nestjs/microservices'
+import { Inject, Injectable } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 
 import 'multer'
 import * as shortid from 'shortid'
@@ -12,8 +12,12 @@ import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
 
 @Injectable()
 export class UserService implements UserREST<UserAddData, Express.Multer.File> {
-    @Client({ transport: Transport.MQTT })
-    private client: ClientProxy
+    constructor(
+        @Inject('MQTT')
+        private readonly client: ClientProxy
+    ) {
+
+    }
 
     async checkUser(): Promise<User> {
         return null

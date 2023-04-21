@@ -58,6 +58,8 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @Body('data') data: string,
         @UploadedFiles() files: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<Version> {
+        console.log('Test')
+        console.log(data)
         const dataParsed = <VersionAddData> JSON.parse(data)
         await canCreateVersionOrFail(this.request.user, dataParsed.productId)
         return this.versionService.addVersion(dataParsed, files)
