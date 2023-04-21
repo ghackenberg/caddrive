@@ -66,7 +66,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductManager.addProduct({userId: contextUser.id, name, description, public: _public})
+                const product = await ProductManager.addProduct({ name, description, public: _public})
                 replace(`/products/${product.id}`)
             }
         } else {

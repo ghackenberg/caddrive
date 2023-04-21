@@ -1,13 +1,15 @@
 import * as fs from 'fs'
 
-import { HttpException, Injectable } from '@nestjs/common'
+import { HttpException, Inject, Injectable } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
+import { Request } from 'express'
 import 'multer'
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
+import { Version, VersionAddData, VersionUpdateData, VersionREST, User } from 'productboard-common'
 import { Database, VersionEntity } from 'productboard-database'
 
 @Injectable()
@@ -15,7 +17,10 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     @Client({ transport: Transport.MQTT })
     private client: ClientProxy
 
-    constructor() {
+    constructor(
+        @Inject(REQUEST)
+        private readonly request: Request & { user: User & { permissions: string[] }},
+    ) {
         if (!fs.existsSync('./uploads')) {
             fs.mkdirSync('./uploads')
         }
@@ -34,9 +39,11 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
         const id = shortid()
         const deleted = false
+        const userId = this.request.user.id
+        const time = new Date().toISOString()
         const modelType = getModelType(null, files)
         const imageType = getImageType(null, files)
-        const version = await Database.get().versionRepository.save({ id, deleted, modelType, imageType, ...data })
+        const version = await Database.get().versionRepository.save({ id, deleted, userId, time, modelType, imageType, ...data })
         saveModel(version, files)
         saveImage(version, files)
         await this.client.emit(`/api/v1/versions/${version.id}/create`, this.convert(version))

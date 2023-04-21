@@ -11,8 +11,6 @@ export class MilestoneUpdateData {
 
 export class MilestoneAddData extends MilestoneUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     productId: string
 }
 
@@ -21,4 +19,6 @@ export class Milestone extends MilestoneAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    userId: string
 }

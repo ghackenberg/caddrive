@@ -31,9 +31,23 @@ export class ProductService implements ProductREST {
     }
     
     async addProduct(data: ProductAddData) {
-        const product = await Database.get().productRepository.save({ id: shortid(), deleted: false, ...data })
-        await Database.get().memberRepository.save({ id: shortid(), productId: product.id, userId: product.userId, role: 'manager' })
+        // Create product
+        const id = shortid()
+        const deleted = false
+        const userId = this.request.user.id
+        const product = await Database.get().productRepository.save({ id, deleted, userId, ...data })
         await this.client.emit(`/api/v1/products/${product.id}/create`, this.convert(product))
+        // Create member
+        {
+            const id = shortid()
+            const deleted = false
+            const productId = product.id
+            const userId = this.request.user.id
+            const role = 'manager'
+            /*const member = */await Database.get().memberRepository.save({ id, deleted, productId, userId, role })
+            // TODO await this.client.emit(`/api/v1/members/${member.id}/create`, this.convert(member))
+        }
+        // Return product
         return this.convert(product)
     }
 

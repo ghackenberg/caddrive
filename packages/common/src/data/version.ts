@@ -12,13 +12,9 @@ export class VersionUpdateData {
 }
 export class VersionAddData extends VersionUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     productId: string
     @ApiProperty()
     baseVersionIds: string[]
-    @ApiProperty()
-    time: string
 }
 
 export class Version extends VersionAddData {
@@ -26,6 +22,10 @@ export class Version extends VersionAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    time: string
     @ApiProperty()
     modelType: 'glb' | 'ldr' | 'mpd'
     @ApiProperty()

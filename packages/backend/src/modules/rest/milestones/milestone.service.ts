@@ -1,16 +1,25 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
+import { Request } from 'express'
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
 import { Database, MilestoneEntity } from 'productboard-database'
 
 @Injectable()
 export class MilestoneService implements MilestoneREST {
     @Client({ transport: Transport.MQTT })
     private client: ClientProxy
+
+    constructor(
+        @Inject(REQUEST)
+        private readonly request: Request & { user: User & { permissions: string[] } }
+    ) {
+
+    }
 
     async findMilestones(productId: string): Promise<Milestone[]> {
         let where: FindOptionsWhere<MilestoneEntity>
@@ -22,8 +31,11 @@ export class MilestoneService implements MilestoneREST {
         return result
     }
 
-    async addMilestone(data: MilestoneAddData): Promise<Milestone> {   
-        const milestone = await Database.get().milestoneRepository.save({ id: shortid(), deleted: false, ...data })
+    async addMilestone(data: MilestoneAddData): Promise<Milestone> {
+        const id = shortid()
+        const deleted = false
+        const userId = this.request.user.id
+        const milestone = await Database.get().milestoneRepository.save({ id, deleted, userId, ...data })
         await this.client.emit(`/api/v1/milestones/${milestone.id}/create`, this.convert(milestone))
         return this.convert(milestone)
     }

@@ -9,11 +9,7 @@ export class CommentUpdateData {
 
 export class CommentAddData extends CommentUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     issueId: string
-    @ApiProperty()
-    time: string
 }
 
 export class Comment extends CommentAddData {
@@ -21,6 +17,10 @@ export class Comment extends CommentAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    time: string
     @ApiProperty()
     audioId?: string
 }

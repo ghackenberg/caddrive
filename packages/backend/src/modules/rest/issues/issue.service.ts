@@ -1,18 +1,27 @@
 import * as fs from 'fs'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { Client, ClientProxy, Transport } from '@nestjs/microservices'
 
+import { Request } from 'express'
 import * as shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
 import { Database, IssueEntity } from 'productboard-database'
 
 @Injectable()
 export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
     @Client({ transport: Transport.MQTT })
     private client: ClientProxy
+
+    constructor(
+        @Inject(REQUEST)
+        private readonly request: Request & { user: User & { permissions: string[] } }
+    ) {
+
+    }
 
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
         let where: FindOptionsWhere<IssueEntity>
@@ -31,15 +40,20 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
   
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
+        const id = shortid()
+        const deleted = false
+        const userId = this.request.user.id
+        const time = new Date().toISOString()
         let issue: IssueEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            issue = await Database.get().issueRepository.save({ id: shortid(), deleted: false, audioId: shortid(), ...data })
+            const audioId = shortid()
+            issue = await Database.get().issueRepository.save({ id, deleted, userId, time, audioId, ...data })
             if (!fs.existsSync('./uploads')) {
                 fs.mkdirSync('./uploads')
             }
             fs.writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         } else {
-            issue = await Database.get().issueRepository.save({ id: shortid(), deleted: false, ...data })
+            issue = await Database.get().issueRepository.save({ id, deleted, userId, time, ...data })
         }
         await this.client.emit(`/api/v1/issues/${issue.id}/create`, this.convert(issue))
         return this.convert(issue)
