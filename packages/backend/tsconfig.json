@@ -3,7 +3,7 @@
         "rootDirs": ["src", "../common/src", "../database/src"],
         "outDir": "bin",
         "lib": ["ES2015"],
-        "types": [],
+        "types": ["node"],
         "target": "ES6",
         "moduleResolution": "node",
         "experimentalDecorators": true,
