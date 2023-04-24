@@ -21,5 +21,5 @@ export class GuardEntity extends Guard {
     override type: string
 
     @Column({nullable: false})
-    override configuration: JSON
+    override configuration: string
 }

@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
-import { Attachment } from 'productboard-common'
+import { AdditionalProperty } from 'productboard-common'
 
 @Entity()
-export class AttachmentEntity extends Attachment {
+export class AdditionalPropertyEntity extends AdditionalProperty {
 
     @PrimaryColumn({ nullable: false })
     override id: string
@@ -33,5 +33,5 @@ export class AttachmentEntity extends Attachment {
     override type: string
 
     @Column({nullable: false})
-    override data: JSON
+    override value: string
 }

@@ -6,7 +6,7 @@ export class ActionUpdateData {
     @ApiProperty()
     type: string
     @ApiProperty()
-    configuration: JSON
+    configuration: string
 }
 
 export class ActionAddData extends ActionUpdateData {

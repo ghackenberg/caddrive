@@ -21,5 +21,5 @@ export class ActionEntity extends Action {
     override type: string
 
     @Column({nullable: false})
-    override configuration: JSON
+    override configuration: string
 }

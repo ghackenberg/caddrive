@@ -10,7 +10,7 @@ export class AdditionalPropertyUpdateData {
     @ApiProperty()
     type: string
     @ApiProperty()
-    value: JSON
+    value: string
 }
 
 export class AdditionalPropertyAddData extends AdditionalPropertyUpdateData {

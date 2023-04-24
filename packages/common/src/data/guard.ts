@@ -6,7 +6,7 @@ export class GuardUpdateData {
     @ApiProperty()
     type: string
     @ApiProperty()
-    configuration: JSON
+    configuration: string
 }
 
 export class GuardAddData extends GuardUpdateData {

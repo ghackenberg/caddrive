@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
-import { Property } from 'productboard-common'
+import { Attachment } from 'productboard-common'
 
 @Entity()
-export class PropertyEntity extends Property {
+export class AttachmentEntity extends Attachment {
 
     @PrimaryColumn({ nullable: false })
     override id: string
@@ -15,14 +15,23 @@ export class PropertyEntity extends Property {
     override issueId: string
 
     @Column({nullable: false})
-    override propertyTypeId: string
+    override userId: string
+
+    @Column({nullable: false})
+    override name: string
 
     @Column({nullable: false})
     override creationDate: string
 
     @Column({nullable: false})
     override modificationDate: string
-    
+
     @Column({nullable: false})
-    override value: JSON
+    override description: string
+
+    @Column({nullable: false})
+    override type: string
+
+    @Column({nullable: false})
+    override data: string
 }

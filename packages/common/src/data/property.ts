@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class PropertyUpdateData {
     @ApiProperty()
-    value: JSON
+    value: string
     @ApiProperty()
     modificationDate: string
 }

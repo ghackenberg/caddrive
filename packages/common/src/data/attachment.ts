@@ -10,7 +10,7 @@ export class AttachmentUpdateData {
     @ApiProperty()
     type: string
     @ApiProperty()
-    data: JSON
+    data: string
 
 }
 

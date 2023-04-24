@@ -1,19 +1,53 @@
 import 'reflect-metadata'
 import { DataSource, DataSourceOptions, FindOptionsWhere, Repository } from 'typeorm'
 
+import { ActionEntity } from './entities/action'
+import { AdditionalPropertyEntity } from './entities/additonalProperty'
+import { AttachmentEntity } from './entities/attachment'
 import { CommentEntity } from './entities/comment'
+import { DoneCriterionEntity } from './entities/doneCriterion'
+import { DonePropertyEntity } from './entities/doneProperty'
+import { GuardEntity } from './entities/guard'
 import { IssueEntity } from './entities/issue'
+import { IssueTypeEntity } from './entities/issueType'
+import { IssueTypeHierarchyEntity } from './entities/issueTypeHierarchy'
 import { MemberEntity } from './entities/member'
 import { MilestoneEntity } from './entities/milestone'
 import { ProductEntity } from './entities/product'
+import { PropertyEntity } from './entities/property'
+import { PropertyTypeEntity } from './entities/propertyType'
+import { ReadyCriterionEntity } from './entities/readyCriterion'
+import { ReadyPropertyEntity } from './entities/readyProperty'
+import { RelationEntity } from './entities/relation'
+import { StateEntity } from './entities/state'
+import { TagEntity } from './entities/tag'
+import { TagAssignmentEntity } from './entities/tagAssignment'
+import { TransitionEntity } from './entities/transition'
 import { UserEntity } from './entities/user'
 import { VersionEntity } from './entities/version'
 
+export { ActionEntity } from './entities/action'
+export { AdditionalPropertyEntity } from './entities/additonalProperty'
+export { AttachmentEntity } from './entities/attachment'
 export { CommentEntity } from './entities/comment'
+export { DoneCriterionEntity } from './entities/doneCriterion'
+export { DonePropertyEntity } from './entities/doneProperty'
+export { GuardEntity } from './entities/guard'
 export { IssueEntity } from './entities/issue'
+export { IssueTypeEntity } from './entities/issueType'
+export { IssueTypeHierarchyEntity } from './entities/issueTypeHierarchy'
 export { MemberEntity } from './entities/member'
 export { MilestoneEntity } from './entities/milestone'
 export { ProductEntity } from './entities/product'
+export { PropertyEntity } from './entities/property'
+export { PropertyTypeEntity } from './entities/propertyType'
+export { ReadyCriterionEntity } from './entities/readyCriterion'
+export { ReadyPropertyEntity } from './entities/readyProperty'
+export { RelationEntity } from './entities/relation'
+export { StateEntity } from './entities/state'
+export { TagEntity } from './entities/tag'
+export { TagAssignmentEntity } from './entities/tagAssignment'
+export { TransitionEntity } from './entities/transition'
 export { UserEntity } from './entities/user'
 export { VersionEntity } from './entities/version'
 
@@ -31,7 +65,7 @@ export class Database {
                 const username = process.env['TYPEORM_USERNAME'] || 'postgres'
                 const password = process.env['TYPEORM_PASSWORD'] || 'test'
 
-                this.instance  = new Database({
+                this.instance = new Database({
                     type,
                     host,
                     port,
@@ -40,19 +74,69 @@ export class Database {
                     password,
                     synchronize: true,
                     logging: false,
-                    entities: [UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    entities: [
+                        ActionEntity,
+                        AdditionalPropertyEntity,
+                        AttachmentEntity,
+                        CommentEntity,
+                        DoneCriterionEntity,
+                        DonePropertyEntity,
+                        GuardEntity,
+                        IssueEntity,
+                        IssueTypeEntity,
+                        IssueTypeHierarchyEntity,
+                        MemberEntity,
+                        MilestoneEntity,
+                        ProductEntity,
+                        PropertyEntity,
+                        PropertyTypeEntity,
+                        ReadyCriterionEntity,
+                        ReadyPropertyEntity,
+                        RelationEntity,
+                        StateEntity,
+                        TagEntity,
+                        TagAssignmentEntity,
+                        TransitionEntity,
+                        UserEntity,
+                        VersionEntity
+                    ],
                     subscribers: [],
                     migrations: []
                 })
             } else if (type == 'sqlite') {
                 const database = process.env['TYPEORM_DATABASE'] || '../../database.sqlite'
 
-                this.instance  = new Database({
+                this.instance = new Database({
                     type,
                     database,
                     synchronize: true,
                     logging: false,
-                    entities: [UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    entities: [
+                        ActionEntity,
+                        AdditionalPropertyEntity,
+                        AttachmentEntity,
+                        CommentEntity,
+                        DoneCriterionEntity,
+                        DonePropertyEntity,
+                        GuardEntity,
+                        IssueEntity,
+                        IssueTypeEntity,
+                        IssueTypeHierarchyEntity,
+                        MemberEntity,
+                        MilestoneEntity,
+                        ProductEntity,
+                        PropertyEntity,
+                        PropertyTypeEntity,
+                        ReadyCriterionEntity,
+                        ReadyPropertyEntity,
+                        RelationEntity,
+                        StateEntity,
+                        TagEntity,
+                        TagAssignmentEntity,
+                        TransitionEntity,
+                        UserEntity,
+                        VersionEntity
+                    ],
                     subscribers: [],
                     migrations: []
                 })
