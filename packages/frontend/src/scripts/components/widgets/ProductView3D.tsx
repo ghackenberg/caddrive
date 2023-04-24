@@ -53,15 +53,31 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     useEffect(() =>  {
         return VersionAPI.register({
             create(version) {
-                if (version.productId == props.product.id && versions.filter(other => other.id == version.id).length == 0) {
-                    setVersions([...versions, version])
+                if (version.productId == props.product.id) {
+                    const newVersions = [...versions.filter(other => other.id != version.id), version]
+                    setVersions(newVersions)
+                    if (contextVersion.id == version.id) {
+                        setContextVersion(version)
+                    }
                 }
             },
             update(version) {
-                setVersions(versions.map(other => other.id != version.id ? other : version))
+                const newVersions = versions.map(other => other.id != version.id ? other : version)
+                setVersions(newVersions)
+                if (contextVersion.id == version.id) {
+                    setContextVersion(version)
+                }
             },
             delete(version) {
-                setVersions(versions.filter(other => other.id != version.id))
+                const newVersions = versions.filter(other => other.id != version.id)
+                setVersions(newVersions)
+                if (contextVersion.id == version.id) {
+                    if (newVersions.length > 0) {
+                        setContextVersion(newVersions[newVersions.length - 1])
+                    } else {
+                        setContextVersion(undefined)
+                    }
+                }
             },
         })
     })

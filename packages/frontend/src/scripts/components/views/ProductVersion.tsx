@@ -88,28 +88,14 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
         return VersionAPI.register({
             create(version) {
                 if (version.productId == productId) {
-                    setVersions([...versions, version])
-                    if (!contextVersion) {
-                        setContextVersion(version)
-                    }
+                    setVersions([...versions.filter(other => other.id != version.id), version])
                 }
             },
             update(version) {
                 setVersions(versions.map(other => other.id != version.id ? other : version))
-                if (contextVersion.id == version.id) {
-                    setContextVersion(version)
-                }
             },
             delete(version) {
                 setVersions(versions.filter(other => other.id != version.id))
-                if (contextVersion.id == version.id) {
-                    const rest = versions.filter(other => other.id != version.id)
-                    if (rest.length > 0) {
-                        setContextVersion(rest[rest.length - 1])
-                    } else {
-                        setContextVersion(undefined)
-                    }
-                }
             },
         })
     })
