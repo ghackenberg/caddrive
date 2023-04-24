@@ -11,35 +11,7 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
         MilestoneAPI.register(this)
     }
 
-    // MQTT
-
-    create(milestone: Milestone): void {
-        console.log(`Milestone created ${milestone}`)
-        this.milestoneIndex[milestone.id] = milestone
-        this.addToFindIndex(milestone)
-    }
-
-    update(milestone: Milestone): void {
-        console.log(`Milestone updated ${milestone}`)
-        this.milestoneIndex[milestone.id] = milestone
-        this.removeFromFindIndex(milestone)
-        this.addToFindIndex(milestone)
-    }
-
-    delete(milestone: Milestone): void {
-        console.log(`Milestone deleted ${milestone}`)
-        this.milestoneIndex[milestone.id] = milestone
-        this.removeFromFindIndex(milestone)
-    }
-
-    getMilestoneCount(productId: string) { 
-        const key = `${productId}`
-        if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).length 
-        } else { 
-            return undefined 
-        } 
-    }
+    // CACHE
 
     findMilestonesFromCache(productId: string) { 
         const key = `${productId}`
@@ -49,6 +21,44 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
             return undefined 
         } 
     }
+    getMilestoneFromCache(milestoneId: string) { 
+        if (milestoneId in this.milestoneIndex) { 
+            return this.milestoneIndex[milestoneId]
+        } else { 
+            return undefined 
+        } 
+    }
+
+    private addToFindIndex(milestone: Milestone) {
+        if (`${milestone.productId}` in this.findIndex) {
+            this.findIndex[`${milestone.productId}`][milestone.id] = true
+        }
+    }
+    private removeFromFindIndex(milestone: Milestone) {
+        for (const key of Object.keys(this.findIndex)) {
+            if (milestone.id in this.findIndex[key]) {
+                delete this.findIndex[key][milestone.id]
+            }
+        }
+    }
+
+    // MQTT
+
+    create(milestone: Milestone): void {
+        this.milestoneIndex[milestone.id] = milestone
+        this.addToFindIndex(milestone)
+    }
+    update(milestone: Milestone): void {
+        this.milestoneIndex[milestone.id] = milestone
+        this.removeFromFindIndex(milestone)
+        this.addToFindIndex(milestone)
+    }
+    delete(milestone: Milestone): void {
+        this.milestoneIndex[milestone.id] = milestone
+        this.removeFromFindIndex(milestone)
+    }
+
+    // REST
 
     async findMilestones(productId: string): Promise<Milestone[]> {
         const key = `${productId}`
@@ -78,14 +88,6 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
         this.addToFindIndex(milestone)
         // Return milestone
         return milestone
-    }
-
-    getMilestoneFromCache(milestoneId: string) { 
-        if (milestoneId in this.milestoneIndex) { 
-            return this.milestoneIndex[milestoneId]
-        } else { 
-            return undefined 
-        } 
     }
 
     async getMilestone(id: string): Promise<Milestone> {
@@ -119,20 +121,6 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
         this.removeFromFindIndex(milestone)
         // Return milestone
         return milestone
-    }
-
-    private addToFindIndex(milestone: Milestone) {
-        if (`${milestone.productId}` in this.findIndex) {
-            this.findIndex[`${milestone.productId}`][milestone.id] = true
-        }
-    }
-
-    private removeFromFindIndex(milestone: Milestone) {
-        for (const key of Object.keys(this.findIndex)) {
-            if (milestone.id in this.findIndex[key]) {
-                delete this.findIndex[key][milestone.id]
-            }
-        }
     }
 }
 

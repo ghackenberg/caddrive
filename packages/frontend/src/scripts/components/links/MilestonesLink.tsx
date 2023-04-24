@@ -10,9 +10,14 @@ import MilestoneIcon from '/src/images/milestone.png'
 
 export const MilestonesLink = (props: {product: Product}) => {
 
+    // INITIAL STATES
+
+    const initialMilestones = MilestoneManager.findMilestonesFromCache(props.product.id)
+    const initialCount = initialMilestones ? initialMilestones.length : undefined
+
     // STATES
 
-    const [count, setCount] = useState<number>(MilestoneManager.getMilestoneCount(props.product.id))
+    const [count, setCount] = useState<number>(initialCount)
 
     // EFFECTS
 

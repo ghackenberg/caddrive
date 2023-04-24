@@ -10,9 +10,14 @@ import VersionIcon from '/src/images/version.png'
 
 export const VersionsLink = (props: {product: Product}) => {
 
+    // INITIAL STATES
+
+    const initialVersions = VersionManager.findVersionsFromCache(props.product.id)
+    const initialCount = initialVersions ? initialVersions.length : undefined
+
     // STATES
 
-    const [count, setCount] = useState<number>(VersionManager.getVersionCount(props.product.id))
+    const [count, setCount] = useState<number>(initialCount)
 
     // EFFECTS
 

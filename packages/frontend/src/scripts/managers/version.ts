@@ -11,34 +11,7 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         VersionAPI.register(this)
     }
 
-    // MQTT
-
-    create(version: Version): void {
-        console.log(`Version created ${version}`)
-        this.versionIndex[version.id] = version
-        this.addToFindIndex(version)
-    }
-
-    update(version: Version): void {
-        console.log(`Version updated ${version}`)
-        this.removeFromFindIndex(version)
-        this.addToFindIndex(version)
-    }
-
-    delete(version: Version): void {
-        console.log(`Version deleted ${version}`)
-        this.versionIndex[version.id] = version
-        this.removeFromFindIndex(version)
-    }
-
-    getVersionCount(productId: string) { 
-        const key = `${productId}`
-        if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).length 
-        } else { 
-            return undefined 
-        } 
-    }
+    // CACHE
 
     findVersionsFromCache(productId: string) { 
         const key = `${productId}`
@@ -48,6 +21,44 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
             return undefined 
         } 
     }
+    getVersionFromCache(versionId: string) { 
+        if (versionId in this.versionIndex) { 
+            return this.versionIndex[versionId]
+        } else { 
+            return undefined 
+        } 
+    }
+
+    private addToFindIndex(version: Version) {
+        if (`${version.productId}` in this.findIndex) {
+            this.findIndex[`${version.productId}`][version.id] = true
+        }
+    }
+    private removeFromFindIndex(version: Version) { 
+        for (const key of Object.keys(this.findIndex)) {
+            if (version.id in this.findIndex[key]) {
+                delete this.findIndex[key][version.id]
+            }
+        }
+    }
+
+    // MQTT
+
+    create(version: Version): void {
+        this.versionIndex[version.id] = version
+        this.addToFindIndex(version)
+    }
+    update(version: Version): void {
+        this.versionIndex[version.id] = version
+        this.removeFromFindIndex(version)
+        this.addToFindIndex(version)
+    }
+    delete(version: Version): void {
+        this.versionIndex[version.id] = version
+        this.removeFromFindIndex(version)
+    }
+
+    // REST
 
     async findVersions(productId: string): Promise<Version[]> {
         const key = `${productId}`
@@ -77,14 +88,6 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         this.addToFindIndex(version)
         // Return version
         return version
-    }
-
-    getVersionFromCache(versionId: string) { 
-        if (versionId in this.versionIndex) { 
-            return this.versionIndex[versionId]
-        } else { 
-            return undefined 
-        } 
     }
 
     async getVersion(id: string): Promise<Version> {
@@ -119,21 +122,6 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         this.removeFromFindIndex(version)
         // Return version
         return version
-    }
-
-    private addToFindIndex(version: Version) {
-        if (`${version.productId}` in this.findIndex) {
-            this.findIndex[`${version.productId}`][version.id] = true
-        }
-    }
-
-    private removeFromFindIndex(version: Version) { 
-        for (const key of Object.keys(this.findIndex)) {
-            if (version.id in this.findIndex[key]) {
-                delete this.findIndex[key][version.id]
-            }
-        }
-
     }
 }
 

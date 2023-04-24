@@ -6,45 +6,13 @@ import { MemberClient } from '../clients/rest/member'
 class MemberManagerImpl implements MemberREST, MemberDownMQTT {
     private memberIndex: {[id: string]: Member} = {}
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
-    private userIndex: {[id: string]: {[id: string]: {[id: string]: boolean}}} = {}
+    private findUserIndex: {[id: string]: {[id: string]: {[id: string]: boolean}}} = {}
 
     constructor() {
         MemberAPI.register(this)
     }
 
-    // MQTT
-
-    create(member: Member): void {
-        console.log(`Member created ${member}`)
-        this.memberIndex[member.id] = member
-        this.addToFindIndex(member)
-        this.addToUserIndex(member)
-    }
-
-    update(member: Member): void {
-        console.log(`Member updated ${member}`)
-        this.memberIndex[member.id] = member
-        this.removeFromFindIndex(member)
-        this.addToFindIndex(member)
-        this.removeFromUserIndex(member)
-        this.addToUserIndex(member)
-    }
-
-    delete(member: Member): void {
-        console.log(`Member deleted ${member}`)
-        this.memberIndex[member.id] = member
-        this.removeFromFindIndex(member)
-        this.removeFromUserIndex(member)
-    }
-
-    getMemberCount(productId: string) { 
-        const key = `${productId}`
-        if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).length 
-        } else { 
-            return undefined 
-        } 
-    }
+    // CACHE
 
     findMembersFromCache(productId: string) { 
         const key = `${productId}`
@@ -54,10 +22,63 @@ class MemberManagerImpl implements MemberREST, MemberDownMQTT {
             return undefined 
         } 
     }
+    getMemberFromCache(memberId: string) { 
+        if (memberId in this.memberIndex) { 
+            return this.memberIndex[memberId]
+        } else { 
+            return undefined 
+        } 
+    }
+
+    private addToFindIndex(member: Member) {
+        if (`${member.productId}` in this.findIndex) {
+            this.findIndex[`${member.productId}`][member.id] = true
+        }
+    }
+    private removeFromFindIndex(member: Member) { 
+        for (const key of Object.keys(this.findIndex)) {
+            if (member.id in this.findIndex[key]) {
+                delete this.findIndex[key][member.id]
+            }
+        }
+    }
+
+    private addToFindUserIndex(member: Member) {
+        if (member.productId in this.findUserIndex && member.userId in this.findUserIndex[member.productId]) {
+            this.findUserIndex[member.productId][member.userId][member.id] = true
+        }
+    }
+    private removeFromFindUserIndex(member: Member) {
+        if (member.productId in this.findUserIndex && member.userId in this.findUserIndex[member.productId]) {
+            delete this.findUserIndex[member.productId][member.userId][member.id]
+        }
+    }
+
+    // MQTT
+
+    create(member: Member): void {
+        this.memberIndex[member.id] = member
+        this.addToFindIndex(member)
+        this.addToFindUserIndex(member)
+    }
+    update(member: Member): void {
+        this.memberIndex[member.id] = member
+        this.removeFromFindIndex(member)
+        this.removeFromFindUserIndex(member)
+        this.addToFindIndex(member)
+        this.addToFindUserIndex(member)
+    }
+    delete(member: Member): void {
+        this.memberIndex[member.id] = member
+        this.removeFromFindIndex(member)
+        this.removeFromFindUserIndex(member)
+    }
+
+    // REST
 
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         if (userId) {
-            if (!(productId in this.userIndex && userId in this.userIndex[productId])) {
+            if (!(productId in this.findUserIndex && userId in this.findUserIndex[productId])) {
                 // Call backend
                 const members = await MemberClient.findMembers(productId, userId)
                 // Update member index
@@ -65,15 +86,15 @@ class MemberManagerImpl implements MemberREST, MemberDownMQTT {
                     this.memberIndex[member.id] = member
                 }
                 // Update user index
-                if (!(productId in this.userIndex)) {
-                    this.userIndex[productId] = {}
+                if (!(productId in this.findUserIndex)) {
+                    this.findUserIndex[productId] = {}
                 }
                 for (const member of members) {
-                    this.userIndex[productId][userId][member.id] = true
+                    this.findUserIndex[productId][userId][member.id] = true
                 }
             }
             // Return members
-            return Object.keys(this.userIndex[productId][userId]).map(id => this.memberIndex[id])
+            return Object.keys(this.findUserIndex[productId][userId]).map(id => this.memberIndex[id])
         } else {
             if (!(productId in this.findIndex)) {
                 // Call backend
@@ -101,17 +122,9 @@ class MemberManagerImpl implements MemberREST, MemberDownMQTT {
         // Update find index
         this.addToFindIndex(member)
         // Update user index
-       this.addToUserIndex(member)
+       this.addToFindUserIndex(member)
         // Return member
         return member
-    }
-
-    getMemberFromCache(memberId: string) { 
-        if (memberId in this.memberIndex) { 
-            return this.memberIndex[memberId]
-        } else { 
-            return undefined 
-        } 
     }
 
     async getMember(id: string): Promise<Member> {
@@ -134,8 +147,8 @@ class MemberManagerImpl implements MemberREST, MemberDownMQTT {
         this.removeFromFindIndex(member)
         this.addToFindIndex(member)
         // Update user index
-        this.removeFromUserIndex(member)
-        this.addToUserIndex(member)
+        this.removeFromFindUserIndex(member)
+        this.addToFindUserIndex(member)
         // Return member
         return this.memberIndex[id]
     }
@@ -148,35 +161,9 @@ class MemberManagerImpl implements MemberREST, MemberDownMQTT {
         // Update find index
         this.removeFromFindIndex(member)
         // Update user index
-        this.removeFromUserIndex(member)
+        this.removeFromFindUserIndex(member)
         // Return member
         return this.memberIndex[id]
-    }
-
-    private addToFindIndex(member: Member) {
-        if (`${member.productId}` in this.findIndex) {
-            this.findIndex[`${member.productId}`][member.id] = true
-        }
-    }
-
-    private removeFromFindIndex(member: Member) { 
-        for (const key of Object.keys(this.findIndex)) {
-            if (member.id in this.findIndex[key]) {
-                delete this.findIndex[key][member.id]
-            }
-        }
-    }
-
-    private addToUserIndex(member: Member) {
-        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-            this.userIndex[member.productId][member.userId][member.id] = true
-        }
-    }
-
-    private removeFromUserIndex(member: Member) {
-        if (member.productId in this.userIndex && member.userId in this.userIndex[member.productId]) {
-            delete this.userIndex[member.productId][member.userId][member.id]
-        }
     }
 }
 

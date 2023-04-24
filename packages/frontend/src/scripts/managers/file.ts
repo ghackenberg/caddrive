@@ -5,6 +5,18 @@ import { FileClient } from '../clients/rest/file'
 class FileManagerImpl implements FileREST<ArrayBuffer> {
     private fileIndex: {[id: string]: ArrayBuffer} = {}
 
+    // CACHE
+
+    getFileFromCache(id: string) {
+        if (id in this.fileIndex) {
+            return this.fileIndex[id]
+        } else {
+            return undefined
+        }
+    }
+
+    // REST
+
     async getFile(id: string): Promise<ArrayBuffer> {
         if (!(id in this.fileIndex)) {
             // Call backend
@@ -14,14 +26,6 @@ class FileManagerImpl implements FileREST<ArrayBuffer> {
         }
         // Return file
         return this.fileIndex[id]
-    }
-
-    getFileFromCache(id: string) {
-        if (id in this.fileIndex) {
-            return this.fileIndex[id]
-        } else {
-            return undefined
-        }
     }
 }
 

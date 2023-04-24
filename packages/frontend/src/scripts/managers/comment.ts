@@ -11,26 +11,7 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         CommentAPI.register(this)
     }
 
-    // MQTT
-
-    create(comment: Comment): void {
-        console.log(`Comment created ${comment}`)
-        this.commentIndex[comment.id] = comment
-        this.addToFindIndex(comment)
-    }
-
-    update(comment: Comment): void {
-        console.log(`Comment updated ${comment}`)
-        this.commentIndex[comment.id] = comment
-        this.removeFromFindIndex(comment)
-        this.addToFindIndex(comment)
-    }
-
-    delete(comment: Comment): void {
-        console.log(`Comment deleted ${comment}`)
-        this.commentIndex[comment.id] = comment
-        this.removeFromFindIndex(comment)
-    }
+    // CACHE
 
     findCommentsFromCache(issueId: string) { 
         const key = `${issueId}`
@@ -40,6 +21,38 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
             return undefined 
         } 
     }
+
+    private addToFindIndex(comment: Comment) {
+        if (`${comment.issueId}` in this.findIndex) {
+            this.findIndex[`${comment.issueId}`][comment.id] = true
+        }
+    }
+    private removeFromFindIndex(comment: Comment) { 
+        for (const key of Object.keys(this.findIndex)) {
+            if (comment.id in this.findIndex[key]) {
+                delete this.findIndex[key][comment.id]
+            }
+        }
+
+    }
+
+    // MQTT
+
+    create(comment: Comment): void {
+        this.commentIndex[comment.id] = comment
+        this.addToFindIndex(comment)
+    }
+    update(comment: Comment): void {
+        this.commentIndex[comment.id] = comment
+        this.removeFromFindIndex(comment)
+        this.addToFindIndex(comment)
+    }
+    delete(comment: Comment): void {
+        this.commentIndex[comment.id] = comment
+        this.removeFromFindIndex(comment)
+    }
+
+    // REST
     
     async findComments(issueId: string): Promise<Comment[]> {
         const key = `${issueId}`
@@ -103,21 +116,6 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
         this.removeFromFindIndex(comment)
         // Return comment
         return comment
-    }
-
-    private addToFindIndex(comment: Comment) {
-        if (`${comment.issueId}` in this.findIndex) {
-            this.findIndex[`${comment.issueId}`][comment.id] = true
-        }
-    }
-
-    private removeFromFindIndex(comment: Comment) { 
-        for (const key of Object.keys(this.findIndex)) {
-            if (comment.id in this.findIndex[key]) {
-                delete this.findIndex[key][comment.id]
-            }
-        }
-
     }
 }
 

@@ -54,13 +54,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [product, setProduct] = useState<Product>(initialProduct)
     const [members, setMembers] = useState<Member[]>(initialMembers)
     const [versions, setVersions] = useState<Version[]>(initialVersions)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+    const [users, setUsers] = useState<{[versionId: string]: User}>(initialUsers)
     // - Computations
-    const [children, setChildren] = useState<{[id: string]: Version[]}>(initialTree.children)
-    const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>(initialTree.childrenMin)
-    const [childrenMax, setChildrenMax] = useState<{[id: string]: number}>(initialTree.childrenMax)
-    const [siblings, setSiblings] = useState<{[id: string]: Version[]}>(initialTree.siblings)
-    const [indents, setIndents] = useState<{[id: string]: number}>(initialTree.indents)
+    const [children, setChildren] = useState<{[versionId: string]: Version[]}>(initialTree.children)
+    const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
+    const [childrenMax, setChildrenMax] = useState<{[versionId: string]: number}>(initialTree.childrenMax)
+    const [siblings, setSiblings] = useState<{[versionId: string]: Version[]}>(initialTree.siblings)
+    const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
     // - Interactions
     const [active, setActive] = useState<string>('left')
@@ -74,7 +74,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     useEffect(() => {
         if (versions) {
             Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
-                const newUsers: {[id: string]: User} = {}
+                const newUsers: {[versionId: string]: User} = {}
                 for (let index = 0; index < versions.length; index++) {
                     newUsers[versions[index].id] = versionUsers[index]
                 }
@@ -231,7 +231,11 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         </div>
                                                     </div>
                                                     <div className="model">
-                                                        <img src={`/rest/files/${vers.id}.${vers.imageType}`}/>
+                                                        {vers.imageType ? (
+                                                            <img src={`/rest/files/${vers.id}.${vers.imageType}`}/>
+                                                        ) : (
+                                                            <img src={LoadIcon} className='icon medium animation spin'/>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </Fragment>

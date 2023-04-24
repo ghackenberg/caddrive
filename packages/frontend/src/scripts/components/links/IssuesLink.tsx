@@ -10,9 +10,14 @@ import IssueIcon from '/src/images/issue.png'
 
 export const IssuesLink = (props: {product: Product}) => {
 
+    // INITIAL STATES
+
+    const initialIssues = IssueManager.findIssuesFromCache(props.product.id)
+    const initialCount = initialIssues ? initialIssues.length : undefined
+
     // STATES
 
-    const [count, setCount] = useState<number>(IssueManager.getIssueCount(props.product.id))
+    const [count, setCount] = useState<number>(initialCount)
 
     // EFFECTS
 

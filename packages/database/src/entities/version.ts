@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
-import { Version } from 'productboard-common'
+import { ImageType, ModelType, Version } from 'productboard-common'
 
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
@@ -46,8 +46,8 @@ export class VersionEntity extends Version {
     override description: string
 
     @Column({ nullable: false })
-    override modelType: 'glb' | 'ldr' | 'mpd'
+    override modelType: ModelType
 
-    @Column({ nullable: false })
-    override imageType: 'png'
+    @Column({ nullable: true })
+    override imageType: ImageType
 }

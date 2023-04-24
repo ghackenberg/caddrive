@@ -11,26 +11,7 @@ class ProductManagerImpl implements ProductREST, ProductDownMQTT {
         ProductAPI.register(this)
     }
 
-    // MQTT
-
-    create(product: Product): void {
-        console.log(`Product created ${product}`)
-        this.productIndex[product.id] = product
-        this.addToFindResult(product)
-    }
-
-    update(product: Product): void {
-        console.log(`Product updated ${product}`)
-        this.productIndex[product.id] = product
-        this.removeFromFindResult(product)
-        this.addToFindResult(product)
-    }
-
-    delete(product: Product): void {
-        console.log(`Product deleted ${product}`)
-        this.productIndex[product.id] = product
-        this.removeFromFindResult(product)
-    }
+    // CACHE
 
     findProductsFromCache() { 
         if (this.findResult) { 
@@ -39,6 +20,42 @@ class ProductManagerImpl implements ProductREST, ProductDownMQTT {
             return undefined 
         } 
     }
+    getProductFromCache(productId: string) { 
+        if (productId in this.productIndex) { 
+            return this.productIndex[productId]
+        } else { 
+            return undefined 
+        } 
+    }
+
+    private addToFindIndex(product: Product) {
+        if (this.findResult) {
+            this.findResult[product.id] = true
+        }
+    }
+    private removeFromFindIndex(product: Product) {
+        if (this.findResult) {
+            delete this.findResult[product.id]
+        }
+    }
+
+    // MQTT
+
+    create(product: Product): void {
+        this.productIndex[product.id] = product
+        this.addToFindIndex(product)
+    }
+    update(product: Product): void {
+        this.productIndex[product.id] = product
+        this.removeFromFindIndex(product)
+        this.addToFindIndex(product)
+    }
+    delete(product: Product): void {
+        this.productIndex[product.id] = product
+        this.removeFromFindIndex(product)
+    }
+
+    // REST
     
     async findProducts(): Promise<Product[]> {
         if (!this.findResult) {
@@ -64,17 +81,9 @@ class ProductManagerImpl implements ProductREST, ProductDownMQTT {
         // Update product index
         this.productIndex[product.id] = product
         // Update product set
-        this.addToFindResult(product)
+        this.addToFindIndex(product)
         // Return product
         return product
-    }
-
-    getProductFromCache(productId: string) { 
-        if (productId in this.productIndex) { 
-            return this.productIndex[productId]
-        } else { 
-            return undefined 
-        } 
     }
 
     async getProduct(id: string): Promise<Product> {
@@ -94,8 +103,8 @@ class ProductManagerImpl implements ProductREST, ProductDownMQTT {
         // Update product index
         this.productIndex[id] = product
         // Update find result
-        this.removeFromFindResult(product)
-        this.addToFindResult(product)
+        this.removeFromFindIndex(product)
+        this.addToFindIndex(product)
         // Return product
         return product
     }
@@ -106,21 +115,9 @@ class ProductManagerImpl implements ProductREST, ProductDownMQTT {
         // Update product index
         this.productIndex[id] = product
         // Update find result
-        this.removeFromFindResult(product)
+        this.removeFromFindIndex(product)
         // Return product
         return product
-    }
-
-    private addToFindResult(product: Product) {
-        if (this.findResult) {
-            this.findResult[product.id] = true
-        }
-    }
-    
-    private removeFromFindResult(product: Product) {
-        if (this.findResult) {
-            delete this.findResult[product.id]
-        }
     }
 }
 

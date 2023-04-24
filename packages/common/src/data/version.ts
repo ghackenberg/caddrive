@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+export type ModelType = 'glb' | 'ldr' | 'mpd'
+
+export type ImageType = 'png' | null
+
 export class VersionUpdateData {
     @ApiProperty()
     major: number
@@ -27,7 +31,7 @@ export class Version extends VersionAddData {
     @ApiProperty()
     time: string
     @ApiProperty()
-    modelType: 'glb' | 'ldr' | 'mpd'
+    modelType: ModelType
     @ApiProperty()
-    imageType: 'png'
+    imageType: ImageType
 }

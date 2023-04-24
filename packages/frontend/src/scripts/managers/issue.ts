@@ -11,36 +11,8 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         IssueAPI.register(this)
     }
 
-    // MQTT
-
-    create(issue: Issue): void {
-        console.log(`Issue created ${issue}`)
-        this.issueIndex[issue.id] = issue
-        this.addToFindIndex(issue)
-    }
-
-    update(issue: Issue): void {
-        console.log(`Issue updated ${issue}`)
-        this.issueIndex[issue.id] = issue
-        this.removeFromFindIndex(issue)
-        this.addToFindIndex(issue)
-    }
-
-    delete(issue: Issue): void {
-        console.log(`Issue deleted ${issue}`)
-        this.issueIndex[issue.id] = issue
-        this.removeFromFindIndex(issue)
-    }
-
-    getIssueCount(productId: string, milestoneId?: string, state?: string) {
-        const key = `${productId}-${milestoneId}-${state}`
-        if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).length 
-        } else { 
-            return undefined 
-        } 
-    }
-
+    // CACHE
+    
     findIssuesFromCache(productId: string, milestoneId?: string, state?: string) {
         const key = `${productId}-${milestoneId}-${state}`
         if (key in this.findIndex) { 
@@ -49,6 +21,53 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
             return undefined 
         } 
     }
+    getIssueFromCache(issueId: string) { 
+        if (issueId in this.issueIndex) { 
+            return this.issueIndex[issueId]
+        } else { 
+            return undefined 
+        } 
+    }
+
+    private addToFindIndex(issue: Issue) {
+        if (`${issue.productId}-${undefined}-${undefined}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${undefined}-${undefined}`][issue.id] = true
+        }
+        if (`${issue.productId}-${issue.milestoneId}-${undefined}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${issue.milestoneId}-${undefined}`][issue.id] = true
+        }
+        if (`${issue.productId}-${undefined}-${issue.state}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${undefined}-${issue.state}`][issue.id] = true
+        }
+        if (`${issue.productId}-${issue.milestoneId}-${issue.state}` in this.findIndex) {
+            this.findIndex[`${issue.productId}-${issue.milestoneId}-${issue.state}`][issue.id] = true
+        }
+    }
+    private removeFromFindIndex(issue: Issue) { 	
+        for (const key of Object.keys(this.findIndex)) {
+            if (issue.id in this.findIndex[key]) {
+                delete this.findIndex[key][issue.id]
+            }
+        }
+    }
+
+    // MQTT
+
+    create(issue: Issue): void {
+        this.issueIndex[issue.id] = issue
+        this.addToFindIndex(issue)
+    }
+    update(issue: Issue): void {
+        this.issueIndex[issue.id] = issue
+        this.removeFromFindIndex(issue)
+        this.addToFindIndex(issue)
+    }
+    delete(issue: Issue): void {
+        this.issueIndex[issue.id] = issue
+        this.removeFromFindIndex(issue)
+    }
+
+    // REST
 
     async findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]> {
         const key = `${productId}-${milestoneId}-${state}`
@@ -78,14 +97,6 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         this.addToFindIndex(issue)
         // Return issue
         return issue
-    }
-
-    getIssueFromCache(issueId: string) { 
-        if (issueId in this.issueIndex) { 
-            return this.issueIndex[issueId]
-        } else { 
-            return undefined 
-        } 
     }
 
     async getIssue(id: string): Promise<Issue> {
@@ -120,29 +131,6 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
         this.removeFromFindIndex(issue)
         // Return issue
         return issue
-    }
-
-    private addToFindIndex(issue: Issue) {
-        if (`${issue.productId}-${undefined}-${undefined}` in this.findIndex) {
-            this.findIndex[`${issue.productId}-${undefined}-${undefined}`][issue.id] = true
-        }
-        if (`${issue.productId}-${issue.milestoneId}-${undefined}` in this.findIndex) {
-            this.findIndex[`${issue.productId}-${issue.milestoneId}-${undefined}`][issue.id] = true
-        }
-        if (`${issue.productId}-${undefined}-${issue.state}` in this.findIndex) {
-            this.findIndex[`${issue.productId}-${undefined}-${issue.state}`][issue.id] = true
-        }
-        if (`${issue.productId}-${issue.milestoneId}-${issue.state}` in this.findIndex) {
-            this.findIndex[`${issue.productId}-${issue.milestoneId}-${issue.state}`][issue.id] = true
-        }
-    }
-
-    private removeFromFindIndex(issue: Issue) { 	
-        for (const key of Object.keys(this.findIndex)) {
-            if (issue.id in this.findIndex[key]) {
-                delete this.findIndex[key][issue.id]
-            }
-        }
     }
 }
 

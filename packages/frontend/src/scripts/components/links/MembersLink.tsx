@@ -10,9 +10,14 @@ import MemberIcon from '/src/images/user.png'
 
 export const MembersLink = (props: {product: Product}) => {
 
+    // INITIAL STATES
+
+    const initialMembers = MemberManager.findMembersFromCache(props.product.id)
+    const initialCount = initialMembers ? initialMembers.length : undefined
+
     // STATES
 
-    const [count, setCount] = useState<number>(MemberManager.getMemberCount(props.product.id))
+    const [count, setCount] = useState<number>(initialCount)
 
     // EFFECTS
 

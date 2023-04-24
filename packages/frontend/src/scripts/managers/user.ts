@@ -11,25 +11,48 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         UserAPI.register(this)
     }
 
+    // CACHE
+
+    findUsersFromCache() { 
+        if (this.findResult) { 
+            return Object.keys(this.findResult).map(id => this.userIndex[id])
+        } else { 
+            return undefined 
+        } 
+    }
+    getUserFromCache(userId: string) { 
+        if (userId in this.userIndex) { 
+            return this.userIndex[userId]
+        } else { 
+            return undefined 
+        } 
+    }
+
+    private addToFindIndex(user: User) {
+        if (this.findResult) {
+            this.findResult[user.id] = true
+        }
+    }
+    private removeFromFindIndex(user: User) {
+        if (this.findResult) {
+            delete this.findResult[user.id]
+        }
+    }
+
     // MQTT
 
     create(user: User): void {
-        console.log(`User created ${user}`)
         this.userIndex[user.id] = user
-        this.addToFindResult(user)
+        this.addToFindIndex(user)
     }
-
     update(user: User): void {
-        console.log(`User updated ${user}`)
         this.userIndex[user.id] = user
-        this.removeFromFindResult(user)
-        this.addToFindResult(user)
+        this.removeFromFindIndex(user)
+        this.addToFindIndex(user)
     }
-
     delete(user: User): void {
-        console.log(`User deleted ${user}`)
         this.userIndex[user.id] = user
-        this.removeFromFindResult(user)
+        this.removeFromFindIndex(user)
     }
 
     // REST
@@ -41,14 +64,6 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         this.userIndex[user.id] = user
         // Return user
         return user
-    }
-
-    findUsersFromCache() { 
-        if (this.findResult) { 
-            return Object.keys(this.findResult).map(id => this.userIndex[id])
-        } else { 
-            return undefined 
-        } 
     }
 
     async findUsers(query?: string, product?: string): Promise<User[]> {
@@ -78,17 +93,9 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         // Update user index
         this.userIndex[user.id] = user
         // Update user set
-        this.addToFindResult(user)
+        this.addToFindIndex(user)
         // Return user
         return user
-    }
-
-    getUserFromCache(userId: string) { 
-        if (userId in this.userIndex) { 
-            return this.userIndex[userId]
-        } else { 
-            return undefined 
-        } 
     }
 
     async getUser(id: string): Promise<User> {
@@ -108,8 +115,8 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         // Update user index
         this.userIndex[id] = user
         // Update find result
-        this.removeFromFindResult(user)
-        this.addToFindResult(user)
+        this.removeFromFindIndex(user)
+        this.addToFindIndex(user)
         // Return user
         return user
     }
@@ -120,21 +127,9 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         // Update user index
         this.userIndex[id] = user
         // Update user set
-        this.removeFromFindResult(user)
+        this.removeFromFindIndex(user)
         // Return user
         return user
-    }
-
-    private addToFindResult(user: User) {
-        if (this.findResult) {
-            this.findResult[user.id] = true
-        }
-    }
-    
-    private removeFromFindResult(user: User) {
-        if (this.findResult) {
-            delete this.findResult[user.id]
-        }
     }
 }
 

@@ -1,6 +1,6 @@
 import gl from 'gl'
 import Jimp from 'jimp'
-import { AmbientLight, Box3, DirectionalLight, Group, LoadingManager, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
+import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, LoadingManager, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
@@ -40,25 +40,24 @@ function initializeCanvas(width = 1, height = 1) {
 }
 
 function initializeContext(width = 1, height = 1) {
-    return gl(width, height)
+    return gl(width, height, { preserveDrawingBuffer: true })
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeRenderer(canvas: any, context: any) {
-    const renderer = new WebGLRenderer({
-        antialias: true,
-        alpha: true,
-        logarithmicDepthBuffer: true,
-        canvas,
-        context
-    })
+    const antialias = true
+    const alpha = true
+    const logarithmicDepthBuffer = true
+    
+    const renderer = new WebGLRenderer({ antialias, alpha, logarithmicDepthBuffer, canvas, context })
+    renderer.outputEncoding = sRGBEncoding
+    renderer.toneMapping = ACESFilmicToneMapping
 
     return renderer
 }
 
 function initializeOrbit(camera: PerspectiveCamera, renderer: WebGLRenderer) {
     const orbit = new OrbitControls(camera, renderer.domElement)
-    orbit.enableDamping = true
 
     return orbit
 }
@@ -121,11 +120,12 @@ function render(model: Group, width: number, height: number): Promise<Jimp> {
                 const data = image.bitmap.data
                 for (let x = 0; x < width; x++) {
                     for (let y = 0; y < height; y++) {
-                        const offset = y * width + x
-                        data[offset + 0] = buffer[offset + 0]
-                        data[offset + 1] = buffer[offset + 1]
-                        data[offset + 2] = buffer[offset + 2]
-                        data[offset + 3] = buffer[offset + 3]
+                        const bufferOffset = y * width * 4 + x * 4
+                        const dataOffset = (height - y - 1) * width * 4 + x * 4
+                        data[dataOffset + 0] = buffer[bufferOffset + 0]
+                        data[dataOffset + 1] = buffer[bufferOffset + 1]
+                        data[dataOffset + 2] = buffer[bufferOffset + 2]
+                        data[dataOffset + 3] = buffer[bufferOffset + 3]
                     }
                 }
                 resolve(image)
@@ -156,6 +156,9 @@ export async function renderLDraw(model: string, width: number, height: number) 
     return new Promise<Jimp>((resolve, reject) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (LDRAW_LOADER as any).parse(model, (group: Group) => {
+            // Fix coordinates
+            group.rotation.x = Math.PI
+            // Render and resolve/reject
             render(group, width, height).then(resolve).catch(reject)
         })
     })
