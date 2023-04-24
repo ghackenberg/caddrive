@@ -3,6 +3,7 @@ import { Issue } from './data/issue'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
 import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
 import { Product, ProductAddData, ProductUpdateData } from './data/product'
+import { Tag, TagAddData, TagUpdateData } from './data/tag'
 import { User } from './data/user'
 import { Version } from './data/version'
 
@@ -21,6 +22,14 @@ export interface ProductREST {
     getProduct(id: string): Promise<Product>
     updateProduct(id: string, data: ProductUpdateData): Promise<Product>
     deleteProduct(id: string): Promise<Product>
+}
+
+export interface TagREST {
+    findTags(): Promise<Tag[]>
+    addTag(data: TagAddData): Promise<Tag>
+    getTag(id: string): Promise<Tag>
+    updateTag(id: string, data: TagUpdateData): Promise<Tag>
+    deleteTag(id: string): Promise<Tag>
 }
 
 export interface VersionREST<DA, DU, M, I> {
