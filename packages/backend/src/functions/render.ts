@@ -167,8 +167,13 @@ export async function renderLDraw(model: string, width: number, height: number) 
 const GLTF_LOADER = new GLTFLoader()
 
 export async function renderGlb(buffer: Buffer, width: number, height: number) {
+    const array = new ArrayBuffer(buffer.length)
+    const view = new Uint8Array(array)
+    for (let i = 0; i < buffer.length; i++) {
+        view[i] = buffer[i]
+    }
     return new Promise<Jimp>((resolve, reject) => {
-        GLTF_LOADER.parse(buffer, undefined, model => {
+        GLTF_LOADER.parse(array, undefined, model => {
             render(model.scene, width, height).then(resolve).catch(reject)
         }, error => {
             reject(error)
