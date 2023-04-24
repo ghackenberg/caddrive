@@ -2,12 +2,13 @@ import { Version, VersionAddData, VersionUpdateData, VersionREST, VersionDownMQT
 
 import { VersionAPI } from '../clients/mqtt/version'
 import { VersionClient } from '../clients/rest/version'
+import { AbstractManager } from './abstract'
 
-class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob>, VersionDownMQTT {
-    private versionIndex: {[id: string]: Version} = {}
+class VersionManagerImpl extends AbstractManager<Version> implements VersionREST<VersionAddData, VersionUpdateData, File, Blob>, VersionDownMQTT {
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
 
     constructor() {
+        super()
         VersionAPI.register(this)
     }
 
@@ -16,17 +17,13 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
     findVersionsFromCache(productId: string) { 
         const key = `${productId}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.versionIndex[id])
+            return Object.keys(this.findIndex[key]).map(id => this.load(id))
         } else { 
             return undefined 
         } 
     }
     getVersionFromCache(versionId: string) { 
-        if (versionId in this.versionIndex) { 
-            return this.versionIndex[versionId]
-        } else { 
-            return undefined 
-        } 
+        return this.load(versionId)
     }
 
     private addToFindIndex(version: Version) {
@@ -45,16 +42,16 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
     // MQTT
 
     create(version: Version): void {
-        this.versionIndex[version.id] = version
+        version = this.store(version)
         this.addToFindIndex(version)
     }
     update(version: Version): void {
-        this.versionIndex[version.id] = version
+        version = this.store(version)
         this.removeFromFindIndex(version)
         this.addToFindIndex(version)
     }
     delete(version: Version): void {
-        this.versionIndex[version.id] = version
+        version = this.store(version)
         this.removeFromFindIndex(version)
     }
 
@@ -64,64 +61,63 @@ class VersionManagerImpl implements VersionREST<VersionAddData, VersionUpdateDat
         const key = `${productId}`
         if (!(key in this.findIndex)) {
             // Call backend
-            const versions = await VersionClient.findVersions(productId)
+            let versions = await VersionClient.findVersions(productId)
             // Update version index
-            for (const version of versions) {
-                this.versionIndex[version.id] = version
-            }
-            // Update find index
+            versions = versions.map(version => this.store(version))
+            // Init find index
             this.findIndex[productId] = {}
-            for (const version of versions) {
-                this.findIndex[key][version.id] = true
-            }
+            // Update find index
+            versions.forEach(version => this.addToFindIndex(version))
         }
         // Return versions
-        return Object.keys(this.findIndex[productId]).map(id => this.versionIndex[id])
+        return Object.keys(this.findIndex[productId]).map(id => this.load(id)).filter(version => !version.deleted)
     }
     
     async addVersion(data: VersionAddData, files: {model: File, image: Blob}): Promise<Version> {
         // Call backend
-        const version = await VersionClient.addVersion(data, files)
+        let version = await VersionClient.addVersion(data, files)
         // Update version index
-        this.versionIndex[version.id] = version
+        version = this.store(version)
         // Update find index
         this.addToFindIndex(version)
         // Return version
-        return version
+        return this.load(version.id)
     }
 
     async getVersion(id: string): Promise<Version> {
-        if (!(id in this.versionIndex)) {
+        if (!this.has(id)) {
             // Call backend
-            const version = await VersionClient.getVersion(id)
+            let version = await VersionClient.getVersion(id)
             // Update version index
-            this.versionIndex[id] = version
+            version = this.store(version)
+            // Update find index
+            this.addToFindIndex(version)
         }
         // Return version
-        return this.versionIndex[id]
+        return this.load(id)
     }
 
     async updateVersion(id: string, data: VersionUpdateData, files?: {model: File, image: Blob}): Promise<Version> {
         // Call backend
-        const version = await VersionClient.updateVersion(id, data, files)
+        let version = await VersionClient.updateVersion(id, data, files)
         // Update version index
-        this.versionIndex[id] = version
+        version = this.store(version)
         // Update find index
         this.removeFromFindIndex(version)
         this.addToFindIndex(version)
         // Return version
-        return version
+        return this.load(id)
     }
 
     async deleteVersion(id: string): Promise<Version> {
         // Call backend
-        const version = await VersionClient.deleteVersion(id)
+        let version = await VersionClient.deleteVersion(id)
         // Update version index
-        this.versionIndex[id] = version
+        version = this.store(version)
         // Update find index
         this.removeFromFindIndex(version)
         // Return version
-        return version
+        return this.load(id)
     }
 }
 

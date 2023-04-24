@@ -2,56 +2,53 @@ import { User, UserAddData, UserUpdateData, UserREST, UserDownMQTT } from 'produ
 
 import { UserAPI } from '../clients/mqtt/user'
 import { UserClient } from '../clients/rest/user'
+import { AbstractManager } from './abstract'
 
-class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
-    private userIndex: {[id: string]: User} = {}
-    private findResult: {[id: string]: boolean}
+class UserManagerImpl extends AbstractManager<User> implements UserREST<UserAddData, File>, UserDownMQTT {
+    private findIndex: {[id: string]: boolean}
 
     constructor() {
+        super()
         UserAPI.register(this)
     }
 
     // CACHE
 
     findUsersFromCache() { 
-        if (this.findResult) { 
-            return Object.keys(this.findResult).map(id => this.userIndex[id])
+        if (this.findIndex) { 
+            return Object.keys(this.findIndex).map(id => this.load(id))
         } else { 
             return undefined 
         } 
     }
     getUserFromCache(userId: string) { 
-        if (userId in this.userIndex) { 
-            return this.userIndex[userId]
-        } else { 
-            return undefined 
-        } 
+        return this.load(userId)
     }
 
     private addToFindIndex(user: User) {
-        if (this.findResult) {
-            this.findResult[user.id] = true
+        if (this.findIndex) {
+            this.findIndex[user.id] = true
         }
     }
     private removeFromFindIndex(user: User) {
-        if (this.findResult) {
-            delete this.findResult[user.id]
+        if (this.findIndex) {
+            delete this.findIndex[user.id]
         }
     }
 
     // MQTT
 
     create(user: User): void {
-        this.userIndex[user.id] = user
+        user = this.store(user)
         this.addToFindIndex(user)
     }
     update(user: User): void {
-        this.userIndex[user.id] = user
+        user = this.store(user)
         this.removeFromFindIndex(user)
         this.addToFindIndex(user)
     }
     delete(user: User): void {
-        this.userIndex[user.id] = user
+        user = this.store(user)
         this.removeFromFindIndex(user)
     }
 
@@ -59,9 +56,9 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
 
     async checkUser(): Promise<User> {
         // Call backend
-        const user = await UserClient.checkUser()
+        let user = await UserClient.checkUser()
         // Update user index
-        this.userIndex[user.id] = user
+        user = this.store(user)
         // Return user
         return user
     }
@@ -70,66 +67,65 @@ class UserManagerImpl implements UserREST<UserAddData, File>, UserDownMQTT {
         if (query || product) {
             return await UserClient.findUsers(query, product)
         }
-        if (!this.findResult) {
+        if (!this.findIndex) {
             // Call backend
-            const users = await UserClient.findUsers(query, product)
+            let users = await UserClient.findUsers(query, product)
             // Update user index
-            for (const user of users) {
-                this.userIndex[user.id] = user
-            }
-            // Update user set
-            this.findResult = {}
-            for (const user of users) {
-                this.findResult[user.id] = true
-            }
+            users = users.map(user => this.store(user))
+            // Init find index
+            this.findIndex = {}
+            // Update find index
+            users.map(user => this.addToFindIndex(user))
         }
         // Return users
-        return Object.keys(this.findResult).map(id => this.userIndex[id])
+        return Object.keys(this.findIndex).map(id => this.load(id)).filter(user => !user.deleted)
     }
 
     async addUser(data: UserAddData, file?: File): Promise<User> {
         // Call backend
-        const user = await UserClient.addUser(data, file)
+        let user = await UserClient.addUser(data, file)
         // Update user index
-        this.userIndex[user.id] = user
+        user = this.store(user)
         // Update user set
         this.addToFindIndex(user)
         // Return user
-        return user
+        return this.load(user.id)
     }
 
     async getUser(id: string): Promise<User> {
-        if (!(id in this.userIndex)) {
+        if (!this.has(id)) {
             // Call backend
-            const user = await UserClient.getUser(id)
+            let user = await UserClient.getUser(id)
             // Update user index
-            this.userIndex[id] = user
+            user = this.store(user)
+            // Update find index
+            this.addToFindIndex(user)
         }
         // Return user
-        return this.userIndex[id]
+        return this.load(id)
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: File): Promise<User> {
         // Call backend
-        const user = await UserClient.updateUser(id, data, file)
+        let user = await UserClient.updateUser(id, data, file)
         // Update user index
-        this.userIndex[id] = user
+        user = this.store(user)
         // Update find result
         this.removeFromFindIndex(user)
         this.addToFindIndex(user)
         // Return user
-        return user
+        return this.load(id)
     }
 
     async deleteUser(id: string): Promise<User> {
         // Call backend
-        const user = await UserClient.deleteUser(id)
+        let user = await UserClient.deleteUser(id)
         // Update user index
-        this.userIndex[id] = user
+        user = this.store(user)
         // Update user set
         this.removeFromFindIndex(user)
         // Return user
-        return user
+        return this.load(id)
     }
 }
 

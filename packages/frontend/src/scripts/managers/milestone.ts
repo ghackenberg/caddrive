@@ -2,12 +2,13 @@ import { Milestone, MilestoneAddData, MilestoneDownMQTT, MilestoneREST, Mileston
 
 import { MilestoneAPI } from '../clients/mqtt/milestone'
 import { MilestoneClient } from '../clients/rest/milestone'
+import { AbstractManager } from './abstract'
 
-class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
-    private milestoneIndex: {[id: string]: Milestone} = {}
+class MilestoneManagerImpl extends AbstractManager<Milestone> implements MilestoneREST, MilestoneDownMQTT {
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
 
     constructor() {
+        super()
         MilestoneAPI.register(this)
     }
 
@@ -16,17 +17,13 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
     findMilestonesFromCache(productId: string) { 
         const key = `${productId}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.milestoneIndex[id])
+            return Object.keys(this.findIndex[key]).map(id => this.load(id))
         } else { 
             return undefined 
         } 
     }
     getMilestoneFromCache(milestoneId: string) { 
-        if (milestoneId in this.milestoneIndex) { 
-            return this.milestoneIndex[milestoneId]
-        } else { 
-            return undefined 
-        } 
+        return this.load(milestoneId)
     }
 
     private addToFindIndex(milestone: Milestone) {
@@ -45,16 +42,16 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
     // MQTT
 
     create(milestone: Milestone): void {
-        this.milestoneIndex[milestone.id] = milestone
+        milestone = this.store(milestone)
         this.addToFindIndex(milestone)
     }
     update(milestone: Milestone): void {
-        this.milestoneIndex[milestone.id] = milestone
+        milestone = this.store(milestone)
         this.removeFromFindIndex(milestone)
         this.addToFindIndex(milestone)
     }
     delete(milestone: Milestone): void {
-        this.milestoneIndex[milestone.id] = milestone
+        milestone = this.store(milestone)
         this.removeFromFindIndex(milestone)
     }
 
@@ -64,63 +61,62 @@ class MilestoneManagerImpl implements MilestoneREST, MilestoneDownMQTT {
         const key = `${productId}`
         if (!(key in this.findIndex)) {
             // Call backend
-            const milestones = await MilestoneClient.findMilestones(productId)
+            let milestones = await MilestoneClient.findMilestones(productId)
             // Update milestone index
-            for (const milestone of milestones) {
-                this.milestoneIndex[milestone.id] = milestone
-            }
-            // Update product index
+            milestones = milestones.map(milestone => this.store(milestone))
+            // Init product index
             this.findIndex[key] = {}
-            for (const milestone of milestones) {
-                this.findIndex[key][milestone.id] = true
-            }
+            // Update product index
+            milestones.forEach(milestone => this.addToFindIndex(milestone))
         }
         // Return issues
-        return Object.keys(this.findIndex[key]).map(id => this.milestoneIndex[id])
+        return Object.keys(this.findIndex[key]).map(id => this.load(id)).filter(milestone => !milestone.deleted)
     }
 
     async addMilestone(data: MilestoneAddData): Promise<Milestone> {
         // Call backend
-        const milestone = await MilestoneClient.addMilestone(data)
+        let milestone = await MilestoneClient.addMilestone(data)
         // Update milestone index
-        this.milestoneIndex[milestone.id] = milestone
+        milestone = this.store(milestone)
         // Update find index
         this.addToFindIndex(milestone)
         // Return milestone
-        return milestone
+        return this.load(milestone.id)
     }
 
     async getMilestone(id: string): Promise<Milestone> {
-        if (!(id in this.milestoneIndex)) {
+        if (!this.has(id)) {
             // Call backend
-            const milestone = await MilestoneClient.getMilestone(id)
+            let milestone = await MilestoneClient.getMilestone(id)
             // Update milestone index
-            this.milestoneIndex[id] = milestone
+            milestone = this.store(milestone)
+            // Update product index
+            this.addToFindIndex(milestone)
         }
         // Return milestone
-        return this.milestoneIndex[id]
+        return this.load(id)
 
     }
     async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
         // Call backend
-        const milestone = await MilestoneClient.updateMilestone(id, data)
+        let milestone = await MilestoneClient.updateMilestone(id, data)
         // Update milestone index
-        this.milestoneIndex[id] = milestone
+        milestone = this.store(milestone)
         // Update find index
         this.removeFromFindIndex(milestone)
         this.addToFindIndex(milestone)
         // Return milestone
-        return milestone
+        return this.load(id)
     }
     async deleteMilestone(id: string): Promise<Milestone> {
         // Call backend
-        const milestone = await MilestoneClient.deleteMilestone(id)
+        let milestone = await MilestoneClient.deleteMilestone(id)
         // Update milestone index
-        this.milestoneIndex[id] = milestone
+        milestone = this.store(milestone)
         // Update find index
         this.removeFromFindIndex(milestone)
         // Return milestone
-        return milestone
+        return this.load(id)
     }
 }
 
