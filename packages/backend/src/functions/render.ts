@@ -1,6 +1,6 @@
-import * as gl from 'gl'
-import * as Jimp from 'jimp'
-import { AmbientLight, Box3, DirectionalLight, Group, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
+import gl from 'gl'
+import Jimp from 'jimp'
+import { AmbientLight, Box3, DirectionalLight, Group, LoadingManager, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
@@ -27,6 +27,9 @@ function initializeCanvas(width = 1, height = 1) {
     return {
         width,
         height,
+        style: {
+            touchAction: 'none'
+        },
         addEventListener: () => {
             // empty
         },
@@ -131,17 +134,38 @@ function render(model: Group, width: number, height: number): Promise<Jimp> {
     })
 }
 
+const LOADING_MANAGER = new LoadingManager()
+
+LOADING_MANAGER.setURLModifier(url => {
+    if (url.indexOf('/') == -1) {
+        return `http://localhost:3000/rest/parts/${url}`
+    } else {
+        return `http://localhost:3000/rest/parts/${url.substring(url.lastIndexOf('/') + 1)}`
+    }
+})
+
+let LDRAW_MATERIALS = false
+
+const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
+
 export async function renderLDraw(model: string, width: number, height: number) {
+    if (!LDRAW_MATERIALS) {
+        await LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
+        LDRAW_MATERIALS = true
+    }
     return new Promise<Jimp>((resolve, reject) => {
-        new LDrawLoader().parse(model, undefined, group => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (LDRAW_LOADER as any).parse(model, (group: Group) => {
             render(group, width, height).then(resolve).catch(reject)
         })
     })
 }
 
+const GLTF_LOADER = new GLTFLoader()
+
 export async function renderGlb(buffer: Buffer, width: number, height: number) {
     return new Promise<Jimp>((resolve, reject) => {
-        new GLTFLoader().parse(buffer, undefined, model => {
+        GLTF_LOADER.parse(buffer, undefined, model => {
             render(model.scene, width, height).then(resolve).catch(reject)
         }, error => {
             reject(error)
