@@ -24,12 +24,17 @@ export class VersionAddData extends VersionUpdateData {
 export class Version extends VersionAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
+    @ApiProperty()
+    updated: number
+    @ApiProperty()
+    deleted: number
+
     @ApiProperty()
     userId: string
-    @ApiProperty()
-    time: string
+    
     @ApiProperty()
     modelType: ModelType
     @ApiProperty()

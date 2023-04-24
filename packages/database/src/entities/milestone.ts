@@ -11,8 +11,12 @@ export class MilestoneEntity extends Milestone {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: false })
+    override created: number
+    @Column({ nullable: true })
+    override updated: number
+    @Column({ nullable: true })
+    override deleted: number
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
@@ -32,10 +36,9 @@ export class MilestoneEntity extends Milestone {
     override label: string
 
     @Column({ nullable: false })
-    override start: string
-
+    override start: number
     @Column({ nullable: false })
-    override end: string
+    override end: number
 
     @OneToMany(() => IssueEntity, issue => issue.milestoneId)
     issues: IssueEntity[]

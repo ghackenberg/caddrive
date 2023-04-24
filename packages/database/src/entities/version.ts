@@ -10,8 +10,12 @@ export class VersionEntity extends Version {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: false })
+    override created: number
+    @Column({ nullable: true })
+    override updated: number
+    @Column({ nullable: true })
+    override deleted: number
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
@@ -31,14 +35,9 @@ export class VersionEntity extends Version {
     override baseVersionIds: string[]
 
     @Column({ nullable: false })
-    override time: string
-
-    @Column({ nullable: false })
     override major: number
-
     @Column({ nullable: false })
     override minor: number
-
     @Column({ nullable: false })
     override patch: number
 
@@ -47,7 +46,6 @@ export class VersionEntity extends Version {
 
     @Column({ nullable: false })
     override modelType: ModelType
-
     @Column({ nullable: true })
     override imageType: ImageType
 }

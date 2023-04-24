@@ -94,10 +94,10 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     async function submitMilestone(event: FormEvent){
         event.preventDefault()
         if(milestoneId == 'new') {
-            await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.toISOString(), end: end.toISOString() })
+            await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })
             replace(`/products/${productId}/milestones/`)
         } else {
-            await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.toISOString(), end: end.toISOString() })
+            await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.getTime(), end: end.getTime() })
             goBack()
         }
     }

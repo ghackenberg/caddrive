@@ -42,7 +42,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
                 </div>
                 <div className="text">
                     <p>
-                        <strong>{props.user ? comment.userId in users && members ? <ProductUserNameWidget user={users[comment.userId]} members={members}/> : '?' : ''}</strong> commented on {comment.time.substring(0, 10)}
+                        <strong>{props.user ? comment.userId in users && members ? <ProductUserNameWidget user={users[comment.userId]} members={members}/> : '?' : ''}</strong> commented on {new Date(comment.created).toISOString().substring(0, 10)}
                     </p>
                 </div>
             </div>

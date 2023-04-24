@@ -23,7 +23,7 @@ export class MilestoneService implements MilestoneREST {
     async findMilestones(productId: string): Promise<Milestone[]> {
         let where: FindOptionsWhere<MilestoneEntity>
         if (productId)
-            where = { productId, deleted: false }
+            where = { productId, deleted: null }
         const result: Milestone[] = []
         for (const milestone of await Database.get().milestoneRepository.findBy(where))
             result.push(this.convert(milestone))
@@ -32,9 +32,9 @@ export class MilestoneService implements MilestoneREST {
 
     async addMilestone(data: MilestoneAddData): Promise<Milestone> {
         const id = shortid()
-        const deleted = false
+        const created = Date.now()
         const userId = this.request.user.id
-        const milestone = await Database.get().milestoneRepository.save({ id, deleted, userId, ...data })
+        const milestone = await Database.get().milestoneRepository.save({ id, created, userId, ...data })
         await this.client.emit(`/api/v1/milestones/${milestone.id}/create`, this.convert(milestone))
         return this.convert(milestone)
     }
@@ -46,6 +46,7 @@ export class MilestoneService implements MilestoneREST {
 
     async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
         const milestone = await Database.get().milestoneRepository.findOneByOrFail({ id })
+        milestone.updated = Date.now()
         milestone.label = data.label
         milestone.start = data.start
         milestone.end = data.end
@@ -57,13 +58,13 @@ export class MilestoneService implements MilestoneREST {
     async deleteMilestone(id: string): Promise<Milestone> {
         const milestone = await Database.get().milestoneRepository.findOneByOrFail({ id })
         await Database.get().issueRepository.update({ milestoneId: milestone.id }, { milestoneId: null })
-        milestone.deleted = true
+        milestone.deleted = Date.now()
         await Database.get().milestoneRepository.save(milestone)
         await this.client.emit(`/api/v1/milestones/${milestone.id}/delete`, this.convert(milestone))
         return this.convert(milestone)
     }
 
     private convert(milestone: MilestoneEntity) {
-        return { id: milestone.id, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end }
+        return { id: milestone.id, created: milestone.created, updated: milestone.updated, deleted: milestone.deleted, userId: milestone.userId, productId: milestone.productId, label: milestone.label, start: milestone.start, end: milestone.end }
     }
 }

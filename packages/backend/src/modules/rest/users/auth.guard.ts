@@ -43,8 +43,10 @@ export class AuthGuard implements CanActivate {
                 const userinfo = await axios.get(endpoint, { headers: { authorization }})
                 // Extract user name and email
                 const { name, email } = userinfo.data
+                // Get timestamp
+                const created = Date.now()
                 // Insert user data in database
-                request.user = { ...await Database.get().userRepository.save({ id, email, name }), permissions }
+                request.user = { ...await Database.get().userRepository.save({ id, created, email, name }), permissions }
             }
         }
         

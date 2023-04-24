@@ -15,12 +15,16 @@ export class CommentAddData extends CommentUpdateData {
 export class Comment extends CommentAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
+    @ApiProperty()
+    updated: number
+    @ApiProperty()
+    deleted: number
+
     @ApiProperty()
     userId: string
     @ApiProperty()
-    time: string
-    @ApiProperty()
-    audioId?: string
+    audioId: string
 }

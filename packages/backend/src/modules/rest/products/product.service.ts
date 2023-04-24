@@ -21,9 +21,9 @@ export class ProductService implements ProductREST {
     async findProducts() : Promise<Product[]> {
         let where: FindOptionsWhere<ProductEntity>
         if (this.request.user)
-            where = { members: [ { userId: this.request.user.id, deleted: false } ], deleted: false }
+            where = { members: [ { userId: this.request.user.id, deleted: null } ], deleted: null }
         else
-            where = { public: true, deleted: false }
+            where = { public: true, deleted: null }
         const result: Product[] = []
         for (const product of await Database.get().productRepository.find({ where }))
             result.push(this.convert(product))
@@ -33,18 +33,17 @@ export class ProductService implements ProductREST {
     async addProduct(data: ProductAddData) {
         // Create product
         const id = shortid()
-        const deleted = false
+        const created = Date.now()
         const userId = this.request.user.id
-        const product = await Database.get().productRepository.save({ id, deleted, userId, ...data })
+        const product = await Database.get().productRepository.save({ id, created, userId, ...data })
         await this.client.emit(`/api/v1/products/${product.id}/create`, this.convert(product))
         // Create member
         {
             const id = shortid()
-            const deleted = false
             const productId = product.id
             const userId = this.request.user.id
             const role = 'manager'
-            /*const member = */await Database.get().memberRepository.save({ id, deleted, productId, userId, role })
+            /*const member = */await Database.get().memberRepository.save({ id, created, productId, userId, role })
             // TODO await this.client.emit(`/api/v1/members/${member.id}/create`, this.convert(member))
         }
         // Return product
@@ -58,6 +57,7 @@ export class ProductService implements ProductREST {
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
         const product = await Database.get().productRepository.findOneByOrFail({ id })
+        product.updated = Date.now()
         product.name = data.name
         product.description = data.description
         product.public = data.public
@@ -68,17 +68,17 @@ export class ProductService implements ProductREST {
 
     async deleteProduct(id: string): Promise<Product> {
         const product = await Database.get().productRepository.findOneByOrFail({ id })
-        await Database.get().memberRepository.update({ productId: product.id }, { deleted: true })
-        await Database.get().versionRepository.update({ productId: product.id }, { deleted: true })
-        await Database.get().milestoneRepository.update({ productId: product.id }, { deleted: true })
-        await Database.get().issueRepository.update({ productId: product.id }, { deleted: true })
-        product.deleted = true
+        await Database.get().memberRepository.update({ productId: product.id }, { deleted: Date.now() })
+        await Database.get().versionRepository.update({ productId: product.id }, { deleted: Date.now() })
+        await Database.get().milestoneRepository.update({ productId: product.id }, { deleted: Date.now() })
+        await Database.get().issueRepository.update({ productId: product.id }, { deleted: Date.now() })
+        product.deleted = Date.now()
         await Database.get().productRepository.save(product)
         await this.client.emit(`/api/v1/products/${product.id}/delete`, this.convert(product))
         return this.convert(product)
     }
 
     private convert(product: ProductEntity) {
-        return { id: product.id, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description, public: product.public }
+        return { id: product.id, created: product.created, updated: product.updated, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description, public: product.public }
     }
 }

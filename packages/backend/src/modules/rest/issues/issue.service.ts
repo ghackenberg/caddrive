@@ -27,13 +27,13 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
         let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
-            where = { productId, milestoneId, state, deleted: false }
+            where = { productId, milestoneId, state, deleted: null }
         else if (productId && milestoneId)
-            where = { productId, milestoneId, deleted: false }
+            where = { productId, milestoneId, deleted: null }
         else if (productId && state)
-            where = { productId, state, deleted: false }
+            where = { productId, state, deleted: null }
         else if (productId)
-            where = { productId, deleted: false }
+            where = { productId, deleted: null }
         const result: Issue[] = []
         for (const issue of await Database.get().issueRepository.findBy(where))
             result.push(this.convert(issue))
@@ -42,16 +42,15 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
   
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const id = shortid()
-        const deleted = false
+        const created = Date.now()
         const userId = this.request.user.id
-        const time = new Date().toISOString()
         let issue: IssueEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             const audioId = shortid()
-            issue = await Database.get().issueRepository.save({ id, deleted, userId, time, audioId, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, userId, audioId, ...data })
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         } else {
-            issue = await Database.get().issueRepository.save({ id, deleted, userId, time, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, userId, ...data })
         }
         await this.client.emit(`/api/v1/issues/${issue.id}/create`, this.convert(issue))
         return this.convert(issue)
@@ -64,6 +63,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
 
     async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
+        issue.updated = Date.now()
         issue.assigneeIds = data.assigneeIds
         issue.label = data.label
         issue.milestoneId =  data.milestoneId
@@ -79,14 +79,14 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
 
     async deleteIssue(id: string): Promise<Issue> {
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
-        await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: true })
-        issue.deleted = true
+        await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: Date.now() })
+        issue.deleted = Date.now()
         await Database.get().issueRepository.save(issue)
         await this.client.emit(`/api/v1/issues/${issue.id}/delete`, this.convert(issue))
         return this.convert(issue)
     }
 
     private convert(issue: IssueEntity) {
-        return {id: issue.id, deleted: issue.deleted, audioId: issue.audioId, userId: issue.userId, productId: issue.productId, time: issue.time, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId}
+        return {id: issue.id, created: issue.created, updated: issue.updated, deleted: issue.deleted, audioId: issue.audioId, userId: issue.userId, productId: issue.productId, label: issue.label, text: issue.text, state: issue.state, assigneeIds: issue.assigneeIds, milestoneId: issue.milestoneId}
     }
 }

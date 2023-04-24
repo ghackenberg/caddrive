@@ -14,8 +14,14 @@ export class UserAddData extends UserUpdateData {
 export class User extends UserAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    created: number
     @ApiProperty()
-    pictureId?: string
+    updated: number
+    @ApiProperty()
+    deleted: number
+
+    @ApiProperty()
+    pictureId: string
 }

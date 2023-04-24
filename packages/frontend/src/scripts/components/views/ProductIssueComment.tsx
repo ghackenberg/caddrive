@@ -337,7 +337,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                         </strong>
                                         &nbsp;
                                         <>
-                                            opened issue on {issue.time.substring(0, 10)}
+                                            opened issue on {new Date(issue.created).toISOString().substring(0, 10)}
                                         </>
                                     </p>
                                     <div className="widget issue_thread">

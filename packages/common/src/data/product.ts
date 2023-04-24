@@ -16,8 +16,14 @@ export class ProductAddData extends ProductUpdateData {
 export class Product extends ProductAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
+    @ApiProperty()
+    updated: number
+    @ApiProperty()
+    deleted: number
+
     @ApiProperty()
     userId: string
 }
