@@ -127,11 +127,11 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
             } else if (files.model) {
                 if (files.model.length == 1) {
                     if (files.model[0].originalname.endsWith('.glb')) {
-                        renderGlb(files.model[0].buffer, 1000, 1000).then(image => this.updateImage(id, image))
+                        renderGlb(files.model[0].buffer, 1000, 1000).then(image => this.updateImage(id, image)).catch(console.error)
                     } else if (files.model[0].originalname.endsWith('.ldr')) {
-                        renderLDraw(files.model[0].buffer.toString(), 1000, 1000).then(image => this.updateImage(id, image))
+                        renderLDraw(files.model[0].buffer.toString(), 1000, 1000).then(image => this.updateImage(id, image)).catch(console.error)
                     } else if (files.model[0].originalname.endsWith('.mpd')) {
-                        renderLDraw(files.model[0].buffer.toString(), 1000, 1000).then(image => this.updateImage(id, image))
+                        renderLDraw(files.model[0].buffer.toString(), 1000, 1000).then(image => this.updateImage(id, image)).catch(console.error)
                     } else {
                         throw new HttpException('Model file type not supported.', 400)
                     }
