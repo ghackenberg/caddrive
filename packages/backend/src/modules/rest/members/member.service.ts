@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 
-import * as shortid from 'shortid'
+import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'

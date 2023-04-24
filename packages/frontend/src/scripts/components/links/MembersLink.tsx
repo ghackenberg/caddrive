@@ -6,7 +6,7 @@ import { Product } from 'productboard-common'
 
 import { MemberManager } from '../../managers/member'
 
-import * as MemberIcon from '/src/images/user.png'
+import MemberIcon from '/src/images/user.png'
 
 export const MembersLink = (props: {product: Product}) => {
 

@@ -1,11 +1,11 @@
-import * as fs from 'fs'
+import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import { Request } from 'express'
-import * as shortid from 'shortid'
+import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
@@ -19,7 +19,9 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {
-
+        if (!existsSync('./uploads')) {
+            mkdirSync('./uploads')
+        }
     }
 
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
@@ -47,10 +49,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             const audioId = shortid()
             issue = await Database.get().issueRepository.save({ id, deleted, userId, time, audioId, ...data })
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
+            writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         } else {
             issue = await Database.get().issueRepository.save({ id, deleted, userId, time, ...data })
         }
@@ -72,10 +71,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.text = data.text
         await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
+            writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         }
         await this.client.emit(`/api/v1/issues/${issue.id}/update`, this.convert(issue))
         return this.convert(issue)

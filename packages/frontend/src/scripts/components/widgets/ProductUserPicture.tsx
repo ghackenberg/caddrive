@@ -2,9 +2,9 @@ import * as React from 'react'
 
 import { Member, User } from 'productboard-common'
 
-import * as DiagonalIcon from '/src/images/diagonal.png'
-import * as PixelIcon from '/src/images/pixel.png'
-import * as UserIcon from '/src/images/user.png'
+import DiagonalIcon from '/src/images/diagonal.png'
+import PixelIcon from '/src/images/pixel.png'
+import UserIcon from '/src/images/user.png'
 
 export const ProductUserPictureWidget = (props: { user: User, members: Member[], background?: string, class?: string }) => {
     const isDeleted = props.user.deleted

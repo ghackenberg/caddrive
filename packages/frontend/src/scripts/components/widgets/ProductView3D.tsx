@@ -10,8 +10,8 @@ import { VersionContext } from '../../contexts/Version'
 import { VersionManager } from '../../managers/version'
 import { VersionView3D } from './VersionView3D'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as EmptyIcon from '/src/images/empty.png'
+import LoadIcon from '/src/images/load.png'
+import EmptyIcon from '/src/images/empty.png'
 
 interface Part {
     productId: string

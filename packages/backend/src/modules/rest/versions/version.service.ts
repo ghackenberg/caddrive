@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
@@ -6,11 +6,13 @@ import { ClientProxy } from '@nestjs/microservices'
 
 import { Request } from 'express'
 import 'multer'
-import * as shortid from 'shortid'
+import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Version, VersionAddData, VersionUpdateData, VersionREST, User } from 'productboard-common'
 import { Database, VersionEntity } from 'productboard-database'
+
+import { renderGlb, renderLDraw } from '../../../functions/render'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
@@ -20,8 +22,8 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {
-        if (!fs.existsSync('./uploads')) {
-            fs.mkdirSync('./uploads')
+        if (!existsSync('./uploads')) {
+            mkdirSync('./uploads')
         }
     }
 
@@ -42,10 +44,9 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const userId = this.request.user.id
         const time = new Date().toISOString()
         const modelType = getModelType(null, files)
-        const imageType = getImageType(null, files)
+        const imageType = 'png'
         const version = await Database.get().versionRepository.save({ id, deleted, userId, time, modelType, imageType, ...data })
         saveModel(version, files)
-        saveImage(version, files)
         await this.client.emit(`/api/v1/versions/${version.id}/create`, this.convert(version))
         return this.convert(version)
     }
@@ -62,10 +63,8 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.patch = data.patch
         version.description = data.description
         version.modelType = getModelType(version, files)
-        version.imageType = getImageType(version, files)
         await Database.get().versionRepository.save(version)
         saveModel(version, files)
-        saveImage(version, files)
         await this.client.emit(`/api/v1/versions/${version.id}/update`, this.convert(version))
         return this.convert(version)
     }
@@ -106,55 +105,27 @@ function getModelType(version: Version, files?: {model: Express.Multer.File[], i
         }
     }
 }
-function getImageType(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
-    if (files && files.image) {
-        if (files.image.length == 1) {
-            if (files.image[0].mimetype.endsWith('/png')) {
-                return 'png'
-            } else {
-                throw new HttpException('Image file type not supported.', 400)
-            }
-        } else {
-            throw new HttpException('Only one image file supported.', 400)
-        }
-    } else {
-        if (version) {
-            return version.imageType
-        } else {
-            return 'png'
-            // TODO throw new HttpException('Image file must be provided.', 400)
-        }
-    }
-}
 
-function saveModel(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
+async function saveModel(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
     if (files && files.model) {
         if (files.model.length == 1) {
             if (files.model[0].originalname.endsWith('.glb')) {
-                fs.writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
+                writeFileSync(`./uploads/${version.id}.glb`, files.model[0].buffer)
+                const image = await renderGlb(files.model[0].buffer, 1000, 1000)
+                await image.writeAsync(`./uploads/${version.id}.png`)
             } else if (files.model[0].originalname.endsWith('.ldr')) {
-                fs.writeFileSync(`./uploads/${version.id}.ldr`, files.model[0].buffer)
+                writeFileSync(`./uploads/${version.id}.ldr`, files.model[0].buffer)
+                const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
+                await image.writeAsync(`./uploads/${version.id}.png`)
             } else if (files.model[0].originalname.endsWith('.mpd')) {
-                fs.writeFileSync(`./uploads/${version.id}.mpd`, files.model[0].buffer)
+                writeFileSync(`./uploads/${version.id}.mpd`, files.model[0].buffer)
+                const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
+                await image.writeAsync(`./uploads/${version.id}.png`)
             } else {
                 throw new HttpException('Model file type not supported.', 400)
             }
         } else {
             throw new HttpException('Only one model file supported.', 400)
-        }
-    }
-}
-
-function saveImage(version: Version, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
-    if (files && files.image) {
-        if (files.image.length == 1) {
-            if (files.image[0].mimetype.endsWith('/png')) {
-                fs.writeFileSync(`./uploads/${version.id}.png`, files.image[0].buffer)
-            } else {
-                throw new HttpException('Image file type not supported.', 400)
-            }
-        } else {
-            throw new HttpException('Only one image file supported.', 400)
         }
     }
 }

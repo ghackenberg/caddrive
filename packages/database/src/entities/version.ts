@@ -26,8 +26,7 @@ export class VersionEntity extends Version {
 
     @Column({ nullable: false })
     override productId: string
-
-    //@Column({ nullable: false, array: true })
+    
     @Column('simple-array')
     override baseVersionIds: string[]
 

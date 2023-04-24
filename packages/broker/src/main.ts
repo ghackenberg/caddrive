@@ -1,4 +1,4 @@
-import * as net from 'net'
+import net from 'net'
 
 import Aedes from 'aedes'
 import websocketStream from 'websocket-stream'

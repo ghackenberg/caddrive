@@ -15,9 +15,9 @@ import { ProductsLink } from '../links/ProductsLink'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LoadIcon from '/src/images/load.png'
-import * as EmptyIcon from '/src/images/empty.png'
+import DeleteIcon from '/src/images/delete.png'
+import LoadIcon from '/src/images/load.png'
+import EmptyIcon from '/src/images/empty.png'
 
 export const ProductView = () => {
     

@@ -17,9 +17,9 @@ import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { UserPictureWidget } from '../widgets/UserPicture'
 
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LeftIcon from '/src/images/setting.png'
-import * as RightIcon from '/src/images/part.png'
+import DeleteIcon from '/src/images/delete.png'
+import LeftIcon from '/src/images/setting.png'
+import RightIcon from '/src/images/part.png'
 
 const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 

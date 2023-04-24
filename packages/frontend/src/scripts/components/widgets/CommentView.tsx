@@ -7,9 +7,9 @@ import { UserContext } from '../../contexts/User'
 import { ProductUserPictureWidget } from './ProductUserPicture'
 import { ProductUserNameWidget } from './ProductUserName'
 
-import * as PartIcon from '/src/images/part.png'
-import * as CloseIcon from '/src/images/close.png'
-import * as ReopenIcon from '/src/images/reopen.png'
+import PartIcon from '/src/images/part.png'
+import CloseIcon from '/src/images/close.png'
+import ReopenIcon from '/src/images/reopen.png'
 
 interface Part {
     productId: string

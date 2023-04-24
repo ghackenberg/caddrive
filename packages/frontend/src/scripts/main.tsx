@@ -10,7 +10,7 @@ import { Auth0Provider } from '@auth0/auth0-react'
 import { Root } from './components/Root'
 import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './env'
 
-import * as AppIcon from '/src/images/app.png'
+import AppIcon from '/src/images/app.png'
 
 // Create root
 const root = document.createElement('div')

@@ -17,8 +17,8 @@ import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 
-import * as LeftIcon from '/src/images/setting.png'
-import * as RightIcon from '/src/images/chart.png'
+import LeftIcon from '/src/images/setting.png'
+import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     

@@ -1,11 +1,11 @@
-import * as fs from 'fs'
+import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import { Request } from 'express'
-import * as shortid from 'shortid'
+import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { CommentREST, Comment, CommentAddData, CommentUpdateData, User } from 'productboard-common'
@@ -19,7 +19,9 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {
-
+        if (!existsSync('./uploads')) {
+            mkdirSync('./uploads')
+        }
     }
 
     async findComments(issueId: string): Promise<Comment[]> {
@@ -41,10 +43,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             const audioId = shortid()
             comment = await Database.get().commentRepository.save({ id, deleted, userId, time, audioId, ...data })
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
+            writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
         } else {
             comment = await Database.get().commentRepository.save({ id, deleted, userId, time, ...data })
         }
@@ -63,10 +62,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         comment.text = data.text
         await Database.get().commentRepository.save(comment)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
+            writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
         }
         await this.client.emit(`/api/v1/comments/${comment.id}/update`, this.convert(comment))
         return this.convert(comment)

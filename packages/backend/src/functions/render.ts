@@ -1,9 +1,9 @@
 import * as gl from 'gl'
 import * as Jimp from 'jimp'
 import { AmbientLight, Box3, DirectionalLight, Group, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 
 function initializeScene() {
     const ambient_light = new AmbientLight(0xffffff, 0.5)

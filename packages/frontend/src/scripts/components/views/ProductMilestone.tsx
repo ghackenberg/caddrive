@@ -17,10 +17,10 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LeftIcon from '/src/images/list.png'
-import * as RightIcon from '/src/images/part.png'
+import LoadIcon from '/src/images/load.png'
+import DeleteIcon from '/src/images/delete.png'
+import LeftIcon from '/src/images/list.png'
+import RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
 

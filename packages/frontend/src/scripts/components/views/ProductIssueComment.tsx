@@ -23,9 +23,9 @@ import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 
-import * as LeftIcon from '/src/images/comment.png'
-import * as RightIcon from '/src/images/part.png'
-import * as UserIcon from '/src/images/user.png'
+import LeftIcon from '/src/images/comment.png'
+import RightIcon from '/src/images/part.png'
+import UserIcon from '/src/images/user.png'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{ product: string, issue: string }>) => {
 

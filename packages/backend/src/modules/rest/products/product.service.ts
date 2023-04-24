@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import { Request } from 'express'
-import * as shortid from 'shortid'
+import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
 import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'

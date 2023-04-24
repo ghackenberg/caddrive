@@ -6,7 +6,7 @@ import { Product } from 'productboard-common'
 
 import { VersionManager } from '../../managers/version'
 
-import * as VersionIcon from '/src/images/version.png'
+import VersionIcon from '/src/images/version.png'
 
 export const VersionsLink = (props: {product: Product}) => {
 

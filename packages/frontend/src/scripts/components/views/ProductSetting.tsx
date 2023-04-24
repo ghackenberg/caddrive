@@ -15,8 +15,8 @@ import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductView3D } from '../widgets/ProductView3D'
 
-import * as LeftIcon from '/src/images/setting.png'
-import * as RightIcon from '/src/images/part.png'
+import LeftIcon from '/src/images/setting.png'
+import RightIcon from '/src/images/part.png'
 
 export const ProductSettingView = (props: RouteComponentProps<{product: string}>) => {
 

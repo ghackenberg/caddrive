@@ -1,10 +1,10 @@
-import * as fs from 'fs'
+import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 
 import 'multer'
-import * as shortid from 'shortid'
+import shortid from 'shortid'
 import { FindOptionsWhere, Raw } from 'typeorm'
 
 import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
@@ -16,7 +16,9 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {
-
+        if (!existsSync('./uploads')) {
+            mkdirSync('./uploads')
+        }
     }
 
     async checkUser(): Promise<User> {
@@ -46,10 +48,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     async addUser(data: UserAddData, file?: Express.Multer.File) {
         const user = await Database.get().userRepository.save({ id: shortid(), deleted: false, pictureId: shortid(), ...data })
         if (file && file.originalname.endsWith('.jpg')) {
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
+            writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
         await this.client.emit(`/api/v1/users/${user.id}/create`, this.convert(user))
         return this.convert(user)
@@ -66,10 +65,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         user.name = data.name
         if (file && file.originalname.endsWith('.jpg')) {
             user.pictureId = shortid()
-            if (!fs.existsSync('./uploads')) {
-                fs.mkdirSync('./uploads')
-            }
-            fs.writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
+            writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
         await Database.get().userRepository.save(user)
         await this.client.emit(`/api/v1/users/${user.id}/update`, this.convert(user))

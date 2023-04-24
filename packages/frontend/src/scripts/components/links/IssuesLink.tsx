@@ -6,7 +6,7 @@ import { Product } from 'productboard-common'
 
 import { IssueManager } from '../../managers/issue'
 
-import * as IssueIcon from '/src/images/issue.png'
+import IssueIcon from '/src/images/issue.png'
 
 export const IssuesLink = (props: {product: Product}) => {
 

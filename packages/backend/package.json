@@ -4,6 +4,7 @@
     "description": "Backend managing and providing product design data",
     "license": "MIT",
     "private": "true",
+    "type": "module",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -34,10 +35,11 @@
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "cross-env TYPEORM_TYPE=postgres ts-node src/main",
-        "devel": "cross-env TYPEORM_TYPE=sqlite ts-node-dev src/main",
+        "start": "cross-env TYPEORM_TYPE=postgres node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "devel": "cross-env TYPEORM_TYPE=sqlite nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
         "lint": "eslint src",
-        "loc": "sloc src"
+        "loc": "sloc src",
+        "test": "node bin/main"
     },
     "dependencies": {
         "@nestjs/common": "^8.1.2",
@@ -76,7 +78,7 @@
         "@typescript-eslint/parser": "^5.44.0",
         "eslint": "^8.28.0",
         "eslint-plugin-import": "^2.26.0",
-        "sloc": "^0.2.1",
-        "ts-node-dev": "^2.0.0"
+        "nodemon": "^2.0.22",
+        "sloc": "^0.2.1"
     }
 }

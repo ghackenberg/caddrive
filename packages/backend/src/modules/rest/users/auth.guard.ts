@@ -3,14 +3,14 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import axios from 'axios'
 import { Request } from 'express'
 import { JwtPayload, verify } from 'jsonwebtoken'
-import * as jwks from 'jwks-rsa'
+import { JwksClient } from 'jwks-rsa'
 
 import { User } from 'productboard-common'
 import { Database } from 'productboard-database'
 
 import { AUTH0_JWKS_KID, AUTH0_JWKS_URI } from '../../../env'
 
-const JWKS_CLIENT = jwks({ jwksUri: AUTH0_JWKS_URI })
+const JWKS_CLIENT = new JwksClient({ jwksUri: AUTH0_JWKS_URI })
 
 const JWKS_KEY = JWKS_CLIENT.getSigningKey(AUTH0_JWKS_KID)
 

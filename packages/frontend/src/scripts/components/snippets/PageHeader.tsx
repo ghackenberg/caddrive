@@ -7,8 +7,8 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { UserContext } from '../../contexts/User'
 import { UserPictureWidget } from '../widgets/UserPicture'
 
-import * as AppIcon from '/src/images/app.png'
-import * as LoadIcon from '/src/images/load.png'
+import AppIcon from '/src/images/app.png'
+import LoadIcon from '/src/images/load.png'
 
 export const PageHeader = () => {
 

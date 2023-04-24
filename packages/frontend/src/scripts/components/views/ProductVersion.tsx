@@ -20,9 +20,9 @@ import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as LeftIcon from '/src/images/version.png'
-import * as RightIcon from '/src/images/part.png'
+import LoadIcon from '/src/images/load.png'
+import LeftIcon from '/src/images/version.png'
+import RightIcon from '/src/images/part.png'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -231,7 +231,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         </div>
                                                     </div>
                                                     <div className="model">
-                                                        <img src={`/rest/files/${vers.id}.png`}/>
+                                                        <img src={`/rest/files/${vers.id}.${vers.imageType}`}/>
                                                     </div>
                                                 </div>
                                             </Fragment>

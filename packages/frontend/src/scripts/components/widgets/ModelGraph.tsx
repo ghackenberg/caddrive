@@ -4,12 +4,12 @@ import { Group, Object3D } from 'three'
 
 import { comparePath } from '../../functions/path'
 
-import * as ObjectIcon from '/src/images/types/Object.png'
-import * as GroupIcon from '/src/images/types/Group.png'
-import * as LineIcon from '/src/images/types/Line.png'
-import * as MeshIcon from '/src/images/types/Mesh.png'
-import * as BoneIcon from '/src/images/types/Bone.png'
-import * as CameraIcon from '/src/images/types/Camera.png'
+import ObjectIcon from '/src/images/types/Object.png'
+import GroupIcon from '/src/images/types/Group.png'
+import LineIcon from '/src/images/types/Line.png'
+import MeshIcon from '/src/images/types/Mesh.png'
+import BoneIcon from '/src/images/types/Bone.png'
+import CameraIcon from '/src/images/types/Camera.png'
 
 const icons: {[key: string]: string} = {
     Object3D: ObjectIcon,

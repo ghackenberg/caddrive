@@ -5,7 +5,7 @@ import { User } from 'productboard-common'
 
 import { UserLink } from '../links/UserLink'
 
-import * as SettingIcon from '/src/images/setting.png'
+import SettingIcon from '/src/images/setting.png'
 
 export const UserHeader = (props: {user?: User}) => (
     <header>
