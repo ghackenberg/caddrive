@@ -218,9 +218,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                     </div>
                                                     <div className="model">
                                                         {vers.imageType ? (
-                                                            <img src={`/rest/files/${vers.id}.${vers.imageType}`}/>
+                                                            <em>
+                                                                <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image"/>
+                                                            </em>
                                                         ) : (
-                                                            <img src={LoadIcon} className='icon medium animation spin'/>
+                                                            <span>
+                                                                <img src={LoadIcon} className='icon small animation spin'/>
+                                                            </span>
                                                         )}
                                                     </div>
                                                 </div>

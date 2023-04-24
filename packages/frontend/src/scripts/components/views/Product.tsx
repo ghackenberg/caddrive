@@ -211,7 +211,9 @@ export const ProductView = () => {
                         latestVersions[product.id].imageType ? (
                             <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id].id}.${latestVersions[product.id].imageType}")` } } className="model"/>
                         ) : (
-                            <img src={LoadIcon} className='icon small animation spin'/>
+                            <div className="model">
+                                <img src={LoadIcon} className='icon small position center animation spin'/>
+                            </div>
                         )
                     ) : (
                         <div className="model" >
@@ -219,7 +221,9 @@ export const ProductView = () => {
                         </div>
                     )
                 ) : (
-                    <img src={LoadIcon} className='icon small animation spin'/>
+                    <div className="model" >
+                        <img src={LoadIcon} className='icon small position center animation spin'/>
+                    </div>
                 )}
             </Link>
         ) },
