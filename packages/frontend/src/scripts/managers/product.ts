@@ -2,125 +2,118 @@ import { Product, ProductAddData, ProductUpdateData, ProductREST, ProductDownMQT
 
 import { ProductAPI } from '../clients/mqtt/product'
 import { ProductClient } from '../clients/rest/product'
+import { AbstractManager } from './abstract'
 
-class ProductManagerImpl implements ProductREST, ProductDownMQTT {
-    private productIndex: {[id: string]: Product} = {}
-    private findResult: {[id: string]: boolean}
+class ProductManagerImpl extends AbstractManager<Product> implements ProductREST, ProductDownMQTT {
+    private findIndex: {[id: string]: boolean}
     
     constructor() {
+        super()
         ProductAPI.register(this)
+    }
+
+    // CACHE
+
+    findProductsFromCache() { 
+        if (this.findIndex) { 
+            return Object.keys(this.findIndex).map(id => this.load(id))
+        } else { 
+            return undefined 
+        } 
+    }
+    getProductFromCache(productId: string) { 
+        return this.load(productId)
+    }
+
+    private addToFindIndex(product: Product) {
+        if (this.findIndex) {
+            this.findIndex[product.id] = true
+        }
+    }
+    private removeFromFindIndex(product: Product) {
+        if (this.findIndex) {
+            delete this.findIndex[product.id]
+        }
     }
 
     // MQTT
 
     create(product: Product): void {
-        console.log(`Product created ${product}`)
-        this.productIndex[product.id] = product
-        this.addToFindResult(product)
+        product = this.store(product)
+        this.addToFindIndex(product)
     }
-
     update(product: Product): void {
-        console.log(`Product updated ${product}`)
-        this.productIndex[product.id] = product
-        this.removeFromFindResult(product)
-        this.addToFindResult(product)
+        product = this.store(product)
+        this.removeFromFindIndex(product)
+        this.addToFindIndex(product)
     }
-
     delete(product: Product): void {
-        console.log(`Product deleted ${product}`)
-        this.productIndex[product.id] = product
-        this.removeFromFindResult(product)
+        product = this.store(product)
+        this.removeFromFindIndex(product)
     }
 
-    findProductsFromCache() { 
-        if (this.findResult) { 
-            return Object.keys(this.findResult).map(id => this.productIndex[id])
-        } else { 
-            return undefined 
-        } 
-    }
+    // REST
     
     async findProducts(): Promise<Product[]> {
-        if (!this.findResult) {
+        if (!this.findIndex) {
             // Call backend
-            const products = await ProductClient.findProducts()
+            let products = await ProductClient.findProducts()
             // Update product index
-            for (const product of products) {
-                this.productIndex[product.id] = product
-            }
-            // Update product set
-            this.findResult = {}
-            for (const product of products) {
-                this.findResult[product.id] = true
-            }
+            products = products.map(product => this.store(product))
+            // Init find index
+            this.findIndex = {}
+            // Update find index
+            products.forEach(product => this.addToFindIndex(product))
         }
         // Return products
-        return Object.keys(this.findResult).map(id => this.productIndex[id])
+        return Object.keys(this.findIndex).map(id => this.load(id)).filter(product => !product.deleted)
     }
 
     async addProduct(data: ProductAddData): Promise<Product> {
         // Call backend
-        const product = await ProductClient.addProduct(data)
+        let product = await ProductClient.addProduct(data)
         // Update product index
-        this.productIndex[product.id] = product
+        product = this.store(product)
         // Update product set
-        this.addToFindResult(product)
+        this.addToFindIndex(product)
         // Return product
-        return product
-    }
-
-    getProductFromCache(productId: string) { 
-        if (productId in this.productIndex) { 
-            return this.productIndex[productId]
-        } else { 
-            return undefined 
-        } 
+        return this.load(product.id)
     }
 
     async getProduct(id: string): Promise<Product> {
-        if (!(id in this.productIndex)) {
+        if (!this.has(id)) {
             // Call backend
-            const product = await ProductClient.getProduct(id)
+            let product = await ProductClient.getProduct(id)
             // Update product index
-            this.productIndex[id] = product
+            product = this.store(product)
+            // Add to find index
+            this.addToFindIndex(product)
         }
         // Return product
-        return this.productIndex[id]
+        return this.load(id)
     }
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
         // Call backend
-        const product = await ProductClient.updateProduct(id, data)
+        let product = await ProductClient.updateProduct(id, data)
         // Update product index
-        this.productIndex[id] = product
+        product = this.store(product)
         // Update find result
-        this.removeFromFindResult(product)
-        this.addToFindResult(product)
+        this.removeFromFindIndex(product)
+        this.addToFindIndex(product)
         // Return product
-        return product
+        return this.load(id)
     }
 
     async deleteProduct(id: string): Promise<Product> {
         // Call backend
-        const product = await ProductClient.deleteProduct(id)
+        let product = await ProductClient.deleteProduct(id)
         // Update product index
-        this.productIndex[id] = product
+        product = this.store(product)
         // Update find result
-        this.removeFromFindResult(product)
+        this.removeFromFindIndex(product)
         // Return product
-        return product
-    }
-
-    private addToFindResult(product: Product) {
-        if (this.findResult) {
-            this.findResult[product.id] = true
-        }
-    }
-    
-    private removeFromFindResult(product: Product) {
-        if (this.findResult) {
-            delete this.findResult[product.id]
-        }
+        return this.load(id)
     }
 }
 

@@ -10,7 +10,7 @@ import { MilestonesLink } from '../links/MilestonesLink'
 import { ProductLink } from '../links/ProductLink'
 import { VersionsLink } from '../links/VersionsLink'
 
-import * as SettingIcon from '/src/images/setting.png'
+import SettingIcon from '/src/images/setting.png'
 
 export const ProductHeader = (props: {product?: Product}) => (
     <header>

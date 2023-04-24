@@ -7,6 +7,7 @@ import { Member, Product, User, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
+import { VersionAPI } from '../../clients/mqtt/version'
 import { computeTree } from '../../functions/tree'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -19,9 +20,9 @@ import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as LeftIcon from '/src/images/version.png'
-import * as RightIcon from '/src/images/part.png'
+import LoadIcon from '/src/images/load.png'
+import LeftIcon from '/src/images/version.png'
+import RightIcon from '/src/images/part.png'
 
 export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -53,13 +54,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [product, setProduct] = useState<Product>(initialProduct)
     const [members, setMembers] = useState<Member[]>(initialMembers)
     const [versions, setVersions] = useState<Version[]>(initialVersions)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+    const [users, setUsers] = useState<{[versionId: string]: User}>(initialUsers)
     // - Computations
-    const [children, setChildren] = useState<{[id: string]: Version[]}>(initialTree.children)
-    const [childrenMin, setChildrenMin] = useState<{[id: string]: number}>(initialTree.childrenMin)
-    const [childrenMax, setChildrenMax] = useState<{[id: string]: number}>(initialTree.childrenMax)
-    const [siblings, setSiblings] = useState<{[id: string]: Version[]}>(initialTree.siblings)
-    const [indents, setIndents] = useState<{[id: string]: number}>(initialTree.indents)
+    const [children, setChildren] = useState<{[versionId: string]: Version[]}>(initialTree.children)
+    const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
+    const [childrenMax, setChildrenMax] = useState<{[versionId: string]: number}>(initialTree.childrenMax)
+    const [siblings, setSiblings] = useState<{[versionId: string]: Version[]}>(initialTree.siblings)
+    const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
     // - Interactions
     const [active, setActive] = useState<string>('left')
@@ -73,7 +74,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     useEffect(() => {
         if (versions) {
             Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
-                const newUsers: {[id: string]: User} = {}
+                const newUsers: {[versionId: string]: User} = {}
                 for (let index = 0; index < versions.length; index++) {
                     newUsers[versions[index].id] = versionUsers[index]
                 }
@@ -81,6 +82,23 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
             })
         }
     }, [versions])
+
+    // - Events
+    useEffect(() =>  {
+        return VersionAPI.register({
+            create(version) {
+                if (version.productId == productId) {
+                    setVersions([...versions.filter(other => other.id != version.id), version])
+                }
+            },
+            update(version) {
+                setVersions(versions.map(other => other.id != version.id ? other : version))
+            },
+            delete(version) {
+                setVersions(versions.filter(other => other.id != version.id))
+            },
+        })
+    })
 
     // - Computations
     useEffect(() => { 
@@ -199,7 +217,15 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                         </div>
                                                     </div>
                                                     <div className="model">
-                                                        <img src={`/rest/files/${vers.id}.png`}/>
+                                                        {vers.imageType ? (
+                                                            <em>
+                                                                <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image"/>
+                                                            </em>
+                                                        ) : (
+                                                            <span>
+                                                                <img src={LoadIcon} className='icon small animation spin'/>
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </Fragment>

@@ -4,13 +4,13 @@ export function calculateActual(milestone: Milestone, issues: Issue[], comments:
     // Calculate detlas
     const deltas: { time: number, delta: number }[] = []
     for (const issue of issues) {
-        deltas.push({ time: new Date(issue.time).getTime(), delta: 1 })
+        deltas.push({ time: issue.created, delta: 1 })
         if (issue.id in comments) {
             for (const comment of comments[issue.id]) {
                 if (comment.action == 'close') {
-                    deltas.push({ time: new Date(comment.time).getTime(), delta: -1 })
+                    deltas.push({ time: comment.created, delta: -1 })
                 } else if (comment.action == 'reopen') {
-                    deltas.push({ time: new Date(comment.time).getTime(), delta: 1 })
+                    deltas.push({ time: comment.created, delta: 1 })
                 }
             }
         }
@@ -18,8 +18,8 @@ export function calculateActual(milestone: Milestone, issues: Issue[], comments:
     // Sort deltas
     deltas.sort((a, b) => a.time - b.time)
     // Parse start and end
-    const start = new Date(milestone.start).getTime()
-    const end = new Date(milestone.end).getTime()
+    const start = milestone.start
+    const end = milestone.end
     // Calculate actual
     const actual: { time: number, actual: number }[] = []
     let lastCount = 0

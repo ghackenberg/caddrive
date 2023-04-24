@@ -23,9 +23,9 @@ import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 
-import * as LeftIcon from '/src/images/comment.png'
-import * as RightIcon from '/src/images/part.png'
-import * as UserIcon from '/src/images/user.png'
+import LeftIcon from '/src/images/comment.png'
+import RightIcon from '/src/images/part.png'
+import UserIcon from '/src/images/user.png'
 
 export const ProductIssueCommentView = (props: RouteComponentProps<{ product: string, issue: string }>) => {
 
@@ -256,7 +256,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     async function submitComment(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'none' }, { audio })
+            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
             setComments([...comments, comment])
             setText('')
         }
@@ -268,7 +268,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     async function submitCommentAndClose(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'close' }, {})
+            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
             setComments([...comments, comment])
             setText('')
             setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed', assigneeIds: issue.assigneeIds }))
@@ -278,7 +278,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     async function submitCommentAndReopen(event: FormEvent) {
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ userId: contextUser.id, issueId: issue.id, time: new Date().toISOString(), text: text, action: 'reopen' }, {})
+            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
             setComments([...comments, comment])
             setText('')
             setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds }))
@@ -337,7 +337,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                         </strong>
                                         &nbsp;
                                         <>
-                                            opened issue on {issue.time.substring(0, 10)}
+                                            opened issue on {new Date(issue.created).toISOString().substring(0, 10)}
                                         </>
                                     </p>
                                     <div className="widget issue_thread">

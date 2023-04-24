@@ -21,10 +21,10 @@ import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LeftIcon from '/src/images/list.png'
-import * as RightIcon from '/src/images/chart.png'
+import LoadIcon from '/src/images/load.png'
+import DeleteIcon from '/src/images/delete.png'
+import LeftIcon from '/src/images/list.png'
+import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
 

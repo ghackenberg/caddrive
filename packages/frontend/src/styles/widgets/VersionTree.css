@@ -137,16 +137,22 @@ div.widget.version_tree > div > div.text > div > span.user > span.email {
     display: none;
 }
 div.widget.version_tree > div > div.model {
+    position: relative;
+
     width: 10em;
     height: 10em;
 
     background-color: rgb(215,215,215);
-    background-position: center;
-    background-size: cover;
 
     vertical-align: middle;
 }
-div.widget.version_tree > div > div.model > img {
+div.widget.version_tree > div > div.model > * > img {
+    display: block;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+div.widget.version_tree > div > div.model > * > img.image {
     width: 100%;
 }
 

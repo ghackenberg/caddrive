@@ -15,18 +15,22 @@ export class IssueUpdateData {
 
 export class IssueAddData extends IssueUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     productId: string
-    @ApiProperty()
-    time: string
 }
 
 export class Issue extends IssueAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
     @ApiProperty()
-    audioId?: string
+    updated: number
+    @ApiProperty()
+    deleted: number
+
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    audioId: string
 }

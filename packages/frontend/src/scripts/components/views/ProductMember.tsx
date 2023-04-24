@@ -15,10 +15,10 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LoadIcon from '/src/images/load.png'
-import * as LeftIcon from '/src/images/list.png'
-import * as RightIcon from '/src/images/part.png'
+import DeleteIcon from '/src/images/delete.png'
+import LoadIcon from '/src/images/load.png'
+import LeftIcon from '/src/images/list.png'
+import RightIcon from '/src/images/part.png'
 
 export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
 

@@ -9,7 +9,7 @@ import { UsersLink } from '../links/UsersLink'
 import { Column, Table } from '../widgets/Table'
 import { UserPictureWidget } from '../widgets/UserPicture'
 
-import * as DeleteIcon from '/src/images/delete.png'
+import DeleteIcon from '/src/images/delete.png'
 
 export const UserView = () => {
 

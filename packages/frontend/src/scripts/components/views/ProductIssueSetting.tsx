@@ -24,9 +24,9 @@ import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as LeftIcon from '/src/images/setting.png'
-import * as RightIcon from '/src/images/part.png'
+import LoadIcon from '/src/images/load.png'
+import LeftIcon from '/src/images/setting.png'
+import RightIcon from '/src/images/part.png'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
@@ -172,7 +172,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ userId: contextUser.id, productId, time: new Date().toISOString(), label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                const issue = await IssueManager.addIssue({ productId, label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {

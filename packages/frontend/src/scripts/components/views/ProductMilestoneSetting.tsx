@@ -1,11 +1,10 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
+import { useState, useEffect, Fragment, FormEvent } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Comment, Issue, Milestone, Product } from 'productboard-common'
 
-import { UserContext } from '../../contexts/User'
 import { calculateActual } from '../../functions/burndown'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
@@ -18,16 +17,12 @@ import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductHeader } from '../snippets/ProductHeader'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 
-import * as LeftIcon from '/src/images/setting.png'
-import * as RightIcon from '/src/images/chart.png'
+import LeftIcon from '/src/images/setting.png'
+import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
     const { goBack, replace } = useHistory()
-    
-    // CONTEXTS
-
-    const { contextUser } = useContext(UserContext)
 
     // PARAMS
 
@@ -99,10 +94,10 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     async function submitMilestone(event: FormEvent){
         event.preventDefault()
         if(milestoneId == 'new') {
-            await MilestoneManager.addMilestone({userId: contextUser.id, productId: productId, label: label, start: start.toISOString(), end: end.toISOString()})
+            await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })
             replace(`/products/${productId}/milestones/`)
         } else {
-            await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.toISOString(), end: end.toISOString()})
+            await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.getTime(), end: end.getTime() })
             goBack()
         }
     }

@@ -1,5 +1,5 @@
-import * as express from 'express'
-import * as proxy from 'http-proxy-middleware'
+import express from 'express'
+import proxy from 'http-proxy-middleware'
 
 const app = express()
 

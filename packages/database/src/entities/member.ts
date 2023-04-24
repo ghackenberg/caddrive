@@ -10,8 +10,12 @@ export class MemberEntity extends Member {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: false })
+    override created: number
+    @Column({ nullable: true })
+    override updated: number
+    @Column({ nullable: true })
+    override deleted: number
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
