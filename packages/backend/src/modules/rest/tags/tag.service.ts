@@ -1,20 +1,27 @@
 import { Injectable } from '@nestjs/common'
 
-import * as shortid from 'shortid'
+import shortid from 'shortid'
+import { FindOptionsWhere } from 'typeorm'
 
 import { Tag, TagAddData, TagREST, TagUpdateData } from "productboard-common"
 import { Database, TagEntity } from 'productboard-database'
 
 @Injectable()
 export class TagService implements TagREST {
-    async findTags(): Promise<Tag[]> {
+ 
+    async findTags(productId: string) : Promise<Tag[]> {
+        let where: FindOptionsWhere<TagEntity>
+        if (productId)
+            where = { productId, deleted: null }
         const result: Tag[] = []
-        for (const tag of await Database.get().tagRepository.find())
+        for (const tag of await Database.get().tagRepository.findBy(where))
             result.push(this.convert(tag))
         return result
     }
+
     async addTag(data: TagAddData): Promise<Tag> {
-        const tag = await Database.get().tagRepository.save({id: shortid(), deleted: false, ...data})
+        const id = shortid()
+        const tag = await Database.get().tagRepository.save({id: id, deleted: false, ...data})
         return this.convert(tag)
     }
     async getTag(id: string): Promise<Tag> {
@@ -36,6 +43,6 @@ export class TagService implements TagREST {
     } 
 
     private convert(tag: TagEntity) {
-        return { id: tag.id, deleted: tag.deleted, name: tag.name, color: tag.color }
+        return { id: tag.id, deleted: tag.deleted, productId:tag.productId, name: tag.name, color: tag.color }
     }
 }

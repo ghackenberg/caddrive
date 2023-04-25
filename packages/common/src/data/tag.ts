@@ -8,6 +8,8 @@ export class TagUpdateData {
 }
 
 export class TagAddData extends TagUpdateData {
+    @ApiProperty()
+    productId: string
     
 }
 

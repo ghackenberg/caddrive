@@ -85,7 +85,7 @@ export interface FileREST<D> {
 }
 
 export interface TagREST {
-    findTags(): Promise<Tag[]>
+    findTags(productId: string): Promise<Tag[]>
     addTag(data: TagAddData): Promise<Tag>
     getTag(id: string): Promise<Tag>
     updateTag(id: string, data: TagUpdateData): Promise<Tag>
@@ -93,7 +93,7 @@ export interface TagREST {
 }
 
 export interface TagAssignmentREST {
-    findTagAssignments(): Promise<TagAssignment[]>
+    findTagAssignments(issueId: string): Promise<TagAssignment[]>
     addTagAssignment(data: TagAssignmentAddData): Promise<TagAssignment>
     getTagAssignment(id: string): Promise<TagAssignment>
     updateTagAssignment(id: string, data: TagAssignmentUpdateData): Promise<TagAssignment>
@@ -101,7 +101,7 @@ export interface TagAssignmentREST {
 }
 
 export interface AttachmentREST {
-    findAttachments(): Promise<Attachment[]>
+    findAttachments(issueId: string): Promise<Attachment[]>
     addAttachment(data: AttachmentAddData): Promise<Attachment>
     getAttachment(id: string): Promise<Attachment>
     updateAttachment(id: string, data: AttachmentUpdateData): Promise<Attachment>
@@ -109,7 +109,7 @@ export interface AttachmentREST {
 }
 
 export interface RelationREST {
-    findRelations(): Promise<Relation[]>
+    findRelations(issueId: string): Promise<Relation[]>
     addRelation(data: RelationAddData): Promise<Relation>
     getRelation(id: string): Promise<Relation>
     updateRelation(id: string, data: RelationUpdateData): Promise<Relation>
@@ -117,7 +117,7 @@ export interface RelationREST {
 }
 
 export interface AdditionalPropertyREST {
-    findAdditionalProperties(): Promise<AdditionalProperty[]>
+    findAdditionalProperties(issueId: string): Promise<AdditionalProperty[]>
     addAdditionalProperty(data: AdditionalPropertyAddData): Promise<AdditionalProperty>
     getAdditionalProperty(id: string): Promise<AdditionalProperty>
     updateAdditionalProperty(id: string, data: AdditionalPropertyUpdateData): Promise<AdditionalProperty>
@@ -125,7 +125,7 @@ export interface AdditionalPropertyREST {
 }
 
 export interface PropertyREST {
-    findProperties(): Promise<Property[]>
+    findProperties(issueId: string): Promise<Property[]>
     addProperty(data: PropertyAddData): Promise<Property>
     getProperty(id: string): Promise<Property>
     updateProperty(id: string, data: PropertyUpdateData): Promise<Property>
@@ -133,7 +133,7 @@ export interface PropertyREST {
 }
 
 export interface StateREST {
-    findStates(): Promise<State[]>
+    findStates(productId: string): Promise<State[]>
     addState(data: StateAddData): Promise<State>
     getState(id: string): Promise<State>
     updateState(id: string, data: StateUpdateData): Promise<State>
@@ -141,7 +141,7 @@ export interface StateREST {
 }
 
 export interface IssueTypeREST {
-    findIssueTypes(): Promise<IssueType[]>
+    findIssueTypes(productId: string): Promise<IssueType[]>
     addIssueType(data: IssueTypeAddData): Promise<IssueType>
     getIssueType(id: string): Promise<IssueType>
     updateIssueType(id: string, data: IssueTypeUpdateData): Promise<IssueType>
@@ -149,7 +149,7 @@ export interface IssueTypeREST {
 }
 
 export interface PropertyTypeREST {
-    findPropertyTypes(): Promise<PropertyType[]>
+    findPropertyTypes(productId: string): Promise<PropertyType[]>
     addPropertyType(data: PropertyTypeAddData): Promise<PropertyType>
     getPropertyType(id: string): Promise<PropertyType>
     updatePropertyType(id: string, data: PropertyTypeUpdateData): Promise<PropertyType>
@@ -157,7 +157,7 @@ export interface PropertyTypeREST {
 }
 
 export interface TransitionREST {
-    findTransitions(): Promise<Transition[]>
+    findTransitions(stateId: string): Promise<Transition[]>
     addTransition(data: TransitionAddData): Promise<Transition>
     getTransition(id: string): Promise<Transition>
     updateTransition(id: string, data: TransitionUpdateData): Promise<Transition>
@@ -165,7 +165,7 @@ export interface TransitionREST {
 }
 
 export interface IssueTypeHierarchyREST {
-    findIssueTypeHierarchies(): Promise<IssueTypeHierarchy[]>
+    findIssueTypeHierarchies(productId: string): Promise<IssueTypeHierarchy[]>
     addIssueTypeHierarchy(data: IssueTypeHierarchyAddData): Promise<IssueTypeHierarchy>
     getIssueTypeHierarchy(id: string): Promise<IssueTypeHierarchy>
     updateIssueTypeHierarchy(id: string, data: IssueTypeHierarchyUpdateData): Promise<IssueTypeHierarchy>
@@ -173,7 +173,7 @@ export interface IssueTypeHierarchyREST {
 }
 
 export interface ReadyCriterionREST {
-    findReadyCriterions(): Promise<ReadyCriterion[]>
+    findReadyCriterions(issueTypeId: string): Promise<ReadyCriterion[]>
     addReadyCriterion(data: ReadyCriterionAddData): Promise<ReadyCriterion>
     getReadyCriterion(id: string): Promise<ReadyCriterion>
     updateReadyCriterion(id: string, data: ReadyCriterionUpdateData): Promise<ReadyCriterion>
@@ -181,7 +181,7 @@ export interface ReadyCriterionREST {
 }
 
 export interface DoneCriterionREST {
-    findDoneCriterions(): Promise<DoneCriterion[]>
+    findDoneCriterions(issueTypeId: string): Promise<DoneCriterion[]>
     addDoneCriterion(data: DoneCriterionAddData): Promise<DoneCriterion>
     getDoneCriterion(id: string): Promise<DoneCriterion>
     updateDoneCriterion(id: string, data: DoneCriterionUpdateData): Promise<DoneCriterion>
@@ -189,7 +189,7 @@ export interface DoneCriterionREST {
 }
 
 export interface ActionREST {
-    findActions(): Promise<Action[]>
+    findActions(transitionId: string): Promise<Action[]>
     addAction(data: ActionAddData): Promise<Action>
     getAction(id: string): Promise<Action>
     updateAction(id: string, data: ActionUpdateData): Promise<Action>
@@ -197,7 +197,7 @@ export interface ActionREST {
 }
 
 export interface GuardREST {
-    findGuards(): Promise<Guard[]>
+    findGuards(transitionId: string): Promise<Guard[]>
     addGuard(data: GuardAddData): Promise<Guard>
     getGuard(id: string): Promise<Guard>
     updateGuard(id: string, data: GuardUpdateData): Promise<Guard>
@@ -205,7 +205,7 @@ export interface GuardREST {
 }
 
 export interface ReadyPropertyREST {
-    findReadyPropertys(): Promise<ReadyProperty[]>
+    findReadyPropertys(issueTypeId: string): Promise<ReadyProperty[]>
     addReadyProperty(data: ReadyPropertyAddData): Promise<ReadyProperty>
     getReadyProperty(id: string): Promise<ReadyProperty>
     updateReadyProperty(id: string, data: ReadyPropertyUpdateData): Promise<ReadyProperty>
@@ -213,7 +213,7 @@ export interface ReadyPropertyREST {
 }
 
 export interface DonePropertyREST {
-    findDonePropertys(): Promise<DoneProperty[]>
+    findDonePropertys(issueTypeId: string): Promise<DoneProperty[]>
     addDoneProperty(data: DonePropertyAddData): Promise<DoneProperty>
     getDoneProperty(id: string): Promise<DoneProperty>
     updateDoneProperty(id: string, data: DonePropertyUpdateData): Promise<DoneProperty>

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 //import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 
@@ -20,15 +20,17 @@ export class TagController implements TagREST {
         //private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
-    @Get()
-    @ApiQuery({ })
+    @Get(':id')
+    @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiResponse({ type: [Tag] })
-    async findTags(): Promise<Tag[]> {
-        return await this.tagService.findTags()
+    async findTags(
+        @Query('product') productId: string
+    ): Promise<Tag[]> {
+        return await this.tagService.findTags(productId)
     }
     @Post()
     @ApiBody({ type: TagAddData })
-    @ApiResponse({ type: TagAddData })
+    @ApiResponse({ type: Tag })
     async addTag(
         @Body() data: Tag
     ): Promise<Tag> {

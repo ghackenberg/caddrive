@@ -12,6 +12,9 @@ export class TagEntity extends Tag {
     override deleted: boolean
 
     @Column({ nullable: false })
+    override productId: string
+
+    @Column({ nullable: false })
     override name: string
 
     @Column({nullable: false})
