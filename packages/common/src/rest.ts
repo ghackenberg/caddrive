@@ -3,6 +3,7 @@ import { AdditionalProperty, AdditionalPropertyAddData, AdditionalPropertyUpdate
 import { Attachment, AttachmentAddData, AttachmentUpdateData } from './data/attachment'
 import { Comment } from './data/comment'
 import { DoneCriterion, DoneCriterionAddData, DoneCriterionUpdateData } from './data/doneCriterion'
+import { DoneProperty, DonePropertyAddData, DonePropertyUpdateData } from './data/doneProperty'
 import { Guard, GuardAddData, GuardUpdateData } from './data/guard'
 import { Issue } from './data/issue'
 import { IssueType, IssueTypeAddData, IssueTypeUpdateData } from './data/issueType'
@@ -209,4 +210,12 @@ export interface ReadyPropertyREST {
     getReadyProperty(id: string): Promise<ReadyProperty>
     updateReadyProperty(id: string, data: ReadyPropertyUpdateData): Promise<ReadyProperty>
     deleteReadyProperty(id: string): Promise<ReadyProperty>
+}
+
+export interface DonePropertyREST {
+    findDonePropertys(): Promise<DoneProperty[]>
+    addDoneProperty(data: DonePropertyAddData): Promise<DoneProperty>
+    getDoneProperty(id: string): Promise<DoneProperty>
+    updateDoneProperty(id: string, data: DonePropertyUpdateData): Promise<DoneProperty>
+    deleteDoneProperty(id: string): Promise<DoneProperty>
 }
