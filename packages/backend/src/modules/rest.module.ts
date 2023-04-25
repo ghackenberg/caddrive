@@ -7,7 +7,7 @@ import { MemberModule } from './rest/members/member.module'
 import { MilestoneModule } from './rest/milestones/milestone.module'
 import { PartModule } from './rest/parts/part.module'
 import { ProductModule } from './rest/products/product.module'
-import { TagModule } from './rest/tag/tag.module'
+import { TagModule } from './rest/tags/tag.module'
 import { UserModule } from './rest/users/user.module'
 import { VersionModule } from './rest/versions/version.module'
 

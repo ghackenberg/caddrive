@@ -6,8 +6,6 @@ export class AdditionalPropertyUpdateData {
     @ApiProperty()
     description: string
     @ApiProperty()
-    modificationDate: string
-    @ApiProperty()
     type: string
     @ApiProperty()
     value: string
@@ -15,11 +13,8 @@ export class AdditionalPropertyUpdateData {
 
 export class AdditionalPropertyAddData extends AdditionalPropertyUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     issueId: string
-    @ApiProperty()
-    creationDate: string
+    
 }
 
 export class AdditionalProperty extends AdditionalPropertyAddData {
@@ -27,4 +22,10 @@ export class AdditionalProperty extends AdditionalPropertyAddData {
     id: string
     @ApiProperty()
     deleted: boolean
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    creationDate: string
+    @ApiProperty()
+    modificationDate: string
 }
