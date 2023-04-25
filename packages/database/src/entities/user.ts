@@ -14,8 +14,12 @@ export class UserEntity extends User {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: false })
+    override created: number
+    @Column({ nullable: true })
+    override updated: number
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({ nullable: false, unique: false })
     override email: string

@@ -2,107 +2,25 @@ import { Comment, CommentAddData, CommentUpdateData, CommentREST, CommentDownMQT
 
 import { CommentAPI } from '../clients/mqtt/comment'
 import { CommentClient } from '../clients/rest/comment'
+import { AbstractManager } from './abstract'
 
-class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob>, CommentDownMQTT {
-    private commentIndex: {[id: string]: Comment} = {}
+class CommentManagerImpl extends AbstractManager<Comment> implements CommentREST<CommentAddData, CommentUpdateData, Blob>, CommentDownMQTT {
     private findIndex: {[id: string]: {[id: string]: boolean}} = {}
 
     constructor() {
+        super()
         CommentAPI.register(this)
     }
 
-    // MQTT
-
-    create(comment: Comment): void {
-        console.log(`Comment created ${comment}`)
-        this.commentIndex[comment.id] = comment
-        this.addToFindIndex(comment)
-    }
-
-    update(comment: Comment): void {
-        console.log(`Comment updated ${comment}`)
-        this.commentIndex[comment.id] = comment
-        this.removeFromFindIndex(comment)
-        this.addToFindIndex(comment)
-    }
-
-    delete(comment: Comment): void {
-        console.log(`Comment deleted ${comment}`)
-        this.commentIndex[comment.id] = comment
-        this.removeFromFindIndex(comment)
-    }
+    // CACHE
 
     findCommentsFromCache(issueId: string) { 
         const key = `${issueId}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.commentIndex[id])
+            return Object.keys(this.findIndex[key]).map(id => this.load(id))
         } else { 
             return undefined 
         } 
-    }
-    
-    async findComments(issueId: string): Promise<Comment[]> {
-        const key = `${issueId}`
-        if (!(key in this.findIndex)) {
-            // Call backend
-            const comments = await CommentClient.findComments(issueId)
-            // Upate comment index
-            for (const comment of comments) {
-                this.commentIndex[comment.id] = comment
-            }
-            // Update find index
-            this.findIndex[key] = {}
-            for (const comment of comments) {
-                this.findIndex[key][comment.id] = true
-            }
-        }
-        // Return comments
-        return Object.keys(this.findIndex[key]).map(id => this.commentIndex[id])
-    }
-
-    async addComment(data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
-        // Call backend
-        const comment = await CommentClient.addComment(data, files)
-        // Update comment index
-        this.commentIndex[comment.id] = comment
-        // Update find index
-        this.addToFindIndex(comment)
-        // Return comment
-        return comment
-    }
-
-    async getComment(id: string): Promise<Comment> {
-        if (!(id in this.commentIndex)) {
-            // Call backend
-            const comment = await CommentClient.getComment(id)
-            // Update comment index
-            this.commentIndex[id] = comment
-        }
-        // Return comment
-        return this.commentIndex[id]
-    }
-
-    async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }): Promise<Comment> {
-        // Call backend
-        const comment = await CommentClient.updateComment(id, data, files)
-        // Update comment index
-        this.commentIndex[id] = comment
-        // Update find index
-        this.removeFromFindIndex(comment)
-        this.addToFindIndex(comment)
-        // Return comment
-        return comment
-    }
-
-    async deleteComment(id: string): Promise<Comment> {
-        // Call backend
-        const comment = await CommentClient.deleteComment(id)
-        // Update comment index
-        this.commentIndex[id] = comment
-        // Update issue index
-        this.removeFromFindIndex(comment)
-        // Return comment
-        return comment
     }
 
     private addToFindIndex(comment: Comment) {
@@ -110,7 +28,6 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
             this.findIndex[`${comment.issueId}`][comment.id] = true
         }
     }
-
     private removeFromFindIndex(comment: Comment) { 
         for (const key of Object.keys(this.findIndex)) {
             if (comment.id in this.findIndex[key]) {
@@ -118,6 +35,87 @@ class CommentManagerImpl implements CommentREST<CommentAddData, CommentUpdateDat
             }
         }
 
+    }
+
+    // MQTT
+
+    create(comment: Comment): void {
+        comment = this.store(comment)
+        this.addToFindIndex(comment)
+    }
+    update(comment: Comment): void {
+        comment = this.store(comment)
+        this.removeFromFindIndex(comment)
+        this.addToFindIndex(comment)
+    }
+    delete(comment: Comment): void {
+        comment = this.store(comment)
+        this.removeFromFindIndex(comment)
+    }
+
+    // REST
+    
+    async findComments(issueId: string): Promise<Comment[]> {
+        const key = `${issueId}`
+        if (!(key in this.findIndex)) {
+            // Call backend
+            let comments = await CommentClient.findComments(issueId)
+            // Upate comment index
+            comments = comments.map(comment => this.store(comment))
+            // Init find index
+            this.findIndex[key] = {}
+            // Update finx index
+            comments.forEach(comment => this.addToFindIndex(comment))
+        }
+        // Return comments
+        return Object.keys(this.findIndex[key]).map(id => this.load(id)).filter(comment => !comment.deleted)
+    }
+
+    async addComment(data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
+        // Call backend
+        let comment = await CommentClient.addComment(data, files)
+        // Update comment index
+        comment = this.store(comment)
+        // Update find index
+        this.addToFindIndex(comment)
+        // Return comment
+        return this.load(comment.id)
+    }
+
+    async getComment(id: string): Promise<Comment> {
+        if (!this.has(id)) {
+            // Call backend
+            let comment = await CommentClient.getComment(id)
+            // Update comment index
+            comment = this.store(comment)
+            // Update find index
+            this.addToFindIndex(comment)
+        }
+        // Return comment
+        return this.load(id)
+    }
+
+    async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }): Promise<Comment> {
+        // Call backend
+        let comment = await CommentClient.updateComment(id, data, files)
+        // Update comment index
+        comment = this.store(comment)
+        // Update find index
+        this.removeFromFindIndex(comment)
+        this.addToFindIndex(comment)
+        // Return comment
+        return this.load(id)
+    }
+
+    async deleteComment(id: string): Promise<Comment> {
+        // Call backend
+        let comment = await CommentClient.deleteComment(id)
+        // Update comment index
+        comment = this.store(comment)
+        // Update issue index
+        this.removeFromFindIndex(comment)
+        // Return comment
+        return this.load(id)
     }
 }
 

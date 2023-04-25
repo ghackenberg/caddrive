@@ -2,124 +2,28 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST, IssueDownMQTT } from '
 
 import { IssueAPI } from '../clients/mqtt/issue'
 import { IssueClient } from '../clients/rest/issue'
+import { AbstractManager } from './abstract'
 
-class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>, IssueDownMQTT {
-    private issueIndex: {[issueId: string]: Issue} = {}
+class IssueManagerImpl extends AbstractManager<Issue> implements IssueREST<IssueAddData, IssueUpdateData, Blob>, IssueDownMQTT {
     private findIndex: {[key: string]: {[issueId: string]: boolean}} = {}
 
     constructor() {
+        super()
         IssueAPI.register(this)
     }
 
-    // MQTT
-
-    create(issue: Issue): void {
-        console.log(`Issue created ${issue}`)
-        this.issueIndex[issue.id] = issue
-        this.addToFindIndex(issue)
-    }
-
-    update(issue: Issue): void {
-        console.log(`Issue updated ${issue}`)
-        this.issueIndex[issue.id] = issue
-        this.removeFromFindIndex(issue)
-        this.addToFindIndex(issue)
-    }
-
-    delete(issue: Issue): void {
-        console.log(`Issue deleted ${issue}`)
-        this.issueIndex[issue.id] = issue
-        this.removeFromFindIndex(issue)
-    }
-
-    getIssueCount(productId: string, milestoneId?: string, state?: string) {
-        const key = `${productId}-${milestoneId}-${state}`
-        if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).length 
-        } else { 
-            return undefined 
-        } 
-    }
-
+    // CACHE
+    
     findIssuesFromCache(productId: string, milestoneId?: string, state?: string) {
         const key = `${productId}-${milestoneId}-${state}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.issueIndex[id])
+            return Object.keys(this.findIndex[key]).map(id => this.load(id))
         } else { 
             return undefined 
         } 
     }
-
-    async findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]> {
-        const key = `${productId}-${milestoneId}-${state}`
-        if (!(key in this.findIndex)) {
-            // Call backend
-            const issues = await IssueClient.findIssues(productId, milestoneId, state)
-            // Update issue index
-            for (const issue of issues) {
-                this.issueIndex[issue.id] = issue
-            }
-            // Update find index
-            this.findIndex[key] = {}
-            for (const issue of issues) {
-                this.findIndex[key][issue.id] = true
-            }
-        }
-        // Return issues
-        return Object.keys(this.findIndex[key]).map(id => this.issueIndex[id])
-    }
-
-    async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
-        // Call backend
-        const issue = await IssueClient.addIssue(data, files)
-        // Update issue index
-        this.issueIndex[issue.id] = issue
-        // Update find index
-        this.addToFindIndex(issue)
-        // Return issue
-        return issue
-    }
-
     getIssueFromCache(issueId: string) { 
-        if (issueId in this.issueIndex) { 
-            return this.issueIndex[issueId]
-        } else { 
-            return undefined 
-        } 
-    }
-
-    async getIssue(id: string): Promise<Issue> {
-        if (!(id in this.issueIndex)) {
-            // Call backend
-            const issue = await IssueClient.getIssue(id)
-            // Update issue index
-            this.issueIndex[issue.id] = issue
-        }
-        // Return issue
-        return this.issueIndex[id]
-    }
-
-    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
-        // Call backend
-        const issue = await IssueClient.updateIssue(id, data, files)
-        // Update issue index
-        this.issueIndex[issue.id] = issue
-        // Update find index
-        this.removeFromFindIndex(issue)
-        this.addToFindIndex(issue)
-        // Return issue
-        return issue
-    }
-
-    async deleteIssue(id: string): Promise<Issue> {
-        // Call backend
-        const issue = await IssueClient.deleteIssue(id)
-        // Update issue index
-        this.issueIndex[issue.id] = issue
-        // Update find index
-        this.removeFromFindIndex(issue)
-        // Return issue
-        return issue
+        return this.load(issueId)
     }
 
     private addToFindIndex(issue: Issue) {
@@ -136,13 +40,93 @@ class IssueManagerImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob>
             this.findIndex[`${issue.productId}-${issue.milestoneId}-${issue.state}`][issue.id] = true
         }
     }
-
     private removeFromFindIndex(issue: Issue) { 	
         for (const key of Object.keys(this.findIndex)) {
             if (issue.id in this.findIndex[key]) {
                 delete this.findIndex[key][issue.id]
             }
         }
+    }
+
+    // MQTT
+
+    create(issue: Issue): void {
+        issue = this.store(issue)
+        this.addToFindIndex(issue)
+    }
+    update(issue: Issue): void {
+        issue = this.store(issue)
+        this.removeFromFindIndex(issue)
+        this.addToFindIndex(issue)
+    }
+    delete(issue: Issue): void {
+        issue = this.store(issue)
+        this.removeFromFindIndex(issue)
+    }
+
+    // REST
+
+    async findIssues(productId: string, milestoneId?: string, state?: string): Promise<Issue[]> {
+        const key = `${productId}-${milestoneId}-${state}`
+        if (!(key in this.findIndex)) {
+            // Call backend
+            let issues = await IssueClient.findIssues(productId, milestoneId, state)
+            // Update issue index
+            issues = issues.map(issue => this.store(issue))
+            // Init find index
+            this.findIndex[key] = {}
+            // Update find index
+            issues.forEach(issue => this.addToFindIndex(issue))
+        }
+        // Return issues
+        return Object.keys(this.findIndex[key]).map(id => this.load(id)).filter(issue => !issue.deleted)
+    }
+
+    async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
+        // Call backend
+        let issue = await IssueClient.addIssue(data, files)
+        // Update issue index
+        issue = this.store(issue)
+        // Update find index
+        this.addToFindIndex(issue)
+        // Return issue
+        return this.load(issue.id)
+    }
+
+    async getIssue(id: string): Promise<Issue> {
+        if (!this.has(id)) {
+            // Call backend
+            let issue = await IssueClient.getIssue(id)
+            // Update issue index
+            issue = this.store(issue)
+            // Update find index
+            this.addToFindIndex(issue)
+        }
+        // Return issue
+        return this.load(id)
+    }
+
+    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
+        // Call backend
+        let issue = await IssueClient.updateIssue(id, data, files)
+        // Update issue index
+        issue = this.store(issue)
+        // Update find index
+        this.removeFromFindIndex(issue)
+        this.addToFindIndex(issue)
+        // Return issue
+        return this.load(id)
+    }
+
+    async deleteIssue(id: string): Promise<Issue> {
+        // Call backend
+        let issue = await IssueClient.deleteIssue(id)
+        // Update issue index
+        issue = this.store(issue)
+        // Update find index
+        this.removeFromFindIndex(issue)
+        // Return issue
+        return this.load(id)
     }
 }
 

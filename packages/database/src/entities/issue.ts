@@ -13,8 +13,12 @@ export class IssueEntity extends Issue {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: false })
+    override created: number
+    @Column({ nullable: true })
+    override updated: number
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({ nullable: true })
     override audioId: string
@@ -43,9 +47,6 @@ export class IssueEntity extends Issue {
     @Column('simple-array')
     override assigneeIds: string[]
 
-    @Column({ nullable: false })
-    override creationDate: string
-
     @Column({nullable: false})
     override name: string
 
@@ -66,9 +67,6 @@ export class IssueEntity extends Issue {
 
     @Column({ nullable: false })
     override issueTypeId: string
-
-    @Column({ nullable: false })
-    override modificationDate: string
 
     @Column({ nullable: false })
     override priority: string

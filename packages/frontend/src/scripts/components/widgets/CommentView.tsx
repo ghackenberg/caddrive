@@ -7,9 +7,9 @@ import { UserContext } from '../../contexts/User'
 import { ProductUserPictureWidget } from './ProductUserPicture'
 import { ProductUserNameWidget } from './ProductUserName'
 
-import * as PartIcon from '/src/images/part.png'
-import * as CloseIcon from '/src/images/close.png'
-import * as ReopenIcon from '/src/images/reopen.png'
+import PartIcon from '/src/images/part.png'
+import CloseIcon from '/src/images/close.png'
+import ReopenIcon from '/src/images/reopen.png'
 
 interface Part {
     productId: string
@@ -42,7 +42,7 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
                 </div>
                 <div className="text">
                     <p>
-                        <strong>{props.user ? comment.userId in users && members ? <ProductUserNameWidget user={users[comment.userId]} members={members}/> : '?' : ''}</strong> commented on {comment.creationDate.substring(0, 10)}
+                        <strong>{props.user ? comment.userId in users && members ? <ProductUserNameWidget user={users[comment.userId]} members={members}/> : '?' : ''}</strong> commented on {new Date(comment.created).toISOString().substring(0, 10)}
                     </p>
                 </div>
             </div>

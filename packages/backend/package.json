@@ -4,6 +4,7 @@
     "description": "Backend managing and providing product design data",
     "license": "MIT",
     "private": "true",
+    "type": "module",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -34,10 +35,11 @@
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "cross-env TYPEORM_TYPE=postgres ts-node src/main",
-        "devel": "cross-env TYPEORM_TYPE=sqlite ts-node-dev src/main",
+        "start": "cross-env TYPEORM_TYPE=postgres node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "devel": "cross-env TYPEORM_TYPE=sqlite nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
         "lint": "eslint src",
-        "loc": "sloc src"
+        "loc": "sloc src",
+        "test": "node bin/main"
     },
     "dependencies": {
         "@nestjs/common": "^8.1.2",
@@ -52,6 +54,8 @@
         "@types/shortid": "^0.0.29",
         "axios": "^0.26.1",
         "cross-env": "^7.0.3",
+        "gl": "^6.0.2",
+        "jimp": "^0.22.7",
         "jsonwebtoken": "^9.0.0",
         "jwks-rsa": "^3.0.0",
         "mqtt": "^4.2.6",
@@ -61,17 +65,20 @@
         "rxjs": "^7.1.0",
         "shortid": "^2.2.16",
         "swagger-ui-express": "^4.1.6",
+        "three": "^0.151.3",
         "ts-node": "^10.9.1",
         "typescript": "^4.9.3",
         "yauzl": "^2.10.0"
     },
     "devDependencies": {
+        "@types/gl": "^6.0.2",
+        "@types/three": "^0.150.2",
         "@types/yauzl": "^2.10.0",
         "@typescript-eslint/eslint-plugin": "^5.44.0",
         "@typescript-eslint/parser": "^5.44.0",
         "eslint": "^8.28.0",
         "eslint-plugin-import": "^2.26.0",
-        "sloc": "^0.2.1",
-        "ts-node-dev": "^2.0.0"
+        "nodemon": "^2.0.22",
+        "sloc": "^0.2.1"
     }
 }

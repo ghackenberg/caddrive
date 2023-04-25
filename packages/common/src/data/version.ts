@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+export type ModelType = 'glb' | 'ldr' | 'mpd'
+
+export type ImageType = 'png' | null
+
 export class VersionUpdateData {
     @ApiProperty()
     major: number
@@ -12,22 +16,27 @@ export class VersionUpdateData {
 }
 export class VersionAddData extends VersionUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     productId: string
     @ApiProperty()
     baseVersionIds: string[]
-    @ApiProperty()
-    time: string
 }
 
 export class Version extends VersionAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
     @ApiProperty()
-    modelType: 'glb' | 'ldr' | 'mpd'
+    updated: number
     @ApiProperty()
-    imageType: 'png'
+    deleted: number
+
+    @ApiProperty()
+    userId: string
+    
+    @ApiProperty()
+    modelType: ModelType
+    @ApiProperty()
+    imageType: ImageType
 }

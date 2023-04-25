@@ -2,8 +2,10 @@ import * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Member, Product, User } from 'productboard-common'
+import { Issue, Member, Product, User, Version } from 'productboard-common'
 
+import { VersionAPI } from '../../clients/mqtt/version'
+import { ProductAPI } from '../../clients/mqtt/product'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { IssueManager } from '../../managers/issue'
@@ -15,9 +17,9 @@ import { ProductsLink } from '../links/ProductsLink'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LoadIcon from '/src/images/load.png'
-import * as EmptyIcon from '/src/images/empty.png'
+import DeleteIcon from '/src/images/delete.png'
+import LoadIcon from '/src/images/load.png'
+import EmptyIcon from '/src/images/empty.png'
 
 export const ProductView = () => {
     
@@ -29,35 +31,35 @@ export const ProductView = () => {
     // INITIAL STATES
     
     const initialProducts = ProductManager.findProductsFromCache()
-    const initialUsers: {[id: string]: User} = {}
+    const initialUsers: {[productId: string]: User} = {}
     for (const product of initialProducts || []) {
         const user = UserManager.getUserFromCache(product.userId)
         if (user) {
             initialUsers[product.id] = user
         }
     }
-    const initialVersions: {[id: string]: number} = {}
+    const initialVersions: {[productId: string]: Version[]} = {}
     for (const product of initialProducts || []) {
-        const versions = VersionManager.getVersionCount(product.id)
+        const versions = VersionManager.findVersionsFromCache(product.id)
         if (versions) {
             initialVersions[product.id] = versions
         }
     }
-    const initialLatestVersions: {[id: string]: string} = {}
+    const initialLatestVersions: {[productId: string]: Version} = {}
     for (const product of initialProducts || []) {
         const versions = VersionManager.findVersionsFromCache(product.id)
         if (versions && versions.length > 0) {
-            initialLatestVersions[product.id] = versions[versions.length - 1].id
+            initialLatestVersions[product.id] = versions[versions.length - 1]
         }
     }
-    const initialIssues: {[id: string]: number} = {}
+    const initialIssues: {[productId: string]: Issue[]} = {}
     for (const product of initialProducts || []) {
-        const issues = IssueManager.getIssueCount(product.id, undefined, undefined)
+        const issues = IssueManager.findIssuesFromCache(product.id, undefined, undefined)
         if (issues) {
             initialIssues[product.id] = issues
         }
     }
-    const initialMembers: {[id: string]: Member[]} = {}
+    const initialMembers: {[productId: string]: Member[]} = {}
     for (const product of initialProducts || []) {
         const members = MemberManager.findMembersFromCache(product.id) 
         if (members) {
@@ -69,11 +71,11 @@ export const ProductView = () => {
 
     // - Entities
     const [products, setProducts] = useState<Product[]>(initialProducts)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
-    const [versions, setVersions] = useState<{[id: string]: number}>(initialVersions)
-    const [latestVersions, setLatestVersions] = useState<{[id: string]: string}>(initialLatestVersions)
-    const [issues, setIssues] = useState<{[id: string]: number}>(initialIssues)
-    const [members, setMembers] = useState<{[id: string]: Member[]}>(initialMembers)
+    const [users, setUsers] = useState<{[productId: string]: User}>(initialUsers)
+    const [versions, setVersions] = useState<{[productId: string]: Version[]}>(initialVersions)
+    const [latestVersions, setLatestVersions] = useState<{[productId: string]: Version}>(initialLatestVersions)
+    const [issues, setIssues] = useState<{[productId: string]: Issue[]}>(initialIssues)
+    const [members, setMembers] = useState<{[productId: string]: Member[]}>(initialMembers)
 
     // EFFECTS
 
@@ -96,33 +98,31 @@ export const ProductView = () => {
             Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
                 const newVersions = {...versions}
                 for (let index = 0; index < products.length; index++) {
-                    newVersions[products[index].id] = productVersions[index].length
+                    newVersions[products[index].id] = productVersions[index]
                 }
                 setVersions(newVersions)
             })
         }
     }, [products])
     useEffect(() => {
-        if (products) {
-            Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
-                const newVersions = {...latestVersions}
-                for (let index = 0; index < products.length; index++) {
-                    if (productVersions[index].length > 0) {
-                        newVersions[products[index].id] = productVersions[index][productVersions[index].length - 1].id
-                    } else {
-                        newVersions[products[index].id] = null
-                    }
+        if (versions) {
+            const latestVersions: {[productId: string]: Version} = {}
+            for (const productId of Object.keys(versions)) {
+                if (versions[productId].length > 0) {
+                    latestVersions[productId] = versions[productId][versions[productId].length - 1]
+                } else {
+                    latestVersions[productId] = null
                 }
-                setLatestVersions(newVersions)
-            })
+            }
+            setLatestVersions(latestVersions)
         }
-    }, [products])
+    }, [versions])
     useEffect(() => {
         if (products) {
             Promise.all(products.map(product => IssueManager.findIssues(product.id))).then(productIssues => {
                 const newIssues = {...issues}
                 for (let index = 0; index < products.length; index++) {
-                    newIssues[products[index].id] = productIssues[index].length
+                    newIssues[products[index].id] = productIssues[index]
                 }
                 setIssues(newIssues)
             })
@@ -140,6 +140,58 @@ export const ProductView = () => {
         }
     }, [products])
 
+    // - Events
+    useEffect(() => {
+        return ProductAPI.register({
+            create(product) {
+                setProducts([...products.filter(other => other.id != product.id), product])
+            },
+            update(product) {
+                setProducts(products.map(other => other.id != product.id ? other : product))
+            },
+            delete(product) {
+                setProducts(products.filter(other => other.id != product.id))
+            },
+        })
+    })
+    useEffect(() => {
+        return VersionAPI.register({
+            create(version) {
+                const newVersions: {[productId: string]: Version[]} = {}
+                for (const productId of Object.keys(versions)) {
+                    if (version.productId == productId) {
+                        newVersions[productId] = [ ...versions[productId].filter(other => other.id != version.id), version ]
+                    } else {
+                        newVersions[productId] = versions[productId]
+                    }
+                }
+                setVersions(newVersions)
+            },
+            update(version) {
+                const newVersions: {[productId: string]: Version[]} = {}
+                for (const productId of Object.keys(versions)) {
+                    if (version.productId == productId) {
+                        newVersions[productId] = versions[productId].map(other => other.id != version.id ? other : version)
+                    } else {
+                        newVersions[productId] = versions[productId]
+                    }
+                }
+                setVersions(newVersions)
+            },
+            delete(version) {
+                const newVersions: {[productId: string]: Version[]} = {}
+                for (const productId of Object.keys(versions)) {
+                    if (version.productId == productId) {
+                        newVersions[productId] = versions[productId].filter(other => other.id != version.id)
+                    } else {
+                        newVersions[productId] = versions[productId]
+                    }
+                }
+                setVersions(newVersions)
+            },
+        })
+    })
+
     // FUNCTIONS
 
     async function deleteProduct(product: Product) {
@@ -155,17 +207,23 @@ export const ProductView = () => {
         { label: '📷', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
                 {product.id in latestVersions ? (
-                    <>
-                        {latestVersions[product.id] ? (
-                            <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id]}.png")` } } className="model"/>
+                    latestVersions[product.id] ? (
+                        latestVersions[product.id].imageType ? (
+                            <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id].id}.${latestVersions[product.id].imageType}")` } } className="model"/>
                         ) : (
-                            <div className="model" >
-                                <img src={EmptyIcon} className='icon medium position center'/>
+                            <div className="model">
+                                <img src={LoadIcon} className='icon small position center animation spin'/>
                             </div>
-                        )}
-                    </>
+                        )
+                    ) : (
+                        <div className="model" >
+                            <img src={EmptyIcon} className='icon medium position center'/>
+                        </div>
+                    )
                 ) : (
-                    <img src={LoadIcon} className='icon small animation spin'/>
+                    <div className="model" >
+                        <img src={LoadIcon} className='icon small position center animation spin'/>
+                    </div>
                 )}
             </Link>
         ) },
@@ -181,12 +239,12 @@ export const ProductView = () => {
         ) },
         { label: 'Versions', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {product.id in versions ? versions[product.id] : '?'}
+                {product.id in versions ? versions[product.id].length : '?'}
             </Link>
         ) },
         { label: 'Issues', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {product.id in issues ? issues[product.id] : '?'}
+                {product.id in issues ? issues[product.id].length : '?'}
             </Link>
         ) },
         { label: 'Members', class: 'center', content: product => (

@@ -1,10 +1,10 @@
-/* eslint-disable */
-const path = require('path')
-const webpack = require('webpack')
+import { resolve } from 'path'
 
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import webpack from 'webpack'
+const { ProvidePlugin } = webpack
 
-module.exports = {
+export default {
     mode: 'development',
     stats: 'minimal',
     entry: './src/scripts/main.tsx',
@@ -40,7 +40,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'three': path.resolve('../../node_modules/three')
+            'three': resolve('../../node_modules/three')
         },
         fallback: {
             'os': false,
@@ -51,7 +51,6 @@ module.exports = {
             'util': false,
             'path': false,
             'crypto': false,
-            'zlib': false,
             '@nestjs/core': false,
             '@nestjs/common': false,
             '@nestjs/mapped-types': false,
@@ -61,7 +60,7 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [
-        new webpack.ProvidePlugin({
+        new ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
             process: 'process/browser.js'
         }),
@@ -72,11 +71,11 @@ module.exports = {
         })
     ],
     output: {
-        path: path.resolve(__dirname, 'public'),
+        path: resolve('public'),
         filename: 'frontend.js'
     },
     devServer: {
-        static: path.join(__dirname, 'public'),
+        static: resolve('public'),
         port: 3003,
         historyApiFallback: {
             rewrites: [

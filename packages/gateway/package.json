@@ -4,6 +4,7 @@
     "description": "Gateway intercepting and dispatching network messages",
     "license": "MIT",
     "private": "true",
+    "type": "module",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
@@ -34,8 +35,8 @@
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "ts-node src/main",
-        "devel": "ts-node-dev src/main",
+        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "devel": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
         "lint": "eslint src",
         "loc": "sloc src"
     },
@@ -53,7 +54,7 @@
         "@typescript-eslint/parser": "^5.44.0",
         "eslint": "^8.28.0",
         "eslint-plugin-import": "^2.26.0",
-        "sloc": "^0.2.1",
-        "ts-node-dev": "^2.0.0"
+        "nodemon": "^2.0.22",
+        "sloc": "^0.2.1"
     }
 }

@@ -17,6 +17,11 @@ export class MemberAddData extends MemberUpdateData {
 export class Member extends MemberAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    created: number
+    @ApiProperty()
+    updated: number
+    @ApiProperty()
+    deleted: number
 }

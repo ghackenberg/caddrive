@@ -10,7 +10,7 @@ import { computePath } from '../../functions/path'
 import { ModelGraph } from './ModelGraph'
 import { ModelView3D } from './ModelView3D'
 
-import * as LoadIcon from '/src/images/load.png'
+import LoadIcon from '/src/images/load.png'
 
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}

@@ -1,6 +1,8 @@
-const path = require('path')
+import { resolve } from "path"
 
-module.exports = (env, argv) => (
+import 'webpack'
+
+export default (_env, argv) => (
     {
         mode: argv.mode,
         stats: 'minimal',
@@ -18,11 +20,11 @@ module.exports = (env, argv) => (
             extensions: ['.tsx', '.ts', '.js'],
         },
         output: {
-            path: path.resolve(__dirname, 'public'),
+            path: resolve('public'),
             filename: 'worker.js'
         },
         devServer: {
-            static: path.join(__dirname, 'public'),
+            static: resolve('public'),
             port: 3002
         },
         devtool: 'inline-source-map'

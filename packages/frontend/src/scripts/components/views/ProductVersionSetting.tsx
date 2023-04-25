@@ -27,10 +27,10 @@ import { ModelView3D } from '../widgets/ModelView3D'
 import { Column, Table } from '../widgets/Table'
 import { VersionView3D } from '../widgets/VersionView3D'
 
-import * as EmptyIcon from '/src/images/empty.png'
-import * as LoadIcon from '/src/images/load.png'
-import * as LeftIcon from '/src/images/setting.png'
-import * as RightIcon from '/src/images/part.png'
+import EmptyIcon from '/src/images/empty.png'
+import LoadIcon from '/src/images/load.png'
+import LeftIcon from '/src/images/setting.png'
+import RightIcon from '/src/images/part.png'
 
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
@@ -130,7 +130,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     async function onSubmit(event: FormEvent) {
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionManager.addVersion({ userId: contextUser.id, productId: product.id, baseVersionIds, time: new Date().toISOString(), major, minor, patch, description }, { model: file, image: blob })
+            const version = await VersionManager.addVersion({ productId: product.id, baseVersionIds, major, minor, patch, description }, { model: file, image: blob })
             setContextVersion(version)
         } else {
             await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image: blob })

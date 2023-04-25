@@ -6,6 +6,7 @@
     "private": "true",
     "main": "src/main",
     "types": "src/main",
+    "type": "module",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"

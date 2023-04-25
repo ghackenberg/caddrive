@@ -10,37 +10,39 @@ export class IssueUpdateData {
     @ApiProperty()
     assigneeIds: string[]
     @ApiProperty()
-    milestoneId?: string
+    milestoneId: string
     @ApiProperty()
-    parentIssueId?: string
+    parentIssueId: string
     @ApiProperty()
     stateId: string
     @ApiProperty()
     issueTypeId: string
     @ApiProperty()
-    modificationDate: string
-    @ApiProperty()
     priority: string
     @ApiProperty()
-    storypoints?: number
+    storypoints: number
     @ApiProperty()
-    progress?: number
+    progress: number
 }
 
 export class IssueAddData extends IssueUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     productId: string
-    @ApiProperty()
-    creationDate: string
 }
 
 export class Issue extends IssueAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
     @ApiProperty()
-    audioId?: string
+    updated: number
+    @ApiProperty()
+    deleted: number
+
+    @ApiProperty()
+    userId: string
+    @ApiProperty()
+    audioId: string
 }

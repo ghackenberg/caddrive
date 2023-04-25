@@ -10,13 +10,20 @@ export class ProductUpdateData {
 }
 
 export class ProductAddData extends ProductUpdateData {
-    @ApiProperty()
-    userId: string
+    // same as update!
 }
 
 export class Product extends ProductAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
+    @ApiProperty()
+    updated: number
+    @ApiProperty()
+    deleted: number
+
+    @ApiProperty()
+    userId: string
 }

@@ -4,6 +4,7 @@
     "description": "Service worker running in the background",
     "license": "MIT",
     "private": "true",
+    "type": "module",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"

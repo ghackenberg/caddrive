@@ -3,15 +3,14 @@ import { ApiProperty } from '@nestjs/swagger'
 export class MilestoneUpdateData {
     @ApiProperty()
     label: string
+    
     @ApiProperty()
-    start: string
+    start: number
     @ApiProperty()
-    end: string
+    end: number
 }
 
 export class MilestoneAddData extends MilestoneUpdateData {
-    @ApiProperty()
-    userId: string
     @ApiProperty()
     productId: string
 }
@@ -19,6 +18,14 @@ export class MilestoneAddData extends MilestoneUpdateData {
 export class Milestone extends MilestoneAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: number
+    @ApiProperty()
+    updated: number
+    @ApiProperty()
+    deleted: number
+
+    @ApiProperty()
+    userId: string
 }

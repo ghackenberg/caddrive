@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState, useContext } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 
-import { Member, Milestone, Product, User } from 'productboard-common'
+import { Issue, Member, Milestone, Product, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { IssueManager } from '../../managers/issue'
@@ -17,10 +17,10 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as DeleteIcon from '/src/images/delete.png'
-import * as LeftIcon from '/src/images/list.png'
-import * as RightIcon from '/src/images/part.png'
+import LoadIcon from '/src/images/load.png'
+import DeleteIcon from '/src/images/delete.png'
+import LeftIcon from '/src/images/list.png'
+import RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
 
@@ -37,13 +37,13 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
-    const initialOpenIssues: {[id: string]: number} = {}
+    const initialOpenIssues: {[id: string]: Issue[]} = {}
     for (const milestone of initialMilestones || []) {
-        initialOpenIssues[milestone.id] = IssueManager.getIssueCount(productId, milestone.id, 'open')
+        initialOpenIssues[milestone.id] = IssueManager.findIssuesFromCache(productId, milestone.id, 'open')
     } 
-    const initialClosedIssues: {[id: string]: number} = {}
+    const initialClosedIssues: {[id: string]: Issue[]} = {}
     for (const milestone of initialMilestones || []) {
-        initialClosedIssues[milestone.id] = IssueManager.getIssueCount(productId, milestone.id, 'closed')
+        initialClosedIssues[milestone.id] = IssueManager.findIssuesFromCache(productId, milestone.id, 'closed')
     } 
     const initialUsers: {[id: string]: User} = {}
     for (const milestone of initialMilestones || []) {
@@ -56,8 +56,8 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     const [product, setProduct] = useState<Product>(initialProduct)
     const [members, setMembers] = useState<Member[]>(initialMembers)
     const [milestones, setMilestones] = useState<Milestone[]>(initialMilestones)
-    const [openIssues, setOpenIssues] = useState<{[id: string]: number}>(initialOpenIssues)
-    const [closedIssues, setClosedIssues] = useState<{[id: string]: number}>(initialClosedIssues)
+    const [openIssues, setOpenIssues] = useState<{[id: string]: Issue[]}>(initialOpenIssues)
+    const [closedIssues, setClosedIssues] = useState<{[id: string]: Issue[]}>(initialClosedIssues)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Interactions
     const [active, setActive] = useState<string>('left')
@@ -73,7 +73,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
                 const newMilestones = {...openIssues}
                 for (let index = 0; index < milestones.length; index++) {
-                    newMilestones[milestones[index].id] = issueMilestones[index].length
+                    newMilestones[milestones[index].id] = issueMilestones[index]
                 }
                 setOpenIssues(newMilestones)
             })
@@ -84,7 +84,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
                 const newMilestones = {...closedIssues}
                 for (let index = 0; index < milestones.length; index++) {
-                    newMilestones[milestones[index].id] = issueMilestones[index].length
+                    newMilestones[milestones[index].id] = issueMilestones[index]
                 }
                 setClosedIssues(newMilestones)
             })
@@ -124,7 +124,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
 
     function calculateIssueProgress(milestone: Milestone) {
         if (milestone.id in openIssues && milestone.id in closedIssues) {
-            return 100 * closedIssues[milestone.id] / (closedIssues[milestone.id] + openIssues[milestone.id])
+            return 100 * closedIssues[milestone.id].length / (closedIssues[milestone.id].length + openIssues[milestone.id].length)
         } else {
             return 0
         }

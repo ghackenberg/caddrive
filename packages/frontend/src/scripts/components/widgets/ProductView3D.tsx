@@ -5,12 +5,13 @@ import { Object3D } from 'three'
 
 import { Product, Version } from 'productboard-common'
 
+import { VersionAPI } from '../../clients/mqtt/version'
 import { VersionContext } from '../../contexts/Version'
 import { VersionManager } from '../../managers/version'
 import { VersionView3D } from './VersionView3D'
 
-import * as LoadIcon from '/src/images/load.png'
-import * as EmptyIcon from '/src/images/empty.png'
+import LoadIcon from '/src/images/load.png'
+import EmptyIcon from '/src/images/empty.png'
 
 interface Part {
     productId: string
@@ -49,6 +50,38 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.marked])
     useEffect(() => { setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.selected])
 
+    useEffect(() =>  {
+        return VersionAPI.register({
+            create(version) {
+                if (version.productId == props.product.id) {
+                    const newVersions = [...versions.filter(other => other.id != version.id), version]
+                    setVersions(newVersions)
+                    if (contextVersion.id == version.id) {
+                        setContextVersion(version)
+                    }
+                }
+            },
+            update(version) {
+                const newVersions = versions.map(other => other.id != version.id ? other : version)
+                setVersions(newVersions)
+                if (contextVersion.id == version.id) {
+                    setContextVersion(version)
+                }
+            },
+            delete(version) {
+                const newVersions = versions.filter(other => other.id != version.id)
+                setVersions(newVersions)
+                if (contextVersion.id == version.id) {
+                    if (newVersions.length > 0) {
+                        setContextVersion(newVersions[newVersions.length - 1])
+                    } else {
+                        setContextVersion(undefined)
+                    }
+                }
+            },
+        })
+    })
+
     // FUNCTIONS
 
     function onChange(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -67,8 +100,8 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
                     contextVersion && (
                         <>
                             <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
-                                {versions.map(v => v).reverse().map(version => (
-                                    <option key={version.id} value={version.id}>
+                                {versions.map(v => v).reverse().map((version, index) => (
+                                    <option key={index} value={version.id}>
                                         {version.major}.{version.minor}.{version.patch}: {version.description}
                                     </option>
                                 ))}

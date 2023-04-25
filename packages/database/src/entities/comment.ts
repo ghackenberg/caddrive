@@ -10,8 +10,12 @@ export class CommentEntity extends Comment {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: false })
+    override created: number
+    @Column({ nullable: true })
+    override updated: number
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({ nullable: true })
     override audioId: string
@@ -29,9 +33,6 @@ export class CommentEntity extends Comment {
 
     @Column({ nullable: false })
     override issueId: string
-
-    @Column({ nullable: false })
-    override creationDate: string
 
     @Column({ nullable: false })
     override text: string

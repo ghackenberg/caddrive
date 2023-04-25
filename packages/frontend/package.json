@@ -4,6 +4,7 @@
     "description": "Web browser frontend for the collaborative design platform",
     "license": "MIT",
     "private": "true",
+    "type": "module",
     "author": {
         "name": "Georg Hackenberg",
         "email": "georg.hackenberg@fh-wels.at"
