@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import 'multer'
@@ -10,9 +11,13 @@ import { FindOptionsWhere, Raw } from 'typeorm'
 import { User, UserUpdateData, UserREST } from 'productboard-common'
 import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
 
+import { AuthorizedRequest } from '../../../request'
+
 @Injectable()
 export class UserService implements UserREST<UserUpdateData, Express.Multer.File> {
     constructor(
+        @Inject(REQUEST)
+        private readonly request: AuthorizedRequest,
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {
@@ -70,6 +75,6 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
     }
 
     private convert(user: UserEntity) {
-        return { id: user.id, created: user.created, updated: user.updated, deleted: user.deleted, email: user.email, consent: user.consent, name: user.name, pictureId: user.pictureId }
+        return { id: user.id, created: user.created, updated: user.updated, deleted: user.deleted, email: this.request.user && this.request.user.id == user.id ? user.email : null, consent: user.consent, name: user.name, pictureId: user.pictureId }
     }
 }
