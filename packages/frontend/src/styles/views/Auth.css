@@ -7,8 +7,10 @@ main.view.auth > main > div {
 
     align-items: center;
 
+    padding-top: 0;
     padding-left: 0;
     padding-right: 0;
+    padding-bottom: 0;
 
     background-color: rgb(245,245,245);
 }
