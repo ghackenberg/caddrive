@@ -17,6 +17,7 @@ export class GuardAddData extends GuardUpdateData {
 export class Guard extends GuardAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

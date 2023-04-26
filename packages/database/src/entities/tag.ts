@@ -8,8 +8,8 @@ export class TagEntity extends Tag {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({ nullable: false })
     override productId: string

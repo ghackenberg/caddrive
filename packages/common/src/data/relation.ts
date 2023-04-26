@@ -9,22 +9,26 @@ export class RelationUpdateData {
     name: string
     @ApiProperty()
     description: string
-    @ApiProperty()
-    modificationDate: string
+    
     @ApiProperty()
     type: string
 }
 
 export class RelationAddData extends RelationUpdateData {
-    @ApiProperty()
-    userId: string
-    @ApiProperty()
-    creationDate: string
+    
 }
 
 export class Relation extends RelationAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    created: string
+    @ApiProperty()
+    updated: string
+    @ApiProperty()
+    deleted: number
+
+    @ApiProperty()
+    userId: string
 }

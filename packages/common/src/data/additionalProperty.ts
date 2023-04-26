@@ -20,12 +20,14 @@ export class AdditionalPropertyAddData extends AdditionalPropertyUpdateData {
 export class AdditionalProperty extends AdditionalPropertyAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    created: string
+    @ApiProperty()
+    updated: string
+    @ApiProperty()
+    deleted: number
+
     @ApiProperty()
     userId: string
-    @ApiProperty()
-    creationDate: string
-    @ApiProperty()
-    modificationDate: string
 }

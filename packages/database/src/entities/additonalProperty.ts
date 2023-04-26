@@ -8,8 +8,8 @@ export class AdditionalPropertyEntity extends AdditionalProperty {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({ nullable: false })
     override issueId: string
@@ -21,10 +21,10 @@ export class AdditionalPropertyEntity extends AdditionalProperty {
     override name: string
 
     @Column({nullable: false})
-    override creationDate: string
+    override created: string
 
     @Column({nullable: false})
-    override modificationDate: string
+    override updated: string
 
     @Column({nullable: false})
     override description: string

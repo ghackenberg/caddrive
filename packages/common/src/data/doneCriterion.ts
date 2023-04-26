@@ -15,6 +15,7 @@ export class DoneCriterionAddData extends DoneCriterionUpdateData {
 export class DoneCriterion extends DoneCriterionAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

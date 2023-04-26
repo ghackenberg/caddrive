@@ -8,11 +8,11 @@ export class IssueTypeHierarchyEntity extends IssueTypeHierarchy {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({nullable: false})
-    override parentIssueTypeId: string
+    override baseIssueTypeId: string
 
     @Column({nullable: false})
     override childIssueTypeId: string

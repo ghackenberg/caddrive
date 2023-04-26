@@ -8,8 +8,8 @@ export class DonePropertyEntity extends DoneProperty {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({ nullable: false })
     override issueId: string

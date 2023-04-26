@@ -15,6 +15,7 @@ export class DonePropertyAddData extends DonePropertyUpdateData {
 export class DoneProperty extends DonePropertyAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

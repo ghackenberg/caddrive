@@ -2,8 +2,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class PropertyTypeUpdateData {
     @ApiProperty()
-    issueTypeId: string
-    @ApiProperty()
     name: string
     @ApiProperty()
     type: string
@@ -12,12 +10,14 @@ export class PropertyTypeUpdateData {
 }
 
 export class PropertyTypeAddData extends PropertyTypeUpdateData {
-    
+    @ApiProperty()
+    issueTypeId: string
 }
 
 export class PropertyType extends PropertyTypeAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

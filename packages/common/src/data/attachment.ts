@@ -6,26 +6,28 @@ export class AttachmentUpdateData {
     @ApiProperty()
     description: string
     @ApiProperty()
-    modificationDate: string
-    @ApiProperty()
     type: string
     @ApiProperty()
     data: string
-
+    
 }
 
 export class AttachmentAddData extends AttachmentUpdateData {
     @ApiProperty()
-    userId: string
-    @ApiProperty()
     issueId: string
-    @ApiProperty()
-    creationDate: string
 }
 
 export class Attachment extends AttachmentAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    created: string
+    @ApiProperty()
+    updated: string
+    @ApiProperty()
+    deleted: number
+
+    @ApiProperty()
+    userId: string
 }

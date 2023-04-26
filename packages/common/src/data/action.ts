@@ -17,6 +17,7 @@ export class ActionAddData extends ActionUpdateData {
 export class Action extends ActionAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

@@ -14,6 +14,7 @@ export class TagAssignmentAddData extends TagAssignmentUpdateData {
 export class TagAssignment extends TagAssignmentAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

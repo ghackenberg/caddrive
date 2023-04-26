@@ -8,8 +8,8 @@ export class ActionEntity extends Action {
     @PrimaryColumn({ nullable: false })
     override id: string
 
-    @Column({ nullable: false, default: false })
-    override deleted: boolean
+    @Column({ nullable: true })
+    override deleted: number
 
     @Column({nullable: false})
     override transitionId: string

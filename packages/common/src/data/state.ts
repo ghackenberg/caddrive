@@ -16,6 +16,7 @@ export class StateAddData extends StateUpdateData {
 export class State extends StateAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

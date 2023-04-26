@@ -15,6 +15,7 @@ export class ReadyPropertyAddData extends ReadyPropertyUpdateData {
 export class ReadyProperty extends ReadyPropertyAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

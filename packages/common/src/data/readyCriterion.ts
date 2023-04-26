@@ -15,6 +15,7 @@ export class ReadyCriterionAddData extends ReadyCriterionUpdateData {
 export class ReadyCriterion extends ReadyCriterionAddData {
     @ApiProperty()
     id: string
+    
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

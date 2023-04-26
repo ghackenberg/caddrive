@@ -18,6 +18,7 @@ export class TransitionAddData extends TransitionUpdateData {
 export class Transition extends TransitionAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }

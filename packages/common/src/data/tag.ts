@@ -16,6 +16,7 @@ export class TagAddData extends TagUpdateData {
 export class Tag extends TagAddData {
     @ApiProperty()
     id: string
+
     @ApiProperty()
-    deleted: boolean
+    deleted: number
 }
