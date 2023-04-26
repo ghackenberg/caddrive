@@ -1,7 +1,9 @@
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Redirect } from 'react-router-dom'
 
 import { UserContext } from '../../contexts/User'
+
+import AuthIcon from '/src/images/auth.png'
 
 export const AuthWelcomeView = () => {
     // CONTEXTS
@@ -9,20 +11,26 @@ export const AuthWelcomeView = () => {
     const { contextUser } = React.useContext(UserContext)
 
     return (
-        <main className='view reduced auth'>
-            <main>
-                <div>
-                    <h5>Authentication process</h5>
-                    <h1>Done! 😀</h1>
-                    <p>
-                        Congratulations <strong>{contextUser.name}</strong>, you signed up successfully on our platform.
-                        We wish you a <strong>great experience</strong> here!
-                    </p>
+        contextUser ? (
+            <main className='view reduced auth'>
+                <main>
                     <div>
-                        <NavLink className='button fill blue' to="/">Start</NavLink>
+                        <img src={AuthIcon}/>
+                        <h5>Authentication process</h5>
+                        <h1>Done! 😀</h1>
+                        <p>
+                            Congrats <strong>{contextUser.name}</strong>!
+                            You signed up successfully on our platform.
+                            We wish you a <strong>great experience</strong> here.
+                        </p>
+                        <div>
+                            <NavLink className='button fill blue' to="/">Start</NavLink>
+                        </div>
                     </div>
-                </div>
+                </main>
             </main>
-        </main>
+        ) : (
+            <Redirect to="/auth"/>
+        )
     )
 }

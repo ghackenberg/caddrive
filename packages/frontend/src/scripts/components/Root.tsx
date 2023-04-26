@@ -74,29 +74,16 @@ export const Root = () => {
         <UserContext.Provider value={{ contextUser, setContextUser }}>
             <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
                 <PageHeader/>
-                {contextUser === undefined && (
+                {contextUser === undefined ? (
                     <LoadingView/>
-                )}
-                {contextUser && contextUser.consent == null && (
-                    <Switch>
-                        <Route path="/auth/consent" component={AuthConsentView}/>
-                        <Redirect to="/auth/consent"/>
-                    </Switch>
-                )}
-                {contextUser && contextUser.consent != null && contextUser.name == null && (
-                    <Switch>
-                        <Route path="/auth/name" component={AuthNameView}/>
-                        <Redirect to="/auth/name"/>
-                    </Switch>
-                )}
-                {(contextUser === null || (contextUser && contextUser.consent != null && contextUser.name != null)) && (
+                ) : (
                     <Switch>
                         {/* Auth views */}
 
-                        <Route path="/auth/welcome" component={AuthWelcomeView}/>
+                        <Route path="/auth/consent" component={AuthConsentView}/>
+                        <Route path="/auth/name" component={AuthNameView}/>
                         <Route path="/auth/picture" component={AuthPictureView}/>
-                        <Route path="/auth/name"><Redirect to="/auth/picture"/></Route>
-                        <Route path="/auth/consent"><Redirect to="/auth/picture"/></Route>
+                        <Route path="/auth/welcome" component={AuthWelcomeView}/>
                         <Route path="/auth" component={AuthView}/>
 
                         {/* User views */}
@@ -128,7 +115,7 @@ export const Root = () => {
                         <Route path="/products/:product/settings" component={ProductSettingView}/>
                         <Redirect path="/products/:product" to="/products/:product/versions"/>
                         <Route path="/products" component={ProductView}/>
-
+                        
                         <Redirect path="/" exact to="/products"/>
 
                         {/* Missing view */}

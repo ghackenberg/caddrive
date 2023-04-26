@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Redirect } from 'react-router'
+import { useHistory } from 'react-router'
 
 import { JWK, JWTVerifyResult, KeyLike, importJWK, jwtVerify } from 'jose'
 
@@ -9,10 +9,14 @@ import { UserContext } from '../../contexts/User'
 import { KeyManager } from '../../managers/key'
 import { UserManager } from '../../managers/user'
 
+import AuthIcon from '/src/images/auth.png'
+
 export const AuthView = () => {
+    const { push } = useHistory()
+
     // CONTEXTS
 
-    const { contextUser, setContextUser } = React.useContext(UserContext)
+    const { setContextUser } = React.useContext(UserContext)
 
     // STATES
 
@@ -33,22 +37,39 @@ export const AuthView = () => {
     // EFFECTS
 
     React.useEffect(() => {
-        !contextUser && KeyManager.getPublicJWK().then(setPublicJWK)
+        KeyManager.getPublicJWK().then(setPublicJWK)
     }) 
     React.useEffect(() => {
-        !contextUser && publicJWK && importJWK(publicJWK, "PS256").then(setPublicKey)
+        publicJWK && importJWK(publicJWK, "PS256").then(setPublicKey)
     }, [publicJWK])
     React.useEffect(() => {
-        !contextUser && jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult)
+        jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult)
     }, [jwt, publicKey])
     React.useEffect(() => {
-        !contextUser && jwtVerifyResult && setPayload(jwtVerifyResult.payload as { userId: string })
+        jwtVerifyResult && setPayload(jwtVerifyResult.payload as { userId: string })
     }, [jwtVerifyResult])
     React.useEffect(() => {
-        !contextUser && payload && setUserId(payload.userId)
+        payload && setUserId(payload.userId)
     }, [payload])
     React.useEffect(() => {
-        !contextUser && userId && UserManager.getUser(userId).then(setContextUser)
+        if (userId) {
+            setLoad(true)
+            setError(undefined)
+            UserManager.getUser(userId).then(user => {
+                setContextUser(user)
+                setLoad(false)
+                if (!user.consent) {
+                    push('/auth/consent')
+                } else if (!user.name) {
+                    push('/auth/name')
+                } else {
+                    push('/')
+                }
+            }).catch(() => {
+                setError('Action failed.')
+                setLoad(false)
+            })
+        } 
     }, [userId])
 
     // EVENTS
@@ -60,9 +81,9 @@ export const AuthView = () => {
             setError(undefined)
             const token = await TokenClient.createToken({ email })
             setId(token.id)
+            setLoad(false)
         } catch (e) {
             setError('Action failed.')
-        } finally {
             setLoad(false)
         }
     }
@@ -76,6 +97,7 @@ export const AuthView = () => {
             localStorage.setItem('jwt', token.jwt)
             auth.headers.Authorization = `Bearer ${token.jwt}`
             setJWT(token.jwt)
+            setLoad(false)
         } catch (e) {
             setError('Action failed.')
             setLoad(false)
@@ -85,44 +107,43 @@ export const AuthView = () => {
     return (
         <main className="view reduced auth">
             <main>
-                    {id === undefined && (
+                {id === undefined && (
+                    <div>
+                        <img src={AuthIcon}/>
+                        <h5>Authentication process</h5>
+                        <h1>Step 1: <span>Email address</span></h1>
+                        <p>
+                            Please enter your <strong>email address</strong> and press <strong>next</strong>.
+                            Then we will send you a <strong>verification code</strong> to sign up/in.
+                        </p>
                         <div>
-                            <h5>Authentication process</h5>
-                            <h1>Step 1: Email address</h1>
-                            <p>
-                                Please enter your <strong>email address</strong> and press <strong>next</strong>.
-                                Then we will send you a <strong>verification code</strong> to sign up/in.
-                            </p>
-                            <div>
-                                <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleEmailSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
-                                <button className='button fill blue' onClick={handleEmailSubmit} >Next</button>
-                            </div>
-                            {!load && !error && <p style={{color: 'lightgray'}}>Waiting...</p>}
-                            {load && <p style={{color: 'gray'}}>Loading...</p>}
-                            {error && <p style={{color: 'red'}}>{error}</p>}
+                            <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleEmailSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
+                            <button className='button fill blue' onClick={handleEmailSubmit} >
+                                {load ? 'Loading ...' : 'Next'}
+                            </button>
                         </div>
-                    )}
-                    {id !== undefined && jwt === undefined && (
+                        {error && <p style={{color: 'red'}}>{error}</p>}
+                    </div>
+                )}
+                {id !== undefined && jwt === undefined && (
+                    <div>
+                        <img src={AuthIcon}/>
+                        <h5>Authentication process</h5>
+                        <h1>Step 2: <span>Verification code</span></h1>
+                        <p>
+                            Please check your <strong>email inbox</strong>.
+                            You should find your <strong>verification code</strong> there.
+                            Then enter your code below and press <strong>next</strong>.
+                        </p>
                         <div>
-                            <h5>Authentication process</h5>
-                            <h1>Step 2: Verification code</h1>
-                            <p>
-                                Please check your <strong>email inbox</strong>.
-                                You should find your <strong>verification code</strong> there.
-                                Then enter your code below and press <strong>next</strong>.
-                            </p>
-                            <div>
-                                <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleCodeSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
-                                <button className='button fill blue' onClick={handleCodeSubmit}>Next</button>
-                            </div>
-                            {!load && !error && <p style={{color: 'lightgray'}}>Waiting...</p>}
-                            {load && <p style={{color: 'gray'}}>Loading...</p>}
-                            {error && <p style={{color: 'red'}}>{error}</p>}
+                            <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleCodeSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
+                            <button className='button fill blue' onClick={handleCodeSubmit}>
+                                {load ? 'Loading ...' : 'Next'}
+                            </button>
                         </div>
-                    )}
-                    {contextUser && (
-                        <Redirect to='/'/>
-                    )}
+                        {error && <p style={{color: 'red'}}>{error}</p>}
+                    </div>
+                )}
             </main>
         </main>
     )

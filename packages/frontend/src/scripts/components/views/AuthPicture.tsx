@@ -1,8 +1,10 @@
 import * as React from 'react'
-import { useHistory } from 'react-router'
+import { Redirect, useHistory } from 'react-router'
 
 import { UserContext } from '../../contexts/User'
 import { UserManager } from '../../managers/user'
+
+import AuthIcon from '/src/images/auth.png'
 
 export const AuthPictureView = () => {
     const { push } = useHistory()
@@ -39,36 +41,41 @@ export const AuthPictureView = () => {
         }
     }
 
-    function handleSelect(event: React.UIEvent) {
+    function handleUpload(event: React.UIEvent) {
         event.preventDefault()
         fileInput.current.click()
     }
 
-    function handleCancel(event: React.UIEvent) {
+    function handleSkip(event: React.UIEvent) {
         event.preventDefault()
         push('/auth/welcome')
     }
 
     return (
-        <main className='view reduced auth'>
-            <main>
-                <div>
-                    <h5>Authentication process</h5>
-                    <h1>Step 5: Profile picture</h1>
-                    <p>
-                        Do you also want to upload a profile picture?
-                        Profile pictures make collaboration more personal and more fun!
-                    </p>
+        contextUser ? (
+            <main className='view reduced auth'>
+                <main>
                     <div>
-                        <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
-                        <button className='button fill lightgray' onClick={handleCancel}>Skip</button>
-                        <button className='button fill blue' onClick={handleSelect}>Select</button>
+                        <img src={AuthIcon}/>
+                        <h5>Authentication process</h5>
+                        <h1>Step 5: <span>Profile picture</span></h1>
+                        <p>
+                            Do you also want to upload a profile picture?
+                            Profile pictures make collaboration more personal and more fun!
+                        </p>
+                        <div>
+                            <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
+                            <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
+                            <button className='button fill blue' onClick={handleUpload}>
+                                {load ? 'Loading ...' : 'Upload'}
+                            </button>
+                        </div>
+                        {error && <p style={{color: 'red'}}>{error}</p>}
                     </div>
-                    {!load && !error && <p style={{color: 'lightgray'}}>Waiting...</p>}
-                    {load && <p style={{color: 'gray'}}>Loading...</p>}
-                    {error && <p style={{color: 'red'}}>{error}</p>}
-                </div>
+                </main>
             </main>
-        </main>
+        ) : (
+            <Redirect to="/auth"/>
+        )
     )
 }
