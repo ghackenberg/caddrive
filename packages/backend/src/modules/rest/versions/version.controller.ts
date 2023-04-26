@@ -3,24 +3,24 @@ import { REQUEST } from '@nestjs/core'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiConsumes, getSchemaPath, ApiExtraModels, ApiBearerAuth } from '@nestjs/swagger'
 
-import { Request } from 'express'
 import 'multer'
 
-import { User, Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
+import { Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
 
 import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../../functions/permission'
-import { AuthGuard } from '../users/auth.guard'
+import { AuthorizedRequest } from '../../../request'
+import { TokenOptionalGuard } from '../tokens/token.guard'
 import { VersionService } from './version.service'
 
 @Controller('rest/versions')
-@UseGuards(AuthGuard)
+@UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(VersionAddData, VersionUpdateData)
 export class VersionController implements VersionREST<string, string, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         private versionService: VersionService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } }
+        private readonly request: AuthorizedRequest
     ) {}
 
     @Get()

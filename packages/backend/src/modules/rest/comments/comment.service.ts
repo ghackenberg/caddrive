@@ -4,18 +4,19 @@ import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
-import { Request } from 'express'
 import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { CommentREST, Comment, CommentAddData, CommentUpdateData, User } from 'productboard-common'
+import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import { CommentEntity, Database } from 'productboard-database'
+
+import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
 export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } },
+        private readonly request: AuthorizedRequest,
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {

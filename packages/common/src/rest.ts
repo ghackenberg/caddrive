@@ -1,13 +1,25 @@
+import { JWK } from 'jose'
+
 import { Comment } from './data/comment'
 import { Issue } from './data/issue'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
 import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
 import { Product, ProductAddData, ProductUpdateData } from './data/product'
+import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse } from './data/token'
 import { User } from './data/user'
 import { Version } from './data/version'
 
+export interface KeyREST {
+    getPublicJWK(): Promise<JWK>
+}
+
+export interface TokenREST {
+    createToken(request: CreateTokenRequest): Promise<CreateTokenResponse>
+    activateToken(id: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse>
+    refreshToken(): Promise<RefreshTokenResponse>
+}
+
 export interface UserREST<D, F> {
-    checkUser(): Promise<User>
     findUsers(query?: string, productId?: string): Promise<User[]>
     addUser(data: D, file?: F): Promise<User>
     getUser(id: string): Promise<User>

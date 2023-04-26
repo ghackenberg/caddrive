@@ -7,7 +7,6 @@ import { IssueService } from './issue.service'
 @Module({
     imports: [ClientsModule.register([{ name: 'MQTT', transport: Transport.MQTT }])],
     controllers: [IssueController],
-    providers: [IssueService],
-    exports: [IssueService]
+    providers: [IssueService]
 })
 export class IssueModule {}

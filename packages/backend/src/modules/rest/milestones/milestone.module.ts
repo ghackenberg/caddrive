@@ -7,7 +7,6 @@ import { MilestoneService } from './milestone.service'
 @Module({
     imports: [ClientsModule.register([{ name: 'MQTT', transport: Transport.MQTT }])],
     controllers: [MilestoneController],
-    providers: [MilestoneService],
-    exports: [MilestoneService]
+    providers: [MilestoneService]
 })
 export class MilestoneModule {}

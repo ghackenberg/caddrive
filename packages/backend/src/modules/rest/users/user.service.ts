@@ -21,10 +21,6 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         }
     }
 
-    async checkUser(): Promise<User> {
-        return null
-    }
-
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
         let where: FindOptionsWhere<UserEntity>
         if (query)

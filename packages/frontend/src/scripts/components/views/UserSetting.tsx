@@ -3,10 +3,9 @@ import { useState, useEffect, FormEvent, Fragment, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
-import { useAuth0 } from '@auth0/auth0-react'
-
 import { User } from 'productboard-common'
 
+import { auth } from '../../clients/auth'
 import { UserContext } from '../../contexts/User'
 import { UserManager } from '../../managers/user'
 import { ButtonInput } from '../inputs/ButtonInput'
@@ -18,9 +17,7 @@ import { UserHeader } from '../snippets/UserHeader'
 
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     
-    const { goBack } = useHistory()
-
-    const { logout } = useAuth0()
+    const { goBack, push } = useHistory()
     
     // CONTEXTS
 
@@ -66,7 +63,10 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
 
     function onClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
-        logout()
+        localStorage.removeItem('jwt')
+        auth.headers.Authorization = ''
+        setContextUser(null)
+        push('/')
     }
 
     // RETURN
@@ -88,10 +88,10 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                                         <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                         <FileInput label='Picture' placeholder='Select JPEG file' accept='.jpg' change={setFile} required={userId === 'new'}/>
                                         {contextUser ? (
-                                            userId == contextUser.id || contextUser.permissions.includes('create:users') ? (
+                                            userId == contextUser.id ? (
                                                 <SubmitInput value='Save'/>
                                             ) : (
-                                                <SubmitInput value='Save (requires role)' disabled={true}/>
+                                                <SubmitInput value='Save (requires permission)' disabled={true}/>
                                             )
                                         ) : (
                                             <SubmitInput value="Save (requires login)" disabled={true}/>

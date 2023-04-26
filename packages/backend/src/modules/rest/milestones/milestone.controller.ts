@@ -2,22 +2,21 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuar
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 
-import { Request } from 'express'
-
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
+import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 
 import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../../functions/permission'
-import { AuthGuard } from '../users/auth.guard'
+import { AuthorizedRequest } from '../../../request'
+import { TokenOptionalGuard } from '../tokens/token.guard'
 import { MilestoneService } from './milestone.service'
 
 @Controller('rest/milestones')
-@UseGuards(AuthGuard)
+@UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 export class MilestoneController implements MilestoneREST {
     constructor(
         private readonly milestoneService: MilestoneService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } }
+        private readonly request: AuthorizedRequest
     ) {}
 
     @Get()

@@ -4,10 +4,7 @@ import { PartService } from "./part.service"
 
 @Controller('rest/parts')
 export class PartController {
-
-    constructor(private readonly service: PartService) {
-        // Empty
-    }
+    constructor(private readonly service: PartService) {}
 
     @Get(':name')
     async getPart(

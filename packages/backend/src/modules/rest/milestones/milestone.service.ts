@@ -2,18 +2,19 @@ import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
-import { Request } from 'express'
 import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData, User } from 'productboard-common'
+import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 import { Database, MilestoneEntity } from 'productboard-database'
+
+import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
 export class MilestoneService implements MilestoneREST {
     constructor(
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } },
+        private readonly request: AuthorizedRequest,
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {

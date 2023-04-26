@@ -1,17 +1,16 @@
 import * as React from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 
-import { useAuth0 } from '@auth0/auth0-react'
-import * as jose from 'jose'
+import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike} from 'jose'
 
 import { User, Version } from 'productboard-common'
 
-import { auth } from '../clients/auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
-import { AUTH0_AUDIENCE } from '../env'
+import { KeyManager } from '../managers/key'
 import { UserManager } from '../managers/user'
 import { PageHeader } from './snippets/PageHeader'
+import { AuthView } from './views/Auth'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
 import { ProductView } from './views/Product'
@@ -33,37 +32,37 @@ import '/src/styles/root.css'
 
 export const Root = () => {
 
-    const { isLoading, isAuthenticated, user, getAccessTokenSilently } = useAuth0()
-
     // STATES
 
-    const [accessToken, setAccessToken] = React.useState<string>()
-
-    const [contextUser, setContextUser] = React.useState<User & { permissions: string[] }>()
+    const [publicJWK, setPublicJWK] = React.useState<JWK>()
+    const [publicKey, setPublicKey] = React.useState<KeyLike | Uint8Array>()
+    const [jwt] = React.useState<string>(localStorage.getItem('jwt'))
+    const [jwtVerifyResult, setJWTVerifyResult] = React.useState<JWTVerifyResult>()
+    const [payload, setPayload] = React.useState<{ userId: string }>()
+    const [userId, setUserId] = React.useState<string>()
+    const [contextUser, setContextUser] = React.useState<User>(jwt ? undefined : null)
     const [contextVersion, setContextVersion] = React.useState<Version>()
 
     // EFFECTS
 
     React.useEffect(() => {
-        if (user) {
-            getAccessTokenSilently({ audience: AUTH0_AUDIENCE }).then(setAccessToken)
-        } else {
-            setAccessToken(undefined)
-        }
-    }, [user])
-    
+        KeyManager.getPublicJWK().then(setPublicJWK).catch(() => setContextUser(null))
+    }) 
     React.useEffect(() => {
-        if (accessToken) {
-            auth.headers.Authorization = `Bearer ${accessToken}`
-            UserManager.getUser(user.sub.split('|')[1]).then(userData => {
-                const { permissions } = jose.decodeJwt(accessToken) as { permissions: string[] }
-                setContextUser({ ...userData, permissions })
-            })
-        } else {
-            auth.headers.Authorization = ''
-            setContextUser(undefined)
-        }
-    }, [accessToken])
+        publicJWK && importJWK(publicJWK, "PS256").then(setPublicKey).catch(() => setContextUser(null))
+    }, [publicJWK])
+    React.useEffect(() => {
+        jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult).catch(() => setContextUser(null))
+    }, [jwt, publicKey])
+    React.useEffect(() => {
+        jwtVerifyResult && setPayload(jwtVerifyResult.payload as { userId: string })
+    }, [jwtVerifyResult])
+    React.useEffect(() => {
+        payload && setUserId(payload.userId)
+    }, [payload])
+    React.useEffect(() => {
+        userId && UserManager.getUser(userId).then(setContextUser).catch(() => setContextUser(null))
+    }, [userId])
 
     // RETURN
 
@@ -71,10 +70,14 @@ export const Root = () => {
         <UserContext.Provider value={{ contextUser, setContextUser }}>
             <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
                 <PageHeader/>
-                {isLoading || (isAuthenticated && !contextUser) ? (
+                {contextUser === undefined ? (
                     <LoadingView/>
                 ) : (
                     <Switch>
+                        {/* Auth views */}
+
+                        <Route path="/auth" component={AuthView}/>
+
                         {/* User views */}
 
                         <Route path="/users/:user/settings" component={UserSettingView}/>

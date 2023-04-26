@@ -6,6 +6,7 @@ import { IssueEntity } from './entities/issue'
 import { MemberEntity } from './entities/member'
 import { MilestoneEntity } from './entities/milestone'
 import { ProductEntity } from './entities/product'
+import { TokenEntity } from './entities/token'
 import { UserEntity } from './entities/user'
 import { VersionEntity } from './entities/version'
 
@@ -14,6 +15,7 @@ export { IssueEntity } from './entities/issue'
 export { MemberEntity } from './entities/member'
 export { MilestoneEntity } from './entities/milestone'
 export { ProductEntity } from './entities/product'
+export { TokenEntity } from './entities/token'
 export { UserEntity } from './entities/user'
 export { VersionEntity } from './entities/version'
 
@@ -40,7 +42,7 @@ export class Database {
                     password,
                     synchronize: true,
                     logging: false,
-                    entities: [UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    entities: [TokenEntity, UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
                     subscribers: [],
                     migrations: []
                 })
@@ -52,7 +54,7 @@ export class Database {
                     database,
                     synchronize: true,
                     logging: false,
-                    entities: [UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    entities: [TokenEntity, UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
                     subscribers: [],
                     migrations: []
                 })
@@ -71,6 +73,7 @@ export class Database {
 
     public readonly dataSource: DataSource
 
+    public readonly tokenRepository: Repository<TokenEntity>
     public readonly userRepository: Repository<UserEntity>
     public readonly productRepository: Repository<ProductEntity>
     public readonly memberRepository: Repository<MemberEntity>
@@ -82,6 +85,7 @@ export class Database {
     private constructor(options: DataSourceOptions) {
         this.dataSource = new DataSource(options)
 
+        this.tokenRepository = this.dataSource.getRepository(TokenEntity)
         this.userRepository = this.dataSource.getRepository(UserEntity)
         this.productRepository = this.dataSource.getRepository(ProductEntity)
         this.memberRepository = this.dataSource.getRepository(MemberEntity)
@@ -100,6 +104,9 @@ async function getEntityOrFail<T, E>(repository: Repository<T>, where: FindOptio
     }
 }
 
+export async function getTokenOrFail<E>(where: FindOptionsWhere<TokenEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().tokenRepository, where, ErrorType)
+}
 export async function getUserOrFail<E>(where: FindOptionsWhere<UserEntity>, ErrorType: { new(): E }) {
     return getEntityOrFail(Database.get().userRepository, where, ErrorType)
 }

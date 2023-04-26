@@ -3,24 +3,24 @@ import { REQUEST } from '@nestjs/core'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
-import { Request } from 'express'
 import 'multer'
 
-import { Comment, CommentAddData, CommentUpdateData, CommentREST, User } from 'productboard-common'
+import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 
 import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../../functions/permission'
-import { AuthGuard } from '../users/auth.guard'
+import { AuthorizedRequest } from '../../../request'
+import { TokenOptionalGuard } from '../tokens/token.guard'
 import { CommentService } from './comment.service'
 
 @Controller('rest/comments')
-@UseGuards(AuthGuard)
+@UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(CommentAddData, CommentUpdateData)
 export class CommentController implements CommentREST<string, string, Express.Multer.File[]> {
     constructor(
         private readonly commentService: CommentService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } }
+        private readonly request: AuthorizedRequest
     ) {}
 
     @Get()

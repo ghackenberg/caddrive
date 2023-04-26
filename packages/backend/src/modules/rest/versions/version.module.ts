@@ -7,7 +7,6 @@ import { VersionService } from './version.service'
 @Module({
     imports: [ClientsModule.register([{ name: 'MQTT', transport: Transport.MQTT }])],
     controllers: [VersionController],
-    providers: [VersionService],
-    exports: [VersionService]
+    providers: [VersionService]
 })
 export class VersionModule {}

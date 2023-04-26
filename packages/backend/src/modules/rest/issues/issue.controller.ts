@@ -3,24 +3,24 @@ import { REQUEST } from '@nestjs/core'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
-import { Request } from 'express'
 import "multer"
 
-import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 
 import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
-import { AuthGuard } from '../users/auth.guard'
+import { AuthorizedRequest } from '../../../request'
+import { TokenOptionalGuard } from '../tokens/token.guard'
 import { IssueService } from './issue.service'
 
 @Controller('rest/issues')
-@UseGuards(AuthGuard)
+@UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(IssueAddData, IssueUpdateData)
 export class IssueController implements IssueREST<string, string, Express.Multer.File[]> {
     constructor(
         private readonly issueService: IssueService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } }
+        private readonly request: AuthorizedRequest
     ) {}
 
     @Get()

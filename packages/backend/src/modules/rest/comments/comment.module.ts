@@ -7,7 +7,6 @@ import { CommentService } from './comment.service'
 @Module({
     imports: [ClientsModule.register([{ name: 'MQTT', transport: Transport.MQTT }])],
     controllers: [CommentController],
-    providers: [CommentService],
-    exports: [CommentService]
+    providers: [CommentService]
 })
 export class CommentModule {}

@@ -4,22 +4,22 @@ import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
-import { Request } from 'express'
 import Jimp from 'jimp'
 import 'multer'
 import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { Version, VersionAddData, VersionUpdateData, VersionREST, User } from 'productboard-common'
+import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { Database, VersionEntity } from 'productboard-database'
 
 import { renderGlb, renderLDraw } from '../../../functions/render'
+import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] }},
+        private readonly request: AuthorizedRequest,
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {

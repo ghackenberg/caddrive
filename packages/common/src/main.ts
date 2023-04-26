@@ -3,6 +3,7 @@ export * from './data/issue'
 export * from './data/member'
 export * from './data/product'
 export * from './data/user'
+export * from './data/token'
 export * from './data/version'
 export * from './data/milestone'
 

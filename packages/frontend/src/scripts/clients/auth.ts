@@ -1,5 +1,5 @@
 export const auth = {
     headers: {
-        Authorization: ``
+        Authorization: localStorage.getItem('jwt') ? `Bearer ${localStorage.getItem('jwt')}` : ''
     }
 }

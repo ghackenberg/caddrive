@@ -3,31 +3,25 @@ import { REQUEST } from '@nestjs/core'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
-import { Request } from 'express'
 import 'multer'
 
 import { User, UserAddData, UserREST, UserUpdateData } from 'productboard-common'
 
 import { canFindUserOrFail, canCreateUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
-import { AuthGuard } from './auth.guard'
+import { AuthorizedRequest } from '../../../request'
+import { TokenOptionalGuard } from '../tokens/token.guard'
 import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
-@UseGuards(AuthGuard)
+@UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(UserAddData, UserUpdateData)
 export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } }
+        private readonly request: AuthorizedRequest
     ) {}
-
-    @Get('check')
-    @ApiResponse({ type: User })
-    async checkUser(): Promise<User> {
-        return this.request.user
-    }
 
     @Get()
     @ApiQuery({ name: 'query', type: 'string', required: false })

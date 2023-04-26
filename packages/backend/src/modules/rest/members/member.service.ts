@@ -12,9 +12,7 @@ export class MemberService implements MemberREST {
     constructor(
         @Inject('MQTT')
         private readonly client: ClientProxy
-    ) {
-
-    }
+    ) {}
 
     async findMembers(productId: string, userId?: string): Promise<Member[]> {
         let where: FindOptionsWhere<MemberEntity>

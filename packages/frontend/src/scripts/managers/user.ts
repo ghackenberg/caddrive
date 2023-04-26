@@ -54,15 +54,6 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserAddD
 
     // REST
 
-    async checkUser(): Promise<User> {
-        // Call backend
-        let user = await UserClient.checkUser()
-        // Update user index
-        user = this.store(user)
-        // Return user
-        return user
-    }
-
     async findUsers(query?: string, product?: string): Promise<User[]> {
         if (query || product) {
             return await UserClient.findUsers(query, product)

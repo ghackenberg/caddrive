@@ -2,18 +2,19 @@ import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
-import { Request } from 'express'
 import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { Product, ProductAddData, ProductUpdateData, ProductREST, User } from 'productboard-common'
+import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 import { Database, ProductEntity } from 'productboard-database'
+
+import { AuthorizedRequest } from '../../../request'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
     public constructor(
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] }},
+        private readonly request: AuthorizedRequest,
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {}

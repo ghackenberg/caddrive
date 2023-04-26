@@ -4,18 +4,19 @@ import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
-import { Request } from 'express'
 import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
 
-import { Issue, IssueAddData, IssueUpdateData, IssueREST, User } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { Database, IssueEntity } from 'productboard-database'
+
+import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
 export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
-        private readonly request: Request & { user: User & { permissions: string[] } },
+        private readonly request: AuthorizedRequest,
         @Inject('MQTT')
         private readonly client: ClientProxy
     ) {
