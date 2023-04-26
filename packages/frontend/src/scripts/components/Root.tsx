@@ -88,7 +88,7 @@ export const Root = () => {
                         <Redirect to="/name"/>
                     </Switch>
                 )}
-                {(contextUser === null || (contextUser && contextUser.consent != null && contextUser.name)) && (
+                {(contextUser === null || (contextUser && contextUser.consent != null && contextUser.name != null)) && (
                     <Switch>
                         {/* Auth views */}
 

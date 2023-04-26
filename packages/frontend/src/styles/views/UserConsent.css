@@ -1,0 +1,42 @@
+main.view.user-consent > main > div {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+main.view.user-consent > main > div > * {
+    max-width: 30em;
+
+    text-align: center;
+}
+
+main.view.user-consent > main > div > h5 {
+    color: gray;
+}
+
+main.view.user-consent > main > div > div {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+main.view.user-consent > main > div > div > input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+main.view.user-consent > main > div > div > input + button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+main.view.user-consent > main > div > div > button {
+    margin-right: 0.5em;
+}
+
+main.view.user-consent > main > div > div > button:last-child {
+    margin-right: 0;
+}

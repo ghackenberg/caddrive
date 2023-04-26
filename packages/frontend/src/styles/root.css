@@ -41,3 +41,7 @@
 @import url(./views/ProductMilestone.css);
 @import url(./views/ProductMilestoneIssue.css);
 @import url(./views/User.css);
+@import url(./views/UserAuth.css);
+@import url(./views/UserConsent.css);
+@import url(./views/UserName.css);
+@import url(./views/UserWelcome.css);

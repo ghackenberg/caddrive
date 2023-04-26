@@ -50,12 +50,13 @@ export const UserAuthView = () => {
 
     // EVENTS
 
-    async function handleEmailSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async function handleEmailSubmit(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         const token = await TokenClient.createToken({ email })
         setId(token.id)
     }
-    async function handleCodeSubmit(event: React.FormEvent<HTMLFormElement>) {
+
+    async function handleCodeSubmit(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         const token = await TokenClient.activateToken(id, { code })
         localStorage.setItem('jwt', token.jwt)
@@ -66,26 +67,38 @@ export const UserAuthView = () => {
     return (
         <main className="view reduced user-auth">
             <main>
-                <div>
-                    <h1>Sign up/in</h1>
                     {id === undefined && (
-                        <form onSubmit={handleEmailSubmit}>
-                            <label>Email: </label>
-                            <input type="email" value={email} onChange={event => setEmail(event.currentTarget.value)}/>
-                            <input type="submit"/>
-                        </form>
+                        <div>
+                            <h5>Authentication process</h5>
+                            <h1>Step 1: Email address</h1>
+                            <p>
+                                Please enter your <strong>email address</strong> and press <strong>next</strong>.
+                                Then we will send you a <strong>verification code</strong> to sign up/in.
+                            </p>
+                            <div>
+                                <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onChange={event => setEmail(event.currentTarget.value)}/>
+                                <button className='button fill blue' onClick={handleEmailSubmit} >Next</button>
+                            </div>
+                        </div>
                     )}
                     {id !== undefined && jwt === undefined && (
-                        <form onSubmit={handleCodeSubmit}>
-                            <label>Code: </label>
-                            <input type="text" minLength={6} maxLength={6} value={code} onChange={event => setCode(event.currentTarget.value)}/>
-                            <input type="submit"/>
-                        </form>
+                        <div>
+                            <h5>Authentication process</h5>
+                            <h1>Step 2: Verification code</h1>
+                            <p>
+                                Please check your <strong>email inbox</strong>.
+                                You should find your <strong>verification code</strong> there.
+                                Then enter your code below and press <strong>next</strong>.
+                            </p>
+                            <div>
+                                <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onChange={event => setCode(event.currentTarget.value)}/>
+                                <button className='button fill blue' onClick={handleCodeSubmit}>Next</button>
+                            </div>
+                        </div>
                     )}
                     {contextUser && (
                         <Redirect to='/'/>
                     )}
-                </div>
             </main>
         </main>
     )

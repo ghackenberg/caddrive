@@ -10,32 +10,30 @@ export const UserNameView = () => {
 
     // STATES
 
-    const [name, setName] = React.useState<string>()
+    const [name, setName] = React.useState<string>('')
 
     // FUNCTIONS
 
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         const user = await UserManager.updateUser(contextUser.id, { consent: contextUser.consent, name })
         setContextUser(user)
-    }
-
-    async function handleReset(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        setContextUser(null)
     }
 
     return (
         <main className='view reduced user-name'>
             <main>
                 <div>
-                    <h1>Name</h1>
-                    <form onSubmit={handleSubmit} onReset={handleReset}>
-                        <label>Name: </label>
-                        <input type="text" value={name} onChange={event => setName(event.currentTarget.value)}/>
-                        <input type="submit"/>
-                        <input type="reset"/>
-                    </form>
+                    <h5>Authentication process</h5>
+                    <h1>Step 4: Profile name</h1>
+                    <p>
+                        How do you want to be called on our platform?
+                        Note that your name will be visible to other users.
+                    </p>
+                    <div>
+                        <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onChange={event => setName(event.currentTarget.value)}/>
+                        <button className='button fill blue' onClick={handleSubmit}>Next</button>
+                    </div>
                 </div>
             </main>
         </main>

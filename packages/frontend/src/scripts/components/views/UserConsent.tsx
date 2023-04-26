@@ -24,11 +24,16 @@ export const UserConsentView = () => {
         <main className='view reduced user-consent'>
             <main>
                 <div>
-                    <h1>Consent</h1>
-                    <form>
-                        <button onClick={handleConsent}>Consent</button>
-                        <button onClick={handleCancel}>Cancel</button>
-                    </form>
+                    <h5>Authentication process</h5>
+                    <h1>Step 3: User agreement</h1>
+                    <p>
+                        Please read carefully our <strong>terms of use</strong> and <strong>privacy policy</strong>.
+                        Then <strong>agree</strong> or <strong>cancel</strong> the authentication process.
+                    </p>
+                    <div>
+                        <button className='button fill lightgray' onClick={handleCancel}>Cancel</button>
+                        <button className='button fill blue' onClick={handleConsent}>Agree</button>
+                    </div>
                 </div>
             </main>
         </main>
