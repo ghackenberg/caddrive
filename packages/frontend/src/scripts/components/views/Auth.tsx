@@ -107,43 +107,45 @@ export const AuthView = () => {
     return (
         <main className="view reduced auth">
             <main>
-                {id === undefined && (
-                    <div>
-                        <img src={AuthIcon}/>
-                        <h5>Authentication process</h5>
-                        <h1>Step 1: <span>Email address</span></h1>
-                        <p>
-                            Please enter your <strong>email address</strong> and press <strong>next</strong>.
-                            Then we will send you a <strong>verification code</strong> to sign up/in.
-                        </p>
+                <div>
+                    {id === undefined && (
                         <div>
-                            <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleEmailSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
-                            <button className='button fill blue' onClick={handleEmailSubmit} >
-                                {load ? 'Loading ...' : 'Next'}
-                            </button>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Step 1: <span>Email address</span></h1>
+                            <p>
+                                Please enter your <strong>email address</strong> and press <strong>next</strong>.
+                                Then we will send you a <strong>verification code</strong> to sign up/in.
+                            </p>
+                            <div>
+                                <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleEmailSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
+                                <button className='button fill blue' onClick={handleEmailSubmit} >
+                                    {load ? 'Loading ...' : 'Next'}
+                                </button>
+                            </div>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
-                        {error && <p style={{color: 'red'}}>{error}</p>}
-                    </div>
-                )}
-                {id !== undefined && jwt === undefined && (
-                    <div>
-                        <img src={AuthIcon}/>
-                        <h5>Authentication process</h5>
-                        <h1>Step 2: <span>Verification code</span></h1>
-                        <p>
-                            Please check your <strong>email inbox</strong>.
-                            You should find your <strong>verification code</strong> there.
-                            Then enter your code below and press <strong>next</strong>.
-                        </p>
+                    )}
+                    {id !== undefined && jwt === undefined && (
                         <div>
-                            <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleCodeSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
-                            <button className='button fill blue' onClick={handleCodeSubmit}>
-                                {load ? 'Loading ...' : 'Next'}
-                            </button>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Step 2: <span>Verification code</span></h1>
+                            <p>
+                                Please check your <strong>email inbox</strong>.
+                                You should find your <strong>verification code</strong> there.
+                                Then enter your code below and press <strong>next</strong>.
+                            </p>
+                            <div>
+                                <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleCodeSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
+                                <button className='button fill blue' onClick={handleCodeSubmit}>
+                                    {load ? 'Loading ...' : 'Next'}
+                                </button>
+                            </div>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
-                        {error && <p style={{color: 'red'}}>{error}</p>}
-                    </div>
-                )}
+                    )}
+                </div>
             </main>
         </main>
     )

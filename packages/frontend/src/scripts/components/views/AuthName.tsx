@@ -42,20 +42,22 @@ export const AuthNameView = () => {
             <main className='view reduced auth'>
                 <main>
                     <div>
-                        <img src={AuthIcon}/>
-                        <h5>Authentication process</h5>
-                        <h1>Step 4: <span>Profile name</span></h1>
-                        <p>
-                            How do you want to be called on our platform?
-                            Note that your profile name will be visible to other users.
-                        </p>
                         <div>
-                            <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setName(event.currentTarget.value)}/>
-                            <button className='button fill blue' onClick={handleSubmit}>
-                                {load ? 'Loading ...' : 'Next'}
-                            </button>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Step 4: <span>Profile name</span></h1>
+                            <p>
+                                How do you want to be called on our platform?
+                                Note that your profile name will be visible to other users.
+                            </p>
+                            <div>
+                                <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setName(event.currentTarget.value)}/>
+                                <button className='button fill blue' onClick={handleSubmit}>
+                                    {load ? 'Loading ...' : 'Next'}
+                                </button>
+                            </div>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
-                        {error && <p style={{color: 'red'}}>{error}</p>}
                     </div>
                 </main>
             </main>

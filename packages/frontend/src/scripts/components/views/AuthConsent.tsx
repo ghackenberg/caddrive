@@ -45,22 +45,24 @@ export const AuthConsentView = () => {
             <main className='view reduced auth'>
                 <main>
                     <div>
-                        <img src={AuthIcon}/>
-                        <h5>Authentication process</h5>
-                        <h1>Step 3: <span>User agreement</span></h1>
-                        <p>
-                            Please read carefully our <strong>terms of use</strong> and <strong>privacy policy</strong>.
-                            Then <strong>agree</strong> or <strong>cancel</strong> the authentication process.
-                        </p>
                         <div>
-                            <button className='button fill lightgray' onClick={handleCancel}>
-                                Cancel
-                            </button>
-                            <button className='button fill blue' onClick={handleAgree}>
-                                {load ? 'Loading ...' : 'Agree'}
-                            </button>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Step 3: <span>User agreement</span></h1>
+                            <p>
+                                Please read carefully our <strong>terms of use</strong> and <strong>privacy policy</strong>.
+                                Then <strong>agree</strong> or <strong>cancel</strong> the authentication process.
+                            </p>
+                            <div>
+                                <button className='button fill lightgray' onClick={handleCancel}>
+                                    Cancel
+                                </button>
+                                <button className='button fill blue' onClick={handleAgree}>
+                                    {load ? 'Loading ...' : 'Agree'}
+                                </button>
+                            </div>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
-                        {error && <p style={{color: 'red'}}>{error}</p>}
                     </div>
                 </main>
             </main>
