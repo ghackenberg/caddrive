@@ -53,7 +53,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     async function onSubmit(event: FormEvent<HTMLFormElement>){
         event.preventDefault()
         if (name && email) {
-            const newUser = await UserManager.updateUser(user.id, { name, email },file)
+            const newUser = await UserManager.updateUser(user.id, { consent: user.consent, name },file)
             if (contextUser.email == newUser.email) {
                 setContextUser({ ...contextUser, ...newUser })
             }
@@ -72,7 +72,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     // RETURN
         
     return (
-        <main className="view extended user">
+        <main className="view extended user-setting">
             {(userId == 'new' || user) && (
                 <Fragment>
                     { user && user.deleted ? (
@@ -84,8 +84,8 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={onSubmit}>
+                                        <EmailInput label='Email' placeholder='Type email' disabled={true} value={email} change={setEmail}/>
                                         <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                        <EmailInput label='Email' placeholder='Type email' value={email} change={setEmail}/>
                                         <FileInput label='Picture' placeholder='Select JPEG file' accept='.jpg' change={setFile} required={userId === 'new'}/>
                                         {contextUser ? (
                                             userId == contextUser.id ? (

@@ -10,7 +10,6 @@ import { VersionContext } from '../contexts/Version'
 import { KeyManager } from '../managers/key'
 import { UserManager } from '../managers/user'
 import { PageHeader } from './snippets/PageHeader'
-import { AuthView } from './views/Auth'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
 import { ProductView } from './views/Product'
@@ -26,7 +25,11 @@ import { ProductSettingView } from './views/ProductSetting'
 import { ProductVersionView } from './views/ProductVersion'
 import { ProductVersionSettingView } from './views/ProductVersionSetting'
 import { UserView } from './views/User'
+import { UserAuthView } from './views/UserAuth'
+import { UserConsentView } from './views/UserConsent'
+import { UserNameView } from './views/UserName'
 import { UserSettingView } from './views/UserSetting'
+import { UserWelcomeView } from './views/UserWelcome'
 
 import '/src/styles/root.css'
 
@@ -70,13 +73,32 @@ export const Root = () => {
         <UserContext.Provider value={{ contextUser, setContextUser }}>
             <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
                 <PageHeader/>
-                {contextUser === undefined ? (
+                {contextUser === undefined && (
                     <LoadingView/>
-                ) : (
+                )}
+                {contextUser && contextUser.consent == null && (
+                    <Switch>
+                        <Route path="/consent" component={UserConsentView}/>
+                        <Redirect to="/consent"/>
+                    </Switch>
+                )}
+                {contextUser && contextUser.consent && contextUser.name == null && (
+                    <Switch>
+                        <Route path="/name" component={UserNameView}/>
+                        <Redirect to="/name"/>
+                    </Switch>
+                )}
+                {(contextUser === null || (contextUser && contextUser.consent != null && contextUser.name)) && (
                     <Switch>
                         {/* Auth views */}
 
-                        <Route path="/auth" component={AuthView}/>
+                        <Route path="/auth" component={UserAuthView}/>
+
+                        {/* Onboarding views */}
+
+                        <Route path="/welcome" component={UserWelcomeView}/>
+                        <Route path="/consent"><Redirect to="/welcome"/></Route>
+                        <Route path="/name"><Redirect to="/welcome"/></Route>
 
                         {/* User views */}
 

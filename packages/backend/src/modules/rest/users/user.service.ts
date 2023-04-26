@@ -7,11 +7,11 @@ import 'multer'
 import shortid from 'shortid'
 import { FindOptionsWhere, Raw } from 'typeorm'
 
-import { User, UserAddData, UserUpdateData, UserREST } from 'productboard-common'
+import { User, UserUpdateData, UserREST } from 'productboard-common'
 import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
 
 @Injectable()
-export class UserService implements UserREST<UserAddData, Express.Multer.File> {
+export class UserService implements UserREST<UserUpdateData, Express.Multer.File> {
     constructor(
         @Inject('MQTT')
         private readonly client: ClientProxy
@@ -41,15 +41,6 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
         return result
     }
 
-    async addUser(data: UserAddData, file?: Express.Multer.File) {
-        const user = await Database.get().userRepository.save({ id: shortid(), created: Date.now(), pictureId: shortid(), ...data })
-        if (file && file.originalname.endsWith('.jpg')) {
-            writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
-        }
-        await this.client.emit(`/api/v1/users/${user.id}/create`, this.convert(user))
-        return this.convert(user)
-    }
-
     async getUser(id: string): Promise<User> {
         const user = await Database.get().userRepository.findOneByOrFail({ id })
         return this.convert(user)
@@ -58,7 +49,7 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
         const user = await Database.get().userRepository.findOneByOrFail({ id })
         user.updated = Date.now()
-        user.email = data.email
+        user.consent = data.consent
         user.name = data.name
         if (file && file.originalname.endsWith('.jpg')) {
             user.pictureId = shortid()
@@ -79,6 +70,6 @@ export class UserService implements UserREST<UserAddData, Express.Multer.File> {
     }
 
     private convert(user: UserEntity) {
-        return { id: user.id, created: user.created, updated: user.updated, deleted: user.deleted, email: user.email, name: user.name, pictureId: user.pictureId }
+        return { id: user.id, created: user.created, updated: user.updated, deleted: user.deleted, email: user.email, consent: user.consent, name: user.name, pictureId: user.pictureId }
     }
 }

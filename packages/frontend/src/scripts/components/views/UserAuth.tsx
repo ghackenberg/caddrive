@@ -9,7 +9,7 @@ import { UserContext } from '../../contexts/User'
 import { KeyManager } from '../../managers/key'
 import { UserManager } from '../../managers/user'
 
-export const AuthView = () => {
+export const UserAuthView = () => {
     // CONTEXTS
 
     const { contextUser, setContextUser } = React.useContext(UserContext)
@@ -64,9 +64,10 @@ export const AuthView = () => {
     }
 
     return (
-        <main className="view reduced auth">
+        <main className="view reduced user-auth">
             <main>
                 <div>
+                    <h1>Sign up/in</h1>
                     {id === undefined && (
                         <form onSubmit={handleEmailSubmit}>
                             <label>Email: </label>

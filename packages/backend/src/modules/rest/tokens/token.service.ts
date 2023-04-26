@@ -55,8 +55,7 @@ export class TokenService implements TokenREST {
             const id = shortid()
             const created = Date.now()
             const email = token.email
-            const name = token.email
-            const user = await Database.get().userRepository.save({ id, created, email, name })
+            const user = await Database.get().userRepository.save({ id, created, email })
             // Return JWT
             return createJWT(user)
         }

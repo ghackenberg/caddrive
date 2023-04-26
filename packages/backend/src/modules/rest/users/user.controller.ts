@@ -1,13 +1,13 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Scope, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Put, Query, Scope, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
 import 'multer'
 
-import { User, UserAddData, UserREST, UserUpdateData } from 'productboard-common'
+import { User, UserREST, UserUpdateData } from 'productboard-common'
 
-import { canFindUserOrFail, canCreateUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
+import { canFindUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
 import { UserService } from './user.service'
@@ -15,7 +15,7 @@ import { UserService } from './user.service'
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
-@ApiExtraModels(UserAddData, UserUpdateData)
+@ApiExtraModels(UserUpdateData)
 export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
@@ -33,28 +33,6 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     ): Promise<User[]> {
         await canFindUserOrFail(this.request.user, query, product)
         return this.userService.findUsers(query, product)
-    }
-  
-    @Post()
-    @UseInterceptors(FileInterceptor('file'))
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                data: { $ref: getSchemaPath(UserAddData) },
-                file: { type: 'string', format: 'binary' }
-            },
-            required: ['data', 'file']
-        }
-    })
-    @ApiResponse({ type: User })
-    async addUser(
-        @Body('data') data: string,
-        @UploadedFile() file?: Express.Multer.File
-    ): Promise<User> {
-        await canCreateUserOrFail(this.request.user)
-        return this.userService.addUser(JSON.parse(data), file)
     }
 
     @Get(':id')
