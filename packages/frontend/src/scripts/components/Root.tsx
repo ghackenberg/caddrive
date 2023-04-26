@@ -13,6 +13,7 @@ import { PageHeader } from './snippets/PageHeader'
 import { AuthView } from './views/Auth'
 import { AuthConsentView } from './views/AuthConsent'
 import { AuthNameView } from './views/AuthName'
+import { AuthPictureView } from './views/AuthPicture'
 import { AuthWelcomeView } from './views/AuthWelcome'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
@@ -82,7 +83,7 @@ export const Root = () => {
                         <Redirect to="/auth/consent"/>
                     </Switch>
                 )}
-                {contextUser && contextUser.consent && contextUser.name == null && (
+                {contextUser && contextUser.consent != null && contextUser.name == null && (
                     <Switch>
                         <Route path="/auth/name" component={AuthNameView}/>
                         <Redirect to="/auth/name"/>
@@ -93,8 +94,9 @@ export const Root = () => {
                         {/* Auth views */}
 
                         <Route path="/auth/welcome" component={AuthWelcomeView}/>
-                        <Route path="/auth/name"><Redirect to="/auth/welcome"/></Route>
-                        <Route path="/auth/consent"><Redirect to="/auth/welcome"/></Route>
+                        <Route path="/auth/picture" component={AuthPictureView}/>
+                        <Route path="/auth/name"><Redirect to="/auth/picture"/></Route>
+                        <Route path="/auth/consent"><Redirect to="/auth/picture"/></Route>
                         <Route path="/auth" component={AuthView}/>
 
                         {/* User views */}

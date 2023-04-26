@@ -28,7 +28,8 @@ main.view.auth > main > div > div > input {
     border-bottom-right-radius: 0;
 }
 
-main.view.auth > main > div > div > input + button {
+main.view.auth > main > div > div > input[type = 'email'] + button,
+main.view.auth > main > div > div > input[type = 'text'] + button {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
