@@ -1,4 +1,4 @@
-main.view.user-auth > main > div {
+main.view.auth > main > div {
     display: flex;
 
     flex-direction: column;
@@ -8,35 +8,35 @@ main.view.user-auth > main > div {
     align-items: center;
 }
 
-main.view.user-auth > main > div > * {
+main.view.auth > main > div > * {
     max-width: 30em;
 
     text-align: center;
 }
 
-main.view.user-auth > main > div > h5 {
+main.view.auth > main > div > h5 {
     color: gray;
 }
 
-main.view.user-auth > main > div > div {
+main.view.auth > main > div > div {
     padding-top: 1em;
     padding-bottom: 1em;
 }
 
-main.view.user-auth > main > div > div > input {
+main.view.auth > main > div > div > input {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
 
-main.view.user-auth > main > div > div > input + button {
+main.view.auth > main > div > div > input + button {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
 
-main.view.user-auth > main > div > div > button {
+main.view.auth > main > div > div > button {
     margin-right: 0.5em;
 }
 
-main.view.user-auth > main > div > div > button:last-child {
+main.view.auth > main > div > div > button:last-child {
     margin-right: 0;
 }

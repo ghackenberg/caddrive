@@ -31,12 +31,12 @@ export const PageHeader = () => {
                             <img src={LoadIcon} className='icon small animation spin'/>
                         </a>
                     )}
-                    {contextUser === null && pathname != '/auth' && (
+                    {contextUser === null && !pathname.startsWith('/auth') && (
                         <NavLink to='/auth' className='button fill white' style={{lineHeight: '100%'}}>
                             Sign up / in
                         </NavLink>
                     )}
-                    {contextUser && pathname != '/consent' && pathname != '/name' && pathname != '/welcome' && (
+                    {contextUser && !pathname.startsWith('/auth') && (
                         <NavLink to={`/users/${contextUser.id}/settings`}>
                             <UserPictureWidget user={contextUser} background='gray' class='icon small round'/>
                         </NavLink>

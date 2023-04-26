@@ -3,13 +3,13 @@ import { NavLink } from 'react-router-dom'
 
 import { UserContext } from '../../contexts/User'
 
-export const UserWelcomeView = () => {
+export const AuthWelcomeView = () => {
     // CONTEXTS
 
     const { contextUser } = React.useContext(UserContext)
 
     return (
-        <main className='view reduced user-welcome'>
+        <main className='view reduced auth'>
             <main>
                 <div>
                     <h5>Authentication process</h5>

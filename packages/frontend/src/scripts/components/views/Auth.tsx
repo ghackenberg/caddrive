@@ -9,7 +9,7 @@ import { UserContext } from '../../contexts/User'
 import { KeyManager } from '../../managers/key'
 import { UserManager } from '../../managers/user'
 
-export const UserAuthView = () => {
+export const AuthView = () => {
     // CONTEXTS
 
     const { contextUser, setContextUser } = React.useContext(UserContext)
@@ -83,7 +83,7 @@ export const UserAuthView = () => {
     }
 
     return (
-        <main className="view reduced user-auth">
+        <main className="view reduced auth">
             <main>
                     {id === undefined && (
                         <div>
