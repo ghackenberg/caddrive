@@ -27,6 +27,9 @@ export const UserAuthView = () => {
     const [code, setCode] = React.useState<string>('')
     const [jwt, setJWT] = React.useState<string>()
 
+    const [load, setLoad] = React.useState<boolean>(false)
+    const [error, setError] = React.useState<string>()
+
     // EFFECTS
 
     React.useEffect(() => {
@@ -50,18 +53,33 @@ export const UserAuthView = () => {
 
     // EVENTS
 
-    async function handleEmailSubmit(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault()
-        const token = await TokenClient.createToken({ email })
-        setId(token.id)
+    async function handleEmailSubmit(event: React.UIEvent) {
+        try {
+            event.preventDefault()
+            setLoad(true)
+            setError(undefined)
+            const token = await TokenClient.createToken({ email })
+            setId(token.id)
+        } catch (e) {
+            setError('Action failed.')
+        } finally {
+            setLoad(false)
+        }
     }
 
-    async function handleCodeSubmit(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault()
-        const token = await TokenClient.activateToken(id, { code })
-        localStorage.setItem('jwt', token.jwt)
-        auth.headers.Authorization = `Bearer ${token.jwt}`
-        setJWT(token.jwt)
+    async function handleCodeSubmit(event: React.UIEvent) {
+        try {
+            event.preventDefault()
+            setLoad(true)
+            setError(undefined)
+            const token = await TokenClient.activateToken(id, { code })
+            localStorage.setItem('jwt', token.jwt)
+            auth.headers.Authorization = `Bearer ${token.jwt}`
+            setJWT(token.jwt)
+        } catch (e) {
+            setError('Action failed.')
+            setLoad(false)
+        }
     }
 
     return (
@@ -76,9 +94,12 @@ export const UserAuthView = () => {
                                 Then we will send you a <strong>verification code</strong> to sign up/in.
                             </p>
                             <div>
-                                <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onChange={event => setEmail(event.currentTarget.value)}/>
+                                <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleEmailSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
                                 <button className='button fill blue' onClick={handleEmailSubmit} >Next</button>
                             </div>
+                            {!load && !error && <p style={{color: 'lightgray'}}>Waiting...</p>}
+                            {load && <p style={{color: 'gray'}}>Loading...</p>}
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
                     )}
                     {id !== undefined && jwt === undefined && (
@@ -91,9 +112,12 @@ export const UserAuthView = () => {
                                 Then enter your code below and press <strong>next</strong>.
                             </p>
                             <div>
-                                <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onChange={event => setCode(event.currentTarget.value)}/>
+                                <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleCodeSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
                                 <button className='button fill blue' onClick={handleCodeSubmit}>Next</button>
                             </div>
+                            {!load && !error && <p style={{color: 'lightgray'}}>Waiting...</p>}
+                            {load && <p style={{color: 'gray'}}>Loading...</p>}
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
                     )}
                     {contextUser && (

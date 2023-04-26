@@ -12,12 +12,22 @@ export const UserNameView = () => {
 
     const [name, setName] = React.useState<string>('')
 
+    const [load, setLoad] = React.useState<boolean>(false)
+    const [error, setError] = React.useState<string>()
+
     // FUNCTIONS
 
-    async function handleSubmit(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault()
-        const user = await UserManager.updateUser(contextUser.id, { consent: contextUser.consent, name })
-        setContextUser(user)
+    async function handleSubmit(event: React.UIEvent) {
+        try {
+            event.preventDefault()
+            setLoad(true)
+            setError(undefined)
+            const user = await UserManager.updateUser(contextUser.id, { consent: contextUser.consent, name })
+            setContextUser(user)
+        } catch (e) {
+            setError('Action failed.')
+            setLoad(false)
+        }
     }
 
     return (
@@ -31,9 +41,12 @@ export const UserNameView = () => {
                         Note that your name will be visible to other users.
                     </p>
                     <div>
-                        <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onChange={event => setName(event.currentTarget.value)}/>
+                        <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setName(event.currentTarget.value)}/>
                         <button className='button fill blue' onClick={handleSubmit}>Next</button>
                     </div>
+                    {!load && !error && <p style={{color: 'lightgray'}}>Waiting...</p>}
+                    {load && <p style={{color: 'gray'}}>Loading...</p>}
+                    {error && <p style={{color: 'red'}}>{error}</p>}
                 </div>
             </main>
         </main>

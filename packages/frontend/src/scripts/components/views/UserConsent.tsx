@@ -8,14 +8,26 @@ export const UserConsentView = () => {
 
     const { contextUser, setContextUser } = React.useContext(UserContext)
 
+    // STATES
+
+    const [load, setLoad] = React.useState<boolean>(false)
+    const [error, setError] = React.useState<string>()
+
     // FUNCTIONS
 
-    async function handleConsent(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault()
-        const user = await UserManager.updateUser(contextUser.id, { consent: true, name: contextUser.name })
-        setContextUser(user)
+    async function handleConsent(event: React.UIEvent) {
+        try {
+            event.preventDefault()
+            setLoad(true)
+            setError(undefined)
+            const user = await UserManager.updateUser(contextUser.id, { consent: true, name: contextUser.name })
+            setContextUser(user)
+        } catch (e) {
+            setError('Action failed.')
+            setLoad(false)
+        }
     }
-    async function handleCancel(event: React.MouseEvent<HTMLButtonElement>) {
+    async function handleCancel(event: React.UIEvent) {
         event.preventDefault()
         setContextUser(null)
     }
@@ -34,6 +46,9 @@ export const UserConsentView = () => {
                         <button className='button fill lightgray' onClick={handleCancel}>Cancel</button>
                         <button className='button fill blue' onClick={handleConsent}>Agree</button>
                     </div>
+                    {!load && !error && <p style={{color: 'lightgray'}}>Waiting...</p>}
+                    {load && <p style={{color: 'gray'}}>Loading...</p>}
+                    {error && <p style={{color: 'red'}}>{error}</p>}
                 </div>
             </main>
         </main>
