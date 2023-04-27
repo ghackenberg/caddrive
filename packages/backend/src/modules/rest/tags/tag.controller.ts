@@ -20,7 +20,7 @@ export class TagController implements TagREST {
         //private readonly request: Request & { user: User & { permissions: string[] } }
     ) {}
 
-    @Get(':id')
+    @Get()
     @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiResponse({ type: [Tag] })
     async findTags(
@@ -28,6 +28,7 @@ export class TagController implements TagREST {
     ): Promise<Tag[]> {
         return await this.tagService.findTags(productId)
     }
+
     @Post()
     @ApiBody({ type: TagAddData })
     @ApiResponse({ type: Tag })

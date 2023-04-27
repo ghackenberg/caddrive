@@ -1,6 +1,6 @@
 import { exit } from 'process'
 
-import { Issue, Member, Milestone, Product, User, Version, Comment } from 'productboard-common'
+import { Issue, Member, Milestone, Product, User, Version, Comment, Tag } from 'productboard-common'
 import { Database } from 'productboard-database'
 
 const users: User[] = [
@@ -58,6 +58,18 @@ const comments: Comment[] = [
     { id: 'demo-6', created: Date.now(), updated: null, deleted: null, userId: 'demo-1', issueId: 'demo-5', audioId: null, text: 'Done', action: 'close' },
     { id: 'demo-7', created: Date.now(), updated: null, deleted: null, userId: 'demo-4', issueId: 'demo-6', audioId: null, text: 'Done', action: 'close' },
     { id: 'demo-8', created: Date.now(), updated: null, deleted: null, userId: 'demo-4', issueId: 'demo-7', audioId: null, text: 'Work in progress', action: 'none' },
+]
+
+const tags: Tag[] = [
+    { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'gray', color: 'rgba(200, 200, 200, 0.6)' },
+    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'brown', color: 'rgba(165, 115, 40, 0.6)' },
+    { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'orange', color: 'rgba(255, 150, 0, 0.6)' },
+    { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'yellow', color: 'rgba(255, 255, 0, 0.6)' },
+    { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'green', color: 'rgba(0, 255, 0, 0.6)' },
+    { id: 'demo-6', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'blue', color: 'rgba(0, 0, 255, 0.6)' },
+    { id: 'demo-7', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'purple', color: 'rgba(165, 0, 255, 0.6)' },
+    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'pink', color: 'rgba(255, 0, 255, 0.6)' },
+    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'red', color: 'rgba(255, 0, 0, 0.6)' },
 ]
 
 // async function drop() {
@@ -122,6 +134,13 @@ async function fill() {
             await Database.get().commentRepository.save(comment)
         }
         console.log('Fill: Comments filled')
+    }
+
+    if (await Database.get().tagRepository.count() == 0) {
+        for (const tag of tags) {
+            await Database.get().tagRepository.save(tag)
+        }
+        console.log('Fill: Tags filled')
     }
     console.log('Fill: All Entities filled')
 

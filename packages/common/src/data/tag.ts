@@ -18,5 +18,9 @@ export class Tag extends TagAddData {
     id: string
 
     @ApiProperty()
+    created: number
+    @ApiProperty()
+    updated: number
+    @ApiProperty()
     deleted: number
 }

@@ -21,7 +21,8 @@ export class TagService implements TagREST {
 
     async addTag(data: TagAddData): Promise<Tag> {
         const id = shortid()
-        const tag = await Database.get().tagRepository.save({id: id, ...data})
+        const created = Date.now()
+        const tag = await Database.get().tagRepository.save({id: id, created: created, ...data})
         return this.convert(tag)
     }
     async getTag(id: string): Promise<Tag> {
@@ -30,9 +31,11 @@ export class TagService implements TagREST {
     }
     async updateTag(id: string, data: TagUpdateData): Promise<Tag> {
         const tag = await Database.get().tagRepository.findOneByOrFail({ id })
+        tag.updated = Date.now()
         tag.name = data.name
         tag.color = data.color
         await Database.get().tagRepository.save(tag)
+        console.log(this.convert(tag))
         return this.convert(tag)
     }
     async deleteTag(id: string): Promise<Tag> {
@@ -43,6 +46,6 @@ export class TagService implements TagREST {
     } 
 
     private convert(tag: TagEntity) {
-        return { id: tag.id, deleted: tag.deleted, productId: tag.productId, name: tag.name, color: tag.color }
+        return { id: tag.id, created: tag.created, updated: tag.updated, deleted: tag.deleted, productId: tag.productId, name: tag.name, color: tag.color }
     }
 }
