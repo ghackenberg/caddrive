@@ -15,6 +15,12 @@ class MemberManagerImpl extends AbstractManager<Member> implements MemberREST, M
 
     // CACHE
 
+    override clear() {
+        super.clear()
+        this.findIndex = {}
+        this.findUserIndex = {}
+    }
+
     findMembersFromCache(productId: string) { 
         const key = `${productId}`
         if (key in this.findIndex) { 

@@ -14,6 +14,11 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserUpda
 
     // CACHE
 
+    override clear() {
+        super.clear()
+        this.findIndex = undefined
+    }
+
     findUsersFromCache() { 
         if (this.findIndex) { 
             return Object.keys(this.findIndex).map(id => this.load(id))

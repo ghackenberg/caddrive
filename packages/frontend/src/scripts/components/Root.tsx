@@ -8,8 +8,15 @@ import { User, Version } from 'productboard-common'
 import { AuthContext } from '../contexts/Auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
+import { CommentManager } from '../managers/comment'
+import { FileManager } from '../managers/file'
+import { IssueManager } from '../managers/issue'
 import { KeyManager } from '../managers/key'
+import { MemberManager } from '../managers/member'
+import { MilestoneManager } from '../managers/milestone'
+import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
+import { VersionManager } from '../managers/version'
 import { PageHeader } from './snippets/PageHeader'
 import { AuthCodeView } from './views/AuthCode'
 import { AuthConsentView } from './views/AuthConsent'
@@ -72,11 +79,36 @@ export const Root = () => {
         userId && UserManager.getUser(userId).then(setContextUser).catch(() => setContextUser(null))
     }, [userId])
 
+    // FUNCTIONS
+    
+    function intercept(newContextUser: User) {
+        if (contextUser && newContextUser) {
+            if (contextUser.id != newContextUser.id) {
+                clear()
+            }
+        } else if (contextUser) {
+            clear()
+        } else if (newContextUser) {
+            clear()
+        }
+        setContextUser(newContextUser)
+    }
+    function clear() {
+        UserManager.clear()
+        ProductManager.clear()
+        VersionManager.clear()
+        IssueManager.clear()
+        CommentManager.clear()
+        MilestoneManager.clear()
+        MemberManager.clear()
+        FileManager.clear()
+    }
+
     // RETURN
 
     return (
         <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
-            <UserContext.Provider value={{ contextUser, setContextUser }}>
+            <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
                 <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
                     <PageHeader/>
                     {contextUser === undefined ? (

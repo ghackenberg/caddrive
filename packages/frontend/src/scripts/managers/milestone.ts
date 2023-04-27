@@ -14,6 +14,11 @@ class MilestoneManagerImpl extends AbstractManager<Milestone> implements Milesto
 
     // CACHE
 
+    override clear() {
+        super.clear()
+        this.findIndex = {}
+    }
+
     findMilestonesFromCache(productId: string) { 
         const key = `${productId}`
         if (key in this.findIndex) { 

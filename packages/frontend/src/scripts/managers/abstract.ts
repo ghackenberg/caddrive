@@ -2,6 +2,10 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
 
     private index: {[id: string]: T} = {}
 
+    protected clear() {
+        this.index = {}
+    }
+
     protected store(t: T) {
         if (this.has(t.id)) {
             const newTime = this.getTime(t)
