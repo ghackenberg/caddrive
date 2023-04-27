@@ -28,10 +28,13 @@ export class TokenService implements TokenREST {
         const token = await Database.get().tokenRepository.save({ id, created, email, code, count })
         const transporter = await TRANSPORTER
         const info = await transporter.sendMail({
-            from: 'ghackenberg@gmail.com',
+            from: 'ProductBoard <ghackenberg@gmail.com>',
             to: email,
             subject: 'Verification code',
-            html: code
+            templateName: 'code',
+            templateData: {
+                code
+            }
         })
         console.log(getTestMessageUrl(info))
         return { id: token.id }

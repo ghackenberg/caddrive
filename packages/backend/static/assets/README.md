@@ -1,3 +1,0 @@
-# ProductBoard Static Assets
-
-TODO

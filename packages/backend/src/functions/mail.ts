@@ -1,8 +1,7 @@
 import { createTestAccount, createTransport } from "nodemailer"
+import { nodemailerMjmlPlugin } from "nodemailer-mjml"
 
 export const TRANSPORTER = createTestAccount().then(account => {
-    console.log('Test account created')
-    
     return createTransport({
         host: account.smtp.host,
         port: account.smtp.port,
@@ -12,4 +11,11 @@ export const TRANSPORTER = createTestAccount().then(account => {
             pass: account.pass
         }
     })
+}).catch(() => {
+    return createTransport({
+        jsonTransport: true
+    })
+}).then(transport => {
+    transport.use('compile', nodemailerMjmlPlugin({ templateFolder: 'templates' }))
+    return transport
 })

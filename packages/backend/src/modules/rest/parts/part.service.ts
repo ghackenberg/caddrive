@@ -11,8 +11,7 @@ export class PartService {
 
     private readonly URL = 'https://library.ldraw.org/library/updates/complete.zip'
 
-    private readonly STATIC = 'static'
-    private readonly ASSETS = join(this.STATIC, 'assets')
+    private readonly ASSETS = 'assets'
     private readonly LDRAW = join(this.ASSETS, 'ldraw')
 
     private readonly paths: {[name: string]: string} = {}
