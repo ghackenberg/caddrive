@@ -2,11 +2,13 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from "@nes
 import { REQUEST } from "@nestjs/core"
 
 import { SignJWT } from 'jose'
+import { getTestMessageUrl } from "nodemailer"
 import shortid from "shortid"
 
 import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse, TokenREST, User } from "productboard-common"
 import { Database, getTokenOrFail, getUserOrFail } from "productboard-database"
 
+import { TRANSPORTER } from "../../../functions/mail"
 import { KEY_PAIR } from "../../../key"
 import { AuthorizedRequest } from "../../../request"
 
@@ -24,7 +26,14 @@ export class TokenService implements TokenREST {
         const code = shortid().substring(0, 6)
         const count = 0
         const token = await Database.get().tokenRepository.save({ id, created, email, code, count })
-        console.log(code)
+        const transporter = await TRANSPORTER
+        const info = await transporter.sendMail({
+            from: 'ghackenberg@gmail.com',
+            to: email,
+            subject: 'Verification code',
+            html: code
+        })
+        console.log(getTestMessageUrl(info))
         return { id: token.id }
     }
     
