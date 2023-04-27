@@ -5,6 +5,7 @@ import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike} from 'jose'
 
 import { User, Version } from 'productboard-common'
 
+import { TokenClient } from '../clients/rest/token'
 import { AuthContext } from '../contexts/Auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
@@ -70,7 +71,10 @@ export const Root = () => {
         jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult).catch(() => setContextUser(null))
     }, [jwt, publicKey])
     React.useEffect(() => {
-        jwtVerifyResult && setPayload(jwtVerifyResult.payload as { userId: string })
+        if (jwtVerifyResult) {
+            setPayload(jwtVerifyResult.payload as { userId: string })
+            TokenClient.refreshToken().then(token => localStorage.setItem('jwt', token.jwt))
+        }
     }, [jwtVerifyResult])
     React.useEffect(() => {
         payload && setUserId(payload.userId)

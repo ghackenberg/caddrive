@@ -12,7 +12,7 @@ class TokenClientImpl implements TokenREST {
         return (await axios.put<ActivateTokenResponse>(`/rest/tokens/${id}`, request)).data
     }
     async refreshToken(): Promise<RefreshTokenResponse> {
-        return (await axios.patch<RefreshTokenResponse>('/rest/tokens', { ...auth })).data
+        return (await axios.patch<RefreshTokenResponse>('/rest/tokens', null, { ...auth })).data
     }
 }
 

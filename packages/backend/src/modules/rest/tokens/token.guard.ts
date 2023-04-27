@@ -20,10 +20,15 @@ abstract class TokenGuard implements CanActivate {
             if (authorization && authorization.startsWith('Bearer ')) {
                 // Load user
                 request.user = await loadUser(authorization)
+            } else {
+                // Init user
+                request.user = null
             }
         } catch (e) {
             // Log error
             console.error(e)
+            // Init user
+            request.user = null
         }
         // Check request
         return this.checkRequest(request)
