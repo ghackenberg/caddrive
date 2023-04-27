@@ -10,8 +10,9 @@ import { VersionContext } from '../contexts/Version'
 import { KeyManager } from '../managers/key'
 import { UserManager } from '../managers/user'
 import { PageHeader } from './snippets/PageHeader'
-import { AuthView } from './views/Auth'
+import { AuthCodeView } from './views/AuthCode'
 import { AuthConsentView } from './views/AuthConsent'
+import { AuthEmailView } from './views/AuthEmail'
 import { AuthNameView } from './views/AuthName'
 import { AuthPictureView } from './views/AuthPicture'
 import { AuthWelcomeView } from './views/AuthWelcome'
@@ -80,11 +81,13 @@ export const Root = () => {
                     <Switch>
                         {/* Auth views */}
 
+                        <Route path="/auth/email" component={AuthEmailView}/>
+                        <Route path="/auth/code/:id" component={AuthCodeView}/>
                         <Route path="/auth/consent" component={AuthConsentView}/>
                         <Route path="/auth/name" component={AuthNameView}/>
                         <Route path="/auth/picture" component={AuthPictureView}/>
                         <Route path="/auth/welcome" component={AuthWelcomeView}/>
-                        <Route path="/auth" component={AuthView}/>
+                        <Redirect path="/auth" to="/auth/email"/>
 
                         {/* User views */}
 

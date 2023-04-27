@@ -45,8 +45,8 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     // - Entities
     useEffect(() => { userId != 'new' && UserManager.getUser(userId).then(setUser) }, [props])
     // - Values
-    useEffect(() => { user && setEmail(user.email) }, [user])
-    useEffect(() => { user && setName(user.name) }, [user])
+    useEffect(() => { user && setEmail(user.email || '') }, [user])
+    useEffect(() => { user && setName(user.name || '') }, [user])
 
     // FUNCTIONS 
 
