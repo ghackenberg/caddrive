@@ -280,15 +280,9 @@ export const ProductView = () => {
             <main>
                 <div>
                     {contextUser ? (
-                        contextUser.permissions.includes('create:products') ? (
-                            <Link to='/products/new/settings' className='button fill green'>
-                                New product
-                            </Link>
-                        ) : (
-                            <a className='button fill green'>
-                                New product (required permission)
-                            </a>
-                        )
+                        <Link to='/products/new/settings' className='button fill green'>
+                            New product
+                        </Link>
                     ) : (
                         <a className='button fill green' style={{fontStyle: 'italic'}}>
                             New product (requires login)

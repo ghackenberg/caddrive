@@ -1,0 +1,83 @@
+main.view.auth > main > div {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+
+    background-color: rgb(245,245,245);
+}
+
+main.view.auth > main > div > div {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    min-height: 100%;
+}
+
+main.view.auth > main > div > div > div {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 0.5em rgba(0,0,0,0.05);
+
+    padding: 1em;
+
+    max-width: 30em;
+
+    border-radius: 1em;
+}
+
+main.view.auth > main > div > div > div > img {
+    display: block;
+
+    width: 5em;
+    height: 5em;
+
+    margin: 1em;
+}
+
+main.view.auth > main > div > div > div > h5 {
+    color: gray;
+}
+
+main.view.auth > main > div > div > div > h1 > span {
+    white-space: nowrap;
+}
+
+main.view.auth > main > div > div > div > div {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+main.view.auth > main > div > div > div > div > input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    max-width: calc(100vw - 10em);
+}
+
+main.view.auth > main > div > div > div > div > button {
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+
+    width: 7.5em;
+}
+
+main.view.auth > main > div > div > div > div > input[type = 'email'] + button,
+main.view.auth > main > div > div > div > div > input[type = 'text'] + button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    margin-left: 0;
+    margin-right: 0;
+}

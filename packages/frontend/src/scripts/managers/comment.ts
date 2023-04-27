@@ -14,6 +14,11 @@ class CommentManagerImpl extends AbstractManager<Comment> implements CommentREST
 
     // CACHE
 
+    override clear() {
+        super.clear()
+        this.findIndex = {}
+    }
+
     findCommentsFromCache(issueId: string) { 
         const key = `${issueId}`
         if (key in this.findIndex) { 

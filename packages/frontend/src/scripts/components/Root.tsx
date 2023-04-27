@@ -1,17 +1,30 @@
 import * as React from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 
-import { useAuth0 } from '@auth0/auth0-react'
-import * as jose from 'jose'
+import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike} from 'jose'
 
 import { User, Version } from 'productboard-common'
 
-import { auth } from '../clients/auth'
+import { TokenClient } from '../clients/rest/token'
+import { AuthContext } from '../contexts/Auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
-import { AUTH0_AUDIENCE } from '../env'
+import { CommentManager } from '../managers/comment'
+import { FileManager } from '../managers/file'
+import { IssueManager } from '../managers/issue'
+import { KeyManager } from '../managers/key'
+import { MemberManager } from '../managers/member'
+import { MilestoneManager } from '../managers/milestone'
+import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
+import { VersionManager } from '../managers/version'
 import { PageHeader } from './snippets/PageHeader'
+import { AuthCodeView } from './views/AuthCode'
+import { AuthConsentView } from './views/AuthConsent'
+import { AuthEmailView } from './views/AuthEmail'
+import { AuthNameView } from './views/AuthName'
+import { AuthPictureView } from './views/AuthPicture'
+import { AuthWelcomeView } from './views/AuthWelcome'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
 import { ProductView } from './views/Product'
@@ -33,87 +46,129 @@ import '/src/styles/root.css'
 
 export const Root = () => {
 
-    const { isLoading, isAuthenticated, user, getAccessTokenSilently } = useAuth0()
-
     // STATES
 
-    const [accessToken, setAccessToken] = React.useState<string>()
-
-    const [contextUser, setContextUser] = React.useState<User & { permissions: string[] }>()
+    const [publicJWK, setPublicJWK] = React.useState<JWK>()
+    const [publicKey, setPublicKey] = React.useState<KeyLike | Uint8Array>()
+    const [jwt] = React.useState<string>(localStorage.getItem('jwt'))
+    const [jwtVerifyResult, setJWTVerifyResult] = React.useState<JWTVerifyResult>()
+    const [payload, setPayload] = React.useState<{ userId: string }>()
+    const [userId, setUserId] = React.useState<string>()
+    const [authContextToken, setAuthContextToken] = React.useState<string>()
+    const [authContextUser, setAuthContextUser] = React.useState<User>()
+    const [contextUser, setContextUser] = React.useState<User>(jwt ? undefined : null)
     const [contextVersion, setContextVersion] = React.useState<Version>()
 
     // EFFECTS
 
     React.useEffect(() => {
-        if (user) {
-            getAccessTokenSilently({ audience: AUTH0_AUDIENCE }).then(setAccessToken)
-        } else {
-            setAccessToken(undefined)
-        }
-    }, [user])
-    
+        KeyManager.getPublicJWK().then(setPublicJWK).catch(() => setContextUser(null))
+    }) 
     React.useEffect(() => {
-        if (accessToken) {
-            auth.headers.Authorization = `Bearer ${accessToken}`
-            UserManager.getUser(user.sub.split('|')[1]).then(userData => {
-                const { permissions } = jose.decodeJwt(accessToken) as { permissions: string[] }
-                setContextUser({ ...userData, permissions })
-            })
-        } else {
-            auth.headers.Authorization = ''
-            setContextUser(undefined)
+        publicJWK && importJWK(publicJWK, "PS256").then(setPublicKey).catch(() => setContextUser(null))
+    }, [publicJWK])
+    React.useEffect(() => {
+        jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult).catch(() => setContextUser(null))
+    }, [jwt, publicKey])
+    React.useEffect(() => {
+        if (jwtVerifyResult) {
+            setPayload(jwtVerifyResult.payload as { userId: string })
+            TokenClient.refreshToken().then(token => localStorage.setItem('jwt', token.jwt))
         }
-    }, [accessToken])
+    }, [jwtVerifyResult])
+    React.useEffect(() => {
+        payload && setUserId(payload.userId)
+    }, [payload])
+    React.useEffect(() => {
+        userId && UserManager.getUser(userId).then(setContextUser).catch(() => setContextUser(null))
+    }, [userId])
+
+    // FUNCTIONS
+    
+    function intercept(newContextUser: User) {
+        if (contextUser && newContextUser) {
+            if (contextUser.id != newContextUser.id) {
+                clear()
+            }
+        } else if (contextUser) {
+            clear()
+        } else if (newContextUser) {
+            clear()
+        }
+        setContextUser(newContextUser)
+    }
+    function clear() {
+        UserManager.clear()
+        ProductManager.clear()
+        VersionManager.clear()
+        IssueManager.clear()
+        CommentManager.clear()
+        MilestoneManager.clear()
+        MemberManager.clear()
+        FileManager.clear()
+    }
 
     // RETURN
 
     return (
-        <UserContext.Provider value={{ contextUser, setContextUser }}>
-            <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
-                <PageHeader/>
-                {isLoading || (isAuthenticated && !contextUser) ? (
-                    <LoadingView/>
-                ) : (
-                    <Switch>
-                        {/* User views */}
+        <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
+            <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
+                <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
+                    <PageHeader/>
+                    {contextUser === undefined ? (
+                        <LoadingView/>
+                    ) : (
+                        <Switch>
+                            {/* Auth views */}
 
-                        <Route path="/users/:user/settings" component={UserSettingView}/>
-                        <Redirect path="/users/:user" to="/users/:user/settings"/>
-                        <Route path="/users" component={UserView}/>
+                            <Route path="/auth/email" component={AuthEmailView}/>
+                            <Route path="/auth/code" component={AuthCodeView}/>
+                            <Route path="/auth/consent" component={AuthConsentView}/>
+                            <Route path="/auth/name" component={AuthNameView}/>
+                            <Route path="/auth/picture" component={AuthPictureView}/>
+                            <Route path="/auth/welcome" component={AuthWelcomeView}/>
+                            <Redirect path="/auth" to="/auth/email"/>
 
-                        {/* Product views */}
+                            {/* User views */}
 
-                        <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
-                        <Redirect path="/products/:product/versions/:version" to="/products/:product/versions/:version/settings"/>
-                        <Route path="/products/:product/versions" component={ProductVersionView}/>
-                        
-                        <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView}/>
-                        <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView}/>
-                        <Redirect path="/products/:product/issues/:issue" to="/products/:product/issues/:issue/comments"/>
-                        <Route path="/products/:product/issues" component={ProductIssueView}/>
+                            <Route path="/users/:user/settings" component={UserSettingView}/>
+                            <Redirect path="/users/:user" to="/users/:user/settings"/>
+                            <Route path="/users" component={UserView}/>
 
-                        <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView}/>
-                        <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
-                        <Redirect path="/products/:product/milestones/:milestone" to="/products/:product/milestones/:milestone/issues"/>
-                        <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
+                            {/* Product views */}
 
-                        <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView}/>
-                        <Redirect path="/products/:product/members/:member" to="/products/:product/members/:member/settings"/>
-                        <Route path="/products/:product/members" component={ProductMemberView}/>
+                            <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
+                            <Redirect path="/products/:product/versions/:version" to="/products/:product/versions/:version/settings"/>
+                            <Route path="/products/:product/versions" component={ProductVersionView}/>
+                            
+                            <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView}/>
+                            <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView}/>
+                            <Redirect path="/products/:product/issues/:issue" to="/products/:product/issues/:issue/comments"/>
+                            <Route path="/products/:product/issues" component={ProductIssueView}/>
 
-                        <Route path="/products/:product/settings" component={ProductSettingView}/>
-                        <Redirect path="/products/:product" to="/products/:product/versions"/>
-                        <Route path="/products" component={ProductView}/>
+                            <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView}/>
+                            <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
+                            <Redirect path="/products/:product/milestones/:milestone" to="/products/:product/milestones/:milestone/issues"/>
+                            <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
 
-                        <Redirect path="/" exact to="/products"/>
+                            <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView}/>
+                            <Redirect path="/products/:product/members/:member" to="/products/:product/members/:member/settings"/>
+                            <Route path="/products/:product/members" component={ProductMemberView}/>
 
-                        {/* Missing view */}
-                        
-                        <Route component={MissingView}/>
-                    </Switch>
-                )}
-            </VersionContext.Provider>
-        </UserContext.Provider>
+                            <Route path="/products/:product/settings" component={ProductSettingView}/>
+                            <Redirect path="/products/:product" to="/products/:product/versions"/>
+                            <Route path="/products" component={ProductView}/>
+                            
+                            <Redirect path="/" exact to="/products"/>
+
+                            {/* Missing view */}
+                            
+                            <Route component={MissingView}/>
+                        </Switch>
+                    )}
+                </VersionContext.Provider>
+            </UserContext.Provider>
+        </AuthContext.Provider>
     )
 
 }

@@ -13,6 +13,11 @@ class IssueManagerImpl extends AbstractManager<Issue> implements IssueREST<Issue
     }
 
     // CACHE
+
+    override clear() {
+        super.clear()
+        this.findIndex = {}
+    }
     
     findIssuesFromCache(productId: string, milestoneId?: string, state?: string) {
         const key = `${productId}-${milestoneId}-${state}`

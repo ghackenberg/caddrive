@@ -23,8 +23,9 @@ export class UserEntity extends User {
 
     @Column({ nullable: false, unique: false })
     override email: string
-
-    @Column({ nullable: false })
+    @Column({ nullable: true })
+    override consent: boolean
+    @Column({ nullable: true })
     override name: string
 
     @Column({ nullable: true })

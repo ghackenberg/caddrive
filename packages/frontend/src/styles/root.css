@@ -30,7 +30,7 @@
 
 /* View specific styles */
 
-@import url(./views/Landing.css);
+@import url(./views/Auth.css);
 @import url(./views/Loading.css);
 @import url(./views/Missing.css);
 @import url(./views/Product.css);

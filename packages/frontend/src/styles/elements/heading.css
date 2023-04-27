@@ -31,6 +31,28 @@ h3 {
     padding-bottom: calc(0.75rem - 0.25em);
 }
 
+h4 {
+    font-size: 125%;
+    
+    line-height: 150%;
+    
+    margin: 0;
+    
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+
+h5 {
+    font-size: 100%;
+    
+    line-height: 150%;
+    
+    margin: 0;
+    
+    padding-top: calc(0.75rem - 0.25em);
+    padding-bottom: calc(0.75rem - 0.25em);
+}
+
 h1 > a::after {
     content: " / ";
 }
