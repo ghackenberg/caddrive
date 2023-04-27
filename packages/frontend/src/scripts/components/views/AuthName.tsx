@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect, useHistory } from 'react-router'
 
-import { UserContext } from '../../contexts/User'
+import { AuthContext } from '../../contexts/Auth'
 import { UserManager } from '../../managers/user'
 
 import AuthIcon from '/src/images/auth.png'
@@ -11,11 +11,11 @@ export const AuthNameView = () => {
 
     // CONTEXTS
 
-    const { contextUser, setContextUser } = React.useContext(UserContext)
+    const { authContextUser, setAuthContextUser } = React.useContext(AuthContext)
 
     // STATES
 
-    const [name, setName] = React.useState<string>(contextUser ? contextUser.name : '')
+    const [name, setName] = React.useState<string>(authContextUser ? authContextUser.name || '' : '')
 
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
@@ -27,8 +27,8 @@ export const AuthNameView = () => {
             event.preventDefault()
             setLoad(true)
             setError(undefined)
-            const user = await UserManager.updateUser(contextUser.id, { consent: contextUser.consent, name })
-            setContextUser(user)
+            const user = await UserManager.updateUser(authContextUser.id, { consent: authContextUser.consent, name })
+            setAuthContextUser(user)
             setLoad(false)
             push('/auth/picture')
         } catch (e) {
@@ -38,7 +38,7 @@ export const AuthNameView = () => {
     }
 
     return (
-        contextUser ? (
+        authContextUser ? (
             <main className='view reduced auth'>
                 <main>
                     <div>

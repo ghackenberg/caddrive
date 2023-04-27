@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect, useHistory } from 'react-router'
 
-import { UserContext } from '../../contexts/User'
+import { AuthContext } from '../../contexts/Auth'
 import { UserManager } from '../../managers/user'
 
 import AuthIcon from '/src/images/auth.png'
@@ -11,7 +11,7 @@ export const AuthConsentView = () => {
 
     // CONTEXTS
 
-    const { contextUser, setContextUser } = React.useContext(UserContext)
+    const { authContextUser, setAuthContextUser } = React.useContext(AuthContext)
 
     // STATES
 
@@ -25,8 +25,8 @@ export const AuthConsentView = () => {
             event.preventDefault()
             setLoad(true)
             setError(undefined)
-            const user = await UserManager.updateUser(contextUser.id, { consent: true, name: contextUser.name })
-            setContextUser(user)
+            const user = await UserManager.updateUser(authContextUser.id, { consent: true, name: authContextUser.name })
+            setAuthContextUser(user)
             setLoad(false)
             push('/auth/name')
         } catch (e) {
@@ -36,12 +36,11 @@ export const AuthConsentView = () => {
     }
     async function handleCancel(event: React.UIEvent) {
         event.preventDefault()
-        setContextUser(null)
         push('/')
     }
 
     return (
-        contextUser ? (
+        authContextUser ? (
             <main className='view reduced auth'>
                 <main>
                     <div>

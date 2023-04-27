@@ -1,17 +1,29 @@
 import * as React from 'react'
-import { NavLink, Redirect } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
 
+import { AuthContext } from '../../contexts/Auth'
 import { UserContext } from '../../contexts/User'
 
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthWelcomeView = () => {
+    const { push } = useHistory()
+
     // CONTEXTS
 
-    const { contextUser } = React.useContext(UserContext)
+    const { authContextUser } = React.useContext(AuthContext)
+    const { setContextUser } = React.useContext(UserContext)
+
+    // FUNCTIONS
+
+    function handleSubmit(event: React.UIEvent) {
+        event.preventDefault()
+        setContextUser(authContextUser)
+        push('/')
+    }
 
     return (
-        contextUser ? (
+        authContextUser ? (
             <main className='view reduced auth'>
                 <main>
                     <div>
@@ -21,12 +33,14 @@ export const AuthWelcomeView = () => {
                                 <h5>Authentication process</h5>
                                 <h1>Done! 😀</h1>
                                 <p>
-                                    Congrats <strong>{contextUser.name}</strong>!
+                                    Congrats <strong>{authContextUser.name}</strong>!
                                     You signed up successfully on our platform.
                                     We wish you a <strong>great experience</strong> here.
                                 </p>
                                 <div>
-                                    <NavLink className='button fill blue' to="/">Start</NavLink>
+                                    <button className='button fill blue' onClick={handleSubmit}>
+                                        Start
+                                    </button>
                                 </div>
                             </div>
                         </div>

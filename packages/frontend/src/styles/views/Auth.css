@@ -81,7 +81,3 @@ main.view.auth > main > div > div > div > div > input[type = 'text'] + button {
     margin-left: 0;
     margin-right: 0;
 }
-
-main.view.auth > main > div > div > div > div > a {
-    width: 7.5em;
-}

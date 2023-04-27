@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Redirect, useHistory } from 'react-router'
 
-import { UserContext } from '../../contexts/User'
+import { AuthContext } from '../../contexts/Auth'
 import { UserManager } from '../../managers/user'
 
 import AuthIcon from '/src/images/auth.png'
@@ -15,7 +15,7 @@ export const AuthPictureView = () => {
 
     // CONTEXTS
 
-    const { contextUser, setContextUser } = React.useContext(UserContext)
+    const { authContextUser, setAuthContextUser } = React.useContext(AuthContext)
 
     // STATES
 
@@ -31,8 +31,8 @@ export const AuthPictureView = () => {
                 setLoad(true)
                 setError(undefined)
                 const picture = fileInput.current.files[0]
-                const user = await UserManager.updateUser(contextUser.id, { consent: contextUser.consent, name: contextUser.name }, picture)
-                setContextUser(user)
+                const user = await UserManager.updateUser(authContextUser.id, { consent: authContextUser.consent, name: authContextUser.name }, picture)
+                setAuthContextUser(user)
                 push('/auth/welcome')
             } catch (e) {
                 setError('Action failed.')
@@ -52,7 +52,7 @@ export const AuthPictureView = () => {
     }
 
     return (
-        contextUser ? (
+        authContextUser ? (
             <main className='view reduced auth'>
                 <main>
                     <div>

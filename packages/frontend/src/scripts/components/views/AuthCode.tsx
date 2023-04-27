@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { useHistory, useParams } from 'react-router'
+import { useHistory } from 'react-router'
 
 import { JWK, JWTVerifyResult, KeyLike, importJWK, jwtVerify } from 'jose'
 
 import { auth } from '../../clients/auth'
 import { TokenClient } from '../../clients/rest/token'
+import { AuthContext } from '../../contexts/Auth'
 import { UserContext } from '../../contexts/User'
 import { KeyManager } from '../../managers/key'
 import { UserManager } from '../../managers/user'
@@ -14,12 +15,9 @@ import AuthIcon from '/src/images/auth.png'
 export const AuthCodeView = () => {
     const { push } = useHistory()
 
-    // PARAMS
-
-    const { id } = useParams<{ id: string }>()
-
     // CONTEXTS
 
+    const { authContextToken, setAuthContextUser } = React.useContext(AuthContext)
     const { setContextUser } = React.useContext(UserContext)
 
     // STATES
@@ -58,11 +56,13 @@ export const AuthCodeView = () => {
             setLoad(true)
             setError(undefined)
             UserManager.getUser(userId).then(user => {
-                setContextUser(user)
-                setLoad(false)
                 if (!user.consent || !user.name) {
+                    setAuthContextUser(user)
+                    setLoad(false)
                     push('/auth/consent')
                 } else {
+                    setContextUser(user)
+                    setLoad(false)
                     push('/')
                 }
             }).catch(() => {
@@ -79,7 +79,7 @@ export const AuthCodeView = () => {
             event.preventDefault()
             setLoad(true)
             setError(undefined)
-            const token = await TokenClient.activateToken(id, { code })
+            const token = await TokenClient.activateToken(authContextToken, { code })
             localStorage.setItem('jwt', token.jwt)
             auth.headers.Authorization = `Bearer ${token.jwt}`
             setJWT(token.jwt)

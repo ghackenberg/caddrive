@@ -2,11 +2,16 @@ import * as React from 'react'
 import { useHistory } from 'react-router'
 
 import { TokenClient } from '../../clients/rest/token'
+import { AuthContext } from '../../contexts/Auth'
 
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthEmailView = () => {
     const { push } = useHistory()
+
+    // CONTEXTS
+
+    const { setAuthContextToken } = React.useContext(AuthContext)
 
     // STATES
 
@@ -23,8 +28,9 @@ export const AuthEmailView = () => {
             setLoad(true)
             setError(undefined)
             const token = await TokenClient.createToken({ email })
+            setAuthContextToken(token.id)
             setLoad(false)
-            push(`/auth/code/${token.id}`)
+            push(`/auth/code`)
         } catch (e) {
             setError('Action failed.')
             setLoad(false)
