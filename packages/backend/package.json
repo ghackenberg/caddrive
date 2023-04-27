@@ -33,13 +33,12 @@
         "directory": "packages/backend"
     },
     "scripts": {
-        "clean": "rm -rf bin",
+        "clean": "rm -rf scripts/bin",
         "build": "tsc",
         "start": "cross-env TYPEORM_TYPE=postgres node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
         "devel": "cross-env TYPEORM_TYPE=sqlite nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
-        "lint": "eslint src",
-        "loc": "sloc src",
-        "test": "node bin/main"
+        "lint": "eslint scripts/src",
+        "loc": "sloc scripts/src"
     },
     "dependencies": {
         "@nestjs/common": "^8.1.2",
