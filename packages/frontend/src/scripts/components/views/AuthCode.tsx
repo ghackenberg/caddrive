@@ -59,11 +59,11 @@ export const AuthCodeView = () => {
                 if (!user.consent || !user.name) {
                     setAuthContextUser(user)
                     setLoad(false)
-                    push('/auth/consent')
+                    setTimeout(() => push('/auth/consent'))
                 } else {
                     setContextUser(user)
                     setLoad(false)
-                    push('/')
+                    setTimeout(() => push('/'))
                 }
             }).catch(() => {
                 setError('Action failed.')
