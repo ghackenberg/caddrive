@@ -1,8 +1,8 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "rootDirs": ["src", "../common/src", "../database/src"],
-        "outDir": "bin",
+        "rootDirs": ["scripts/src", "../common/src", "../database/src"],
+        "outDir": "scripts/bin",
         "lib": ["ES2015", "DOM"]
     }
 }
