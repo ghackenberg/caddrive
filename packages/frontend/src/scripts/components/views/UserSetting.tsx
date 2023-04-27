@@ -36,9 +36,9 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     // - Entities
     const [user, setUser] = useState<User>(initialUser)
     // - Values
-    const [email, setEmail] = useState<string>('')
-    const [name, setName] = useState<string>('')
-    const [file, setFile] = useState<File>()
+    const [email, setEmail] = useState<string>(initialUser ? initialUser.email || '' : '')
+    const [name, setName] = useState<string>(initialUser ? initialUser.name || '' : '')
+    const [picture, setPicture] = useState<File>()
 
     // EFFECTS
 
@@ -53,7 +53,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     async function onSubmit(event: FormEvent<HTMLFormElement>){
         event.preventDefault()
         if (name && email) {
-            const newUser = await UserManager.updateUser(user.id, { consent: user.consent, name },file)
+            const newUser = await UserManager.updateUser(user.id, { consent: user.consent, name }, picture)
             if (contextUser.email == newUser.email) {
                 setContextUser({ ...contextUser, ...newUser })
             }
@@ -84,9 +84,12 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                                 <div>
                                     <h1>Settings</h1>
                                     <form onSubmit={onSubmit}>
-                                        <EmailInput label='Email' placeholder='Type email' disabled={true} value={email} change={setEmail}/>
-                                        <TextInput label='Name' placeholder='Type name' value={name} change={setName}/>
-                                        <FileInput label='Picture' placeholder='Select JPEG file' accept='.jpg' change={setFile} required={userId === 'new'}/>
+                                        <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
+                                        {contextUser && contextUser.id == userId && (
+                                            <TextInput label='Token' disabled={true} value={localStorage.getItem('jwt')}/>
+                                        )}
+                                        <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
+                                        <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
                                         {contextUser ? (
                                             userId == contextUser.id ? (
                                                 <SubmitInput value='Save'/>
