@@ -57,21 +57,23 @@ export const AuthPictureView = () => {
                 <main>
                     <div>
                         <div>
-                            <img src={AuthIcon}/>
-                            <h5>Authentication process</h5>
-                            <h1>Step 5: <span>Profile picture</span></h1>
-                            <p>
-                                Do you also want to upload a profile picture?
-                                Profile pictures make collaboration more personal and more fun!
-                            </p>
                             <div>
-                                <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
-                                <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
-                                <button className='button fill blue' onClick={handleUpload}>
-                                    {load ? 'Loading ...' : 'Upload'}
-                                </button>
+                                <img src={AuthIcon}/>
+                                <h5>Authentication process</h5>
+                                <h1>Step 5: <span>Profile picture</span></h1>
+                                <p>
+                                    Do you also want to upload a profile picture?
+                                    Profile pictures make collaboration more personal and more fun!
+                                </p>
+                                <div>
+                                    <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
+                                    <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
+                                    <button className='button fill blue' onClick={handleUpload}>
+                                        {load ? 'Loading ...' : 'Upload'}
+                                    </button>
+                                </div>
+                                {error && <p style={{color: 'red'}}>{error}</p>}
                             </div>
-                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
                     </div>
                 </main>
