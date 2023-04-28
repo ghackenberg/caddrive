@@ -8,7 +8,7 @@ import { UserPictureWidget } from '../widgets/UserPicture'
 import AppIcon from '/src/images/app.png'
 import LoadIcon from '/src/images/load.png'
 
-export const PageHeader = () => {
+export const PageHeaderRoot = () => {
     
     const { pathname } = useLocation()
 

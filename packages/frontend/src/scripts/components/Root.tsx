@@ -18,7 +18,7 @@ import { MilestoneManager } from '../managers/milestone'
 import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
-import { PageHeader } from './snippets/PageHeader'
+import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
 
@@ -96,7 +96,7 @@ const Root = () => {
         <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
             <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
                 <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
-                    <PageHeader/>
+                    <PageHeaderRoot/>
                     {contextUser === undefined ? (
                         <LoadingView/>
                     ) : (
