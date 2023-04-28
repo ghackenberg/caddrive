@@ -5,7 +5,7 @@ import * as ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter } from 'react-router-dom'
 
-import { Root } from './components/Root'
+import { Boot } from './components/Boot'
 
 import AppIcon from '/src/images/app.png'
 
@@ -20,7 +20,7 @@ ReactDOM.render((
             <link rel="icon" href={AppIcon}/>
         </Helmet>
         <BrowserRouter>
-            <Root/>
+            <Boot/>
         </BrowserRouter>
     </>
 ), root)

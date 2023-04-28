@@ -18,18 +18,16 @@ import { MilestoneManager } from '../managers/milestone'
 import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
-import AuthRouter from './routers/Auth'
-import LegalRouter from './routers/Legal'
-import ProductRouter from './routers/Product'
-import UserRouter from './routers/User'
 import { PageHeader } from './snippets/PageHeader'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
 
-import '/src/styles/root.css'
+const AuthRouter = React.lazy(() => import('./routers/Auth'))
+const LegalRouter = React.lazy(() => import('./routers/Legal'))
+const ProductRouter = React.lazy(() => import('./routers/Product'))
+const UserRouter = React.lazy(() => import('./routers/User'))
 
-export const Root = () => {
-
+const Root = () => {
     // STATES
 
     const [publicJWK, setPublicJWK] = React.useState<JWK>()
@@ -102,18 +100,21 @@ export const Root = () => {
                     {contextUser === undefined ? (
                         <LoadingView/>
                     ) : (
-                        <Switch>
-                            <Route path="/legal*" component={LegalRouter}/>
-                            <Route path="/auth*" component={AuthRouter}/>
-                            <Route path="/users*" component={UserRouter}/>
-                            <Route path="/products*" component={ProductRouter}/>
-                            <Redirect path="/" exact to="/products"/>
-                            <Route component={MissingView}/>
-                        </Switch>
+                        <React.Suspense fallback={<LoadingView/>}>
+                            <Switch>
+                                <Route path="/legal*" component={LegalRouter}/>
+                                <Route path="/auth*" component={AuthRouter}/>
+                                <Route path="/users*" component={UserRouter}/>
+                                <Route path="/products*" component={ProductRouter}/>
+                                <Redirect path="/" exact to="/products"/>
+                                <Route component={MissingView}/>
+                            </Switch>
+                        </React.Suspense>
                     )}
                 </VersionContext.Provider>
             </UserContext.Provider>
         </AuthContext.Provider>
     )
-
 }
+
+export default Root

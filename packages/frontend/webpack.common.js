@@ -65,6 +65,6 @@ export default {
     ],
     output: {
         path: resolve('public'),
-        filename: 'frontend.js'
+        filename: 'scripts/frontend/[name].js'
     }
 }

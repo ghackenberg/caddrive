@@ -19,6 +19,6 @@ export default {
     },
     output: {
         path: resolve('public'),
-        filename: 'worker.js'
+        filename: 'scripts/worker/[name].js'
     }
 }
