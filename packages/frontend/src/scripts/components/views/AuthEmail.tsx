@@ -38,7 +38,7 @@ export const AuthEmailView = () => {
     }
 
     return (
-        <main className="view reduced auth">
+        <main className="view reduced auth email">
             <main>
                 <div>
                     <div>

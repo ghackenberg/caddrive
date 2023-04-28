@@ -41,7 +41,7 @@ export const AuthConsentView = () => {
 
     return (
         authContextUser ? (
-            <main className='view reduced auth'>
+            <main className='view reduced auth consent'>
                 <main>
                     <div>
                         <div>

@@ -53,7 +53,7 @@ export const AuthPictureView = () => {
 
     return (
         authContextUser ? (
-            <main className='view reduced auth'>
+            <main className='view reduced auth picture'>
                 <main>
                     <div>
                         <div>

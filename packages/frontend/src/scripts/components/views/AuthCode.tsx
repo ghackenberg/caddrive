@@ -91,7 +91,7 @@ export const AuthCodeView = () => {
     }
 
     return (
-        <main className="view reduced auth">
+        <main className="view reduced auth code">
             <main>
                 <div>
                     <div>
