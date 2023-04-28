@@ -5,9 +5,23 @@ import * as ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter } from 'react-router-dom'
 
-import { Root } from './components/Root'
+import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
+import { LoadingView } from './components/views/Loading'
 
 import AppIcon from '/src/images/app.png'
+
+import '/src/styles/root.css'
+
+const Root = React.lazy(() => import('./components/Root'))
+
+const Fallback = () => {
+    return (
+        <>
+            <PageHeaderBoot/>
+            <LoadingView/>
+        </>
+    )
+}
 
 // Create root
 const root = document.createElement('div')
@@ -20,7 +34,9 @@ ReactDOM.render((
             <link rel="icon" href={AppIcon}/>
         </Helmet>
         <BrowserRouter>
-            <Root/>
+            <React.Suspense fallback={<Fallback/>}>
+                <Root/>
+            </React.Suspense>
         </BrowserRouter>
     </>
 ), root)

@@ -24,7 +24,7 @@ export const AuthWelcomeView = () => {
 
     return (
         authContextUser ? (
-            <main className='view reduced auth'>
+            <main className='view reduced auth welcome'>
                 <main>
                     <div>
                         <div>

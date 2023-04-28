@@ -18,34 +18,16 @@ import { MilestoneManager } from '../managers/milestone'
 import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
-import { PageHeader } from './snippets/PageHeader'
-import { AuthCodeView } from './views/AuthCode'
-import { AuthConsentView } from './views/AuthConsent'
-import { AuthEmailView } from './views/AuthEmail'
-import { AuthNameView } from './views/AuthName'
-import { AuthPictureView } from './views/AuthPicture'
-import { AuthWelcomeView } from './views/AuthWelcome'
+import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
-import { ProductView } from './views/Product'
-import { ProductIssueView } from './views/ProductIssue'
-import { ProductIssueCommentView } from './views/ProductIssueComment'
-import { ProductIssueSettingView } from './views/ProductIssueSetting'
-import { ProductMemberView } from './views/ProductMember'
-import { ProductMemberSettingView } from './views/ProductMemberSetting'
-import { ProductMilestoneView } from './views/ProductMilestone'
-import { ProductMilestoneIssueView } from './views/ProductMilestoneIssue'
-import { ProductMilestoneSettingView } from './views/ProductMilestoneSetting'
-import { ProductSettingView } from './views/ProductSetting'
-import { ProductVersionView } from './views/ProductVersion'
-import { ProductVersionSettingView } from './views/ProductVersionSetting'
-import { UserView } from './views/User'
-import { UserSettingView } from './views/UserSetting'
 
-import '/src/styles/root.css'
+const AuthRouter = React.lazy(() => import('./routers/Auth'))
+const LegalRouter = React.lazy(() => import('./routers/Legal'))
+const ProductRouter = React.lazy(() => import('./routers/Product'))
+const UserRouter = React.lazy(() => import('./routers/User'))
 
-export const Root = () => {
-
+const Root = () => {
     // STATES
 
     const [publicJWK, setPublicJWK] = React.useState<JWK>()
@@ -114,61 +96,25 @@ export const Root = () => {
         <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
             <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
                 <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
-                    <PageHeader/>
+                    <PageHeaderRoot/>
                     {contextUser === undefined ? (
                         <LoadingView/>
                     ) : (
-                        <Switch>
-                            {/* Auth views */}
-
-                            <Route path="/auth/email" component={AuthEmailView}/>
-                            <Route path="/auth/code" component={AuthCodeView}/>
-                            <Route path="/auth/consent" component={AuthConsentView}/>
-                            <Route path="/auth/name" component={AuthNameView}/>
-                            <Route path="/auth/picture" component={AuthPictureView}/>
-                            <Route path="/auth/welcome" component={AuthWelcomeView}/>
-                            <Redirect path="/auth" to="/auth/email"/>
-
-                            {/* User views */}
-
-                            <Route path="/users/:user/settings" component={UserSettingView}/>
-                            <Redirect path="/users/:user" to="/users/:user/settings"/>
-                            <Route path="/users" component={UserView}/>
-
-                            {/* Product views */}
-
-                            <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
-                            <Redirect path="/products/:product/versions/:version" to="/products/:product/versions/:version/settings"/>
-                            <Route path="/products/:product/versions" component={ProductVersionView}/>
-                            
-                            <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView}/>
-                            <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView}/>
-                            <Redirect path="/products/:product/issues/:issue" to="/products/:product/issues/:issue/comments"/>
-                            <Route path="/products/:product/issues" component={ProductIssueView}/>
-
-                            <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView}/>
-                            <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
-                            <Redirect path="/products/:product/milestones/:milestone" to="/products/:product/milestones/:milestone/issues"/>
-                            <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
-
-                            <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView}/>
-                            <Redirect path="/products/:product/members/:member" to="/products/:product/members/:member/settings"/>
-                            <Route path="/products/:product/members" component={ProductMemberView}/>
-
-                            <Route path="/products/:product/settings" component={ProductSettingView}/>
-                            <Redirect path="/products/:product" to="/products/:product/versions"/>
-                            <Route path="/products" component={ProductView}/>
-                            
-                            <Redirect path="/" exact to="/products"/>
-
-                            {/* Missing view */}
-                            
-                            <Route component={MissingView}/>
-                        </Switch>
+                        <React.Suspense fallback={<LoadingView/>}>
+                            <Switch>
+                                <Route path="/legal*" component={LegalRouter}/>
+                                <Route path="/auth*" component={AuthRouter}/>
+                                <Route path="/users*" component={UserRouter}/>
+                                <Route path="/products*" component={ProductRouter}/>
+                                <Redirect path="/" exact to="/products"/>
+                                <Route component={MissingView}/>
+                            </Switch>
+                        </React.Suspense>
                     )}
                 </VersionContext.Provider>
             </UserContext.Provider>
         </AuthContext.Provider>
     )
-
 }
+
+export default Root

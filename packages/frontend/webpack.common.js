@@ -5,7 +5,6 @@ import webpack from 'webpack'
 const { ProvidePlugin } = webpack
 
 export default {
-    mode: 'development',
     stats: 'minimal',
     entry: './src/scripts/main.tsx',
     module: {
@@ -28,12 +27,6 @@ export default {
                 type: 'asset/resource',
                 generator: {
                     filename: 'fonts/[hash][ext][query]'
-                }
-            },{
-                test: /\.(glb|gltf|bin)$/i,
-                type: 'asset/resource',
-                generator: {
-                    filename: 'models/[hash][ext][query]'
                 }
             }
         ],
@@ -72,16 +65,6 @@ export default {
     ],
     output: {
         path: resolve('public'),
-        filename: 'frontend.js'
-    },
-    devServer: {
-        static: resolve('public'),
-        port: 3003,
-        historyApiFallback: {
-            rewrites: [
-                { from: /./, to: '/404.html' }
-            ]
-        }
-    },
-    devtool: 'inline-source-map'
+        filename: 'scripts/frontend/[name].js'
+    }
 }
