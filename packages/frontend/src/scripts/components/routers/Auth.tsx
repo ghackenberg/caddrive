@@ -17,7 +17,7 @@ const AuthRouter = () => {
             <Route path="/auth/name" component={AuthNameView}/>
             <Route path="/auth/picture" component={AuthPictureView}/>
             <Route path="/auth/welcome" component={AuthWelcomeView}/>
-            <Redirect path="/auth/" to="/auth/email"/>
+            <Redirect path="/auth" to="/auth/email"/>
         </Switch>
     )
 }
