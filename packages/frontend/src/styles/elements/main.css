@@ -5,7 +5,7 @@ main.view {
 
     flex-direction: row;
 
-    overflow: auto;
+    overflow: hidden;
 }
 
 main.view > div {
@@ -39,7 +39,9 @@ main.view > div:nth-child(1) > a.button.right {
 }
 
 main.view > div:nth-child(2) {
-    flex-grow: 1;
+    flex: 1;
+
+    overflow: hidden;
 }
 
 @media screen and (max-width: 70em) {
