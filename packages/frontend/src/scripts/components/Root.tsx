@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 
 import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike} from 'jose'
 
@@ -93,27 +93,29 @@ const Root = () => {
     // RETURN
 
     return (
-        <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
-            <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
-                <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
-                    <PageHeaderRoot/>
-                    {contextUser === undefined ? (
-                        <LoadingView/>
-                    ) : (
-                        <React.Suspense fallback={<LoadingView/>}>
-                            <Switch>
-                                <Route path="/legal" component={LegalRouter}/>
-                                <Route path="/auth" component={AuthRouter}/>
-                                <Route path="/users" component={UsersRouter}/>
-                                <Route path="/products" component={ProductsRouter}/>
-                                <Redirect path="/" exact to="/products"/>
-                                <Route component={MissingView}/>
-                            </Switch>
-                        </React.Suspense>
-                    )}
-                </VersionContext.Provider>
-            </UserContext.Provider>
-        </AuthContext.Provider>
+        <BrowserRouter>
+            <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
+                <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
+                    <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
+                        <PageHeaderRoot/>
+                        {contextUser === undefined ? (
+                            <LoadingView/>
+                        ) : (
+                            <React.Suspense fallback={<LoadingView/>}>
+                                <Switch>
+                                    <Route path="/legal" component={LegalRouter}/>
+                                    <Route path="/auth" component={AuthRouter}/>
+                                    <Route path="/users" component={UsersRouter}/>
+                                    <Route path="/products" component={ProductsRouter}/>
+                                    <Redirect path="/" exact to="/products"/>
+                                    <Route component={MissingView}/>
+                                </Switch>
+                            </React.Suspense>
+                        )}
+                    </VersionContext.Provider>
+                </UserContext.Provider>
+            </AuthContext.Provider>
+        </BrowserRouter>
     )
 }
 
