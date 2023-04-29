@@ -1,11 +1,11 @@
 main.view {
+    flex: 1;
+
     display: flex;
 
     flex-direction: row;
 
     overflow: auto;
-
-    flex: 1;
 }
 
 main.view > div {
