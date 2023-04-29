@@ -12,10 +12,10 @@ import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductHeader } from '../snippets/ProductHeader'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { UserPictureWidget } from '../widgets/UserPicture'
+import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/setting.png'
@@ -74,10 +74,11 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     useEffect(() => {
         if (users) {
             setNames(users.map(user => {
-                const index = user.name.toLowerCase().indexOf(query.toLowerCase())
-                const before = user.name.substring(0, index)
-                const between = user.name.substring(index, index + query.length)
-                const after = user.name.substring(index + query.length)
+                const name = user.name || ''
+                const index = name.toLowerCase().indexOf(query.toLowerCase())
+                const before = name.substring(0, index)
+                const between = name.substring(index, index + query.length)
+                const after = name.substring(index + query.length)
                 return <Fragment>{before}<mark>{between}</mark>{after}</Fragment>
             }))
         }
@@ -144,82 +145,79 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // RETURN
 
     return (
-        <main className="view extended product-member-setting">
-            {product && members && (
-                 <Fragment>
-                    {product && product.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <ProductHeader product={product}/>
-                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>
-                                    <h1>Settings</h1>
-                                    <form onSubmit={onSubmit}>
-                                        {user ? (
+        (product && members) ? (
+            product.deleted ? (
+                <Redirect to='/'/>
+            ) : (
+                <>
+                    <main className={`view product-member-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                        <div>
+                            <h1>Settings</h1>
+                            <form onSubmit={onSubmit}>
+                                {user ? (
+                                    <div>
+                                        <div>
+                                            <label>User</label>
+                                        </div>
+                                        <div>
+                                            {users && user && (
+                                                <Table items={[user]} columns={selectedUserColumns}/>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
+                                )}
+                                {query && (
+                                        <div>
                                             <div>
-                                                <div>
-                                                    <label>User</label>
-                                                </div>
-                                                <div>
-                                                    {users && user && (
-                                                        <Table items={[user]} columns={selectedUserColumns}/>
-                                                    )}
-                                                </div>
+                                                <label>User</label>
                                             </div>
+                                            <div>
+                                                {users && (
+                                                    <Table items={users} columns={queriedUserColumns}/>
+                                                )}
+                                            </div>
+                                        </div>
+                                )}
+                                {user && (
+                                    <div>
+                                        <div>
+                                            <label>Role</label>
+                                        </div>
+                                        <div>
+                                            <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
+                                                {ROLES.map(role => (
+                                                    <option key={role} value={role}>
+                                                        {role}
+                                                    </option>
+                                                ))}    
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+                                {user && (
+                                    contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                            <SubmitInput value='Save'/>
                                         ) : (
-                                            <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
-                                        )}
-                                        {query && (
-                                                <div>
-                                                    <div>
-                                                        <label>User</label>
-                                                    </div>
-                                                    <div>
-                                                        {users && (
-                                                            <Table items={users} columns={queriedUserColumns}/>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                        )}
-                                        {user && (
-                                            <div>
-                                                <div>
-                                                    <label>Role</label>
-                                                </div>
-                                                <div>
-                                                    <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
-                                                        {ROLES.map(role => (
-                                                            <option key={role} value={role}>
-                                                                {role}
-                                                            </option>
-                                                        ))}    
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {user && (
-                                            contextUser ? (
-                                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                                    <SubmitInput value='Save'/>
-                                                ) : (
-                                                    <SubmitInput value='Save (requires role)' disabled={true}/>
-                                                )
-                                            ) : (
-                                                <SubmitInput value='Save (requires login)' disabled={true}/>
-                                            )
-                                        )}
-                                    </form>
-                                </div>
-                                <div>
-                                    <ProductView3D product={product} mouse={true}/>
-                                </div>
-                            </main>
-                            <ProductFooter items={items} active={active} setActive={setActive}/>       
-                        </Fragment>
-                    )}
-                 </Fragment>
-            )}
-        </main>
+                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                        )
+                                    ) : (
+                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                    )
+                                )}
+                            </form>
+                        </div>
+                        <div>
+                            <ProductView3D product={product} mouse={true}/>
+                        </div>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive}/>       
+                </>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
 }

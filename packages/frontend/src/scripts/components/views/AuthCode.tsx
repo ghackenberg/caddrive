@@ -91,30 +91,28 @@ export const AuthCodeView = () => {
     }
 
     return (
-        <main className="view reduced auth code">
-            <main>
+        <main className="view auth code">
+            <div>
                 <div>
                     <div>
+                        <img src={AuthIcon}/>
+                        <h5>Authentication process</h5>
+                        <h1>Step 2: <span>Verification code</span></h1>
+                        <p>
+                            Please check your <strong>email inbox</strong>.
+                            You should find your <strong>verification code</strong> there.
+                            Then enter your code below and press <strong>next</strong>.
+                        </p>
                         <div>
-                            <img src={AuthIcon}/>
-                            <h5>Authentication process</h5>
-                            <h1>Step 2: <span>Verification code</span></h1>
-                            <p>
-                                Please check your <strong>email inbox</strong>.
-                                You should find your <strong>verification code</strong> there.
-                                Then enter your code below and press <strong>next</strong>.
-                            </p>
-                            <div>
-                                <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
-                                <button className='button fill blue' onClick={handleSubmit}>
-                                    {load ? 'Loading ...' : 'Next'}
-                                </button>
-                            </div>
-                            {error && <p style={{color: 'red'}}>{error}</p>}
+                            <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
+                            <button className='button fill blue' onClick={handleSubmit}>
+                                {load ? 'Loading ...' : 'Next'}
+                            </button>
                         </div>
+                        {error && <p style={{color: 'red'}}>{error}</p>}
                     </div>
                 </div>
-            </main>
+            </div>
         </main>
     )
 }

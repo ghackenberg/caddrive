@@ -8,8 +8,7 @@ export type ProductFooterItem = {
 
 export const ProductFooter = (props: { items: ProductFooterItem[], active: string, setActive: (name: string) => void }) => {
     return(
-        <footer>
-            <div/>
+        <footer className='view'>
             <div>
                 {props.items.map(item => (
                     <span key={item.name}>

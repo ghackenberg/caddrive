@@ -1,31 +1,50 @@
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 
-import { User } from 'productboard-common'
-
+import { UserManager } from '../../managers/user'
 import { UserLink } from '../links/UserLink'
 
 import SettingIcon from '/src/images/setting.png'
 
-export const UserHeader = (props: {user?: User}) => (
-    <header>
-        <div>
-            <UserLink user={props.user}/>
-        </div>
-        <div>
-            <span>
-                {props.user ? (
-                    <NavLink to={`/users/${props.user.id}`}>
-                        <img src={SettingIcon} className='icon small'/>
-                        <span>Settings</span>
-                    </NavLink>
-                ) : (
-                    <a className="active">
-                        <img src={SettingIcon} className='icon small'/>
-                        <span>Settings</span>
-                    </a>
-                )}
-            </span>
-        </div>
-    </header>
-)
+export const UserHeader = () => {
+    // PARAMS
+
+    const params = useParams<{ user: string }>()
+
+    // INITIAL STATES
+
+    const initialUser = params.user == 'new' ? undefined : UserManager.getUserFromCache(params.user)
+
+    // STATES
+
+    const [user, setUser] = React.useState(initialUser)
+
+    // EFFECTS
+
+    React.useEffect(() => {
+        params.user == 'new' ? setUser(undefined) : UserManager.getUser(params.user).then(setUser)
+    }, [params.user])
+
+    return (
+        <header className='view large'>
+            <div>
+                <UserLink user={user}/>
+            </div>
+            <div>
+                <span>
+                    {params.user == 'new' ? (
+                        <a className="active">
+                            <img src={SettingIcon} className='icon small'/>
+                            <span>Settings</span>
+                        </a>
+                    ) : (
+                        <NavLink to={`/users/${params.user}`}>
+                            <img src={SettingIcon} className='icon small'/>
+                            <span>Settings</span>
+                        </NavLink>
+                    )}
+                </span>
+            </div>
+        </header>
+    )
+}

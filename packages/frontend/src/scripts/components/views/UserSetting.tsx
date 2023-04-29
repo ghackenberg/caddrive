@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, FormEvent, Fragment, useContext } from 'react'
+import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
@@ -13,7 +13,7 @@ import { EmailInput } from '../inputs/EmailInput'
 import { FileInput } from '../inputs/FileInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
-import { UserHeader } from '../snippets/UserHeader'
+import { LoadingView } from './Loading'
 
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     
@@ -72,43 +72,38 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     // RETURN
         
     return (
-        <main className="view extended user-setting">
-            {(userId == 'new' || user) && (
-                <Fragment>
-                    { user && user.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <UserHeader user={user}/>
-                            <main>
-                                <div>
-                                    <h1>Settings</h1>
-                                    <form onSubmit={onSubmit}>
-                                        <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
-                                        {contextUser && contextUser.id == userId && (
-                                            <TextInput label='Token' disabled={true} value={localStorage.getItem('jwt')}/>
-                                        )}
-                                        <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
-                                        <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
-                                        {contextUser ? (
-                                            userId == contextUser.id ? (
-                                                <SubmitInput value='Save'/>
-                                            ) : (
-                                                <SubmitInput value='Save (requires permission)' disabled={true}/>
-                                            )
-                                        ) : (
-                                            <SubmitInput value="Save (requires login)" disabled={true}/>
-                                        )}
-                                        {contextUser && contextUser.id == userId && (
-                                            <ButtonInput value='Leave' class='red' click={onClick}/>
-                                        )}
-                                    </form>
-                                </div>
-                            </main>
-                        </Fragment>
-                    )}
-                </Fragment>
-            )}
-        </main>
+        (userId == 'new' || user) ? (
+            (user && user.deleted) ? (
+                <Redirect to='/'/>
+            ) : (
+                <main className="view user-setting">
+                    <div>
+                        <h1>Settings</h1>
+                        <form onSubmit={onSubmit}>
+                            <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
+                            {contextUser && contextUser.id == userId && (
+                                <TextInput label='Token' disabled={true} value={localStorage.getItem('jwt')}/>
+                            )}
+                            <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
+                            <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
+                            {contextUser ? (
+                                userId == contextUser.id ? (
+                                    <SubmitInput value='Save'/>
+                                ) : (
+                                    <SubmitInput value='Save (requires permission)' disabled={true}/>
+                                )
+                            ) : (
+                                <SubmitInput value="Save (requires login)" disabled={true}/>
+                            )}
+                            {contextUser && contextUser.id == userId && (
+                                <ButtonInput value='Leave' class='red' click={onClick}/>
+                            )}
+                        </form>
+                    </div>
+                </main>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
 }

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { User } from 'productboard-common'
@@ -7,7 +6,7 @@ import { User } from 'productboard-common'
 import { UsersLink } from './UsersLink'
 
 export const UserLink = (props: {user?: User}) => (
-    <Fragment>
+    <>
         <UsersLink/>
         { props.user ? (
             <span>
@@ -22,5 +21,5 @@ export const UserLink = (props: {user?: User}) => (
                 </NavLink>
             </span>
         )}
-    </Fragment>  
+    </>  
 )

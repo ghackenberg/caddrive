@@ -24,28 +24,26 @@ export const AuthWelcomeView = () => {
 
     return (
         authContextUser ? (
-            <main className='view reduced auth welcome'>
-                <main>
+            <main className='view auth welcome'>
+                <div>
                     <div>
                         <div>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Done! 😀</h1>
+                            <p>
+                                Congrats <strong>{authContextUser.name}</strong>!
+                                You signed up successfully on our platform.
+                                We wish you a <strong>great experience</strong> here.
+                            </p>
                             <div>
-                                <img src={AuthIcon}/>
-                                <h5>Authentication process</h5>
-                                <h1>Done! 😀</h1>
-                                <p>
-                                    Congrats <strong>{authContextUser.name}</strong>!
-                                    You signed up successfully on our platform.
-                                    We wish you a <strong>great experience</strong> here.
-                                </p>
-                                <div>
-                                    <button className='button fill blue' onClick={handleSubmit}>
-                                        Start
-                                    </button>
-                                </div>
+                                <button className='button fill blue' onClick={handleSubmit}>
+                                    Start
+                                </button>
                             </div>
                         </div>
                     </div>
-                </main>
+                </div>
             </main>
         ) : (
             <Redirect to="/auth"/>

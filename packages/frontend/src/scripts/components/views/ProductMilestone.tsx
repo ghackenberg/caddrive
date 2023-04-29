@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { Fragment, useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { Redirect, RouteComponentProps } from 'react-router'
 import { Link } from 'react-router-dom'
 
@@ -12,10 +12,10 @@ import { MilestoneManager } from '../../managers/milestone'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
+import { LoadingView } from './Loading'
 
 import LoadIcon from '/src/images/load.png'
 import DeleteIcon from '/src/images/delete.png'
@@ -123,7 +123,7 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     }
 
     function calculateIssueProgress(milestone: Milestone) {
-        if (milestone.id in openIssues && milestone.id in closedIssues) {
+        if (openIssues[milestone.id] && closedIssues[milestone.id]) {
             return 100 * closedIssues[milestone.id].length / (closedIssues[milestone.id].length + openIssues[milestone.id].length)
         } else {
             return 0
@@ -159,23 +159,23 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
         ) },
         { label: 'Open', class: 'center', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {milestone.id in openIssues ? openIssues[milestone.id] : '?'}
+                {openIssues[milestone.id] ? openIssues[milestone.id].length : '?'}
             </Link>
         ) },
         { label: 'Closed', class: 'center', content: milestone => (
             <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {milestone.id in closedIssues ? closedIssues[milestone.id] : '?'}
+                {closedIssues[milestone.id] ? closedIssues[milestone.id].length : '?'}
             </Link>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
-            <Fragment>
+            <>
                 <div className='progress date'>
                     <div style={{width: `${calculateDateProgress(milestone)}%` }}/>
                 </div>
                 <div className='progress issue'>
                     <div style={{width: `${calculateIssueProgress(milestone)}%` }}/>
                 </div>
-            </Fragment>
+            </>
         ) },
         { label: '🛠️', class: 'center', content: milestone => (
             <a onClick={() => deleteMilestone(milestone)}>
@@ -192,45 +192,42 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // RETURN
 
     return (
-        <main className="view extended product-milestone">
-            {product && members && (
-                 <Fragment>
-                    {product && product.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <ProductHeader product={product}/>
-                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>
-                                    {contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                            <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
-                                                New milestone
-                                            </Link>
-                                        ) : (
-                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                                New milestone (requires role)
-                                            </a>
-                                        )
-                                    ) : (
-                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New milestone (requires login)
-                                        </a>
-                                    )}
-                                    {milestones && (
-                                        <Table columns={columns} items={milestones}/>
-                                    )}
-                                </div>
-                                <div>
-                                    <ProductView3D product={product} mouse={true}/>
-                                </div>
-                            </main>
-                            <ProductFooter items={items} active={active} setActive={setActive}/>
-                        </Fragment>
-                    )}
-                 </Fragment>  
-            )}
-        </main>
+        (product && members && milestones) ? (
+            product.deleted ? (
+                <Redirect to='/'/>
+            ) : (
+                <>
+                    <main className={`view product-milestone sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                        <div>
+                            {contextUser ? (
+                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                    <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
+                                        New milestone
+                                    </Link>
+                                ) : (
+                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                        New milestone (requires role)
+                                    </a>
+                                )
+                            ) : (
+                                <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                    New milestone (requires login)
+                                </a>
+                            )}
+                            {milestones && (
+                                <Table columns={columns} items={milestones}/>
+                            )}
+                        </div>
+                        <div>
+                            <ProductView3D product={product} mouse={true}/>
+                        </div>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                </>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
 
 }

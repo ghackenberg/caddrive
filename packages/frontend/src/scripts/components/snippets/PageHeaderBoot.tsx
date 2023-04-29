@@ -4,7 +4,7 @@ import AppIcon from '/src/images/app.png'
 
 export const PageHeaderBoot = () => {
     return (
-        <header>
+        <header className='page'>
             <div>
                 <span>
                     <a>

@@ -24,8 +24,8 @@ import { MissingView } from './views/Missing'
 
 const AuthRouter = React.lazy(() => import('./routers/Auth'))
 const LegalRouter = React.lazy(() => import('./routers/Legal'))
-const ProductRouter = React.lazy(() => import('./routers/Product'))
-const UserRouter = React.lazy(() => import('./routers/User'))
+const ProductsRouter = React.lazy(() => import('./routers/Products'))
+const UsersRouter = React.lazy(() => import('./routers/Users'))
 
 const Root = () => {
     // STATES
@@ -102,10 +102,10 @@ const Root = () => {
                     ) : (
                         <React.Suspense fallback={<LoadingView/>}>
                             <Switch>
-                                <Route path="/legal*" component={LegalRouter}/>
-                                <Route path="/auth*" component={AuthRouter}/>
-                                <Route path="/users*" component={UserRouter}/>
-                                <Route path="/products*" component={ProductRouter}/>
+                                <Route path="/legal" component={LegalRouter}/>
+                                <Route path="/auth" component={AuthRouter}/>
+                                <Route path="/users" component={UsersRouter}/>
+                                <Route path="/products" component={ProductsRouter}/>
                                 <Redirect path="/" exact to="/products"/>
                                 <Route component={MissingView}/>
                             </Switch>
