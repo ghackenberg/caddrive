@@ -75,6 +75,7 @@ export class ModelView3D extends React.Component<Props> {
     override componentWillUnmount() {
         // Frame
         this.renderer.setAnimationLoop(null)
+        this.renderer.forceContextLoss()
         // Resize
         window.removeEventListener('resize', this.resize)
         // Remove all active WebGl contexts
