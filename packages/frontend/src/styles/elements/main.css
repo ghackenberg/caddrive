@@ -5,7 +5,7 @@ main.view {
 
     overflow: auto;
 
-    flex-grow: 1;
+    flex: 1;
 }
 
 main.view > div {

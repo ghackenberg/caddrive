@@ -1,6 +1,8 @@
 /* View footer */
 
 footer.view {
+    flex: 0;
+    
     display: none;
 
     height: 3em;

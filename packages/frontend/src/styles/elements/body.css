@@ -4,6 +4,8 @@ body {
     font-family: Arial;
     
     line-height: 150%;
+
+    overflow: hidden;
 }
 
 body > div {
