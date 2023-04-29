@@ -1,48 +1,37 @@
-body > div > header {
-    position: fixed;
+/* Page header */
 
-    z-index: 1;
+header.page {
+    display: flex;
 
-    top: 0;
-    left: 0;
-    right: 0;
+    flex-direction: row;
 
-    height: 4em;
+    justify-content: space-between;
 
     background-color: black;
 
     color: white;
 }
-body > div > header > div {
-    position: absolute;
-    
-    top: 0;
-    
+header.page > div {
     padding: 1em;
     
     line-height: 2em;
 }
-body > div > header > div:first-child {
-    left: 0;
-    
+header.page > div:first-child {
     font-family: 'Arial Black';
 }
-body > div > header > div:last-child {
-    right: 0;
-}
-body > div > header > div > span > a {
+header.page > div > span > a {
     text-decoration: none;
     
     color: inherit;
 }
-body > div > header > div > span > a > img {
+header.page > div > span > a > img {
     filter: invert();
     
     padding: 0.25em;
     
     margin-right: 0;
 }
-body > div > header > div:first-child > span > a > img.icon.small {
+header.page > div:first-child > span > a > img.icon.small {
     width: 2em;
     height: 2em;
 
@@ -50,6 +39,84 @@ body > div > header > div:first-child > span > a > img.icon.small {
 
     margin-right: 0.5em;
 }
-body > div > header > div:last-child > span:last-child > a > img {
+header.page > div:last-child > span:last-child > a > img {
     filter: none;
+}
+
+/* View header */
+
+header.view {
+    background-color: rgb(245,245,245);
+
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: rgb(215,215,215);
+}
+
+header.view > div {
+    white-space: nowrap;
+
+    overflow: hidden;
+}
+
+header.view > div:nth-child(1) {
+    padding: 1rem;
+
+    font-size: 200%;
+
+    line-height: 150%;
+}
+header.view > div:nth-child(1) > span::after {
+    content: "/";
+
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
+header.view > div:nth-child(1) > span:last-child::after {
+    content: "";
+}
+
+header.view > div:nth-child(2) > span > a {
+    display: inline-block;
+    
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.75em;
+
+    color: black;
+}
+header.view > div:nth-child(2) > span > a > span > span:last-child {
+    margin-left: 0.25em;
+}
+header.view > div:nth-child(2) > span > a > span > span:last-child::before {
+    content: "(";
+}
+header.view > div:nth-child(2) > span > a > span > span:last-child::after {
+    content: ")";
+}
+header.view > div:nth-child(2) > span > a.active {
+    font-weight: bold;
+
+    border-bottom-width: 4px;
+    border-bottom-style: solid;
+    border-bottom-color: orange;
+
+    padding-bottom: calc(0.75em - 2px);
+
+    margin-bottom: -1px;
+}
+
+@media screen and (max-width: 45em) {
+    header.view > div:nth-child(2) > span > a > span > span:last-child {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 40em) {
+    header.view > div:nth-child(2) > span > a > span {
+        display: none;
+    }
+    header.view > div:nth-child(2) > span > a.active > span {
+        display: inline;
+    }
 }

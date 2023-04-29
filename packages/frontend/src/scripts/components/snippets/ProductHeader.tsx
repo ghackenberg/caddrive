@@ -1,9 +1,7 @@
 import * as React from 'react'
-import { Fragment } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 
-import { Product } from 'productboard-common'
-
+import { ProductManager } from '../../managers/product'
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 import { MilestonesLink } from '../links/MilestonesLink'
@@ -12,33 +10,53 @@ import { VersionsLink } from '../links/VersionsLink'
 
 import SettingIcon from '/src/images/setting.png'
 
-export const ProductHeader = (props: {product?: Product}) => (
-    <header>
-        <div>
-            <ProductLink product={props.product}/>
-        </div>
-        <div>
-            {props.product && (
-                <Fragment>
-                    <VersionsLink product={props.product}/>
-                    <IssuesLink product={props.product}/>
-                    <MilestonesLink product={props.product}/>
-                    <MembersLink product={props.product}/>
-                </Fragment>
-            )}
-            <span>
-                {props.product ? (
-                    <NavLink to={`/products/${props.product.id}/settings`}>
-                        <img src={SettingIcon} className='icon small'/>
-                        <span>Settings</span>
-                    </NavLink>
-                ) : (
-                    <a className="active">
-                        <img src={SettingIcon} className='icon small'/>
-                        <span>Settings</span>
-                    </a>
+export const ProductHeader = () => {
+    // PARAMS
+
+    const params = useParams<{ product: string }>()
+
+    // INITIAL STATES
+
+    const initialProduct = params.product == 'new' ? undefined : ProductManager.getProductFromCache(params.product)
+
+    // STATES
+
+    const [product, setProduct] = React.useState(initialProduct)
+
+    // EFFECTS
+
+    React.useEffect(() => {
+        params.product == 'new' ? setProduct(undefined) : ProductManager.getProduct(params.product).then(setProduct)
+    }, [params.product])
+
+    return (
+        <header className='view large'>
+            <div>
+                <ProductLink product={product}/>
+            </div>
+            <div>
+                {product && (
+                    <>
+                        <VersionsLink product={product}/>
+                        <IssuesLink product={product}/>
+                        <MilestonesLink product={product}/>
+                        <MembersLink product={product}/>
+                    </>
                 )}
-            </span>
-        </div>
-    </header>
-)
+                <span>
+                    {params.product == 'new' ? (
+                        <a className="active">
+                            <img src={SettingIcon} className='icon small'/>
+                            <span>Settings</span>
+                        </a>
+                    ) : (
+                        <NavLink to={`/products/${params.product}/settings`}>
+                            <img src={SettingIcon} className='icon small'/>
+                            <span>Settings</span>
+                        </NavLink>
+                    )}
+                </span>
+            </div>
+        </header>
+    )
+}

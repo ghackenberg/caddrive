@@ -13,7 +13,6 @@ import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
 import { UserManager } from '../../managers/user'
-import { ProductsLink } from '../links/ProductsLink'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 
@@ -272,27 +271,20 @@ export const ProductView = () => {
 
     return (
         <main className="view product">
-            <header>
-                <div>
-                    <ProductsLink/>
-                </div>
-            </header>
-            <main>
-                <div>
-                    {contextUser ? (
-                        <Link to='/products/new/settings' className='button fill green'>
-                            New product
-                        </Link>
-                    ) : (
-                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                            New product (requires login)
-                        </a>
-                    )}
-                    {products && (
-                        <Table columns={columns} items={products.map(p => p).reverse()}/>
-                    )}
-                </div>
-            </main>
+            <div>
+                {contextUser ? (
+                    <Link to='/products/new/settings' className='button fill green'>
+                        New product
+                    </Link>
+                ) : (
+                    <a className='button fill green' style={{fontStyle: 'italic'}}>
+                        New product (requires login)
+                    </a>
+                )}
+                {products && (
+                    <Table columns={columns} items={products.map(p => p).reverse()}/>
+                )}
+            </div>
         </main>
     )
 

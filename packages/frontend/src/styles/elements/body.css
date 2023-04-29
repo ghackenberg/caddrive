@@ -1,9 +1,16 @@
 body {
     margin: 0;
+
     font-family: Arial;
+    
     line-height: 150%;
 }
-body > div > canvas {
-    background-color: rgb(215,215,215);
-    background-image: linear-gradient(rgba(0,0,0,00), rgba(0,0,0,0.05), rgba(0,0,0,0.15), rgba(0,0,0,0.4));
+
+body > div {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100vw;
+    height: 100vh;
 }

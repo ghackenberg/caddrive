@@ -13,11 +13,11 @@ import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
-import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
 import LoadIcon from '/src/images/load.png'
@@ -259,48 +259,45 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // RETURN
 
     return (
-        <main className="view extended product-issue">
-            {product && members && issues && (
-                 <Fragment>
-                    {product.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <ProductHeader product={product}/>
-                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>
-                                    {contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                            <Link to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
-                                                New issue
-                                            </Link>
-                                        ) : (
-                                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                                New issue (requires role)
-                                            </a>
-                                        )
-                                    ) : (
-                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New issue (requires login)
-                                        </a>
-                                    )}
-                                    <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                        Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
+        (product && members && issues) ? (
+            product.deleted ? (
+                <Redirect to='/'/>
+            ) : (
+                <>
+                    <main className={`view product-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                        <div>
+                            {contextUser ? (
+                                members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                    <Link to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
+                                        New issue
+                                    </Link>
+                                ) : (
+                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                        New issue (requires role)
                                     </a>
-                                    <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                        Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
-                                    </a>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
-                                </div>
-                                <div>
-                                    <ProductView3D product={product} highlighted={hightlighted} mouse={true}/>
-                                </div>
-                            </main>
-                            <ProductFooter items={items} active={active} setActive={setActive}/>
-                        </Fragment>
-                    )}
-                 </Fragment>     
-            )}
-        </main>
+                                )
+                            ) : (
+                                <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                    New issue (requires login)
+                                </a>
+                            )}
+                            <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
+                            </a>
+                            <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
+                            </a>
+                            <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                        </div>
+                        <div>
+                            <ProductView3D product={product} highlighted={hightlighted} mouse={true}/>
+                        </div>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                </>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
 }

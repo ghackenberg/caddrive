@@ -1,209 +1,60 @@
-body > div > main {
-    position: fixed;
+main.view {
+    display: flex;
 
-    top: 4em;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
+    flex-direction: row;
 
-/* Header and footer */
-
-body > div > main > footer,
-body > div > main > header {
-    background-color: rgb(245,245,245);
-
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: rgb(215,215,215);
-}
-body > div > main > header > div:nth-child(1) {
-    position: relative;
-
-    padding: 1rem;
-
-    font-size: 200%;
-
-    line-height: 150%;
-
-    overflow: none;
-
-    white-space: nowrap;
-}
-body > div > main > header > div:nth-child(1) > span::after {
-    content: "/";
-
-    margin-left: 0.25em;
-    margin-right: 0.25em;
-}
-body > div > main > header > div:nth-child(1) > span:last-child::after {
-    content: "";
-}
-body > div > main > header > div:nth-child(2),
-body > div > main > footer > div:nth-child(2) {
-    position: relative;
-
-    white-space: nowrap;
-}
-body > div > main > footer > div:nth-child(2) > span > a,
-body > div > main > header > div:nth-child(2) > span > a {
-    display: inline-block;
-    
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 0.75em;
-
-    color: black;
-}
-
-body > div > main > footer > div:nth-child(2) > span > img {
-    vertical-align: middle;
-}
-
-body > div > main > header > div:nth-child(2) > span > a > span > span:last-child {
-    margin-left: 0.25em;
-}
-body > div > main > header > div:nth-child(2) > span > a > span > span:last-child::before {
-    content: "(";
-}
-body > div > main > header > div:nth-child(2) > span > a > span > span:last-child::after {
-    content: ")";
-}
-
-body > div > main > header > div:nth-child(2) > span > a.active {
-    font-weight: bold;
-
-    border-bottom-width: 4px;
-    border-bottom-style: solid;
-    border-bottom-color: orange;
-
-    padding-bottom: calc(0.75em - 2px);
-
-    margin-bottom: -1px;
-}
-
-body > div > main > footer > div:nth-child(2) > span > a.active {
-    font-weight: bold;
-
-    border-top-width: 4px;
-    border-top-style: solid;
-    border-top-color: orange;
-
-    padding-top: calc(0.75em - 1px);
-
-    margin-top: -1px;
-}
-
-/* Main */
-
-body > div > main > main {
-    position: absolute;
-
-    top: calc(5em + 1px);
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-body > div > main.reduced > main {
-    top: 0;
-}
-
-body > div > main.extended > main {
-    top: calc(7.25em + 2px);
-}
-
-body > div > main > main > div {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-body > div > main > main > div:nth-child(1) {
     overflow: auto;
+
+    flex-grow: 1;
+}
+
+main.view > div {
+    box-sizing: border-box;
+}
+
+main.view > div:first-child:last-child {
+    width: 100vw;
+}
+
+main.view > div:nth-child(1) {
+    width: 50em;
 
     padding-top: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
     padding-bottom: 0.5em;
+        
+    overflow: auto;
 }
-body > div > main > main > div:nth-child(1) > a.button {
+main.view > div:nth-child(1) > a.button {
     margin-top: 0.5em;
     margin-right: 1em;
     margin-bottom: 0.5em;
 }
-body > div > main > main > div:nth-child(1) > a.button.right {
+main.view > div:nth-child(1) > a.button.right {
     float: right;
 
     margin-left: 1em;
     margin-right: 0em;
 }
-body > div > main > main.sidebar > div:nth-child(1) {
-    left: 0;
 
-    width: 48em;
-}
-
-body > div > main > main.sidebar > div:nth-child(2) {
-    left: 50em;
-    right: 0;
-}
-
-body > div > main > footer {
-    display: none;
+main.view > div:nth-child(2) {
+    flex-grow: 1;
 }
 
 @media screen and (max-width: 70em) {
-    body > div > main > main.sidebar > div:nth-child(1) {
-        width: auto;
-        
-        right: 0;
-        bottom: 3em;
-    }
-    
-    body > div > main > main.sidebar > div:nth-child(2) {
-        width: 100%;
-
-        left: 100%;
-        right: auto;
-        bottom: 3em;
+    main.view.sidebar > div {
+        width: 100vw;
     }
 
-    body > div > main > main.sidebar.visible > div:nth-child(2) {
-        left: 0;
-    }
-
-    body > div > main > footer {
-        display: inline-block;
-
-        position: absolute;
-        
-        left: 0;
-        right: 0;
-        bottom: 0;
-
-        border-top-width: 1px;
-        border-top-style: solid;
-        border-top-color: rgb(215,215,215);
-
-        height: 3em;
-    }
-}
-
-@media screen and (max-width: 45em) {
-    body > div > main > header > div:nth-child(2) > span > a > span > span:last-child {
+    main.view.sidebar > div:nth-child(2) {
         display: none;
     }
-}
 
-@media screen and (max-width: 40em) {
-    body > div > main > header > div:nth-child(2) > span > a > span {
+    main.view.sidebar.visible > div:nth-child(1) {
         display: none;
     }
-    body > div > main > header > div:nth-child(2) > span > a.active > span {
-        display: inline;
+    main.view.sidebar.visible > div:nth-child(2) {
+        display: block;
     }
 }

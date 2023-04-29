@@ -38,29 +38,27 @@ export const AuthEmailView = () => {
     }
 
     return (
-        <main className="view reduced auth email">
-            <main>
+        <main className="view auth email">
+            <div>
                 <div>
                     <div>
+                        <img src={AuthIcon}/>
+                        <h5>Authentication process</h5>
+                        <h1>Step 1: <span>Email address</span></h1>
+                        <p>
+                            Please enter your <strong>email address</strong> and press <strong>next</strong>.
+                            Then we will send you a <strong>verification code</strong> to sign up/in.
+                        </p>
                         <div>
-                            <img src={AuthIcon}/>
-                            <h5>Authentication process</h5>
-                            <h1>Step 1: <span>Email address</span></h1>
-                            <p>
-                                Please enter your <strong>email address</strong> and press <strong>next</strong>.
-                                Then we will send you a <strong>verification code</strong> to sign up/in.
-                            </p>
-                            <div>
-                                <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
-                                <button className='button fill blue' onClick={handleSubmit} >
-                                    {load ? 'Loading ...' : 'Next'}
-                                </button>
-                            </div>
-                            {error && <p style={{color: 'red'}}>{error}</p>}
+                            <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
+                            <button className='button fill blue' onClick={handleSubmit} >
+                                {load ? 'Loading ...' : 'Next'}
+                            </button>
                         </div>
+                        {error && <p style={{color: 'red'}}>{error}</p>}
                     </div>
                 </div>
-            </main>
+            </div>
         </main>
     )
 }

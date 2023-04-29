@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, FormEvent, ChangeEvent, Fragment } from 'react'
+import { useState, useEffect, useContext, FormEvent, ChangeEvent } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
@@ -22,10 +22,10 @@ import { NumberInput } from '../inputs/NumberInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextareaInput } from '../inputs/TextareaInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductHeader } from '../snippets/ProductHeader'
 import { ModelView3D } from '../widgets/ModelView3D'
 import { Column, Table } from '../widgets/Table'
 import { VersionView3D } from '../widgets/VersionView3D'
+import { LoadingView } from './Loading'
 
 import EmptyIcon from '/src/images/empty.png'
 import LoadIcon from '/src/images/load.png'
@@ -163,82 +163,76 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     // RETURN
 
     return (
-        <main className="view extended product-version-setting">
-            {(versionId == 'new' || version) && product && versions && (
-                <Fragment>
-                    {version && version.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <ProductHeader product={product}/>
-                            <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>
-                                    <h1>Settings</h1>
-                                    <form onSubmit={onSubmit}>
-                                        <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
-                                        <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
-                                        <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
-                                        {versions.length > 0 && (
-                                            <GenericInput label="Base">
-                                                <Table columns={columns} items={versions.map(v => v).reverse()}/>
-                                            </GenericInput>
-                                        )}
-                                        <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                        {versionId == 'new' && (
-                                            <FileInput label='File' placeholder='Select file' accept='.glb,.ldr,.mpd' change={setFile} required={true}/>
-                                        )}
-                                        <GenericInput label='Preview'>
-                                            {dataUrl ? (
-                                                <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>
-                                            ) : (
-                                                file ? (
-                                                    <em>Rendering preview...</em>
-                                                ) : (
-                                                    <em>Please select file</em>
-                                                )
-                                            )}
-                                        </GenericInput>
-                                        {contextUser ? (
-                                            members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                                blob ? (
-                                                    <SubmitInput value='Save'/>
-                                                ) : (
-                                                    <SubmitInput value='Save (requires file)' disabled={true}/>
-                                                )
-                                            ) : (
-                                                <SubmitInput value='Save (requires role)' disabled={true}/>
-                                            )
-                                        ) : (
-                                            <SubmitInput value='Save (requires login)' disabled={true}/>
-                                        )}
-                                    </form>
-                                </div>
-                                <div>
-                                    {version ? (
-                                        <VersionView3D version={version} mouse={true}/>
+        ((versionId == 'new' || version) && product && versions) ? (
+            (version && version.deleted) ? (
+                <Redirect to='/'/>
+            ) : (
+                <>
+                    <main className= {`view sidebar product-version-setting ${active == 'left' ? 'hidden' : 'visible'}`}>
+                        <div>
+                            <h1>Settings</h1>
+                            <form onSubmit={onSubmit}>
+                                <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
+                                <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
+                                <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
+                                {versions.length > 0 && (
+                                    <GenericInput label="Base">
+                                        <Table columns={columns} items={versions.map(v => v).reverse()}/>
+                                    </GenericInput>
+                                )}
+                                <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
+                                {versionId == 'new' && (
+                                    <FileInput label='File' placeholder='Select file' accept='.glb,.ldr,.mpd' change={setFile} required={true}/>
+                                )}
+                                <GenericInput label='Preview'>
+                                    {dataUrl ? (
+                                        <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>
                                     ) : (
-                                        <div className="widget version_view_3d">
-                                            {!file ? (
-                                                <img src={EmptyIcon} className='icon medium position center'/>
-                                            ) : (
-                                                <Fragment>
-                                                    {!group ? (
-                                                        <img src={LoadIcon} className='icon small position center animation spin'/>
-                                                    ) : (
-                                                        <ModelView3D model={group} highlighted={[]} marked={[]} selected={[]}/>
-                                                    )}
-                                                </Fragment>
-                                            )}
-                                        </div>
+                                        file ? (
+                                            <em>Rendering preview...</em>
+                                        ) : (
+                                            <em>Please select file</em>
+                                        )
+                                    )}
+                                </GenericInput>
+                                {contextUser ? (
+                                    members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
+                                        blob ? (
+                                            <SubmitInput value='Save'/>
+                                        ) : (
+                                            <SubmitInput value='Save (requires file)' disabled={true}/>
+                                        )
+                                    ) : (
+                                        <SubmitInput value='Save (requires role)' disabled={true}/>
+                                    )
+                                ) : (
+                                    <SubmitInput value='Save (requires login)' disabled={true}/>
+                                )}
+                            </form>
+                        </div>
+                        <div>
+                            {version ? (
+                                <VersionView3D version={version} mouse={true}/>
+                            ) : (
+                                <div className="widget version_view_3d">
+                                    {!file ? (
+                                        <img src={EmptyIcon} className='icon medium position center'/>
+                                    ) : (
+                                        !group ? (
+                                            <img src={LoadIcon} className='icon small position center animation spin'/>
+                                        ) : (
+                                            <ModelView3D model={group} highlighted={[]} marked={[]} selected={[]}/>
+                                        )
                                     )}
                                 </div>
-                            </main>
-                            <ProductFooter items={items} active={active} setActive={setActive}/>
-                        </Fragment>
-                    )}
-                </Fragment>
-            )}
-        </main>
+                            )}
+                        </div>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                </>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
-
 }

@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
@@ -14,8 +14,8 @@ import { DateInput } from '../inputs/DateInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductHeader } from '../snippets/ProductHeader'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
+import { LoadingView } from './Loading'
 
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/chart.png'
@@ -112,34 +112,31 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // RETURN
 
     return (
-        <main className="view extended product-milestone-setting">
-            {product && (
-                 <Fragment>
-                    {product && product.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <ProductHeader product={product}/>
-                            <main className={`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>
-                                    <h1>Settings</h1>
-                                    <form onSubmit={submitMilestone} onReset={goBack}>
-                                        <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
-                                        <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
-                                        <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
-                                        <SubmitInput value='Save'/>
-                                    </form>
-                                </div>
-                                <div>
-                                    <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
-                                </div>
-                            </main>
-                            <ProductFooter items={items} active={active} setActive={setActive}/>
-                        </Fragment>
-                    )}
-                 </Fragment>
-            )}
-        </main>
+        product ? (
+            product.deleted ? (
+                <Redirect to='/'/>
+            ) : (
+                <>
+                    <main className={`view product-milestone-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                        <div>
+                            <h1>Settings</h1>
+                            <form onSubmit={submitMilestone} onReset={goBack}>
+                                <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
+                                <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
+                                <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
+                                <SubmitInput value='Save'/>
+                            </form>
+                        </div>
+                        <div>
+                            <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
+                        </div>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                </>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
 
 }

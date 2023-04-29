@@ -15,7 +15,7 @@ export const PageHeaderRoot = () => {
     const { contextUser } = useContext(UserContext)
 
     return (
-        <header>
+        <header className='page'>
             <div>
                 <span>
                     <NavLink to="/products">

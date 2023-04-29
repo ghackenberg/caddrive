@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, FormEvent, Fragment } from 'react'
 import { Redirect, useHistory } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
@@ -12,8 +11,8 @@ import { BooleanInput } from '../inputs/BooleanInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductHeader } from '../snippets/ProductHeader'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { LoadingView } from './Loading'
 
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
@@ -24,7 +23,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     // CONTEXTS
 
-    const { contextUser } = useContext(UserContext)
+    const { contextUser } = React.useContext(UserContext)
 
     // PARAMS
 
@@ -41,28 +40,28 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
+    const [product, setProduct] = React.useState<Product>(initialProduct)
+    const [members, setMembers] = React.useState<Member[]>(initialMembers)
     // - Values
-    const [name, setName] = useState<string>(initialName)
-    const [description, setDescription] = useState<string>(initialDescription)
-    const [_public, setPublic] = useState<boolean>(initialPublic)
+    const [name, setName] = React.useState<string>(initialName)
+    const [description, setDescription] = React.useState<string>(initialDescription)
+    const [_public, setPublic] = React.useState<boolean>(initialPublic)
     // - Interactions
-    const [active, setActive] = useState<string>('left')
+    const [active, setActive] = React.useState<string>('left')
     
     // EFFECTS
 
     // - Entities
-    useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { productId != 'new' && MemberManager.findMembers(productId).then(setMembers) }, [props])
+    React.useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
+    React.useEffect(() => { productId != 'new' && MemberManager.findMembers(productId).then(setMembers) }, [props])
     // - Values
-    useEffect(() => { product && setName(product.name) }, [product])
-    useEffect(() => { product && setDescription(product.description) }, [product])
-    useEffect(() => { product && setPublic(product.public) }, [product])
+    React.useEffect(() => { product && setName(product.name) }, [product])
+    React.useEffect(() => { product && setDescription(product.description) }, [product])
+    React.useEffect(() => { product && setPublic(product.public) }, [product])
 
     // FUNCTIONS
 
-    async function submit(event: FormEvent){
+    async function submit(event: React.FormEvent){
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
@@ -87,41 +86,38 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // RETURN
 
     return (
-        <main className="view extended product-setting">
-            {(productId == 'new' || product) && members && (
-                <Fragment>
-                    {product && product.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <ProductHeader product={product}/>
-                            <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>
-                                    <h1>Settings</h1>
-                                    <form onSubmit={submit}>
-                                        <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
-                                        <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
-                                        <BooleanInput label='Public' value={_public} change={setPublic}/>
-                                        {contextUser ? (
-                                            (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
-                                                <SubmitInput value='Save'/>
-                                            ) : (
-                                                <SubmitInput value='Save (requires role)' disabled={true}/>
-                                            )
-                                        ) : (
-                                            <SubmitInput value='Save (requires login)' disabled={true}/>
-                                        )}
-                                    </form>
-                                </div>
-                                <div>
-                                    <ProductView3D product={product} mouse={true}/>
-                                </div>
-                            </main>
-                            <ProductFooter items={items} active={active} setActive={setActive}/>
-                        </Fragment>
-                    )}
-                </Fragment>
-            )}
-        </main>
+        (productId == 'new' || product) && members ? (
+            (product && product.deleted) ? (
+                <Redirect to='/'/>
+            ) : (
+                <>
+                    <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                        <div>
+                            <h1>Settings</h1>
+                            <form onSubmit={submit}>
+                                <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
+                                <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
+                                <BooleanInput label='Public' value={_public} change={setPublic}/>
+                                {contextUser ? (
+                                    (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
+                                        <SubmitInput value='Save'/>
+                                    ) : (
+                                        <SubmitInput value='Save (requires role)' disabled={true}/>
+                                    )
+                                ) : (
+                                    <SubmitInput value='Save (requires login)' disabled={true}/>
+                                )}
+                            </form>
+                        </div>
+                        <div>
+                            <ProductView3D product={product} mouse={true}/>
+                        </div>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                </>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
 }
