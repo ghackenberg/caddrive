@@ -13,7 +13,7 @@ export const LegalPrivacyView = () => {
                             Coming soon...
                         </p>
                     </div>
-                    <LegalFooter replace={false}/>
+                    <LegalFooter replace={true}/>
                 </div>
             </main>
         </>
