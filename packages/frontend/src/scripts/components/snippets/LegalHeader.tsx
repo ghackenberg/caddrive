@@ -8,7 +8,7 @@ export const LegalHeader = () => {
         <header className='view large legal'>
             <div>
                 <span>
-                    <NavLink to="/legal">
+                    <NavLink to="/legal" replace={true}>
                         <img src={LegalIcon} className='icon small'/>
                         <span>Legal</span>
                     </NavLink>
@@ -21,12 +21,12 @@ export const LegalHeader = () => {
                             </NavLink>
                         </Route>
                         <Route path="/legal/terms">
-                            <NavLink to="/legal/terms">
+                            <NavLink to="/legal/terms" replace={true}>
                                 <span>Terms of use</span>
                             </NavLink>
                         </Route>
                         <Route path="/legal/privacy">
-                            <NavLink to="/legal/privacy">
+                            <NavLink to="/legal/privacy" replace={true}>
                                 <span>Privacy policy</span>
                             </NavLink>
                         </Route>
@@ -35,19 +35,19 @@ export const LegalHeader = () => {
             </div>
             <div>
                 <span>
-                    <NavLink to="/legal/imprint">
+                    <NavLink to="/legal/imprint" replace={true}>
                         <img src={LegalIcon}  className='icon small'/>
                         <span>Imprint</span>
                     </NavLink>
                 </span>
                 <span>
-                    <NavLink to="/legal/terms">
+                    <NavLink to="/legal/terms" replace={true}>
                         <img src={LegalIcon}  className='icon small'/>
                         <span>Terms of use</span>
                     </NavLink>
                 </span>
                 <span>
-                    <NavLink to="/legal/privacy">
+                    <NavLink to="/legal/privacy" replace={true}>
                         <img src={LegalIcon}  className='icon small'/>
                         <span>Privacy policy</span>
                     </NavLink>
