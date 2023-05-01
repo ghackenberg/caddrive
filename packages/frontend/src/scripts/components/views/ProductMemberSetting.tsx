@@ -11,6 +11,7 @@ import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -152,62 +153,65 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                 <>
                     <main className={`view product-member-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={onSubmit}>
-                                {user ? (
-                                    <div>
-                                        <div>
-                                            <label>User</label>
-                                        </div>
-                                        <div>
-                                            {users && user && (
-                                                <Table items={[user]} columns={selectedUserColumns}/>
-                                            )}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
-                                )}
-                                {query && (
+                            <div>
+                                <h1>Settings</h1>
+                                <form onSubmit={onSubmit}>
+                                    {user ? (
                                         <div>
                                             <div>
                                                 <label>User</label>
                                             </div>
                                             <div>
-                                                {users && (
-                                                    <Table items={users} columns={queriedUserColumns}/>
+                                                {users && user && (
+                                                    <Table items={[user]} columns={selectedUserColumns}/>
                                                 )}
                                             </div>
                                         </div>
-                                )}
-                                {user && (
-                                    <div>
-                                        <div>
-                                            <label>Role</label>
-                                        </div>
-                                        <div>
-                                            <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
-                                                {ROLES.map(role => (
-                                                    <option key={role} value={role}>
-                                                        {role}
-                                                    </option>
-                                                ))}    
-                                            </select>
-                                        </div>
-                                    </div>
-                                )}
-                                {user && (
-                                    contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                            <SubmitInput value='Save'/>
-                                        ) : (
-                                            <SubmitInput value='Save (requires role)' disabled={true}/>
-                                        )
                                     ) : (
-                                        <SubmitInput value='Save (requires login)' disabled={true}/>
-                                    )
-                                )}
-                            </form>
+                                        <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
+                                    )}
+                                    {query && (
+                                            <div>
+                                                <div>
+                                                    <label>User</label>
+                                                </div>
+                                                <div>
+                                                    {users && (
+                                                        <Table items={users} columns={queriedUserColumns}/>
+                                                    )}
+                                                </div>
+                                            </div>
+                                    )}
+                                    {user && (
+                                        <div>
+                                            <div>
+                                                <label>Role</label>
+                                            </div>
+                                            <div>
+                                                <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
+                                                    {ROLES.map(role => (
+                                                        <option key={role} value={role}>
+                                                            {role}
+                                                        </option>
+                                                    ))}    
+                                                </select>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {user && (
+                                        contextUser ? (
+                                            members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                                <SubmitInput value='Save'/>
+                                            ) : (
+                                                <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            )
+                                        ) : (
+                                            <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        )
+                                    )}
+                                </form>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true}/>

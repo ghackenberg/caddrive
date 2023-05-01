@@ -11,6 +11,7 @@ import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -199,24 +200,25 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                 <>
                     <main className={`view product-milestone sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            {contextUser ? (
-                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                    <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
-                                        New milestone
-                                    </Link>
+                            <div>
+                                {contextUser ? (
+                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                        <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
+                                            New milestone
+                                        </Link>
+                                    ) : (
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New milestone (requires role)
+                                        </a>
+                                    )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New milestone (requires role)
+                                        New milestone (requires login)
                                     </a>
-                                )
-                            ) : (
-                                <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                    New milestone (requires login)
-                                </a>
-                            )}
-                            {milestones && (
+                                )}
                                 <Table columns={columns} items={milestones}/>
-                            )}
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true}/>

@@ -20,7 +20,8 @@ export const PageHeaderRoot = () => {
                 <span>
                     <NavLink to="/products">
                         <img src={AppIcon} className='icon small'/>
-                        ProductBoard
+                        <span>Product</span>
+                        <span>Board</span>
                     </NavLink>
                 </span>
             </div>

@@ -13,8 +13,10 @@ import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
 import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
 import LoadIcon from '/src/images/load.png'
@@ -270,22 +272,29 @@ export const ProductView = () => {
     // RETURN
 
     return (
-        <main className="view product">
-            <div>
-                {contextUser ? (
-                    <Link to='/products/new/settings' className='button fill green'>
-                        New product
-                    </Link>
-                ) : (
-                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                        New product (requires login)
-                    </a>
-                )}
-                {products && (
-                    <Table columns={columns} items={products.map(p => p).reverse()}/>
-                )}
-            </div>
-        </main>
+        products ? (
+            <main className="view product">
+                <div>
+                    <div>
+                        {contextUser ? (
+                            <Link to='/products/new/settings' className='button fill green'>
+                                New product
+                            </Link>
+                        ) : (
+                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                New product (requires login)
+                            </a>
+                        )}
+                        {products && (
+                            <Table columns={columns} items={products.map(p => p).reverse()}/>
+                        )}
+                    </div>
+                    <LegalFooter/>
+                </div>
+            </main>
+        ) : (
+            <LoadingView/>
+        )
     )
 
 }

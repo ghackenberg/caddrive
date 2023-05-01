@@ -18,9 +18,6 @@ header.page > div {
     
     line-height: 2em;
 }
-header.page > div:first-child {
-    font-family: 'Arial Black';
-}
 header.page > div > span > a {
     text-decoration: none;
     
@@ -40,6 +37,18 @@ header.page > div:first-child > span > a > img.icon.small {
     padding: 0;
 
     margin-right: 0.5em;
+}
+header.page > div:first-child > span > a > span:first-of-type {
+    font-family: 'Arial Black';
+
+    text-transform: uppercase;
+}
+header.page > div:first-child > span > a > span:last-of-type {
+    font-family: 'Arial Black';
+
+    text-transform: uppercase;
+
+    color: rgb(128,128,128);
 }
 header.page > div:last-child > span:last-child > a > img {
     filter: none;
@@ -111,16 +120,16 @@ header.view > div:nth-child(2) > span > a.active {
 }
 
 @media screen and (max-width: 45em) {
-    header.view > div:nth-child(2) > span > a > span > span:last-child {
+    header.view.product > div:nth-child(2) > span > a > span > span:last-child {
         display: none;
     }
 }
 
 @media screen and (max-width: 40em) {
-    header.view > div:nth-child(2) > span > a > span {
+    header.view.product > div:nth-child(2) > span > a > span {
         display: none;
     }
-    header.view > div:nth-child(2) > span > a.active > span {
+    header.view.product > div:nth-child(2) > span > a.active > span {
         display: inline;
     }
 }

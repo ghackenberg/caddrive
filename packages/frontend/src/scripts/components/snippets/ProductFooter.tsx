@@ -7,14 +7,27 @@ export type ProductFooterItem = {
 }
 
 export const ProductFooter = (props: { items: ProductFooterItem[], active: string, setActive: (name: string) => void }) => {
-    return(
-        <footer className='view'>
+    // CONSTANTS
+
+    const items = props.items
+    const active = props.active
+    const setActive = props.setActive
+
+    // FUNCTIONS
+
+    function handleClick(event: React.UIEvent, active: string) {
+        event.preventDefault()
+        setActive(active)
+    }
+
+    return (
+        <footer className='page'>
             <div>
-                {props.items.map(item => (
-                    <span key={item.name}>
-                        <a className={item.name == props.active ? 'active' : ''} onClick={() => props.setActive(item.name)}>
-                            <img src={item.image} className='icon small'/>
-                            <span>{item.text}</span>
+                {items.map(({ name, image, text }) => (
+                    <span key={name}>
+                        <a className={name == active ? 'active' : ''} onClick={event => handleClick(event, name)}>
+                            <img src={image} className='icon small'/>
+                            <span>{text}</span>
                         </a>
                     </span>
                 ))} 

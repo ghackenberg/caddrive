@@ -26,7 +26,7 @@ export const UserHeader = () => {
     }, [params.user])
 
     return (
-        <header className='view large'>
+        <header className='view large user'>
             <div>
                 <UserLink user={user}/>
             </div>

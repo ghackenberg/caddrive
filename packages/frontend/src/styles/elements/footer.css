@@ -1,9 +1,13 @@
 /* View footer */
 
-footer.view {
+footer.page {
     flex: 0;
-    
+
     display: none;
+
+    flex-direction: row;
+
+    justify-content: space-between;
 
     height: 3em;
 
@@ -13,10 +17,13 @@ footer.view {
     border-top-style: solid;
     border-top-color: rgb(215,215,215);
 }
-footer.view > div {
+footer.page > div {
     white-space: nowrap;
 }
-footer.view > div > span > a {
+footer.page > div:first-child {
+    flex: 1;
+}
+footer.page > div:first-child > span > a {
     display: inline-block;
     
     padding-left: 1em;
@@ -25,10 +32,7 @@ footer.view > div > span > a {
 
     color: black;
 }
-footer.view > div > span > img {
-    vertical-align: middle;
-}
-footer.view > div > span > a.active {
+footer.page > div:first-child > span > a.active {
     font-weight: bold;
 
     border-top-width: 4px;
@@ -39,9 +43,22 @@ footer.view > div > span > a.active {
 
     margin-top: -1px;
 }
+footer.page > div:last-child {
+    flex: 0;
+}
+footer.page > div:last-child > a {
+    display: inline-block;
+
+    padding-top: 0.75em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.75em;
+
+    color: black;
+}
 
 @media screen and (max-width: 70em) {
-    footer.view {
-        display: block;
+    footer.page {
+        display: flex;
     }
 }

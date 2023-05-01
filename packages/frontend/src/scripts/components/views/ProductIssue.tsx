@@ -13,6 +13,7 @@ import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
@@ -266,28 +267,31 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                 <>
                     <main className={`view product-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            {contextUser ? (
-                                members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                    <Link to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
-                                        New issue
-                                    </Link>
+                            <div>
+                                {contextUser ? (
+                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                        <Link to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
+                                            New issue
+                                        </Link>
+                                    ) : (
+                                        <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                            New issue (requires role)
+                                        </a>
+                                    )
                                 ) : (
-                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                        New issue (requires role)
+                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                        New issue (requires login)
                                     </a>
-                                )
-                            ) : (
-                                <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                    New issue (requires login)
+                                )}
+                                <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                    Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
                                 </a>
-                            )}
-                            <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
-                            </a>
-                            <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
-                            </a>
-                            <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                                <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                    Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
+                                </a>
+                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} highlighted={hightlighted} mouse={true}/>

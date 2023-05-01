@@ -16,6 +16,7 @@ import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { AudioRecorder } from '../../services/recorder'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { CommentView } from '../widgets/CommentView'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
@@ -302,146 +303,149 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                 <>
                     <main className={`view product-issue-comment sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            {contextUser ? (
-                                members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                    <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
-                                        Edit issue
-                                    </Link>
+                            <div>
+                                {contextUser ? (
+                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                        <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
+                                            Edit issue
+                                        </Link>
+                                    ) : (
+                                        <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
+                                            Edit issue (requires role)
+                                        </a>
+                                    )
                                 ) : (
                                     <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
-                                        Edit issue (requires role)
+                                        Edit issue (requires login)
                                     </a>
-                                )
-                            ) : (
-                                <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
-                                    Edit issue (requires login)
-                                </a>
-                            )}
-                            <h1>
-                                {issue.label}
-                            </h1>
-                            <p>
-                                <span className={`state ${issue.state}`}>
-                                    {issue.state}
-                                </span>
-                                &nbsp;
-                                <strong>
-                                    {issue.userId in users && members ? (
-                                        <ProductUserNameWidget user={users[issue.userId]} members={members} />
-                                    ) : (
-                                        '?'
-                                    )}
-                                </strong>
-                                &nbsp;
-                                <>
-                                    opened issue on {new Date(issue.created).toISOString().substring(0, 10)}
-                                </>
-                            </p>
-                            <div className="widget issue_thread">
-                                <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
-                                {comments && comments.map(comment => (
-                                    <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
-                                ))}
-                                <div className="comment self">
-                                    <div className="head">
-                                        <div className="icon">
-                                            {contextUser ? (
-                                                <Link to={`/users/${contextUser.id}`}>
-                                                    <ProductUserPictureWidget user={contextUser} members={members} />
-                                                </Link>
-                                            ) : (
-                                                <a>
-                                                    <img src={UserIcon} className='icon small round' />
-                                                </a>
-                                            )}
+                                )}
+                                <h1>
+                                    {issue.label}
+                                </h1>
+                                <p>
+                                    <span className={`state ${issue.state}`}>
+                                        {issue.state}
+                                    </span>
+                                    &nbsp;
+                                    <strong>
+                                        {issue.userId in users && members ? (
+                                            <ProductUserNameWidget user={users[issue.userId]} members={members} />
+                                        ) : (
+                                            '?'
+                                        )}
+                                    </strong>
+                                    &nbsp;
+                                    <>
+                                        opened issue on {new Date(issue.created).toISOString().substring(0, 10)}
+                                    </>
+                                </p>
+                                <div className="widget issue_thread">
+                                    <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
+                                    {comments && comments.map(comment => (
+                                        <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
+                                    ))}
+                                    <div className="comment self">
+                                        <div className="head">
+                                            <div className="icon">
+                                                {contextUser ? (
+                                                    <Link to={`/users/${contextUser.id}`}>
+                                                        <ProductUserPictureWidget user={contextUser} members={members} />
+                                                    </Link>
+                                                ) : (
+                                                    <a>
+                                                        <img src={UserIcon} className='icon small round' />
+                                                    </a>
+                                                )}
+                                            </div>
+                                            <div className="text">
+                                                <p>
+                                                    <strong>New comment</strong>
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="text">
-                                            <p>
-                                                <strong>New comment</strong>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="body">
-                                        <div className="free" />
-                                        <div className="text">
-                                            <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
-                                            {contextUser ? (
-                                                members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                                    <>
-                                                        {recorder ? (
-                                                            <button onClick={stopRecordAudio} className='button fill gray block-when-responsive' >
-                                                                Stop recording
-                                                            </button>
-                                                        ) : (
-                                                            audio ? (
-                                                                <>
-                                                                    <audio src={audioUrl} controls />
-                                                                    <button onClick={removeAudio} className='button fill gray block-when-responsive' >
-                                                                        Remove recording
-                                                                    </button>
-                                                                </>
-                                                            ) : (
-                                                                <button onClick={startRecordAudio} className='button fill gray block-when-responsive' >
-                                                                    Start recording
+                                        <div className="body">
+                                            <div className="free" />
+                                            <div className="text">
+                                                <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
+                                                {contextUser ? (
+                                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                                        <>
+                                                            {recorder ? (
+                                                                <button onClick={stopRecordAudio} className='button fill gray block-when-responsive' >
+                                                                    Stop recording
                                                                 </button>
-                                                            )
-                                                        )}
-                                                        <button className='button fill blue' onClick={submitComment}>
-                                                            Save
-                                                        </button>
-                                                        {issue.state == 'open' ? (
-                                                            <button className='button stroke blue' onClick={submitCommentAndClose}>
-                                                                Close
+                                                            ) : (
+                                                                audio ? (
+                                                                    <>
+                                                                        <audio src={audioUrl} controls />
+                                                                        <button onClick={removeAudio} className='button fill gray block-when-responsive' >
+                                                                            Remove recording
+                                                                        </button>
+                                                                    </>
+                                                                ) : (
+                                                                    <button onClick={startRecordAudio} className='button fill gray block-when-responsive' >
+                                                                        Start recording
+                                                                    </button>
+                                                                )
+                                                            )}
+                                                            <button className='button fill blue' onClick={submitComment}>
+                                                                Save
                                                             </button>
-                                                        ) : (
-                                                            <button className='button stroke blue' onClick={submitCommentAndReopen}>
-                                                                Reopen
-                                                            </button>
-                                                        )}
-                                                    </>
+                                                            {issue.state == 'open' ? (
+                                                                <button className='button stroke blue' onClick={submitCommentAndClose}>
+                                                                    Close
+                                                                </button>
+                                                            ) : (
+                                                                <button className='button stroke blue' onClick={submitCommentAndReopen}>
+                                                                    Reopen
+                                                                </button>
+                                                            )}
+                                                        </>
 
+                                                    ) : (
+                                                        <>
+                                                            <button className='button fill gray block-when-responsive' style={{ fontStyle: 'italic' }} >
+                                                                Start recording (requires role)
+                                                            </button>                                                                
+                                                            <button className='button fill blue' style={{ fontStyle: 'italic' }}>
+                                                                Save (requires role)
+                                                            </button>
+                                                            {issue.state == 'open' ? (
+                                                                <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
+                                                                    Close (requires role)
+                                                                </button>
+                                                            ) : (
+                                                                <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
+                                                                    Reopen (requires role)
+                                                                </button>
+                                                            )}
+                                                        </>
+                                                    )
                                                 ) : (
                                                     <>
                                                         <button className='button fill gray block-when-responsive' style={{ fontStyle: 'italic' }} >
-                                                            Start recording (requires role)
-                                                        </button>                                                                
+                                                                Start recording (requires login)
+                                                            </button>
                                                         <button className='button fill blue' style={{ fontStyle: 'italic' }}>
-                                                            Save (requires role)
+                                                            Save (requires login)
                                                         </button>
                                                         {issue.state == 'open' ? (
                                                             <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                                Close (requires role)
+                                                                Close (requires login)
                                                             </button>
                                                         ) : (
                                                             <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                                Reopen (requires role)
+                                                                Reopen (requires login)
                                                             </button>
                                                         )}
                                                     </>
-                                                )
-                                            ) : (
-                                                <>
-                                                    <button className='button fill gray block-when-responsive' style={{ fontStyle: 'italic' }} >
-                                                            Start recording (requires login)
-                                                        </button>
-                                                    <button className='button fill blue' style={{ fontStyle: 'italic' }}>
-                                                        Save (requires login)
-                                                    </button>
-                                                    {issue.state == 'open' ? (
-                                                        <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                            Close (requires login)
-                                                        </button>
-                                                    ) : (
-                                                        <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                            Reopen (requires login)
-                                                        </button>
-                                                    )}
-                                                </>
-                                            )}
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} over={overObject} out={outObject} click={selectObject}/>

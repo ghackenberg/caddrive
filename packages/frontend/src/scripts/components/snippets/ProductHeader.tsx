@@ -30,7 +30,7 @@ export const ProductHeader = () => {
     }, [params.product])
 
     return (
-        <header className='view large'>
+        <header className='view large product'>
             <div>
                 <ProductLink product={product}/>
             </div>

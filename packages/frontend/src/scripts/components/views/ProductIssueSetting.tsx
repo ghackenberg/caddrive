@@ -18,6 +18,7 @@ import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
 import { AudioRecorder } from '../../services/recorder'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -229,71 +230,74 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                 <>
                     <main className={`view product-issue-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={submitIssue} onReset={goBack}>
-                                <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
-                                <div>
+                            <div>
+                                <h1>Settings</h1>
+                                <form onSubmit={submitIssue} onReset={goBack}>
+                                    <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <div>
-                                        <label>Text</label>
+                                        <div>
+                                            <label>Text</label>
+                                        </div>
+                                        <div>
+                                            <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
+                                        </div>
                                     </div>
                                     <div>
-                                        <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <label>Audio</label>
-                                    </div>
-                                    <div>
-                                        {recorder ? (
-                                            <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray'/>
-                                        ) : (
-                                            audio ? (
-                                                <>
-                                                    <audio src={audioUrl} controls/>
-                                                    <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray'/>
-                                                </>
+                                        <div>
+                                            <label>Audio</label>
+                                        </div>
+                                        <div>
+                                            {recorder ? (
+                                                <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray'/>
                                             ) : (
-                                                <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray'/>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <label>Milestone</label>
-                                    </div>
-                                    <div>
-                                        <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
-                                            <option >none</option>
-                                            {milestones && milestones.map((milestone) => (
-                                                <option key={milestone.id} value={milestone.id}>
-                                                    {milestone.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>
-                                        <label>Assignees</label>
+                                                audio ? (
+                                                    <>
+                                                        <audio src={audioUrl} controls/>
+                                                        <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray'/>
+                                                    </>
+                                                ) : (
+                                                    <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray'/>
+                                                )
+                                            )}
+                                        </div>
                                     </div>
                                     <div>
-                                        {members && (
-                                            <Table columns={columns} items={members}/>
-                                        )}
+                                        <div>
+                                            <label>Milestone</label>
+                                        </div>
+                                        <div>
+                                            <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
+                                                <option >none</option>
+                                                {milestones && milestones.map((milestone) => (
+                                                    <option key={milestone.id} value={milestone.id}>
+                                                        {milestone.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <SubmitInput value='Save'/>
+                                    <div>
+                                        <div>
+                                            <label>Assignees</label>
+                                        </div>
+                                        <div>
+                                            {members && (
+                                                <Table columns={columns} items={members}/>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                            <SubmitInput value='Save'/>
+                                        ) : (
+                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                        )
                                     ) : (
-                                        <SubmitInput value='Save (requires role)' disabled={true}/>
-                                    )
-                                ) : (
-                                    <SubmitInput value='Save (requires login)' disabled={true}/>
-                                )}
-                            </form>
+                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                    )}
+                                </form>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} selected={selected} marked={marked} mouse={true} over={overObject} out={outObject} click={selectObject}/>

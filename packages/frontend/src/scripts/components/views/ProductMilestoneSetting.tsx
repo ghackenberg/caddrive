@@ -13,6 +13,7 @@ import { ProductManager } from '../../managers/product'
 import { DateInput } from '../inputs/DateInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { LoadingView } from './Loading'
@@ -119,13 +120,16 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                 <>
                     <main className={`view product-milestone-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={submitMilestone} onReset={goBack}>
-                                <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
-                                <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
-                                <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
-                                <SubmitInput value='Save'/>
-                            </form>
+                            <div>
+                                <h1>Settings</h1>
+                                <form onSubmit={submitMilestone} onReset={goBack}>
+                                    <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
+                                    <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
+                                    <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
+                                    <SubmitInput value='Save'/>
+                                </form>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
