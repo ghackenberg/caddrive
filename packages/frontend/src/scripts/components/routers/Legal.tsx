@@ -14,7 +14,7 @@ const LegalRouter = () => {
                 <Route path="/legal/imprint" component={LegalImprintView}/>
                 <Route path="/legal/privacy" component={LegalPrivacyView}/>
                 <Route path="/legal/terms" component={LegalTermsView}/>
-                <Redirect path="/legal" to="/legal/imprint"/>
+                <Redirect path="/legal" to="/legal/imprint" push={false}/>
             </Switch>
         </>
     )

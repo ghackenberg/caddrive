@@ -10,7 +10,7 @@ const UserRouter = () => {
             <UserHeader/>
             <Switch>
                 <Route path="/users/:user/settings" component={UserSettingView}/>
-                <Redirect path="/users/:user" to="/users/:user/settings"/>
+                <Redirect path="/users/:user" to="/users/:user/settings" push={false}/>
             </Switch>
         </>
     )
