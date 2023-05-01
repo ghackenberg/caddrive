@@ -13,7 +13,7 @@ export const LegalImprintView = () => {
                             Coming soon...
                         </p>
                     </div>
-                    <LegalFooter/>
+                    <LegalFooter replace={false}/>
                 </div>
             </main>
         </>
