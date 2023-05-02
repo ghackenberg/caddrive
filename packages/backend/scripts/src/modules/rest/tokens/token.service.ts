@@ -5,7 +5,7 @@ import { SignJWT } from 'jose'
 import { getTestMessageUrl } from "nodemailer"
 import shortid from "shortid"
 
-import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse, TokenREST, User } from "productboard-common"
+import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, Member, RefreshTokenResponse, TokenREST, User } from "productboard-common"
 import { Database, getTokenOrFail, getUserOrFail } from "productboard-database"
 
 import { TRANSPORTER } from "../../../functions/mail"
@@ -36,6 +36,7 @@ export class TokenService implements TokenREST {
                 code
             }
         })
+        console.log(code)
         console.log(getTestMessageUrl(info))
         return { id: token.id }
     }
@@ -68,6 +69,7 @@ export class TokenService implements TokenREST {
             const created = Date.now()
             const email = token.email
             const user = await Database.get().userRepository.save({ id, created, email })
+            await registerNewUserAsMemberForDemo(id)
             // Return JWT
             return createJWT(user)
         }
@@ -90,4 +92,15 @@ async function createJWT(user: User) {
     const jwt = await new SignJWT({ userId: user.id }).setProtectedHeader({ alg: 'PS256' }).setExpirationTime('7d').sign(privateKey)
     // Return JWT
     return { jwt }
+}
+
+function registerNewUserAsMemberForDemo(id: string) {
+    const members: Member[] = [
+        { id: 'demo-7', userId: id, productId: "demo-1", created: Date.now(), updated: Date.now(), deleted: null, role: 'manager'},
+        { id: 'demo-8', userId: id, productId: "demo-2", created: Date.now(), updated: Date.now(), deleted: null, role: 'manager'},
+        { id: 'demo-9', userId: id, productId: "demo-3", created: Date.now(), updated: Date.now(), deleted: null, role: 'manager'},
+    ]
+    for (const member of members) {
+        Database.get().memberRepository.save(member)
+    }
 }

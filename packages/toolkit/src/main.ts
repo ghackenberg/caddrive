@@ -4,9 +4,9 @@ import { Issue, Member, Milestone, Product, User, Version, Comment, Tag } from '
 import { Database } from 'productboard-database'
 
 const users: User[] = [
-    { id: 'demo-1', created: Date.now(), updated: null, deleted: null, name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', pictureId: 'demo-1'},
-    { id: 'demo-2', created: Date.now(), updated: null, deleted: null, name: 'Christian Zehetner', email: 'christian.zehetner@fh-wels.at', pictureId: 'demo-2' },
-    { id: 'demo-4', created: Date.now(), updated: null, deleted: null, name: 'Dominik Frühwirth', email: 'dominik.fruehwirth@fh-wels.at', pictureId: 'demo-4' }
+    { id: 'demo-1', consent: true, created: Date.now(), updated: null, deleted: null, name: 'Georg Hackenberg', email: 'georg.hackenberg@fh-wels.at', pictureId: 'demo-1'},
+    { id: 'demo-2', consent: true, created: Date.now(), updated: null, deleted: null, name: 'Christian Zehetner', email: 'christian.zehetner@fh-wels.at', pictureId: 'demo-2' },
+    { id: 'demo-4', consent: true, created: Date.now(), updated: null, deleted: null, name: 'Dominik Frühwirth', email: 'dominik.fruehwirth@fh-wels.at', pictureId: 'demo-4' }
 ]
 
 const products: Product[] = [
