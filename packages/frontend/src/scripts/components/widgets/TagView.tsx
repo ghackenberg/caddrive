@@ -52,24 +52,28 @@ export const TagView = (props: { value: Tag[], productId: string, assignable: bo
 
     async function updateTag(event: React.FormEvent) {
         event.preventDefault()
-        const updatedData = ({ color: tagColor, name: tagName })
-        await TagManager.updateTag(selectedTag.id, { ...selectedTag, ...updatedData })
-        setTags((prev) => {
-            return prev.map((tag) => {
-                return tag.id === selectedTag.id
-                    ? { tag, ...selectedTag, ...updatedData }
-                    : tag
+        if (selectedTag) {
+            const updatedData = ({ color: tagColor, name: tagName })
+            await TagManager.updateTag(selectedTag.id, { ...selectedTag, ...updatedData })
+            setTags((prev) => {
+                return prev.map((tag) => {
+                    return tag.id === selectedTag.id
+                        ? { tag, ...selectedTag, ...updatedData }
+                        : tag
+                })
             })
-        })
+        }
     }
 
     async function deleteTag(event: React.FormEvent) {
         event.preventDefault()
-        await TagManager.deleteTag(selectedTag.id)
-        setTags(tags.filter(other => other.id != selectedTag.id))
-        setSelectedTag(null)
-        setTagColor('blue')
-        setTagName('new tag')
+        if (selectedTag) {
+            await TagManager.deleteTag(selectedTag.id)
+            setTags(tags.filter(other => other.id != selectedTag.id))
+            setSelectedTag(null)
+            setTagColor('blue')
+            setTagName('new tag')
+        }
     }
 
     return (
@@ -85,47 +89,47 @@ export const TagView = (props: { value: Tag[], productId: string, assignable: bo
                 ))}
             </div>
             <div className='tag_settings'>
-                            <div className='form'>
-                            <div>
-                                <p>name:</p> <input placeholder='abc' className='button fill lightgray' type='text' value={tagName} onChange={(event) => setTagName(event.currentTarget.value)} required />
-                            </div>
-                            
-                            <div>
-                                <p>color:</p>
-                                <div>
-                                    <select className='button fill lightgray' value={tagColor} onChange={event => setTagColor(event.currentTarget.value)}>
-                                        <option value={'brown'} >brown</option>
-                                        <option value={'orange'} >orange</option>
-                                        <option value={'yellow'} >yellow</option>
-                                        <option value={'green'} >green</option>
-                                        <option value={'blue'} >blue</option>
-                                        <option value={'purple'} >purple</option>
-                                        <option value={'pink'} >pink</option>
-                                        <option value={'red'} >red</option>
-                                    </select>
-                                </div>
-                            </div>
-                            </div>
-                            <div className='buttons'>
-                            { props.assignable && 
-                                <button className='button fill green' onClick={updateTag}>
-                                    assign
-                                </button>
-                            }
-                            <button className='button fill green inline' onClick={addTag}>
-                            add
-                            </button>
-                            <button className='button fill blue' onClick={updateTag}>
-                                update
-                            </button>
-                            <button className='button fill red' onClick={deleteTag}>
-                                delete
-                            </button>
-                            <button className='button stroke red' onClick={deselectTag}>
-                                cancel
-                            </button>
-                            </div>
+                <div className='form'>
+                    <div>
+                        <p>name:</p> <input placeholder='name' className='button fill lightgray' type='text' value={tagName} onChange={(event) => setTagName(event.currentTarget.value)} required />
+                    </div>
+
+                    <div>
+                        <p>color:</p>
+                        <div>
+                            <select className='button fill lightgray' value={tagColor} onChange={event => setTagColor(event.currentTarget.value)}>
+                                <option value={'brown'} >brown</option>
+                                <option value={'orange'} >orange</option>
+                                <option value={'yellow'} >yellow</option>
+                                <option value={'green'} >green</option>
+                                <option value={'blue'} >blue</option>
+                                <option value={'purple'} >purple</option>
+                                <option value={'pink'} >pink</option>
+                                <option value={'red'} >red</option>
+                            </select>
                         </div>
+                    </div>
+                </div>
+                <div className='buttons'>
+                    {props.assignable &&
+                        <button className='button fill green' onClick={updateTag}>
+                            assign
+                        </button>
+                    }
+                    <button className='button fill green inline' onClick={addTag}>
+                        add
+                    </button>
+                    <button className='button fill blue' onClick={updateTag}>
+                        update
+                    </button>
+                    <button className='button fill red' onClick={deleteTag}>
+                        delete
+                    </button>
+                    <button className='button stroke red' onClick={deselectTag}>
+                        cancel
+                    </button>
+                </div>
             </div>
+        </div>
     )
 }
