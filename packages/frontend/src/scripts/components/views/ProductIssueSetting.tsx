@@ -98,7 +98,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilstones) }, [props]) 
-    React.useEffect(() => { productId != 'new' && TagManager.findTags(productId).then(setTags) }, [props])
+    useEffect(() => { productId != 'new' && TagManager.findTags(productId).then(setTags) }, [props])
     useEffect(() => {
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
@@ -242,7 +242,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // RETURN
 
     return (
-        ((issueId == 'new' || issue) && product && members) ? (
+        ((issueId == 'new' || issue) && product && members && tags) ? (
             issue && issue.deleted ? (
                 <Redirect to='/'/>
             ) : (

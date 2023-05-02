@@ -22,7 +22,6 @@ div.widget.tag_view > div.tag_container {
     display: 'flex';
     flex-direction: row;
     flex-wrap: 'wrap';
-    margin-bottom: 1em;
 }
 
 div.widget.tag_view > div.tag_container > div.tag {
@@ -35,6 +34,9 @@ div.widget.tag_view > div.tag_container > div.tag {
     padding-left: 0.5em;
     padding-right: 0.5em;
 }
+div.widget.tag_view > div.tag_container > div.tag.active {
+    box-shadow: 5px 10px 8px #888888;
+}
 div.widget.tag_view > div.tag_container > div.tag:hover {
     cursor: pointer;
 }
@@ -43,10 +45,39 @@ div.widget.tag_view > div.tag_settings {
     height: 100%;
     width: 95%;
 }
-div.widget.tag_view > div.tag_settings > div > form {
-    background-color: lightgray
+div.widget.tag_view > div.tag_settings > div.form   {
+    display: table;
+
+    box-sizing: border-box;
+    
+    margin: 0;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+    
+    width: 100%;
+    
+    padding: 0;
+    
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+    border-radius: 1em;
+    border-spacing: 1.5em;
+    border-collapse: separate;
+
 }
-div.widget.tag_view > div.tag_settings > div:last-child > .buttons {
+div.widget.tag_view > div.tag_settings > div.form > div  {
+    display: table-row;
+}
+div.widget.tag_view > div.tag_settings > div.form > div  > p {
+    display: table-cell;
+    margin-right: 1em;
+}
+div.widget.tag_view > div.tag_settings > div.form > div  > input, 
+div.widget.tag_view > div.tag_settings > div.form > div  > select {
+    display: table-cell;
+}
+div.widget.tag_view > div.tag_settings  > div.buttons {
     display: flex;
     gap: 1em;
     align-items:flex-end ;
