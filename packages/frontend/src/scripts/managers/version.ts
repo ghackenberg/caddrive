@@ -14,6 +14,11 @@ class VersionManagerImpl extends AbstractManager<Version> implements VersionREST
 
     // CACHE
 
+    override clear() {
+        super.clear()
+        this.findIndex = {}
+    }
+
     findVersionsFromCache(productId: string) { 
         const key = `${productId}`
         if (key in this.findIndex) { 

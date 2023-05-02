@@ -7,6 +7,10 @@ class FileManagerImpl implements FileREST<ArrayBuffer> {
 
     // CACHE
 
+    clear() {
+        this.fileIndex = {}
+    }
+
     getFileFromCache(id: string) {
         if (id in this.fileIndex) {
             return this.fileIndex[id]

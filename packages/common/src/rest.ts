@@ -1,3 +1,5 @@
+import { JWK } from 'jose'
+
 import { Action, ActionAddData, ActionUpdateData } from './data/action'
 import { AdditionalProperty, AdditionalPropertyAddData, AdditionalPropertyUpdateData } from './data/additionalProperty'
 import { Attachment, AttachmentAddData, AttachmentUpdateData } from './data/attachment'
@@ -19,14 +21,23 @@ import { Relation, RelationAddData, RelationUpdateData } from './data/relation'
 import { State, StateAddData, StateUpdateData } from './data/state'
 import { Tag, TagAddData, TagUpdateData } from './data/tag'
 import { TagAssignment, TagAssignmentAddData, TagAssignmentUpdateData } from './data/tagAssignment'
+import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse } from './data/token'
 import { Transition, TransitionAddData, TransitionUpdateData } from './data/transition'
 import { User } from './data/user'
 import { Version } from './data/version'
 
+export interface KeyREST {
+    getPublicJWK(): Promise<JWK>
+}
+
+export interface TokenREST {
+    createToken(request: CreateTokenRequest): Promise<CreateTokenResponse>
+    activateToken(id: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse>
+    refreshToken(): Promise<RefreshTokenResponse>
+}
+
 export interface UserREST<D, F> {
-    checkUser(): Promise<User>
     findUsers(query?: string, productId?: string): Promise<User[]>
-    addUser(data: D, file?: F): Promise<User>
     getUser(id: string): Promise<User>
     updateUser(id: string, data: D, file?: F): Promise<User>
     deleteUser(id: string): Promise<User>

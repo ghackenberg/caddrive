@@ -16,10 +16,10 @@ import { MilestoneManager } from '../../managers/milestone'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductHeader } from '../snippets/ProductHeader'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
+import { LoadingView } from './Loading'
 
 import LoadIcon from '/src/images/load.png'
 import DeleteIcon from '/src/images/delete.png'
@@ -221,76 +221,73 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // RETURN
 
     return (
-        <main className="view extended product-milestone-issue">
-            {issues && product && milestone && (
-                 <Fragment>
-                    {product.deleted ? (
-                        <Redirect to='/'/>
-                    ) : (
-                        <Fragment>
-                            <ProductHeader product={product}/>
-                            <main className= {`sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
-                                <div>
-                                    {contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                            <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray'>
-                                                Edit milestone
-                                            </Link>
-                                        ) : (
-                                            <a className='button fill gray' style={{fontStyle: 'italic'}}>
-                                                Edit milestone (requires role)
-                                            </a>
-                                        )
-                                    ) : (
-                                        <a className='button fill gray' style={{fontStyle: 'italic'}}>
-                                            Edit milestone (requires login)
-                                        </a>
-                                    )}
-                                    <h1>
-                                        {milestone.label}
-                                    </h1>
-                                    <p>
-                                        <span>Start: </span>    
-                                        <em>
-                                            {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
-                                        </em>
-                                        <span> / End: </span>  
-                                        <em>
-                                            {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
-                                        </em>
-                                    </p>
-                                    {contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                            <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green block-when-responsive'>
-                                                New issue
-                                            </Link>
-                                        ) : (
-                                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                                New issue (requires role)
-                                            </a>
-                                        )
-                                    ) : (
-                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New issue (requires login)
-                                        </a>
-                                    )}
-                                    <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                        Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
+        (issues && product && milestone) ? (
+            product.deleted ? (
+                <Redirect to='/'/>
+            ) : (
+                <>
+                    <main className= {`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                        <div>
+                            {contextUser ? (
+                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                    <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray'>
+                                        Edit milestone
+                                    </Link>
+                                ) : (
+                                    <a className='button fill gray' style={{fontStyle: 'italic'}}>
+                                        Edit milestone (requires role)
                                     </a>
-                                    <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                        Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
+                                )
+                            ) : (
+                                <a className='button fill gray' style={{fontStyle: 'italic'}}>
+                                    Edit milestone (requires login)
+                                </a>
+                            )}
+                            <h1>
+                                {milestone.label}
+                            </h1>
+                            <p>
+                                <span>Start: </span>    
+                                <em>
+                                    {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                </em>
+                                <span> / End: </span>  
+                                <em>
+                                    {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                </em>
+                            </p>
+                            {contextUser ? (
+                                members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                    <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green block-when-responsive'>
+                                        New issue
+                                    </Link>
+                                ) : (
+                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                        New issue (requires role)
                                     </a>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
-                                </div>
-                                <div>
-                                    <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
-                                </div>
-                            </main>                            
-                            <ProductFooter items={items} active={active} setActive={setActive}/>
-                        </Fragment>
-                    )}
-                 </Fragment>     
-            )}
-        </main>
+                                )
+                            ) : (
+                                <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                    New issue (requires login)
+                                </a>
+                            )}
+                            <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
+                            </a>
+                            <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
+                            </a>
+                            <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
+                        </div>
+                        <div>
+                            <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
+                        </div>
+                    </main>                            
+                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                </>
+            )
+        ) : (
+            <LoadingView/>
+        )
     )
 }

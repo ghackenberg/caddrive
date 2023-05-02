@@ -47,29 +47,56 @@ form *.button {
     background-color: white;
     color: black;
 }
+*.button.fill.white:disabled {
+    color: gray;
+}
+
 *.button.fill.lightgray {
     background-color: lightgray;
     color: black;
 }
+*.button.fill.lightgray:disabled {
+    color: gray;
+}
+
 *.button.fill.gray {
     background-color: gray;
     color: white;
 }
+*.button.fill.gray:disabled {
+    color: lightgray;
+}
+
 *.button.fill.black {
     background-color: black;
     color: white;
 }
+*.button.fill.black:disabled {
+    color: lightgray;
+}
+
 *.button.fill.red {
     background-color: red;
     color: white;
 }
+*.button.fill.red:disabled {
+    color: lightgray;
+}
+
 *.button.fill.green {
     background-color: green;
     color: white;
 }
+*.button.fill.green:disabled {
+    color: lightgray;
+}
+
 *.button.fill.blue {
     background-color: blue;
     color: white;
+}
+*.button.fill.blue:disabled {
+    color: lightgray;
 }
 
 *.button.stroke.white {

@@ -1,10 +1,10 @@
-import { User, UserAddData, UserUpdateData, UserREST, UserDownMQTT } from 'productboard-common'
+import { User, UserUpdateData, UserREST, UserDownMQTT } from 'productboard-common'
 
 import { UserAPI } from '../clients/mqtt/user'
 import { UserClient } from '../clients/rest/user'
 import { AbstractManager } from './abstract'
 
-class UserManagerImpl extends AbstractManager<User> implements UserREST<UserAddData, File>, UserDownMQTT {
+class UserManagerImpl extends AbstractManager<User> implements UserREST<UserUpdateData, File>, UserDownMQTT {
     private findIndex: {[id: string]: boolean}
 
     constructor() {
@@ -13,6 +13,11 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserAddD
     }
 
     // CACHE
+
+    override clear() {
+        super.clear()
+        this.findIndex = undefined
+    }
 
     findUsersFromCache() { 
         if (this.findIndex) { 
@@ -54,15 +59,6 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserAddD
 
     // REST
 
-    async checkUser(): Promise<User> {
-        // Call backend
-        let user = await UserClient.checkUser()
-        // Update user index
-        user = this.store(user)
-        // Return user
-        return user
-    }
-
     async findUsers(query?: string, product?: string): Promise<User[]> {
         if (query || product) {
             return await UserClient.findUsers(query, product)
@@ -79,17 +75,6 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserAddD
         }
         // Return users
         return Object.keys(this.findIndex).map(id => this.load(id)).filter(user => !user.deleted)
-    }
-
-    async addUser(data: UserAddData, file?: File): Promise<User> {
-        // Call backend
-        let user = await UserClient.addUser(data, file)
-        // Update user index
-        user = this.store(user)
-        // Update user set
-        this.addToFindIndex(user)
-        // Return user
-        return this.load(user.id)
     }
 
     async getUser(id: string): Promise<User> {

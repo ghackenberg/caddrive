@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom'
 import { User } from 'productboard-common'
 
 import { UserManager } from '../../managers/user'
-import { UsersLink } from '../links/UsersLink'
 import { Column, Table } from '../widgets/Table'
 import { UserPictureWidget } from '../widgets/UserPicture'
+import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
 
@@ -64,20 +64,15 @@ export const UserView = () => {
     // RETURN
 
     return (
-        <main className="view user">
-            <header>
+        users ? (
+            <main className="view user">
                 <div>
-                    <UsersLink/>
-                </div>
-            </header>
-            <main>
-                <div>
-                    {users && (
-                        <Table columns={columns} items={users}/>
-                    )}
+                    <Table columns={columns} items={users}/>
                 </div>
             </main>
-        </main>
+        ) : (
+            <LoadingView/>
+        )
     )
 
 }

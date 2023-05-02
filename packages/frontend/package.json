@@ -34,14 +34,13 @@
     },
     "scripts": {
         "clean": "rm -rf public",
-        "build": "webpack --mode=production",
+        "build": "webpack --config webpack.prod.js",
         "start": "http-server -p 3003 -s",
-        "devel": "webpack serve --mode=development",
+        "devel": "webpack serve --config webpack.dev.js",
         "lint": "eslint src/scripts",
         "loc": "sloc src/scripts"
     },
     "dependencies": {
-        "@auth0/auth0-react": "^1.12.0",
         "axios": "^0.26.1",
         "buffer": "^5.7.1",
         "http-server": "^14.1.0",
@@ -85,6 +84,7 @@
         "typescript": "^4.9.3",
         "webpack": "^5.38.1",
         "webpack-cli": "^4.7.2",
-        "webpack-dev-server": "^4.8.1"
+        "webpack-dev-server": "^4.8.1",
+        "webpack-merge": "^5.8.0"
     }
 }

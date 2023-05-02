@@ -3,6 +3,7 @@
 @import url(./elements/anchor.css);
 @import url(./elements/body.css);
 @import url(./elements/form.css);
+@import url(./elements/footer.css);
 @import url(./elements/header.css);
 @import url(./elements/heading.css);
 @import url(./elements/main.css);
@@ -30,9 +31,11 @@
 
 /* View specific styles */
 
-@import url(./views/Landing.css);
 @import url(./views/Loading.css);
 @import url(./views/Missing.css);
+@import url(./views/Legal.css);
+@import url(./views/Auth.css);
+@import url(./views/User.css);
 @import url(./views/Product.css);
 @import url(./views/ProductIssue.css);
 @import url(./views/ProductIssueComment.css);
@@ -40,4 +43,3 @@
 @import url(./views/ProductMember.css);
 @import url(./views/ProductMilestone.css);
 @import url(./views/ProductMilestoneIssue.css);
-@import url(./views/User.css);

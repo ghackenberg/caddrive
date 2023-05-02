@@ -14,6 +14,11 @@ class ProductManagerImpl extends AbstractManager<Product> implements ProductREST
 
     // CACHE
 
+    override clear() {
+        super.clear()
+        this.findIndex = undefined
+    }
+
     findProductsFromCache() { 
         if (this.findIndex) { 
             return Object.keys(this.findIndex).map(id => this.load(id))

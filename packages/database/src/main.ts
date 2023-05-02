@@ -22,6 +22,7 @@ import { RelationEntity } from './entities/relation'
 import { StateEntity } from './entities/state'
 import { TagEntity } from './entities/tag'
 import { TagAssignmentEntity } from './entities/tagAssignment'
+import { TokenEntity } from './entities/token'
 import { TransitionEntity } from './entities/transition'
 import { UserEntity } from './entities/user'
 import { VersionEntity } from './entities/version'
@@ -48,6 +49,7 @@ export { StateEntity } from './entities/state'
 export { TagEntity } from './entities/tag'
 export { TagAssignmentEntity } from './entities/tagAssignment'
 export { TransitionEntity } from './entities/transition'
+export { TokenEntity } from './entities/token'
 export { UserEntity } from './entities/user'
 export { VersionEntity } from './entities/version'
 
@@ -75,6 +77,7 @@ export class Database {
                     synchronize: true,
                     logging: false,
                     entities: [
+                        TokenEntity,
                         ActionEntity,
                         AdditionalPropertyEntity,
                         AttachmentEntity,
@@ -112,6 +115,7 @@ export class Database {
                     synchronize: true,
                     logging: false,
                     entities: [
+                        TokenEntity,
                         ActionEntity,
                         AdditionalPropertyEntity,
                         AttachmentEntity,
@@ -155,6 +159,7 @@ export class Database {
 
     public readonly dataSource: DataSource
 
+    public readonly tokenRepository: Repository<TokenEntity>
     public readonly userRepository: Repository<UserEntity>
     public readonly productRepository: Repository<ProductEntity>
     public readonly memberRepository: Repository<MemberEntity>
@@ -167,6 +172,7 @@ export class Database {
     private constructor(options: DataSourceOptions) {
         this.dataSource = new DataSource(options)
 
+        this.tokenRepository = this.dataSource.getRepository(TokenEntity)
         this.userRepository = this.dataSource.getRepository(UserEntity)
         this.productRepository = this.dataSource.getRepository(ProductEntity)
         this.memberRepository = this.dataSource.getRepository(MemberEntity)
@@ -186,6 +192,9 @@ async function getEntityOrFail<T, E>(repository: Repository<T>, where: FindOptio
     }
 }
 
+export async function getTokenOrFail<E>(where: FindOptionsWhere<TokenEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().tokenRepository, where, ErrorType)
+}
 export async function getUserOrFail<E>(where: FindOptionsWhere<UserEntity>, ErrorType: { new(): E }) {
     return getEntityOrFail(Database.get().userRepository, where, ErrorType)
 }

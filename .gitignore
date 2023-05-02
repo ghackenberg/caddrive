@@ -14,7 +14,7 @@ bin
 
 database.sqlite
 
-env.ts
+*.jwk
 
 # Models
 packages/backend/uploads/*.glb
