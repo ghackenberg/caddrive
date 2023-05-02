@@ -61,15 +61,15 @@ const comments: Comment[] = [
 ]
 
 const tags: Tag[] = [
-    { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'gray', color: 'rgba(200, 200, 200, 0.6)' },
-    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'brown', color: 'rgba(165, 115, 40, 0.6)' },
-    { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'orange', color: 'rgba(255, 150, 0, 0.6)' },
-    { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'yellow', color: 'rgba(255, 255, 0, 0.6)' },
-    { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'green', color: 'rgba(0, 255, 0, 0.6)' },
-    { id: 'demo-6', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'blue', color: 'rgba(0, 0, 255, 0.6)' },
-    { id: 'demo-7', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'purple', color: 'rgba(165, 0, 255, 0.6)' },
-    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'pink', color: 'rgba(255, 0, 255, 0.6)' },
-    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'red', color: 'rgba(255, 0, 0, 0.6)' },
+    { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'gray', color: 'gray' },
+    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'brown', color: 'brown' },
+    { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'orange', color: 'orange' },
+    { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'yellow', color: 'yellow' },
+    { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'green', color: 'green' },
+    { id: 'demo-6', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'blue', color: 'blue' },
+    { id: 'demo-7', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'purple', color: 'purple' },
+    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'pink', color: 'pink' },
+    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'red', color: 'red' },
 ]
 
 // async function drop() {

@@ -1,0 +1,81 @@
+div.widget.tag_view {
+    position: relative;
+}
+div.widget.tag_view.expanded {
+    height: fit-content; 
+}
+div.widget.tag_view.collapsed {
+    height: 40px; 
+    overflow-y: hidden;
+}
+
+div.widget.tag_view > div.dropdown_toggle {
+    position: absolute;
+    top: 0em;
+    right: 0em;
+    display: inline-block;
+}
+
+div.widget.tag_view > div.tag_container {
+    height: 100%;
+    width: 95%;
+    display: 'flex';
+    flex-direction: row;
+    flex-wrap: 'wrap';
+    margin-bottom: 1em;
+}
+
+div.widget.tag_view > div.tag_container > div.tag {
+    display: inline-flex;
+    width: fit-content;
+    height: fit-content;
+    margin-right: 1em;
+    margin-bottom: 1em;
+    border-radius: 0.3em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+div.widget.tag_view > div.tag_container > div.tag:hover {
+    cursor: pointer;
+}
+
+div.widget.tag_view > div.tag_settings {
+    height: 100%;
+    width: 95%;
+}
+div.widget.tag_view > div.tag_settings > div > form {
+    background-color: lightgray
+}
+div.widget.tag_view > div.tag_settings > div:last-child > .buttons {
+    display: flex;
+    gap: 1em;
+    align-items:flex-end ;
+}
+
+div.widget.tag_view > div.tag_container > div.gray {
+    background-color: rgba(200, 200, 200, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.brown {
+    background-color: rgba(165, 115, 40, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.orange {
+    background-color: rgba(255, 150, 0, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.yellow {
+    background-color: rgba(255, 255, 0, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.green {
+    background-color: rgba(0, 255, 0, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.blue {
+    background-color: rgba(0, 0, 255, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.purple {
+    background-color: rgba(165, 0, 255, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.pink {
+    background-color: rgba(255, 0, 255, 0.6);
+}
+div.widget.tag_view > div.tag_container > div.red {
+    background-color: rgba(255, 0, 0, 0.6);
+}

@@ -5,8 +5,9 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
-import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
+import { Issue, Product, User, Member, Version, Milestone, Tag } from 'productboard-common'
 
+import { TagInput } from '../inputs/TagInput'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
@@ -17,6 +18,7 @@ import { ProductManager } from '../../managers/product'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
+import { TagManager } from '../../managers/tag'
 import { AudioRecorder } from '../../services/recorder'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
@@ -75,6 +77,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     const [issue, setIssue] = useState<Issue>(initialIssue)
     const [milestones, setMilstones] = useState<Milestone[]>(initialMilestones)
+    const [tags, setTags] = React.useState<Tag[]>()
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [text, setText] = useState<string>(initialText)
@@ -95,6 +98,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilstones) }, [props]) 
+    React.useEffect(() => { productId != 'new' && TagManager.findTags(productId).then(setTags) }, [props])
     useEffect(() => {
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
@@ -256,6 +260,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
                                     </div>
                                 </div>
+                                <TagInput label='Tags' value= {tags} productId= {productId} assignable= {true}/>
                                 <div>
                                     <div>
                                         <label>Audio</label>
