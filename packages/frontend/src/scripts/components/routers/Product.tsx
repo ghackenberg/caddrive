@@ -22,23 +22,23 @@ const ProductRouter = () => {
                 <Route path="/products/:product/settings" component={ProductSettingView}/>
 
                 <Route path="/products/:product/members/:member/settings" component={ProductMemberSettingView}/>
-                <Redirect path="/products/:product/members/:member" to="/products/:product/members/:member/settings"/>
+                <Redirect path="/products/:product/members/:member" to="/products/:product/members/:member/settings" push={false}/>
                 <Route path="/products/:product/members" component={ProductMemberView}/>
 
                 <Route path="/products/:product/milestones/:milestone/issues" component={ProductMilestoneIssueView}/>
                 <Route path="/products/:product/milestones/:milestone/settings" component={ProductMilestoneSettingView}/>
-                <Redirect path="/products/:product/milestones/:milestone" to="/products/:product/milestones/:milestone/issues"/>
+                <Redirect path="/products/:product/milestones/:milestone" to="/products/:product/milestones/:milestone/issues" push={false}/>
                 <Route path="/products/:product/milestones" component={ProductMilestoneView}/>
                 
                 <Route path="/products/:product/issues/:issue/comments" component={ProductIssueCommentView}/>
                 <Route path="/products/:product/issues/:issue/settings" component={ProductIssueSettingView}/>
-                <Redirect path="/products/:product/issues/:issue" to="/products/:product/issues/:issue/comments"/>
+                <Redirect path="/products/:product/issues/:issue" to="/products/:product/issues/:issue/comments" push={false}/>
                 <Route path="/products/:product/issues" component={ProductIssueView}/>
 
                 <Route path="/products/:product/versions/:version/settings" component={ProductVersionSettingView}/>
-                <Redirect path="/products/:product/versions/:version" to="/products/:product/versions/:version/settings"/>
+                <Redirect path="/products/:product/versions/:version" to="/products/:product/versions/:version/settings" push={false}/>
                 <Route path="/products/:product/versions" component={ProductVersionView}/>
-                <Redirect path="/products/:product" to="/products/:product/versions"/>
+                <Redirect path="/products/:product" to="/products/:product/versions" push={false}/>
             </Switch>
         </>
     )

@@ -8,34 +8,61 @@ main.view {
     overflow: hidden;
 }
 
-main.view > div {
-    box-sizing: border-box;
-}
-
 main.view > div:first-child:last-child {
     width: 100vw;
 }
 
 main.view > div:nth-child(1) {
-    width: 50em;
+    display: flex;
 
-    padding-top: 0.5em;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 0.5em;
+    flex-direction: column;
+
+    width: 50em;
         
     overflow: auto;
 }
-main.view > div:nth-child(1) > a.button {
+main.view > div:nth-child(1) > div {
+    box-sizing: border-box;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+main.view > div:nth-child(1) > div:first-child {
+    flex: 1;
+
+    padding-top: 0.5em;
+}
+main.view > div:nth-child(1) > div:first-child > a.button {
     margin-top: 0.5em;
     margin-right: 1em;
     margin-bottom: 0.5em;
 }
-main.view > div:nth-child(1) > a.button.right {
+main.view > div:nth-child(1) > div:first-child > a.button.right {
     float: right;
 
     margin-left: 1em;
     margin-right: 0em;
+}
+
+main.view > div:nth-child(1) > div:last-child {
+    flex: 0;
+    
+    padding-bottom: 0.5rem;
+
+    text-align: center;
+
+    font-size: 0.75em;
+
+    color: rgb(128,128,128);
+}
+main.view > div:nth-child(1) > div:last-child > a {
+    margin-left: 0.5rem;
+
+    color: rgb(192,192,192);
+}
+main.view > div:nth-child(1) > div:last-child > a:hover {
+    color: black;
 }
 
 main.view > div:nth-child(2) {

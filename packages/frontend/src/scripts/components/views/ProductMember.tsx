@@ -9,6 +9,7 @@ import { UserContext } from '../../contexts/User'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
@@ -125,24 +126,25 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                 <>
                     <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
                         <div>
-                            {contextUser ? (
-                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                    <Link to={`/products/${productId}/members/new/settings`} className='button fill green'>
-                                        New member
-                                    </Link>
+                            <div>
+                                {contextUser ? (
+                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                        <Link to={`/products/${productId}/members/new/settings`} className='button fill green'>
+                                            New member
+                                        </Link>
+                                    ) : (
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New member (requires role)
+                                        </a>
+                                    )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New member (requires role)
+                                        New member (requires login)
                                     </a>
-                                )
-                            ) : (
-                                <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                    New member (requires login)
-                                </a>
-                            )}
-                            {members && (
+                                )}
                                 <Table columns={columns} items={members}/>
-                            )}
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true}/>

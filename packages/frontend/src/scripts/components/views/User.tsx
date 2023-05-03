@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { User } from 'productboard-common'
 
 import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { UserPictureWidget } from '../widgets/UserPicture'
 import { LoadingView } from './Loading'
@@ -65,11 +66,16 @@ export const UserView = () => {
 
     return (
         users ? (
-            <main className="view user">
-                <div>
-                    <Table columns={columns} items={users}/>
-                </div>
-            </main>
+            <>
+                <main className="view user">
+                    <div>
+                        <div>
+                            <Table columns={columns} items={users}/>
+                        </div>
+                        <LegalFooter/>
+                    </div>
+                </main>
+            </>
         ) : (
             <LoadingView/>
         )

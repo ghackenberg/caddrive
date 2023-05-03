@@ -107,7 +107,7 @@ const Root = () => {
                                     <Route path="/auth" component={AuthRouter}/>
                                     <Route path="/users" component={UsersRouter}/>
                                     <Route path="/products" component={ProductsRouter}/>
-                                    <Redirect path="/" exact to="/products"/>
+                                    <Redirect path="/" exact to="/products" push={false}/>
                                     <Route component={MissingView}/>
                                 </Switch>
                             </React.Suspense>

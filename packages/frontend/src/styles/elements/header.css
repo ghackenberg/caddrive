@@ -15,11 +15,12 @@ header.page {
 }
 header.page > div {
     padding: 1em;
+
+    height: 2em;
     
     line-height: 2em;
-}
-header.page > div:first-child {
-    font-family: 'Arial Black';
+
+    white-space: nowrap;
 }
 header.page > div > span > a {
     text-decoration: none;
@@ -34,12 +35,26 @@ header.page > div > span > a > img {
     margin-right: 0;
 }
 header.page > div:first-child > span > a > img.icon.small {
-    width: 2em;
-    height: 2em;
+    margin-right: 0.5em;
 
     padding: 0;
 
-    margin-right: 0.5em;
+    width: 2em;
+    height: 2em;
+}
+header.page > div:first-child > span > a > span:nth-child(2) {
+    font-family: 'Arial Black';
+
+    text-transform: uppercase;
+
+    color: inherit;
+}
+header.page > div:first-child > span > a > span:nth-child(3) {
+    font-family: 'Arial Black';
+
+    text-transform: uppercase;
+
+    color: rgb(128,128,128);
 }
 header.page > div:last-child > span:last-child > a > img {
     filter: none;
@@ -60,27 +75,19 @@ header.view {
 header.view > div {
     white-space: nowrap;
 
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: auto;
 }
 
-header.view > div:nth-child(1) {
+header.view > div.entity {
     padding: 1rem;
 
     font-size: 200%;
 
     line-height: 150%;
 }
-header.view > div:nth-child(1) > span::after {
-    content: "/";
 
-    margin-left: 0.25em;
-    margin-right: 0.25em;
-}
-header.view > div:nth-child(1) > span:last-child::after {
-    content: "";
-}
-
-header.view > div:nth-child(2) > span > a {
+header.view > div.tabs > span > a {
     display: inline-block;
     
     padding-left: 1em;
@@ -89,16 +96,30 @@ header.view > div:nth-child(2) > span > a {
 
     color: black;
 }
-header.view > div:nth-child(2) > span > a > span > span:last-child {
-    margin-left: 0.25em;
+header.view > div.tabs:first-child > span > a {
+    padding-top: 1em;
 }
-header.view > div:nth-child(2) > span > a > span > span:last-child::before {
-    content: "(";
+header.view > div.tabs > span > a > span > span:last-child {
+    display: inline-block;
+
+    vertical-align: top;
+
+    font-size: 75%;
+
+    line-height: 1.25rem;
+
+    margin-top: 0.125rem;
+    margin-left: 0.5rem;
+    margin-bottom: 0.125rem;
+
+    border-radius: 0.5rem;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;  
+
+    background-color: rgb(225,225,225);
 }
-header.view > div:nth-child(2) > span > a > span > span:last-child::after {
-    content: ")";
-}
-header.view > div:nth-child(2) > span > a.active {
+header.view > div.tabs > span > a.active {
     font-weight: bold;
 
     border-bottom-width: 4px;
@@ -108,19 +129,4 @@ header.view > div:nth-child(2) > span > a.active {
     padding-bottom: calc(0.75em - 2px);
 
     margin-bottom: -1px;
-}
-
-@media screen and (max-width: 45em) {
-    header.view > div:nth-child(2) > span > a > span > span:last-child {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 40em) {
-    header.view > div:nth-child(2) > span > a > span {
-        display: none;
-    }
-    header.view > div:nth-child(2) > span > a.active > span {
-        display: inline;
-    }
 }

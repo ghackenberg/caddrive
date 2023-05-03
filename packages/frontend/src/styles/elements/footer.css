@@ -1,11 +1,9 @@
 /* View footer */
 
-footer.view {
+footer.page {
     flex: 0;
-    
-    display: none;
 
-    height: 3em;
+    display: none;
 
     background-color: rgb(245,245,245);
 
@@ -13,10 +11,13 @@ footer.view {
     border-top-style: solid;
     border-top-color: rgb(215,215,215);
 }
-footer.view > div {
+footer.page > div {
     white-space: nowrap;
+
+    overflow-y: hidden;
+    overflow-x: auto;
 }
-footer.view > div > span > a {
+footer.page > div > span > a {
     display: inline-block;
     
     padding-left: 1em;
@@ -25,10 +26,7 @@ footer.view > div > span > a {
 
     color: black;
 }
-footer.view > div > span > img {
-    vertical-align: middle;
-}
-footer.view > div > span > a.active {
+footer.page > div > span > a.active {
     font-weight: bold;
 
     border-top-width: 4px;
@@ -41,7 +39,7 @@ footer.view > div > span > a.active {
 }
 
 @media screen and (max-width: 70em) {
-    footer.view {
+    footer.page {
         display: block;
     }
 }

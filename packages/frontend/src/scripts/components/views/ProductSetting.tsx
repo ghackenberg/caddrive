@@ -10,6 +10,7 @@ import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
@@ -93,21 +94,24 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                 <>
                     <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={submit}>
-                                <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
-                                <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
-                                <BooleanInput label='Public' value={_public} change={setPublic}/>
-                                {contextUser ? (
-                                    (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
-                                        <SubmitInput value='Save'/>
+                            <div>
+                                <h1>{productId == 'new' ? 'New product' : 'Product settings'}</h1>
+                                <form onSubmit={submit}>
+                                    <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
+                                    <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
+                                    <BooleanInput label='Public' value={_public} change={setPublic}/>
+                                    {contextUser ? (
+                                        (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
+                                            <SubmitInput value='Save'/>
+                                        ) : (
+                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                        )
                                     ) : (
-                                        <SubmitInput value='Save (requires role)' disabled={true}/>
-                                    )
-                                ) : (
-                                    <SubmitInput value='Save (requires login)' disabled={true}/>
-                                )}
-                            </form>
+                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                    )}
+                                </form>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true}/>

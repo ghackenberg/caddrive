@@ -3,23 +3,22 @@ import { NavLink } from 'react-router-dom'
 
 import { User } from 'productboard-common'
 
-import { UsersLink } from './UsersLink'
+import UserIcon from '/src/images/user.png'
 
 export const UserLink = (props: {user?: User}) => (
-    <>
-        <UsersLink/>
-        { props.user ? (
-            <span>
-                <NavLink to={`/users/${props.user.id}`}>
-                    {props.user.name}
-                </NavLink>
-            </span>
-        ) : (
-            <span>
-                <NavLink to={`/users/new`}>
-                    New user
-                </NavLink>
-            </span>
-        )}
-    </>  
+    props.user ? (
+        <span>
+            <NavLink to={`/users/${props.user.id}`}>
+                <img src={UserIcon} className='icon small'/>
+                <span>{props.user.name}</span>
+            </NavLink>
+        </span>
+    ) : (
+        <span>
+            <NavLink to={`/users/new`}>
+                <img src={UserIcon} className='icon small'/>
+                <span>New user</span>
+            </NavLink>
+        </span>
+    )
 )
