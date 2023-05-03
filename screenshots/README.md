@@ -1,3 +1,0 @@
-# ProductBoard Screenshots
-
-TODO
