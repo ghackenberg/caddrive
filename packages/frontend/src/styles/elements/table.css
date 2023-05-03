@@ -102,6 +102,9 @@ table div.progress {
 table div.progress:last-child {
     margin-bottom: 0;
 }
+table div.progress.date {
+    display: none;
+}
 table div.progress > div {
     height: 100%;
     
