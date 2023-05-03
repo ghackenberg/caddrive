@@ -1,6 +1,6 @@
 import { exit } from 'process'
 
-import { Issue, Member, Milestone, Product, User, Version, Comment, Tag } from 'productboard-common'
+import { Issue, Member, Milestone, Product, User, Version, Comment, Tag, TagAssignment } from 'productboard-common'
 import { Database } from 'productboard-database'
 
 const users: User[] = [
@@ -40,9 +40,9 @@ const milestones: Milestone[] = [
 ]
 
 const issues: Issue[] = [
-    { id: 'demo-1', created: Date.now(), updated: null, deleted: null, userId: 'demo-1', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Design vehicle that can be used in summer and winter.', description: '**Description**\n\n* In winter, the vehicle has to deal with cold temperatures and icy roads.\n* In summer, the vehicle has to deal with warm temperatures, rain, and mud.\n\n**Validation**\n\nWe plan to conduct test drives under winter and summer conditions to validate the product design.', state: 'closed', assigneeIds: ['demo-4', 'demo-2'], milestoneId: 'demo-1' },
-    { id: 'demo-2', created: Date.now(), updated: null, deleted: null, userId: 'demo-2', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Use different wheel profile in winter version.', description: 'Please change the wheel profile (see [body_115_instance_2](/products/demo-1/versions/demo-3/objects/body_115_instance_2)). We need a stronger profile to handle winter conditions properly.', state: 'closed' ,assigneeIds: ['demo-4'], milestoneId: 'demo-1' },
-    { id: 'demo-3', created: Date.now(), updated: null, deleted: null, userId: 'demo-4', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Use blue helmet for driver.', description: 'Please change the helmet color (see [technic_driver_helmet_p_SOLIDS_1_1](/products/demo-1/versions/demo-3/objects/technic_driver_helmet_p_SOLIDS_1_1)). We want a blue helmet because it fits better to our corporate design standards.', state: 'closed' ,assigneeIds: ['demo-2'], milestoneId: 'demo-1' },
+    { id: 'demo-1', created: Date.now(), updated: null, deleted: null, userId: 'demo-1', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Design vehicle that can be used in summer and winter.', description: '**Description**\n\n* In winter, the vehicle has to deal with cold temperatures and icy roads.\n* In summer, the vehicle has to deal with warm temperatures, rain, and mud.\n\n**Validation**\n\nWe plan to conduct test drives under winter and summer conditions to validate the product design.', state: 'open', assigneeIds: ['demo-4', 'demo-2'], milestoneId: 'demo-1' },
+    { id: 'demo-2', created: Date.now(), updated: null, deleted: null, userId: 'demo-2', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Use different wheel profile in winter version.', description: 'Please change the wheel profile (see [body_115_instance_2](/products/demo-1/versions/demo-3/objects/body_115_instance_2)). We need a stronger profile to handle winter conditions properly.', state: 'open' ,assigneeIds: ['demo-4'], milestoneId: 'demo-1' },
+    { id: 'demo-3', created: Date.now(), updated: null, deleted: null, userId: 'demo-4', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Use blue helmet for driver.', description: 'Please change the helmet color (see [technic_driver_helmet_p_SOLIDS_1_1](/products/demo-1/versions/demo-3/objects/technic_driver_helmet_p_SOLIDS_1_1)). We want a blue helmet because it fits better to our corporate design standards.', state: 'open' ,assigneeIds: ['demo-2'], milestoneId: 'demo-1' },
     { id: 'demo-4', created: Date.now(), updated: null, deleted: null, userId: 'demo-4', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Install car radio for music.', description: 'Please install a car radio, so the driver can listen to music and news.', state: 'closed' ,assigneeIds: ['demo-1', 'demo-2'], milestoneId: 'demo-1' },
     { id: 'demo-5', created: Date.now(), updated: null, deleted: null, userId: 'demo-4', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Provide a possibility to mount a roof.', description: 'Please provide a mount to give possibility to hang up a roof in rainy days', state: 'closed' ,assigneeIds: ['demo-1'], milestoneId: 'demo-1' },
     { id: 'demo-6', created: Date.now(), updated: null, deleted: null, userId: 'demo-1', productId: 'demo-1', parentIssueId: 'demo1', stateId: 'demo1', issueTypeId: 'demo1', audioId: null, storypoints: null, progress: null, priority: 'High', name: 'Install seat belt for driver.', description: 'Please install a seat belt for safety', state: 'closed' ,assigneeIds: ['demo-2', 'demo-4'], milestoneId: 'demo-1' },
@@ -61,15 +61,21 @@ const comments: Comment[] = [
 ]
 
 const tags: Tag[] = [
-    { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'gray', color: 'gray' },
-    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'brown', color: 'brown' },
-    { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'orange', color: 'orange' },
-    { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'yellow', color: 'yellow' },
-    { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'green', color: 'green' },
-    { id: 'demo-6', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'blue', color: 'blue' },
-    { id: 'demo-7', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'purple', color: 'purple' },
-    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'pink', color: 'pink' },
-    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'red', color: 'red' },
+    { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'roof', color: 'brown' },
+    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'weels', color: 'orange' },
+    { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'safety', color: 'yellow' },
+    { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'entertainment', color: 'green' },
+    { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'motor', color: 'blue' },
+    { id: 'demo-6', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'comfort', color: 'purple' },
+    { id: 'demo-7', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'breaks', color: 'pink' },
+    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'design', color: 'red' },
+]
+
+const tagAssignments: TagAssignment[] = [
+    { id: 'demo-1', issueId: 'demo-1', tagId: 'demo-1', created: Date.now(), updated: null, deleted: null },
+    { id: 'demo-2', issueId: 'demo-2', tagId: 'demo-1', created: Date.now(), updated: null, deleted: null },
+    { id: 'demo-3', issueId: 'demo-2', tagId: 'demo-2', created: Date.now(), updated: null, deleted: null },
+    { id: 'demo-4', issueId: 'demo-2', tagId: 'demo-3', created: Date.now(), updated: null, deleted: null },
 ]
 
 // async function drop() {
@@ -139,6 +145,13 @@ async function fill() {
     if (await Database.get().tagRepository.count() == 0) {
         for (const tag of tags) {
             await Database.get().tagRepository.save(tag)
+        }
+        console.log('Fill: Tags filled')
+    }
+
+    if (await Database.get().tagAssignmentRepository.count() == 0) {
+        for (const tagAssignment of tagAssignments) {
+            await Database.get().tagAssignmentRepository.save(tagAssignment)
         }
         console.log('Fill: Tags filled')
     }
