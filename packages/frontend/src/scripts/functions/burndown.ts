@@ -1,51 +1,64 @@
 import { Comment, Issue, Milestone } from "productboard-common"
 
+const TIME_STEP = 1000 * 60 * 60 * 24
+
+export function cropTimestamp(timestamp: number) {
+    const date = new Date(timestamp)
+    date.setHours(12, 0, 0, 0)
+    return date.getTime()
+}
+
 export function calculateActual(milestone: Milestone, issues: Issue[], comments: {[id: string]: Comment[]}) {
     // Calculate detlas
     const deltas: { time: number, delta: number }[] = []
     for (const issue of issues) {
-        deltas.push({ time: issue.created, delta: 1 })
+        deltas.push({ time: cropTimestamp(issue.created), delta: 1 })
         if (issue.id in comments) {
             for (const comment of comments[issue.id]) {
                 if (comment.action == 'close') {
-                    deltas.push({ time: comment.created, delta: -1 })
+                    deltas.push({ time: cropTimestamp(comment.created), delta: -1 })
                 } else if (comment.action == 'reopen') {
-                    deltas.push({ time: comment.created, delta: 1 })
+                    deltas.push({ time: cropTimestamp(comment.created), delta: 1 })
                 }
             }
         }
     }
-    // Sort deltas
     deltas.sort((a, b) => a.time - b.time)
-    // Parse start and end
-    const start = milestone.start
-    const end = milestone.end
-    // Calculate actual
-    const actual: { time: number, actual: number }[] = []
+    
+    // Calculate counts
+    const counts: number[] = []
     let lastCount = 0
     let lastTime = 0
     for (const delta of deltas) {
-        if (lastTime != 0 && lastTime < start && delta.time > start) {
-            actual.push({ time: start, actual: lastCount })
-        }
-        if (lastTime != 0 && lastTime < end && delta.time > end) {
-            actual.push({ time: end, actual: lastCount })
-        }
-        lastCount += delta.delta
-        if (delta.time >= start && delta.time <= end) {
-            if (lastTime == delta.time) {
-                actual[actual.length - 1].actual = lastCount
-            } else {
-                actual.push({ time: delta.time, actual: lastCount })
+        if (lastTime == 0) {
+            counts.push(delta.delta)
+        } else if (lastTime < delta.time) {
+            for (let i = lastTime + TIME_STEP; i < delta.time; i += TIME_STEP) {
+                counts.push(lastCount)
             }
+            counts.push(lastCount + delta.delta)
+        } else {
+            counts[counts.length - 1] += delta.delta
         }
+        lastCount = lastCount + delta.delta
         lastTime = delta.time
     }
-    if (Date.now() < end && lastTime < Date.now()) {
-        actual.push({ time: Date.now(), actual: lastCount })
-    }
-    if (Date.now() >= end && lastTime < end) {
-        actual.push({ time: end, actual: lastCount })
+
+    // Calculate actual
+    const actual: { time: number, actual: number }[] = []
+    const start = cropTimestamp(milestone.start)
+    const end = cropTimestamp(milestone.end)
+    const now = cropTimestamp(Date.now())
+    const min = deltas.length > 0 ? deltas[0].time : Number.MAX_VALUE
+    const max = deltas.length > 0 ? deltas[deltas.length - 1].time : Number.MAX_VALUE
+    for (let i = start; i <= Math.min(now, end); i += TIME_STEP) {
+        if (i < min) {
+            actual.push({ time: i, actual: 0 })
+        } else if (i > max) {
+            actual.push({ time: i, actual: lastCount })
+        } else {
+            actual.push({ time: i, actual: counts[(i - min) / TIME_STEP] })
+        }
     }
 
     return actual
