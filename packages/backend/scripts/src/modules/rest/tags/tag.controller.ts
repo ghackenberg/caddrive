@@ -37,7 +37,6 @@ export class TagController implements TagREST {
     async getTag(
         @Param('id') id: string
     ): Promise<Tag> {
-        console.log('get tag')
         return this.tagService.getTag(id)
     }
     @Put(':id')

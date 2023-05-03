@@ -168,6 +168,7 @@ export class Database {
     public readonly commentRepository: Repository<CommentEntity>
     public readonly milestoneRepository: Repository<MilestoneEntity>
     public readonly tagRepository: Repository<TagEntity>
+    public readonly tagAssignmentRepository: Repository<TagAssignmentEntity>
 
     private constructor(options: DataSourceOptions) {
         this.dataSource = new DataSource(options)
@@ -181,6 +182,7 @@ export class Database {
         this.commentRepository = this.dataSource.getRepository(CommentEntity)
         this.milestoneRepository = this.dataSource.getRepository(MilestoneEntity)
         this.tagRepository = this.dataSource.getRepository(TagEntity)
+        this.tagAssignmentRepository = this.dataSource.getRepository(TagAssignmentEntity)
     }
 }
 

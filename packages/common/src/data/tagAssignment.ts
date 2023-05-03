@@ -14,6 +14,12 @@ export class TagAssignmentAddData extends TagAssignmentUpdateData {
 export class TagAssignment extends TagAssignmentAddData {
     @ApiProperty()
     id: string
+
+    @ApiProperty()
+    created: number
+
+    @ApiProperty()
+    updated: number
     
     @ApiProperty()
     deleted: number
