@@ -1,6 +1,6 @@
-# ProductBoard
+# CADDrive
 
-ProductBoard provides a free and open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help making the discussion more self-explanatory and easy to understand.
+**CADDrive** provides a free and open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help making the discussion more self-explanatory and easy to understand.
 
 ## Screenshots
 
@@ -24,43 +24,10 @@ The comments view enables discussion between stakeholders and engineers around i
 
 ## Tools
 
-ProductBoard requires the following tools:
+**CADDrive** requires the following tools:
 
 - node@^16
 - npm@^8
-
-## Variables
-
-### **Backend** variables
-
-Copy the variables file:
-
-```
-packages/backend/src/env.example.ts -> packages/backend/src/env.ts
-```
-
-Edit the variables:
-
-```ts
-export const AUTH0_JWKS_URI = 'Your_Auth0_JWKS_URI'
-export const AUTH0_JWKS_KID = 'Your_Auth0_JWKS_KID'
-```
-
-### **Frontend** variables
-
-Copy the variables file:
-
-```
-packages/frontend/src/scripts/env.example.ts -> packages/frontend/src/scripts/env.ts
-```
-
-Edit the variables:
-
-```ts
-export const AUTH0_DOMAIN    = 'Your_Auth0_Domain'
-export const AUTH0_CLIENT_ID = 'Your_Auth0_Client_ID'
-export const AUTH0_AUDIENCE  = 'Your_Auth0_API_Audience'
-```
 
 ## Scripts
 
@@ -87,6 +54,12 @@ npm run devel
 Start the software in production mode as follows:
 
 ```
+export SMTP_HOST=<domain name or IP address>
+export SMTP_PORT=<port number>
+export SMTP_SECURE=<true|false>
+export SMTP_AUTH_USER=<user name>
+export SMTP_AUTH_PASS=<password>
+
 npm run clean
 npm run build
 npm start
@@ -105,19 +78,6 @@ The software exhibits the following package structure:
 The software implements the following entity structure:
 
 ![Entities](diagrams/entities-v3.png)
-
-## Packages
-
-The software comprises the following packages:
-
-* [Common](packages/common/README.md)
-* [Database](packages/database/README.md)
-* [Toolkit](packages/toolkit/README.md)
-* [Broker](packages/broker/README.md)
-* [Backend](packages/backend/README.md)
-* [Worker](packages/worker/README.md)
-* [Frontend](packages/frontend/README.md)
-* [Gateway](packages/gateway/README.md)
 
 ## Documenations
 
