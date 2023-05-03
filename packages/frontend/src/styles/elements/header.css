@@ -15,8 +15,12 @@ header.page {
 }
 header.page > div {
     padding: 1em;
+
+    height: 2em;
     
     line-height: 2em;
+
+    white-space: nowrap;
 }
 header.page > div > span > a {
     text-decoration: none;
@@ -71,7 +75,8 @@ header.view {
 header.view > div {
     white-space: nowrap;
 
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: auto;
 }
 
 header.view > div:nth-child(1) {
@@ -119,19 +124,4 @@ header.view > div:nth-child(2) > span > a.active {
     padding-bottom: calc(0.75em - 2px);
 
     margin-bottom: -1px;
-}
-
-@media screen and (max-width: 45em) {
-    header.view.product > div:nth-child(2) > span > a > span > span:last-child {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 40em) {
-    header.view.product > div:nth-child(2) > span > a > span {
-        display: none;
-    }
-    header.view.product > div:nth-child(2) > span > a.active > span {
-        display: inline;
-    }
 }

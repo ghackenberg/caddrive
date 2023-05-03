@@ -5,12 +5,6 @@ footer.page {
 
     display: none;
 
-    flex-direction: row;
-
-    justify-content: space-between;
-
-    height: 3em;
-
     background-color: rgb(245,245,245);
 
     border-top-width: 1px;
@@ -19,11 +13,11 @@ footer.page {
 }
 footer.page > div {
     white-space: nowrap;
+
+    overflow-y: hidden;
+    overflow-x: auto;
 }
-footer.page > div:first-child {
-    flex: 1;
-}
-footer.page > div:first-child > span > a {
+footer.page > div > span > a {
     display: inline-block;
     
     padding-left: 1em;
@@ -32,7 +26,7 @@ footer.page > div:first-child > span > a {
 
     color: black;
 }
-footer.page > div:first-child > span > a.active {
+footer.page > div > span > a.active {
     font-weight: bold;
 
     border-top-width: 4px;
@@ -43,22 +37,9 @@ footer.page > div:first-child > span > a.active {
 
     margin-top: -1px;
 }
-footer.page > div:last-child {
-    flex: 0;
-}
-footer.page > div:last-child > a {
-    display: inline-block;
-
-    padding-top: 0.75em;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 0.75em;
-
-    color: black;
-}
 
 @media screen and (max-width: 70em) {
     footer.page {
-        display: flex;
+        display: block;
     }
 }
