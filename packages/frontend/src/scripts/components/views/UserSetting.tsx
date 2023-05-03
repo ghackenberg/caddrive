@@ -81,7 +81,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                     <main className="view user-setting">
                         <div>
                             <div>
-                                <h1>Settings</h1>
+                                <h1>{userId == 'new' ? 'New user' : 'User settings'}</h1>
                                 <form onSubmit={onSubmit}>
                                     <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
                                     {contextUser && contextUser.id == userId && (

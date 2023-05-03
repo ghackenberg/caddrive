@@ -95,7 +95,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
                     <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                <h1>Settings</h1>
+                                <h1>{productId == 'new' ? 'New product' : 'Product settings'}</h1>
                                 <form onSubmit={submit}>
                                     <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
                                     <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>

@@ -172,7 +172,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
                     <main className= {`view sidebar product-version-setting ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                <h1>Settings</h1>
+                                <h1>{versionId == 'new' ? 'New version' : 'Version settings'}</h1>
                                 <form onSubmit={onSubmit}>
                                     <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                     <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>

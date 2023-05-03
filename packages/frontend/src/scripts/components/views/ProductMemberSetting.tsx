@@ -154,7 +154,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                     <main className={`view product-member-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                <h1>Settings</h1>
+                                <h1>{memberId == 'new' ? 'New member' : 'Member settings'}</h1>
                                 <form onSubmit={onSubmit}>
                                     {user ? (
                                         <div>
@@ -168,12 +168,12 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                                             </div>
                                         </div>
                                     ) : (
-                                        <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
+                                        <TextInput label='Search user' placeholder='Type name or full email' value={query} change={setQuery} input={setQuery}/>
                                     )}
                                     {query && (
                                             <div>
                                                 <div>
-                                                    <label>User</label>
+                                                    <label>Matching users</label>
                                                 </div>
                                                 <div>
                                                     {users && (

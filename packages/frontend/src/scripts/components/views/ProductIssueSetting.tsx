@@ -231,7 +231,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                     <main className={`view product-issue-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                <h1>Settings</h1>
+                                <h1>{issueId == 'new' ? 'New issue' : 'Issue settings'}</h1>
                                 <form onSubmit={submitIssue} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <div>

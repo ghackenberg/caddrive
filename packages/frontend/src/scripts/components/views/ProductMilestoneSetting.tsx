@@ -121,7 +121,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                     <main className={`view product-milestone-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                <h1>Settings</h1>
+                                <h1>{milestoneId == 'new' ? 'New milestone' : 'Milestone settings'}</h1>
                                 <form onSubmit={submitMilestone} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
