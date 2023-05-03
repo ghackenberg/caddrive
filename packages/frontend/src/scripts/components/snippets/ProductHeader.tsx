@@ -30,11 +30,11 @@ export const ProductHeader = () => {
     }, [params.product])
 
     return (
-        <header className='view large product'>
-            <div>
+        <header className='view product'>
+            <div className='entity'>
                 <ProductLink product={product}/>
             </div>
-            <div>
+            <div className='tabs'>
                 {product && (
                     <>
                         <VersionsLink product={product}/>

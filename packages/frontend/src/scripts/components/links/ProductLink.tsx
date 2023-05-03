@@ -1,26 +1,24 @@
 import * as React from 'react'
-import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
-import { ProductsLink } from './ProductsLink'
+import ProductIcon from '/src/images/product.png'
 
 export const ProductLink = (props: {product?: Product}) => (
-    <Fragment>
-        <ProductsLink/>
-        { props.product ? (
-            <span>
-                <NavLink to={`/products/${props.product.id}`}>
-                    {props.product.name}
-                </NavLink>
-            </span>
-        ) : (
-            <span>
-                <NavLink to={`/products/new/settings`}>
-                    New product
-                </NavLink>
-            </span>
-        )}
-    </Fragment>  
+    props.product ? (
+        <span>
+            <NavLink to={`/products/${props.product.id}`}>
+                <img src={ProductIcon} className='icon small'/>
+                <span>{props.product.name}</span>
+            </NavLink>
+        </span>
+    ) : (
+        <span>
+            <NavLink to={`/products/new/settings`}>
+                <img src={ProductIcon} className='icon small'/>
+                <span>New product</span>
+            </NavLink>
+        </span>
+    )
 )

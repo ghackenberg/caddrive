@@ -6,9 +6,9 @@ export const LegalFooter = (props: { replace?: boolean }) => {
     return (
         <div>
             <span>&copy; 2023 FHOOE</span>
+            <NavLink to="/legal/terms" replace={replace}>Terms</NavLink>
+            <NavLink to="/legal/privacy" replace={replace}>Privacy</NavLink>
             <NavLink to="/legal/imprint" replace={replace}>Imprint</NavLink>
-            <NavLink to="/legal/terms" replace={replace}>Terms of use</NavLink>
-            <NavLink to="/legal/privacy" replace={replace}>Privacy policy</NavLink>
         </div>
     )
 }

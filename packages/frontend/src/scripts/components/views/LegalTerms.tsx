@@ -8,7 +8,7 @@ export const LegalTermsView = () => {
             <main className="view legal terms">
                 <div>
                     <div>
-                        <h1>Terms of use</h1>
+                        <h1>Terms</h1>
                         <p>
                             Coming soon...
                         </p>

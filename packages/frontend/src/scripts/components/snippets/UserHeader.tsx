@@ -26,11 +26,11 @@ export const UserHeader = () => {
     }, [params.user])
 
     return (
-        <header className='view large user'>
-            <div>
+        <header className='view user'>
+            <div className='entity'>
                 <UserLink user={user}/>
             </div>
-            <div>
+            <div className='tabs'>
                 <span>
                     {params.user == 'new' ? (
                         <a className="active">
