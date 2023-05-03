@@ -1,3 +1,0 @@
-# ProductBoard Frontend Package
-
-TODO

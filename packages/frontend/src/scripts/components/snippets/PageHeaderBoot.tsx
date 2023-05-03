@@ -9,8 +9,8 @@ export const PageHeaderBoot = () => {
                 <span>
                     <a>
                         <img src={AppIcon} className='icon small'/>
-                        <span>Product</span>
-                        <span>Board</span>
+                        <span>CAD</span>
+                        <span>Drive</span>
                     </a>
                 </span>
             </div>
