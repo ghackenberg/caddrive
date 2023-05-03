@@ -106,13 +106,24 @@ header.view > div:nth-child(2) > span > a {
     color: black;
 }
 header.view > div:nth-child(2) > span > a > span > span:last-child {
-    margin-left: 0.25em;
-}
-header.view > div:nth-child(2) > span > a > span > span:last-child::before {
-    content: "(";
-}
-header.view > div:nth-child(2) > span > a > span > span:last-child::after {
-    content: ")";
+    display: inline-block;
+
+    vertical-align: top;
+
+    font-size: 75%;
+
+    line-height: 1.25rem;
+
+    margin-top: 0.125rem;
+    margin-left: 0.5rem;
+    margin-bottom: 0.125rem;
+
+    border-radius: 0.5rem;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;  
+
+    background-color: rgb(225,225,225);
 }
 header.view > div:nth-child(2) > span > a.active {
     font-weight: bold;
