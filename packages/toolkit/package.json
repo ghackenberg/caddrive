@@ -35,14 +35,13 @@
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "cross-env TYPEORM_TYPE=postgres node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
-        "devel": "cross-env TYPEORM_TYPE=sqlite nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "devel": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
         "lint": "eslint src",
         "loc": "sloc src"
     },
     "dependencies": {
         "@types/node": "^18.11.9",
-        "cross-env": "^7.0.3",
         "productboard-common": "^0.0.1",
         "productboard-database": "^0.0.1",
         "ts-node": "^10.9.1",

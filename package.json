@@ -43,9 +43,9 @@
     "scripts": {
         "clean": "workspaces-run -- npm run clean",
         "build": "workspaces-run --ignore=\"productboard-{broker,gateway}\" -- npm run build",
-        "start": "docker-compose -f ./compositions/production.yml up -d && workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run start",
+        "start": "workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run start",
         "devel": "workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run devel",
-        "toolkit-start": "docker-compose -f ./compositions/production.yml up -d && workspaces-run --only=\"productboard-toolkit\" -- npm run start",
+        "toolkit-start": "workspaces-run --only=\"productboard-toolkit\" -- npm run start",
         "toolkit-devel": "workspaces-run --only=\"productboard-toolkit\" -- npm run devel",
         "lint": "workspaces-run -- npm run lint",
         "loc": "workspaces-run -- npm run loc"
