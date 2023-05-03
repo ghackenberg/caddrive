@@ -52,8 +52,6 @@ header.page > div:first-child > span > a > span:nth-child(2) {
 header.page > div:first-child > span > a > span:nth-child(3) {
     font-family: 'Arial Black';
 
-    text-transform: uppercase;
-
     color: rgb(128,128,128);
 }
 header.page > div:last-child > span:last-child > a > img {

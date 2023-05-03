@@ -6,6 +6,7 @@ import { UserContext } from '../../contexts/User'
 import { UserPictureWidget } from '../widgets/UserPicture'
 
 import AppIcon from '/src/images/app.png'
+import BackIcon from '/src/images/back.png'
 import LoadIcon from '/src/images/load.png'
 
 export const PageHeaderRoot = () => {
@@ -26,23 +27,21 @@ export const PageHeaderRoot = () => {
                     <Switch>
                         <Route path="/legal">
                             <a onClick={handleClick}>
-                                <img src={AppIcon} className='icon small'/>
-                                <span>Product</span>
-                                <span>Board</span>
+                                <img src={BackIcon} className='icon small'/>
+                                <span>Back</span>
                             </a>
                         </Route>
                         <Route path="/auth">
                             <a onClick={handleClick}>
-                                <img src={AppIcon} className='icon small'/>
-                                <span>Product</span>
-                                <span>Board</span>
+                                <img src={BackIcon} className='icon small'/>
+                                <span>Back</span>
                             </a>
                         </Route>
                         <Route>
                             <NavLink to="/products">
                                 <img src={AppIcon} className='icon small'/>
-                                <span>Product</span>
-                                <span>Board</span>
+                                <span>CAD</span>
+                                <span>Drive</span>
                             </NavLink>
                         </Route>
                     </Switch>
