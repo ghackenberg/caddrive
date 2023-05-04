@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Member, Product } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
@@ -20,7 +21,7 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductSettingView = (props: RouteComponentProps<{product: string}>) => {
 
-    const { replace } = useHistory()
+    const { replace } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -72,7 +73,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
         } else {
             if (name && description) {
                 await setProduct(await ProductManager.updateProduct(product.id, { name, description, public: _public }))
-                replace(`/products/${product.id}`)
+                await replace(`/products/${product.id}`)
             }
         }
     }

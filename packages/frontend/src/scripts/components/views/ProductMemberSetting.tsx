@@ -1,11 +1,12 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Member, MemberRole, Product, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
@@ -26,7 +27,7 @@ const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 
 export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
     
-    const { goBack } = useHistory()
+    const { goBack } = useAsyncHistory()
 
     // PARAMS
 
@@ -92,12 +93,12 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
         if (memberId == 'new') {
             if (confirm('Do you really want to add this member?')) {
                 await MemberManager.addMember({ productId, userId: user.id, role: role })
-                goBack()
+                await goBack()
             }
         } else {
             if (confirm('Do you really want to change this member?')) {
                 await MemberManager.updateMember(memberId,{...member, role: role})
-                goBack()
+                await goBack()
             }
         }
     }

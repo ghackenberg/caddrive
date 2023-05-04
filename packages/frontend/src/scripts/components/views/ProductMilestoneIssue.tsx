@@ -29,6 +29,7 @@ import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
+    
     const { goBack, replace, push } = useAsyncHistory()
 
     // PARAMS
@@ -155,15 +156,16 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     async function deleteIssue(issue: Issue) {
         if (confirm('Do you really want to delete this issue from this milestone?')) {
             await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: null })
-            setIssues(issues.filter(other => other.id != issue.id))  
-            
+            setIssues(issues.filter(other => other.id != issue.id))
         }
-    }    
+    }
+
     async function showClosedIssues(event: FormEvent) {
         event.preventDefault()
         setState('closed')
    
     }
+
     async function showOpenIssues(event: FormEvent) {
         event.preventDefault()
         setState('open')

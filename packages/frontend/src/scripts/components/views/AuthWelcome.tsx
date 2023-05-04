@@ -9,7 +9,8 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthWelcomeView = () => {
-    const { goBack } = useAsyncHistory()
+    
+    const { go } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -21,11 +22,7 @@ export const AuthWelcomeView = () => {
     async function handleSubmit(event: React.UIEvent) {
         event.preventDefault()
         setContextUser(authContextUser)
-        await goBack() // picture
-        await goBack() // name
-        await goBack() // consent
-        await goBack() // email
-        await goBack() // root
+        await go(-5) // picture, name, consent, email, root
     }
 
     return (

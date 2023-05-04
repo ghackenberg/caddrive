@@ -11,8 +11,9 @@ import { PRODUCTS_4 } from '../../pattern'
 import MemberIcon from '/src/images/user.png'
 
 export const MembersLink = (props: {product: Product}) => {
+    
     const { pathname } = useLocation()
-    const { goBack, replace } = useAsyncHistory()
+    const { go, goBack, replace } = useAsyncHistory()
 
     // INITIAL STATES
 
@@ -34,11 +35,12 @@ export const MembersLink = (props: {product: Product}) => {
         const products4 = PRODUCTS_4.exec(pathname)
         if (products4) {
             if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
-                await goBack()
+                await go(-2)
             } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
+                await go(-2)
+            } else {
                 await goBack()
             }
-            await goBack()
         }
         await replace(`/products/${props.product.id}/members`)
     }

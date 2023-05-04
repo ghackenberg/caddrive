@@ -14,7 +14,8 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthCodeView = () => {
-    const { goBack, replace } = useAsyncHistory()
+    
+    const { go, replace } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -64,8 +65,7 @@ export const AuthCodeView = () => {
                 } else {
                     setContextUser(user)
                     setLoad(false)
-                    await goBack()
-                    await goBack()
+                    await go(-2)
                 }
             }).catch(() => {
                 setError('Action failed.')

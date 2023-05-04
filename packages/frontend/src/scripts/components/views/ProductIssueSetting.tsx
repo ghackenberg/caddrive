@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent } from 'react'
-import { Redirect, useHistory } from 'react-router' 
+import { Redirect } from 'react-router' 
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Object3D } from 'three'
@@ -10,6 +10,7 @@ import { Issue, Product, User, Member, Version, Milestone } from 'productboard-c
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
+import { useAsyncHistory } from '../../hooks/history'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { UserManager } from '../../managers/user'
@@ -31,7 +32,7 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
 
-    const { goBack, replace, location } = useHistory()
+    const { goBack, replace } = useAsyncHistory()
 
     // REFERENCES
 
@@ -174,12 +175,12 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         if (issueId == 'new') {
             if (label && text) {
                 const issue = await IssueManager.addIssue({ productId, label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
-                replace(`/products/${productId}/issues/${issue.id}/comments`)
+                await replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
                 await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
-                goBack()    
+                await goBack()    
             }
         }
     }

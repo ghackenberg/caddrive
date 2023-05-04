@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent } from 'react'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Group } from 'three'
@@ -11,6 +11,7 @@ import { Member, Product, Version } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { render } from '../../functions/render'
+import { useAsyncHistory } from '../../hooks/history'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
@@ -38,7 +39,7 @@ const PREVIEW_HEIGHT = 1000
 
 export const ProductVersionSettingView = (props: RouteComponentProps<{ product: string, version: string }>) => {
 
-    const { goBack } = useHistory()
+    const { goBack } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -137,7 +138,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
             await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image: blob })
             setContextVersion(version)
         }
-        goBack()
+        await goBack()
     }
 
     // CONSTANTS
