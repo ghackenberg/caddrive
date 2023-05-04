@@ -1,5 +1,7 @@
-main.legal > div {
-    max-width: 60em;
+main.legal > div > div {
+    width: 60em;
+
+    max-width: 100%;
 
     margin-left: auto;
     margin-right: auto;
