@@ -5,7 +5,7 @@ div.widget.tag_view.expanded {
     height: fit-content; 
 }
 div.widget.tag_view.collapsed {
-    height: 40px; 
+    height: 80px; 
     overflow-y: hidden;
 }
 
@@ -22,6 +22,11 @@ div.widget.tag_view > div.tag_container {
     display: 'flex';
     flex-direction: row;
     flex-wrap: 'wrap';
+    margin-bottom: 1em;
+}
+
+div.widget.tag_view > div.tag_container > div:first-child {
+    margin-bottom: 1em;
 }
 
 div.widget.tag_view > div.tag_container > div.tag {
@@ -34,6 +39,7 @@ div.widget.tag_view > div.tag_container > div.tag {
     padding-left: 0.5em;
     padding-right: 0.5em;
 }
+
 div.widget.tag_view > div.tag_container > div.tag.active {
     box-shadow: 5px 10px 8px #888888;
 }
@@ -77,7 +83,7 @@ div.widget.tag_view > div.tag_settings > div.form > div  > input,
 div.widget.tag_view > div.tag_settings > div.form > div  > select {
     display: table-cell;
 }
-div.widget.tag_view > div.tag_settings  > div.buttons {
+div.widget.tag_view > div.tag_settings  > div.buttons  {
     display: flex;
     gap: 1em;
     align-items:flex-end ;

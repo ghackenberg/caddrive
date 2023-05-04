@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
-import { Issue, Product, User, Member, Version, Milestone, Tag } from 'productboard-common'
+import { Issue, Product, User, Member, Version, Milestone, Tag, TagAssignment } from 'productboard-common'
 
 import { TagInput } from '../inputs/TagInput'
 import { UserContext } from '../../contexts/User'
@@ -18,6 +18,7 @@ import { ProductManager } from '../../managers/product'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
+import { TagAssignmentManager } from '../../managers/tagAssignment'
 import { TagManager } from '../../managers/tag'
 import { AudioRecorder } from '../../services/recorder'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -78,6 +79,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [issue, setIssue] = useState<Issue>(initialIssue)
     const [milestones, setMilstones] = useState<Milestone[]>(initialMilestones)
     const [tags, setTags] = React.useState<Tag[]>()
+    const [tagAssignments, setTagAssignments] = React.useState<TagAssignment[]>()
+    const [assignedTags, setAssignedTags] = React.useState<Tag[]>()
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [text, setText] = useState<string>(initialText)
@@ -99,6 +102,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
     useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilstones) }, [props]) 
     useEffect(() => { productId != 'new' && TagManager.findTags(productId).then(setTags) }, [props])
+    useEffect(() => { productId != 'new' && TagAssignmentManager.findTagAssignments(issueId).then(setTagAssignments) }, [props])
+
     useEffect(() => {
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
@@ -110,6 +115,23 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
             })
         }
     }, [members])
+
+    useEffect(() => {
+        if (tagAssignments && tags) {
+            const result: Tag[] = []
+            tagAssignments.map(assignment => {
+                for (let index = 0; index < tags.length; index++) {
+                    if (assignment.tagId === tags[index].id) {
+                        result.push(tags[index])
+                    }
+                }
+            })
+            setAssignedTags(result)
+        }
+    }, [tagAssignments])
+
+    console.log(assignedTags)
+
     // - Values
     useEffect(() => { issue && setLabel(issue.name) }, [issue])
     useEffect(() => { issue && setText(issue.description) }, [issue])
@@ -242,7 +264,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // RETURN
 
     return (
-        ((issueId == 'new' || issue) && product && members && tags) ? (
+        ((issueId == 'new' || issue) && product && members && tags && assignedTags) ? (
             issue && issue.deleted ? (
                 <Redirect to='/'/>
             ) : (
@@ -260,7 +282,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
                                         <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
                                     </div>
                                 </div>
-                                <TagInput label='Tags' value= {tags} productId= {productId} assignable= {true}/>
+                                <TagInput label='Tags' tags= {tags} productId= {productId} assignable= {true} assignedTags = {assignedTags} issueId = {issueId}/>
                                 <div>
                                     <div>
                                         <label>Audio</label>

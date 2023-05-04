@@ -1,4 +1,4 @@
-import { Comment, Issue, Member, Milestone, Product, Tag, User, Version } from "./main"
+import { Comment, Issue, Member, Milestone, Product, Tag, TagAssignment, User, Version } from "./main"
 
 export interface TestUpMQTT {
     a(data: string): Promise<void>
@@ -77,17 +77,6 @@ export interface MilestoneDownMQTT {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TagUpMQTT {
-    // empty
-}
-
-export interface TagDownMQTT {
-    create(member: Tag): void
-    update(member: Tag): void
-    delete(member: Tag): void
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MemberUpMQTT {
     // empty
 }
@@ -99,3 +88,25 @@ export interface MemberDownMQTT {
 }
 
 // TODO Add missing MQTT interfaces
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TagUpMQTT {
+    // empty
+}
+
+export interface TagDownMQTT {
+    create(tag: Tag): void
+    update(tag: Tag): void
+    delete(tag: Tag): void
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TagAssignmentUpMQTT {
+    // empty
+}
+
+export interface TagAssignmentDownMQTT {
+    create(tagAssignment: TagAssignment): void
+    update(tagAssignment: TagAssignment): void
+    delete(tagAssignment: TagAssignment): void
+}

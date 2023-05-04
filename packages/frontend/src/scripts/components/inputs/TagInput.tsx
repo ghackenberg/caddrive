@@ -5,11 +5,11 @@ import { Tag } from 'productboard-common'
 import { TagView } from '../widgets/TagView'
 import { GenericInput } from './GenericInput'
 
-export const TagInput = (props: { label: string, value: Tag[], productId: string, assignable: boolean }) => {
+export const TagInput = (props: { label: string, tags: Tag[], productId: string, assignable: boolean, assignedTags?: Tag[], issueId?: string }) => {
 
     return (
         <GenericInput label={props.label}>
-            <TagView value={props.value} productId={props.productId} assignable={props.assignable}></TagView>
+            <TagView tags={props.tags} productId={props.productId} assignable={props.assignable} assignedTags= {props.assignedTags} issueId = {props.issueId}></TagView>
         </GenericInput>
     )
 }
