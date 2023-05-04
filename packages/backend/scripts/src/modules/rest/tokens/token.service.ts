@@ -36,6 +36,7 @@ export class TokenService implements TokenREST {
                 code
             }
         })
+        console.log(code)
         console.log(getTestMessageUrl(info))
         return { id: token.id }
     }

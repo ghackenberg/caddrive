@@ -38,7 +38,7 @@ export const UserHeader = () => {
                             <span>Settings</span>
                         </a>
                     ) : (
-                        <NavLink to={`/users/${params.user}`}>
+                        <NavLink to={`/users/${params.user}`} replace={true}>
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </NavLink>

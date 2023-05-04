@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { useContext } from 'react'
-import { NavLink, Route, Switch, useHistory } from 'react-router-dom'
+import { NavLink, Route, Switch } from 'react-router-dom'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { UserPictureWidget } from '../widgets/UserPicture'
 
 import AppIcon from '/src/images/app.png'
@@ -11,13 +12,13 @@ import LoadIcon from '/src/images/load.png'
 
 export const PageHeaderRoot = () => {
 
-    const { goBack } = useHistory()
+    const { goBack } = useAsyncHistory()
 
     const { contextUser } = useContext(UserContext)
 
-    function handleClick(event: React.UIEvent) {
+    async function handleClick(event: React.UIEvent) {
         event.preventDefault()
-        goBack()
+        await goBack()
     }
 
     return (
@@ -37,8 +38,20 @@ export const PageHeaderRoot = () => {
                                 <span>Back</span>
                             </a>
                         </Route>
+                        <Route path="/users">
+                            <a onClick={handleClick}>
+                                <img src={BackIcon} className='icon small'/>
+                                <span>Back</span>
+                            </a>
+                        </Route>
+                        <Route path="/products/:productId">
+                            <a onClick={handleClick}>
+                                <img src={BackIcon} className='icon small'/>
+                                <span>Back</span>
+                            </a>
+                        </Route>
                         <Route>
-                            <NavLink to="/products">
+                            <NavLink to="/products" replace={true}>
                                 <img src={AppIcon} className='icon small'/>
                                 <span>CAD</span>
                                 <span>Drive</span>
@@ -63,7 +76,7 @@ export const PageHeaderRoot = () => {
                                 </a>
                             )}
                             {contextUser === null && (
-                                <NavLink to='/auth' className='button fill white' style={{lineHeight: '100%'}}>
+                                <NavLink to='/auth/email' className='button fill white' style={{lineHeight: '100%'}}>
                                     Sign up / in
                                 </NavLink>
                             )}

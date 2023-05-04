@@ -6,6 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
@@ -28,6 +29,7 @@ import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
+    const { goBack, replace, push } = useAsyncHistory()
 
     // PARAMS
 
@@ -166,12 +168,21 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
         event.preventDefault()
         setState('open')
     }
+
+    async function handleClick(event: React.UIEvent<HTMLAnchorElement>) {
+        event.preventDefault()
+        const pathname = event.currentTarget.pathname
+        const search = event.currentTarget.search
+        await goBack()
+        await replace(`/products/${productId}/issues`)
+        await push(`${pathname}${search}`)
+    }
     
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
         { label: '👤', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.userId in users && members ? (
                     <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
                 ) : (
@@ -180,12 +191,12 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
             </Link>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.label}
             </Link>
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
                         {assignedId in users && members ? (
@@ -198,12 +209,12 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
             </Link>
         ) },
         { label: 'Comments', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.id in comments ? comments[issue.id].length : '?'}
             </Link>
         ) },
         { label: 'Parts', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.id in partsCount ? partsCount[issue.id] : '?'}
             </Link>
         ) },
@@ -232,16 +243,16 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray'>
+                                        <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
                                             Edit milestone
                                         </Link>
                                     ) : (
-                                        <a className='button fill gray' style={{fontStyle: 'italic'}}>
+                                        <a className='button fill gray right' style={{fontStyle: 'italic'}}>
                                             Edit milestone (requires role)
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill gray' style={{fontStyle: 'italic'}}>
+                                    <a className='button fill gray right' style={{fontStyle: 'italic'}}>
                                         Edit milestone (requires login)
                                     </a>
                                 )}
@@ -260,7 +271,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                 </p>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} className='button fill green block-when-responsive'>
+                                        <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClick} className='button fill green block-when-responsive'>
                                             New issue
                                         </Link>
                                     ) : (

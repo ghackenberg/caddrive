@@ -1,11 +1,12 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { Comment, Issue, Milestone, Product } from 'productboard-common'
 
 import { calculateActual } from '../../functions/burndown'
+import { useAsyncHistory } from '../../hooks/history'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { MilestoneManager } from '../../managers/milestone'
@@ -23,7 +24,7 @@ import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
     
-    const { goBack, replace } = useHistory()
+    const { goBack, replace } = useAsyncHistory()
 
     // PARAMS
 
@@ -95,11 +96,11 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     async function submitMilestone(event: FormEvent){
         event.preventDefault()
         if(milestoneId == 'new') {
-            await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })
-            replace(`/products/${productId}/milestones/`)
+            const milestone = await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })
+            await replace(`/products/${productId}/milestones/${milestone.id}/issues`)
         } else {
             await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.getTime(), end: end.getTime() })
-            goBack()
+            await goBack()
         }
     }
 

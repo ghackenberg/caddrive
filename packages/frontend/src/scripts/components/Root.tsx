@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 
 import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike} from 'jose'
 
@@ -9,6 +9,7 @@ import { TokenClient } from '../clients/rest/token'
 import { AuthContext } from '../contexts/Auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
+import { useAsyncHistory } from '../hooks/history'
 import { CommentManager } from '../managers/comment'
 import { FileManager } from '../managers/file'
 import { IssueManager } from '../managers/issue'
@@ -18,6 +19,7 @@ import { MilestoneManager } from '../managers/milestone'
 import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
+import { AUTH_0, AUTH_1, LEGAL_0, LEGAL_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, USERS_0, USERS_1, USERS_2 } from '../pattern'
 import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
@@ -28,6 +30,9 @@ const ProductsRouter = React.lazy(() => import('./routers/Products'))
 const UsersRouter = React.lazy(() => import('./routers/Users'))
 
 const Root = () => {
+    const { pathname } = useLocation()
+    const { replace, push } = useAsyncHistory()
+
     // STATES
 
     const [publicJWK, setPublicJWK] = React.useState<JWK>()
@@ -40,6 +45,7 @@ const Root = () => {
     const [authContextUser, setAuthContextUser] = React.useState<User>()
     const [contextUser, setContextUser] = React.useState<User>(jwt ? undefined : null)
     const [contextVersion, setContextVersion] = React.useState<Version>()
+    const [initialized, setInitialized] = React.useState(false)
 
     // EFFECTS
 
@@ -64,6 +70,92 @@ const Root = () => {
     React.useEffect(() => {
         userId && UserManager.getUser(userId).then(setContextUser).catch(() => setContextUser(null))
     }, [userId])
+    React.useEffect(() => {
+        if (contextUser === undefined) return
+        if (initialized) return
+
+        const path = pathname
+        
+        const legal1 = LEGAL_1.exec(path)
+        const legal0 = LEGAL_0.exec(path)
+        
+        const auth1 = AUTH_1.exec(path)
+        const auth0 = AUTH_0.exec(path)
+        
+        const users2 = USERS_2.exec(path)
+        const users1 = USERS_1.exec(path)
+        const users0 = USERS_0.exec(path)
+        
+        const products4 = PRODUCTS_4.exec(path)
+        const products3 = PRODUCTS_3.exec(path)
+        const products2 = PRODUCTS_2.exec(path)
+        const products1 = PRODUCTS_1.exec(path)
+
+        if (legal1) {
+            replace('/products').
+                then(() => push(`/legal/${legal1[1]}`)).
+                then(() => setInitialized(true))
+        } else if (legal0) {
+            replace('/products').
+                then(() => push('/legal')).
+                then(() => setInitialized(true))
+        } else if (auth1) {
+            replace('/products').
+                then(() => push(`/auth/email`)).
+                then(() => setInitialized(true))
+        } else if (auth0) {
+            replace('/products').
+                then(() => push('/auth')).
+                then(() => setInitialized(true))
+        } else if (users2) {
+            replace('/products').
+                then(() => push(`/users/${users2[1]}/${users2[2]}`)).
+                then(() => setInitialized(true))
+        } else if (users1) {
+            replace('/products').
+                then(() => push(`/users/${users1[1]}`)).
+                then(() => setInitialized(true))
+        } else if (users0) {
+            replace('/products').
+                then(() => push('/users')).
+                then(() => setInitialized(true))
+        } else if (products4) {
+            if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
+                replace('/products').
+                    then(() => push(`/products/${products4[1]}/${products4[2]}`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/comments`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/settings`)).
+                    then(() => setInitialized(true))
+            } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
+                replace('/products').
+                    then(() => push(`/products/${products4[1]}/${products4[2]}`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/issues`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/settings`)).
+                    then(() => setInitialized(true))
+            } else {
+                replace('/products').
+                    then(() => push(`/products/${products4[1]}/${products4[2]}`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/${products4[4]}`)).
+                    then(() => setInitialized(true))
+            }
+        } else if (products3) {
+            replace('/products').
+                then(() => push(`/products/${products3[1]}/${products3[2]}`)).
+                then(() => push(`/products/${products3[1]}/${products3[2]}/${products3[3]}`)).
+                then(() => setInitialized(true))
+        } else if (products2) {
+            replace('/products').
+                then(() => push(`/products/${products2[1]}/${products2[2]}`)).
+                then(() => setInitialized(true))
+        } else if (products1) {
+            replace('/products').
+                then(() => push(`/products/${products1[1]}`)).
+                then(() => setInitialized(true))
+        } else {
+            replace('/products').
+                then(() => setInitialized(true))
+        }
+    }, [contextUser])
 
     // FUNCTIONS
     
@@ -93,29 +185,27 @@ const Root = () => {
     // RETURN
 
     return (
-        <BrowserRouter>
-            <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
-                <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
-                    <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
-                        <PageHeaderRoot/>
-                        {contextUser === undefined ? (
-                            <LoadingView/>
-                        ) : (
-                            <React.Suspense fallback={<LoadingView/>}>
-                                <Switch>
-                                    <Route path="/legal" component={LegalRouter}/>
-                                    <Route path="/auth" component={AuthRouter}/>
-                                    <Route path="/users" component={UsersRouter}/>
-                                    <Route path="/products" component={ProductsRouter}/>
-                                    <Redirect path="/" exact to="/products" push={false}/>
-                                    <Route component={MissingView}/>
-                                </Switch>
-                            </React.Suspense>
-                        )}
-                    </VersionContext.Provider>
-                </UserContext.Provider>
-            </AuthContext.Provider>
-        </BrowserRouter>
+        <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
+            <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
+                <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
+                    <PageHeaderRoot/>
+                    {initialized ? (
+                        <React.Suspense fallback={<LoadingView/>}>
+                            <Switch>
+                                <Route path="/legal" component={LegalRouter}/>
+                                <Route path="/auth" component={AuthRouter}/>
+                                <Route path="/users" component={UsersRouter}/>
+                                <Route path="/products" component={ProductsRouter}/>
+                                <Redirect path="/" exact to="/products" push={false}/>
+                                <Route component={MissingView}/>
+                            </Switch>
+                        </React.Suspense>
+                    ) : (
+                        <LoadingView/>
+                    )}
+                </VersionContext.Provider>
+            </UserContext.Provider>
+        </AuthContext.Provider>
     )
 }
 
