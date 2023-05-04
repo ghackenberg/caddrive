@@ -11,7 +11,7 @@ import { PRODUCTS_4 } from '../../pattern'
 import MemberIcon from '/src/images/user.png'
 
 export const MembersLink = (props: {product: Product}) => {
-    
+
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
@@ -26,7 +26,11 @@ export const MembersLink = (props: {product: Product}) => {
 
     // EFFECTS
 
-    useEffect(() => { MemberManager.findMembers(props.product.id).then(members => setCount(members.length)) }, [props])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(props.product.id).then(members => exec && setCount(members.length))
+        return () => { exec = false }
+    }, [props])
 
     // FUNCTIONS
 

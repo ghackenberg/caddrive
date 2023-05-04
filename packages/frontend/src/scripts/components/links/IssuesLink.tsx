@@ -11,7 +11,7 @@ import { PRODUCTS_4 } from '../../pattern'
 import IssueIcon from '/src/images/issue.png'
 
 export const IssuesLink = (props: {product: Product}) => {
-    
+
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
@@ -26,7 +26,11 @@ export const IssuesLink = (props: {product: Product}) => {
 
     // EFFECTS
 
-    useEffect(() => { IssueManager.findIssues(props.product.id).then(issues => setCount(issues.length)) }, [props])
+    useEffect(() => {
+        let exec = true
+        IssueManager.findIssues(props.product.id).then(issues => exec && setCount(issues.length))
+        return () => { exec = false }
+    }, [props])
 
     // FUNCTIONS
 

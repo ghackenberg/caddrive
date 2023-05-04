@@ -11,7 +11,7 @@ import { PRODUCTS_4 } from '../../pattern'
 import VersionIcon from '/src/images/version.png'
 
 export const VersionsLink = (props: {product: Product}) => {
-    
+
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
@@ -26,7 +26,11 @@ export const VersionsLink = (props: {product: Product}) => {
 
     // EFFECTS
 
-    useEffect(() => { VersionManager.findVersions(props.product.id).then(versions => setCount(versions.length)) }, [props])
+    useEffect(() => {
+        let exec = true
+        VersionManager.findVersions(props.product.id).then(versions => exec && setCount(versions.length))
+        return () => { exec = false }
+    }, [props])
 
     // FUNCTIONS
 

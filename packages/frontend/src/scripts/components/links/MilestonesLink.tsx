@@ -11,7 +11,7 @@ import { PRODUCTS_4 } from '../../pattern'
 import MilestoneIcon from '/src/images/milestone.png'
 
 export const MilestonesLink = (props: {product: Product}) => {
-    
+
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
@@ -25,9 +25,12 @@ export const MilestonesLink = (props: {product: Product}) => {
     const [count, setCount] = useState<number>(initialCount)
 
     // EFFECTS
-
-    // TODO: Find Milestones und unten count übergeben
-    useEffect(() => { MilestoneManager.findMilestones(props.product.id).then(milestones => setCount(milestones.length)) }, [props])
+    
+    useEffect(() => {
+        let exec = true
+        MilestoneManager.findMilestones(props.product.id).then(milestones => exec && setCount(milestones.length))
+        return () => { exec = false }
+    }, [props])
 
     // FUNCTIONS
 
