@@ -1,14 +1,15 @@
 import * as React from 'react'
-import { Redirect, useHistory } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 import { AuthContext } from '../../contexts/Auth'
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { LegalFooter } from '../snippets/LegalFooter'
 
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthWelcomeView = () => {
-    const { push } = useHistory()
+    const { goBack } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -17,10 +18,14 @@ export const AuthWelcomeView = () => {
 
     // FUNCTIONS
 
-    function handleSubmit(event: React.UIEvent) {
+    async function handleSubmit(event: React.UIEvent) {
         event.preventDefault()
         setContextUser(authContextUser)
-        push('/')
+        await goBack() // picture
+        await goBack() // name
+        await goBack() // consent
+        await goBack() // email
+        await goBack() // root
     }
 
     return (

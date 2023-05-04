@@ -1,12 +1,13 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, useContext } from 'react'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 import { RouteComponentProps } from 'react-router-dom'
 
 import { User } from 'productboard-common'
 
 import { auth } from '../../clients/auth'
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { UserManager } from '../../managers/user'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { EmailInput } from '../inputs/EmailInput'
@@ -18,7 +19,7 @@ import { LoadingView } from './Loading'
 
 export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
     
-    const { goBack, push } = useHistory()
+    const { goBack } = useAsyncHistory()
     
     // CONTEXTS
 
@@ -62,12 +63,12 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
         goBack() 
     }
 
-    function onClick(event: React.MouseEvent<HTMLButtonElement>) {
+    async function onClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         localStorage.removeItem('jwt')
         auth.headers.Authorization = ''
         setContextUser(null)
-        push('/')
+        await goBack()
     }
 
     // RETURN

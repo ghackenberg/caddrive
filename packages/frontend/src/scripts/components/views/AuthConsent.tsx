@@ -1,14 +1,15 @@
 import * as React from 'react'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 
 import { AuthContext } from '../../contexts/Auth'
+import { useAsyncHistory } from '../../hooks/history'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthConsentView = () => {
-    const { push } = useHistory()
+    const { push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -29,7 +30,7 @@ export const AuthConsentView = () => {
             const user = await UserManager.updateUser(authContextUser.id, { consent: true, name: authContextUser.name })
             setAuthContextUser(user)
             setLoad(false)
-            push('/auth/name')
+            await push('/auth/name')
         } catch (e) {
             setError('Action failed.')
             setLoad(false)
@@ -37,7 +38,7 @@ export const AuthConsentView = () => {
     }
     async function handleCancel(event: React.UIEvent) {
         event.preventDefault()
-        push('/')
+        await push('/')
     }
 
     return (

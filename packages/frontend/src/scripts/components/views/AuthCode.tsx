@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useHistory } from 'react-router'
 
 import { JWK, JWTVerifyResult, KeyLike, importJWK, jwtVerify } from 'jose'
 
@@ -7,6 +6,7 @@ import { auth } from '../../clients/auth'
 import { TokenClient } from '../../clients/rest/token'
 import { AuthContext } from '../../contexts/Auth'
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { KeyManager } from '../../managers/key'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -14,7 +14,7 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthCodeView = () => {
-    const { push } = useHistory()
+    const { goBack, replace } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -56,15 +56,16 @@ export const AuthCodeView = () => {
         if (userId) {
             setLoad(true)
             setError(undefined)
-            UserManager.getUser(userId).then(user => {
+            UserManager.getUser(userId).then(async user => {
                 if (!user.consent || !user.name) {
                     setAuthContextUser(user)
                     setLoad(false)
-                    setTimeout(() => push('/auth/consent'))
+                    await replace('/auth/consent')
                 } else {
                     setContextUser(user)
                     setLoad(false)
-                    setTimeout(() => push('/'))
+                    await goBack()
+                    await goBack()
                 }
             }).catch(() => {
                 setError('Action failed.')
