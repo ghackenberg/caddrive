@@ -29,7 +29,9 @@ export const ProductHeader = () => {
     // EFFECTS
 
     React.useEffect(() => {
-        params.product == 'new' ? setProduct(undefined) : ProductManager.getProduct(params.product).then(setProduct)
+        let exec = true
+        params.product == 'new' ? setProduct(undefined) : ProductManager.getProduct(params.product).then(product => exec && setProduct(product))
+        return () => { exec = false }
     }, [params.product])
 
     // FUNCTIONS

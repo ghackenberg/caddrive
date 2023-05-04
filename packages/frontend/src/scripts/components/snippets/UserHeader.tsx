@@ -22,7 +22,9 @@ export const UserHeader = () => {
     // EFFECTS
 
     React.useEffect(() => {
-        params.user == 'new' ? setUser(undefined) : UserManager.getUser(params.user).then(setUser)
+        let exec = true
+        params.user == 'new' ? setUser(undefined) : UserManager.getUser(params.user).then(user => exec && setUser(user))
+        return () => { exec = false }
     }, [params.user])
 
     return (
