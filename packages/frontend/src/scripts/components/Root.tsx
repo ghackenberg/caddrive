@@ -120,10 +120,24 @@ const Root = () => {
                 then(() => push('/users')).
                 then(() => setInitialized(true))
         } else if (products4) {
-            replace('/products').
-                then(() => push(`/products/${products4[1]}/${products4[2]}`)).
-                then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/${products4[4]}`)).
-                then(() => setInitialized(true))
+            if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
+                replace('/products').
+                    then(() => push(`/products/${products4[1]}/${products4[2]}`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/comments`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/settings`)).
+                    then(() => setInitialized(true))
+            } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
+                replace('/products').
+                    then(() => push(`/products/${products4[1]}/${products4[2]}`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/issues`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/settings`)).
+                    then(() => setInitialized(true))
+            } else {
+                replace('/products').
+                    then(() => push(`/products/${products4[1]}/${products4[2]}`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/${products4[4]}`)).
+                    then(() => setInitialized(true))
+            }
         } else if (products3) {
             replace('/products').
                 then(() => push(`/products/${products3[1]}/${products3[2]}`)).

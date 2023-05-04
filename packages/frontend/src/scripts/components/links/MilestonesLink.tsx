@@ -32,7 +32,13 @@ export const MilestonesLink = (props: {product: Product}) => {
 
     async function handleClick(event: React.UIEvent) {
         event.preventDefault()
-        if (PRODUCTS_4.test(pathname)) {
+        const products4 = PRODUCTS_4.exec(pathname)
+        if (products4) {
+            if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
+                await goBack()
+            } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
+                await goBack()
+            }
             await goBack()
         }
         await replace(`/products/${props.product.id}/milestones`)
