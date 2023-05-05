@@ -10,7 +10,9 @@ export const ProductUserNameWidget = (props: { user: User, members: Member[] }) 
             </del>
         ) : (
             props.members.map(member => member.userId).includes(props.user.id) ? (
-                props.user.name
+                <>
+                    {props.user.name}
+                </>
             ) : (
                 <del>
                     {props.user.name}
