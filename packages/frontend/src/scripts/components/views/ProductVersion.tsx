@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, Fragment } from 'react'
-import { Redirect, RouteComponentProps } from 'react-router'
-import { Link } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 import { Member, Product, User, Version } from 'productboard-common'
 
@@ -25,7 +25,7 @@ import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/version.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductVersionView = () => {
 
     // CONTEXTS
 
@@ -34,7 +34,7 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
 
     // INITIAL STATES
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
@@ -156,9 +156,9 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                        <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
                                             New version
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button green fill' style={{fontStyle: 'italic'}}>
                                             New version (requires role)

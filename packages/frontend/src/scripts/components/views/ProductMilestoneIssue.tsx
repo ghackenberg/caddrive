@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
 
@@ -28,14 +28,13 @@ import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
 
-export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: string, milestone: string}>) => {
+export const ProductMilestoneIssueView = () => {
     
     const { goBack, replace, push } = useAsyncHistory()
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const milestoneId = props.match.params.milestone
+    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
 
     // CONTEXTS
 
@@ -208,21 +207,21 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
 
     const columns: Column<Issue>[] = [
         { label: '👤', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.userId in users && members ? (
                     <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
                 ) : (
                     <img src={LoadIcon} className='icon medium pad animation spin'/>
                 )}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.label}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
                         {assignedId in users && members ? (
@@ -232,17 +231,17 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                         )}
                     </Fragment>
                 ))}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Comments', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.id in comments ? comments[issue.id].length : '?'}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Parts', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.id in partsCount ? partsCount[issue.id] : '?'}
-            </Link>
+            </NavLink>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
             <a onClick={() => deleteIssue(issue)}>
@@ -269,9 +268,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <Link to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
+                                        <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
                                             Edit milestone
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button fill gray right' style={{fontStyle: 'italic'}}>
                                             Edit milestone (requires role)
@@ -297,9 +296,9 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                                 </p>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <Link to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClick} className='button fill green block-when-responsive'>
+                                        <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClick} className='button fill green block-when-responsive'>
                                             New issue
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
                                             New issue (requires role)

@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
-import { Redirect } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 import { Member, Product, User } from 'productboard-common'
 
@@ -21,11 +21,11 @@ import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductMemberView = () => {
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
 
     // CONTEXTS
 
@@ -59,12 +59,12 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
         let exec = true
         ProductManager.getProduct(productId).then(product => exec && setProduct(product))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MemberManager.findMembers(productId).then(members => exec && setMembers(members))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
 
     useEffect(() => {
         let exec = true
@@ -97,25 +97,25 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
             member.id in users ? (
-                <Link to={`/products/${productId}/members/${member.id}/settings`}>
+                <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
                     <ProductUserPictureWidget user={users[member.id]} members={members} class='icon medium round middle'/>
-                </Link> 
+                </NavLink> 
             ) : (
                 <img src={LoadIcon} className='icon medium pad animation spin'/>
             )
         ) },
         { label: 'Name', class: 'left nowrap', content: (
             member => member.id in users ? (
-                <Link to={`/products/${productId}/members/${member.id}/settings`}>
+                <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
                     {users[member.id].name}
-                </Link>
+                </NavLink>
              ) : '?'
         ) },
         { label: 'Role', class: 'fill left nowrap', content: (
             member => member.id in users ? (
-                <Link to={`/products/${productId}/members/${member.id}/settings`}>
+                <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
                     {member.role}
-                </Link>
+                </NavLink>
              ) : '?'
         ) },
         { label: '🛠️', class: 'center', content: member => (
@@ -143,9 +143,9 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <Link to={`/products/${productId}/members/new/settings`} className='button fill green'>
+                                        <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
                                             New member
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button fill green' style={{fontStyle: 'italic'}}>
                                             New member (requires role)

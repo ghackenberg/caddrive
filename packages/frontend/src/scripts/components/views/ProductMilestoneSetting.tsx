@@ -1,7 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
-import { Redirect } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
 import { Comment, Issue, Milestone, Product } from 'productboard-common'
 
@@ -22,14 +21,13 @@ import { LoadingView } from './Loading'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/chart.png'
 
-export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
+export const ProductMilestoneSettingView = () => {
     
     const { goBack, replace } = useAsyncHistory()
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const milestoneId = props.match.params.milestone
+    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
 
     // INITIAL STATES
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)

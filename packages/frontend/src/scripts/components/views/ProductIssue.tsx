@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 import { Comment, Issue, Member, Product, User } from 'productboard-common'
 
@@ -25,11 +25,11 @@ import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductIssueView = () => {
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
 
     // CONTEXTS
 
@@ -90,17 +90,17 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         let exec = true
         ProductManager.getProduct(productId).then(product => exec && setProduct(product))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MemberManager.findMembers(productId).then(members => exec && setMembers(members))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         IssueManager.findIssues(productId).then(issues => exec && setIssues(issues))
         return () => { exec = false}
-    }, [props, state])
+    }, [productId, state])
 
     useEffect(() => {
         let exec = true
@@ -229,21 +229,21 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
 
     const columns: Column<Issue>[] = [
         { label: '👤', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.userId in users && members ? (
                     <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
                 ) : (
                     <img src={LoadIcon} className='icon medium pad animation spin'/>
                 )}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.label}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
                     <Fragment key={assignedId}>
                         {assignedId in users && members ? (
@@ -253,17 +253,17 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                         )}
                     </Fragment>
                 ))}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Comments', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Parts', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.id in partsCount ? partsCount[issue.id] : '?'}
-            </Link>
+            </NavLink>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
             <a onClick={() => deleteIssue(issue)}>
@@ -290,9 +290,9 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <Link to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
+                                        <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
                                             New issue
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
                                             New issue (requires role)

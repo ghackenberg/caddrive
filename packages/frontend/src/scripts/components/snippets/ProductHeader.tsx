@@ -13,14 +13,14 @@ import { PRODUCTS_4 } from '../../pattern'
 import SettingIcon from '/src/images/setting.png'
 
 export const ProductHeader = () => {
-    const { pathname } = useLocation()
-    const { goBack, replace } = useAsyncHistory()
 
-    const params = useParams<{ product: string }>()
+    const { pathname } = useLocation()
+    const { productId } = useParams<{ productId: string }>()
+    const { goBack, replace } = useAsyncHistory()
 
     // INITIAL STATES
 
-    const initialProduct = params.product == 'new' ? undefined : ProductManager.getProductFromCache(params.product)
+    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
 
     // STATES
 
@@ -30,9 +30,9 @@ export const ProductHeader = () => {
 
     React.useEffect(() => {
         let exec = true
-        params.product == 'new' ? setProduct(undefined) : ProductManager.getProduct(params.product).then(product => exec && setProduct(product))
+        productId == 'new' ? setProduct(undefined) : ProductManager.getProduct(productId).then(product => exec && setProduct(product))
         return () => { exec = false }
-    }, [params.product])
+    }, [productId])
 
     // FUNCTIONS
 
@@ -41,7 +41,7 @@ export const ProductHeader = () => {
         if (PRODUCTS_4.test(pathname)) {
             await goBack()
         }
-        await replace(`/products/${params.product}/settings`)
+        await replace(`/products/${productId}/settings`)
     }
 
     // RETURN
@@ -61,13 +61,13 @@ export const ProductHeader = () => {
                     </>
                 )}
                 <span>
-                    {params.product == 'new' ? (
+                    {productId == 'new' ? (
                         <a className="active">
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </a>
                     ) : (
-                        <NavLink to={`/products/${params.product}/settings`} onClick={handleClick}>
+                        <NavLink to={`/products/${productId}/settings`} onClick={handleClick}>
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </NavLink>

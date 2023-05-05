@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { Redirect } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
 import { Member, Product } from 'productboard-common'
 
@@ -19,7 +18,7 @@ import { LoadingView } from './Loading'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductSettingView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductSettingView = () => {
 
     const { replace } = useAsyncHistory()
 
@@ -29,7 +28,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
 
     // INITIAL STATES
 

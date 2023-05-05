@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, ReactElement } from 'react'
-import { Redirect } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
@@ -28,7 +28,7 @@ import LeftIcon from '/src/images/comment.png'
 import RightIcon from '/src/images/part.png'
 import UserIcon from '/src/images/user.png'
 
-export const ProductIssueCommentView = (props: RouteComponentProps<{ product: string, issue: string }>) => {
+export const ProductIssueCommentView = () => {
 
     // CONSTANTS
 
@@ -42,8 +42,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const issueId = props.match.params.issue
+    const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
 
     // INITIAL STATES
 
@@ -122,22 +121,22 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
         let exec = true
         ProductManager.getProduct(productId).then(product => exec && setProduct(product))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MemberManager.findMembers(productId).then(members => exec && setMembers(members))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         IssueManager.getIssue(issueId).then(issue => exec && setIssue(issue))
         return () => { exec = false }
-    }, [props])
+    }, [issueId])
     useEffect(() => {
         let exec = true
         CommentManager.findComments(issueId).then(comments => exec && setComments(comments))
         return () => { exec = false }
-    }, [props])
+    }, [issueId])
 
     useEffect(() => {
         let exec = true
@@ -332,9 +331,9 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
+                                        <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
                                             Edit issue
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
                                             Edit issue (requires role)
@@ -374,9 +373,9 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                         <div className="head">
                                             <div className="icon">
                                                 {contextUser ? (
-                                                    <Link to={`/users/${contextUser.id}`}>
+                                                    <NavLink to={`/users/${contextUser.id}`}>
                                                         <ProductUserPictureWidget user={contextUser} members={members} />
-                                                    </Link>
+                                                    </NavLink>
                                                 ) : (
                                                     <a>
                                                         <img src={UserIcon} className='icon small round' />

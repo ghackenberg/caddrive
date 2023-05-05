@@ -1,7 +1,7 @@
 import  * as React from 'react'
 import { useEffect, useState, useContext } from 'react'
-import { Redirect, RouteComponentProps } from 'react-router'
-import { Link } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 import { Issue, Member, Milestone, Product, User } from 'productboard-common'
 
@@ -23,11 +23,11 @@ import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductMilestoneView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductMilestoneView = () => {
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
 
     // CONTEXTS
 
@@ -70,17 +70,17 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
         let exec = true
         ProductManager.getProduct(productId).then(product => exec && setProduct(product))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MemberManager.findMembers(productId).then(members => exec && setMembers(members))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MilestoneManager.findMilestones(productId).then(milestones => exec && setMilestones(milestones))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
 
     useEffect(() => {
         let exec = true
@@ -161,38 +161,38 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
 
     const columns: Column<Milestone>[] = [
         { label: '👤', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {users[milestone.userId] && members ? (
                     <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='icon medium round'/>
                 ) : (
                     <img src={LoadIcon} className='icon medium pad animation spin'/>
                 )}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Label', class: 'left fill', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {milestone.label}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Start', class: 'nowrap center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
-            </Link>
+            </NavLink>
         ) },
         { label: 'End', class: 'nowrap center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Open', class: 'center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {openIssues[milestone.id] ? openIssues[milestone.id].length : '?'}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Closed', class: 'center', content: milestone => (
-            <Link to={`/products/${productId}/milestones/${milestone.id}/issues`}>
+            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
                 {closedIssues[milestone.id] ? closedIssues[milestone.id].length : '?'}
-            </Link>
+            </NavLink>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
             <>
@@ -229,9 +229,9 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <Link to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
+                                        <NavLink to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
                                             New milestone
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button fill green' style={{fontStyle: 'italic'}}>
                                             New milestone (requires role)

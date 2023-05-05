@@ -1,7 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent } from 'react'
-import { Redirect } from 'react-router' 
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
 import { Object3D } from 'three'
 
@@ -30,7 +29,7 @@ import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
+export const ProductIssueSettingView = () => {
 
     const { goBack, replace } = useAsyncHistory()
 
@@ -44,8 +43,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const issueId = props.match.params.issue
+    const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
 
     // INITIAL STATES
 
@@ -97,22 +95,22 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
         let exec = true
         ProductManager.getProduct(productId).then(product => exec && setProduct(product))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MemberManager.findMembers(productId).then(members => exec && setMembers(members))
         return () => { exec = false }
-    }, [props])
-    useEffect(() => {
-        let exec = true
-        issueId != 'new' && IssueManager.getIssue(issueId).then(issue => exec && setIssue(issue))
-        return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MilestoneManager.findMilestones(productId).then(milestones => exec && setMilstones(milestones))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        issueId != 'new' && IssueManager.getIssue(issueId).then(issue => exec && setIssue(issue))
+        return () => { exec = false }
+    }, [issueId])
 
     useEffect(() => {
         let exec = true

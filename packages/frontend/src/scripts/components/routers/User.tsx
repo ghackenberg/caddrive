@@ -9,8 +9,8 @@ const UserRouter = () => {
         <>
             <UserHeader/>
             <Switch>
-                <Route path="/users/:user/settings" component={UserSettingView}/>
-                <Redirect path="/users/:user" to="/users/:user/settings" push={false}/>
+                <Route path="/users/:userId/settings" component={UserSettingView}/>
+                <Redirect path="/users/:userId" to="/users/:userId/settings" push={false}/>
             </Switch>
         </>
     )

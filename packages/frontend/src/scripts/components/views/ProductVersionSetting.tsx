@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent } from 'react'
-import { Redirect } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
 import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
@@ -37,7 +36,7 @@ import RightIcon from '/src/images/part.png'
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
 
-export const ProductVersionSettingView = (props: RouteComponentProps<{ product: string, version: string }>) => {
+export const ProductVersionSettingView = () => {
 
     const { goBack } = useAsyncHistory()
 
@@ -48,8 +47,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const versionId = props.match.params.version
+    const { productId, versionId } = useParams<{ productId: string, versionId: string }>()
 
     // INITIAL STATES
 

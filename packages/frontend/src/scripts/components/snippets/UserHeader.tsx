@@ -9,11 +9,11 @@ import SettingIcon from '/src/images/setting.png'
 export const UserHeader = () => {
     // PARAMS
 
-    const params = useParams<{ user: string }>()
+    const { userId } = useParams<{ userId: string }>()
 
     // INITIAL STATES
 
-    const initialUser = params.user == 'new' ? undefined : UserManager.getUserFromCache(params.user)
+    const initialUser = userId == 'new' ? undefined : UserManager.getUserFromCache(userId)
 
     // STATES
 
@@ -23,9 +23,9 @@ export const UserHeader = () => {
 
     React.useEffect(() => {
         let exec = true
-        params.user == 'new' ? setUser(undefined) : UserManager.getUser(params.user).then(user => exec && setUser(user))
+        userId == 'new' ? setUser(undefined) : UserManager.getUser(userId).then(user => exec && setUser(user))
         return () => { exec = false }
-    }, [params.user])
+    }, [userId])
 
     return (
         <header className='view user'>
@@ -34,13 +34,13 @@ export const UserHeader = () => {
             </div>
             <div className='tabs'>
                 <span>
-                    {params.user == 'new' ? (
+                    {userId == 'new' ? (
                         <a className="active">
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </a>
                     ) : (
-                        <NavLink to={`/users/${params.user}`} replace={true}>
+                        <NavLink to={`/users/${userId}`} replace={true}>
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </NavLink>

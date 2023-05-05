@@ -1,7 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
 import { Member, MemberRole, Product, User } from 'productboard-common'
 
@@ -25,14 +24,13 @@ import RightIcon from '/src/images/part.png'
 
 const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 
-export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
+export const ProductMemberSettingView = () => {
     
     const { goBack } = useAsyncHistory()
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const memberId = props.match.params.member
+    const { productId, memberId } = useParams<{ productId: string, memberId: string }>()
 
     // CONTEXTS
 
@@ -69,22 +67,22 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
         let exec = true
         ProductManager.getProduct(productId).then(product => exec && setProduct(product))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         MemberManager.findMembers(productId).then(members => exec && setMembers(members))
         return () => { exec = false }
-    }, [props])
+    }, [productId])
     useEffect(() => {
         let exec = true
         UserManager.findUsers(query, productId).then(users => exec && setUsers(users))
         return () => { exec = false }
-    }, [props, query])
+    }, [productId, query])
     useEffect(() => {
         let exec = true
         memberId != 'new' && MemberManager.getMember(memberId).then(member => exec && setMember(member))
         return () => { exec = false }
-    }, [props])
+    }, [memberId])
     useEffect(() => {
         let exec = true
         member && UserManager.getUser(member.userId).then(user => exec && setUser(user))

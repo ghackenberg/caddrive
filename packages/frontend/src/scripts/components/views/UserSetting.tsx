@@ -1,7 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, useContext } from 'react'
-import { Redirect } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
 import { User } from 'productboard-common'
 
@@ -17,7 +16,7 @@ import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { LoadingView } from './Loading'
 
-export const UserSettingView = (props: RouteComponentProps<{ user: string }>) => {
+export const UserSettingView = () => {
     
     const { goBack } = useAsyncHistory()
     
@@ -27,7 +26,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     
     // PARAMS
 
-    const userId = props.match.params.user
+    const { userId } = useParams<{ userId: string }>()
 
     // INITIAL STATES
     
@@ -49,7 +48,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
         let exec = true
         userId != 'new' && UserManager.getUser(userId).then(user => exec && setUser(user))
         return () => { exec = false }
-    }, [props])
+    }, [userId])
 
     // - Values
     useEffect(() => { user && setEmail(user.email || '') }, [user])
