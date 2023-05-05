@@ -16,7 +16,7 @@ export const IssuesLink = (props: {product: Product}) => {
 
     // HOOKS
 
-    const issues = useIssues(props.product.id)
+    const issues = useIssues(props.product.id, undefined, 'open')
 
     // FUNCTIONS
 

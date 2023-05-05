@@ -6,10 +6,11 @@ import { NavLink } from 'react-router-dom'
 import { Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useIssues, useMembers, useProduct, useProductIssueComments } from '../../hooks/route'
+import { useIssuesComments, useIssues, useMembers, useProduct } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
+import { IssueCount } from '../counts/Issues'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
@@ -36,15 +37,13 @@ export const ProductIssueView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const issues = useIssues(productId)
-    const { comments } = useProductIssueComments(productId)
+    const comments = useIssuesComments(productId)
 
     // INITIAL STATES
 
     const initialIssueParts = collectIssueParts(issues)
     const initialCommentParts = collectCommentParts(comments)
     const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
-    const initialOpenIssueCount = issues ? issues.filter(issue => issue.state == 'open').length : undefined
-    const initialClosedIssueCount = issues ? issues.filter(issue => issue.state == 'closed').length : undefined
 
     // STATES
 
@@ -52,8 +51,6 @@ export const ProductIssueView = () => {
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
     const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
     const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
-    const [openIssueCount, setOpenIssueCount] = useState<number>(initialOpenIssueCount)
-    const [closedIssueCount, setClosedIssueCount] = useState<number>(initialClosedIssueCount)
     
     // - Interactions
     const [state, setState] = useState('open')
@@ -77,9 +74,6 @@ export const ProductIssueView = () => {
     useEffect(() => {
         setPartsCount(countParts(issues, comments, issueParts, commentParts))
     }, [issueParts, commentParts])
-    
-    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
-    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
     
     // - Interactions
     useEffect(() => {
@@ -215,10 +209,10 @@ export const ProductIssueView = () => {
                                     </a>
                                 )}
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues ({openIssueCount !== undefined ? openIssueCount : '?'})
+                                    Open issues (<IssueCount productId={productId} state={'open'}/>)
                                 </a>
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
+                                    Closed issues (<IssueCount productId={productId} state={'closed'}/>)
                                 </a>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
                             </div>

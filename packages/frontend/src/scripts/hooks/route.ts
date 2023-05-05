@@ -80,7 +80,7 @@ function useEntities<T extends { id: string }>(cache: () => T[], get: () => Prom
     return values
 }
 
-function useChildEntities<T extends { id: string }>(parentId: string, parent: (e: T) => string, cache: () => T[], get: () => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+function useChildEntities<T extends { id: string }>(parentId: string, include: (e: T) => boolean, cache: () => T[], get: () => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
     const initialValue = parentId && parentId != 'new' && cache()
 
     const [values, setValues] = React.useState(initialValue)
@@ -94,17 +94,25 @@ function useChildEntities<T extends { id: string }>(parentId: string, parent: (e
     React.useEffect(() => {
         return api.register({
             create(e) {
-                if (values && parent(e) == parentId) {
-                    setValues([...values.filter(other => other.id != e.id), e])
+                if (values) {
+                    if (include(e)) {
+                        setValues([...values.filter(other => other.id != e.id), e])
+                    } else {
+                        setValues(values.filter(other => other.id != e.id))
+                    }
                 }
             },
             update(e) {
-                if (values && parent(e) == parentId) {
-                    setValues(values.map(other => other.id == e.id ? e : other))
+                if (values) {
+                    if (include(e)) {
+                        setValues([...values.filter(other => other.id != e.id), e])
+                    } else {
+                        setValues(values.filter(other => other.id != e.id))
+                    }
                 }
             },
             delete(e) {
-                if (values && parent(e) == parentId) {
+                if (values) {
                     setValues(values.filter(other => other.id != e.id))
                 }
             }
@@ -137,7 +145,7 @@ export function useProduct(productId: string) {
 // VERSIONS
 
 export function useVersions(productId: string) {
-    return useChildEntities(productId, version => version.productId, () => VersionManager.findVersionsFromCache(productId), () => VersionManager.findVersions(productId), VersionAPI)
+    return useChildEntities(productId, version => version.productId == productId, () => VersionManager.findVersionsFromCache(productId), () => VersionManager.findVersions(productId), VersionAPI)
 }
 
 export function useVersion(versionId: string) {
@@ -146,12 +154,8 @@ export function useVersion(versionId: string) {
 
 // ISSUES
 
-export function useIssues(productId: string, milestoneId?: string) {
-    if (milestoneId) {
-        return useChildEntities(milestoneId, issue => issue.milestoneId, () => IssueManager.findIssuesFromCache(productId, milestoneId), () => IssueManager.findIssues(productId, milestoneId), IssueAPI)
-    } else {
-        return useChildEntities(productId, issue => issue.productId, () => IssueManager.findIssuesFromCache(productId), () => IssueManager.findIssues(productId), IssueAPI)
-    }
+export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') {
+    return useChildEntities(milestoneId || productId, issue => issue.productId == productId && (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state), () => IssueManager.findIssuesFromCache(productId, milestoneId, state), () => IssueManager.findIssues(productId, milestoneId, state), IssueAPI)
 }
 
 export function useIssue(issueId: string) {
@@ -160,7 +164,7 @@ export function useIssue(issueId: string) {
 
 // COMMENTS
 
-export function useMilestoneIssueComments(productId: string, milestoneId: string) {
+export function useIssuesComments(productId: string, milestoneId?: string) {
     const issues = useIssues(productId, milestoneId)
 
     const initialComments: {[issueId: string]: Comment[]} = {}
@@ -230,90 +234,17 @@ export function useMilestoneIssueComments(productId: string, milestoneId: string
         })
     })
 
-    return { milestoneId, comments }
-}
-
-export function useProductIssueComments(productId: string) {
-    const issues = useIssues(productId)
-
-    const initialComments: {[issueId: string]: Comment[]} = {}
-    for (const issue of issues || []) {
-        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    }
-
-    const [comments, setComments] = React.useState(initialComments)
-
-    React.useEffect(() => {
-        let exec = true
-        if (issues) {
-            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(comments => {
-                if (exec) {
-                    const newComments: {[issueId: string]: Comment[]} = {}
-                    issues.forEach((issue, index) => {
-                        newComments[issue.id] = comments[index]
-                    })
-                    setComments(newComments)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [issues])
-
-    React.useEffect(() => {
-        return CommentAPI.register({
-            create(comment) {
-                if (comments && comment.issueId in comments) {
-                    const newComments: {[issueId: string]: Comment[]} = {}
-                    for (const issue of issues) {
-                        if (issue.id == comment.issueId) {
-                            newComments[issue.id] = [...comments[issue.id].filter(other => other.id != comment.id), comment]
-                        } else {
-                            newComments[issue.id] = [...comments[issue.id]]
-                        }
-                    }
-                    setComments(newComments)
-                }
-            },
-            update(comment) {
-                if (comments && comment.issueId in comments) {
-                    const newComments: {[issueId: string]: Comment[]} = {}
-                    for (const issue of issues) {
-                        if (issue.id == comment.issueId) {
-                            newComments[issue.id] = comments[issue.id].map(other => other.id == comment.id ? comment : other)
-                        } else {
-                            newComments[issue.id] = [...comments[issue.id]]
-                        }
-                    }
-                    setComments(newComments)
-                }
-            },
-            delete(comment) {
-                if (comments && comment.issueId in comments) {
-                    const newComments: {[issueId: string]: Comment[]} = {}
-                    for (const issue of issues) {
-                        if (issue.id == comment.issueId) {
-                            newComments[issue.id] = comments[issue.id].filter(other => other.id != comment.id)
-                        } else {
-                            newComments[issue.id] = [...comments[issue.id]]
-                        }
-                    }
-                    setComments(newComments)
-                }
-            }
-        })
-    })
-
-    return { productId, comments }
+    return comments
 }
 
 export function useComments(issueId: string) {
-    return useChildEntities(issueId, comment => comment.issueId, () => CommentManager.findCommentsFromCache(issueId), () => CommentManager.findComments(issueId), CommentAPI)
+    return useChildEntities(issueId, comment => comment.issueId == issueId, () => CommentManager.findCommentsFromCache(issueId), () => CommentManager.findComments(issueId), CommentAPI)
 }
 
 // MILESTONE
 
 export function useMilestones(productId: string) {
-    return useChildEntities(productId, milestone => milestone.productId, () => MilestoneManager.findMilestonesFromCache(productId), () => MilestoneManager.findMilestones(productId), MilestoneAPI)
+    return useChildEntities(productId, milestone => milestone.productId == productId, () => MilestoneManager.findMilestonesFromCache(productId), () => MilestoneManager.findMilestones(productId), MilestoneAPI)
 }
 
 export function useMilestone(milestoneId: string) {
@@ -323,7 +254,7 @@ export function useMilestone(milestoneId: string) {
 // MEMBER
 
 export function useMembers(productId: string) {
-    return useChildEntities(productId, member => member.productId, () => MemberManager.findMembersFromCache(productId), () => MemberManager.findMembers(productId), MemberAPI)
+    return useChildEntities(productId, member => member.productId == productId, () => MemberManager.findMembersFromCache(productId), () => MemberManager.findMembers(productId), MemberAPI)
 }
 
 export function useMember(memberId: string) {

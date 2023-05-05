@@ -7,11 +7,12 @@ import { Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMembers, useMilestone, useProduct, useMilestoneIssueComments, useIssues } from '../../hooks/route'
+import { useMembers, useMilestone, useProduct, useIssuesComments, useIssues } from '../../hooks/route'
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { IssueManager } from '../../managers/issue'
+import { IssueCount } from '../counts/Issues'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
@@ -41,7 +42,7 @@ export const ProductMilestoneIssueView = () => {
     const members = useMembers(productId)
     const milestone = useMilestone(milestoneId)
     const issues = useIssues(productId, milestoneId)
-    const { comments } = useMilestoneIssueComments(productId, milestoneId)
+    const comments = useIssuesComments(productId, milestoneId)
 
     // INITIAL STATES
 
@@ -57,8 +58,6 @@ export const ProductMilestoneIssueView = () => {
     const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
-    const [openIssueCount, setOpenIssueCount] = useState<number>()
-    const [closedIssueCount, setClosedIssueCount] = useState<number>()
 
     // - Interactions
     const [state, setState] = useState('open')
@@ -85,9 +84,6 @@ export const ProductMilestoneIssueView = () => {
             setActualBurndown(calculateActual(milestone, issues, comments))
         }
     }, [milestone, issues, comments])
-
-    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) }, [issues])
-    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) }, [issues])
 
     // FUNCTIONS
 
@@ -214,10 +210,10 @@ export const ProductMilestoneIssueView = () => {
                                     </a>
                                 )}
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues ({openIssueCount != undefined ? openIssueCount : '?'})
+                                    Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
                                 </a>
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues ({closedIssueCount != undefined ? closedIssueCount : '?'})
+                                    Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
                                 </a>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
                             </div>

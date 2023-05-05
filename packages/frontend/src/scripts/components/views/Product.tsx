@@ -68,7 +68,7 @@ export const ProductView = () => {
         ) },
         { label: 'Issues', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                <IssueCount productId={product.id}/>
+                <IssueCount productId={product.id} state='open'/>
             </Link>
         ) },
         { label: 'Members', class: 'center', content: product => (

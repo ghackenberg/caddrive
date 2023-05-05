@@ -1,14 +1,14 @@
 import  * as React from 'react'
-import { useEffect, useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue, Milestone } from 'productboard-common'
+import { Milestone } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useMilestones, useProduct, useMembers } from '../../hooks/route'
-import { IssueManager } from '../../managers/issue'
 import { MilestoneManager } from '../../managers/milestone'
+import { IssueCount } from '../counts/Issues'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
@@ -35,71 +35,12 @@ export const ProductMilestoneView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const milestones = useMilestones(productId)
-
-    // INITIAL STATES
-
-    const initialOpenIssues: {[id: string]: Issue[]} = {}
-    for (const milestone of milestones || []) {
-        initialOpenIssues[milestone.id] = IssueManager.findIssuesFromCache(productId, milestone.id, 'open')
-    }
-
-    const initialClosedIssues: {[id: string]: Issue[]} = {}
-    for (const milestone of milestones || []) {
-        initialClosedIssues[milestone.id] = IssueManager.findIssuesFromCache(productId, milestone.id, 'closed')
-    }
     
     // STATES
 
-    // - Entities
-    const [openIssues, setOpenIssues] = useState<{[id: string]: Issue[]}>(initialOpenIssues)
-    const [closedIssues, setClosedIssues] = useState<{[id: string]: Issue[]}>(initialClosedIssues)
-
-    // - Interactions
     const [active, setActive] = useState<string>('left')
-
-    // EFFECTS
-
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        if (milestones) {
-            Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
-                if (exec) {
-                    const newMilestones = {...openIssues}
-                    for (let index = 0; index < milestones.length; index++) {
-                        newMilestones[milestones[index].id] = issueMilestones[index]
-                    }
-                    setOpenIssues(newMilestones)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [milestones])
-    
-    useEffect(() => {
-        let exec = true
-        if (milestones) {
-            Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
-                if (exec) {
-                    const newMilestones = {...closedIssues}
-                    for (let index = 0; index < milestones.length; index++) {
-                        newMilestones[milestones[index].id] = issueMilestones[index]
-                    }
-                    setClosedIssues(newMilestones)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [milestones])
    
     // FUNCTIONS
-
-    async function deleteMilestone(milestone: Milestone) {
-        // TODO handle unmount!
-        if (confirm('Do you really want to delete this milestone?')) {
-            await MilestoneManager.deleteMilestone(milestone.id) 
-        }
-    }
 
     function calculateDateProgress(milestone: Milestone) {
         const start = new Date(milestone.start).getTime()
@@ -112,11 +53,10 @@ export const ProductMilestoneView = () => {
         }
     }
 
-    function calculateIssueProgress(milestone: Milestone) {
-        if (openIssues[milestone.id] && closedIssues[milestone.id]) {
-            return 100 * closedIssues[milestone.id].length / (closedIssues[milestone.id].length + openIssues[milestone.id].length)
-        } else {
-            return 0
+    async function deleteMilestone(milestone: Milestone) {
+        // TODO handle unmount!
+        if (confirm('Do you really want to delete this milestone?')) {
+            await MilestoneManager.deleteMilestone(milestone.id) 
         }
     }
 
@@ -145,23 +85,18 @@ export const ProductMilestoneView = () => {
         ) },
         { label: 'Open', class: 'center', content: milestone => (
             <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {openIssues[milestone.id] ? openIssues[milestone.id].length : '?'}
+                <IssueCount productId={productId} milestoneId={milestone.id} state='open'/>
             </NavLink>
         ) },
         { label: 'Closed', class: 'center', content: milestone => (
             <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {closedIssues[milestone.id] ? closedIssues[milestone.id].length : '?'}
+                <IssueCount productId={productId} milestoneId={milestone.id} state='closed'/>
             </NavLink>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
-            <>
-                <div className='progress date'>
-                    <div style={{width: `${calculateDateProgress(milestone)}%` }}/>
-                </div>
-                <div className='progress issue'>
-                    <div style={{width: `${calculateIssueProgress(milestone)}%` }}/>
-                </div>
-            </>
+            <div className='progress'>
+                <div style={{width: `${calculateDateProgress(milestone)}%` }}/>
+            </div>
         ) },
         { label: '🛠️', class: 'center', content: milestone => (
             <a onClick={() => deleteMilestone(milestone)}>
