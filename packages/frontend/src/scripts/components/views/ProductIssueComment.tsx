@@ -29,8 +29,6 @@ import UserIcon from '/src/images/user.png'
 
 export const ProductIssueCommentView = () => {
 
-    // CONSTANTS
-
     // REFERENCES
 
     const textReference = useRef<HTMLTextAreaElement>()
@@ -147,6 +145,7 @@ export const ProductIssueCommentView = () => {
             setIssueParts(parts)
         }
     }, [issue])
+
     useEffect(() => {
         if (comments) {
             const commentsHtml: { [id: string]: ReactElement } = {}
@@ -160,6 +159,7 @@ export const ProductIssueCommentView = () => {
             setCommentsParts(commentsParts)
         }
     }, [comments])
+
     useEffect(() => {
         const highlighted: Part[] = []
         if (issueParts) {
@@ -178,6 +178,7 @@ export const ProductIssueCommentView = () => {
         }
         setHighlighted(highlighted)
     }, [issueParts, commentsParts])
+    
     useEffect(() => {
         const parts: Part[] = []
         collectParts(text || '', parts)

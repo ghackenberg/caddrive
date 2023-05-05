@@ -3,11 +3,10 @@ import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Comment, Issue, User } from 'productboard-common'
+import { Issue, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useProductIssues, useProductMembers, useProduct } from '../../hooks/route'
-import { CommentManager } from '../../managers/comment'
+import { useProductIssues, useProductMembers, useProduct, useProductIssueComments } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { UserManager } from '../../managers/user'
 import { countParts } from '../../functions/counter'
@@ -35,20 +34,17 @@ export const ProductIssueView = () => {
     const { productId, product } = useProduct()
     const { members } = useProductMembers()
     const { issues } = useProductIssues()
+    const { comments } = useProductIssueComments()
 
     // INITIAL STATES
 
-    const initialComments: {[id: string]: Comment[]} = {}
-    for (const issue of issues || []) {
-        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    } 
     const initialUsers: {[id: string]: User} = {}
     for (const issue of issues || []) {
         const user = UserManager.getUserFromCache(issue.userId)
         if (user) {
             initialUsers[user.id] = user
         }
-        for (const comment of initialComments[issue.id] || []) {
+        for (const comment of comments[issue.id] || []) {
             const otherUser = UserManager.getUserFromCache(comment.userId)
             if (otherUser) {
                 initialUsers[otherUser.id] = otherUser
@@ -56,22 +52,23 @@ export const ProductIssueView = () => {
         }
     } 
     const initialIssueParts = collectIssueParts(issues)
-    const initialCommentParts = collectCommentParts(initialComments)
-    const initialPartsCount = countParts(issues, initialComments, initialIssueParts, initialCommentParts)
+    const initialCommentParts = collectCommentParts(comments)
+    const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
     const initialOpenIssueCount = issues ? issues.filter(issue => issue.state == 'open').length : undefined
     const initialClosedIssueCount = issues ? issues.filter(issue => issue.state == 'closed').length : undefined
 
     // STATES
 
     // - Entities
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
     const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
     const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
     const [openIssueCount, setOpenIssueCount] = useState<number>(initialOpenIssueCount)
     const [closedIssueCount, setClosedIssueCount] = useState<number>(initialClosedIssueCount)
+    
     // - Interactions
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
@@ -107,34 +104,22 @@ export const ProductIssueView = () => {
         }
         return () => { exec = false }
     }, [issues])
-    useEffect(() => {
-        let exec = true
-        if (issues) {
-            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                if (exec) {
-                    const newComments = {...comments}
-                    for (let index = 0; index < issues.length; index++) {
-                        newComments[issues[index].id] = issueComments[index]
-                    }
-                    setComments(newComments)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [issues])
 
     // - Computations
     useEffect(() => { 
         setIssueParts(collectIssueParts(issues))
         updateHightlighted()
     }, [issues])
+
     useEffect(() => {
         setCommentParts(collectCommentParts(comments))   
         updateHightlighted()
     }, [comments])
+
     useEffect(() => {
         setPartsCount(countParts(issues, comments, issueParts, commentParts))
     }, [issueParts, commentParts])
+    
     useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
     useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
     
