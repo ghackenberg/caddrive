@@ -2,12 +2,9 @@ import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
 import { Redirect } from 'react-router'
 
-import { Comment } from 'productboard-common'
-
 import { calculateActual } from '../../functions/burndown'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMilestone, useMilestoneIssues, useProduct } from '../../hooks/route'
-import { CommentManager } from '../../managers/comment'
+import { useMilestone, useMilestoneIssueComments, useMilestoneIssues, useProduct } from '../../hooks/route'
 import { MilestoneManager } from '../../managers/milestone'
 import { DateInput } from '../inputs/DateInput'
 import { SubmitInput } from '../inputs/SubmitInput'
@@ -29,13 +26,9 @@ export const ProductMilestoneSettingView = () => {
     const { productId, product } = useProduct()
     const { milestoneId, milestone } = useMilestone()
     const { issues } = useMilestoneIssues()
+    const { comments } = useMilestoneIssueComments()
 
     // INITIAL STATES
-
-    const initialComments: {[id: string]: Comment[]} = {}
-    for (const issue of issues || []) {
-        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    }
 
     const initialLabel = milestone ? milestone.label : ''
     const initialStart = milestone ? new Date(milestone.start) : new Date(new Date().setHours(0,0,0,0))
@@ -43,36 +36,19 @@ export const ProductMilestoneSettingView = () => {
 
     // STATES
 
-    // - Entities
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [start, setStart] = useState<Date>(initialStart)
     const [end, setEnd] = useState<Date>(initialEnd)
+
     // - Computations
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
+
     // - Interactions
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
-
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        if (issues) {
-            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                if (exec) {
-                    const newComments = {...comments}
-                    for (let index = 0; index < issues.length; index++) {
-                        newComments[issues[index].id] = issueComments[index]
-                    }
-                    setComments(newComments)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [issues])
     
     // - Values
     useEffect(() => { milestone && setLabel(milestone.label) }, [milestone])

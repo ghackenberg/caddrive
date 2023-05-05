@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { useParams } from 'react-router'
 
+import { Comment } from 'productboard-common'
+
 import { AbstractClient } from '../clients/mqtt/abstract'
 import { CommentAPI } from '../clients/mqtt/comment'
 import { IssueAPI } from '../clients/mqtt/issue'
@@ -190,6 +192,79 @@ export function useIssue() {
 }
 
 // COMMENTS
+
+export function useMilestoneIssueComments() {
+    const { milestoneId, issues } = useMilestoneIssues()
+
+    const initialComments: {[issueId: string]: Comment[]} = {}
+    for (const issue of issues || []) {
+        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
+    }
+
+    const [comments, setComments] = React.useState(initialComments)
+
+    React.useEffect(() => {
+        let exec = true
+        if (issues) {
+            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(comments => {
+                if (exec) {
+                    const newComments: {[issueId: string]: Comment[]} = {}
+                    issues.forEach((issue, index) => {
+                        newComments[issue.id] = comments[index]
+                    })
+                    setComments(newComments)
+                }
+            })
+        }
+        return () => { exec = false }
+    }, [issues])
+
+    React.useEffect(() => {
+        return CommentAPI.register({
+            create(comment) {
+                if (comments && comment.issueId in comments) {
+                    const newComments: {[issueId: string]: Comment[]} = {}
+                    for (const issue of issues) {
+                        if (issue.id == comment.issueId) {
+                            newComments[issue.id] = [...comments[issue.id].filter(other => other.id != comment.id), comment]
+                        } else {
+                            newComments[issue.id] = [...comments[issue.id]]
+                        }
+                    }
+                    setComments(newComments)
+                }
+            },
+            update(comment) {
+                if (comments && comment.issueId in comments) {
+                    const newComments: {[issueId: string]: Comment[]} = {}
+                    for (const issue of issues) {
+                        if (issue.id == comment.issueId) {
+                            newComments[issue.id] = comments[issue.id].map(other => other.id == comment.id ? comment : other)
+                        } else {
+                            newComments[issue.id] = [...comments[issue.id]]
+                        }
+                    }
+                    setComments(newComments)
+                }
+            },
+            delete(comment) {
+                if (comments && comment.issueId in comments) {
+                    const newComments: {[issueId: string]: Comment[]} = {}
+                    for (const issue of issues) {
+                        if (issue.id == comment.issueId) {
+                            newComments[issue.id] = comments[issue.id].filter(other => other.id != comment.id)
+                        } else {
+                            newComments[issue.id] = [...comments[issue.id]]
+                        }
+                    }
+                    setComments(newComments)
+                }
+            }
+        })
+    })
+
+    return { milestoneId, comments }
+}
 
 export function useIssueComments() {
     const { issueId } = useParams<{ issueId: string }>()

@@ -3,15 +3,14 @@ import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Comment, Issue, User } from 'productboard-common'
+import { Issue, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useProductMembers, useMilestone, useProduct, useMilestoneIssues } from '../../hooks/route'
+import { useProductMembers, useMilestone, useProduct, useMilestoneIssues, useMilestoneIssueComments } from '../../hooks/route'
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
-import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -40,13 +39,9 @@ export const ProductMilestoneIssueView = () => {
     const { members } = useProductMembers()
     const { milestoneId, milestone } = useMilestone()
     const { issues } = useMilestoneIssues()
+    const { comments } = useMilestoneIssueComments()
 
     // INITIAL STATES
-
-    const initialComments: {[id: string]: Comment[]} = {}
-    for (const issue of issues || []) {
-        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    }
 
     const initialUsers: {[id: string]: User} = {}
     for (const issue of issues || []) {
@@ -54,7 +49,7 @@ export const ProductMilestoneIssueView = () => {
         if (user) {
             initialUsers[user.id] = user
         }
-        for (const comment of initialComments[issue.id] || []) {
+        for (const comment of comments[issue.id] || []) {
             const otherUser = UserManager.getUserFromCache(comment.userId)
             if (otherUser) {
                 initialUsers[otherUser.id] = otherUser
@@ -63,13 +58,12 @@ export const ProductMilestoneIssueView = () => {
     }
 
     const initialIssueParts = collectIssueParts(issues)
-    const initialCommentParts = collectCommentParts(initialComments)
-    const initialPartsCount = countParts(issues, initialComments, initialIssueParts, initialCommentParts)
+    const initialCommentParts = collectCommentParts(comments)
+    const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
     
     // STATES
 
     // - Entities
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
 
     // - Computations
@@ -90,7 +84,7 @@ export const ProductMilestoneIssueView = () => {
     // - Entities
     useEffect(() => {
         let exec = true
-        if (issues) {
+        if (issues && comments) {
             const userIds: string[] = []
             for (const issue of issues) {
                 if (!(issue.userId in users || userIds.includes(issue.userId))) {
@@ -113,40 +107,29 @@ export const ProductMilestoneIssueView = () => {
             })
         }
         return () => { exec = false }
-    }, [issues])
-    
-    useEffect(() => {
-        let exec = true
-        if (issues) {
-            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                if (exec) {
-                    const newComments = {...comments}
-                    for (let index = 0; index < issues.length; index++) {
-                        newComments[issues[index].id] = issueComments[index]
-                    }
-                    setComments(newComments)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [issues])
+    }, [issues, comments])
 
     // - Computations
     useEffect(() => {
         setIssueParts(collectIssueParts(issues))
     }, [issues])
+
     useEffect(() => {
         setCommentParts(collectCommentParts(comments)) 
     }, [comments])
+
     useEffect(() => {
         setPartsCount(countParts(issues, comments, issueParts, commentParts))
     }, [issueParts, commentParts])
+
     useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
+
     useEffect(() => {
         if (milestone && issues && comments) {
             setActualBurndown(calculateActual(milestone, issues, comments))
         }
     }, [milestone, issues, comments])
+
     useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) }, [issues])
     useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) }, [issues])
 
