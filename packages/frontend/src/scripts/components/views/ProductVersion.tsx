@@ -1,18 +1,15 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, Fragment } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Member, Product, User, Version } from 'productboard-common'
+import { User, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { VersionAPI } from '../../clients/mqtt/version'
+import { useProduct, useProductMembers, useProductVersions } from '../../hooks/route'
 import { computeTree } from '../../functions/tree'
-import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
-import { VersionManager } from '../../managers/version'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
@@ -32,30 +29,27 @@ export const ProductVersionView = () => {
     const { contextUser } = useContext(UserContext)
     const { contextVersion, setContextVersion } = useContext(VersionContext)
 
-    // PARAMS
+    // HOOKS
 
-    const { productId } = useParams<{ productId: string }>()
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
+    const { versions } = useProductVersions()
 
     // INITIAL STATES
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
     const initialUsers : {[id: string]: User} = {}
-    for (const version of initialVersions || []) {
+    for (const version of versions || []) {
         const user = UserManager.getUserFromCache(version.userId)
         if (user) {
             initialUsers[version.id] = user
         }
     }
-    const initialTree = computeTree(initialVersions)
+    const initialTree = computeTree(versions)
 
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [versions, setVersions] = useState<Version[]>(initialVersions)
     const [users, setUsers] = useState<{[versionId: string]: User}>(initialUsers)
+
     // - Computations
     const [children, setChildren] = useState<{[versionId: string]: Version[]}>(initialTree.children)
     const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
@@ -63,28 +57,13 @@ export const ProductVersionView = () => {
     const [siblings, setSiblings] = useState<{[versionId: string]: Version[]}>(initialTree.siblings)
     const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
+    
     // - Interactions
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        VersionManager.findVersions(productId).then(versions => exec && setVersions(versions))
-        return () => { exec = false }
-    }, [productId])
-
     useEffect(() => {
         let exec = true
         if (versions) {
@@ -100,23 +79,6 @@ export const ProductVersionView = () => {
         }
         return () => { exec = false }
     }, [versions])
-
-    // - Events
-    useEffect(() =>  {
-        return VersionAPI.register({
-            create(version) {
-                if (version.productId == productId) {
-                    setVersions([...versions.filter(other => other.id != version.id), version])
-                }
-            },
-            update(version) {
-                setVersions(versions.map(other => other.id != version.id ? other : version))
-            },
-            delete(version) {
-                setVersions(versions.filter(other => other.id != version.id))
-            },
-        })
-    })
 
     // - Computations
     useEffect(() => { 

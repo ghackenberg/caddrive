@@ -1,18 +1,17 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 
 import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { Member, Product, Version } from 'productboard-common'
+import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
+import { useProduct, useProductMembers, useProductVersions, useVersion } from '../../hooks/route'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
-import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel } from '../../loaders/ldraw'
@@ -45,25 +44,15 @@ export const ProductVersionSettingView = () => {
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
-    // PARAMS
+    // HOOKS
 
-    const { productId, versionId } = useParams<{ productId: string, versionId: string }>()
-
-    // INITIAL STATES
-
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
-    const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
-    const initialVersion = versionId == 'new' ? undefined : VersionManager.getVersionFromCache(versionId)
+    const { product } = useProduct()
+    const { members } = useProductMembers()
+    const { versions } = useProductVersions()
+    const { versionId, version } = useVersion()
 
     // STATES
 
-    // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [versions, setVersions] = useState<Version[]>(initialVersions)
-    const [version, setVersion] = useState<Version>(initialVersion)
-    // - Values
     const [major, setMajor] = useState<number>(0)
     const [minor, setMinor] = useState<number>(0)
     const [patch, setPatch] = useState<number>(0)
@@ -81,29 +70,6 @@ export const ProductVersionSettingView = () => {
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        productId != 'new' && ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        productId != 'new' && MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        productId != 'new' && VersionManager.findVersions(productId).then(versions => exec && setVersions(versions))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        versionId != 'new' && VersionManager.getVersion(versionId).then(version => exec && setVersion(version))
-        return () => { exec = false }
-    }, [versionId])
-
-    // - Values
     useEffect(() => { version && setMajor(version.major) }, [version])
     useEffect(() => { version && setMinor(version.minor) }, [version])
     useEffect(() => { version && setPatch(version.patch) }, [version])
@@ -126,17 +92,21 @@ export const ProductVersionSettingView = () => {
         }
         return () => { exec = false }
     }, [file])
+
     useEffect(() => {
         let exec = true
         arrayBuffer && parseGLTFModel(arrayBuffer).then(model => exec && setModel(model))
         return () => { exec = false }
     }, [arrayBuffer])
+
     useEffect(() => {
         let exec = true
         text && parseLDrawModel(text).then(group => exec && setGroup(group))
         return () => { exec = false }
     }, [text])
+
     useEffect(() => { model && setGroup(model.scene) }, [model])
+    
     useEffect(() => {
         let exec = true
         group && render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
