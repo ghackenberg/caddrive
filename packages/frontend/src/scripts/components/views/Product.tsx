@@ -6,6 +6,7 @@ import { Product } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
+import { useAsyncHistory } from '../../hooks/history'
 import { useProducts } from '../../hooks/route'
 import { ProductManager } from '../../managers/product'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -20,6 +21,8 @@ import { LoadingView } from './Loading'
 import DeleteIcon from '/src/images/delete.png'
 
 export const ProductView = () => {
+
+    const { push } = useAsyncHistory()
     
     // CONTEXTS
     
@@ -30,16 +33,15 @@ export const ProductView = () => {
 
     const products = useProducts()
 
-    console.log(products)
-
     // EFFECTS
 
     useEffect(() => { setContextVersion(undefined) })
 
     // FUNCTIONS
 
-    async function deleteProduct(product: Product) {
+    async function deleteProduct(event: React.UIEvent, product: Product) {
         // TODO handle unmount!
+        event.stopPropagation()
         if (confirm('Do you really want to delete this Product?')) {
             await ProductManager.deleteProduct(product.id)
         }
@@ -49,12 +51,10 @@ export const ProductView = () => {
     
     const columns: Column<Product>[] = [
         { label: '📷', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                <ProductImageWidget productId={product.id}/>
-            </Link>
+            <ProductImageWidget productId={product.id}/>
         ) },
         { label: 'Name / Description', class: 'left fill', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
+            <>
                 <div>
                     <strong>{product.name}</strong>
                     {product.public ? (
@@ -64,30 +64,22 @@ export const ProductView = () => {
                     )}
                 </div>
                 <div>{product.description}</div>
-            </Link>
+            </>
         ) },
         { label: 'Versions', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                <VersionCount productId={product.id}/>
-            </Link>
+            <VersionCount productId={product.id}/>
         ) },
         { label: 'Issues', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                <IssueCount productId={product.id} state='open'/>
-            </Link>
+            <IssueCount productId={product.id} state='open'/>
         ) },
         { label: 'Members', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                <MemberCount productId={product.id}/>
-            </Link>
+            <MemberCount productId={product.id}/>
         ) },
         { label: '👤', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                <ProductUserPictureWidget userId={product.userId} productId={product.id} class='icon medium round'/>
-            </Link>
+            <ProductUserPictureWidget userId={product.userId} productId={product.id} class='icon medium round'/>
         ) },
         { label: '🛠️', content: product => (
-            <a onClick={() => deleteProduct(product)}>
+            <a onClick={event => deleteProduct(event, product)}>
                 <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
@@ -109,7 +101,7 @@ export const ProductView = () => {
                                 New product (requires login)
                             </a>
                         )}
-                        <Table columns={columns} items={products.map(p => p).reverse()}/>
+                        <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
                     </div>
                     <LegalFooter/>
                 </div>

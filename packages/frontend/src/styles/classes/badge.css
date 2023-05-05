@@ -20,6 +20,9 @@ span.badge {
 
     color: gray;
 }
+span.badge:first-child {
+    margin-left: 0;
+}
 span.badge.public {
     background-color: green;
 
@@ -27,6 +30,11 @@ span.badge.public {
 }
 span.badge.private {
     background-color: red;
+
+    color: white;
+}
+span.badge.role {
+    background-color: black;
 
     color: white;
 }

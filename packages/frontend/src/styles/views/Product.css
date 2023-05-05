@@ -1,5 +1,5 @@
 @media screen and (max-width: 65em) {
-    main.view.product table > tbody > tr > td > a > div.model {
+    main.view.product table > tbody > tr > td > div.model {
         width: 5em;
         height: 5em;
     }

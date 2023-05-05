@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { Member } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useProduct } from '../../hooks/route'
 import { MemberManager } from '../../managers/member'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -21,6 +22,8 @@ import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
 export const ProductMemberView = () => {
+
+    const { push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -41,8 +44,9 @@ export const ProductMemberView = () => {
 
     // FUNCTIONS
 
-    async function deleteMember(member:Member) {
+    async function deleteMember(event: React.UIEvent, member:Member) {
         // TODO handle unmount!
+        event.stopPropagation()
         if (confirm('Do you really want to delete this member?')) {
             await MemberManager.deleteMember(member.id)
         }
@@ -52,22 +56,16 @@ export const ProductMemberView = () => {
 
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
-            <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
-                <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round middle'/>
-            </NavLink>
+            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round middle'/>
         ) },
         { label: 'Name', class: 'left nowrap', content: member => (
-            <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
-                <ProductUserNameWidget userId={member.userId} productId={productId}/>
-            </NavLink>
+            <ProductUserNameWidget userId={member.userId} productId={productId}/>
         ) },
         { label: 'Role', class: 'fill left nowrap', content: member => (
-            <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
-                {member.role}
-            </NavLink>
+            <span className='badge role'>{member.role}</span>
         ) },
         { label: '🛠️', class: 'center', content: member => (
-            <a onClick={() => deleteMember(member)}>
+            <a onClick={event => deleteMember(event, member)}>
                 <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
@@ -104,7 +102,7 @@ export const ProductMemberView = () => {
                                         New member (requires login)
                                     </a>
                                 )}
-                                <Table columns={columns} items={members}/>
+                                <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)}/>
                             </div>
                             <LegalFooter/>
                         </div>

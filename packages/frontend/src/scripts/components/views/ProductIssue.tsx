@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { useIssuesComments, useIssues, useMembers, useProduct } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { countParts } from '../../functions/counter'
@@ -23,6 +24,8 @@ import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
 export const ProductIssueView = () => {
+
+    const { push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -123,8 +126,9 @@ export const ProductIssueView = () => {
         }, 0)
     }
 
-    async function deleteIssue(issue: Issue) {
+    async function deleteIssue(event: React.UIEvent, issue: Issue) {
         // TODO handle unmount!
+        event.stopPropagation()
         if (confirm('Do you really want to delete this issue?')) {
             await IssueManager.deleteIssue(issue.id)    
         }
@@ -144,34 +148,24 @@ export const ProductIssueView = () => {
 
     const columns: Column<Issue>[] = [
         { label: '👤', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
-                <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
-            </NavLink>
+            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.label}
-            </NavLink>
+            issue.label
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.assigneeIds.map((assignedId) => (
-                    <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
-                ))}
-            </NavLink>
+            issue.assigneeIds.map((assignedId) => (
+                <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
+            ))
         ) },
         { label: 'Comments', class: 'center', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'}
-            </NavLink>
+            issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'
         ) },
         { label: 'Parts', class: 'center', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.id in partsCount ? partsCount[issue.id] : '?'}
-            </NavLink>
+            issue.id in partsCount ? partsCount[issue.id] : '?'
         ) },
         { label: '🛠️', class: 'center', content: issue => (
-            <a onClick={() => deleteIssue(issue)}>
+            <a onClick={event => deleteIssue(event, issue)}>
                 <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
@@ -214,7 +208,7 @@ export const ProductIssueView = () => {
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     Closed issues (<IssueCount productId={productId} state={'closed'}/>)
                                 </a>
-                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)}/>
                             </div>
                             <LegalFooter/>
                         </div>

@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { Milestone } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
 import { useMilestones, useProduct, useMembers } from '../../hooks/route'
 import { MilestoneManager } from '../../managers/milestone'
 import { IssueCount } from '../counts/Issues'
@@ -22,6 +23,8 @@ import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = () => {
+
+    const { push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -43,8 +46,9 @@ export const ProductMilestoneView = () => {
    
     // FUNCTIONS
 
-    async function deleteMilestone(milestone: Milestone) {
+    async function deleteMilestone(event: React.UIEvent, milestone: Milestone) {
         // TODO handle unmount!
+        event.stopPropagation()
         if (confirm('Do you really want to delete this milestone?')) {
             await MilestoneManager.deleteMilestone(milestone.id) 
         }
@@ -54,40 +58,28 @@ export const ProductMilestoneView = () => {
 
     const columns: Column<Milestone>[] = [
         { label: '👤', content: milestone => (
-            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                <ProductUserPictureWidget userId={milestone.userId} productId={productId} class='icon medium round'/>
-            </NavLink>
+            <ProductUserPictureWidget userId={milestone.userId} productId={productId} class='icon medium round'/>
         ) },
         { label: 'Label', class: 'left fill', content: milestone => (
-            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {milestone.label}
-            </NavLink>
+            milestone.label
         ) },
         { label: 'Start', class: 'nowrap center', content: milestone => (
-            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
-            </NavLink>
+            new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })
         ) },
         { label: 'End', class: 'nowrap center', content: milestone => (
-            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
-            </NavLink>
+            new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })
         ) },
         { label: 'Open', class: 'center', content: milestone => (
-            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                <IssueCount productId={productId} milestoneId={milestone.id} state='open'/>
-            </NavLink>
+            <IssueCount productId={productId} milestoneId={milestone.id} state='open'/>
         ) },
         { label: 'Closed', class: 'center', content: milestone => (
-            <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                <IssueCount productId={productId} milestoneId={milestone.id} state='closed'/>
-            </NavLink>
+            <IssueCount productId={productId} milestoneId={milestone.id} state='closed'/>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
             <MilestoneProgressWidget productId={productId} milestoneId={milestone.id}/>
         ) },
         { label: '🛠️', class: 'center', content: milestone => (
-            <a onClick={() => deleteMilestone(milestone)}>
+            <a onClick={event => deleteMilestone(event, milestone)}>
                 <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
@@ -124,7 +116,7 @@ export const ProductMilestoneView = () => {
                                         New milestone (requires login)
                                     </a>
                                 )}
-                                <Table columns={columns} items={milestones}/>
+                                <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.id}/issues`)}/>
                             </div>
                             <LegalFooter/>
                         </div>

@@ -87,13 +87,6 @@ export const ProductMilestoneIssueView = () => {
 
     // FUNCTIONS
 
-    async function deleteIssue(issue: Issue) {
-        // TODO handle unmount!
-        if (confirm('Do you really want to delete this issue from this milestone?')) {
-            await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: null })
-        }
-    }
-
     async function showClosedIssues(event: FormEvent) {
         event.preventDefault()
         setState('closed')
@@ -104,7 +97,15 @@ export const ProductMilestoneIssueView = () => {
         setState('open')
     }
 
-    async function handleClick(event: React.UIEvent<HTMLAnchorElement>) {
+    async function deleteIssue(event: React.UIEvent, issue: Issue) {
+        // TODO handle unmount!
+        event.stopPropagation()
+        if (confirm('Do you really want to delete this issue from this milestone?')) {
+            await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: null })
+        }
+    }
+
+    async function handleClickLink(event: React.UIEvent<HTMLAnchorElement>) {
         event.preventDefault()
         const pathname = event.currentTarget.pathname
         const search = event.currentTarget.search
@@ -112,39 +113,35 @@ export const ProductMilestoneIssueView = () => {
         await replace(`/products/${productId}/issues`)
         await push(`${pathname}${search}`)
     }
+
+    async function handleClickIssue(issue: Issue) {
+        await goBack()
+        await replace(`/products/${productId}/issues`)
+        await push(`/products/${productId}/issues/${issue.id}/comments`)
+    }
     
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
         { label: '👤', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
-                <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
-            </NavLink>
+            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
-                {issue.label}
-            </NavLink>
+            issue.label
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
-                {issue.assigneeIds.map((assignedId) => (
-                    <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
-                ))}
-            </NavLink>
+            issue.assigneeIds.map((assignedId) => (
+                <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
+            ))
         ) },
         { label: 'Comments', class: 'center', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
-                {issue.id in comments ? comments[issue.id].length : '?'}
-            </NavLink>
+            issue.id in comments ? comments[issue.id].length : '?'
         ) },
         { label: 'Parts', class: 'center', content: issue => (
-            <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
-                {issue.id in partsCount ? partsCount[issue.id] : '?'}
-            </NavLink>
+            issue.id in partsCount ? partsCount[issue.id] : '?'
         ) },
         { label: '🛠️', class: 'center', content: issue => (
-            <a onClick={() => deleteIssue(issue)}>
+            <a onClick={event => deleteIssue(event, issue)}>
                 <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
@@ -196,7 +193,7 @@ export const ProductMilestoneIssueView = () => {
                                 </p>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClick} className='button fill green block-when-responsive'>
+                                        <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
                                             New issue
                                         </NavLink>
                                     ) : (
@@ -215,7 +212,7 @@ export const ProductMilestoneIssueView = () => {
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
                                 </a>
-                                <Table columns={columns} items={issues.filter(issue => issue.state == state)}/>
+                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
                             </div>
                             <LegalFooter/>
                         </div>
