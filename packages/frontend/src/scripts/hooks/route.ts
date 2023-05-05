@@ -24,7 +24,7 @@ function useEntity<T extends { id: string }>(id: string, cache: (id: string) => 
 
     React.useEffect(() => {
         let exec = true
-        id && id != 'new' && get(id).then(value => exec && setValue(value))
+        id && id != 'new' && !value && get(id).then(value => exec && setValue(value))
         return () => { exec = false}
     }, [id])
 
@@ -52,7 +52,7 @@ function useEntities<T extends { id: string }>(cache: () => T[], get: () => Prom
 
     React.useEffect(() => {
         let exec = true
-         get().then(values => exec && setValues(values))
+        !values && get().then(values => exec && setValues(values))
         return () => { exec = false }
     })
 
@@ -86,7 +86,7 @@ function useChildEntities<T extends { id: string }>(parentId: string, parent: (e
 
     React.useEffect(() => {
         let exec = true
-        parentId && parentId != 'new' && get(parentId).then(values => exec && setValues(values))
+        parentId && parentId != 'new' && !values && get(parentId).then(values => exec && setValues(values))
         return () => { exec = false }
     }, [parentId])
 

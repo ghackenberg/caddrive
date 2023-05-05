@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom'
 import { Issue, Member, Product, User, Version } from 'productboard-common'
 
 import { VersionAPI } from '../../clients/mqtt/version'
-import { ProductAPI } from '../../clients/mqtt/product'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
+import { useRouteProducts } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -29,39 +29,42 @@ export const ProductView = () => {
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
+    // HOOKS
+
+    const { products } = useRouteProducts()
+
     // INITIAL STATES
     
-    const initialProducts = ProductManager.findProductsFromCache()
     const initialUsers: {[productId: string]: User} = {}
-    for (const product of initialProducts || []) {
+    for (const product of products || []) {
         const user = UserManager.getUserFromCache(product.userId)
         if (user) {
             initialUsers[product.id] = user
         }
     }
     const initialVersions: {[productId: string]: Version[]} = {}
-    for (const product of initialProducts || []) {
+    for (const product of products || []) {
         const versions = VersionManager.findVersionsFromCache(product.id)
         if (versions) {
             initialVersions[product.id] = versions
         }
     }
     const initialLatestVersions: {[productId: string]: Version} = {}
-    for (const product of initialProducts || []) {
+    for (const product of products || []) {
         const versions = VersionManager.findVersionsFromCache(product.id)
         if (versions && versions.length > 0) {
             initialLatestVersions[product.id] = versions[versions.length - 1]
         }
     }
     const initialIssues: {[productId: string]: Issue[]} = {}
-    for (const product of initialProducts || []) {
+    for (const product of products || []) {
         const issues = IssueManager.findIssuesFromCache(product.id, undefined, undefined)
         if (issues) {
             initialIssues[product.id] = issues
         }
     }
     const initialMembers: {[productId: string]: Member[]} = {}
-    for (const product of initialProducts || []) {
+    for (const product of products || []) {
         const members = MemberManager.findMembersFromCache(product.id) 
         if (members) {
             initialMembers[product.id] = members
@@ -71,7 +74,6 @@ export const ProductView = () => {
     // STATES
 
     // - Entities
-    const [products, setProducts] = useState<Product[]>(initialProducts)
     const [users, setUsers] = useState<{[productId: string]: User}>(initialUsers)
     const [versions, setVersions] = useState<{[productId: string]: Version[]}>(initialVersions)
     const [latestVersions, setLatestVersions] = useState<{[productId: string]: Version}>(initialLatestVersions)
@@ -81,13 +83,8 @@ export const ProductView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => { setContextVersion(undefined) }, [])
+    useEffect(() => { setContextVersion(undefined) })
 
-    useEffect(() => {
-        let exec = true
-        ProductManager.findProducts().then(products => exec && setProducts(products))
-        return () => { exec = false }
-    }, [])
     useEffect(() => {
         let exec = true
         if (products) {
@@ -164,19 +161,6 @@ export const ProductView = () => {
 
     // - Events
     useEffect(() => {
-        return ProductAPI.register({
-            create(product) {
-                setProducts([...products.filter(other => other.id != product.id), product])
-            },
-            update(product) {
-                setProducts(products.map(other => other.id != product.id ? other : product))
-            },
-            delete(product) {
-                setProducts(products.filter(other => other.id != product.id))
-            },
-        })
-    })
-    useEffect(() => {
         return VersionAPI.register({
             create(version) {
                 const newVersions: {[productId: string]: Version[]} = {}
@@ -220,7 +204,6 @@ export const ProductView = () => {
         // TODO handle unmount!
         if (confirm('Do you really want to delete this Product?')) {
             await ProductManager.deleteProduct(product.id)
-            setProducts(products.filter(other => other.id != product.id))
         }
     }
 
