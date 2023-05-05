@@ -30,6 +30,7 @@ const ProductsRouter = React.lazy(() => import('./routers/Products'))
 const UsersRouter = React.lazy(() => import('./routers/Users'))
 
 const Root = () => {
+    
     const { pathname } = useLocation()
     const { replace, push } = useAsyncHistory()
 
@@ -51,25 +52,31 @@ const Root = () => {
 
     React.useEffect(() => {
         KeyManager.getPublicJWK().then(setPublicJWK).catch(() => setContextUser(null))
-    }) 
+    })
+
     React.useEffect(() => {
         publicJWK && importJWK(publicJWK, "PS256").then(setPublicKey).catch(() => setContextUser(null))
     }, [publicJWK])
+
     React.useEffect(() => {
         jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult).catch(() => setContextUser(null))
     }, [jwt, publicKey])
+
     React.useEffect(() => {
         if (jwtVerifyResult) {
             setPayload(jwtVerifyResult.payload as { userId: string })
             TokenClient.refreshToken().then(token => localStorage.setItem('jwt', token.jwt))
         }
     }, [jwtVerifyResult])
+
     React.useEffect(() => {
         payload && setUserId(payload.userId)
     }, [payload])
+
     React.useEffect(() => {
         userId && UserManager.getUser(userId).then(setContextUser).catch(() => setContextUser(null))
     }, [userId])
+
     React.useEffect(() => {
         if (contextUser === undefined) return
         if (initialized) return
@@ -171,6 +178,7 @@ const Root = () => {
         }
         setContextUser(newContextUser)
     }
+
     function clear() {
         UserManager.clear()
         ProductManager.clear()
