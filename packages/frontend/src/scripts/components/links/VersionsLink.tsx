@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { VersionManager } from '../../managers/version'
+import { useRouteVersions } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import VersionIcon from '/src/images/version.png'
@@ -15,22 +14,9 @@ export const VersionsLink = (props: {product: Product}) => {
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
-    // INITIAL STATES
+    // HOOKS
 
-    const initialVersions = VersionManager.findVersionsFromCache(props.product.id)
-    const initialCount = initialVersions ? initialVersions.length : undefined
-
-    // STATES
-
-    const [count, setCount] = useState<number>(initialCount)
-
-    // EFFECTS
-
-    useEffect(() => {
-        let exec = true
-        VersionManager.findVersions(props.product.id).then(versions => exec && setCount(versions.length))
-        return () => { exec = false }
-    }, [props])
+    const { versions } = useRouteVersions()
 
     // FUNCTIONS
 
@@ -57,7 +43,7 @@ export const VersionsLink = (props: {product: Product}) => {
                 <img src={VersionIcon} className='icon small'/>
                 <span>
                     <span>Versions</span>
-                    <span>{count != undefined ? count : '?'}</span>
+                    <span>{versions ? versions.length : '?'}</span>
                 </span>
             </NavLink>
         </span>

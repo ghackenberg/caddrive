@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { MilestoneManager } from '../../managers/milestone'
+import { useRouteMilestones } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import MilestoneIcon from '/src/images/milestone.png'
@@ -15,22 +14,9 @@ export const MilestonesLink = (props: {product: Product}) => {
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
-    // INITIAL STATES
+    // HOOKS
 
-    const initialMilestones = MilestoneManager.findMilestonesFromCache(props.product.id)
-    const initialCount = initialMilestones ? initialMilestones.length : undefined
-
-    // STATES
-
-    const [count, setCount] = useState<number>(initialCount)
-
-    // EFFECTS
-    
-    useEffect(() => {
-        let exec = true
-        MilestoneManager.findMilestones(props.product.id).then(milestones => exec && setCount(milestones.length))
-        return () => { exec = false }
-    }, [props])
+    const { milestones } = useRouteMilestones()
 
     // FUNCTIONS
 
@@ -57,7 +43,7 @@ export const MilestonesLink = (props: {product: Product}) => {
                 <img src={MilestoneIcon} className='icon small'/>
                 <span>
                     <span>Milestones</span>
-                    <span>{count != undefined ? count : '?'}</span>
+                    <span>{milestones ? milestones.length : '?'}</span>
                 </span>
             </NavLink>
         </span>

@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { MemberManager } from '../../managers/member'
+import { useRouteMembers } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import MemberIcon from '/src/images/user.png'
@@ -15,22 +14,9 @@ export const MembersLink = (props: {product: Product}) => {
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
-    // INITIAL STATES
+    // HOOKS
 
-    const initialMembers = MemberManager.findMembersFromCache(props.product.id)
-    const initialCount = initialMembers ? initialMembers.length : undefined
-
-    // STATES
-
-    const [count, setCount] = useState<number>(initialCount)
-
-    // EFFECTS
-
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(props.product.id).then(members => exec && setCount(members.length))
-        return () => { exec = false }
-    }, [props])
+    const { members } = useRouteMembers()
 
     // FUNCTIONS
 
@@ -57,7 +43,7 @@ export const MembersLink = (props: {product: Product}) => {
                 <img src={MemberIcon} className='icon small'/>
                 <span>
                     <span>Members</span>
-                    <span>{count != undefined ? count : '?'}</span>
+                    <span>{members ? members.length : '?'}</span>
                 </span>
             </NavLink>
         </span>

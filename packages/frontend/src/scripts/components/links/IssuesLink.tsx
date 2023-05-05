@@ -1,11 +1,10 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { IssueManager } from '../../managers/issue'
+import { useRouteIssues } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import IssueIcon from '/src/images/issue.png'
@@ -15,22 +14,9 @@ export const IssuesLink = (props: {product: Product}) => {
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
 
-    // INITIAL STATES
+    // HOOKS
 
-    const initialIssues = IssueManager.findIssuesFromCache(props.product.id)
-    const initialCount = initialIssues ? initialIssues.length : undefined
-
-    // STATES
-
-    const [count, setCount] = useState<number>(initialCount)
-
-    // EFFECTS
-
-    useEffect(() => {
-        let exec = true
-        IssueManager.findIssues(props.product.id).then(issues => exec && setCount(issues.length))
-        return () => { exec = false }
-    }, [props])
+    const { issues } = useRouteIssues()
 
     // FUNCTIONS
 
@@ -57,7 +43,7 @@ export const IssuesLink = (props: {product: Product}) => {
                 <img src={IssueIcon} className='icon small'/>
                 <span>
                     <span>Issues</span>
-                    <span>{count != undefined ? count : '?'}</span>
+                    <span>{issues ? issues.length : '?'}</span>
                 </span>
             </NavLink>
         </span>
