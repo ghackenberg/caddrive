@@ -62,7 +62,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
             writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
         await Database.get().userRepository.save(user)
-        await this.client.emit(`/api/v1/users/${user.id}/update`, convertUser(user, this.request.user.id == id))
+        await this.client.emit(`/api/v1/users/${user.id}/update`, convertUser(user, false))
         return convertUser(user, this.request.user.id == id)
     }
 
@@ -71,7 +71,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         await Database.get().memberRepository.update({ userId: user.id }, { deleted: Date.now() })
         user.deleted = Date.now()
         await Database.get().userRepository.save(user)
-        await this.client.emit(`/api/v1/users/${user.id}/delete`, convertUser(user, this.request.user.id == id))
+        await this.client.emit(`/api/v1/users/${user.id}/delete`, convertUser(user, false))
         return convertUser(user, this.request.user.id == id)
     }
 }
