@@ -5,7 +5,7 @@ import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
-import { FindOptionsWhere } from 'typeorm'
+import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import { CommentEntity, Database } from 'productboard-database'
@@ -29,7 +29,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     async findComments(issueId: string): Promise<Comment[]> {
         let where: FindOptionsWhere<CommentEntity>
         if (issueId)
-            where = { issueId, deleted: null }
+            where = { issueId, deleted: IsNull() }
         const result: Comment[] = []
         for (const comment of await Database.get().commentRepository.findBy(where))
             result.push(convertComment(comment))

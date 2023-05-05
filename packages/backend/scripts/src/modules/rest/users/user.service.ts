@@ -6,7 +6,7 @@ import { ClientProxy } from '@nestjs/microservices'
 
 import 'multer'
 import shortid from 'shortid'
-import { FindOptionsWhere, Raw } from 'typeorm'
+import { FindOptionsWhere, IsNull, Raw } from 'typeorm'
 
 import { User, UserUpdateData, UserREST } from 'productboard-common'
 import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
@@ -30,9 +30,9 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
     async findUsers(query?: string, productId?: string) : Promise<User[]> {
         let where: FindOptionsWhere<UserEntity>
         if (query)
-            where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`) }
+            where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`), deleted: IsNull() }
         else
-            where = { deleted: null }
+            where = { deleted: IsNull() }
         const result: User[] = []
         for (const user of await Database.get().userRepository.findBy(where))
             try {

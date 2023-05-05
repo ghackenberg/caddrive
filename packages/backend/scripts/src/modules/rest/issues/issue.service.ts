@@ -5,7 +5,7 @@ import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
-import { FindOptionsWhere } from 'typeorm'
+import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 import { Database, IssueEntity } from 'productboard-database'
@@ -29,13 +29,13 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
         let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
-            where = { productId, milestoneId, state, deleted: null }
+            where = { productId, milestoneId, state, deleted: IsNull() }
         else if (productId && milestoneId)
-            where = { productId, milestoneId, deleted: null }
+            where = { productId, milestoneId, deleted: IsNull() }
         else if (productId && state)
-            where = { productId, state, deleted: null }
+            where = { productId, state, deleted: IsNull() }
         else if (productId)
-            where = { productId, deleted: null }
+            where = { productId, deleted: IsNull() }
         const result: Issue[] = []
         for (const issue of await Database.get().issueRepository.findBy(where))
             result.push(convertIssue(issue))

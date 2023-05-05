@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
-import { FindOptionsWhere } from 'typeorm'
+import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 import { Database, ProductEntity } from 'productboard-database'
@@ -21,14 +21,18 @@ export class ProductService implements ProductREST {
     ) {}
     
     async findProducts() : Promise<Product[]> {
-        let where: FindOptionsWhere<ProductEntity>
+        let where: FindOptionsWhere<ProductEntity> | FindOptionsWhere<ProductEntity>[]
         if (this.request.user)
-            where = { members: [ { userId: this.request.user.id, deleted: null } ], deleted: null }
+            where = [
+                { members: [ { userId: this.request.user.id, deleted: IsNull() } ], deleted: IsNull() },
+                { public: true, deleted: IsNull() }
+            ]
         else
-            where = { public: true, deleted: null }
+            where = { public: true, deleted: IsNull() }
         const result: Product[] = []
         for (const product of await Database.get().productRepository.find({ where }))
             result.push(convertProduct(product))
+        console.log(result)
         return result
     }
     

@@ -7,7 +7,7 @@ import { ClientProxy } from '@nestjs/microservices'
 import Jimp from 'jimp'
 import 'multer'
 import shortid from 'shortid'
-import { FindOptionsWhere } from 'typeorm'
+import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { Database, VersionEntity } from 'productboard-database'
@@ -32,7 +32,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     async findVersions(productId: string) : Promise<Version[]> {
         let where: FindOptionsWhere<VersionEntity>
         if (productId)
-            where = { productId, deleted: null }
+            where = { productId, deleted: IsNull() }
         const result: Version[] = []
         for (const version of await Database.get().versionRepository.findBy(where))
             result.push(convertVersion(version))

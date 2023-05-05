@@ -3,7 +3,7 @@ import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
-import { FindOptionsWhere } from 'typeorm'
+import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 import { Database, MilestoneEntity } from 'productboard-database'
@@ -18,14 +18,12 @@ export class MilestoneService implements MilestoneREST {
         private readonly request: AuthorizedRequest,
         @Inject('MQTT')
         private readonly client: ClientProxy
-    ) {
-
-    }
+    ) {}
 
     async findMilestones(productId: string): Promise<Milestone[]> {
         let where: FindOptionsWhere<MilestoneEntity>
         if (productId)
-            where = { productId, deleted: null }
+            where = { productId, deleted: IsNull() }
         const result: Milestone[] = []
         for (const milestone of await Database.get().milestoneRepository.findBy(where))
             result.push(convertMilestone(milestone))

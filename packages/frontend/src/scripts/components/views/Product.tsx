@@ -30,6 +30,8 @@ export const ProductView = () => {
 
     const products = useProducts()
 
+    console.log(products)
+
     // EFFECTS
 
     useEffect(() => { setContextVersion(undefined) })
@@ -104,9 +106,7 @@ export const ProductView = () => {
                                 New product (requires login)
                             </a>
                         )}
-                        {products && (
-                            <Table columns={columns} items={products.map(p => p).reverse()}/>
-                        )}
+                        <Table columns={columns} items={products.map(p => p).reverse()}/>
                     </div>
                     <LegalFooter/>
                 </div>
