@@ -83,7 +83,7 @@ export const ProductSettingView = () => {
     // RETURN
 
     return (
-        (productId == 'new' || product) && members ? (
+        (productId == 'new' || (product && members)) ? (
             (product && product.deleted) ? (
                 <Redirect to='/'/>
             ) : (
