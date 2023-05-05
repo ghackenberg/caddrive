@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useMembers, useUser } from '../../hooks/route'
 
 export const ProductUserEmailWidget = (props: { productId: string, userId: string }) => {
-    const { members } = useMembers(props.productId)
+    const members = useMembers(props.productId)
     const user = useUser(props.userId)
 
     if (members && user) {

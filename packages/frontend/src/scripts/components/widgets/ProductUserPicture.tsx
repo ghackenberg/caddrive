@@ -8,7 +8,7 @@ import PixelIcon from '/src/images/pixel.png'
 import UserIcon from '/src/images/user.png'
 
 export const ProductUserPictureWidget = (props: { userId: string, productId: string, background?: string, class?: string }) => {
-    const { members } = useMembers(props.productId)
+    const members = useMembers(props.productId)
     const user = useUser(props.userId)
 
     if (user && members) {       

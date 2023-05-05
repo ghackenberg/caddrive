@@ -34,14 +34,14 @@ export const ProductMemberSettingView = () => {
 
     // PARAMS
 
-    const { productId } = useParams<{ productId: string }>()
+    const { productId, memberId } = useParams<{ productId: string, memberId: string }>()
 
     // HOOKS
 
     const product = useProduct(productId)
-    const { members } = useMembers(productId)
-    const { memberId, member } = useMember()
-
+    const members = useMembers(productId)
+    const member = useMember(memberId)
+    
     // INITIAL STATES
 
     const initialUser = member ? UserManager.getUserFromCache(member.userId) : undefined

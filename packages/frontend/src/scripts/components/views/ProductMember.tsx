@@ -33,7 +33,7 @@ export const ProductMemberView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const { members } = useMembers(productId)
+    const members = useMembers(productId)
     
     // STATES
 

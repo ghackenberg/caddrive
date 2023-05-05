@@ -35,7 +35,7 @@ export const ProductVersionView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const { members } = useMembers(productId)
+    const members = useMembers(productId)
     const versions = useVersions(productId)
 
     // INITIAL STATES

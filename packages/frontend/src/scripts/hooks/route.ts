@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useParams } from 'react-router'
 
 import { Comment } from 'productboard-common'
 
@@ -324,15 +323,9 @@ export function useMilestone(milestoneId: string) {
 // MEMBER
 
 export function useMembers(productId: string) {
-    const members = useChildEntities(productId, member => member.productId, () => MemberManager.findMembersFromCache(productId), () => MemberManager.findMembers(productId), MemberAPI)
-
-    return { productId, members }
+    return useChildEntities(productId, member => member.productId, () => MemberManager.findMembersFromCache(productId), () => MemberManager.findMembers(productId), MemberAPI)
 }
 
-export function useMember() {
-    const { memberId } = useParams<{ memberId: string }>()
-
-    const member = useEntity(memberId, () => MemberManager.getMemberFromCache(memberId), () => MemberManager.getMember(memberId), MemberAPI)
-
-    return { memberId, member }
+export function useMember(memberId: string) {
+    return useEntity(memberId, () => MemberManager.getMemberFromCache(memberId), () => MemberManager.getMember(memberId), MemberAPI)
 }

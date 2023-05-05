@@ -34,7 +34,7 @@ export const ProductIssueView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const { members } = useMembers(productId)
+    const members = useMembers(productId)
     const issues = useProductIssues(productId)
     const { comments } = useProductIssueComments(productId)
 

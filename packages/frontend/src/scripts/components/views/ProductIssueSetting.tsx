@@ -45,7 +45,7 @@ export const ProductIssueSettingView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const { members } = useMembers(productId)
+    const members = useMembers(productId)
     const milestones = useMilestones(productId)
     const issue = useIssue(issueId)
 

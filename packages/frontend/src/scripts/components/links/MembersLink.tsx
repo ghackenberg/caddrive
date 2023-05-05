@@ -16,7 +16,7 @@ export const MembersLink = (props: {product: Product}) => {
 
     // HOOKS
 
-    const { members } = useMembers(props.product.id)
+    const members = useMembers(props.product.id)
 
     // FUNCTIONS
 

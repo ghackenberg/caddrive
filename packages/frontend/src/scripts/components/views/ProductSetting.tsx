@@ -31,7 +31,7 @@ export const ProductSettingView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const { members } = useMembers(productId)
+    const members = useMembers(productId)
 
     // INITIAL STATES
 
