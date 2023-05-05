@@ -1,12 +1,11 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
-
-import { User } from 'productboard-common'
+import { Redirect } from 'react-router'
 
 import { auth } from '../../clients/auth'
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
+import { useRouteUser } from '../../hooks/route'
 import { UserManager } from '../../managers/user'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { EmailInput } from '../inputs/EmailInput'
@@ -24,31 +23,18 @@ export const UserSettingView = () => {
 
     const { contextUser, setContextUser } = useContext(UserContext)
     
-    // PARAMS
+    // HOOKS
 
-    const { userId } = useParams<{ userId: string }>()
-
-    // INITIAL STATES
-    
-    const initialUser = userId == 'new' ? undefined : UserManager.getUserFromCache(userId)
+    const { userId, user } = useRouteUser()
 
     // STATES
     
-    // - Entities
-    const [user, setUser] = useState<User>(initialUser)
     // - Values
-    const [email, setEmail] = useState<string>(initialUser ? initialUser.email || '' : '')
-    const [name, setName] = useState<string>(initialUser ? initialUser.name || '' : '')
+    const [email, setEmail] = useState<string>(user ? user.email || '' : '')
+    const [name, setName] = useState<string>(user ? user.name || '' : '')
     const [picture, setPicture] = useState<File>()
 
     // EFFECTS
-
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        userId != 'new' && UserManager.getUser(userId).then(user => exec && setUser(user))
-        return () => { exec = false }
-    }, [userId])
 
     // - Values
     useEffect(() => { user && setEmail(user.email || '') }, [user])
