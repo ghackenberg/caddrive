@@ -7,7 +7,7 @@ import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { useProduct, useMembers, useProductVersions } from '../../hooks/route'
+import { useProduct, useMembers, useVersions } from '../../hooks/route'
 import { computeTree } from '../../functions/tree'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -36,7 +36,7 @@ export const ProductVersionView = () => {
 
     const product = useProduct(productId)
     const { members } = useMembers(productId)
-    const { versions } = useProductVersions()
+    const versions = useVersions(productId)
 
     // INITIAL STATES
 

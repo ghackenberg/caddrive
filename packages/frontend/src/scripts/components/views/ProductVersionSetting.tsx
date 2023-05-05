@@ -9,7 +9,7 @@ import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { useProduct, useMembers, useProductVersions, useVersion } from '../../hooks/route'
+import { useProduct, useMembers, useVersions, useVersion } from '../../hooks/route'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
 import { VersionManager } from '../../managers/version'
@@ -46,14 +46,14 @@ export const ProductVersionSettingView = () => {
 
     // PARAMS
 
-    const { productId } = useParams<{ productId: string }>()
+    const { productId, versionId } = useParams<{ productId: string, versionId: string }>()
 
     // HOOKS
 
     const product = useProduct(productId)
     const { members } = useMembers(productId)
-    const { versions } = useProductVersions()
-    const { versionId, version } = useVersion()
+    const versions = useVersions(productId)
+    const version = useVersion(versionId)
 
     // STATES
 

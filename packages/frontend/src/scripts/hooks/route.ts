@@ -137,20 +137,12 @@ export function useProduct(productId: string) {
 
 // VERSIONS
 
-export function useProductVersions() {
-    const { productId } = useParams<{ productId: string }>()
-
-    const versions = useChildEntities(productId, version => version.productId, () => VersionManager.findVersionsFromCache(productId), () => VersionManager.findVersions(productId), VersionAPI)
-
-    return { productId, versions }
+export function useVersions(productId: string) {
+    return useChildEntities(productId, version => version.productId, () => VersionManager.findVersionsFromCache(productId), () => VersionManager.findVersions(productId), VersionAPI)
 }
 
-export function useVersion() {
-    const { versionId } = useParams<{ versionId: string }>()
-
-    const version = useEntity(versionId, () => VersionManager.getVersionFromCache(versionId), () => VersionManager.getVersion(versionId), VersionAPI)
-
-    return { versionId, version }
+export function useVersion(versionId: string) {
+    return useEntity(versionId, () => VersionManager.getVersionFromCache(versionId), () => VersionManager.getVersion(versionId), VersionAPI)
 }
 
 // ISSUES
