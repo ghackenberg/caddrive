@@ -307,12 +307,8 @@ export function useProductIssueComments(productId: string) {
     return { productId, comments }
 }
 
-export function useIssueComments() {
-    const { issueId } = useParams<{ issueId: string }>()
-
-    const comments = useChildEntities(issueId, comment => comment.issueId, () => CommentManager.findCommentsFromCache(issueId), () => CommentManager.findComments(issueId), CommentAPI)
-
-    return { issueId, comments }
+export function useIssueComments(issueId: string) {
+    return useChildEntities(issueId, comment => comment.issueId, () => CommentManager.findCommentsFromCache(issueId), () => CommentManager.findComments(issueId), CommentAPI)
 }
 
 // MILESTONE
