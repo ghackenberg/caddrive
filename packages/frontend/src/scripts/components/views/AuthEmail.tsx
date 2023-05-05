@@ -18,7 +18,6 @@ export const AuthEmailView = () => {
     // STATES
 
     const [email, setEmail] = React.useState<string>('')
-
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
 

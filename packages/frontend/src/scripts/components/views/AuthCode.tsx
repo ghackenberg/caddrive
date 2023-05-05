@@ -42,12 +42,14 @@ export const AuthCodeView = () => {
         let exec = true
         KeyManager.getPublicJWK().then(publicJWK => exec && setPublicJWK(publicJWK))
         return () => { exec = false }
-    }) 
+    })
+
     React.useEffect(() => {
         let exec = true
         publicJWK && importJWK(publicJWK, "PS256").then(publicKey => exec && setPublicKey(publicKey))
         return () => { exec = false }
     }, [publicJWK])
+
     React.useEffect(() => {
         let exec = true
         jwt && publicKey && jwtVerify(jwt, publicKey).then(jwtVerifyResult => exec && setJWTVerifyResult(jwtVerifyResult))
@@ -57,6 +59,7 @@ export const AuthCodeView = () => {
     React.useEffect(() => {
         jwtVerifyResult && setPayload(jwtVerifyResult.payload as { userId: string })
     }, [jwtVerifyResult])
+    
     React.useEffect(() => {
         payload && setUserId(payload.userId)
     }, [payload])

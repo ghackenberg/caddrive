@@ -19,7 +19,6 @@ export const AuthNameView = () => {
     // STATES
 
     const [name, setName] = React.useState<string>(authContextUser ? authContextUser.name || '' : '')
-
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
 
