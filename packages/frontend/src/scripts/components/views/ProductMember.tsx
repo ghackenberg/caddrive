@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { Member, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useRouteMembers, useRouteProduct } from '../../hooks/route'
+import { useProductMembers, useProduct } from '../../hooks/route'
 import { MemberManager } from '../../managers/member'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -29,8 +29,8 @@ export const ProductMemberView = () => {
 
     // HOOKS
 
-    const { productId, product } = useRouteProduct()
-    const { members } = useRouteMembers()
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
 
     // INITIAL STATES
 

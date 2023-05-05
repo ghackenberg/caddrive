@@ -2,7 +2,7 @@ import * as React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useRouteProduct } from '../../hooks/route'
+import { useProduct } from '../../hooks/route'
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 import { MilestonesLink } from '../links/MilestonesLink'
@@ -19,7 +19,7 @@ export const ProductHeader = () => {
 
     // HOOKS
 
-    const { productId, product } = useRouteProduct()
+    const { productId, product } = useProduct()
 
     // FUNCTIONS
 

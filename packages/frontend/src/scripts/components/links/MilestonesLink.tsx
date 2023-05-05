@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useRouteMilestones } from '../../hooks/route'
+import { useProductMilestones } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import MilestoneIcon from '/src/images/milestone.png'
@@ -16,7 +16,7 @@ export const MilestonesLink = (props: {product: Product}) => {
 
     // HOOKS
 
-    const { milestones } = useRouteMilestones()
+    const { milestones } = useProductMilestones()
 
     // FUNCTIONS
 

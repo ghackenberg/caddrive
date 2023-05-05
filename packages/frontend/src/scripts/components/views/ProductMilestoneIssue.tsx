@@ -1,20 +1,18 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Comment, Issue, Member, Milestone, Product, User } from 'productboard-common'
+import { Comment, Issue, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
+import { useProductMembers, useMilestone, useProduct, useMilestoneIssues } from '../../hooks/route'
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
-import { MilestoneManager } from '../../managers/milestone'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -32,26 +30,26 @@ export const ProductMilestoneIssueView = () => {
     
     const { goBack, replace, push } = useAsyncHistory()
 
-    // PARAMS
-
-    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
-
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // HOOKS
+
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
+    const { milestoneId, milestone } = useMilestone()
+    const { issues } = useMilestoneIssues()
+
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMilestone = milestoneId == 'new' ? undefined : MilestoneManager.getMilestoneFromCache(milestoneId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialIssues = milestoneId == 'new' ? undefined: IssueManager.findIssuesFromCache(productId, milestoneId)
     const initialComments: {[id: string]: Comment[]} = {}
-    for (const issue of initialIssues || []) {
+    for (const issue of issues || []) {
         initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    } 
+    }
+
     const initialUsers: {[id: string]: User} = {}
-    for (const issue of initialIssues || []) {
+    for (const issue of issues || []) {
         const user = UserManager.getUserFromCache(issue.userId)
         if (user) {
             initialUsers[user.id] = user
@@ -62,20 +60,18 @@ export const ProductMilestoneIssueView = () => {
                 initialUsers[otherUser.id] = otherUser
             }
         }
-    } 
-    const initialIssueParts = collectIssueParts(initialIssues)
+    }
+
+    const initialIssueParts = collectIssueParts(issues)
     const initialCommentParts = collectCommentParts(initialComments)
-    const initialPartsCount = countParts(initialIssues, initialComments, initialIssueParts, initialCommentParts)
+    const initialPartsCount = countParts(issues, initialComments, initialIssueParts, initialCommentParts)
     
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [milestone, setMilestone] = useState<Milestone>(initialMilestone)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [issues, setIssues] = useState<Issue[]>(initialIssues)
     const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
     const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
@@ -84,6 +80,7 @@ export const ProductMilestoneIssueView = () => {
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
     const [openIssueCount, setOpenIssueCount] = useState<number>()
     const [closedIssueCount, setClosedIssueCount] = useState<number>()
+
     // - Interactions
     const [state, setState] = useState('open')
     const [active, setActive] = useState<string>('left')
@@ -91,27 +88,6 @@ export const ProductMilestoneIssueView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MilestoneManager.getMilestone(milestoneId).then(milestone => exec && setMilestone(milestone))
-        return () => { exec = false }
-    }, [milestoneId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        IssueManager.findIssues(productId, milestoneId).then(issues => exec && setIssues(issues))
-        return () => { exec = false }
-    }, [productId, milestoneId])
-
     useEffect(() => {
         let exec = true
         if (issues) {
@@ -138,6 +114,7 @@ export const ProductMilestoneIssueView = () => {
         }
         return () => { exec = false }
     }, [issues])
+    
     useEffect(() => {
         let exec = true
         if (issues) {
@@ -179,14 +156,12 @@ export const ProductMilestoneIssueView = () => {
         // TODO handle unmount!
         if (confirm('Do you really want to delete this issue from this milestone?')) {
             await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: null })
-            setIssues(issues.filter(other => other.id != issue.id))
         }
     }
 
     async function showClosedIssues(event: FormEvent) {
         event.preventDefault()
         setState('closed')
-   
     }
 
     async function showOpenIssues(event: FormEvent) {

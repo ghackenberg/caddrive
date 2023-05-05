@@ -10,7 +10,7 @@ import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useAsyncHistory } from '../../hooks/history'
-import { useRouteIssue, useRouteMembers, useRouteMilestones, useRouteProduct } from '../../hooks/route'
+import { useIssue, useProductMembers, useProductMilestones, useProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { UserManager } from '../../managers/user'
@@ -41,10 +41,10 @@ export const ProductIssueSettingView = () => {
 
     // HOOKS
 
-    const { productId, product } = useRouteProduct()
-    const { members } = useRouteMembers()
-    const { milestones } = useRouteMilestones()
-    const { issueId, issue } = useRouteIssue()
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
+    const { milestones } = useProductMilestones()
+    const { issueId, issue } = useIssue()
 
     // INITIAL STATES
 

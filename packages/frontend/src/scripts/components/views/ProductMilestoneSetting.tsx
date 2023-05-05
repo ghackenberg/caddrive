@@ -1,15 +1,14 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 
-import { Comment, Issue, Milestone, Product } from 'productboard-common'
+import { Comment } from 'productboard-common'
 
 import { calculateActual } from '../../functions/burndown'
 import { useAsyncHistory } from '../../hooks/history'
+import { useMilestone, useMilestoneIssues, useProduct } from '../../hooks/route'
 import { CommentManager } from '../../managers/comment'
-import { IssueManager } from '../../managers/issue'
 import { MilestoneManager } from '../../managers/milestone'
-import { ProductManager } from '../../managers/product'
 import { DateInput } from '../inputs/DateInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
@@ -25,28 +24,26 @@ export const ProductMilestoneSettingView = () => {
     
     const { goBack, replace } = useAsyncHistory()
 
-    // PARAMS
+    // HOOKS
 
-    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
+    const { productId, product } = useProduct()
+    const { milestoneId, milestone } = useMilestone()
+    const { issues } = useMilestoneIssues()
 
     // INITIAL STATES
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMilestone = milestoneId == 'new' ? undefined : MilestoneManager.getMilestoneFromCache(milestoneId)
-    const initialIssues = milestoneId == 'new' ? undefined: IssueManager.findIssuesFromCache(productId, milestoneId)
+
     const initialComments: {[id: string]: Comment[]} = {}
-    for (const issue of initialIssues || []) {
+    for (const issue of issues || []) {
         initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    } 
-    const initialLabel = initialMilestone ? initialMilestone.label : ''
-    const initialStart = initialMilestone ? new Date(initialMilestone.start) : new Date(new Date().setHours(0,0,0,0))
-    const initialEnd = initialMilestone ? new Date(initialMilestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
+    }
+
+    const initialLabel = milestone ? milestone.label : ''
+    const initialStart = milestone ? new Date(milestone.start) : new Date(new Date().setHours(0,0,0,0))
+    const initialEnd = milestone ? new Date(milestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
 
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [milestone, setMilestone] = useState<Milestone>(initialMilestone)
-    const [issues, setIssues] = useState<Issue[]>(initialIssues)
     const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
@@ -61,22 +58,6 @@ export const ProductMilestoneSettingView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        milestoneId != 'new' && MilestoneManager.getMilestone(milestoneId).then(milestone => exec && setMilestone(milestone))
-        return () => { exec = false }
-    }, [milestoneId])
-    useEffect(() => {
-        let exec = true
-        IssueManager.findIssues(productId, milestoneId).then(issues => exec && setIssues(issues))
-        return () => { exec = false }
-    }, [productId, milestoneId])
-
     useEffect(() => {
         let exec = true
         if (issues) {
@@ -97,6 +78,7 @@ export const ProductMilestoneSettingView = () => {
     useEffect(() => { milestone && setLabel(milestone.label) }, [milestone])
     useEffect(() => { milestone && setStart(new Date(milestone.start)) }, [milestone])
     useEffect(() => { milestone && setEnd(new Date(milestone.end)) }, [milestone])
+
     // - Computations
     useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
     useEffect(() => {

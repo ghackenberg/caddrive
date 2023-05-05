@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { Comment, Issue, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useRouteIssues, useRouteMembers, useRouteProduct } from '../../hooks/route'
+import { useProductIssues, useProductMembers, useProduct } from '../../hooks/route'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { UserManager } from '../../managers/user'
@@ -32,9 +32,9 @@ export const ProductIssueView = () => {
 
     // HOOKS
 
-    const { productId, product } = useRouteProduct()
-    const { members } = useRouteMembers()
-    const { issues } = useRouteIssues()
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
+    const { issues } = useProductIssues()
 
     // INITIAL STATES
 

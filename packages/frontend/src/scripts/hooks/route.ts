@@ -17,14 +17,14 @@ import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 
-function useEntity<T extends { id: string }>(id: string, cache: (id: string) => T, get: (id: string) => Promise<T>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
-    const initialValue = id && id != 'new' && cache(id)
+function useEntity<T extends { id: string }>(id: string, cache: () => T, get: () => Promise<T>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+    const initialValue = id && id != 'new' && cache()
 
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
         let exec = true
-        id && id != 'new' && !value && get(id).then(value => exec && setValue(value))
+        id && id != 'new' && !value && get().then(value => exec && setValue(value))
         return () => { exec = false}
     }, [id])
 
@@ -79,14 +79,14 @@ function useEntities<T extends { id: string }>(cache: () => T[], get: () => Prom
     return values
 }
 
-function useChildEntities<T extends { id: string }>(parentId: string, parent: (e: T) => string, cache: (parentId: string) => T[], get: (parentId: string) => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
-    const initialValue = parentId && parentId != 'new' && cache(parentId)
+function useChildEntities<T extends { id: string }>(parentId: string, parent: (e: T) => string, cache: () => T[], get: () => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+    const initialValue = parentId && parentId != 'new' && cache()
 
     const [values, setValues] = React.useState(initialValue)
 
     React.useEffect(() => {
         let exec = true
-        parentId && parentId != 'new' && !values && get(parentId).then(values => exec && setValues(values))
+        parentId && parentId != 'new' && !values && get().then(values => exec && setValues(values))
         return () => { exec = false }
     }, [parentId])
 
@@ -115,114 +115,122 @@ function useChildEntities<T extends { id: string }>(parentId: string, parent: (e
 
 // USERS
 
-export function useRouteUsers() {
+export function useUsers() {
     const users = useEntities(() => UserManager.findUsersFromCache(), () => UserManager.findUsers(), UserAPI)
 
     return { users }
 }
 
-export function useRouteUser() {
+export function useUser() {
     const { userId } = useParams<{ userId: string }>()
 
-    const user = useEntity(userId, id => UserManager.getUserFromCache(id), id => UserManager.getUser(id), UserAPI)
+    const user = useEntity(userId, () => UserManager.getUserFromCache(userId), () => UserManager.getUser(userId), UserAPI)
 
     return { userId, user }
 }
 
 // PRODUCTS
 
-export function useRouteProducts() {
+export function useProducts() {
     const products = useEntities(() => ProductManager.findProductsFromCache(), () => ProductManager.findProducts(), ProductAPI)
 
     return { products }
 }
 
-export function useRouteProduct() {
+export function useProduct() {
     const { productId } = useParams<{ productId: string }>()
 
-    const product = useEntity(productId, id => ProductManager.getProductFromCache(id), id => ProductManager.getProduct(id), ProductAPI)
+    const product = useEntity(productId, () => ProductManager.getProductFromCache(productId), () => ProductManager.getProduct(productId), ProductAPI)
     
     return { productId, product }
 }
 
 // VERSIONS
 
-export function useRouteVersions() {
+export function useProductVersions() {
     const { productId } = useParams<{ productId: string }>()
 
-    const versions = useChildEntities(productId, version => version.productId, id => VersionManager.findVersionsFromCache(id), id => VersionManager.findVersions(id), VersionAPI)
+    const versions = useChildEntities(productId, version => version.productId, () => VersionManager.findVersionsFromCache(productId), () => VersionManager.findVersions(productId), VersionAPI)
 
     return { productId, versions }
 }
 
-export function useRouteVersion() {
+export function useVersion() {
     const { versionId } = useParams<{ versionId: string }>()
 
-    const version = useEntity(versionId, id => VersionManager.getVersionFromCache(id), id => VersionManager.getVersion(id), VersionAPI)
+    const version = useEntity(versionId, () => VersionManager.getVersionFromCache(versionId), () => VersionManager.getVersion(versionId), VersionAPI)
 
     return { versionId, version }
 }
 
 // ISSUES
 
-export function useRouteIssues() {
+export function useProductIssues() {
     const { productId } = useParams<{ productId: string }>()
 
-    const issues = useChildEntities(productId, issue => issue.productId, id => IssueManager.findIssuesFromCache(id), id => IssueManager.findIssues(id), IssueAPI)
+    const issues = useChildEntities(productId, issue => issue.productId, () => IssueManager.findIssuesFromCache(productId), () => IssueManager.findIssues(productId), IssueAPI)
 
-    return { productId, issues}
+    return { productId, issues }
 }
 
-export function useRouteIssue() {
+export function useMilestoneIssues() {
+    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
+
+    const issues = useChildEntities(milestoneId, issue => issue.milestoneId, () => IssueManager.findIssuesFromCache(productId, milestoneId), () => IssueManager.findIssues(productId, milestoneId), IssueAPI)
+
+    return { productId, milestoneId, issues }
+}
+
+export function useIssue() {
     const { issueId } = useParams<{ issueId: string }>()
 
-    const issue = useEntity(issueId, id => IssueManager.getIssueFromCache(id), id => IssueManager.getIssue(id), IssueAPI)
+    const issue = useEntity(issueId, () => IssueManager.getIssueFromCache(issueId), () => IssueManager.getIssue(issueId), IssueAPI)
 
     return { issueId, issue }
 }
 
 // COMMENTS
 
-export function useRouteComments() {
+export function useIssueComments() {
     const { issueId } = useParams<{ issueId: string }>()
 
-    const comments = useChildEntities(issueId, comment => comment.issueId, id => CommentManager.findCommentsFromCache(id), id => CommentManager.findComments(id), CommentAPI)
+    const comments = useChildEntities(issueId, comment => comment.issueId, () => CommentManager.findCommentsFromCache(issueId), () => CommentManager.findComments(issueId), CommentAPI)
 
     return { issueId, comments }
 }
 
 // MILESTONE
 
-export function useRouteMilestones() {
+export function useProductMilestones() {
     const { productId } = useParams<{ productId: string }>()
 
-    const milestones = useChildEntities(productId, milestone => milestone.productId, id => MilestoneManager.findMilestonesFromCache(id), id => MilestoneManager.findMilestones(id), MilestoneAPI)
+    const milestones = useChildEntities(productId, milestone => milestone.productId, () => MilestoneManager.findMilestonesFromCache(productId), () => MilestoneManager.findMilestones(productId), MilestoneAPI)
 
     return { productId, milestones }
 }
 
-export function useRouteMilestone() {
+export function useMilestone() {
     const { milestoneId } = useParams<{ milestoneId: string }>()
 
-    const milestone = useEntity(milestoneId, id => MilestoneManager.getMilestoneFromCache(id), id => MilestoneManager.getMilestone(id), MilestoneAPI)
+    const milestone = useEntity(milestoneId, () => MilestoneManager.getMilestoneFromCache(milestoneId), () => MilestoneManager.getMilestone(milestoneId), MilestoneAPI)
 
     return { milestoneId, milestone }
 }
 
 // MEMBER
 
-export function useRouteMembers() {
+export function useProductMembers() {
     const { productId } = useParams<{ productId: string }>()
 
-    const members = useChildEntities(productId, member => member.productId, id => MemberManager.findMembersFromCache(id), id => MemberManager.findMembers(id), MemberAPI)
+    const members = useChildEntities(productId, member => member.productId, () => MemberManager.findMembersFromCache(productId), () => MemberManager.findMembers(productId), MemberAPI)
 
     return { productId, members }
 }
 
-export function useRouteMember() {
+export function useMember() {
     const { memberId } = useParams<{ memberId: string }>()
 
-    const member = useEntity(memberId, id => MemberManager.getMemberFromCache(id), id => MemberManager.getMember(id), MemberAPI)
+    const member = useEntity(memberId, () => MemberManager.getMemberFromCache(memberId), () => MemberManager.getMember(memberId), MemberAPI)
 
     return { memberId, member }
 }

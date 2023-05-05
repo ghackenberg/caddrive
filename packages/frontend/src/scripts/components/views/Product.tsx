@@ -7,7 +7,7 @@ import { Issue, Member, Product, User, Version } from 'productboard-common'
 import { VersionAPI } from '../../clients/mqtt/version'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { useRouteProducts } from '../../hooks/route'
+import { useProducts } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
@@ -31,7 +31,7 @@ export const ProductView = () => {
 
     // HOOKS
 
-    const { products } = useRouteProducts()
+    const { products } = useProducts()
 
     // INITIAL STATES
     

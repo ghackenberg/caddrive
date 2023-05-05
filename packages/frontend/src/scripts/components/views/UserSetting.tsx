@@ -5,7 +5,7 @@ import { Redirect } from 'react-router'
 import { auth } from '../../clients/auth'
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useRouteUser } from '../../hooks/route'
+import { useUser } from '../../hooks/route'
 import { UserManager } from '../../managers/user'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { EmailInput } from '../inputs/EmailInput'
@@ -25,7 +25,7 @@ export const UserSettingView = () => {
     
     // HOOKS
 
-    const { userId, user } = useRouteUser()
+    const { userId, user } = useUser()
 
     // STATES
     

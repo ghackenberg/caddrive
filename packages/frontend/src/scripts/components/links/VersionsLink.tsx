@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useRouteVersions } from '../../hooks/route'
+import { useProductVersions } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import VersionIcon from '/src/images/version.png'
@@ -16,7 +16,7 @@ export const VersionsLink = (props: {product: Product}) => {
 
     // HOOKS
 
-    const { versions } = useRouteVersions()
+    const { versions } = useProductVersions()
 
     // FUNCTIONS
 

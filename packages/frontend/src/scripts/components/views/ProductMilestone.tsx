@@ -1,15 +1,14 @@
 import  * as React from 'react'
 import { useEffect, useState, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue, Member, Milestone, Product, User } from 'productboard-common'
+import { Issue, Milestone, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useProductMilestones, useProduct, useProductMembers } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
 import { MilestoneManager } from '../../managers/milestone'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -25,63 +24,46 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = () => {
 
-    // PARAMS
-
-    const { productId } = useParams<{ productId: string }>()
-
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // HOOKS
+
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
+    const { milestones } = useProductMilestones()
+
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
     const initialOpenIssues: {[id: string]: Issue[]} = {}
-    for (const milestone of initialMilestones || []) {
+    for (const milestone of milestones || []) {
         initialOpenIssues[milestone.id] = IssueManager.findIssuesFromCache(productId, milestone.id, 'open')
-    } 
+    }
+
     const initialClosedIssues: {[id: string]: Issue[]} = {}
-    for (const milestone of initialMilestones || []) {
+    for (const milestone of milestones || []) {
         initialClosedIssues[milestone.id] = IssueManager.findIssuesFromCache(productId, milestone.id, 'closed')
-    } 
+    }
+
     const initialUsers: {[id: string]: User} = {}
-    for (const milestone of initialMilestones || []) {
+    for (const milestone of milestones || []) {
         initialUsers[milestone.userId] = UserManager.getUserFromCache(milestone.userId)
     }
     
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [milestones, setMilestones] = useState<Milestone[]>(initialMilestones)
     const [openIssues, setOpenIssues] = useState<{[id: string]: Issue[]}>(initialOpenIssues)
     const [closedIssues, setClosedIssues] = useState<{[id: string]: Issue[]}>(initialClosedIssues)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+
     // - Interactions
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MilestoneManager.findMilestones(productId).then(milestones => exec && setMilestones(milestones))
-        return () => { exec = false }
-    }, [productId])
-
     useEffect(() => {
         let exec = true
         if (milestones) {
@@ -97,6 +79,7 @@ export const ProductMilestoneView = () => {
         }
         return () => { exec = false }
     }, [milestones])
+    
     useEffect(() => {
         let exec = true
         if (milestones) {
@@ -112,6 +95,7 @@ export const ProductMilestoneView = () => {
         }
         return () => { exec = false }
     }, [milestones])
+
     useEffect(() => {
         let exec = true
         if (milestones) {
@@ -133,8 +117,7 @@ export const ProductMilestoneView = () => {
     async function deleteMilestone(milestone: Milestone) {
         // TODO handle unmount!
         if (confirm('Do you really want to delete this milestone?')) {
-            await MilestoneManager.deleteMilestone(milestone.id)
-            setMilestones(milestones.filter(other => other.id != milestone.id))       
+            await MilestoneManager.deleteMilestone(milestone.id) 
         }
     }
 

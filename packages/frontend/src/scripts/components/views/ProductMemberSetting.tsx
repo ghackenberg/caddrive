@@ -6,7 +6,7 @@ import { MemberRole, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useRouteMember, useRouteMembers, useRouteProduct } from '../../hooks/route'
+import { useMember, useProductMembers, useProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
@@ -34,9 +34,9 @@ export const ProductMemberSettingView = () => {
 
     // HOOKS
 
-    const { productId, product } = useRouteProduct()
-    const { members } = useRouteMembers()
-    const { memberId, member } = useRouteMember()
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
+    const { memberId, member } = useMember()
 
     // INITIAL STATES
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { User } from 'productboard-common'
 
-import { useRouteUsers } from '../../hooks/route'
+import { useUsers } from '../../hooks/route'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { UserPictureWidget } from '../widgets/UserPicture'
@@ -13,7 +13,7 @@ export const UserView = () => {
 
     // HOOKS
 
-    const { users } = useRouteUsers()
+    const { users } = useUsers()
 
     // CONSTANTS
 
