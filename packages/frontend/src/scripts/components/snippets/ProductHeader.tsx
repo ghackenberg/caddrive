@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { NavLink, useLocation, useParams } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { ProductManager } from '../../managers/product'
+import { useRouteProduct } from '../../hooks/route'
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 import { MilestonesLink } from '../links/MilestonesLink'
@@ -15,24 +15,11 @@ import SettingIcon from '/src/images/setting.png'
 export const ProductHeader = () => {
 
     const { pathname } = useLocation()
-    const { productId } = useParams<{ productId: string }>()
     const { goBack, replace } = useAsyncHistory()
 
-    // INITIAL STATES
+    // HOOKS
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-
-    // STATES
-
-    const [product, setProduct] = React.useState(initialProduct)
-
-    // EFFECTS
-
-    React.useEffect(() => {
-        let exec = true
-        productId == 'new' ? setProduct(undefined) : ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
+    const { productId, product } = useRouteProduct()
 
     // FUNCTIONS
 

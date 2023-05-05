@@ -1,31 +1,17 @@
 import * as React from 'react'
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
-import { UserManager } from '../../managers/user'
+import { useRouteUser } from '../../hooks/route'
 import { UserLink } from '../links/UserLink'
 
 import SettingIcon from '/src/images/setting.png'
 
 export const UserHeader = () => {
-    // PARAMS
+    // HOOKS
 
-    const { userId } = useParams<{ userId: string }>()
+    const { userId, user } = useRouteUser()
 
-    // INITIAL STATES
-
-    const initialUser = userId == 'new' ? undefined : UserManager.getUserFromCache(userId)
-
-    // STATES
-
-    const [user, setUser] = React.useState(initialUser)
-
-    // EFFECTS
-
-    React.useEffect(() => {
-        let exec = true
-        userId == 'new' ? setUser(undefined) : UserManager.getUser(userId).then(user => exec && setUser(user))
-        return () => { exec = false }
-    }, [userId])
+    // RETURN
 
     return (
         <header className='view user'>
