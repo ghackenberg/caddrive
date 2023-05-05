@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { Issue, Milestone } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useProductMilestones, useProduct, useMembers } from '../../hooks/route'
+import { useMilestones, useProduct, useMembers } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { MilestoneManager } from '../../managers/milestone'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -34,7 +34,7 @@ export const ProductMilestoneView = () => {
 
     const product = useProduct(productId)
     const { members } = useMembers(productId)
-    const { milestones } = useProductMilestones()
+    const milestones = useMilestones(productId)
 
     // INITIAL STATES
 

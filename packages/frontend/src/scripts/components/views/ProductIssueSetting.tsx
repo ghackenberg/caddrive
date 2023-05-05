@@ -10,7 +10,7 @@ import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssue, useMembers, useProductMilestones, useProduct } from '../../hooks/route'
+import { useIssue, useMembers, useMilestones, useProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { IssueManager } from '../../managers/issue'
@@ -46,7 +46,7 @@ export const ProductIssueSettingView = () => {
 
     const product = useProduct(productId)
     const { members } = useMembers(productId)
-    const { milestones } = useProductMilestones()
+    const milestones = useMilestones(productId)
     const issue = useIssue(issueId)
 
     // INITIAL STATES

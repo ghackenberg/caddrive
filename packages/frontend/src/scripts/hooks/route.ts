@@ -313,20 +313,12 @@ export function useIssueComments(issueId: string) {
 
 // MILESTONE
 
-export function useProductMilestones() {
-    const { productId } = useParams<{ productId: string }>()
-
-    const milestones = useChildEntities(productId, milestone => milestone.productId, () => MilestoneManager.findMilestonesFromCache(productId), () => MilestoneManager.findMilestones(productId), MilestoneAPI)
-
-    return { productId, milestones }
+export function useMilestones(productId: string) {
+    return useChildEntities(productId, milestone => milestone.productId, () => MilestoneManager.findMilestonesFromCache(productId), () => MilestoneManager.findMilestones(productId), MilestoneAPI)
 }
 
-export function useMilestone() {
-    const { milestoneId } = useParams<{ milestoneId: string }>()
-
-    const milestone = useEntity(milestoneId, () => MilestoneManager.getMilestoneFromCache(milestoneId), () => MilestoneManager.getMilestone(milestoneId), MilestoneAPI)
-
-    return { milestoneId, milestone }
+export function useMilestone(milestoneId: string) {
+    return useEntity(milestoneId, () => MilestoneManager.getMilestoneFromCache(milestoneId), () => MilestoneManager.getMilestone(milestoneId), MilestoneAPI)
 }
 
 // MEMBER
