@@ -11,6 +11,7 @@ import { MilestoneManager } from '../../managers/milestone'
 import { IssueCount } from '../counts/Issues'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
+import { MilestoneProgressWidget } from '../widgets/MilestoneProgress'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
@@ -41,17 +42,6 @@ export const ProductMilestoneView = () => {
     const [active, setActive] = useState<string>('left')
    
     // FUNCTIONS
-
-    function calculateDateProgress(milestone: Milestone) {
-        const start = new Date(milestone.start).getTime()
-        const end = new Date(milestone.end).getTime()
-        const now = Date.now()
-        if (now >= start) {
-            return Math.min(100 * (now - start) / (end - start), 100)
-        } else {
-            return 0
-        }
-    }
 
     async function deleteMilestone(milestone: Milestone) {
         // TODO handle unmount!
@@ -94,9 +84,7 @@ export const ProductMilestoneView = () => {
             </NavLink>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
-            <div className='progress'>
-                <div style={{width: `${calculateDateProgress(milestone)}%` }}/>
-            </div>
+            <MilestoneProgressWidget productId={productId} milestoneId={milestone.id}/>
         ) },
         { label: '🛠️', class: 'center', content: milestone => (
             <a onClick={() => deleteMilestone(milestone)}>
