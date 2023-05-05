@@ -41,10 +41,8 @@ export const VersionsLink = (props: {product: Product}) => {
         <span>
             <NavLink to={`/products/${props.product.id}/versions`} onClick={handleClick}>
                 <img src={VersionIcon} className='icon small'/>
-                <span>
-                    <span>Versions</span>
-                    <span>{versions ? versions.length : '?'}</span>
-                </span>
+                <span className='label'>Versions</span>
+                <span className='badge'>{versions ? versions.length : '?'}</span>
             </NavLink>
         </span>
     )

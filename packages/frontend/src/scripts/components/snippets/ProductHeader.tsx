@@ -41,6 +41,14 @@ export const ProductHeader = () => {
         <header className='view product'>
             <div className='entity'>
                 <ProductLink product={product}/>
+                {product && (
+                    product.public ? (
+                        <span className='badge public'>public</span>
+                    ) : (
+
+                        <span className='badge private'>private</span>
+                    )
+                )}
             </div>
             <div className='tabs'>
                 {product && (

@@ -85,6 +85,13 @@ header.view > div.entity {
     line-height: 150%;
 }
 
+header.view > div.entity > span.badge {
+    font-size: 0.75rem;
+
+    margin-top: 0.875rem;
+    margin-bottom: 0.875rem;
+}
+
 header.view > div.tabs > span > a {
     display: inline-block;
     
@@ -96,26 +103,6 @@ header.view > div.tabs > span > a {
 }
 header.view > div.tabs:first-child > span > a {
     padding-top: 1em;
-}
-header.view > div.tabs > span > a > span > span:last-child {
-    display: inline-block;
-
-    vertical-align: top;
-
-    font-size: 75%;
-
-    line-height: 1.25rem;
-
-    margin-top: 0.125rem;
-    margin-left: 0.5rem;
-    margin-bottom: 0.125rem;
-
-    border-radius: 0.5rem;
-
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;  
-
-    background-color: rgb(225,225,225);
 }
 header.view > div.tabs > span > a.active {
     font-weight: bold;

@@ -1,0 +1,32 @@
+span.badge {
+    display: inline-block;
+
+    font-size: 75%;
+
+    line-height: 1.25rem;
+
+    margin-top: 0.125rem;
+    margin-left: 0.5rem;
+    margin-bottom: 0.125rem;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+
+    border-radius: 0.5rem;
+
+    vertical-align: top;
+
+    background-color: rgb(225,225,225);
+
+    color: gray;
+}
+span.badge.public {
+    background-color: green;
+
+    color: white;
+}
+span.badge.private {
+    background-color: red;
+
+    color: white;
+}

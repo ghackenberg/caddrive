@@ -53,14 +53,17 @@ export const ProductView = () => {
                 <ProductImageWidget productId={product.id}/>
             </Link>
         ) },
-        { label: 'Name', class: 'left nowrap', content: product => (
+        { label: 'Name / Description', class: 'left fill', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {product.name}
-            </Link>
-        ) },
-        { label: 'Description', class: 'left fill', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {product.description}
+                <div>
+                    <strong>{product.name}</strong>
+                    {product.public ? (
+                        <span className='badge public'>public</span>
+                    ) : (
+                        <span className='badge private'>private</span>
+                    )}
+                </div>
+                <div>{product.description}</div>
             </Link>
         ) },
         { label: 'Versions', class: 'center', content: product => (
