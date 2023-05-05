@@ -47,14 +47,14 @@ export const ProductIssueCommentView = () => {
     // INITIAL STATES
 
     const initialUsers: { [id: string]: User } = {}
-    const user = UserManager.getUserFromCache(issueId)
+    const user = issue && UserManager.getUserFromCache(issue.userId)
     if (user) {
         initialUsers[user.id] = user
-        for (const comment of comments || []) {
-            const user = UserManager.getUserFromCache(comment.userId)
-            if (user) {
-                initialUsers[user.id] = user
-            }
+    }
+    for (const comment of comments || []) {
+        const user = UserManager.getUserFromCache(comment.userId)
+        if (user) {
+            initialUsers[user.id] = user
         }
     }
 
@@ -178,7 +178,7 @@ export const ProductIssueCommentView = () => {
         }
         setHighlighted(highlighted)
     }, [issueParts, commentsParts])
-    
+
     useEffect(() => {
         const parts: Part[] = []
         collectParts(text || '', parts)
