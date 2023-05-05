@@ -7,7 +7,7 @@ import { Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMembers, useMilestone, useProduct, useMilestoneIssues, useMilestoneIssueComments } from '../../hooks/route'
+import { useMembers, useMilestone, useProduct, useMilestoneIssueComments, useIssues } from '../../hooks/route'
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
@@ -40,7 +40,7 @@ export const ProductMilestoneIssueView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const milestone = useMilestone(milestoneId)
-    const issues = useMilestoneIssues(productId, milestoneId)
+    const issues = useIssues(productId, milestoneId)
     const { comments } = useMilestoneIssueComments(productId, milestoneId)
 
     // INITIAL STATES

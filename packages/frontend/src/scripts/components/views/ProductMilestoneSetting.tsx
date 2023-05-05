@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router'
 
 import { calculateActual } from '../../functions/burndown'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMilestone, useMilestoneIssueComments, useMilestoneIssues, useProduct } from '../../hooks/route'
+import { useIssues, useMilestone, useMilestoneIssueComments, useProduct } from '../../hooks/route'
 import { MilestoneManager } from '../../managers/milestone'
 import { DateInput } from '../inputs/DateInput'
 import { SubmitInput } from '../inputs/SubmitInput'
@@ -29,7 +29,7 @@ export const ProductMilestoneSettingView = () => {
 
     const product = useProduct(productId)
     const milestone = useMilestone(milestoneId)
-    const issues = useMilestoneIssues(productId, milestoneId)
+    const issues = useIssues(productId, milestoneId)
     const { comments } = useMilestoneIssueComments(productId, milestoneId)
 
     // INITIAL STATES

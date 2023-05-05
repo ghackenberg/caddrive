@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useProductIssues } from '../../hooks/route'
+import { useIssues } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import IssueIcon from '/src/images/issue.png'
@@ -16,7 +16,7 @@ export const IssuesLink = (props: {product: Product}) => {
 
     // HOOKS
 
-    const issues = useProductIssues(props.product.id)
+    const issues = useIssues(props.product.id)
 
     // FUNCTIONS
 

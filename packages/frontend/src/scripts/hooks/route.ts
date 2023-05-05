@@ -146,12 +146,12 @@ export function useVersion(versionId: string) {
 
 // ISSUES
 
-export function useProductIssues(productId: string) {
-    return useChildEntities(productId, issue => issue.productId, () => IssueManager.findIssuesFromCache(productId), () => IssueManager.findIssues(productId), IssueAPI)
-}
-
-export function useMilestoneIssues(productId: string, milestoneId: string) {
-    return useChildEntities(milestoneId, issue => issue.milestoneId, () => IssueManager.findIssuesFromCache(productId, milestoneId), () => IssueManager.findIssues(productId, milestoneId), IssueAPI)
+export function useIssues(productId: string, milestoneId?: string) {
+    if (milestoneId) {
+        return useChildEntities(milestoneId, issue => issue.milestoneId, () => IssueManager.findIssuesFromCache(productId, milestoneId), () => IssueManager.findIssues(productId, milestoneId), IssueAPI)
+    } else {
+        return useChildEntities(productId, issue => issue.productId, () => IssueManager.findIssuesFromCache(productId), () => IssueManager.findIssues(productId), IssueAPI)
+    }
 }
 
 export function useIssue(issueId: string) {
@@ -161,7 +161,7 @@ export function useIssue(issueId: string) {
 // COMMENTS
 
 export function useMilestoneIssueComments(productId: string, milestoneId: string) {
-    const issues = useMilestoneIssues(productId, milestoneId)
+    const issues = useIssues(productId, milestoneId)
 
     const initialComments: {[issueId: string]: Comment[]} = {}
     for (const issue of issues || []) {
@@ -234,7 +234,7 @@ export function useMilestoneIssueComments(productId: string, milestoneId: string
 }
 
 export function useProductIssueComments(productId: string) {
-    const issues = useProductIssues(productId)
+    const issues = useIssues(productId)
 
     const initialComments: {[issueId: string]: Comment[]} = {}
     for (const issue of issues || []) {
@@ -306,7 +306,7 @@ export function useProductIssueComments(productId: string) {
     return { productId, comments }
 }
 
-export function useIssueComments(issueId: string) {
+export function useComments(issueId: string) {
     return useChildEntities(issueId, comment => comment.issueId, () => CommentManager.findCommentsFromCache(issueId), () => CommentManager.findComments(issueId), CommentAPI)
 }
 

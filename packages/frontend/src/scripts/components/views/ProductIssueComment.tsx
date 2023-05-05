@@ -10,7 +10,7 @@ import { Version } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
-import { useIssueComments, useIssue, useMembers, useProduct } from '../../hooks/route'
+import { useComments, useIssue, useMembers, useProduct } from '../../hooks/route'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
@@ -45,7 +45,7 @@ export const ProductIssueCommentView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const issue = useIssue(issueId)
-    const comments = useIssueComments(issueId)
+    const comments = useComments(issueId)
 
     // INITIAL STATES
 
