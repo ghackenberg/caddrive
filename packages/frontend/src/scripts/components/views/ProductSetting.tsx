@@ -1,11 +1,9 @@
 import * as React from 'react'
-import { Redirect, useParams } from 'react-router'
-
-import { Member, Product } from 'productboard-common'
+import { Redirect } from 'react-router'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { MemberManager } from '../../managers/member'
+import { useProduct, useProductMembers } from '../../hooks/route'
 import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { SubmitInput } from '../inputs/SubmitInput'
@@ -26,43 +24,28 @@ export const ProductSettingView = () => {
 
     const { contextUser } = React.useContext(UserContext)
 
-    // PARAMS
+    // HOOKS
 
-    const { productId } = useParams<{ productId: string }>()
+    const { productId, product } = useProduct()
+    const { members } = useProductMembers()
 
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
-    const initialName = initialProduct ? initialProduct.name : ''
-    const initialDescription = initialProduct ? initialProduct.description : ''
-    const initialPublic = initialProduct ? initialProduct.public : false
+    const initialName = product ? product.name : ''
+    const initialDescription = product ? product.description : ''
+    const initialPublic = product ? product.public : false
 
     // STATES
 
-    // - Entities
-    const [product, setProduct] = React.useState<Product>(initialProduct)
-    const [members, setMembers] = React.useState<Member[]>(initialMembers)
     // - Values
     const [name, setName] = React.useState<string>(initialName)
     const [description, setDescription] = React.useState<string>(initialDescription)
     const [_public, setPublic] = React.useState<boolean>(initialPublic)
+
     // - Interactions
     const [active, setActive] = React.useState<string>('left')
     
     // EFFECTS
-
-    // - Entities
-    React.useEffect(() => {
-        let exec = true
-        productId != 'new' && ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    React.useEffect(() => {
-        let exec = true
-        productId != 'new' && MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
 
     // - Values
     React.useEffect(() => { product && setName(product.name) }, [product])
@@ -81,7 +64,7 @@ export const ProductSettingView = () => {
             }
         } else {
             if (name && description) {
-                await setProduct(await ProductManager.updateProduct(product.id, { name, description, public: _public }))
+                await ProductManager.updateProduct(product.id, { name, description, public: _public })
                 await replace(`/products/${product.id}`)
             }
         }
