@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, useContext } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 
 import { auth } from '../../clients/auth'
 import { UserContext } from '../../contexts/User'
@@ -22,10 +22,14 @@ export const UserSettingView = () => {
     // CONTEXTS
 
     const { contextUser, setContextUser } = useContext(UserContext)
+
+    // PARAMS
+
+    const { userId } = useParams<{ userId: string }>()
     
     // HOOKS
 
-    const { userId, user } = useUser()
+    const user = useUser(userId)
 
     // STATES
     
@@ -35,8 +39,7 @@ export const UserSettingView = () => {
     const [picture, setPicture] = useState<File>()
 
     // EFFECTS
-
-    // - Values
+    
     useEffect(() => { user && setEmail(user.email || '') }, [user])
     useEffect(() => { user && setName(user.name || '') }, [user])
 

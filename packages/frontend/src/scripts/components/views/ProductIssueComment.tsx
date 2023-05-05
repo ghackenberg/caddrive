@@ -5,15 +5,14 @@ import { NavLink } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
-import { User, Version } from 'productboard-common'
+import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
-import { useIssueComments, useIssue, useProductMembers, useProduct } from '../../hooks/route'
+import { useIssueComments, useIssue, useMembers, useProduct } from '../../hooks/route'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
-import { UserManager } from '../../managers/user'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -40,23 +39,11 @@ export const ProductIssueCommentView = () => {
     // HOOKS
 
     const { productId, product } = useProduct()
-    const { members } = useProductMembers()
+    const { members } = useMembers(productId)
     const { issueId, issue } = useIssue()
     const { comments } = useIssueComments()
 
     // INITIAL STATES
-
-    const initialUsers: { [id: string]: User } = {}
-    const user = issue && UserManager.getUserFromCache(issue.userId)
-    if (user) {
-        initialUsers[user.id] = user
-    }
-    for (const comment of comments || []) {
-        const user = UserManager.getUserFromCache(comment.userId)
-        if (user) {
-            initialUsers[user.id] = user
-        }
-    }
 
     const initialIssueParts: Part[] = []
     const initialIssueHtml = issue ? createProcessor(initialIssueParts, handleMouseOver, handleMouseOut, handleClick).processSync(issue.text).result : undefined
@@ -87,9 +74,6 @@ export const ProductIssueCommentView = () => {
 
     // STATES
 
-    // - Entities
-    const [users, setUsers] = useState<{ [id: string]: User }>(initialUsers)
-
     // - Values
     const [text, setText] = useState<string>('')
     const [audio, setAudio] = useState<Blob>()
@@ -100,6 +84,7 @@ export const ProductIssueCommentView = () => {
     const [commentsHtml, setCommentsHtml] = useState<{ [id: string]: ReactElement }>(initialCommentsHtml)
     const [commentsParts, setCommentsParts] = useState<{ [id: string]: Part[] }>(initialCommentsParts)
     const [highlighted, setHighlighted] = useState<Part[]>(initialHighlighted)
+
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [audioUrl, setAudioUrl] = useState<string>('')
@@ -109,35 +94,6 @@ export const ProductIssueCommentView = () => {
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        const userIds: string[] = []
-        if (issue) {
-            if (!(issue.userId in users) && userIds.indexOf(issue.userId) == -1) {
-                userIds.push(issue.userId)
-            }
-        }
-        if (comments) {
-            for (const comment of comments) {
-                if (!(comment.userId in users) && userIds.indexOf(comment.userId) == -1) {
-                    userIds.push(comment.userId)
-                }
-            }
-        }
-        Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userList => {
-            if (exec) {
-                const dict = { ...users }
-                for (const user of userList) {
-                    dict[user.id] = user
-                }
-                setUsers(dict)    
-            }
-        })
-        return () => { exec = false }
-    }, [issue, comments])
-
-    // - Computations
     useEffect(() => {
         if (issue) {
             const parts: Part[] = []
@@ -324,11 +280,7 @@ export const ProductIssueCommentView = () => {
                                     </span>
                                     &nbsp;
                                     <strong>
-                                        {issue.userId in users && members ? (
-                                            <ProductUserNameWidget user={users[issue.userId]} members={members} />
-                                        ) : (
-                                            '?'
-                                        )}
+                                        <ProductUserNameWidget userId={issue.userId} productId={productId}/>
                                     </strong>
                                     &nbsp;
                                     <>
@@ -336,16 +288,16 @@ export const ProductIssueCommentView = () => {
                                     </>
                                 </p>
                                 <div className="widget issue_thread">
-                                    <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
+                                    <CommentView class="issue" comment={issue} productId={productId} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     {comments && comments.map(comment => (
-                                        <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
+                                        <CommentView key={comment.id} class="comment" comment={comment} productId={productId} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     ))}
                                     <div className="comment self">
                                         <div className="head">
                                             <div className="icon">
                                                 {contextUser ? (
                                                     <NavLink to={`/users/${contextUser.id}`}>
-                                                        <ProductUserPictureWidget user={contextUser} members={members} />
+                                                        <ProductUserPictureWidget userId={contextUser.id} productId={productId} />
                                                     </NavLink>
                                                 ) : (
                                                     <a>

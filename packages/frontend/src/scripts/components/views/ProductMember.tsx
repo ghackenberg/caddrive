@@ -1,23 +1,22 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Member, User } from 'productboard-common'
+import { Member } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useProductMembers, useProduct } from '../../hooks/route'
+import { useMembers, useProduct } from '../../hooks/route'
 import { MemberManager } from '../../managers/member'
-import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
-import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
@@ -30,43 +29,11 @@ export const ProductMemberView = () => {
     // HOOKS
 
     const { productId, product } = useProduct()
-    const { members } = useProductMembers()
-
-    // INITIAL STATES
-
-    const initialUsers : {[id: string]: User} = {}
-    for (const member of members || []) {
-        const user = UserManager.getUserFromCache(member.userId)
-        if (user) {
-            initialUsers[member.id] = user
-        }
-    }
+    const { members } = useMembers(productId)
     
     // STATES
 
-    // - Entities
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
-    // - Interactions
     const [active, setActive] = useState<string>('left')
-
-    // EFFECTS
-
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        if (members) {
-            Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
-                if (exec) {
-                    const newUsers = {...users}
-                    for (let index = 0; index < members.length; index++) {
-                        newUsers[members[index].id] = memberUsers[index]
-                    }
-                    setUsers(newUsers)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [members])
 
     // FUNCTIONS
 
@@ -81,27 +48,19 @@ export const ProductMemberView = () => {
 
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
-            member.id in users ? (
-                <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
-                    <ProductUserPictureWidget user={users[member.id]} members={members} class='icon medium round middle'/>
-                </NavLink> 
-            ) : (
-                <img src={LoadIcon} className='icon medium pad animation spin'/>
-            )
+            <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
+                <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round middle'/>
+            </NavLink>
         ) },
-        { label: 'Name', class: 'left nowrap', content: (
-            member => member.id in users ? (
-                <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
-                    {users[member.id].name}
-                </NavLink>
-             ) : '?'
+        { label: 'Name', class: 'left nowrap', content: member => (
+            <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
+                <ProductUserNameWidget userId={member.userId} productId={productId}/>
+            </NavLink>
         ) },
-        { label: 'Role', class: 'fill left nowrap', content: (
-            member => member.id in users ? (
-                <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
-                    {member.role}
-                </NavLink>
-             ) : '?'
+        { label: 'Role', class: 'fill left nowrap', content: member => (
+            <NavLink to={`/products/${productId}/members/${member.id}/settings`}>
+                {member.role}
+            </NavLink>
         ) },
         { label: '🛠️', class: 'center', content: member => (
             <a onClick={() => deleteMember(member)}>

@@ -1,18 +1,17 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
+import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue, User } from 'productboard-common'
+import { Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useProductMembers, useMilestone, useProduct, useMilestoneIssues, useMilestoneIssueComments } from '../../hooks/route'
+import { useMembers, useMilestone, useProduct, useMilestoneIssues, useMilestoneIssueComments } from '../../hooks/route'
 import { calculateActual } from '../../functions/burndown'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { IssueManager } from '../../managers/issue'
-import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
@@ -20,7 +19,6 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
-import LoadIcon from '/src/images/load.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
@@ -36,35 +34,18 @@ export const ProductMilestoneIssueView = () => {
     // HOOKS
 
     const { productId, product } = useProduct()
-    const { members } = useProductMembers()
+    const { members } = useMembers(productId)
     const { milestoneId, milestone } = useMilestone()
     const { issues } = useMilestoneIssues()
     const { comments } = useMilestoneIssueComments()
 
     // INITIAL STATES
 
-    const initialUsers: {[id: string]: User} = {}
-    for (const issue of issues || []) {
-        const user = UserManager.getUserFromCache(issue.userId)
-        if (user) {
-            initialUsers[user.id] = user
-        }
-        for (const comment of comments[issue.id] || []) {
-            const otherUser = UserManager.getUserFromCache(comment.userId)
-            if (otherUser) {
-                initialUsers[otherUser.id] = otherUser
-            }
-        }
-    }
-
     const initialIssueParts = collectIssueParts(issues)
     const initialCommentParts = collectCommentParts(comments)
     const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
     
     // STATES
-
-    // - Entities
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
 
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
@@ -81,35 +62,6 @@ export const ProductMilestoneIssueView = () => {
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        if (issues && comments) {
-            const userIds: string[] = []
-            for (const issue of issues) {
-                if (!(issue.userId in users || userIds.includes(issue.userId))) {
-                    userIds.push(issue.userId)
-                }
-                for (const assigneeId of issue.assigneeIds) {
-                    if (!(assigneeId in users || userIds.includes(assigneeId))) {
-                        userIds.push(assigneeId)
-                    }
-                }
-            }
-            Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userObjects => {
-                if (exec) {
-                    const newUsers = {...users}
-                    for (const user of userObjects) {
-                        newUsers[user.id] = user
-                    }
-                    setUsers(newUsers)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [issues, comments])
-
-    // - Computations
     useEffect(() => {
         setIssueParts(collectIssueParts(issues))
     }, [issues])
@@ -166,11 +118,7 @@ export const ProductMilestoneIssueView = () => {
     const columns: Column<Issue>[] = [
         { label: '👤', content: issue => (
             <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
-                {issue.userId in users && members ? (
-                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
-                ) : (
-                    <img src={LoadIcon} className='icon medium pad animation spin'/>
-                )}
+                <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
             </NavLink>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
@@ -181,13 +129,7 @@ export const ProductMilestoneIssueView = () => {
         { label: 'Assignees', class: 'nowrap', content: issue => (
             <NavLink to={`/products/${productId}/issues/${issue.id}/comments`} onClick={handleClick}>
                 {issue.assigneeIds.map((assignedId) => (
-                    <Fragment key={assignedId}>
-                        {assignedId in users && members ? (
-                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='icon medium round'/>
-                        ) : (
-                            <img src={LoadIcon} className='icon medium pad animation spin'/>
-                        )}
-                    </Fragment>
+                    <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
                 ))}
             </NavLink>
         ) },

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 
 import { useUser } from '../../hooks/route'
 import { UserLink } from '../links/UserLink'
@@ -7,9 +7,13 @@ import { UserLink } from '../links/UserLink'
 import SettingIcon from '/src/images/setting.png'
 
 export const UserHeader = () => {
+    // PARAMS
+
+    const { userId } = useParams<{ userId: string }>()
+
     // HOOKS
 
-    const { userId, user } = useUser()
+    const user = useUser(userId)
 
     // RETURN
 

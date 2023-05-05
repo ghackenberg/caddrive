@@ -2,20 +2,19 @@ import * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Issue, Member, Product, User, Version } from 'productboard-common'
+import { Issue, Product, Version } from 'productboard-common'
 
 import { VersionAPI } from '../../clients/mqtt/version'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { useProducts } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
 import { VersionManager } from '../../managers/version'
-import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { MemberCount } from '../counts/Members'
 import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
@@ -35,13 +34,6 @@ export const ProductView = () => {
 
     // INITIAL STATES
     
-    const initialUsers: {[productId: string]: User} = {}
-    for (const product of products || []) {
-        const user = UserManager.getUserFromCache(product.userId)
-        if (user) {
-            initialUsers[product.id] = user
-        }
-    }
     const initialVersions: {[productId: string]: Version[]} = {}
     for (const product of products || []) {
         const versions = VersionManager.findVersionsFromCache(product.id)
@@ -63,43 +55,19 @@ export const ProductView = () => {
             initialIssues[product.id] = issues
         }
     }
-    const initialMembers: {[productId: string]: Member[]} = {}
-    for (const product of products || []) {
-        const members = MemberManager.findMembersFromCache(product.id) 
-        if (members) {
-            initialMembers[product.id] = members
-        }
-    }
     
     // STATES
 
     // - Entities
-    const [users, setUsers] = useState<{[productId: string]: User}>(initialUsers)
     const [versions, setVersions] = useState<{[productId: string]: Version[]}>(initialVersions)
     const [latestVersions, setLatestVersions] = useState<{[productId: string]: Version}>(initialLatestVersions)
     const [issues, setIssues] = useState<{[productId: string]: Issue[]}>(initialIssues)
-    const [members, setMembers] = useState<{[productId: string]: Member[]}>(initialMembers)
 
     // EFFECTS
 
     // - Entities
     useEffect(() => { setContextVersion(undefined) })
 
-    useEffect(() => {
-        let exec = true
-        if (products) {
-            Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {
-                if (exec) {
-                    const newUsers = {...users}
-                    for (let index = 0; index < products.length; index++) {
-                        newUsers[products[index].id] = productUsers[index]
-                    }
-                    setUsers(newUsers)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [products])
     useEffect(() => {
         let exec = true
         if (products) {
@@ -138,21 +106,6 @@ export const ProductView = () => {
                         newIssues[products[index].id] = productIssues[index]
                     }
                     setIssues(newIssues)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [products])
-    useEffect(() => {
-        let exec = true
-        if (products) {
-            Promise.all(products.map(product => MemberManager.findMembers(product.id))).then(productMembers => {
-                if (exec) {
-                    const newMembers = {...members}
-                    for (let index = 0; index < products.length; index++) {
-                        newMembers[products[index].id] = productMembers[index]
-                    }
-                    setMembers(newMembers)
                 }
             })
         }
@@ -255,16 +208,12 @@ export const ProductView = () => {
         ) },
         { label: 'Members', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {product.id in members ? members[product.id].length : '?'}
+                <MemberCount productId={product.id}/>
             </Link>
         ) },
         { label: '👤', class: 'center', content: product => (
             <Link to={`/products/${product.id}/versions`}>
-                {users[product.id] && members[product.id] ? (
-                    <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='icon medium round'/>
-                ) : (
-                    <img src={LoadIcon} className='icon small animation spin'/>
-                )}
+                <ProductUserPictureWidget userId={product.userId} productId={product.id} class='icon medium round'/>
             </Link>
         ) },
         { label: '🛠️', content: product => (

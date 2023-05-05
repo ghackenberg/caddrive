@@ -1,23 +1,32 @@
 import * as React from 'react'
 
-import { Member, User } from 'productboard-common'
+import { useMembers, useUser } from '../../hooks/route'
 
-export const ProductUserEmailWidget = (props: { user: User, members: Member[] }) => {
-    return (
-        props.user.deleted ? (
-            <>
-                &lt;<del style={{opacity: 0.5}}>{props.user.email}</del>&gt;
-            </>
-        ) : (
-            props.members.map(member => member.userId).includes(props.user.id) ? (
+export const ProductUserEmailWidget = (props: { productId: string, userId: string }) => {
+    const { members } = useMembers(props.productId)
+    const user = useUser(props.userId)
+
+    if (members && user) {
+        return (
+            user.deleted ? (
                 <>
-                    &lt;{props.user.email}&gt;
+                    &lt;<del style={{opacity: 0.5}}>{user.email}</del>&gt;
                 </>
             ) : (
-                <>
-                    &lt;<del>{props.user.email}</del>&gt;
-                </>
+                members.map(member => member.userId).includes(user.id) ? (
+                    <>
+                        &lt;{user.email}&gt;
+                    </>
+                ) : (
+                    <>
+                        &lt;<del>{user.email}</del>&gt;
+                    </>
+                )
             )
         )
-    )
+    } else {
+        return (
+            <>?</>
+        )
+    }
 }

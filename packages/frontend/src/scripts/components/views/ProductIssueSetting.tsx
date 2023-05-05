@@ -4,26 +4,25 @@ import { Redirect } from 'react-router'
 
 import { Object3D } from 'three'
 
-import { User, Member, Version } from 'productboard-common'
+import { Member, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssue, useProductMembers, useProductMilestones, useProduct } from '../../hooks/route'
+import { useIssue, useMembers, useProductMilestones, useProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
-import { UserManager } from '../../managers/user'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { LoadingView } from './Loading'
 
-import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
 
@@ -42,19 +41,11 @@ export const ProductIssueSettingView = () => {
     // HOOKS
 
     const { productId, product } = useProduct()
-    const { members } = useProductMembers()
+    const { members } = useMembers(productId)
     const { milestones } = useProductMilestones()
     const { issueId, issue } = useIssue()
 
     // INITIAL STATES
-
-    const initialUsers: {[id: string]: User} = {}
-    for (const member of members || []) {
-        const user = UserManager.getUserFromCache(member.userId)
-        if (user) {
-            initialUsers[member.id] = user
-        }
-    }
 
     const initialLabel = issue ? issue.label : ''
     const initialText = issue ? issue.text : ''
@@ -65,15 +56,14 @@ export const ProductIssueSettingView = () => {
     collectParts(initialText, initialMarked)
     
     // STATES
-    
-    // - Entities
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [text, setText] = useState<string>(initialText)
     const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
+
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [audioUrl, setAudioUrl] = useState<string>('')
@@ -82,23 +72,6 @@ export const ProductIssueSettingView = () => {
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
-
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        if (members) {
-            Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
-                if (exec) {
-                    const newUsers = {...users}
-                    for (let index = 0; index < members.length; index++) {
-                        newUsers[members[index].id] = memberUsers[index]
-                    }
-                    setUsers(newUsers)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [members])
 
     // - Values
     useEffect(() => { issue && setLabel(issue.label) }, [issue])
@@ -196,16 +169,10 @@ export const ProductIssueSettingView = () => {
 
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
-            member.id in users ? (
-                <ProductUserPictureWidget user={users[member.id]} members={members} class='icon medium round'/>
-            ) : (
-                <img src={LoadIcon} className='icon mediumn pad animation spin'/>
-            )
+            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round'/>
         ) },
         { label: 'Name', class: 'fill left nowrap', content: member => (
-            member.id in users ? (
-                users[member.id].name
-            ) : '?'
+            <ProductUserNameWidget userId={member.userId} productId={productId}/>
         ) },
         { label: '🛠️', class: 'fill center nowrap', content: member => (
             <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>

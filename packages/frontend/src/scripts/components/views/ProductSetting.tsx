@@ -3,7 +3,7 @@ import { Redirect } from 'react-router'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useProduct, useProductMembers } from '../../hooks/route'
+import { useProduct, useMembers } from '../../hooks/route'
 import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { SubmitInput } from '../inputs/SubmitInput'
@@ -27,7 +27,7 @@ export const ProductSettingView = () => {
     // HOOKS
 
     const { productId, product } = useProduct()
-    const { members } = useProductMembers()
+    const { members } = useMembers(productId)
 
     // INITIAL STATES
 
@@ -46,8 +46,7 @@ export const ProductSettingView = () => {
     const [active, setActive] = React.useState<string>('left')
     
     // EFFECTS
-
-    // - Values
+    
     React.useEffect(() => { product && setName(product.name) }, [product])
     React.useEffect(() => { product && setDescription(product.description) }, [product])
     React.useEffect(() => { product && setPublic(product.public) }, [product])

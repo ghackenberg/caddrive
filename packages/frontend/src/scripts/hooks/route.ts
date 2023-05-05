@@ -123,12 +123,10 @@ export function useUsers() {
     return { users }
 }
 
-export function useUser() {
-    const { userId } = useParams<{ userId: string }>()
-
+export function useUser(userId: string) {
     const user = useEntity(userId, () => UserManager.getUserFromCache(userId), () => UserManager.getUser(userId), UserAPI)
 
-    return { userId, user }
+    return user
 }
 
 // PRODUCTS
@@ -367,9 +365,7 @@ export function useMilestone() {
 
 // MEMBER
 
-export function useProductMembers() {
-    const { productId } = useParams<{ productId: string }>()
-
+export function useMembers(productId: string) {
     const members = useChildEntities(productId, member => member.productId, () => MemberManager.findMembersFromCache(productId), () => MemberManager.findMembers(productId), MemberAPI)
 
     return { productId, members }

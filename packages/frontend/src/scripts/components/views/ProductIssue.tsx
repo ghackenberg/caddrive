@@ -1,14 +1,13 @@
 import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
+import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue, User } from 'productboard-common'
+import { Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useProductIssues, useProductMembers, useProduct, useProductIssueComments } from '../../hooks/route'
+import { useProductIssues, useMembers, useProduct, useProductIssueComments } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
-import { UserManager } from '../../managers/user'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -19,7 +18,6 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
-import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
@@ -32,25 +30,12 @@ export const ProductIssueView = () => {
     // HOOKS
 
     const { productId, product } = useProduct()
-    const { members } = useProductMembers()
+    const { members } = useMembers(productId)
     const { issues } = useProductIssues()
     const { comments } = useProductIssueComments()
 
     // INITIAL STATES
 
-    const initialUsers: {[id: string]: User} = {}
-    for (const issue of issues || []) {
-        const user = UserManager.getUserFromCache(issue.userId)
-        if (user) {
-            initialUsers[user.id] = user
-        }
-        for (const comment of comments[issue.id] || []) {
-            const otherUser = UserManager.getUserFromCache(comment.userId)
-            if (otherUser) {
-                initialUsers[otherUser.id] = otherUser
-            }
-        }
-    } 
     const initialIssueParts = collectIssueParts(issues)
     const initialCommentParts = collectCommentParts(comments)
     const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
@@ -58,9 +43,6 @@ export const ProductIssueView = () => {
     const initialClosedIssueCount = issues ? issues.filter(issue => issue.state == 'closed').length : undefined
 
     // STATES
-
-    // - Entities
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
 
     // - Computations
     const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
@@ -76,34 +58,6 @@ export const ProductIssueView = () => {
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
-
-    // - Entities
-    useEffect(() => {
-        let exec = true
-        if (issues) {
-            const userIds: string[] = []
-            for (const issue of issues) {
-                if (!(issue.userId in users || userIds.includes(issue.userId))) {
-                    userIds.push(issue.userId)
-                }
-                for (const assigneeId of issue.assigneeIds) {
-                    if (!(assigneeId in users || userIds.includes(assigneeId))) {
-                        userIds.push(assigneeId)
-                    }
-                }
-            }
-            Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userObjects => {
-                if (exec) {
-                    const newUsers = {...users}
-                    for (const user of userObjects) {
-                        newUsers[user.id] = user
-                    }
-                    setUsers(newUsers)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [issues])
 
     // - Computations
     useEffect(() => { 
@@ -193,11 +147,7 @@ export const ProductIssueView = () => {
     const columns: Column<Issue>[] = [
         { label: '👤', content: issue => (
             <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.userId in users && members ? (
-                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
-                ) : (
-                    <img src={LoadIcon} className='icon medium pad animation spin'/>
-                )}
+                <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
             </NavLink>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
@@ -208,13 +158,7 @@ export const ProductIssueView = () => {
         { label: 'Assignees', class: 'nowrap', content: issue => (
             <NavLink to={`/products/${productId}/issues/${issue.id}/comments`}>
                 {issue.assigneeIds.map((assignedId) => (
-                    <Fragment key={assignedId}>
-                        {assignedId in users && members ? (
-                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='icon medium round'/>
-                        ) : (
-                            <img src={LoadIcon} className='icon medium pad animation spin'/>
-                        )}
-                    </Fragment>
+                    <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
                 ))}
             </NavLink>
         ) },

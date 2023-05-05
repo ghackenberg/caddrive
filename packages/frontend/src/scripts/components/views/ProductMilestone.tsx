@@ -3,13 +3,12 @@ import { useEffect, useState, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue, Milestone, User } from 'productboard-common'
+import { Issue, Milestone } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useProductMilestones, useProduct, useProductMembers } from '../../hooks/route'
+import { useProductMilestones, useProduct, useMembers } from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { MilestoneManager } from '../../managers/milestone'
-import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
@@ -17,7 +16,6 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
-import LoadIcon from '/src/images/load.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
@@ -31,7 +29,7 @@ export const ProductMilestoneView = () => {
     // HOOKS
 
     const { productId, product } = useProduct()
-    const { members } = useProductMembers()
+    const { members } = useMembers(productId)
     const { milestones } = useProductMilestones()
 
     // INITIAL STATES
@@ -45,18 +43,12 @@ export const ProductMilestoneView = () => {
     for (const milestone of milestones || []) {
         initialClosedIssues[milestone.id] = IssueManager.findIssuesFromCache(productId, milestone.id, 'closed')
     }
-
-    const initialUsers: {[id: string]: User} = {}
-    for (const milestone of milestones || []) {
-        initialUsers[milestone.userId] = UserManager.getUserFromCache(milestone.userId)
-    }
     
     // STATES
 
     // - Entities
     const [openIssues, setOpenIssues] = useState<{[id: string]: Issue[]}>(initialOpenIssues)
     const [closedIssues, setClosedIssues] = useState<{[id: string]: Issue[]}>(initialClosedIssues)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
 
     // - Interactions
     const [active, setActive] = useState<string>('left')
@@ -90,22 +82,6 @@ export const ProductMilestoneView = () => {
                         newMilestones[milestones[index].id] = issueMilestones[index]
                     }
                     setClosedIssues(newMilestones)
-                }
-            })
-        }
-        return () => { exec = false }
-    }, [milestones])
-
-    useEffect(() => {
-        let exec = true
-        if (milestones) {
-            Promise.all(milestones.map(milestone => UserManager.getUser(milestone.userId))).then(milestoneUsers => {
-                if (exec) {
-                    const newUsers = {...users}
-                    for (let index = 0; index < milestones.length; index++) {
-                        newUsers[milestones[index].userId] = milestoneUsers[index]
-                    }
-                    setUsers(newUsers)
                 }
             })
         }
@@ -145,11 +121,7 @@ export const ProductMilestoneView = () => {
     const columns: Column<Milestone>[] = [
         { label: '👤', content: milestone => (
             <NavLink to={`/products/${productId}/milestones/${milestone.id}/issues`}>
-                {users[milestone.userId] && members ? (
-                    <ProductUserPictureWidget user={users[milestone.userId]} members={members} class='icon medium round'/>
-                ) : (
-                    <img src={LoadIcon} className='icon medium pad animation spin'/>
-                )}
+                <ProductUserPictureWidget userId={milestone.userId} productId={productId} class='icon medium round'/>
             </NavLink>
         ) },
         { label: 'Label', class: 'left fill', content: milestone => (
