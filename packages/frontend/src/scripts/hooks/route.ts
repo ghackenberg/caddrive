@@ -46,14 +46,19 @@ function useEntity<T extends { id: string }>(id: string, cache: () => T, get: ()
     return value
 }
 
-function useEntities<T extends { id: string }>(cache: () => T[], get: () => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+function useEntities<T extends { id: string, created: number }>(cache: () => T[], get: () => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+
+    function compare(a: T, b: T) {
+        return a.created - b.created
+    }
+
     const initialValue = cache()
 
-    const [values, setValues] = React.useState(initialValue)
+    const [values, setValues] = React.useState(initialValue && initialValue.sort(compare))
 
     React.useEffect(() => {
         let exec = true
-        !values && get().then(values => exec && setValues(values))
+        !values && get().then(values => exec && setValues(values.sort(compare)))
         return () => { exec = false }
     })
 
@@ -61,17 +66,17 @@ function useEntities<T extends { id: string }>(cache: () => T[], get: () => Prom
         return api.register({
             create(e) {
                 if (values) {
-                    setValues([...values.filter(other => other.id != e.id), e])
+                    setValues([...values.filter(other => other.id != e.id).sort(compare), e])
                 }
             },
             update(e) {
                 if (values) {
-                    setValues(values.map(other => other.id == e.id ? e : other))
+                    setValues(values.map(other => other.id == e.id ? e : other).sort(compare))
                 }
             },
             delete(e) {
                 if (values) {
-                    setValues(values.filter(other => other.id != e.id))
+                    setValues(values.filter(other => other.id != e.id).sort(compare))
                 }
             }
         })
@@ -80,14 +85,19 @@ function useEntities<T extends { id: string }>(cache: () => T[], get: () => Prom
     return values
 }
 
-function useChildEntities<T extends { id: string }>(parentId: string, include: (e: T) => boolean, cache: () => T[], get: () => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+function useChildEntities<T extends { id: string, created: number }>(parentId: string, include: (e: T) => boolean, cache: () => T[], get: () => Promise<T[]>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+
+    function compare(a: T, b: T) {
+        return a.created - b.created
+    }
+
     const initialValue = parentId && parentId != 'new' && cache()
 
-    const [values, setValues] = React.useState(initialValue)
+    const [values, setValues] = React.useState(initialValue && initialValue.sort(compare))
 
     React.useEffect(() => {
         let exec = true
-        parentId && parentId != 'new' && !values && get().then(values => exec && setValues(values))
+        parentId && parentId != 'new' && !values && get().then(values => exec && setValues(values.sort(compare)))
         return () => { exec = false }
     }, [parentId])
 
@@ -96,24 +106,24 @@ function useChildEntities<T extends { id: string }>(parentId: string, include: (
             create(e) {
                 if (values) {
                     if (include(e)) {
-                        setValues([...values.filter(other => other.id != e.id), e])
+                        setValues([...values.filter(other => other.id != e.id), e].sort(compare))
                     } else {
-                        setValues(values.filter(other => other.id != e.id))
+                        setValues(values.filter(other => other.id != e.id).sort(compare))
                     }
                 }
             },
             update(e) {
                 if (values) {
                     if (include(e)) {
-                        setValues([...values.filter(other => other.id != e.id), e])
+                        setValues([...values.filter(other => other.id != e.id), e].sort(compare))
                     } else {
-                        setValues(values.filter(other => other.id != e.id))
+                        setValues(values.filter(other => other.id != e.id).sort(compare))
                     }
                 }
             },
             delete(e) {
                 if (values) {
-                    setValues(values.filter(other => other.id != e.id))
+                    setValues(values.filter(other => other.id != e.id).sort(compare))
                 }
             }
         })
@@ -165,11 +175,17 @@ export function useIssue(issueId: string) {
 // COMMENTS
 
 export function useIssuesComments(productId: string, milestoneId?: string) {
+
+    function compare(a: Comment, b: Comment) {
+        return a.created - b.created
+    }
+
     const issues = useIssues(productId, milestoneId)
 
     const initialComments: {[issueId: string]: Comment[]} = {}
     for (const issue of issues || []) {
-        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
+        const value = CommentManager.findCommentsFromCache(issue.id)
+        initialComments[issue.id] = value && value.sort(compare)
     }
 
     const [comments, setComments] = React.useState(initialComments)
@@ -181,7 +197,7 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
                 if (exec) {
                     const newComments: {[issueId: string]: Comment[]} = {}
                     issues.forEach((issue, index) => {
-                        newComments[issue.id] = comments[index]
+                        newComments[issue.id] = comments[index].sort(compare)
                     })
                     setComments(newComments)
                 }
@@ -197,9 +213,9 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
                     const newComments: {[issueId: string]: Comment[]} = {}
                     for (const issue of issues) {
                         if (issue.id == comment.issueId) {
-                            newComments[issue.id] = [...comments[issue.id].filter(other => other.id != comment.id), comment]
+                            newComments[issue.id] = [...comments[issue.id].filter(other => other.id != comment.id), comment].sort(compare)
                         } else {
-                            newComments[issue.id] = [...comments[issue.id]]
+                            newComments[issue.id] = [...comments[issue.id]].sort(compare)
                         }
                     }
                     setComments(newComments)
@@ -210,9 +226,9 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
                     const newComments: {[issueId: string]: Comment[]} = {}
                     for (const issue of issues) {
                         if (issue.id == comment.issueId) {
-                            newComments[issue.id] = comments[issue.id].map(other => other.id == comment.id ? comment : other)
+                            newComments[issue.id] = comments[issue.id].map(other => other.id == comment.id ? comment : other).sort(compare)
                         } else {
-                            newComments[issue.id] = [...comments[issue.id]]
+                            newComments[issue.id] = [...comments[issue.id]].sort(compare)
                         }
                     }
                     setComments(newComments)
@@ -223,9 +239,9 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
                     const newComments: {[issueId: string]: Comment[]} = {}
                     for (const issue of issues) {
                         if (issue.id == comment.issueId) {
-                            newComments[issue.id] = comments[issue.id].filter(other => other.id != comment.id)
+                            newComments[issue.id] = comments[issue.id].filter(other => other.id != comment.id).sort(compare)
                         } else {
-                            newComments[issue.id] = [...comments[issue.id]]
+                            newComments[issue.id] = [...comments[issue.id]].sort(compare)
                         }
                     }
                     setComments(newComments)
