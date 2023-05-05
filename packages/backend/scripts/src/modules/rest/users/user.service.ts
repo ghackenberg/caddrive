@@ -42,14 +42,14 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
                     throw new Error()
                 }
             } catch (error) {
-                result.push(convertUser(user, this.request.user.id == user.id))
+                result.push(convertUser(user, this.request.user && this.request.user.id == user.id))
             }
         return result
     }
 
     async getUser(id: string): Promise<User> {
         const user = await Database.get().userRepository.findOneByOrFail({ id })
-        return convertUser(user, this.request.user.id == id)
+        return convertUser(user, this.request.user && this.request.user.id == id)
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
@@ -63,7 +63,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         }
         await Database.get().userRepository.save(user)
         await this.client.emit(`/api/v1/users/${user.id}/update`, convertUser(user, false))
-        return convertUser(user, this.request.user.id == id)
+        return convertUser(user, this.request.user && this.request.user.id == id)
     }
 
     async deleteUser(id: string): Promise<User> {
@@ -72,6 +72,6 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         user.deleted = Date.now()
         await Database.get().userRepository.save(user)
         await this.client.emit(`/api/v1/users/${user.id}/delete`, convertUser(user, false))
-        return convertUser(user, this.request.user.id == id)
+        return convertUser(user, this.request.user && this.request.user.id == id)
     }
 }
