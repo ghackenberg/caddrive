@@ -147,34 +147,22 @@ export function useVersion(versionId: string) {
 
 // ISSUES
 
-export function useProductIssues() {
-    const { productId } = useParams<{ productId: string }>()
-
-    const issues = useChildEntities(productId, issue => issue.productId, () => IssueManager.findIssuesFromCache(productId), () => IssueManager.findIssues(productId), IssueAPI)
-
-    return { productId, issues }
+export function useProductIssues(productId: string) {
+    return useChildEntities(productId, issue => issue.productId, () => IssueManager.findIssuesFromCache(productId), () => IssueManager.findIssues(productId), IssueAPI)
 }
 
-export function useMilestoneIssues() {
-    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
-
-    const issues = useChildEntities(milestoneId, issue => issue.milestoneId, () => IssueManager.findIssuesFromCache(productId, milestoneId), () => IssueManager.findIssues(productId, milestoneId), IssueAPI)
-
-    return { productId, milestoneId, issues }
+export function useMilestoneIssues(productId: string, milestoneId: string) {
+    return useChildEntities(milestoneId, issue => issue.milestoneId, () => IssueManager.findIssuesFromCache(productId, milestoneId), () => IssueManager.findIssues(productId, milestoneId), IssueAPI)
 }
 
-export function useIssue() {
-    const { issueId } = useParams<{ issueId: string }>()
-
-    const issue = useEntity(issueId, () => IssueManager.getIssueFromCache(issueId), () => IssueManager.getIssue(issueId), IssueAPI)
-
-    return { issueId, issue }
+export function useIssue(issueId: string) {
+    return useEntity(issueId, () => IssueManager.getIssueFromCache(issueId), () => IssueManager.getIssue(issueId), IssueAPI)
 }
 
 // COMMENTS
 
-export function useMilestoneIssueComments() {
-    const { milestoneId, issues } = useMilestoneIssues()
+export function useMilestoneIssueComments(productId: string, milestoneId: string) {
+    const issues = useMilestoneIssues(productId, milestoneId)
 
     const initialComments: {[issueId: string]: Comment[]} = {}
     for (const issue of issues || []) {
@@ -246,8 +234,8 @@ export function useMilestoneIssueComments() {
     return { milestoneId, comments }
 }
 
-export function useProductIssueComments() {
-    const { productId, issues } = useProductIssues()
+export function useProductIssueComments(productId: string) {
+    const issues = useProductIssues(productId)
 
     const initialComments: {[issueId: string]: Comment[]} = {}
     for (const issue of issues || []) {

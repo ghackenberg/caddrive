@@ -35,8 +35,8 @@ export const ProductIssueView = () => {
 
     const product = useProduct(productId)
     const { members } = useMembers(productId)
-    const { issues } = useProductIssues()
-    const { comments } = useProductIssueComments()
+    const issues = useProductIssues(productId)
+    const { comments } = useProductIssueComments(productId)
 
     // INITIAL STATES
 

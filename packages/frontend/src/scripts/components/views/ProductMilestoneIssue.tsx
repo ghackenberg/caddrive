@@ -33,15 +33,15 @@ export const ProductMilestoneIssueView = () => {
 
     // PARAMS
 
-    const { productId } = useParams<{ productId: string }>()
+    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
 
     // HOOKS
 
     const product = useProduct(productId)
     const { members } = useMembers(productId)
-    const { milestoneId, milestone } = useMilestone()
-    const { issues } = useMilestoneIssues()
-    const { comments } = useMilestoneIssueComments()
+    const { milestone } = useMilestone()
+    const issues = useMilestoneIssues(productId, milestoneId)
+    const { comments } = useMilestoneIssueComments(productId, milestoneId)
 
     // INITIAL STATES
 

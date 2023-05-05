@@ -38,13 +38,13 @@ export const ProductIssueCommentView = () => {
 
     // PARAMS
 
-    const { productId } = useParams<{ productId: string }>()
+    const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
 
     // HOOKS
 
     const product = useProduct(productId)
     const { members } = useMembers(productId)
-    const { issueId, issue } = useIssue()
+    const issue = useIssue(issueId)
     const { comments } = useIssueComments()
 
     // INITIAL STATES
