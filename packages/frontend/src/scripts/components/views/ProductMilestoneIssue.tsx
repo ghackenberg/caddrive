@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent, useContext } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { Issue } from 'productboard-common'
@@ -31,9 +31,13 @@ export const ProductMilestoneIssueView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
     const { milestoneId, milestone } = useMilestone()
     const { issues } = useMilestoneIssues()

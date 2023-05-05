@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 
 import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
@@ -44,9 +44,13 @@ export const ProductVersionSettingView = () => {
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
     const { versions } = useProductVersions()
     const { versionId, version } = useVersion()

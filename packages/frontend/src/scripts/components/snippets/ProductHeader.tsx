@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useParams } from 'react-router-dom'
 
 import { useAsyncHistory } from '../../hooks/history'
 import { useProduct } from '../../hooks/route'
@@ -17,9 +17,13 @@ export const ProductHeader = () => {
     const { pathname } = useLocation()
     const { goBack, replace } = useAsyncHistory()
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
 
     // FUNCTIONS
 

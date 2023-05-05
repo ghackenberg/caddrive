@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
@@ -24,9 +24,13 @@ export const ProductSettingView = () => {
 
     const { contextUser } = React.useContext(UserContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
 
     // INITIAL STATES

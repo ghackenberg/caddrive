@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, ReactElement } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { Object3D } from 'three'
@@ -36,9 +36,13 @@ export const ProductIssueCommentView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
     const { issueId, issue } = useIssue()
     const { comments } = useIssueComments()

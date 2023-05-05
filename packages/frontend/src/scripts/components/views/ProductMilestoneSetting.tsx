@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 
 import { calculateActual } from '../../functions/burndown'
 import { useAsyncHistory } from '../../hooks/history'
@@ -21,9 +21,13 @@ export const ProductMilestoneSettingView = () => {
     
     const { goBack, replace } = useAsyncHistory()
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { milestoneId, milestone } = useMilestone()
     const { issues } = useMilestoneIssues()
     const { comments } = useMilestoneIssueComments()

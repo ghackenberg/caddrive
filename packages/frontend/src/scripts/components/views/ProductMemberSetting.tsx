@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 
 import { MemberRole, User } from 'productboard-common'
 
@@ -32,9 +32,13 @@ export const ProductMemberSettingView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
     const { memberId, member } = useMember()
 

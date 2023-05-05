@@ -118,31 +118,21 @@ function useChildEntities<T extends { id: string }>(parentId: string, parent: (e
 // USERS
 
 export function useUsers() {
-    const users = useEntities(() => UserManager.findUsersFromCache(), () => UserManager.findUsers(), UserAPI)
-
-    return { users }
+    return useEntities(() => UserManager.findUsersFromCache(), () => UserManager.findUsers(), UserAPI)
 }
 
 export function useUser(userId: string) {
-    const user = useEntity(userId, () => UserManager.getUserFromCache(userId), () => UserManager.getUser(userId), UserAPI)
-
-    return user
+    return useEntity(userId, () => UserManager.getUserFromCache(userId), () => UserManager.getUser(userId), UserAPI)
 }
 
 // PRODUCTS
 
 export function useProducts() {
-    const products = useEntities(() => ProductManager.findProductsFromCache(), () => ProductManager.findProducts(), ProductAPI)
-
-    return { products }
+    return useEntities(() => ProductManager.findProductsFromCache(), () => ProductManager.findProducts(), ProductAPI)
 }
 
-export function useProduct() {
-    const { productId } = useParams<{ productId: string }>()
-
-    const product = useEntity(productId, () => ProductManager.getProductFromCache(productId), () => ProductManager.getProduct(productId), ProductAPI)
-    
-    return { productId, product }
+export function useProduct(productId: string) {
+    return useEntity(productId, () => ProductManager.getProductFromCache(productId), () => ProductManager.getProduct(productId), ProductAPI)
 }
 
 // VERSIONS

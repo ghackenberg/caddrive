@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, Fragment } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { Version } from 'productboard-common'
@@ -28,9 +28,13 @@ export const ProductVersionView = () => {
     const { contextUser } = useContext(UserContext)
     const { contextVersion, setContextVersion } = useContext(VersionContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
     const { versions } = useProductVersions()
 

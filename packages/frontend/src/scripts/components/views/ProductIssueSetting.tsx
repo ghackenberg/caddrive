@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 
 import { Object3D } from 'three'
 
@@ -38,9 +38,13 @@ export const ProductIssueSettingView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
     const { milestones } = useProductMilestones()
     const { issueId, issue } = useIssue()

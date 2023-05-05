@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useContext } from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { Member } from 'productboard-common'
@@ -26,9 +26,13 @@ export const ProductMemberView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // PARAMS
+
+    const { productId } = useParams<{ productId: string }>()
+
     // HOOKS
 
-    const { productId, product } = useProduct()
+    const product = useProduct(productId)
     const { members } = useMembers(productId)
     
     // STATES

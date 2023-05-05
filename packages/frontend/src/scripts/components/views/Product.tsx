@@ -30,7 +30,7 @@ export const ProductView = () => {
 
     // HOOKS
 
-    const { products } = useProducts()
+    const products = useProducts()
 
     // INITIAL STATES
     
