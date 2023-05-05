@@ -9,6 +9,7 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthNameView = () => {
+
     const { push } = useAsyncHistory()
 
     // CONTEXTS
@@ -42,31 +43,29 @@ export const AuthNameView = () => {
 
     return (
         authContextUser ? (
-            <>
-                <main className='view auth name'>
+            <main className='view auth name'>
+                <div>
                     <div>
                         <div>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Step 4: <span>Profile name</span></h1>
+                            <p>
+                                How do you want to be called on our platform?
+                                Note that your profile name will be visible to other users.
+                            </p>
                             <div>
-                                <img src={AuthIcon}/>
-                                <h5>Authentication process</h5>
-                                <h1>Step 4: <span>Profile name</span></h1>
-                                <p>
-                                    How do you want to be called on our platform?
-                                    Note that your profile name will be visible to other users.
-                                </p>
-                                <div>
-                                    <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setName(event.currentTarget.value)}/>
-                                    <button className='button fill blue' onClick={handleSubmit}>
-                                        {load ? 'Loading ...' : 'Next'}
-                                    </button>
-                                </div>
-                                {error && <p style={{color: 'red'}}>{error}</p>}
+                                <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setName(event.currentTarget.value)}/>
+                                <button className='button fill blue' onClick={handleSubmit}>
+                                    {load ? 'Loading ...' : 'Next'}
+                                </button>
                             </div>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
-                        <LegalFooter/>
                     </div>
-                </main>
-            </>
+                    <LegalFooter/>
+                </div>
+            </main>
         ) : (
             <Redirect to="/auth"/>
         )

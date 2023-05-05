@@ -71,16 +71,14 @@ export const UserView = () => {
 
     return (
         users ? (
-            <>
-                <main className="view user">
+            <main className="view user">
+                <div>
                     <div>
-                        <div>
-                            <Table columns={columns} items={users}/>
-                        </div>
-                        <LegalFooter/>
+                        <Table columns={columns} items={users}/>
                     </div>
-                </main>
-            </>
+                    <LegalFooter/>
+                </div>
+            </main>
         ) : (
             <LoadingView/>
         )

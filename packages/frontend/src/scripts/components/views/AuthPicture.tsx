@@ -9,6 +9,7 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthPictureView = () => {
+
     const { push } = useAsyncHistory()
 
     // REFS
@@ -56,32 +57,30 @@ export const AuthPictureView = () => {
 
     return (
         authContextUser ? (
-            <>
-                <main className='view auth picture'>
+            <main className='view auth picture'>
+                <div>
                     <div>
                         <div>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Step 5: <span>Profile picture</span></h1>
+                            <p>
+                                Do you also want to upload a profile picture?
+                                Profile pictures make collaboration more personal and more fun!
+                            </p>
                             <div>
-                                <img src={AuthIcon}/>
-                                <h5>Authentication process</h5>
-                                <h1>Step 5: <span>Profile picture</span></h1>
-                                <p>
-                                    Do you also want to upload a profile picture?
-                                    Profile pictures make collaboration more personal and more fun!
-                                </p>
-                                <div>
-                                    <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
-                                    <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
-                                    <button className='button fill blue' onClick={handleUpload}>
-                                        {load ? 'Loading ...' : 'Upload'}
-                                    </button>
-                                </div>
-                                {error && <p style={{color: 'red'}}>{error}</p>}
+                                <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
+                                <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
+                                <button className='button fill blue' onClick={handleUpload}>
+                                    {load ? 'Loading ...' : 'Upload'}
+                                </button>
                             </div>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
-                        <LegalFooter/>
                     </div>
-                </main>
-            </>
+                    <LegalFooter/>
+                </div>
+            </main>
         ) : (
             <Redirect to="/auth"/>
         )

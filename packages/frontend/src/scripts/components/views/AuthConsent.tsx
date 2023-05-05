@@ -47,33 +47,31 @@ export const AuthConsentView = () => {
 
     return (
         authContextUser ? (
-            <>
-                <main className='view auth consent'>
+            <main className='view auth consent'>
+                <div>
                     <div>
                         <div>
+                            <img src={AuthIcon}/>
+                            <h5>Authentication process</h5>
+                            <h1>Step 3: <span>User agreement</span></h1>
+                            <p>
+                                Please read carefully our <NavLink to='/legal/terms'>terms of use</NavLink> and <NavLink to='/legal/policy'>privacy policy</NavLink>.
+                                Then <strong>agree</strong> or <strong>cancel</strong> the authentication process.
+                            </p>
                             <div>
-                                <img src={AuthIcon}/>
-                                <h5>Authentication process</h5>
-                                <h1>Step 3: <span>User agreement</span></h1>
-                                <p>
-                                    Please read carefully our <NavLink to='/legal/terms'>terms of use</NavLink> and <NavLink to='/legal/policy'>privacy policy</NavLink>.
-                                    Then <strong>agree</strong> or <strong>cancel</strong> the authentication process.
-                                </p>
-                                <div>
-                                    <button className='button fill lightgray' onClick={handleCancel}>
-                                        Cancel
-                                    </button>
-                                    <button className='button fill blue' onClick={handleAgree}>
-                                        {load ? 'Loading ...' : 'Agree'}
-                                    </button>
-                                </div>
-                                {error && <p style={{color: 'red'}}>{error}</p>}
+                                <button className='button fill lightgray' onClick={handleCancel}>
+                                    Cancel
+                                </button>
+                                <button className='button fill blue' onClick={handleAgree}>
+                                    {load ? 'Loading ...' : 'Agree'}
+                                </button>
                             </div>
+                            {error && <p style={{color: 'red'}}>{error}</p>}
                         </div>
-                        <LegalFooter/>
                     </div>
-                </main>
-            </>
+                    <LegalFooter/>
+                </div>
+            </main>
         ) : (
             <Redirect to="/auth"/>
         )

@@ -4,18 +4,16 @@ import { LegalFooter } from '../snippets/LegalFooter'
 
 export const LegalTermsView = () => {
     return (
-        <>
-            <main className="view legal terms">
+        <main className="view legal terms">
+            <div>
                 <div>
-                    <div>
-                        <h1>Terms</h1>
-                        <p>
-                            Coming soon...
-                        </p>
-                    </div>
-                    <LegalFooter replace={true}/>
+                    <h1>Terms</h1>
+                    <p>
+                        Coming soon...
+                    </p>
                 </div>
-            </main>
-        </>
+                <LegalFooter replace={true}/>
+            </div>
+        </main>
     )
 }
