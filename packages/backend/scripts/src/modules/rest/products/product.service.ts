@@ -32,7 +32,6 @@ export class ProductService implements ProductREST {
         const result: Product[] = []
         for (const product of await Database.get().productRepository.find({ where }))
             result.push(convertProduct(product))
-        console.log(result)
         return result
     }
     
