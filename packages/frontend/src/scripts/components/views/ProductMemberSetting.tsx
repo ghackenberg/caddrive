@@ -1,15 +1,15 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 
-import { Member, MemberRole, Product, User } from 'productboard-common'
+import { MemberRole, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
+import { useRouteMember, useRouteMembers, useRouteProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -28,30 +28,26 @@ export const ProductMemberSettingView = () => {
     
     const { goBack } = useAsyncHistory()
 
-    // PARAMS
-
-    const { productId, memberId } = useParams<{ productId: string, memberId: string }>()
-
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // HOOKS
+
+    const { productId, product } = useRouteProduct()
+    const { members } = useRouteMembers()
+    const { memberId, member } = useRouteMember()
+
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
-    const initialMember = memberId == 'new' ? undefined : MemberManager.getMemberFromCache(memberId)
-    const initialUser = initialMember ? UserManager.getUserFromCache(initialMember.userId) : undefined
-    const initialRole = initialMember ? initialMember.role : 'customer'
+    const initialUser = member ? UserManager.getUserFromCache(member.userId) : undefined
+    const initialRole = member ? member.role : 'customer'
 
     // STATES
     
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
     const [users, setUsers] = useState<User[]>()
     const [user, setUser] = useState<User>(initialUser)
-    const [member, setMember] = useState<Member>(initialMember)
     // - Computations
     const [names, setNames] = useState<React.ReactNode[]>()
     // - Values
@@ -65,24 +61,9 @@ export const ProductMemberSettingView = () => {
     // - Entities
     useEffect(() => {
         let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
         UserManager.findUsers(query, productId).then(users => exec && setUsers(users))
         return () => { exec = false }
     }, [productId, query])
-    useEffect(() => {
-        let exec = true
-        memberId != 'new' && MemberManager.getMember(memberId).then(member => exec && setMember(member))
-        return () => { exec = false }
-    }, [memberId])
     useEffect(() => {
         let exec = true
         member && UserManager.getUser(member.userId).then(user => exec && setUser(user))

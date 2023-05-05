@@ -1,13 +1,13 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Member, Product, User } from 'productboard-common'
+import { Member, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useRouteMembers, useRouteProduct } from '../../hooks/route'
 import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -23,20 +23,19 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductMemberView = () => {
 
-    // PARAMS
-
-    const { productId } = useParams<{ productId: string }>()
-
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // HOOKS
+
+    const { productId, product } = useRouteProduct()
+    const { members } = useRouteMembers()
+
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialUsers : {[id: string]: User} = {}
-    for (const member of initialMembers || []) {
+    for (const member of members || []) {
         const user = UserManager.getUserFromCache(member.userId)
         if (user) {
             initialUsers[member.id] = user
@@ -46,8 +45,6 @@ export const ProductMemberView = () => {
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Interactions
     const [active, setActive] = useState<string>('left')
@@ -55,17 +52,6 @@ export const ProductMemberView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-
     useEffect(() => {
         let exec = true
         if (members) {
@@ -88,7 +74,6 @@ export const ProductMemberView = () => {
         // TODO handle unmount!
         if (confirm('Do you really want to delete this member?')) {
             await MemberManager.deleteMember(member.id)
-            setMembers(members.filter(other => other.id != member.id))  
         }
     }
 
