@@ -8,6 +8,7 @@ import { FindOptionsWhere } from 'typeorm'
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 import { Database, ProductEntity } from 'productboard-database'
 
+import { convertMember, convertProduct } from '../../../functions/convert'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -27,33 +28,29 @@ export class ProductService implements ProductREST {
             where = { public: true, deleted: null }
         const result: Product[] = []
         for (const product of await Database.get().productRepository.find({ where }))
-            result.push(this.convert(product))
+            result.push(convertProduct(product))
         return result
     }
     
     async addProduct(data: ProductAddData) {
         // Create product
-        const id = shortid()
+        const productId = shortid()
         const created = Date.now()
         const userId = this.request.user.id
-        const product = await Database.get().productRepository.save({ id, created, userId, ...data })
-        await this.client.emit(`/api/v1/products/${product.id}/create`, this.convert(product))
+        const product = await Database.get().productRepository.save({ id: productId, created, userId, ...data })
+        await this.client.emit(`/api/v1/products/${product.id}/create`, convertProduct(product))
         // Create member
-        {
-            const id = shortid()
-            const productId = product.id
-            const userId = this.request.user.id
-            const role = 'manager'
-            /*const member = */await Database.get().memberRepository.save({ id, created, productId, userId, role })
-            // TODO await this.client.emit(`/api/v1/members/${member.id}/create`, this.convert(member))
-        }
+        const memberId = shortid()
+        const role = 'manager'
+        const member = await Database.get().memberRepository.save({ id: memberId, created, productId, userId, role })
+        await this.client.emit(`/api/v1/members/${member.id}/create`, convertMember(member))
         // Return product
-        return this.convert(product)
+        return convertProduct(product)
     }
 
     async getProduct(id: string): Promise<Product> {
         const product = await Database.get().productRepository.findOneByOrFail({ id })
-        return this.convert(product)
+        return convertProduct(product)
     }
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
@@ -63,8 +60,8 @@ export class ProductService implements ProductREST {
         product.description = data.description
         product.public = data.public
         await Database.get().productRepository.save(product)
-        await this.client.emit(`/api/v1/products/${product.id}/update`, this.convert(product))
-        return this.convert(product)
+        await this.client.emit(`/api/v1/products/${product.id}/update`, convertProduct(product))
+        return convertProduct(product)
     }
 
     async deleteProduct(id: string): Promise<Product> {
@@ -75,11 +72,7 @@ export class ProductService implements ProductREST {
         await Database.get().issueRepository.update({ productId: product.id }, { deleted: Date.now() })
         product.deleted = Date.now()
         await Database.get().productRepository.save(product)
-        await this.client.emit(`/api/v1/products/${product.id}/delete`, this.convert(product))
-        return this.convert(product)
-    }
-
-    private convert(product: ProductEntity) {
-        return { id: product.id, created: product.created, updated: product.updated, deleted: product.deleted, userId: product.userId, name: product.name, description: product.description, public: product.public }
+        await this.client.emit(`/api/v1/products/${product.id}/delete`, convertProduct(product))
+        return convertProduct(product)
     }
 }

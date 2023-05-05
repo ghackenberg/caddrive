@@ -1,15 +1,14 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Comment, Issue, Member, Product, User } from 'productboard-common'
+import { Comment, Issue, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useRouteIssues, useRouteMembers, useRouteProduct } from '../../hooks/route'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
@@ -27,25 +26,24 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductIssueView = () => {
 
-    // PARAMS
-
-    const { productId } = useParams<{ productId: string }>()
-
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // HOOKS
+
+    const { productId, product } = useRouteProduct()
+    const { members } = useRouteMembers()
+    const { issues } = useRouteIssues()
+
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialIssues = productId == 'new' ? undefined : IssueManager.findIssuesFromCache(productId)
     const initialComments: {[id: string]: Comment[]} = {}
-    for (const issue of initialIssues || []) {
+    for (const issue of issues || []) {
         initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
     } 
     const initialUsers: {[id: string]: User} = {}
-    for (const issue of initialIssues || []) {
+    for (const issue of issues || []) {
         const user = UserManager.getUserFromCache(issue.userId)
         if (user) {
             initialUsers[user.id] = user
@@ -57,18 +55,15 @@ export const ProductIssueView = () => {
             }
         }
     } 
-    const initialIssueParts = collectIssueParts(initialIssues)
+    const initialIssueParts = collectIssueParts(issues)
     const initialCommentParts = collectCommentParts(initialComments)
-    const initialPartsCount = countParts(initialIssues, initialComments, initialIssueParts, initialCommentParts)
-    const initialOpenIssueCount = initialIssues ? initialIssues.filter(issue => issue.state == 'open').length : undefined
-    const initialClosedIssueCount = initialIssues ? initialIssues.filter(issue => issue.state == 'closed').length : undefined
+    const initialPartsCount = countParts(issues, initialComments, initialIssueParts, initialCommentParts)
+    const initialOpenIssueCount = issues ? issues.filter(issue => issue.state == 'open').length : undefined
+    const initialClosedIssueCount = issues ? issues.filter(issue => issue.state == 'closed').length : undefined
 
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct) 
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [issues, setIssues] = useState<Issue[]>(initialIssues)
     const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     // - Computations
@@ -86,22 +81,6 @@ export const ProductIssueView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        IssueManager.findIssues(productId).then(issues => exec && setIssues(issues))
-        return () => { exec = false}
-    }, [productId, state])
-
     useEffect(() => {
         let exec = true
         if (issues) {
@@ -210,8 +189,7 @@ export const ProductIssueView = () => {
     async function deleteIssue(issue: Issue) {
         // TODO handle unmount!
         if (confirm('Do you really want to delete this issue?')) {
-            await IssueManager.deleteIssue(issue.id)
-            setIssues(issues.filter(other => other.id != issue.id))       
+            await IssueManager.deleteIssue(issue.id)    
         }
     }
     

@@ -12,6 +12,7 @@ import { FindOptionsWhere } from 'typeorm'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 import { Database, VersionEntity } from 'productboard-database'
 
+import { convertVersion } from '../../../functions/convert'
 import { renderGlb, renderLDraw } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
@@ -34,7 +35,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
             where = { productId, deleted: null }
         const result: Version[] = []
         for (const version of await Database.get().versionRepository.findBy(where))
-            result.push(this.convert(version))
+            result.push(convertVersion(version))
         return result
     }
  
@@ -45,13 +46,13 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const modelType = await this.processModel(id, null, files)
         const imageType = await this.processImage(id, null, files)
         const version = await Database.get().versionRepository.save({ id, created, userId, modelType, imageType, ...data })
-        await this.client.emit(`/api/v1/versions/${version.id}/create`, this.convert(version))
-        return this.convert(version)
+        await this.client.emit(`/api/v1/versions/${version.id}/create`, convertVersion(version))
+        return convertVersion(version)
     }
 
     async getVersion(id: string): Promise<Version> {
         const version = await Database.get().versionRepository.findOneByOrFail({ id })
-        return this.convert(version)
+        return convertVersion(version)
     }
 
     async updateVersion(id: string, data: VersionUpdateData, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
@@ -64,20 +65,16 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.modelType = await this.processModel(id, version.modelType, files)
         version.imageType = await this.processImage(id, version.imageType, files)
         await Database.get().versionRepository.save(version)
-        await this.client.emit(`/api/v1/versions/${version.id}/update`, this.convert(version))
-        return this.convert(version)
+        await this.client.emit(`/api/v1/versions/${version.id}/update`, convertVersion(version))
+        return convertVersion(version)
     }
 
     async deleteVersion(id: string): Promise<Version> {
         const version = await Database.get().versionRepository.findOneByOrFail({ id })
         version.deleted = Date.now()
         await Database.get().versionRepository.save(version)
-        await this.client.emit(`/api/v1/versions/${version.id}/delete`, this.convert(version))
-        return this.convert(version)
-    }
-
-    private convert(version: VersionEntity) {
-        return { id: version.id, created: version.created, updated: version.updated, deleted: version.deleted, userId: version.userId, productId: version.productId, baseVersionIds: version.baseVersionIds, major:version.major, minor: version.minor, patch: version.patch, description: version.description, modelType: version.modelType, imageType: version.imageType }
+        await this.client.emit(`/api/v1/versions/${version.id}/delete`, convertVersion(version))
+        return convertVersion(version)
     }
 
     private async processModel(id: string, modelType: 'glb' | 'ldr' | 'mpd', files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
@@ -157,6 +154,6 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.updated = Date.now()
         version.imageType = 'png'
         await Database.get().versionRepository.save(version)
-        await this.client.emit(`/api/v1/versions/${version.id}/update`, this.convert(version))
+        await this.client.emit(`/api/v1/versions/${version.id}/update`, convertVersion(version))
     }
 }

@@ -7,6 +7,8 @@ import { FindOptionsWhere } from 'typeorm'
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 import { Database, MemberEntity } from 'productboard-database'
 
+import { convertMember } from '../../../functions/convert'
+
 @Injectable()
 export class MemberService implements MemberREST {
     constructor(
@@ -22,7 +24,7 @@ export class MemberService implements MemberREST {
             where = { productId, deleted: null }
         const result: Member[] = []
         for (const member of await Database.get().memberRepository.findBy(where))
-            result.push(this.convert(member))
+            result.push(convertMember(member))
         return result
     }
 
@@ -32,13 +34,13 @@ export class MemberService implements MemberREST {
         const id = shortid()
         const created = Date.now()
         const member = await Database.get().memberRepository.save({ id, created, product, user, ...data })
-        await this.client.emit(`/api/v1/members/${member.id}/create`, this.convert(member))
-        return this.convert(member)
+        await this.client.emit(`/api/v1/members/${member.id}/create`, convertMember(member))
+        return convertMember(member)
     }
 
     async getMember(id: string): Promise<Member> {
        const member = await Database.get().memberRepository.findOneByOrFail({ id })
-        return this.convert(member)
+        return convertMember(member)
     }
 
     async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
@@ -46,19 +48,15 @@ export class MemberService implements MemberREST {
         member.updated = Date.now()
         member.role = data.role
         await Database.get().memberRepository.save(member)
-        await this.client.emit(`/api/v1/members/${member.id}/update`, this.convert(member))
-        return this.convert(member)
+        await this.client.emit(`/api/v1/members/${member.id}/update`, convertMember(member))
+        return convertMember(member)
     }
     
     async deleteMember(id: string): Promise<Member> {
         const member = await Database.get().memberRepository.findOneByOrFail({ id })
         member.deleted = Date.now()
         await Database.get().memberRepository.save(member)
-        await this.client.emit(`/api/v1/members/${member.id}/delete`, this.convert(member))
-        return this.convert(member)
-    }
-
-    private convert(member: MemberEntity) {
-        return { id: member.id, created: member.created, updated: member.updated, deleted: member.deleted, productId: member.productId, userId: member.userId, role: member.role }
+        await this.client.emit(`/api/v1/members/${member.id}/delete`, convertMember(member))
+        return convertMember(member)
     }
 }

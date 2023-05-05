@@ -1,22 +1,20 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 
 import { Object3D } from 'three'
 
-import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
+import { User, Member, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useAsyncHistory } from '../../hooks/history'
+import { useRouteIssue, useRouteMembers, useRouteMilestones, useRouteProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { UserManager } from '../../managers/user'
-import { ProductManager } from '../../managers/product'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
-import { MilestoneManager } from '../../managers/milestone'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -41,28 +39,27 @@ export const ProductIssueSettingView = () => {
 
     const { contextUser } = useContext(UserContext)
 
-    // PARAMS
+    // HOOKS
 
-    const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
+    const { productId, product } = useRouteProduct()
+    const { members } = useRouteMembers()
+    const { milestones } = useRouteMilestones()
+    const { issueId, issue } = useRouteIssue()
 
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
     const initialUsers: {[id: string]: User} = {}
-    for (const member of initialMembers || []) {
+    for (const member of members || []) {
         const user = UserManager.getUserFromCache(member.userId)
         if (user) {
             initialUsers[member.id] = user
         }
-    } 
-    const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
-    const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
+    }
 
-    const initialLabel = initialIssue ? initialIssue.label : ''
-    const initialText = initialIssue ? initialIssue.text : ''
-    const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (initialIssue && initialIssue.milestoneId)
-    const initialAssigneeIds = initialIssue ? initialIssue.assigneeIds : []
+    const initialLabel = issue ? issue.label : ''
+    const initialText = issue ? issue.text : ''
+    const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
+    const initialAssigneeIds = issue ? issue.assigneeIds : []
 
     const initialMarked: Part[] = []
     collectParts(initialText, initialMarked)
@@ -70,11 +67,7 @@ export const ProductIssueSettingView = () => {
     // STATES
     
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
-    const [issue, setIssue] = useState<Issue>(initialIssue)
-    const [milestones, setMilstones] = useState<Milestone[]>(initialMilestones)
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [text, setText] = useState<string>(initialText)
@@ -91,27 +84,6 @@ export const ProductIssueSettingView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MilestoneManager.findMilestones(productId).then(milestones => exec && setMilstones(milestones))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        issueId != 'new' && IssueManager.getIssue(issueId).then(issue => exec && setIssue(issue))
-        return () => { exec = false }
-    }, [issueId])
-
     useEffect(() => {
         let exec = true
         if (members) {

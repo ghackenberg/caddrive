@@ -1,19 +1,18 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, ReactElement } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
-import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
+import { User, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
+import { useRouteComments, useRouteIssue, useRouteMembers, useRouteProduct } from '../../hooks/route'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -40,22 +39,20 @@ export const ProductIssueCommentView = () => {
 
     const { contextUser } = useContext(UserContext)
 
-    // PARAMS
+    // HOOKS
 
-    const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
+    const { productId, product } = useRouteProduct()
+    const { members } = useRouteMembers()
+    const { issueId, issue } = useRouteIssue()
+    const { comments } = useRouteComments()
 
     // INITIAL STATES
-
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
-    const initialComments = issueId == 'new' ? undefined : CommentManager.findCommentsFromCache(issueId)
 
     const initialUsers: { [id: string]: User } = {}
     const user = UserManager.getUserFromCache(issueId)
     if (user) {
         initialUsers[user.id] = user
-        for (const comment of initialComments || []) {
+        for (const comment of comments || []) {
             const user = UserManager.getUserFromCache(comment.userId)
             if (user) {
                 initialUsers[user.id] = user
@@ -64,11 +61,11 @@ export const ProductIssueCommentView = () => {
     }
 
     const initialIssueParts: Part[] = []
-    const initialIssueHtml = initialIssue ? createProcessor(initialIssueParts, handleMouseOver, handleMouseOut, handleClick).processSync(initialIssue.text).result : undefined
+    const initialIssueHtml = issue ? createProcessor(initialIssueParts, handleMouseOver, handleMouseOut, handleClick).processSync(issue.text).result : undefined
 
     const initialCommentsParts: { [id: string]: Part[] } = {}
     const initialCommentsHtml: { [id: string]: ReactElement } = {}
-    for (const comment of initialComments || []) {
+    for (const comment of comments || []) {
         const parts: Part[] = []
         initialCommentsHtml[comment.id] = createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(comment.text).result
         initialCommentsParts[comment.id] = parts
@@ -80,8 +77,8 @@ export const ProductIssueCommentView = () => {
             initialHighlighted.push(part)
         }
     }
-    if (initialComments && initialCommentsParts) {
-        for (const comment of initialComments) {
+    if (comments && initialCommentsParts) {
+        for (const comment of comments) {
             if (comment.id in initialCommentsParts) {
                 for (const part of initialCommentsParts[comment.id]) {
                     initialHighlighted.push(part)
@@ -93,14 +90,12 @@ export const ProductIssueCommentView = () => {
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [issue, setIssue] = useState<Issue>(initialIssue)
-    const [comments, setComments] = useState<Comment[]>(initialComments)
     const [users, setUsers] = useState<{ [id: string]: User }>(initialUsers)
+
     // - Values
     const [text, setText] = useState<string>('')
     const [audio, setAudio] = useState<Blob>()
+
     // - Computations
     const [issueHtml, setIssueHtml] = useState<ReactElement>(initialIssueHtml)
     const [issueParts, setIssueParts] = useState<Part[]>(initialIssueParts)
@@ -117,27 +112,6 @@ export const ProductIssueCommentView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => {
-        let exec = true
-        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
-        return () => { exec = false }
-    }, [productId])
-    useEffect(() => {
-        let exec = true
-        IssueManager.getIssue(issueId).then(issue => exec && setIssue(issue))
-        return () => { exec = false }
-    }, [issueId])
-    useEffect(() => {
-        let exec = true
-        CommentManager.findComments(issueId).then(comments => exec && setComments(comments))
-        return () => { exec = false }
-    }, [issueId])
-
     useEffect(() => {
         let exec = true
         const userIds: string[] = []
@@ -280,8 +254,7 @@ export const ProductIssueCommentView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
-            setComments([...comments, comment])
+            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
             setText('')
         }
         if (audio) {
@@ -293,10 +266,8 @@ export const ProductIssueCommentView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
-            setComments([...comments, comment])
+            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
             setText('')
-            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed', assigneeIds: issue.assigneeIds }))
         }
     }
 
@@ -304,10 +275,9 @@ export const ProductIssueCommentView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
-            setComments([...comments, comment])
+            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
             setText('')
-            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds }))
+            await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds })
         }
     }
 
