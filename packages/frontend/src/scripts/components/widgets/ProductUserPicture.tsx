@@ -29,7 +29,7 @@ export const ProductUserPictureWidget = (props: { userId: string, productId: str
 
         return <img src={src} title={title} style={style} className={className}/>
     } else {
-        const className = props.class
+        const className = `${props.class} pad animation spin`
 
         const backgroundColor = props.background || 'lightgray'
 
