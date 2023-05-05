@@ -66,46 +66,72 @@ export const ProductMilestoneView = (props: RouteComponentProps<{product: string
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilestones) }, [props])
     useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MilestoneManager.findMilestones(productId).then(milestones => exec && setMilestones(milestones))
+        return () => { exec = false }
+    }, [props])
+
+    useEffect(() => {
+        let exec = true
         if (milestones) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'open'))).then(issueMilestones => {
-                const newMilestones = {...openIssues}
-                for (let index = 0; index < milestones.length; index++) {
-                    newMilestones[milestones[index].id] = issueMilestones[index]
+                if (exec) {
+                    const newMilestones = {...openIssues}
+                    for (let index = 0; index < milestones.length; index++) {
+                        newMilestones[milestones[index].id] = issueMilestones[index]
+                    }
+                    setOpenIssues(newMilestones)
                 }
-                setOpenIssues(newMilestones)
             })
         }
+        return () => { exec = false }
     }, [milestones])
     useEffect(() => {
+        let exec = true
         if (milestones) {
             Promise.all(milestones.map(milestone => IssueManager.findIssues(productId, milestone.id,'closed'))).then(issueMilestones => {
-                const newMilestones = {...closedIssues}
-                for (let index = 0; index < milestones.length; index++) {
-                    newMilestones[milestones[index].id] = issueMilestones[index]
+                if (exec) {
+                    const newMilestones = {...closedIssues}
+                    for (let index = 0; index < milestones.length; index++) {
+                        newMilestones[milestones[index].id] = issueMilestones[index]
+                    }
+                    setClosedIssues(newMilestones)
                 }
-                setClosedIssues(newMilestones)
             })
         }
+        return () => { exec = false }
     }, [milestones])
     useEffect(() => {
+        let exec = true
         if (milestones) {
             Promise.all(milestones.map(milestone => UserManager.getUser(milestone.userId))).then(milestoneUsers => {
-                const newUsers = {...users}
-                for (let index = 0; index < milestones.length; index++) {
-                    newUsers[milestones[index].userId] = milestoneUsers[index]
+                if (exec) {
+                    const newUsers = {...users}
+                    for (let index = 0; index < milestones.length; index++) {
+                        newUsers[milestones[index].userId] = milestoneUsers[index]
+                    }
+                    setUsers(newUsers)
                 }
-                setUsers(newUsers)
             })
         }
+        return () => { exec = false }
     }, [milestones])
    
     // FUNCTIONS
 
     async function deleteMilestone(milestone: Milestone) {
+        // TODO handle unmount!
         if (confirm('Do you really want to delete this milestone?')) {
             await MilestoneManager.deleteMilestone(milestone.id)
             setMilestones(milestones.filter(other => other.id != milestone.id))       

@@ -55,23 +55,37 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
     useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [props])
+
+    useEffect(() => {
+        let exec = true
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
-                const newUsers = {...users}
-                for (let index = 0; index < members.length; index++) {
-                    newUsers[members[index].id] = memberUsers[index]
+                if (exec) {
+                    const newUsers = {...users}
+                    for (let index = 0; index < members.length; index++) {
+                        newUsers[members[index].id] = memberUsers[index]
+                    }
+                    setUsers(newUsers)
                 }
-                setUsers(newUsers)
             })
         }
+        return () => { exec = false }
     }, [members])
 
     // FUNCTIONS
 
     async function deleteMember(member:Member) {
+        // TODO handle unmount!
         if (confirm('Do you really want to delete this member?')) {
             await MemberManager.deleteMember(member.id)
             setMembers(members.filter(other => other.id != member.id))  

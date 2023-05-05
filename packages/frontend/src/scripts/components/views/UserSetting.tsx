@@ -45,14 +45,20 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
     // EFFECTS
 
     // - Entities
-    useEffect(() => { userId != 'new' && UserManager.getUser(userId).then(setUser) }, [props])
+    useEffect(() => {
+        let exec = true
+        userId != 'new' && UserManager.getUser(userId).then(user => exec && setUser(user))
+        return () => { exec = false }
+    }, [props])
+
     // - Values
     useEffect(() => { user && setEmail(user.email || '') }, [user])
     useEffect(() => { user && setName(user.name || '') }, [user])
 
     // FUNCTIONS 
 
-    async function onSubmit(event: FormEvent<HTMLFormElement>){
+    async function onSubmit(event: FormEvent<HTMLFormElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         if (name && email) {
             const newUser = await UserManager.updateUser(user.id, { consent: user.consent, name }, picture)
@@ -60,7 +66,7 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
                 setContextUser({ ...contextUser, ...newUser })
             }
         }
-        goBack() 
+        await goBack() 
     }
 
     async function onClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -78,36 +84,34 @@ export const UserSettingView = (props: RouteComponentProps<{ user: string }>) =>
             (user && user.deleted) ? (
                 <Redirect to='/'/>
             ) : (
-                <>
-                    <main className="view user-setting">
+                <main className="view user-setting">
+                    <div>
                         <div>
-                            <div>
-                                <h1>{userId == 'new' ? 'New user' : 'User settings'}</h1>
-                                <form onSubmit={onSubmit}>
-                                    <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
-                                    {contextUser && contextUser.id == userId && (
-                                        <TextInput label='Token' disabled={true} value={localStorage.getItem('jwt')}/>
-                                    )}
-                                    <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
-                                    <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
-                                    {contextUser ? (
-                                        userId == contextUser.id ? (
-                                            <SubmitInput value='Save'/>
-                                        ) : (
-                                            <SubmitInput value='Save (requires permission)' disabled={true}/>
-                                        )
+                            <h1>{userId == 'new' ? 'New user' : 'User settings'}</h1>
+                            <form onSubmit={onSubmit}>
+                                <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
+                                {contextUser && contextUser.id == userId && (
+                                    <TextInput label='Token' disabled={true} value={localStorage.getItem('jwt')}/>
+                                )}
+                                <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
+                                <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
+                                {contextUser ? (
+                                    userId == contextUser.id ? (
+                                        <SubmitInput value='Save'/>
                                     ) : (
-                                        <SubmitInput value="Save (requires login)" disabled={true}/>
-                                    )}
-                                    {contextUser && contextUser.id == userId && (
-                                        <ButtonInput value='Leave' class='red' click={onClick}/>
-                                    )}
-                                </form>
-                            </div>
-                            <LegalFooter/>
+                                        <SubmitInput value='Save (requires permission)' disabled={true}/>
+                                    )
+                                ) : (
+                                    <SubmitInput value="Save (requires login)" disabled={true}/>
+                                )}
+                                {contextUser && contextUser.id == userId && (
+                                    <ButtonInput value='Leave' class='red' click={onClick}/>
+                                )}
+                            </form>
                         </div>
-                    </main>
-                </>
+                        <LegalFooter/>
+                    </div>
+                </main>
             )
         ) : (
             <LoadingView/>

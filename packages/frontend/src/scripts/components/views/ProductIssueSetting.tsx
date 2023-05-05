@@ -93,26 +93,49 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
-    useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilstones) }, [props]) 
     useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        issueId != 'new' && IssueManager.getIssue(issueId).then(issue => exec && setIssue(issue))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MilestoneManager.findMilestones(productId).then(milestones => exec && setMilstones(milestones))
+        return () => { exec = false }
+    }, [props])
+
+    useEffect(() => {
+        let exec = true
         if (members) {
             Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
-                const newUsers = {...users}
-                for (let index = 0; index < members.length; index++) {
-                    newUsers[members[index].id] = memberUsers[index]
+                if (exec) {
+                    const newUsers = {...users}
+                    for (let index = 0; index < members.length; index++) {
+                        newUsers[members[index].id] = memberUsers[index]
+                    }
+                    setUsers(newUsers)
                 }
-                setUsers(newUsers)
             })
         }
+        return () => { exec = false }
     }, [members])
+
     // - Values
     useEffect(() => { issue && setLabel(issue.label) }, [issue])
     useEffect(() => { issue && setText(issue.text) }, [issue])
     useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
+
     // - Computations
     useEffect(() => {
         const parts: Part[] = []
@@ -123,6 +146,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // FUNCTIONS
 
     async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const recorder = new AudioRecorder()
         await recorder.start()
@@ -130,6 +154,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     }
 
     async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
@@ -171,6 +196,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     }
 
     async function submitIssue(event: FormEvent){
+        // TODO handle unmount!
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {

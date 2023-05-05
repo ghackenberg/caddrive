@@ -65,11 +65,33 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
-    useEffect(() => { memberId != 'new' && MemberManager.getMember(memberId).then(setMember) }, [props])
-    useEffect(() => { member && UserManager.getUser(member.userId).then(setUser) }, [member] )
+    useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        UserManager.findUsers(query, productId).then(users => exec && setUsers(users))
+        return () => { exec = false }
+    }, [props, query])
+    useEffect(() => {
+        let exec = true
+        memberId != 'new' && MemberManager.getMember(memberId).then(member => exec && setMember(member))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        member && UserManager.getUser(member.userId).then(user => exec && setUser(user))
+        return () => { exec = false }
+    }, [member] )
+
+    // - Values
     useEffect(() => { member && setRole(member.role) }, [member] )
 
     // - Computations
@@ -89,6 +111,7 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // FUNCTIONS
 
     async function onSubmit(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (memberId == 'new') {
             if (confirm('Do you really want to add this member?')) {

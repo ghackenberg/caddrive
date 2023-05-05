@@ -69,19 +69,36 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
     useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        VersionManager.findVersions(productId).then(versions => exec && setVersions(versions))
+        return () => { exec = false }
+    }, [productId])
+
+    useEffect(() => {
+        let exec = true
         if (versions) {
             Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
-                const newUsers: {[versionId: string]: User} = {}
-                for (let index = 0; index < versions.length; index++) {
-                    newUsers[versions[index].id] = versionUsers[index]
+                if (exec) {
+                    const newUsers: {[versionId: string]: User} = {}
+                    for (let index = 0; index < versions.length; index++) {
+                        newUsers[versions[index].id] = versionUsers[index]
+                    }
+                    setUsers(newUsers)
                 }
-                setUsers(newUsers)
             })
         }
+        return () => { exec = false }
     }, [versions])
 
     // - Events

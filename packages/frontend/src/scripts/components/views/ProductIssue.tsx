@@ -86,13 +86,26 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props, state])
     useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        IssueManager.findIssues(productId).then(issues => exec && setIssues(issues))
+        return () => { exec = false}
+    }, [props, state])
+
+    useEffect(() => {
+        let exec = true
         if (issues) {
             const userIds: string[] = []
-
             for (const issue of issues) {
                 if (!(issue.userId in users || userIds.includes(issue.userId))) {
                     userIds.push(issue.userId)
@@ -103,26 +116,32 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                     }
                 }
             }
-
             Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userObjects => {
-                const newUsers = {...users}
-                for (const user of userObjects) {
-                    newUsers[user.id] = user
+                if (exec) {
+                    const newUsers = {...users}
+                    for (const user of userObjects) {
+                        newUsers[user.id] = user
+                    }
+                    setUsers(newUsers)
                 }
-                setUsers(newUsers)
             })
         }
+        return () => { exec = false }
     }, [issues])
     useEffect(() => {
+        let exec = true
         if (issues) {
             Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                const newComments = {...comments}
-                for (let index = 0; index < issues.length; index++) {
-                    newComments[issues[index].id] = issueComments[index]
+                if (exec) {
+                    const newComments = {...comments}
+                    for (let index = 0; index < issues.length; index++) {
+                        newComments[issues[index].id] = issueComments[index]
+                    }
+                    setComments(newComments)
                 }
-                setComments(newComments)
             })
         }
+        return () => { exec = false }
     }, [issues])
 
     // - Computations
@@ -180,8 +199,8 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function handleMouseOut(_issue: Issue) {
+    function handleMouseOut() {
+        // TODO handle unmount!
         timeout = setTimeout(() => {
             setHovered(undefined)
             timeout = undefined
@@ -189,6 +208,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     }
 
     async function deleteIssue(issue: Issue) {
+        // TODO handle unmount!
         if (confirm('Do you really want to delete this issue?')) {
             await IssueManager.deleteIssue(issue.id)
             setIssues(issues.filter(other => other.id != issue.id))       

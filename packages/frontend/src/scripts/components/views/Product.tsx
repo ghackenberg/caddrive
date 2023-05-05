@@ -82,28 +82,41 @@ export const ProductView = () => {
 
     // - Entities
     useEffect(() => { setContextVersion(undefined) }, [])
-    useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
+
     useEffect(() => {
+        let exec = true
+        ProductManager.findProducts().then(products => exec && setProducts(products))
+        return () => { exec = false }
+    }, [])
+    useEffect(() => {
+        let exec = true
         if (products) {
             Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {
-                const newUsers = {...users}
-                for (let index = 0; index < products.length; index++) {
-                    newUsers[products[index].id] = productUsers[index]
+                if (exec) {
+                    const newUsers = {...users}
+                    for (let index = 0; index < products.length; index++) {
+                        newUsers[products[index].id] = productUsers[index]
+                    }
+                    setUsers(newUsers)
                 }
-                setUsers(newUsers)
             })
         }
+        return () => { exec = false }
     }, [products])
     useEffect(() => {
+        let exec = true
         if (products) {
             Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
-                const newVersions = {...versions}
-                for (let index = 0; index < products.length; index++) {
-                    newVersions[products[index].id] = productVersions[index]
+                if (exec) {
+                    const newVersions = {...versions}
+                    for (let index = 0; index < products.length; index++) {
+                        newVersions[products[index].id] = productVersions[index]
+                    }
+                    setVersions(newVersions)
                 }
-                setVersions(newVersions)
             })
         }
+        return () => { exec = false }
     }, [products])
     useEffect(() => {
         if (versions) {
@@ -119,26 +132,34 @@ export const ProductView = () => {
         }
     }, [versions])
     useEffect(() => {
+        let exec = true
         if (products) {
             Promise.all(products.map(product => IssueManager.findIssues(product.id))).then(productIssues => {
-                const newIssues = {...issues}
-                for (let index = 0; index < products.length; index++) {
-                    newIssues[products[index].id] = productIssues[index]
+                if (exec) {
+                    const newIssues = {...issues}
+                    for (let index = 0; index < products.length; index++) {
+                        newIssues[products[index].id] = productIssues[index]
+                    }
+                    setIssues(newIssues)
                 }
-                setIssues(newIssues)
             })
         }
+        return () => { exec = false }
     }, [products])
     useEffect(() => {
+        let exec = true
         if (products) {
             Promise.all(products.map(product => MemberManager.findMembers(product.id))).then(productMembers => {
-                const newMembers = {...members}
-                for (let index = 0; index < products.length; index++) {
-                    newMembers[products[index].id] = productMembers[index]
+                if (exec) {
+                    const newMembers = {...members}
+                    for (let index = 0; index < products.length; index++) {
+                        newMembers[products[index].id] = productMembers[index]
+                    }
+                    setMembers(newMembers)
                 }
-                setMembers(newMembers)
             })
         }
+        return () => { exec = false }
     }, [products])
 
     // - Events
@@ -196,6 +217,7 @@ export const ProductView = () => {
     // FUNCTIONS
 
     async function deleteProduct(product: Product) {
+        // TODO handle unmount!
         if (confirm('Do you really want to delete this Product?')) {
             await ProductManager.deleteProduct(product.id)
             setProducts(products.filter(other => other.id != product.id))

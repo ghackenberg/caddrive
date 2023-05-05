@@ -39,44 +39,59 @@ export const AuthCodeView = () => {
     // EFFECTS
 
     React.useEffect(() => {
-        KeyManager.getPublicJWK().then(setPublicJWK)
+        let exec = true
+        KeyManager.getPublicJWK().then(publicJWK => exec && setPublicJWK(publicJWK))
+        return () => { exec = false }
     }) 
     React.useEffect(() => {
-        publicJWK && importJWK(publicJWK, "PS256").then(setPublicKey)
+        let exec = true
+        publicJWK && importJWK(publicJWK, "PS256").then(publicKey => exec && setPublicKey(publicKey))
+        return () => { exec = false }
     }, [publicJWK])
     React.useEffect(() => {
-        jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult)
+        let exec = true
+        jwt && publicKey && jwtVerify(jwt, publicKey).then(jwtVerifyResult => exec && setJWTVerifyResult(jwtVerifyResult))
+        return () => { exec = false }
     }, [jwt, publicKey])
+
     React.useEffect(() => {
         jwtVerifyResult && setPayload(jwtVerifyResult.payload as { userId: string })
     }, [jwtVerifyResult])
     React.useEffect(() => {
         payload && setUserId(payload.userId)
     }, [payload])
+
     React.useEffect(() => {
+        let exec = true
         if (userId) {
             setLoad(true)
             setError(undefined)
             UserManager.getUser(userId).then(async user => {
-                if (!user.consent || !user.name) {
-                    setAuthContextUser(user)
-                    setLoad(false)
-                    await replace('/auth/consent')
-                } else {
-                    setContextUser(user)
-                    setLoad(false)
-                    await go(-2)
+                if (exec) {
+                    if (!user.consent || !user.name) {
+                        setAuthContextUser(user)
+                        setLoad(false)
+                        await replace('/auth/consent')
+                    } else {
+                        setContextUser(user)
+                        setLoad(false)
+                        await go(-2)
+                    }
                 }
             }).catch(() => {
-                setError('Action failed.')
-                setLoad(false)
+                if (exec) {
+                    setError('Action failed.')
+                    setLoad(false)
+                }
             })
-        } 
+        }
+        return () => { exec = false }
     }, [userId])
 
     // EVENTS
 
     async function handleSubmit(event: React.UIEvent) {
+        // TODO handle unmount!
         try {
             event.preventDefault()
             setLoad(true)

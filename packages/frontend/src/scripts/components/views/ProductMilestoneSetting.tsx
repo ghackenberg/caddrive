@@ -47,7 +47,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
 
     // - Entities
     const [product, setProduct] = useState<Product>(initialProduct)
-    const [milestone, setMilstone] = useState<Milestone>(initialMilestone)
+    const [milestone, setMilestone] = useState<Milestone>(initialMilestone)
     const [issues, setIssues] = useState<Issue[]>(initialIssues)
     const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     // - Values
@@ -63,20 +63,36 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { milestoneId != 'new' && MilestoneManager.getMilestone(milestoneId).then(setMilstone) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues) }, [props, milestoneId])
+    useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        milestoneId != 'new' && MilestoneManager.getMilestone(milestoneId).then(milestone => exec && setMilestone(milestone))
+        return () => { exec = false }
+    }, [milestoneId])
+    useEffect(() => {
+        let exec = true
+        IssueManager.findIssues(productId, milestoneId).then(issues => exec && setIssues(issues))
+        return () => { exec = false }
+    }, [productId, milestoneId])
 
     useEffect(() => {
+        let exec = true
         if (issues) {
             Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                const newComments = {...comments}
-                for (let index = 0; index < issues.length; index++) {
-                    newComments[issues[index].id] = issueComments[index]
+                if (exec) {
+                    const newComments = {...comments}
+                    for (let index = 0; index < issues.length; index++) {
+                        newComments[issues[index].id] = issueComments[index]
+                    }
+                    setComments(newComments)
                 }
-                setComments(newComments)
             })
         }
+        return () => { exec = false }
     }, [issues])
     
     // - Values
@@ -94,6 +110,7 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // FUNCTIONS
 
     async function submitMilestone(event: FormEvent){
+        // TODO handle unmount!
         event.preventDefault()
         if(milestoneId == 'new') {
             const milestone = await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })

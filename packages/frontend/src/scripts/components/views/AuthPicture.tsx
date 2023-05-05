@@ -27,6 +27,7 @@ export const AuthPictureView = () => {
     // FUNCTIONS
 
     async function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        // TODO handle unmount!
         if (fileInput.current.files.length > 0) {
             try {
                 event.preventDefault()

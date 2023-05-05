@@ -84,10 +84,27 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     // EFFECTS
 
     // - Entities
-    useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { productId != 'new' && MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { productId != 'new' && VersionManager.findVersions(productId).then(setVersions) }, [props])
-    useEffect(() => { versionId != 'new' && VersionManager.getVersion(versionId).then(setVersion) }, [props])
+    useEffect(() => {
+        let exec = true
+        productId != 'new' && ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        productId != 'new' && MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        productId != 'new' && VersionManager.findVersions(productId).then(versions => exec && setVersions(versions))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        versionId != 'new' && VersionManager.getVersion(versionId).then(version => exec && setVersion(version))
+        return () => { exec = false }
+    }, [versionId])
+
     // - Values
     useEffect(() => { version && setMajor(version.major) }, [version])
     useEffect(() => { version && setMinor(version.minor) }, [version])
@@ -95,6 +112,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     useEffect(() => { version && setDescription(version.description) }, [version])
 
     useEffect(() => {
+        let exec = true
         if (file) {
             setArrayBuffer(null)
             setText(null)
@@ -103,20 +121,33 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
             setBlob(null)
             setDataUrl(null)
             if (file.name.endsWith('.glb')) {
-                file.arrayBuffer().then(setArrayBuffer)
+                file.arrayBuffer().then(arrayBuffer => exec && setArrayBuffer(arrayBuffer))
             } else if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
-                file.text().then(setText)
+                file.text().then(text => exec && setText(text))
             }
         }
+        return () => { exec = false }
     }, [file])
-    useEffect(() => { arrayBuffer && parseGLTFModel(arrayBuffer).then(setModel) }, [arrayBuffer])
-    useEffect(() => { text && parseLDrawModel(text).then(setGroup) }, [text])
+    useEffect(() => {
+        let exec = true
+        arrayBuffer && parseGLTFModel(arrayBuffer).then(model => exec && setModel(model))
+        return () => { exec = false }
+    }, [arrayBuffer])
+    useEffect(() => {
+        let exec = true
+        text && parseLDrawModel(text).then(group => exec && setGroup(group))
+        return () => { exec = false }
+    }, [text])
     useEffect(() => { model && setGroup(model.scene) }, [model])
     useEffect(() => {
+        let exec = true
         group && render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
-            setBlob(result.blob)
-            setDataUrl(result.dataUrl)
+            if (exec) {
+                setBlob(result.blob)
+                setDataUrl(result.dataUrl)
+            }
         })
+        return () => { exec = false }
     }, [group])
 
     // FUNCTIONS
@@ -130,6 +161,7 @@ export const ProductVersionSettingView = (props: RouteComponentProps<{ product: 
     }
 
     async function onSubmit(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (versionId == 'new') {
             const version = await VersionManager.addVersion({ productId: product.id, baseVersionIds, major, minor, patch, description }, { model: file, image: blob })

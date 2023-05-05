@@ -54,8 +54,17 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // EFFECTS
 
     // - Entities
-    React.useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
-    React.useEffect(() => { productId != 'new' && MemberManager.findMembers(productId).then(setMembers) }, [props])
+    React.useEffect(() => {
+        let exec = true
+        productId != 'new' && ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [productId])
+    React.useEffect(() => {
+        let exec = true
+        productId != 'new' && MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [productId])
+
     // - Values
     React.useEffect(() => { product && setName(product.name) }, [product])
     React.useEffect(() => { product && setDescription(product.description) }, [product])
@@ -64,6 +73,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // FUNCTIONS
 
     async function submit(event: React.FormEvent){
+        // TODO handle unmount!
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {

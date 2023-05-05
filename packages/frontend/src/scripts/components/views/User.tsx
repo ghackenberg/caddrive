@@ -26,11 +26,16 @@ export const UserView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => { UserManager.findUsers().then(setUsers) }, [])
+    useEffect(() => {
+        let exec = true
+        UserManager.findUsers().then(users => exec && setUsers(users))
+        return () => { exec = false }
+    }, [])
 
     // FUNCTIONS
 
     async function deleteUser(user: User) {
+        // TODO handle unmount!
         if (confirm('Do you really want to delete this user?')) {
             await UserManager.deleteUser(user.id)
             setUsers(users.filter(other => other.id != user.id))

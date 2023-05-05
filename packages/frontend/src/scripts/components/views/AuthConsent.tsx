@@ -10,6 +10,7 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthConsentView = () => {
+
     const { push } = useAsyncHistory()
 
     // CONTEXTS
@@ -24,6 +25,7 @@ export const AuthConsentView = () => {
     // FUNCTIONS
 
     async function handleAgree(event: React.UIEvent) {
+        // TODO handle unmount!
         try {
             event.preventDefault()
             setLoad(true)
@@ -37,6 +39,7 @@ export const AuthConsentView = () => {
             setLoad(false)
         }
     }
+    
     async function handleCancel(event: React.UIEvent) {
         event.preventDefault()
         await push('/')

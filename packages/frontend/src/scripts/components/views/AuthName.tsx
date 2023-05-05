@@ -25,6 +25,7 @@ export const AuthNameView = () => {
     // FUNCTIONS
 
     async function handleSubmit(event: React.UIEvent) {
+        // TODO handle unmount!
         try {
             event.preventDefault()
             setLoad(true)

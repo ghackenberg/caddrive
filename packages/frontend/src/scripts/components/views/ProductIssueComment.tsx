@@ -95,7 +95,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
 
     // - Entities
     const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMember] = useState<Member[]>(initialMembers)
+    const [members, setMembers] = useState<Member[]>(initialMembers)
     const [issue, setIssue] = useState<Issue>(initialIssue)
     const [comments, setComments] = useState<Comment[]>(initialComments)
     const [users, setUsers] = useState<{ [id: string]: User }>(initialUsers)
@@ -118,11 +118,29 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMember) }, [props])
-    useEffect(() => { IssueManager.getIssue(issueId).then(setIssue) }, [props])
-    useEffect(() => { CommentManager.findComments(issueId).then(setComments) }, [props])
     useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        IssueManager.getIssue(issueId).then(issue => exec && setIssue(issue))
+        return () => { exec = false }
+    }, [props])
+    useEffect(() => {
+        let exec = true
+        CommentManager.findComments(issueId).then(comments => exec && setComments(comments))
+        return () => { exec = false }
+    }, [props])
+
+    useEffect(() => {
+        let exec = true
         const userIds: string[] = []
         if (issue) {
             if (!(issue.userId in users) && userIds.indexOf(issue.userId) == -1) {
@@ -137,12 +155,15 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
             }
         }
         Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userList => {
-            const dict = { ...users }
-            for (const user of userList) {
-                dict[user.id] = user
+            if (exec) {
+                const dict = { ...users }
+                for (const user of userList) {
+                    dict[user.id] = user
+                }
+                setUsers(dict)    
             }
-            setUsers(dict)
         })
+        return () => { exec = false }
     }, [issue, comments])
 
     // - Computations
@@ -193,6 +214,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     // FUNCTIONS
 
     async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const recorder = new AudioRecorder()
         await recorder.start()
@@ -200,6 +222,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
@@ -255,6 +278,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function submitComment(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (text) {
             const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
@@ -267,6 +291,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function submitCommentAndClose(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (text) {
             const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
@@ -277,6 +302,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function submitCommentAndReopen(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (text) {
             const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})

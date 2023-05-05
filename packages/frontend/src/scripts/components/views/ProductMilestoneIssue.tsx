@@ -92,14 +92,31 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MilestoneManager.getMilestone(milestoneId).then(setMilestone) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues)}, [props, milestoneId])
     useEffect(() => {
+        let exec = true
+        ProductManager.getProduct(productId).then(product => exec && setProduct(product))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        MilestoneManager.getMilestone(milestoneId).then(milestone => exec && setMilestone(milestone))
+        return () => { exec = false }
+    }, [milestoneId])
+    useEffect(() => {
+        let exec = true
+        MemberManager.findMembers(productId).then(members => exec && setMembers(members))
+        return () => { exec = false }
+    }, [productId])
+    useEffect(() => {
+        let exec = true
+        IssueManager.findIssues(productId, milestoneId).then(issues => exec && setIssues(issues))
+        return () => { exec = false }
+    }, [productId, milestoneId])
+
+    useEffect(() => {
+        let exec = true
         if (issues) {
             const userIds: string[] = []
-
             for (const issue of issues) {
                 if (!(issue.userId in users || userIds.includes(issue.userId))) {
                     userIds.push(issue.userId)
@@ -110,26 +127,32 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
                     }
                 }
             }
-
             Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userObjects => {
-                const newUsers = {...users}
-                for (const user of userObjects) {
-                    newUsers[user.id] = user
+                if (exec) {
+                    const newUsers = {...users}
+                    for (const user of userObjects) {
+                        newUsers[user.id] = user
+                    }
+                    setUsers(newUsers)
                 }
-                setUsers(newUsers)
             })
         }
+        return () => { exec = false }
     }, [issues])
     useEffect(() => {
+        let exec = true
         if (issues) {
             Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                const newComments = {...comments}
-                for (let index = 0; index < issues.length; index++) {
-                    newComments[issues[index].id] = issueComments[index]
+                if (exec) {
+                    const newComments = {...comments}
+                    for (let index = 0; index < issues.length; index++) {
+                        newComments[issues[index].id] = issueComments[index]
+                    }
+                    setComments(newComments)
                 }
-                setComments(newComments)
             })
         }
+        return () => { exec = false }
     }, [issues])
 
     // - Computations
@@ -154,6 +177,7 @@ export const ProductMilestoneIssueView = (props: RouteComponentProps<{product: s
     // FUNCTIONS
 
     async function deleteIssue(issue: Issue) {
+        // TODO handle unmount!
         if (confirm('Do you really want to delete this issue from this milestone?')) {
             await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: null })
             setIssues(issues.filter(other => other.id != issue.id))
