@@ -51,6 +51,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         await this.client.emit(`/api/v1/comments/${comment.id}/create`, convertComment(comment))
         if (comment.action != 'none') {
             const issue = await Database.get().issueRepository.findOneBy({ id: comment.issueId })
+            issue.updated = Date.now()
             if (comment.action == 'close') {
                 issue.state = 'closed'
                 await Database.get().issueRepository.save(issue)

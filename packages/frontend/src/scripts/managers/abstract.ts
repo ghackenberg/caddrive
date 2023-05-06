@@ -10,7 +10,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         if (this.has(t.id)) {
             const newTime = this.getTime(t)
             const oldTime = this.getTime(this.index[t.id])
-            if (newTime >= oldTime) {
+            if (newTime > oldTime) {
                 this.index[t.id] = t
                 return t
             } else {
