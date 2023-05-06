@@ -109,8 +109,7 @@ export const ProductMemberSettingView = () => {
         }
     }
 
-    function selectUser(user: User) {
-        setQuery('')
+    function handleClick(user: User) {
         setUser(user)
     }
 
@@ -134,14 +133,10 @@ export const ProductMemberSettingView = () => {
 
     const queriedUserColumns: Column<User>[] = [
         { label: '👤', class: 'center', content: user => (
-            <a onClick={() => selectUser(user)}>
-                <UserPictureWidget user={user} class='icon medium round'/>
-            </a>
+            <UserPictureWidget user={user} class='icon medium round'/>
         ) },
-        { label: 'Name', class: 'left fill', content: (user, index) => (
-            <a onClick={() => selectUser(user)}>
-                {names ? names[index] : '?'}
-            </a>
+        { label: 'Name', class: 'left fill', content: (_, index) => (
+            names ? names[index] : '?'
         ) }
     ]
 
@@ -205,7 +200,7 @@ export const ProductMemberSettingView = () => {
                                                     <label>Matching users</label>
                                                 </div>
                                                 <div>
-                                                    <Table items={users} columns={queriedUserColumns}/>
+                                                    <Table items={users} columns={queriedUserColumns} onClick={handleClick}/>
                                                 </div>
                                             </div>
                                         </>
