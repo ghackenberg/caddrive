@@ -164,57 +164,51 @@ export const ProductMemberSettingView = () => {
                                 <h1>{memberId == 'new' ? 'New member' : 'Member settings'}</h1>
                                 <form onSubmit={onSubmit}>
                                     {user ? (
-                                        <div>
+                                        <>
                                             <div>
-                                                <label>User</label>
-                                            </div>
-                                            <div>
-                                                {users && user && (
+                                                <div>
+                                                    <label>User</label>
+                                                </div>
+                                                <div>
                                                     <Table items={[user]} columns={selectedUserColumns}/>
-                                                )}
+                                                </div>
                                             </div>
-                                        </div>
+                                            <div>
+                                                <div>
+                                                    <label>Role</label>
+                                                </div>
+                                                <div>
+                                                    <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
+                                                        {ROLES.map(role => (
+                                                            <option key={role} value={role}>
+                                                                {role}
+                                                            </option>
+                                                        ))}    
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            {contextUser ? (
+                                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                                    <SubmitInput value='Save'/>
+                                                ) : (
+                                                    <SubmitInput value='Save (requires role)' disabled={true}/>
+                                                )
+                                            ) : (
+                                                <SubmitInput value='Save (requires login)' disabled={true}/>
+                                            )}
+                                        </>
                                     ) : (
-                                        <TextInput label='Search user' placeholder='Type name or full email' value={query} change={setQuery} input={setQuery}/>
-                                    )}
-                                    {query && (
+                                        <>
+                                            <TextInput label='Search user' placeholder='Type name or full email' value={query} change={setQuery} input={setQuery}/>
                                             <div>
                                                 <div>
                                                     <label>Matching users</label>
                                                 </div>
                                                 <div>
-                                                    {users && (
-                                                        <Table items={users} columns={queriedUserColumns}/>
-                                                    )}
+                                                    <Table items={users} columns={queriedUserColumns}/>
                                                 </div>
                                             </div>
-                                    )}
-                                    {user && (
-                                        <div>
-                                            <div>
-                                                <label>Role</label>
-                                            </div>
-                                            <div>
-                                                <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
-                                                    {ROLES.map(role => (
-                                                        <option key={role} value={role}>
-                                                            {role}
-                                                        </option>
-                                                    ))}    
-                                                </select>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {user && (
-                                        contextUser ? (
-                                            members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                                <SubmitInput value='Save'/>
-                                            ) : (
-                                                <SubmitInput value='Save (requires role)' disabled={true}/>
-                                            )
-                                        ) : (
-                                            <SubmitInput value='Save (requires login)' disabled={true}/>
-                                        )
+                                        </>
                                     )}
                                 </form>
                             </div>

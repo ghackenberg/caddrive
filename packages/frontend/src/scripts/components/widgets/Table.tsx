@@ -28,7 +28,7 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[], onMouseOver
                 </tr>
             </thead>
             <tbody>
-                {props.items.map((item, itemIndex) =>
+                {props.items && props.items.map((item, itemIndex) =>
                     <tr key={`body-row-${itemIndex}`} onMouseOver={() => onMouseOver(item)} onMouseOut={() => onMouseOut(item)} onClick={() => onClick(item)} style={{cursor: props.onClick ? 'pointer' : 'default'}}>
                         {props.columns.map((column, columnIndex) =>
                             <td key={`body-cell-${columnIndex}`} className={column.class}>
@@ -37,10 +37,17 @@ export const Table = <T,> (props: {columns: Column<T>[], items: T[], onMouseOver
                         )}
                     </tr>
                 )}
-                {props.items.length == 0 && (
+                {props.items && props.items.length == 0 && (
                     <tr>
                         <td colSpan={props.columns.length} className='center'>
                             <em>Empty</em>
+                        </td>
+                    </tr>
+                )}
+                {props.items === undefined && (
+                    <tr>
+                        <td colSpan={props.columns.length} className='center'>
+                            <em>Loading...</em>
                         </td>
                     </tr>
                 )}
