@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
@@ -8,6 +9,12 @@ import { Database, TagAssignmentEntity } from 'productboard-database'
 
 @Injectable()
 export class TagAssignmentService implements TagAssignmentREST {
+    constructor(
+        @Inject('MQTT')
+        private readonly client: ClientProxy
+    ) {
+
+    }
  
     async findTagAssignments(issueId: string) : Promise<TagAssignment[]> {
         let where: FindOptionsWhere<TagAssignmentEntity>
@@ -23,6 +30,7 @@ export class TagAssignmentService implements TagAssignmentREST {
         const id = shortid()
         const created = Date.now()
         const tagAssignment = await Database.get().tagAssignmentRepository.save({id: id, created: created, ...data})
+        await this.client.emit(`/api/v1/tagAssignments/${tagAssignment.id}/create`, this.convert(tagAssignment))
         return this.convert(tagAssignment)
     }
     async getTagAssignment(id: string): Promise<TagAssignment> {
@@ -35,13 +43,14 @@ export class TagAssignmentService implements TagAssignmentREST {
         tagAssignment.issueId = data.issueId
         tagAssignment.tagId = data.tagId
         await Database.get().tagAssignmentRepository.save(tagAssignment)
-        console.log(this.convert(tagAssignment))
+        await this.client.emit(`/api/v1/tagAssignments/${tagAssignment.id}/update`, this.convert(tagAssignment))
         return this.convert(tagAssignment)
     }
     async deleteTagAssignment(id: string): Promise<TagAssignment> {
         const tagAssignment = await Database.get().tagAssignmentRepository.findOneByOrFail({ id })
         tagAssignment.deleted = Date.now()
         await Database.get().tagAssignmentRepository.save(tagAssignment)
+        await this.client.emit(`/api/v1/tagAssignments/${tagAssignment.id}/delete`, this.convert(tagAssignment))
         return this.convert(tagAssignment)
     } 
 

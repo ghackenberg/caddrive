@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
 import { FindOptionsWhere } from 'typeorm'
@@ -8,6 +9,12 @@ import { Database, TagEntity } from 'productboard-database'
 
 @Injectable()
 export class TagService implements TagREST {
+    constructor(
+        @Inject('MQTT')
+        private readonly client: ClientProxy
+    ) {
+
+    }
  
     async findTags(productId: string) : Promise<Tag[]> {
         let where: FindOptionsWhere<TagEntity>
@@ -23,6 +30,7 @@ export class TagService implements TagREST {
         const id = shortid()
         const created = Date.now()
         const tag = await Database.get().tagRepository.save({id: id, created: created, ...data})
+        await this.client.emit(`/api/v1/tags/${tag.id}/create`, this.convert(tag))
         return this.convert(tag)
     }
     async getTag(id: string): Promise<Tag> {
@@ -35,13 +43,14 @@ export class TagService implements TagREST {
         tag.name = data.name
         tag.color = data.color
         await Database.get().tagRepository.save(tag)
-        console.log(this.convert(tag))
+        await this.client.emit(`/api/v1/tags/${tag.id}/update`, this.convert(tag))
         return this.convert(tag)
     }
     async deleteTag(id: string): Promise<Tag> {
         const tag = await Database.get().tagRepository.findOneByOrFail({ id })
         tag.deleted = Date.now()
         await Database.get().tagRepository.save(tag)
+        await this.client.emit(`/api/v1/tags/${tag.id}/delete`, this.convert(tag))
         return this.convert(tag)
     } 
 
