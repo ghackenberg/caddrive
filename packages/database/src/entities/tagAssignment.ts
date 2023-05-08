@@ -1,6 +1,9 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
 import { TagAssignment } from 'productboard-common'
+
+import { IssueEntity } from './issue'
+import { TagEntity } from './tag'
 
 @Entity()
 export class TagAssignmentEntity extends TagAssignment {
@@ -11,8 +14,16 @@ export class TagAssignmentEntity extends TagAssignment {
     @Column({ nullable: true })
     override deleted: number
 
+    @ManyToOne(() => TagEntity)
+    @JoinColumn({ name: 'tagId' })
+    tag: TagEntity
+
     @Column({ nullable: false })
     override tagId: string
+
+    @ManyToOne(() => IssueEntity)
+    @JoinColumn({ name: 'issueId' })
+    issue: IssueEntity
 
     @Column({nullable: false})
     override issueId: string

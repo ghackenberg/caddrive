@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 
 import { Tag } from 'productboard-common'
+
+import { TagAssignmentEntity } from './tagAssignment'
 
 @Entity()
 export class TagEntity extends Tag {
@@ -25,4 +27,7 @@ export class TagEntity extends Tag {
 
     @Column({nullable: false})
     override color: string
+
+    @OneToMany(() => TagAssignmentEntity, TagAssignment => TagAssignment.tag)
+    tagAssignment: TagAssignmentEntity[]
 }
