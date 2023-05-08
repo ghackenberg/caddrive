@@ -1,8 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 
 import { TagAssignment, TagAssignmentREST, TagAssignmentAddData, TagAssignmentUpdateData } from "productboard-common"
 
+import { canReadTagAssignmentOrFail, canDeleteTagAssignmentOrFail, canUpdateTagAssignmentOrFail, canCreateTagAssignmentOrFail, canFindTagAssignmentOrFail } from '../../../functions/permission'
+import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
 import {TagAssignmentService } from './tagAssignment.service'
 
@@ -12,6 +15,8 @@ import {TagAssignmentService } from './tagAssignment.service'
 export class TagAssignmentController implements TagAssignmentREST {
     constructor(
         private readonly tagAssignmentService: TagAssignmentService,
+        @Inject(REQUEST)
+        private readonly request: AuthorizedRequest
     ) {}
 
     @Get()
@@ -20,6 +25,7 @@ export class TagAssignmentController implements TagAssignmentREST {
     async findTagAssignments(
         @Query('issue') issueId: string
     ): Promise<TagAssignment[]> {
+        await canFindTagAssignmentOrFail(this.request.user, issueId)
         return await this.tagAssignmentService.findTagAssignments(issueId)
     }
 
@@ -29,7 +35,7 @@ export class TagAssignmentController implements TagAssignmentREST {
     async addTagAssignment(
         @Body() data: TagAssignment
     ): Promise<TagAssignment> {
-        console.log(data)
+        await canCreateTagAssignmentOrFail(this.request.user, data.issueId)
         return await this.tagAssignmentService.addTagAssignment(data)
     }
     @Get(':id')
@@ -38,6 +44,7 @@ export class TagAssignmentController implements TagAssignmentREST {
     async getTagAssignment(
         @Param('id') id: string
     ): Promise<TagAssignment> {
+        await canReadTagAssignmentOrFail(this.request.user, id)
         return this.tagAssignmentService.getTagAssignment(id)
     }
     @Put(':id')
@@ -48,6 +55,7 @@ export class TagAssignmentController implements TagAssignmentREST {
         @Param('id') id: string,
         @Body() data: TagAssignmentUpdateData
     ): Promise<TagAssignment> {
+        await canUpdateTagAssignmentOrFail(this.request.user, id)
         return this.tagAssignmentService.updateTagAssignment(id, data)
     }
     @Delete(':id')
@@ -56,6 +64,7 @@ export class TagAssignmentController implements TagAssignmentREST {
     async deleteTagAssignment(
         @Param('id') id: string
     ): Promise<TagAssignment> {
+        await canDeleteTagAssignmentOrFail(this.request.user, id)
         return this.tagAssignmentService.deleteTagAssignment(id)
     } 
 

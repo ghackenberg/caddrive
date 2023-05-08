@@ -218,3 +218,9 @@ export async function getIssueOrFail<E>(where: FindOptionsWhere<IssueEntity>, Er
 export async function getCommentOrFail<E>(where: FindOptionsWhere<CommentEntity>, ErrorType: { new(): E }) {
     return getEntityOrFail(Database.get().commentRepository, where, ErrorType)
 }
+export async function getTagOrFail<E>(where: FindOptionsWhere<TagEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().tagRepository, where, ErrorType)
+}
+export async function getTagAssignmentOrFail<E>(where: FindOptionsWhere<TagAssignmentEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().tagAssignmentRepository, where, ErrorType)
+}

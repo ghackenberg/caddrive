@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 
 import { Tag, TagREST, TagAddData, TagUpdateData } from "productboard-common"
 
+import { canReadTagOrFail, canDeleteTagOrFail, canUpdateTagOrFail, canCreateTagOrFail, canFindTagOrFail } from '../../../functions/permission'
+import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import {TagService } from './tag.service'
+import { TagService } from './tag.service'
 
 @Controller('rest/tags')
 @UseGuards(TokenOptionalGuard)
@@ -12,6 +15,8 @@ import {TagService } from './tag.service'
 export class TagController implements TagREST {
     constructor(
         private readonly tagService: TagService,
+        @Inject(REQUEST)
+        private readonly request: AuthorizedRequest
     ) {}
 
     @Get()
@@ -20,6 +25,7 @@ export class TagController implements TagREST {
     async findTags(
         @Query('product') productId: string
     ): Promise<Tag[]> {
+        await canFindTagOrFail(this.request.user, productId)
         return await this.tagService.findTags(productId)
     }
 
@@ -29,6 +35,7 @@ export class TagController implements TagREST {
     async addTag(
         @Body() data: Tag
     ): Promise<Tag> {
+        await canCreateTagOrFail(this.request.user, data.productId)
         return await this.tagService.addTag(data)
     }
     @Get(':id')
@@ -37,6 +44,7 @@ export class TagController implements TagREST {
     async getTag(
         @Param('id') id: string
     ): Promise<Tag> {
+        await canReadTagOrFail(this.request.user, id)
         return this.tagService.getTag(id)
     }
     @Put(':id')
@@ -47,6 +55,7 @@ export class TagController implements TagREST {
         @Param('id') id: string,
         @Body() data: TagUpdateData
     ): Promise<Tag> {
+        await canUpdateTagOrFail(this.request.user, id)
         return this.tagService.updateTag(id, data)
     }
     @Delete(':id')
@@ -55,6 +64,7 @@ export class TagController implements TagREST {
     async deleteTag(
         @Param('id') id: string
     ): Promise<Tag> {
+        await canDeleteTagOrFail(this.request.user, id)
         return this.tagService.deleteTag(id)
     } 
 
