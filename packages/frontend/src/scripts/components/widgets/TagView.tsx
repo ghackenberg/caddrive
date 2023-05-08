@@ -47,9 +47,11 @@ export const TagView = (props: { tags: Tag[], productId: string, assignable: boo
     }
     async function addTag(event: React.FormEvent) {
         event.preventDefault()
-        const tag = await TagManager.addTag({ productId: productId, color: tagColor, name: tagName || 'new tag' })
-        setTags((prev) => [...prev, tag])
-        setSelectedTag(tag)
+        if (!tags.find(tag => tag.name === tagName)) {
+            const tag = await TagManager.addTag({ productId: productId, color: tagColor, name: tagName || 'new tag' })
+            setTags((prev) => [...prev, tag])
+            setSelectedTag(tag)
+        }
     }
 
     async function updateTag(event: React.FormEvent) {
@@ -89,7 +91,7 @@ export const TagView = (props: { tags: Tag[], productId: string, assignable: boo
     }
     async function assignTag(event: React.FormEvent) {
         event.preventDefault()
-        if (selectedTag) {
+        if (selectedTag && !assignedTags.find(tag => tag.id === selectedTag.id)) {
             const assignment = await TagAssignmentManager.addTagAssignment({ tagId: selectedTag.id, issueId: props.issueId })
             setAssignedTags((prev) => [...prev, tags.find(tag => assignment.tagId === tag.id)])
         }

@@ -62,7 +62,7 @@ const comments: Comment[] = [
 
 const tags: Tag[] = [
     { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'roof', color: 'brown' },
-    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'weels', color: 'orange' },
+    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'wheels', color: 'orange' },
     { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'safety', color: 'yellow' },
     { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'entertainment', color: 'green' },
     { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'motor', color: 'blue' },

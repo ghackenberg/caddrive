@@ -1,15 +1,17 @@
-import  * as React from 'react'
+import * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect } from 'react-router'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
-import { Comment, Issue, Member, Product, User } from 'productboard-common'
+import { Comment, Issue, Member, Product, Tag, TagAssignment, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { MemberManager } from '../../managers/member'
 import { ProductManager } from '../../managers/product'
+import { TagManager } from '../../managers/tag'
+import { TagAssignmentManager } from '../../managers/tagAssignment'
 import { UserManager } from '../../managers/user'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
@@ -24,7 +26,7 @@ import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductIssueView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductIssueView = (props: RouteComponentProps<{ product: string }>) => {
 
     // PARAMS
 
@@ -39,11 +41,11 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
     const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
     const initialIssues = productId == 'new' ? undefined : IssueManager.findIssuesFromCache(productId)
-    const initialComments: {[id: string]: Comment[]} = {}
+    const initialComments: { [id: string]: Comment[] } = {}
     for (const issue of initialIssues || []) {
         initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    } 
-    const initialUsers: {[id: string]: User} = {}
+    }
+    const initialUsers: { [id: string]: User } = {}
     for (const issue of initialIssues || []) {
         const user = UserManager.getUserFromCache(issue.userId)
         if (user) {
@@ -55,7 +57,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                 initialUsers[otherUser.id] = otherUser
             }
         }
-    } 
+    }
     const initialIssueParts = collectIssueParts(initialIssues)
     const initialCommentParts = collectCommentParts(initialComments)
     const initialPartsCount = countParts(initialIssues, initialComments, initialIssueParts, initialCommentParts)
@@ -65,15 +67,17 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // STATES
 
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct) 
+    const [product, setProduct] = useState<Product>(initialProduct)
     const [members, setMembers] = useState<Member[]>(initialMembers)
     const [issues, setIssues] = useState<Issue[]>(initialIssues)
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
+    const [comments, setComments] = useState<{ [id: string]: Comment[] }>(initialComments)
+    const [users, setUsers] = useState<{ [id: string]: User }>(initialUsers)
+    const [assignedTags, setAssignedTags] = useState<{ [id: string]: Tag[] }>()
+    const [tagAssignments, setTagAssignments] = useState<{ [id: string]: TagAssignment[] }>()
     // - Computations
-    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
-    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
-    const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
+    const [issueParts, setIssueParts] = useState<{ [id: string]: Part[] }>(initialIssueParts)
+    const [commentParts, setCommentParts] = useState<{ [id: string]: Part[] }>(initialCommentParts)
+    const [partsCount, setPartsCount] = useState<{ [id: string]: number }>(initialPartsCount)
     const [openIssueCount, setOpenIssueCount] = useState<number>(initialOpenIssueCount)
     const [closedIssueCount, setClosedIssueCount] = useState<number>(initialClosedIssueCount)
     // - Interactions
@@ -87,7 +91,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // - Entities
     useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
     useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId).then(setIssues)}, [props, state])
+    useEffect(() => { IssueManager.findIssues(productId).then(setIssues) }, [props, state])
     useEffect(() => {
         if (issues) {
             const userIds: string[] = []
@@ -104,7 +108,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
             }
 
             Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userObjects => {
-                const newUsers = {...users}
+                const newUsers = { ...users }
                 for (const user of userObjects) {
                     newUsers[user.id] = user
                 }
@@ -115,7 +119,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     useEffect(() => {
         if (issues) {
             Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                const newComments = {...comments}
+                const newComments = { ...comments }
                 for (let index = 0; index < issues.length; index++) {
                     newComments[issues[index].id] = issueComments[index]
                 }
@@ -124,21 +128,51 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
         }
     }, [issues])
 
+    useEffect(() => {
+        if (issues) {
+            Promise.all(issues.map(issue => TagAssignmentManager.findTagAssignments(issue.id))).then(assignments => {
+                const newAssignment = { ...tagAssignments }
+                for (let index = 0; index < issues.length; index++) {
+                    newAssignment[issues[index].id] = assignments[index]
+                }
+                setTagAssignments(newAssignment)
+            })
+        }
+    }, [issues])
+
+    useEffect(() => {
+        if (tagAssignments) {
+            const newTags = { ...assignedTags }
+            Promise.all(issues.map(issue => {
+                const tempTags: Tag[] = []
+                for (let index = 0; index < tagAssignments[issue.id].length; index++) {
+                    TagManager.getTag(tagAssignments[issue.id][index].tagId).then(tag => {
+                        tempTags.push(tag)
+                    })
+                }
+                newTags[issue.id] = tempTags
+            }))
+            setAssignedTags(newTags)
+        }
+    }, [tagAssignments])
+
+    console.log(assignedTags)
+
     // - Computations
-    useEffect(() => { 
+    useEffect(() => {
         setIssueParts(collectIssueParts(issues))
         updateHightlighted()
     }, [issues])
     useEffect(() => {
-        setCommentParts(collectCommentParts(comments))   
+        setCommentParts(collectCommentParts(comments))
         updateHightlighted()
     }, [comments])
     useEffect(() => {
         setPartsCount(countParts(issues, comments, issueParts, commentParts))
     }, [issueParts, commentParts])
-    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) },[issues])
-    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) },[issues])
-    
+    useEffect(() => { issues && setOpenIssueCount(issues.filter(issue => issue.state == 'open').length) }, [issues])
+    useEffect(() => { issues && setClosedIssueCount(issues.filter(issue => issue.state == 'closed').length) }, [issues])
+
     // - Interactions
     useEffect(() => {
         updateHightlighted()
@@ -190,14 +224,14 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     async function deleteIssue(issue: Issue) {
         if (confirm('Do you really want to delete this issue?')) {
             await IssueManager.deleteIssue(issue.id)
-            setIssues(issues.filter(other => other.id != issue.id))       
+            setIssues(issues.filter(other => other.id != issue.id))
         }
     }
-    
+
     async function showClosedIssues(event: FormEvent) {
         event.preventDefault()
         setState('closed')
-   
+
     }
     async function showOpenIssues(event: FormEvent) {
         event.preventDefault()
@@ -207,48 +241,69 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
-        { label: '👤', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.userId in users && members ? (
-                    <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round'/>
-                ) : (
-                    <img src={LoadIcon} className='icon medium pad animation spin'/>
-                )}
-            </Link>
-        ) },
-        { label: 'Label', class: 'left fill', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.name}
-            </Link>
-        ) },
-        { label: 'Assignees', class: 'nowrap', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.assigneeIds.map((assignedId) => (
-                    <Fragment key={assignedId}>
-                        {assignedId in users && members ? (
-                            <ProductUserPictureWidget user={users[assignedId]} members={members} class='icon medium round'/>
-                        ) : (
-                            <img src={LoadIcon} className='icon medium pad animation spin'/>
-                        )}
-                    </Fragment>
-                ))}
-            </Link>
-        ) },
-        { label: 'Comments', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'}
-            </Link>
-        ) },
-        { label: 'Parts', class: 'center', content: issue => (
-            <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
-                {issue.id in partsCount ? partsCount[issue.id] : '?'}
-            </Link>
-        ) },
-        { label: '🛠️', class: 'center', content: issue => (
-            <a onClick={() => deleteIssue(issue)}>
-                <img src={DeleteIcon} className='icon medium pad'/>
-            </a>
-        ) }
+        {
+            label: '👤', content: issue => (
+                <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+                    {issue.userId in users && members ? (
+                        <ProductUserPictureWidget user={users[issue.userId]} members={members} class='icon medium round' />
+                    ) : (
+                        <img src={LoadIcon} className='icon medium pad animation spin' />
+                    )}
+                </Link>
+            )
+        },
+        {
+            label: 'Label', class: 'left fill', content: issue => (
+                <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+                    {issue.name}
+                </Link>
+            )
+        },
+        // {
+        //     label: 'Tags', class: 'nowrap', content: issue => (
+        //         <div className='tag_container'>
+        //        { tags && tags[issue.id].map((tag) => (
+        //             <div key={tag.id} className={`tag ${tag.color}`}>{tag.name}</div>
+        //         ))}
+        //         </div>
+        //     )
+        // },
+        {
+            label: 'Assignees', class: 'nowrap', content: issue => (
+                <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+                    {issue.assigneeIds.map((assignedId) => (
+                        <Fragment key={assignedId}>
+                            {assignedId in users && members ? (
+                                <ProductUserPictureWidget user={users[assignedId]} members={members} class='icon medium round' />
+                            ) : (
+                                <img src={LoadIcon} className='icon medium pad animation spin' />
+                            )}
+                        </Fragment>
+                    ))}
+                </Link>
+            )
+        },
+        {
+            label: 'Comments', class: 'center', content: issue => (
+                <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+                    {issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'}
+                </Link>
+            )
+        },
+        {
+            label: 'Parts', class: 'center', content: issue => (
+                <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
+                    {issue.id in partsCount ? partsCount[issue.id] : '?'}
+                </Link>
+            )
+        },
+        {
+            label: '🛠️', class: 'center', content: issue => (
+                <a onClick={() => deleteIssue(issue)}>
+                    <img src={DeleteIcon} className='icon medium pad' />
+                </a>
+            )
+        }
     ]
 
     const items: ProductFooterItem[] = [
@@ -261,7 +316,7 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
     return (
         (product && members && issues) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Redirect to='/' />
             ) : (
                 <>
                     <main className={`view product-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
@@ -272,12 +327,12 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                                         New issue
                                     </Link>
                                 ) : (
-                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                    <a className='button fill green block-when-responsive' style={{ fontStyle: 'italic' }}>
                                         New issue (requires role)
                                     </a>
                                 )
                             ) : (
-                                <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                <a className='button fill green' style={{ fontStyle: 'italic' }}>
                                     New issue (requires login)
                                 </a>
                             )}
@@ -287,17 +342,17 @@ export const ProductIssueView = (props: RouteComponentProps<{product: string}>) 
                             <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                 Closed issues ({closedIssueCount !== undefined ? closedIssueCount : '?'})
                             </a>
-                            <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}/>
+                            <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} />
                         </div>
                         <div>
-                            <ProductView3D product={product} highlighted={hightlighted} mouse={true}/>
+                            <ProductView3D product={product} highlighted={hightlighted} mouse={true} />
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 }

@@ -128,8 +128,9 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
             })
             setAssignedTags(result)
         }
-    }, [tagAssignments])
-
+    }, [tagAssignments, tags])
+    console.log(tags)
+    console.log(tagAssignments)
     console.log(assignedTags)
 
     // - Values
@@ -264,7 +265,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // RETURN
 
     return (
-        ((issueId == 'new' || issue) && product && members && tags && assignedTags) ? (
+        ((issueId == 'new' || issue) && product && members && tags && tagAssignments && assignedTags) ? (
             issue && issue.deleted ? (
                 <Redirect to='/'/>
             ) : (
