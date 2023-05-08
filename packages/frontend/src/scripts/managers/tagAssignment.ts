@@ -14,8 +14,8 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> implements
 
     // CACHE
 
-    findTagAssignmentsFromCache(productId: string) { 
-        const key = `${productId}`
+    findTagAssignmentsFromCache(issueId: string) { 
+        const key = `${issueId}`
         if (key in this.findIndex) { 
             return Object.keys(this.findIndex[key]).map(id => this.load(id))
         } else { 
@@ -57,11 +57,11 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> implements
 
     // REST
 
-    async findTagAssignments(productId: string): Promise<TagAssignment[]> {
-        const key = `${productId}`
+    async findTagAssignments(issueId: string): Promise<TagAssignment[]> {
+        const key = `${issueId}`
         if (!(key in this.findIndex)) {
             // Call backend
-            let tagAssignments = await TagAssignmentClient.findTagAssignments(productId)
+            let tagAssignments = await TagAssignmentClient.findTagAssignments(issueId)
             // Update tagAssignment index
             tagAssignments = tagAssignments.map(tagAssignment => this.store(tagAssignment))
             // Init product index

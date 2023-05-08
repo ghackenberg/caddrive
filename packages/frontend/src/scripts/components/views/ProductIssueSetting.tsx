@@ -61,7 +61,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     } 
     const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
     const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
-
+    const initialTags = productId == 'new' ? undefined : TagManager.findTagsFromCache(productId)
+    const initialTagAssignments = productId == 'new' ? undefined : TagAssignmentManager.findTagAssignmentsFromCache(issueId)
     const initialLabel = initialIssue ? initialIssue.name : ''
     const initialText = initialIssue ? initialIssue.description : ''
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (initialIssue && initialIssue.milestoneId)
@@ -78,8 +79,8 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
     const [issue, setIssue] = useState<Issue>(initialIssue)
     const [milestones, setMilstones] = useState<Milestone[]>(initialMilestones)
-    const [tags, setTags] = React.useState<Tag[]>()
-    const [tagAssignments, setTagAssignments] = React.useState<TagAssignment[]>()
+    const [tags, setTags] = React.useState<Tag[]>(initialTags)
+    const [tagAssignments, setTagAssignments] = React.useState<TagAssignment[]>(initialTagAssignments)
     const [assignedTags, setAssignedTags] = React.useState<Tag[]>()
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
@@ -129,9 +130,6 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
             setAssignedTags(result)
         }
     }, [tagAssignments, tags])
-    console.log(tags)
-    console.log(tagAssignments)
-    console.log(assignedTags)
 
     // - Values
     useEffect(() => { issue && setLabel(issue.name) }, [issue])

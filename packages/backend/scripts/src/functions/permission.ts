@@ -403,9 +403,11 @@ export async function canFindTagAssignmentOrFail(user: User, issueId: string) {
         }
     }
 }
-export async function canCreateTagAssignmentOrFail(user: User, productId: string) {
+export async function canCreateTagAssignmentOrFail(user: User, tagAssignmentId: string) {
+    const tagAssignment = await getTagAssignmentOrFail({ id: tagAssignmentId, deleted: null }, NotFoundException)
+    const issue = await getIssueOrFail({ id: tagAssignment.issueId, deleted: null }, NotFoundException)
     if (user) {
-        await getMemberOrFail({ userId: user.id, product: { id: productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
+        await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
     } else {
         throw new ForbiddenException()
     }
