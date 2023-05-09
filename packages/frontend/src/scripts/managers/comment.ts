@@ -22,7 +22,7 @@ class CommentManagerImpl extends AbstractManager<Comment> implements CommentREST
     findCommentsFromCache(issueId: string) { 
         const key = `${issueId}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.load(id))
+            return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id))
         } else { 
             return undefined 
         } 
@@ -45,16 +45,16 @@ class CommentManagerImpl extends AbstractManager<Comment> implements CommentREST
     // MQTT
 
     create(comment: Comment): void {
-        comment = this.store(comment)
+        comment = this.resolveItem(comment)
         this.addToFindIndex(comment)
     }
     update(comment: Comment): void {
-        comment = this.store(comment)
+        comment = this.resolveItem(comment)
         this.removeFromFindIndex(comment)
         this.addToFindIndex(comment)
     }
     delete(comment: Comment): void {
-        comment = this.store(comment)
+        comment = this.resolveItem(comment)
         this.removeFromFindIndex(comment)
     }
 
@@ -66,61 +66,61 @@ class CommentManagerImpl extends AbstractManager<Comment> implements CommentREST
             // Call backend
             let comments = await CommentClient.findComments(issueId)
             // Upate comment index
-            comments = comments.map(comment => this.store(comment))
+            comments = comments.map(comment => this.resolveItem(comment))
             // Init find index
             this.findIndex[key] = {}
             // Update finx index
             comments.forEach(comment => this.addToFindIndex(comment))
         }
         // Return comments
-        return Object.keys(this.findIndex[key]).map(id => this.load(id)).filter(comment => !comment.deleted)
+        return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id)).filter(comment => !comment.deleted)
     }
 
     async addComment(data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
         // Call backend
         let comment = await CommentClient.addComment(data, files)
         // Update comment index
-        comment = this.store(comment)
+        comment = this.resolveItem(comment)
         // Update find index
         this.addToFindIndex(comment)
         // Return comment
-        return this.load(comment.id)
+        return this.getResolveItem(comment.id)
     }
 
     async getComment(id: string): Promise<Comment> {
-        if (!this.has(id)) {
+        if (!this.hasResolveItem(id)) {
             // Call backend
             let comment = await CommentClient.getComment(id)
             // Update comment index
-            comment = this.store(comment)
+            comment = this.resolveItem(comment)
             // Update find index
             this.addToFindIndex(comment)
         }
         // Return comment
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 
     async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }): Promise<Comment> {
         // Call backend
         let comment = await CommentClient.updateComment(id, data, files)
         // Update comment index
-        comment = this.store(comment)
+        comment = this.resolveItem(comment)
         // Update find index
         this.removeFromFindIndex(comment)
         this.addToFindIndex(comment)
         // Return comment
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 
     async deleteComment(id: string): Promise<Comment> {
         // Call backend
         let comment = await CommentClient.deleteComment(id)
         // Update comment index
-        comment = this.store(comment)
+        comment = this.resolveItem(comment)
         // Update issue index
         this.removeFromFindIndex(comment)
         // Return comment
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 }
 
