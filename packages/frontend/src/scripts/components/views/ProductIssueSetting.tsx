@@ -4,19 +4,17 @@ import { Redirect, useParams } from 'react-router'
 
 import { Object3D } from 'three'
 
-import { Member, Version, Tag, TagAssignment } from 'productboard-common'
+import { Member, Version, Tag } from 'productboard-common'
 
 import { TagInput } from '../inputs/TagInput'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssue, useMembers, useMilestones, useProduct } from '../../hooks/route'
+import { useIssue, useMembers, useMilestones, useProduct, useTagAssignments, useTags } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { IssueManager } from '../../managers/issue'
-import { TagAssignmentManager } from '../../managers/tagAssignment'
-import { TagManager } from '../../managers/tag'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -51,11 +49,10 @@ export const ProductIssueSettingView = () => {
     const members = useMembers(productId)
     const milestones = useMilestones(productId)
     const issue = useIssue(issueId)
+    const tags = useTags(productId)
+    const tagAssignments = useTagAssignments(issueId)
 
     // INITIAL STATES
-
-    const initialTags = productId == 'new' ? undefined : TagManager.findTagsFromCache(productId)
-    const initialTagAssignments = productId == 'new' ? undefined : TagAssignmentManager.findTagAssignmentsFromCache(issueId)
     const initialLabel = issue ? issue.name : ''
     const initialText = issue ? issue.description : ''
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
@@ -67,8 +64,7 @@ export const ProductIssueSettingView = () => {
     // STATES
     
     // - Entities
-    const [tags, setTags] = React.useState<Tag[]>(initialTags)
-    const [tagAssignments, setTagAssignments] = React.useState<TagAssignment[]>(initialTagAssignments)
+
     const [assignedTags, setAssignedTags] = React.useState<Tag[]>()
 
     // - Values
@@ -88,8 +84,6 @@ export const ProductIssueSettingView = () => {
     // EFFECTS
 
     // - Entities
-    useEffect(() => { productId != 'new' && TagManager.findTags(productId).then(setTags) }, [productId])
-    useEffect(() => { productId != 'new' && TagAssignmentManager.findTagAssignments(issueId).then(setTagAssignments) }, [productId, issueId])
     useEffect(() => {
         if (tagAssignments && tags) {
             const result: Tag[] = []

@@ -8,6 +8,8 @@ import { IssueAPI } from '../clients/mqtt/issue'
 import { MemberAPI } from '../clients/mqtt/member'
 import { MilestoneAPI } from '../clients/mqtt/milestone'
 import { ProductAPI } from '../clients/mqtt/product'
+import { TagAPI } from '../clients/mqtt/tag'
+import { TagAssignmentAPI } from '../clients/mqtt/tagAssignment'
 import { UserAPI } from '../clients/mqtt/user'
 import { VersionAPI } from '../clients/mqtt/version'
 import { CommentManager } from '../managers/comment'
@@ -15,6 +17,8 @@ import { IssueManager } from '../managers/issue'
 import { MemberManager } from '../managers/member'
 import { MilestoneManager } from '../managers/milestone'
 import { ProductManager } from '../managers/product'
+import { TagManager } from '../managers/tag'
+import { TagAssignmentManager } from '../managers/tagAssignment'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 
@@ -275,4 +279,24 @@ export function useMembers(productId: string) {
 
 export function useMember(memberId: string) {
     return useEntity(memberId, () => MemberManager.getMemberFromCache(memberId), () => MemberManager.getMember(memberId), MemberAPI)
+}
+
+// TAG
+
+export function useTags(productId: string) {
+    return useChildEntities(productId, member => member.productId == productId, () => TagManager.findTagsFromCache(productId), () => TagManager.findTags(productId), TagAPI)
+}
+
+export function useTag(tagId: string) {
+    return useEntity(tagId, () => TagManager.getTagFromCache(tagId), () => TagManager.getTag(tagId), TagAPI)
+}
+
+// TAGASSIGNMENT
+
+export function useTagAssignments(issueId: string) {
+    return useChildEntities(issueId, member => member.issueId == issueId, () => TagAssignmentManager.findTagAssignmentsFromCache(issueId), () => TagAssignmentManager.findTagAssignments(issueId), TagAssignmentAPI)
+}
+
+export function useTagAssignment(tagAssignmentId: string) {
+    return useEntity(tagAssignmentId, () => TagAssignmentManager.getTagAssignmentFromCache(tagAssignmentId), () => TagAssignmentManager.getTagAssignment(tagAssignmentId), TagAssignmentAPI)
 }
