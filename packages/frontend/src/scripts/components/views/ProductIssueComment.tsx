@@ -229,6 +229,7 @@ export const ProductIssueCommentView = () => {
         event.preventDefault()
         if (text) {
             await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
+            await IssueManager.updateIssue(issueId, { ...issue })
             setText('')
         }
     }
@@ -238,8 +239,8 @@ export const ProductIssueCommentView = () => {
         event.preventDefault()
         if (text) {
             await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
+            await IssueManager.updateIssue(issueId, { ...issue })
             setText('')
-            await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds })
         }
     }
 

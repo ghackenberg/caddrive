@@ -1,9 +1,9 @@
-import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
+import { Version, VersionAddData, VersionUpdateData } from 'productboard-common'
 
 import { VersionClient } from '../clients/rest/version'
 import { AbstractManager } from './abstract'
 
-class VersionManagerImpl extends AbstractManager<Version> implements VersionREST<VersionAddData, VersionUpdateData, File, Blob> {
+class VersionManagerImpl extends AbstractManager<Version> {
     // CACHE
 
     findVersionsFromCache(productId: string) { 
@@ -15,18 +15,19 @@ class VersionManagerImpl extends AbstractManager<Version> implements VersionREST
 
     // REST
 
-    async findVersions(productId: string) {
+    findVersions(productId: string, callback: (versions: Version[], error?: string) => void) {
         return this.find(
             productId,
             () => VersionClient.findVersions(productId),
-            version => version.productId == productId
+            version => version.productId == productId,
+            callback
         )
     }
     async addVersion(data: VersionAddData, files: {model: File, image: Blob}) {
         return this.add(VersionClient.addVersion(data, files))
     }
-    async getVersion(id: string) {
-        return this.get(id, () => VersionClient.getVersion(id))
+    getVersion(id: string, callback: (version: Version, error?: string) => void) {
+        return this.get(id, () => VersionClient.getVersion(id), callback)
     }
     async updateVersion(id: string, data: VersionUpdateData, files?: {model: File, image: Blob}) {
         return this.update(id, VersionClient.updateVersion(id, data, files))

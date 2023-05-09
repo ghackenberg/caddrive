@@ -7,33 +7,19 @@ import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 
-function useEntity<T extends { id: string }>(id: string, cache: () => T, get: () => Promise<T>) {
+function useEntity<T extends { id: string }>(id: string, cache: () => T, get: (callback: (value: T) => void) => (() => void)) {
     const initialValue = id && id != 'new' && cache()
 
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        let exec = true
         if (id && id != 'new') {
-            get().then(value => exec && setValue(value)).catch(() => exec && setValue(undefined))
+            return get(value => setValue(value))
         } else {
             setValue(undefined)
+            return undefined
         }
-        return () => { exec = false }
     }, [id])
-
-    React.useEffect(() => {
-        let exec = true
-        function update() {
-            if (id && id != 'new') {
-                get().then(value => exec && setValue(value)).catch(() => exec && setValue(undefined))
-            } else {
-                setValue(undefined)
-            }
-        }
-        const interval = setInterval(update, 1000 * 60)
-        return () => { clearInterval(interval), exec = false }
-    })
 
     return value
 }
@@ -42,7 +28,7 @@ export function useUser(userId: string) {
     return useEntity(
         userId,
         () => UserManager.getUserFromCache(userId),
-        () => UserManager.getUser(userId)
+        callback => UserManager.getUser(userId, callback)
     )
 }
 
@@ -50,7 +36,7 @@ export function useProduct(productId: string) {
     return useEntity(
         productId,
         () => ProductManager.getProductFromCache(productId),
-        () => ProductManager.getProduct(productId)
+        callback => ProductManager.getProduct(productId, callback)
     )
 }
 
@@ -58,7 +44,7 @@ export function useVersion(versionId: string) {
     return useEntity(
         versionId,
         () => VersionManager.getVersionFromCache(versionId),
-        () => VersionManager.getVersion(versionId)
+        callback => VersionManager.getVersion(versionId, callback)
     )
 }
 
@@ -66,7 +52,7 @@ export function useIssue(issueId: string) {
     return useEntity(
         issueId,
         () => IssueManager.getIssueFromCache(issueId),
-        () => IssueManager.getIssue(issueId)
+        callback => IssueManager.getIssue(issueId, callback)
     )
 }
 
@@ -74,7 +60,7 @@ export function useMilestone(milestoneId: string) {
     return useEntity(
         milestoneId,
         () => MilestoneManager.getMilestoneFromCache(milestoneId),
-        () => MilestoneManager.getMilestone(milestoneId)
+        callback => MilestoneManager.getMilestone(milestoneId, callback)
     )
 }
 
@@ -82,6 +68,6 @@ export function useMember(memberId: string) {
     return useEntity(
         memberId,
         () => MemberManager.getMemberFromCache(memberId),
-        () => MemberManager.getMember(memberId)
+        callback => MemberManager.getMember(memberId, callback)
     )
 }

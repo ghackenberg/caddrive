@@ -1,9 +1,9 @@
-import { User, UserUpdateData, UserREST } from 'productboard-common'
+import { User, UserUpdateData } from 'productboard-common'
 
 import { UserClient } from '../clients/rest/user'
 import { AbstractManager } from './abstract'
 
-class UserManagerImpl extends AbstractManager<User> implements UserREST<UserUpdateData, File> {
+class UserManagerImpl extends AbstractManager<User> {
     // CACHE
 
     findUsersFromCache() {
@@ -15,15 +15,16 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserUpda
 
     // REST
 
-    async findUsers(query?: string, product?: string) {
+    findUsers(query: string, product: string, callback: (users: User[], error?: string) => void) {
         return this.find(
             `${query}-${product}`,
             () => UserClient.findUsers(query, product),
-            () => false
+            () => false,
+            callback
         )
     }
-    async getUser(id: string) {
-        return this.get(id, () => UserClient.getUser(id))
+    getUser(id: string, callback: (user: User, error?: string) => void) {
+        return this.get(id, () => UserClient.getUser(id), callback)
     }
     async updateUser(id: string, data: UserUpdateData, file?: File) {
         return this.update(id, UserClient.updateUser(id, data, file))

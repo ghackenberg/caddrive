@@ -69,7 +69,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.assigneeIds = data.assigneeIds
         issue.label = data.label
         issue.milestoneId =  data.milestoneId
-        issue.state = data.state
         issue.text = data.text
         await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {

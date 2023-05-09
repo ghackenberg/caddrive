@@ -1,9 +1,9 @@
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+import { Milestone, MilestoneAddData, MilestoneUpdateData } from 'productboard-common'
 
 import { MilestoneClient } from '../clients/rest/milestone'
 import { AbstractManager } from './abstract'
 
-class MilestoneManagerImpl extends AbstractManager<Milestone> implements MilestoneREST {
+class MilestoneManagerImpl extends AbstractManager<Milestone> {
     // CACHE
 
     findMilestonesFromCache(productId: string) { 
@@ -15,18 +15,19 @@ class MilestoneManagerImpl extends AbstractManager<Milestone> implements Milesto
 
     // REST
 
-    async findMilestones(productId: string) {
+    findMilestones(productId: string, callback: (milestones: Milestone[], error?: string) => void) {
         return this.find(
             productId,
             () => MilestoneClient.findMilestones(productId),
-            milestone => milestone.productId == productId
+            milestone => milestone.productId == productId,
+            callback
         )
     }
     async addMilestone(data: MilestoneAddData) {
         return this.add(MilestoneClient.addMilestone(data))
     }
-    async getMilestone(id: string) {
-        return this.get(id, () => MilestoneClient.getMilestone(id))
+    getMilestone(id: string, callback: (milestone: Milestone, error?: string) => void) {
+        return this.get(id, () => MilestoneClient.getMilestone(id), callback)
     }
     async updateMilestone(id: string, data: MilestoneUpdateData) {
         return this.update(id, MilestoneClient.updateMilestone(id, data))

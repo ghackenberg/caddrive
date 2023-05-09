@@ -22,19 +22,24 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
     const [comments, setComments] = React.useState(initialComments)
 
     React.useEffect(() => {
-        let exec = true
+        const callbacks: (() => void)[] = []
         if (issues) {
-            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(comments => {
-                if (exec) {
-                    const newComments: {[issueId: string]: Comment[]} = {}
-                    issues.forEach((issue, index) => {
-                        newComments[issue.id] = comments[index].sort(compare)
-                    })
-                    setComments(newComments)
-                }
-            })
+            for (const issue of issues) {
+                const callback = CommentManager.findComments(issue.id, (newComments, error) => {
+                    if (error) {
+                        setComments({...comments, [issue.id]: undefined})
+                    } else {
+                        setComments({...comments, [issue.id]: newComments})
+                    }
+                })
+                callbacks.push(callback)
+            }
         }
-        return () => { exec = false }
+        return () => {
+            for (const callback of callbacks) {
+                callback()
+            }
+        }
     }, [issues])
 
     return comments

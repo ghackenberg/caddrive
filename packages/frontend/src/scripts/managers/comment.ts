@@ -1,9 +1,9 @@
-import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
+import { Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 
 import { CommentClient } from '../clients/rest/comment'
 import { AbstractManager } from './abstract'
 
-class CommentManagerImpl extends AbstractManager<Comment> implements CommentREST<CommentAddData, CommentUpdateData, Blob> {
+class CommentManagerImpl extends AbstractManager<Comment> {
     // CACHE
     
     findCommentsFromCache(issueId: string) { 
@@ -12,18 +12,19 @@ class CommentManagerImpl extends AbstractManager<Comment> implements CommentREST
 
     // REST
     
-    async findComments(issueId: string) {
+    findComments(issueId: string, callback: (comments: Comment[], error?: string) => void) {
         return this.find(
             issueId,
             () => CommentClient.findComments(issueId),
-            comment => comment.issueId == issueId
+            comment => comment.issueId == issueId,
+            callback
         )
     }
     async addComment(data: CommentAddData, files: { audio?: Blob }) {
         return this.add(CommentClient.addComment(data, files))
     }
-    async getComment(id: string) {
-        return this.get(id, () => CommentClient.getComment(id))
+    getComment(id: string, callback: (comment: Comment, error?: string) => void) {
+        return this.get(id, () => CommentClient.getComment(id), callback)
     }
     async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }) {
         return this.delete(id, CommentClient.updateComment(id, data, files))

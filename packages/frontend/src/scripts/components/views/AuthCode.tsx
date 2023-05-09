@@ -69,22 +69,22 @@ export const AuthCodeView = () => {
         if (userId) {
             setLoad(true)
             setError(undefined)
-            UserManager.getUser(userId).then(async user => {
+            UserManager.getUser(userId, async (user, error) => {
                 if (exec) {
-                    if (!user.consent || !user.name) {
-                        setAuthContextUser(user)
+                    if (error) {
+                        setError('Action failed.')
                         setLoad(false)
-                        await replace('/auth/consent')
                     } else {
-                        setContextUser(user)
-                        setLoad(false)
-                        await go(-2)
+                        if (!user.consent || !user.name) {
+                            setAuthContextUser(user)
+                            setLoad(false)
+                            await replace('/auth/consent')
+                        } else {
+                            setContextUser(user)
+                            setLoad(false)
+                            await go(-2)
+                        }
                     }
-                }
-            }).catch(() => {
-                if (exec) {
-                    setError('Action failed.')
-                    setLoad(false)
                 }
             })
         }

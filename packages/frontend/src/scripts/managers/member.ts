@@ -1,9 +1,9 @@
-import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+import { Member, MemberAddData, MemberUpdateData } from 'productboard-common'
 
 import { MemberClient } from '../clients/rest/member'
 import { AbstractManager } from './abstract'
 
-class MemberManagerImpl extends AbstractManager<Member> implements MemberREST {
+class MemberManagerImpl extends AbstractManager<Member> {
     // CACHE
 
     findMembersFromCache(productId: string, userId?: string) { 
@@ -15,18 +15,19 @@ class MemberManagerImpl extends AbstractManager<Member> implements MemberREST {
 
     // REST
 
-    async findMembers(productId: string, userId?: string) {
+    findMembers(productId: string, userId: string, callback: (members: Member[], error?: string) => void) {
         return this.find(
             `${productId}-${userId}`,
             () => MemberClient.findMembers(productId, userId),
-            member => (!productId || member.productId == productId) && (!userId || member.userId == userId)
+            member => (!productId || member.productId == productId) && (!userId || member.userId == userId),
+            callback
         )
     }
     async addMember(data: MemberAddData) {
         return this.add(MemberClient.addMember(data))
     }
-    async getMember(id: string) {
-        return this.get(id, () => MemberClient.getMember(id))
+    getMember(id: string, callback: (member: Member, error?: string) => void) {
+        return this.get(id, () => MemberClient.getMember(id), callback)
     }
     async updateMember(id: string, data: MemberUpdateData) {
         return this.update(id, MemberClient.updateMember(id, data))

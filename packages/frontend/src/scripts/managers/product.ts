@@ -1,9 +1,9 @@
-import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
+import { Product, ProductAddData, ProductUpdateData } from 'productboard-common'
 
 import { ProductClient } from '../clients/rest/product'
 import { AbstractManager } from './abstract'
 
-class ProductManagerImpl extends AbstractManager<Product> implements ProductREST {
+class ProductManagerImpl extends AbstractManager<Product> {
     // CACHE
 
     findProductsFromCache() {
@@ -15,18 +15,19 @@ class ProductManagerImpl extends AbstractManager<Product> implements ProductREST
 
     // REST
     
-    async findProducts() {
+    findProducts(callback: (products: Product[], error?: string) => void) {
         return this.find(
             '',
             () => ProductClient.findProducts(),
-            () => true
+            () => true,
+            callback
         )
     }
     async addProduct(data: ProductAddData) {
         return this.add(ProductClient.addProduct(data))
     }
-    async getProduct(id: string) {
-        return this.get(id, () => ProductClient.getProduct(id))
+    getProduct(id: string, callback: (product: Product, error?: string) => void) {
+        return this.get(id, () => ProductClient.getProduct(id), callback)
     }
     async updateProduct(id: string, data: ProductUpdateData) {
         return this.update(id, ProductClient.updateProduct(id, data))

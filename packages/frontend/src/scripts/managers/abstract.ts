@@ -10,114 +10,136 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
 
     // ITEM
 
-    private promiseItemIndex: {[id: string]: Promise<T>} = {}
-    private resolveItemIndex: {[id: string]: T} = {}
+    private promiseItemIndex:  {[id: string]: Promise<T>} = {}
+    private resolveItemIndex:  {[id: string]: T} = {}
+    private callbackItemIndex: {[id: string]: ((item: T) => void)[]} = {}
 
-    protected async promiseItem(id: string, promise: Promise<T>) {
+    private async promiseItem(id: string, promise: Promise<T>) {
+        if (!(id in this.callbackItemIndex)) {
+            this.callbackItemIndex[id] = []
+        }
         this.promiseItemIndex[id] = promise
         const item = await promise
         this.resolveItem(item)
+        return item
     }
-
-    protected resolveItem(item: T) {
-        if (this.hasItem(item.id)) {
-            if (item.deleted === null) {
-                const newTime = this.getTime(item)
-                const oldTime = this.getTime(this.resolveItemIndex[item.id])
-                if (newTime > oldTime) {
-                    this.resolveItemIndex[item.id] = item
-                }
-            } else {
-                delete this.resolveItemIndex[item.id]
-            }
-        } else {
-            if (item.deleted === null) {
-                this.resolveItemIndex[item.id] = item
-            }
+    private resolveItem(item: T) {
+        if (!(item.id in this.callbackItemIndex)) {
+            this.callbackItemIndex[item.id] = []
         }
-    }
-
-    protected async getItemPromise(id: string) {
-        return this.promiseItemIndex[id]
-    }
-    protected getItem(id: string)  {
-        return this.resolveItemIndex[id]
+        this.resolveItemIndex[item.id] = item
+        return item
     }
     
-    protected hasItemPromise(id: string) {
+    private hasItemPromise(id: string) {
         return id in this.promiseItemIndex
     }
-    protected hasItem(id: string) {
+    private hasItem(id: string) {
         return id in this.resolveItemIndex
     }
 
+    protected getItem(id: string)  {
+        return this.resolveItemIndex[id]
+    }
+
     protected async add(promise: Promise<T>) {
-        const item = await promise
-        this.resolveItem(item)
+        const item = this.resolveItem(await promise)
         for (const key of Object.keys(this.resolveFindIndex)) {
             if (this.includeFindIndex[key](item)) {
                 this.resolveFindIndex[key][item.id] = true
             } else {
                 delete this.resolveFindIndex[key][item.id]
             }
+            for (const callback of this.callbackFindIndex[key]) {
+                callback(this.getFind(key))
+            }
         }
         return item
     }
-    protected async get(id: string, get: () => Promise<T>) {
+
+    protected get(id: string, get: () => Promise<T>, callback: (item: T, error?: string) => void) {
         if (this.hasItem(id)) {
-            return this.getItem(id)
+            callback(this.getItem(id))
+            this.callbackItemIndex[id].push(callback)
         } else if (this.hasItemPromise(id)) {
-            return this.getItemPromise(id)
+            this.callbackItemIndex[id].push(callback)
         } else {
-            const promise = get()
-            this.promiseItem(id, promise)
-            return promise
+            this.callbackItemIndex[id] = [callback]
+            this.promiseItem(id, get()).then(item => {
+                for (const callback of this.callbackItemIndex[id]) {
+                    callback(item)
+                }
+            })
+        }
+        return () => {
+            this.callbackItemIndex[id].splice(this.callbackItemIndex[id].indexOf(callback), 1)
         }
     }
+
     protected async update(id: string, promise: Promise<T>) {
-        this.promiseItem(id, promise)
-        const item = await promise
+        const item = await this.promiseItem(id, promise)
+        for (const callback of this.callbackItemIndex[id]) {
+            callback(item)
+        }
         for (const key of Object.keys(this.resolveFindIndex)) {
             if (this.includeFindIndex[key](item)) {
                 this.resolveFindIndex[key][item.id] = true
             } else {
                 delete this.resolveFindIndex[key][item.id]
             }
+            for (const callback of this.callbackFindIndex[key]) {
+                callback(this.getFind(key))
+            }
         }
         return item
     }
+
     protected async delete(id: string, promise: Promise<T>) {
-        this.promiseItem(id, promise)
-        const item = await promise
+        const item = await this.promiseItem(id, promise)
+        for (const callback of this.callbackItemIndex[id]) {
+            callback(undefined)
+        }
         for (const key of Object.keys(this.resolveFindIndex)) {
             delete this.resolveFindIndex[key][item.id]
+            for (const callback of this.callbackFindIndex[key]) {
+                callback(this.getFind(key))
+            }
         }
         return promise
     }
 
     // FIND
 
-    private promiseFindIndex: {[key: string]: Promise<T[]>} = {}
-    private includeFindIndex: {[key: string]: (item: T) => boolean} = {}
-    private resolveFindIndex: {[key: string]: {[id: string]: boolean}} = {}
+    private promiseFindIndex:  {[key: string]: Promise<T[]>} = {}
+    private includeFindIndex:  {[key: string]: (item: T) => boolean} = {}
+    private resolveFindIndex:  {[key: string]: {[id: string]: boolean}} = {}
+    private callbackFindIndex: {[key: string]: ((item: T[]) => void)[]} = {}
 
-    protected async promiseFind(key: string, promise: Promise<T[]>, include: (item: T) => boolean) {
+    private async promiseFind(key: string, promise: Promise<T[]>, include: (item: T) => boolean) {
+        if (!(key in this.callbackFindIndex)) {
+            this.callbackFindIndex[key] = []
+        }
         this.promiseFindIndex[key] = promise
         this.includeFindIndex[key] = include
         const find = await promise
-        this.resolveFind(key, find)
+        return this.resolveFind(key, find)
     }
-    protected resolveFind(key: string, find: T[]) {
+    private resolveFind(key: string, find: T[]) {
         this.resolveFindIndex[key] = {}
         for (const item of find) {
             this.resolveItem(item)
             this.resolveFindIndex[key][item.id] = true
         }
+        return find
     }
 
-    protected getFindPromise(key: string) {
-        return this.promiseFindIndex[key]
+    private hasFindPromise(key: string) {
+        return key in this.promiseFindIndex
     }
+    private hasFind(key: string) {
+        return key in this.resolveFindIndex
+    }
+
     protected getFind(key: string) {
         if (key in this.resolveFindIndex) {
             return Object.keys(this.resolveFindIndex[key]).map(id => this.getItem(id)).filter(t => t && t.deleted === null)
@@ -126,32 +148,22 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         }
     }
 
-    protected hasFindPromise(key: string) {
-        return key in this.promiseFindIndex
-    }
-    protected hasFind(key: string) {
-        return key in this.resolveFindIndex
-    }
-
-    protected async find(key: string, find: () => Promise<T[]>, include: (item: T) => boolean) {
+    protected find(key: string, find: () => Promise<T[]>, include: (item: T) => boolean, callback: (items: T[], error?: string) => void) {
         if (this.hasFind(key)) {
-            return this.getFind(key)
+            callback(this.getFind(key))
+            this.callbackFindIndex[key].push(callback)
         } else if (this.hasFindPromise(key)) {
-            return this.getFindPromise(key)
+            this.callbackFindIndex[key].push(callback)
         } else {
-            const promise = find()
-            this.promiseFind(key, promise, include)
-            return promise
+            this.callbackFindIndex[key] = [callback]
+            this.promiseFind(key, find(), include).then(items => {
+                for (const callback of this.callbackFindIndex[key]) {
+                    callback(items)
+                }
+            })
         }
-    }
-
-    private getTime(t: T) {
-        if (t.deleted) {
-            return t.deleted
-        } else if (t.updated) {
-            return t.updated
-        } else {
-            return t.created
+        return () => {
+            this.callbackFindIndex[key].splice(this.callbackFindIndex[key].indexOf(callback), 1)
         }
     }
     

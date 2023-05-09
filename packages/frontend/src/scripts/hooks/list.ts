@@ -8,7 +8,7 @@ import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 
-function useEntities<T extends { id: string, created: number }>(id: string, cache: () => T[], get: () => Promise<T[]>) {
+function useEntities<T extends { id: string, created: number }>(id: string, cache: () => T[], get: (callback: (values: T[]) => void) => (() => void)) {
 
     function compare(a: T, b: T) {
         return a.created - b.created
@@ -19,9 +19,12 @@ function useEntities<T extends { id: string, created: number }>(id: string, cach
     const [values, setValues] = React.useState(initialValue && initialValue.sort(compare))
 
     React.useEffect(() => {
-        let exec = true
-        !values && !id.includes('new') && get().then(values => exec && setValues(values.sort(compare)))
-        return () => { exec = false }
+        if (id && !id.includes('new')) {
+            return get(values => setValues(values.sort(compare)))
+        } else {
+            setValues(undefined)
+            return () => {/**/}
+        }
     }, [id])
 
     return values
@@ -29,11 +32,11 @@ function useEntities<T extends { id: string, created: number }>(id: string, cach
 
 // USERS
 
-export function useUsers() {
+export function useUsers(query?: string, productId?: string) {
     return useEntities(
         '',
         () => UserManager.findUsersFromCache(),
-        () => UserManager.findUsers()
+        callback => UserManager.findUsers(query, productId, callback)
     )
 }
 
@@ -41,7 +44,7 @@ export function useProducts() {
     return useEntities(
         '',
         () => ProductManager.findProductsFromCache(),
-        () => ProductManager.findProducts()
+        callback => ProductManager.findProducts(callback)
     )
 }
 
@@ -49,7 +52,7 @@ export function useVersions(productId: string) {
     return useEntities(
         productId,
         () => VersionManager.findVersionsFromCache(productId),
-        () => VersionManager.findVersions(productId)
+        callback => VersionManager.findVersions(productId, callback)
     )
 }
 
@@ -57,7 +60,7 @@ export function useIssues(productId: string, milestoneId?: string, state?: 'open
     return useEntities(
         `${productId}-${milestoneId}-${state}`,
         () => IssueManager.findIssuesFromCache(productId, milestoneId, state),
-        () => IssueManager.findIssues(productId, milestoneId, state)
+        callback => IssueManager.findIssues(productId, milestoneId, state, callback)
     )
 }
 
@@ -65,7 +68,7 @@ export function useComments(issueId: string) {
     return useEntities(
         issueId,
         () => CommentManager.findCommentsFromCache(issueId),
-        () => CommentManager.findComments(issueId)
+        callback => CommentManager.findComments(issueId, callback)
     )
 }
 
@@ -73,14 +76,14 @@ export function useMilestones(productId: string) {
     return useEntities(
         productId,
         () => MilestoneManager.findMilestonesFromCache(productId),
-        () => MilestoneManager.findMilestones(productId)
+        callback => MilestoneManager.findMilestones(productId, callback)
     )
 }
 
-export function useMembers(productId: string) {
+export function useMembers(productId: string, userId?: string) {
     return useEntities(
         productId,
         () => MemberManager.findMembersFromCache(productId),
-        () => MemberManager.findMembers(productId)
+        callback => MemberManager.findMembers(productId, userId, callback)
     )
 }
