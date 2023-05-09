@@ -65,11 +65,17 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
             this.callbackItemIndex[id].push(callback)
         } else {
             this.callbackItemIndex[id] = [callback]
-            this.promiseItem(id, get()).then(item => {
-                for (const callback of this.callbackItemIndex[id]) {
-                    callback(item)
-                }
-            })
+            const impl = () => {
+                this.promiseItem(id, get()).then(item => {
+                    for (const callback of this.callbackItemIndex[id]) {
+                        callback(item)
+                    }
+                    if (this.callbackItemIndex[id].length > 0) {
+                        setTimeout(impl, 1000 * 60)
+                    }
+                })
+            }
+            impl()
         }
         return () => {
             this.callbackItemIndex[id].splice(this.callbackItemIndex[id].indexOf(callback), 1)
@@ -156,11 +162,17 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
             this.callbackFindIndex[key].push(callback)
         } else {
             this.callbackFindIndex[key] = [callback]
-            this.promiseFind(key, find(), include).then(items => {
-                for (const callback of this.callbackFindIndex[key]) {
-                    callback(items)
-                }
-            })
+            const impl = () => {
+                this.promiseFind(key, find(), include).then(items => {
+                    for (const callback of this.callbackFindIndex[key]) {
+                        callback(items)
+                    }
+                    if (this.callbackFindIndex[key].length > 0) {
+                        setTimeout(impl, 1000 * 60)
+                    }
+                })
+            }
+            impl()
         }
         return () => {
             this.callbackFindIndex[key].splice(this.callbackFindIndex[key].indexOf(callback), 1)
