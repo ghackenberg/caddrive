@@ -142,21 +142,32 @@ export const ProductIssueView = (props: RouteComponentProps<{ product: string }>
 
     useEffect(() => {
         if (tagAssignments) {
-            const newTags = { ...assignedTags }
-            Promise.all(issues.map(issue => {
-                const tempTags: Tag[] = []
-                for (let index = 0; index < tagAssignments[issue.id].length; index++) {
-                    TagManager.getTag(tagAssignments[issue.id][index].tagId).then(tag => {
-                        tempTags.push(tag)
-                    })
+
+            const tagIds: string[] = []
+            for (const issue of issues) {
+                for (const tagAssignment of tagAssignments[issue.id]) {
+                    if (!tagIds.includes(tagAssignment.tagId)) {
+                        tagIds.push(tagAssignment.tagId)
+                    }
                 }
-                newTags[issue.id] = tempTags
-            }))
-            setAssignedTags(newTags)
+            }
+            Promise.all(tagIds.map(tagId => TagManager.getTag(tagId))).then(tags => {
+                const newTags: {[issueId: string]: Tag[]} = {}
+                for (const issue of issues) {
+                    newTags[issue.id] = []
+                    for (const tagAssignment of tagAssignments[issue.id]) {
+                        for (const tag of tags) {
+                            if (tag.id == tagAssignment.tagId) {
+                                newTags[issue.id].push(tag)
+                                break
+                            }
+                        }
+                    }
+                }
+                setAssignedTags(newTags) 
+            })
         }
     }, [tagAssignments])
-
-    console.log(assignedTags)
 
     // - Computations
     useEffect(() => {
@@ -254,20 +265,24 @@ export const ProductIssueView = (props: RouteComponentProps<{ product: string }>
         },
         {
             label: 'Label', class: 'left fill', content: issue => (
+                <>
+                <div>
+
                 <Link to={`/products/${productId}/issues/${issue.id}/comments`}>
                     {issue.name}
                 </Link>
+                </div>
+                <div className='tag_container'>
+                
+                { assignedTags ? assignedTags[issue.id].map((tag) => (
+                    <div key={tag.id} className={`tag ${tag.color}`}>{tag.name}</div>
+                    )): 
+                    <img src={LoadIcon} className='icon medium pad animation spin' />
+                } 
+                 </div>
+                </>
             )
         },
-        // {
-        //     label: 'Tags', class: 'nowrap', content: issue => (
-        //         <div className='tag_container'>
-        //        { tags && tags[issue.id].map((tag) => (
-        //             <div key={tag.id} className={`tag ${tag.color}`}>{tag.name}</div>
-        //         ))}
-        //         </div>
-        //     )
-        // },
         {
             label: 'Assignees', class: 'nowrap', content: issue => (
                 <Link to={`/products/${productId}/issues/${issue.id}/comments`}>

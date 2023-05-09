@@ -136,14 +136,16 @@ table div.tag_container {
     height: 100%;
     width: 95%;
     display: 'flex';
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: 'wrap';
     margin-bottom: 1em;
     align-content: end;
+    margin-top: 1em;
+    
 }
 
 table div.tag_container > div.tag  {
-    display: block;
+    display: inline-flex;
     width: fit-content;
     height: fit-content;
     margin-right: 1em;
@@ -151,6 +153,8 @@ table div.tag_container > div.tag  {
     border-radius: 0.3em;
     padding-left: 0.5em;
     padding-right: 0.5em;
+    font-size: 75%;
+    
 }
 
 table div.tag_container > div.gray {
