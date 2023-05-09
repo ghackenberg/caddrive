@@ -54,6 +54,13 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     protected async add(promise: Promise<T>) {
         const item = await promise
         this.resolveItem(item)
+        for (const key of Object.keys(this.resolveFindIndex)) {
+            if (this.includeFindIndex[key](item)) {
+                this.resolveFindIndex[key][item.id] = true
+            } else {
+                delete this.resolveFindIndex[key][item.id]
+            }
+        }
         return item
     }
     protected async get(id: string, get: () => Promise<T>) {
@@ -69,10 +76,22 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
     protected async update(id: string, promise: Promise<T>) {
         this.promiseItem(id, promise)
-        return promise
+        const item = await promise
+        for (const key of Object.keys(this.resolveFindIndex)) {
+            if (this.includeFindIndex[key](item)) {
+                this.resolveFindIndex[key][item.id] = true
+            } else {
+                delete this.resolveFindIndex[key][item.id]
+            }
+        }
+        return item
     }
     protected async delete(id: string, promise: Promise<T>) {
         this.promiseItem(id, promise)
+        const item = await promise
+        for (const key of Object.keys(this.resolveFindIndex)) {
+            delete this.resolveFindIndex[key][item.id]
+        }
         return promise
     }
 
