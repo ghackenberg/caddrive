@@ -17,13 +17,13 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> implements
     findTagAssignmentsFromCache(issueId: string) { 
         const key = `${issueId}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.load(id))
+            return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id))
         } else { 
             return undefined 
         } 
     }
     getTagAssignmentFromCache(tagAssignmentId: string) { 
-        return this.load(tagAssignmentId)
+        return this.getResolveItem(tagAssignmentId)
     }
 
     private addToFindIndex(tagAssignment: TagAssignment) {
@@ -42,16 +42,16 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> implements
     // MQTT
 
     create(tagAssignment: TagAssignment): void {
-        tagAssignment = this.store(tagAssignment)
+        tagAssignment = this.resolveItem(tagAssignment)
         this.addToFindIndex(tagAssignment)
     }
     update(tagAssignment: TagAssignment): void {
-        tagAssignment = this.store(tagAssignment)
+        tagAssignment = this.resolveItem(tagAssignment)
         this.removeFromFindIndex(tagAssignment)
         this.addToFindIndex(tagAssignment)
     }
     delete(tagAssignment: TagAssignment): void {
-        tagAssignment = this.store(tagAssignment)
+        tagAssignment = this.resolveItem(tagAssignment)
         this.removeFromFindIndex(tagAssignment)
     }
 
@@ -63,60 +63,60 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> implements
             // Call backend
             let tagAssignments = await TagAssignmentClient.findTagAssignments(issueId)
             // Update tagAssignment index
-            tagAssignments = tagAssignments.map(tagAssignment => this.store(tagAssignment))
+            tagAssignments = tagAssignments.map(tagAssignment => this.resolveItem(tagAssignment))
             // Init product index
             this.findIndex[key] = {}
             // Update product index
             tagAssignments.forEach(tagAssignment => this.addToFindIndex(tagAssignment))
         }
         // Return issues
-        return Object.keys(this.findIndex[key]).map(id => this.load(id)).filter(tagAssignment => !tagAssignment.deleted)
+        return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id)).filter(tagAssignment => !tagAssignment.deleted)
     }
 
     async addTagAssignment(data: TagAssignmentAddData): Promise<TagAssignment> {
         // Call backend
         let tagAssignment = await TagAssignmentClient.addTagAssignment(data)
         // Update tagAssignment index
-        tagAssignment = this.store(tagAssignment)
+        tagAssignment = this.resolveItem(tagAssignment)
         // Update find index
         this.addToFindIndex(tagAssignment)
         // Return tagAssignment
-        return this.load(tagAssignment.id)
+        return this.getResolveItem(tagAssignment.id)
     }
 
     async getTagAssignment(id: string): Promise<TagAssignment> {
-        if (!this.has(id)) {
+        if (!this.hasResolveItem(id)) {
             // Call backend
             let tagAssignment = await TagAssignmentClient.getTagAssignment(id)
             // Update tagAssignment index
-            tagAssignment = this.store(tagAssignment)
+            tagAssignment = this.resolveItem(tagAssignment)
             // Update product index
             this.addToFindIndex(tagAssignment)
         }
         // Return tagAssignment
-        return this.load(id)
+        return this.getResolveItem(id)
 
     }
     async updateTagAssignment(id: string, data: TagAssignmentUpdateData): Promise<TagAssignment> {
         // Call backend
         let tagAssignment = await TagAssignmentClient.updateTagAssignment(id, data)
         // Update tagAssignment index
-        tagAssignment = this.store(tagAssignment)
+        tagAssignment = this.resolveItem(tagAssignment)
         // Update find index
         this.removeFromFindIndex(tagAssignment)
         this.addToFindIndex(tagAssignment)
         // Return tagAssignment
-        return this.load(id)
+        return this.getResolveItem(id)
     }
     async deleteTagAssignment(id: string): Promise<TagAssignment> {
         // Call backend
         let tagAssignment = await TagAssignmentClient.deleteTagAssignment(id)
         // Update tagAssignment index
-        tagAssignment = this.store(tagAssignment)
+        tagAssignment = this.resolveItem(tagAssignment)
         // Update find index
         this.removeFromFindIndex(tagAssignment)
         // Return tagAssignment
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 }
 

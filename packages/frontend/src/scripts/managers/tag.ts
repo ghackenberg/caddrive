@@ -17,13 +17,13 @@ class TagManagerImpl extends AbstractManager<Tag> implements TagREST, TagDownMQT
     findTagsFromCache(productId: string) { 
         const key = `${productId}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.load(id))
+            return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id))
         } else { 
             return undefined 
         } 
     }
     getTagFromCache(tagId: string) { 
-        return this.load(tagId)
+        return this.getResolveItem(tagId)
     }
 
     private addToFindIndex(tag: Tag) {
@@ -42,16 +42,16 @@ class TagManagerImpl extends AbstractManager<Tag> implements TagREST, TagDownMQT
     // MQTT
 
     create(tag: Tag): void {
-        tag = this.store(tag)
+        tag = this.resolveItem(tag)
         this.addToFindIndex(tag)
     }
     update(tag: Tag): void {
-        tag = this.store(tag)
+        tag = this.resolveItem(tag)
         this.removeFromFindIndex(tag)
         this.addToFindIndex(tag)
     }
     delete(tag: Tag): void {
-        tag = this.store(tag)
+        tag = this.resolveItem(tag)
         this.removeFromFindIndex(tag)
     }
 
@@ -63,60 +63,60 @@ class TagManagerImpl extends AbstractManager<Tag> implements TagREST, TagDownMQT
             // Call backend
             let tags = await TagClient.findTags(productId)
             // Update tag index
-            tags = tags.map(tag => this.store(tag))
+            tags = tags.map(tag => this.resolveItem(tag))
             // Init product index
             this.findIndex[key] = {}
             // Update product index
             tags.forEach(tag => this.addToFindIndex(tag))
         }
         // Return issues
-        return Object.keys(this.findIndex[key]).map(id => this.load(id)).filter(tag => !tag.deleted)
+        return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id)).filter(tag => !tag.deleted)
     }
 
     async addTag(data: TagAddData): Promise<Tag> {
         // Call backend
         let tag = await TagClient.addTag(data)
         // Update tag index
-        tag = this.store(tag)
+        tag = this.resolveItem(tag)
         // Update find index
         this.addToFindIndex(tag)
         // Return tag
-        return this.load(tag.id)
+        return this.getResolveItem(tag.id)
     }
 
     async getTag(id: string): Promise<Tag> {
-        if (!this.has(id)) {
+        if (!this.hasResolveItem(id)) {
             // Call backend
             let tag = await TagClient.getTag(id)
             // Update tag index
-            tag = this.store(tag)
+            tag = this.resolveItem(tag)
             // Update product index
             this.addToFindIndex(tag)
         }
         // Return tag
-        return this.load(id)
+        return this.getResolveItem(id)
 
     }
     async updateTag(id: string, data: TagUpdateData): Promise<Tag> {
         // Call backend
         let tag = await TagClient.updateTag(id, data)
         // Update tag index
-        tag = this.store(tag)
+        tag = this.resolveItem(tag)
         // Update find index
         this.removeFromFindIndex(tag)
         this.addToFindIndex(tag)
         // Return tag
-        return this.load(id)
+        return this.getResolveItem(id)
     }
     async deleteTag(id: string): Promise<Tag> {
         // Call backend
         let tag = await TagClient.deleteTag(id)
         // Update tag index
-        tag = this.store(tag)
+        tag = this.resolveItem(tag)
         // Update find index
         this.removeFromFindIndex(tag)
         // Return tag
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 }
 
