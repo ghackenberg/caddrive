@@ -3,19 +3,20 @@ import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue, Tag, TagAssignment } from 'productboard-common'
+import { Issue, TagAssignment } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
 import { useIssuesComments, useIssues, useMembers, useProduct} from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
-import { TagManager } from '../../managers/tag'
+//import { TagManager } from '../../managers/tag'
 import { TagAssignmentManager } from '../../managers/tagAssignment'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { IssueCount } from '../counts/Issues'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
+import { AssignedTagsWidget } from '../widgets/AssignedTags'
 import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -24,7 +25,6 @@ import { LoadingView } from './Loading'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
-import LoadIcon from '/src/images/load.png'
 
 export const ProductIssueView = () => {
     const { push } = useAsyncHistory()
@@ -55,7 +55,7 @@ export const ProductIssueView = () => {
     // STATES
     
     // - Computations
-    const [assignedTags, setAssignedTags] = useState<{ [id: string]: Tag[] }>()
+    //const [assignedTags, setAssignedTags] = useState<{ [id: string]: Tag[] }>()
     const [tagAssignments, setTagAssignments] = useState<{ [id: string]: TagAssignment[] }>()
     const [issueParts, setIssueParts] = useState<{ [id: string]: Part[] }>(initialIssueParts)
     const [commentParts, setCommentParts] = useState<{ [id: string]: Part[] }>(initialCommentParts)
@@ -82,35 +82,6 @@ export const ProductIssueView = () => {
             })
         }
     }, [issues])
-
-    useEffect(() => {
-        if (tagAssignments) {
-
-            const tagIds: string[] = []
-            for (const issue of issues) {
-                for (const tagAssignment of tagAssignments[issue.id]) {
-                    if (!tagIds.includes(tagAssignment.tagId)) {
-                        tagIds.push(tagAssignment.tagId)
-                    }
-                }
-            }
-            Promise.all(tagIds.map(tagId => TagManager.getTag(tagId))).then(tags => {
-                const newTags: { [issueId: string]: Tag[] } = {}
-                for (const issue of issues) {
-                    newTags[issue.id] = []
-                    for (const tagAssignment of tagAssignments[issue.id]) {
-                        for (const tag of tags) {
-                            if (tag.id == tagAssignment.tagId) {
-                                newTags[issue.id].push(tag)
-                                break
-                            }
-                        }
-                    }
-                }
-                setAssignedTags(newTags)
-            })
-        }
-    }, [tagAssignments])
 
     // - Computations
     useEffect(() => {
@@ -207,12 +178,8 @@ export const ProductIssueView = () => {
                     <div>
                         {issue.name}
                     </div>
-                    <div className='tag_container'>
-                        {assignedTags ? assignedTags[issue.id].map((tag) => (
-                            <div key={tag.id} className={`tag ${tag.color}`}>{tag.name}</div>
-                        )) :
-                            <img src={LoadIcon} className='icon medium pad animation spin' />
-                        }
+                    <div>
+                        <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
                     </div>
                 </>
             )
