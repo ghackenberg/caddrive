@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { useVersions } from '../../hooks/route'
+import { useVersions } from '../../hooks/list'
 
 import LoadIcon from '/src/images/load.png'
 import EmptyIcon from '/src/images/empty.png'

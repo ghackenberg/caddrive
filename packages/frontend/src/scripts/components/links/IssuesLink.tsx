@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssues } from '../../hooks/route'
+import { useIssues } from '../../hooks/list'
 import { PRODUCTS_4 } from '../../pattern'
 
 import IssueIcon from '/src/images/issue.png'

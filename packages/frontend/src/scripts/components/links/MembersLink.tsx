@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useMembers } from '../../hooks/route'
+import { useMembers } from '../../hooks/list'
 import { PRODUCTS_4 } from '../../pattern'
 
 import MemberIcon from '/src/images/user.png'

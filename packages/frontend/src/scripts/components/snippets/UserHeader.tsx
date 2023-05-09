@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 
-import { useUser } from '../../hooks/route'
+import { useUser } from '../../hooks/entity'
 import { UserLink } from '../links/UserLink'
 
 import SettingIcon from '/src/images/setting.png'
