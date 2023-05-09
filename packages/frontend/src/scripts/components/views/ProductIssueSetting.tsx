@@ -1,37 +1,34 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent } from 'react'
-import { Redirect, useHistory } from 'react-router' 
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
 import { Object3D } from 'three'
 
-import { Issue, Product, User, Member, Version, Milestone } from 'productboard-common'
+import { Member, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
+import { useAsyncHistory } from '../../hooks/history'
+import { useIssue, useMembers, useMilestones, useProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
-import { UserManager } from '../../managers/user'
-import { ProductManager } from '../../managers/product'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
-import { MilestoneManager } from '../../managers/milestone'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { LoadingView } from './Loading'
 
-import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductIssueSettingView = (props: RouteComponentProps<{product: string, issue: string}>) => {
+export const ProductIssueSettingView = () => {
 
-    const { goBack, replace, location } = useHistory()
+    const { goBack, replace } = useAsyncHistory()
 
     // REFERENCES
 
@@ -43,45 +40,34 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const issueId = props.match.params.issue
+    const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const members = useMembers(productId)
+    const milestones = useMilestones(productId)
+    const issue = useIssue(issueId)
 
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
-    const initialUsers: {[id: string]: User} = {}
-    for (const member of initialMembers || []) {
-        const user = UserManager.getUserFromCache(member.userId)
-        if (user) {
-            initialUsers[member.id] = user
-        }
-    } 
-    const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
-    const initialMilestones = productId == 'new' ? undefined : MilestoneManager.findMilestonesFromCache(productId)
-
-    const initialLabel = initialIssue ? initialIssue.label : ''
-    const initialText = initialIssue ? initialIssue.text : ''
-    const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (initialIssue && initialIssue.milestoneId)
-    const initialAssigneeIds = initialIssue ? initialIssue.assigneeIds : []
+    const initialLabel = issue ? issue.label : ''
+    const initialText = issue ? issue.text : ''
+    const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
+    const initialAssigneeIds = issue ? issue.assigneeIds : []
 
     const initialMarked: Part[] = []
     collectParts(initialText, initialMarked)
     
     // STATES
-    
-    // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
-    const [issue, setIssue] = useState<Issue>(initialIssue)
-    const [milestones, setMilstones] = useState<Milestone[]>(initialMilestones)
+
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [text, setText] = useState<string>(initialText)
     const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
+
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [audioUrl, setAudioUrl] = useState<string>('')
@@ -91,27 +77,12 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { issueId != 'new' && IssueManager.getIssue(issueId).then(setIssue) }, [props])
-    useEffect(() => { MilestoneManager.findMilestones(productId).then(setMilstones) }, [props]) 
-    useEffect(() => {
-        if (members) {
-            Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
-                const newUsers = {...users}
-                for (let index = 0; index < members.length; index++) {
-                    newUsers[members[index].id] = memberUsers[index]
-                }
-                setUsers(newUsers)
-            })
-        }
-    }, [members])
     // - Values
     useEffect(() => { issue && setLabel(issue.label) }, [issue])
     useEffect(() => { issue && setText(issue.text) }, [issue])
     useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
+
     // - Computations
     useEffect(() => {
         const parts: Part[] = []
@@ -122,6 +93,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     // FUNCTIONS
 
     async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const recorder = new AudioRecorder()
         await recorder.start()
@@ -129,6 +101,7 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     }
 
     async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
@@ -170,16 +143,17 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
     }
 
     async function submitIssue(event: FormEvent){
+        // TODO handle unmount!
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
                 const issue = await IssueManager.addIssue({ productId, label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
-                replace(`/products/${productId}/issues/${issue.id}/comments`)
+                await replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
                 await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
-                goBack()    
+                await goBack()    
             }
         }
     }
@@ -199,16 +173,10 @@ export const ProductIssueSettingView = (props: RouteComponentProps<{product: str
 
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
-            member.id in users ? (
-                <ProductUserPictureWidget user={users[member.id]} members={members} class='icon medium round'/>
-            ) : (
-                <img src={LoadIcon} className='icon mediumn pad animation spin'/>
-            )
+            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round'/>
         ) },
         { label: 'Name', class: 'fill left nowrap', content: member => (
-            member.id in users ? (
-                users[member.id].name
-            ) : '?'
+            <ProductUserNameWidget userId={member.userId} productId={productId}/>
         ) },
         { label: '🛠️', class: 'fill center nowrap', content: member => (
             <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>

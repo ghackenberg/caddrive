@@ -1,18 +1,14 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, Fragment } from 'react'
-import { Redirect, RouteComponentProps } from 'react-router'
-import { Link } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
-import { Member, Product, User, Version } from 'productboard-common'
+import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { VersionAPI } from '../../clients/mqtt/version'
+import { useProduct, useMembers, useVersions } from '../../hooks/route'
 import { computeTree } from '../../functions/tree'
-import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
-import { UserManager } from '../../managers/user'
-import { VersionManager } from '../../managers/version'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
@@ -25,7 +21,7 @@ import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/version.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductVersionView = () => {
 
     // CONTEXTS
 
@@ -34,28 +30,20 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const members = useMembers(productId)
+    const versions = useVersions(productId)
 
     // INITIAL STATES
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
-    const initialUsers : {[id: string]: User} = {}
-    for (const version of initialVersions || []) {
-        const user = UserManager.getUserFromCache(version.userId)
-        if (user) {
-            initialUsers[version.id] = user
-        }
-    }
-    const initialTree = computeTree(initialVersions)
+
+    const initialTree = computeTree(versions)
 
     // STATES
 
-    // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [versions, setVersions] = useState<Version[]>(initialVersions)
-    const [users, setUsers] = useState<{[versionId: string]: User}>(initialUsers)
     // - Computations
     const [children, setChildren] = useState<{[versionId: string]: Version[]}>(initialTree.children)
     const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
@@ -63,45 +51,12 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [siblings, setSiblings] = useState<{[versionId: string]: Version[]}>(initialTree.siblings)
     const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
+    
     // - Interactions
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
-    useEffect(() => {
-        if (versions) {
-            Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
-                const newUsers: {[versionId: string]: User} = {}
-                for (let index = 0; index < versions.length; index++) {
-                    newUsers[versions[index].id] = versionUsers[index]
-                }
-                setUsers(newUsers)
-            })
-        }
-    }, [versions])
-
-    // - Events
-    useEffect(() =>  {
-        return VersionAPI.register({
-            create(version) {
-                if (version.productId == productId) {
-                    setVersions([...versions.filter(other => other.id != version.id), version])
-                }
-            },
-            update(version) {
-                setVersions(versions.map(other => other.id != version.id ? other : version))
-            },
-            delete(version) {
-                setVersions(versions.filter(other => other.id != version.id))
-            },
-        })
-    })
-
-    // - Computations
     useEffect(() => { 
         const tree = computeTree(versions)
         setChildren(tree.children)
@@ -139,9 +94,9 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                        <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
                                             New version
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button green fill' style={{fontStyle: 'italic'}}>
                                             New version (requires role)
@@ -189,25 +144,13 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                                                 <div className="text">
                                                     <div>
                                                         <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                        {users[vers.id] && members ? (
-                                                            <ProductUserPictureWidget user={users[vers.id]} members={members} class='icon medium round middle'/>
-                                                        ) : (
-                                                            <img src={LoadIcon} className='icon medium animation spin'/> 
-                                                        )}
+                                                        <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle'/>
                                                         <span className="user">
                                                             <span className="name">
-                                                                {vers.id in users && users[vers.id] && members ? (
-                                                                    <ProductUserNameWidget user={users[vers.id]} members={members}/>
-                                                                ) : (
-                                                                    '?'
-                                                                )}
+                                                                <ProductUserNameWidget userId={vers.userId} productId={productId}/>
                                                             </span>
                                                             <span className="email">
-                                                                {vers.id in users && members ? (
-                                                                    <ProductUserEmailWidget user={users[vers.id]} members={members}/>
-                                                                ) : (
-                                                                    '?'
-                                                                )} 
+                                                                <ProductUserEmailWidget userId={vers.userId} productId={productId}/>
                                                             </span>
                                                         </span>
                                                     </div>

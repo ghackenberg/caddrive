@@ -1,20 +1,18 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, ReactElement } from 'react'
-import { Redirect } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
-import { Comment, Issue, Member, Product, User, Version } from 'productboard-common'
+import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
+import { useComments, useIssue, useMembers, useProduct } from '../../hooks/route'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
-import { UserManager } from '../../managers/user'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -28,9 +26,7 @@ import LeftIcon from '/src/images/comment.png'
 import RightIcon from '/src/images/part.png'
 import UserIcon from '/src/images/user.png'
 
-export const ProductIssueCommentView = (props: RouteComponentProps<{ product: string, issue: string }>) => {
-
-    // CONSTANTS
+export const ProductIssueCommentView = () => {
 
     // REFERENCES
 
@@ -42,34 +38,23 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const issueId = props.match.params.issue
+    const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const members = useMembers(productId)
+    const issue = useIssue(issueId)
+    const comments = useComments(issueId)
 
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialIssue = issueId == 'new' ? undefined : IssueManager.getIssueFromCache(issueId)
-    const initialComments = issueId == 'new' ? undefined : CommentManager.findCommentsFromCache(issueId)
-
-    const initialUsers: { [id: string]: User } = {}
-    const user = UserManager.getUserFromCache(issueId)
-    if (user) {
-        initialUsers[user.id] = user
-        for (const comment of initialComments || []) {
-            const user = UserManager.getUserFromCache(comment.userId)
-            if (user) {
-                initialUsers[user.id] = user
-            }
-        }
-    }
-
     const initialIssueParts: Part[] = []
-    const initialIssueHtml = initialIssue ? createProcessor(initialIssueParts, handleMouseOver, handleMouseOut, handleClick).processSync(initialIssue.text).result : undefined
+    const initialIssueHtml = issue ? createProcessor(initialIssueParts, handleMouseOver, handleMouseOut, handleClick).processSync(issue.text).result : undefined
 
     const initialCommentsParts: { [id: string]: Part[] } = {}
     const initialCommentsHtml: { [id: string]: ReactElement } = {}
-    for (const comment of initialComments || []) {
+    for (const comment of comments || []) {
         const parts: Part[] = []
         initialCommentsHtml[comment.id] = createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(comment.text).result
         initialCommentsParts[comment.id] = parts
@@ -81,8 +66,8 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
             initialHighlighted.push(part)
         }
     }
-    if (initialComments && initialCommentsParts) {
-        for (const comment of initialComments) {
+    if (comments && initialCommentsParts) {
+        for (const comment of comments) {
             if (comment.id in initialCommentsParts) {
                 for (const part of initialCommentsParts[comment.id]) {
                     initialHighlighted.push(part)
@@ -93,21 +78,17 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
 
     // STATES
 
-    // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMember] = useState<Member[]>(initialMembers)
-    const [issue, setIssue] = useState<Issue>(initialIssue)
-    const [comments, setComments] = useState<Comment[]>(initialComments)
-    const [users, setUsers] = useState<{ [id: string]: User }>(initialUsers)
     // - Values
     const [text, setText] = useState<string>('')
     const [audio, setAudio] = useState<Blob>()
+
     // - Computations
     const [issueHtml, setIssueHtml] = useState<ReactElement>(initialIssueHtml)
     const [issueParts, setIssueParts] = useState<Part[]>(initialIssueParts)
     const [commentsHtml, setCommentsHtml] = useState<{ [id: string]: ReactElement }>(initialCommentsHtml)
     const [commentsParts, setCommentsParts] = useState<{ [id: string]: Part[] }>(initialCommentsParts)
     const [highlighted, setHighlighted] = useState<Part[]>(initialHighlighted)
+
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
     const [audioUrl, setAudioUrl] = useState<string>('')
@@ -117,35 +98,6 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMember) }, [props])
-    useEffect(() => { IssueManager.getIssue(issueId).then(setIssue) }, [props])
-    useEffect(() => { CommentManager.findComments(issueId).then(setComments) }, [props])
-    useEffect(() => {
-        const userIds: string[] = []
-        if (issue) {
-            if (!(issue.userId in users) && userIds.indexOf(issue.userId) == -1) {
-                userIds.push(issue.userId)
-            }
-        }
-        if (comments) {
-            for (const comment of comments) {
-                if (!(comment.userId in users) && userIds.indexOf(comment.userId) == -1) {
-                    userIds.push(comment.userId)
-                }
-            }
-        }
-        Promise.all(userIds.map(userId => UserManager.getUser(userId))).then(userList => {
-            const dict = { ...users }
-            for (const user of userList) {
-                dict[user.id] = user
-            }
-            setUsers(dict)
-        })
-    }, [issue, comments])
-
-    // - Computations
     useEffect(() => {
         if (issue) {
             const parts: Part[] = []
@@ -153,6 +105,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
             setIssueParts(parts)
         }
     }, [issue])
+
     useEffect(() => {
         if (comments) {
             const commentsHtml: { [id: string]: ReactElement } = {}
@@ -166,6 +119,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
             setCommentsParts(commentsParts)
         }
     }, [comments])
+
     useEffect(() => {
         const highlighted: Part[] = []
         if (issueParts) {
@@ -184,6 +138,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
         }
         setHighlighted(highlighted)
     }, [issueParts, commentsParts])
+
     useEffect(() => {
         const parts: Part[] = []
         collectParts(text || '', parts)
@@ -193,6 +148,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     // FUNCTIONS
 
     async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const recorder = new AudioRecorder()
         await recorder.start()
@@ -200,6 +156,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
         event.preventDefault()
         const data = await recorder.stop()
         setAudio(data)
@@ -255,10 +212,10 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function submitComment(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
-            setComments([...comments, comment])
+            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
             setText('')
         }
         if (audio) {
@@ -267,22 +224,21 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
     }
 
     async function submitCommentAndClose(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
-            setComments([...comments, comment])
+            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
             setText('')
-            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'closed', assigneeIds: issue.assigneeIds }))
         }
     }
 
     async function submitCommentAndReopen(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
-            setComments([...comments, comment])
+            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
             setText('')
-            setIssue(await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds }))
+            await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds })
         }
     }
 
@@ -306,9 +262,9 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <Link to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
+                                        <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
                                             Edit issue
-                                        </Link>
+                                        </NavLink>
                                     ) : (
                                         <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
                                             Edit issue (requires role)
@@ -328,11 +284,7 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                     </span>
                                     &nbsp;
                                     <strong>
-                                        {issue.userId in users && members ? (
-                                            <ProductUserNameWidget user={users[issue.userId]} members={members} />
-                                        ) : (
-                                            '?'
-                                        )}
+                                        <ProductUserNameWidget userId={issue.userId} productId={productId}/>
                                     </strong>
                                     &nbsp;
                                     <>
@@ -340,17 +292,17 @@ export const ProductIssueCommentView = (props: RouteComponentProps<{ product: st
                                     </>
                                 </p>
                                 <div className="widget issue_thread">
-                                    <CommentView class="issue" comment={issue} user={users[issue.userId]} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
+                                    <CommentView class="issue" comment={issue} productId={productId} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     {comments && comments.map(comment => (
-                                        <CommentView key={comment.id} class="comment" comment={comment} user={users[comment.userId]} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} users={users} members={members} />
+                                        <CommentView key={comment.id} class="comment" comment={comment} productId={productId} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     ))}
                                     <div className="comment self">
                                         <div className="head">
                                             <div className="icon">
                                                 {contextUser ? (
-                                                    <Link to={`/users/${contextUser.id}`}>
-                                                        <ProductUserPictureWidget user={contextUser} members={members} />
-                                                    </Link>
+                                                    <NavLink to={`/users/${contextUser.id}`}>
+                                                        <ProductUserPictureWidget userId={contextUser.id} productId={productId} />
+                                                    </NavLink>
                                                 ) : (
                                                     <a>
                                                         <img src={UserIcon} className='icon small round' />

@@ -13,6 +13,7 @@
 /* Class specific styles */
 
 @import url(./classes/animation.css);
+@import url(./classes/badge.css);
 @import url(./classes/button.css);
 @import url(./classes/icon.css);
 @import url(./classes/position.css);

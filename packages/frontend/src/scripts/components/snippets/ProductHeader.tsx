@@ -2,7 +2,7 @@ import * as React from 'react'
 import { NavLink, useLocation, useParams } from 'react-router-dom'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { ProductManager } from '../../managers/product'
+import { useProduct } from '../../hooks/route'
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 import { MilestonesLink } from '../links/MilestonesLink'
@@ -13,24 +13,17 @@ import { PRODUCTS_4 } from '../../pattern'
 import SettingIcon from '/src/images/setting.png'
 
 export const ProductHeader = () => {
+
     const { pathname } = useLocation()
     const { goBack, replace } = useAsyncHistory()
 
-    const params = useParams<{ product: string }>()
+    // PARAMS
 
-    // INITIAL STATES
+    const { productId } = useParams<{ productId: string }>()
 
-    const initialProduct = params.product == 'new' ? undefined : ProductManager.getProductFromCache(params.product)
+    // HOOKS
 
-    // STATES
-
-    const [product, setProduct] = React.useState(initialProduct)
-
-    // EFFECTS
-
-    React.useEffect(() => {
-        params.product == 'new' ? setProduct(undefined) : ProductManager.getProduct(params.product).then(setProduct)
-    }, [params.product])
+    const product = useProduct(productId)
 
     // FUNCTIONS
 
@@ -39,7 +32,7 @@ export const ProductHeader = () => {
         if (PRODUCTS_4.test(pathname)) {
             await goBack()
         }
-        await replace(`/products/${params.product}/settings`)
+        await replace(`/products/${productId}/settings`)
     }
 
     // RETURN
@@ -48,6 +41,14 @@ export const ProductHeader = () => {
         <header className='view product'>
             <div className='entity'>
                 <ProductLink product={product}/>
+                {product && (
+                    product.public ? (
+                        <span className='badge public'>public</span>
+                    ) : (
+
+                        <span className='badge private'>private</span>
+                    )
+                )}
             </div>
             <div className='tabs'>
                 {product && (
@@ -59,13 +60,13 @@ export const ProductHeader = () => {
                     </>
                 )}
                 <span>
-                    {params.product == 'new' ? (
+                    {productId == 'new' ? (
                         <a className="active">
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </a>
                     ) : (
-                        <NavLink to={`/products/${params.product}/settings`} onClick={handleClick}>
+                        <NavLink to={`/products/${productId}/settings`} onClick={handleClick}>
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </NavLink>

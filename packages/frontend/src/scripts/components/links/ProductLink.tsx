@@ -11,18 +11,19 @@ import ProductIcon from '/src/images/product.png'
 export const ProductLink = (props: {product?: Product}) => {
 
     const { pathname } = useLocation()
-    const { replace, goBack } = useAsyncHistory()
+    const { go, replace, goBack } = useAsyncHistory()
 
     async function handleClick(event: React.UIEvent) {
         event.preventDefault()
         const products4 = PRODUCTS_4.exec(pathname)
         if (products4) {
             if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
-                await goBack()
+                await go(-2)
             } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
+                await go(-2)
+            } else {
                 await goBack()
             }
-            await goBack()
         }
         await replace(`/products/${props.product.id}/versions`)
     }

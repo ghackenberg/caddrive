@@ -1,11 +1,9 @@
 import * as React from 'react'
-import { Redirect, useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
-
-import { Member, Product } from 'productboard-common'
+import { Redirect, useParams } from 'react-router'
 
 import { UserContext } from '../../contexts/User'
-import { MemberManager } from '../../managers/member'
+import { useAsyncHistory } from '../../hooks/history'
+import { useProduct, useMembers } from '../../hooks/route'
 import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { SubmitInput } from '../inputs/SubmitInput'
@@ -18,9 +16,9 @@ import { LoadingView } from './Loading'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductSettingView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductSettingView = () => {
 
-    const { replace } = useHistory()
+    const { replace } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -28,34 +26,31 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const members = useMembers(productId)
 
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
-    const initialName = initialProduct ? initialProduct.name : ''
-    const initialDescription = initialProduct ? initialProduct.description : ''
-    const initialPublic = initialProduct ? initialProduct.public : false
+    const initialName = product ? product.name : ''
+    const initialDescription = product ? product.description : ''
+    const initialPublic = product ? product.public : false
 
     // STATES
 
-    // - Entities
-    const [product, setProduct] = React.useState<Product>(initialProduct)
-    const [members, setMembers] = React.useState<Member[]>(initialMembers)
     // - Values
     const [name, setName] = React.useState<string>(initialName)
     const [description, setDescription] = React.useState<string>(initialDescription)
     const [_public, setPublic] = React.useState<boolean>(initialPublic)
+
     // - Interactions
     const [active, setActive] = React.useState<string>('left')
     
     // EFFECTS
-
-    // - Entities
-    React.useEffect(() => { productId != 'new' && ProductManager.getProduct(productId).then(setProduct) }, [props])
-    React.useEffect(() => { productId != 'new' && MemberManager.findMembers(productId).then(setMembers) }, [props])
-    // - Values
+    
     React.useEffect(() => { product && setName(product.name) }, [product])
     React.useEffect(() => { product && setDescription(product.description) }, [product])
     React.useEffect(() => { product && setPublic(product.public) }, [product])
@@ -63,6 +58,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // FUNCTIONS
 
     async function submit(event: React.FormEvent){
+        // TODO handle unmount!
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
@@ -71,8 +67,8 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
             }
         } else {
             if (name && description) {
-                await setProduct(await ProductManager.updateProduct(product.id, { name, description, public: _public }))
-                replace(`/products/${product.id}`)
+                await ProductManager.updateProduct(product.id, { name, description, public: _public })
+                await replace(`/products/${product.id}`)
             }
         }
     }
@@ -87,7 +83,7 @@ export const ProductSettingView = (props: RouteComponentProps<{product: string}>
     // RETURN
 
     return (
-        (productId == 'new' || product) && members ? (
+        (productId == 'new' || (product && members)) ? (
             (product && product.deleted) ? (
                 <Redirect to='/'/>
             ) : (

@@ -16,7 +16,7 @@ const Overview = () => (
 const ProductsRouter = () => {
     return (
         <Switch>
-            <Route path="/products/:product" component={ProductRouter}/>
+            <Route path="/products/:productId" component={ProductRouter}/>
             <Route path="/products" component={Overview}/>
         </Switch>
     )

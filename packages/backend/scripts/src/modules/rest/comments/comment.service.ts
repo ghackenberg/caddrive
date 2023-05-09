@@ -5,11 +5,12 @@ import { REQUEST } from '@nestjs/core'
 import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
-import { FindOptionsWhere } from 'typeorm'
+import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import { CommentEntity, Database } from 'productboard-database'
 
+import { convertComment, convertIssue } from '../../../functions/convert'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -28,10 +29,10 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     async findComments(issueId: string): Promise<Comment[]> {
         let where: FindOptionsWhere<CommentEntity>
         if (issueId)
-            where = { issueId, deleted: null }
+            where = { issueId, deleted: IsNull() }
         const result: Comment[] = []
         for (const comment of await Database.get().commentRepository.findBy(where))
-            result.push(this.convert(comment))
+            result.push(convertComment(comment))
         return result
     }
 
@@ -47,13 +48,25 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         } else {
             comment = await Database.get().commentRepository.save({ id, created, userId, ...data })
         }
-        await this.client.emit(`/api/v1/comments/${comment.id}/create`, this.convert(comment))
-        return this.convert(comment)
+        await this.client.emit(`/api/v1/comments/${comment.id}/create`, convertComment(comment))
+        if (comment.action != 'none') {
+            const issue = await Database.get().issueRepository.findOneBy({ id: comment.issueId })
+            issue.updated = Date.now()
+            if (comment.action == 'close') {
+                issue.state = 'closed'
+                await Database.get().issueRepository.save(issue)
+            } else if (comment.action == 'reopen') {
+                issue.state = 'open'
+                await Database.get().issueRepository.save(issue)
+            }
+            await this.client.emit(`/api/v1/issues/${issue.id}/update`, convertIssue(issue))
+        }
+        return convertComment(comment)
     }
 
     async getComment(id: string): Promise<Comment> {
         const comment = await Database.get().commentRepository.findOneByOrFail({ id })
-        return this.convert(comment)
+        return convertComment(comment)
     }
     
     async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Comment> {
@@ -65,19 +78,15 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
         }
-        await this.client.emit(`/api/v1/comments/${comment.id}/update`, this.convert(comment))
-        return this.convert(comment)
+        await this.client.emit(`/api/v1/comments/${comment.id}/update`, convertComment(comment))
+        return convertComment(comment)
     }
 
     async deleteComment(id: string): Promise<Comment> {
         const comment = await Database.get().commentRepository.findOneByOrFail({ id })
         comment.deleted = Date.now()
         await Database.get().commentRepository.save(comment)
-        await this.client.emit(`/api/v1/comments/${comment.id}/delete`, this.convert(comment))
-        return this.convert(comment)
-    }
-
-    private convert(comment: CommentEntity) {
-        return { id: comment.id, created: comment.created, updated: comment.updated, deleted: comment.deleted, audioId: comment.audioId, userId: comment.userId, issueId: comment.issueId, text: comment.text, action: comment.action }
+        await this.client.emit(`/api/v1/comments/${comment.id}/delete`, convertComment(comment))
+        return convertComment(comment)
     }
 }

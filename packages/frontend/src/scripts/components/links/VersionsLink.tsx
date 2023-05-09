@@ -1,31 +1,22 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { VersionManager } from '../../managers/version'
+import { useVersions } from '../../hooks/route'
 import { PRODUCTS_4 } from '../../pattern'
 
 import VersionIcon from '/src/images/version.png'
 
 export const VersionsLink = (props: {product: Product}) => {
+
     const { pathname } = useLocation()
-    const { goBack, replace } = useAsyncHistory()
+    const { go, goBack, replace } = useAsyncHistory()
 
-    // INITIAL STATES
+    // HOOKS
 
-    const initialVersions = VersionManager.findVersionsFromCache(props.product.id)
-    const initialCount = initialVersions ? initialVersions.length : undefined
-
-    // STATES
-
-    const [count, setCount] = useState<number>(initialCount)
-
-    // EFFECTS
-
-    useEffect(() => { VersionManager.findVersions(props.product.id).then(versions => setCount(versions.length)) }, [props])
+    const versions = useVersions(props.product.id)
 
     // FUNCTIONS
 
@@ -34,11 +25,12 @@ export const VersionsLink = (props: {product: Product}) => {
         const products4 = PRODUCTS_4.exec(pathname)
         if (products4) {
             if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
-                await goBack()
+                await go(-2)
             } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
+                await go(-2)
+            } else {
                 await goBack()
             }
-            await goBack()
         }
         await replace(`/products/${props.product.id}/versions`)
     }
@@ -49,10 +41,8 @@ export const VersionsLink = (props: {product: Product}) => {
         <span>
             <NavLink to={`/products/${props.product.id}/versions`} onClick={handleClick}>
                 <img src={VersionIcon} className='icon small'/>
-                <span>
-                    <span>Versions</span>
-                    <span>{count != undefined ? count : '?'}</span>
-                </span>
+                <span className='label'>Versions</span>
+                <span className='badge'>{versions ? versions.length : '?'}</span>
             </NavLink>
         </span>
     )

@@ -3,6 +3,16 @@ import { useHistory } from "react-router"
 export function useAsyncHistory() {
     const history = useHistory()
 
+    async function go(total: number) {
+        return new Promise<void>(resolve => {
+            const unregister = history.listen(() => {
+                unregister()
+                resolve()
+            })
+            history.go(total)
+        })
+    }
+
     async function goBack() {
         return new Promise<void>(resolve => {
             const unregister = history.listen(() => {
@@ -33,5 +43,5 @@ export function useAsyncHistory() {
         })
     }
 
-    return { goBack, replace, push }
+    return { go, goBack, replace, push }
 }
