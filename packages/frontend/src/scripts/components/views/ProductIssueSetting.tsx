@@ -233,7 +233,7 @@ export const ProductIssueSettingView = () => {
     // RETURN
 
     return (
-        ((issueId == 'new' || issue) && product && members && tags && tagAssignments && assignedTags) ? (
+        ((issueId == 'new' || (issue && tagAssignments && assignedTags)) && product && members && tags ) ? (
             issue && issue.deleted ? (
                 <Redirect to='/'/>
             ) : (
@@ -252,7 +252,9 @@ export const ProductIssueSettingView = () => {
                                             <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
                                         </div>
                                     </div>
+                                    {issueId != 'new' &&
                                     <TagInput label='Tags' tags= {tags} productId= {productId} assignable= {true} assignedTags = {assignedTags} issueId = {issueId}/>
+                                    }
                                     <div>
                                         <div>
                                             <label>Audio</label>
