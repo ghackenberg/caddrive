@@ -1,12 +1,5 @@
 import * as React from 'react'
 
-import { AbstractClient } from '../clients/mqtt/abstract'
-import { IssueAPI } from '../clients/mqtt/issue'
-import { MemberAPI } from '../clients/mqtt/member'
-import { MilestoneAPI } from '../clients/mqtt/milestone'
-import { ProductAPI } from '../clients/mqtt/product'
-import { UserAPI } from '../clients/mqtt/user'
-import { VersionAPI } from '../clients/mqtt/version'
 import { IssueManager } from '../managers/issue'
 import { MemberManager } from '../managers/member'
 import { MilestoneManager } from '../managers/milestone'
@@ -14,54 +7,81 @@ import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 
-function useEntity<T extends { id: string }>(id: string, cache: () => T, get: () => Promise<T>, api: AbstractClient<{ create: (e: T) => void, update: (e: T) => void, delete: (e: T) => void }>) {
+function useEntity<T extends { id: string }>(id: string, cache: () => T, get: () => Promise<T>) {
     const initialValue = id && id != 'new' && cache()
 
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
         let exec = true
-        id && id != 'new' && !value && get().then(value => exec && setValue(value))
-        return () => { exec = false}
+        if (id && id != 'new') {
+            get().then(value => exec && setValue(value)).catch(() => exec && setValue(undefined))
+        } else {
+            setValue(undefined)
+        }
+        return () => { exec = false }
     }, [id])
 
     React.useEffect(() => {
-        return api.register({
-            create(e) {
-                e.id == id && setValue(e)
-            },
-            update(e) {
-                e.id == id && setValue(e)
-            },
-            delete(e) {
-                e.id == id && setValue(e)
+        let exec = true
+        function update() {
+            if (id && id != 'new') {
+                get().then(value => exec && setValue(value)).catch(() => exec && setValue(undefined))
+            } else {
+                setValue(undefined)
             }
-        })
+        }
+        const interval = setInterval(update, 1000 * 60)
+        return () => { clearInterval(interval), exec = false }
     })
 
     return value
 }
 
 export function useUser(userId: string) {
-    return useEntity(userId, () => UserManager.getUserFromCache(userId), () => UserManager.getUser(userId), UserAPI)
+    return useEntity(
+        userId,
+        () => UserManager.getUserFromCache(userId),
+        () => UserManager.getUser(userId)
+    )
 }
 
 export function useProduct(productId: string) {
-    return useEntity(productId, () => ProductManager.getProductFromCache(productId), () => ProductManager.getProduct(productId), ProductAPI)
+    return useEntity(
+        productId,
+        () => ProductManager.getProductFromCache(productId),
+        () => ProductManager.getProduct(productId)
+    )
 }
 
 export function useVersion(versionId: string) {
-    return useEntity(versionId, () => VersionManager.getVersionFromCache(versionId), () => VersionManager.getVersion(versionId), VersionAPI)
+    return useEntity(
+        versionId,
+        () => VersionManager.getVersionFromCache(versionId),
+        () => VersionManager.getVersion(versionId)
+    )
 }
 
 export function useIssue(issueId: string) {
-    return useEntity(issueId, () => IssueManager.getIssueFromCache(issueId), () => IssueManager.getIssue(issueId), IssueAPI)
+    return useEntity(
+        issueId,
+        () => IssueManager.getIssueFromCache(issueId),
+        () => IssueManager.getIssue(issueId)
+    )
 }
 
 export function useMilestone(milestoneId: string) {
-    return useEntity(milestoneId, () => MilestoneManager.getMilestoneFromCache(milestoneId), () => MilestoneManager.getMilestone(milestoneId), MilestoneAPI)
+    return useEntity(
+        milestoneId,
+        () => MilestoneManager.getMilestoneFromCache(milestoneId),
+        () => MilestoneManager.getMilestone(milestoneId)
+    )
 }
 
 export function useMember(memberId: string) {
-    return useEntity(memberId, () => MemberManager.getMemberFromCache(memberId), () => MemberManager.getMember(memberId), MemberAPI)
+    return useEntity(
+        memberId,
+        () => MemberManager.getMemberFromCache(memberId),
+        () => MemberManager.getMember(memberId)
+    )
 }

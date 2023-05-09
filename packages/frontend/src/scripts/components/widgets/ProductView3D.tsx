@@ -5,9 +5,8 @@ import { Object3D } from 'three'
 
 import { Product, Version } from 'productboard-common'
 
-import { VersionAPI } from '../../clients/mqtt/version'
 import { VersionContext } from '../../contexts/Version'
-import { VersionManager } from '../../managers/version'
+import { useVersions } from '../../hooks/list'
 import { VersionView3D } from './VersionView3D'
 
 import LoadIcon from '/src/images/load.png'
@@ -28,65 +27,29 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
 
     const { contextVersion, setContextVersion } = versionContext
 
+    // HOOKS
+
+    const versions = useVersions(props.product.id)
+
     // INITIAL STATES
 
-    const initialVersions = props.product ? VersionManager.findVersionsFromCache(props.product.id) : []
     const initialHighlighted = (props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
     const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
     const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
 
     // STATES
 
-    const [versions, setVersions] = useState<Version[]>(initialVersions)
     const [highlighted, setHighlighted] = useState<string[]>(initialHighlighted)
     const [marked, setMarked] = useState<string[]>(initialMarked)
     const [selected, setSelected] = useState<string[]>(initialSelected)
 
     // EFFECTS
     
-    useEffect(() => {
-        let exec = true
-        props.product && VersionManager.findVersions(props.product.id).then(versions => exec && setVersions(versions))
-        return () => { exec = false }
-    }, [props.product])
-    
     useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
 
     useEffect(() => { setHighlighted((props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.highlighted])
     useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.marked])
     useEffect(() => { setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.selected])
-
-    useEffect(() =>  {
-        return VersionAPI.register({
-            create(version) {
-                if (version.productId == props.product.id) {
-                    const newVersions = [...versions.filter(other => other.id != version.id), version]
-                    setVersions(newVersions)
-                    if (contextVersion.id == version.id) {
-                        setContextVersion(version)
-                    }
-                }
-            },
-            update(version) {
-                const newVersions = versions.map(other => other.id != version.id ? other : version)
-                setVersions(newVersions)
-                if (contextVersion.id == version.id) {
-                    setContextVersion(version)
-                }
-            },
-            delete(version) {
-                const newVersions = versions.filter(other => other.id != version.id)
-                setVersions(newVersions)
-                if (contextVersion.id == version.id) {
-                    if (newVersions.length > 0) {
-                        setContextVersion(newVersions[newVersions.length - 1])
-                    } else {
-                        setContextVersion(undefined)
-                    }
-                }
-            },
-        })
-    })
 
     // FUNCTIONS
 

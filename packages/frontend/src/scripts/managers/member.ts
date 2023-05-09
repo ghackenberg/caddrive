@@ -1,169 +1,38 @@
-import { Member, MemberAddData, MemberUpdateData, MemberREST, MemberDownMQTT } from 'productboard-common'
+import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 
-import { MemberAPI } from '../clients/mqtt/member'
 import { MemberClient } from '../clients/rest/member'
 import { AbstractManager } from './abstract'
 
-class MemberManagerImpl extends AbstractManager<Member> implements MemberREST, MemberDownMQTT {
-    private findIndex: {[id: string]: {[id: string]: boolean}} = {}
-    private findUserIndex: {[id: string]: {[id: string]: {[id: string]: boolean}}} = {}
-
-    constructor() {
-        super()
-        MemberAPI.register(this)
-    }
-
+class MemberManagerImpl extends AbstractManager<Member> implements MemberREST {
     // CACHE
 
-    override clear() {
-        super.clear()
-        this.findIndex = {}
-        this.findUserIndex = {}
-    }
-
-    findMembersFromCache(productId: string) { 
-        const key = `${productId}`
-        if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id))
-        } else { 
-            return undefined 
-        } 
+    findMembersFromCache(productId: string, userId?: string) { 
+        return this.getFind(`${productId}-${userId}`)
     }
     getMemberFromCache(memberId: string) { 
-        return this.getResolveItem(memberId)
-    }
-
-    private addToFindIndex(member: Member) {
-        if (`${member.productId}` in this.findIndex) {
-            this.findIndex[`${member.productId}`][member.id] = true
-        }
-    }
-    private removeFromFindIndex(member: Member) { 
-        for (const key of Object.keys(this.findIndex)) {
-            if (member.id in this.findIndex[key]) {
-                delete this.findIndex[key][member.id]
-            }
-        }
-    }
-
-    private addToFindUserIndex(member: Member) {
-        if (member.productId in this.findUserIndex && member.userId in this.findUserIndex[member.productId]) {
-            this.findUserIndex[member.productId][member.userId][member.id] = true
-        }
-    }
-    private removeFromFindUserIndex(member: Member) {
-        if (member.productId in this.findUserIndex && member.userId in this.findUserIndex[member.productId]) {
-            delete this.findUserIndex[member.productId][member.userId][member.id]
-        }
-    }
-
-    // MQTT
-
-    create(member: Member): void {
-        member = this.resolveItem(member)
-        this.addToFindIndex(member)
-        this.addToFindUserIndex(member)
-    }
-    update(member: Member): void {
-        member = this.resolveItem(member)
-        this.removeFromFindIndex(member)
-        this.removeFromFindUserIndex(member)
-        this.addToFindIndex(member)
-        this.addToFindUserIndex(member)
-    }
-    delete(member: Member): void {
-        member = this.resolveItem(member)
-        this.removeFromFindIndex(member)
-        this.removeFromFindUserIndex(member)
+        return this.getItem(memberId)
     }
 
     // REST
 
-    async findMembers(productId: string, userId?: string): Promise<Member[]> {
-        if (userId) {
-            if (!(productId in this.findUserIndex && userId in this.findUserIndex[productId])) {
-                // Call backend
-                let members = await MemberClient.findMembers(productId, userId)
-                // Update member index
-                members = members.map(member => this.resolveItem(member))
-                // Update user index
-                if (!(productId in this.findUserIndex)) {
-                    this.findUserIndex[productId] = {}
-                }
-                members.forEach(member => this.addToFindUserIndex(member))
-            }
-            // Return members
-            return Object.keys(this.findUserIndex[productId][userId]).map(id => this.getResolveItem(id)).filter(member => !member.deleted)
-        } else {
-            if (!(productId in this.findIndex)) {
-                // Call backend
-                let members = await MemberClient.findMembers(productId, userId)
-                // Update member index
-                members = members.map(member => this.resolveItem(member))
-                // Init find index
-                this.findIndex[productId] = {}
-                // Update find index
-                members.forEach(member => this.addToFindIndex(member))
-            }
-            // Return members
-            return Object.keys(this.findIndex[productId]).map(id => this.getResolveItem(id)).filter(member => !member.deleted)
-        }
+    async findMembers(productId: string, userId?: string) {
+        return this.find(
+            `${productId}-${userId}`,
+            () => MemberClient.findMembers(productId, userId),
+            member => (!productId || member.productId == productId) && (!userId || member.userId == userId)
+        )
     }
-
-    async addMember(data: MemberAddData): Promise<Member> {
-        // Call backend
-        let member = await MemberClient.addMember(data)
-        // Update member index
-        member = this.resolveItem(member)
-        // Update find index
-        this.addToFindIndex(member)
-        // Update user index
-        this.addToFindUserIndex(member)
-        // Return member
-        return this.getResolveItem(member.id)
+    async addMember(data: MemberAddData) {
+        return this.add(MemberClient.addMember(data))
     }
-
-    async getMember(id: string): Promise<Member> {
-        if (!this.hasResolveItem(id)) {
-            // Call backend
-            let member = await MemberClient.getMember(id)
-            // Update member index
-            member = this.resolveItem(member)
-            // Update find index
-            this.addToFindIndex(member)
-            // Update user index
-            this.addToFindUserIndex(member)
-        }
-        // Return member
-        return this.getResolveItem(id)
+    async getMember(id: string) {
+        return this.get(id, () => MemberClient.getMember(id))
     }
-
-    async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
-        // Call backend
-        let member = await MemberClient.updateMember(id, data)
-        // Update member index
-        member = this.resolveItem(member)
-        // Update find index
-        this.removeFromFindIndex(member)
-        this.removeFromFindUserIndex(member)
-        // Update user index
-        this.addToFindIndex(member)
-        this.addToFindUserIndex(member)
-        // Return member
-        return this.getResolveItem(id)
+    async updateMember(id: string, data: MemberUpdateData) {
+        return this.update(id, MemberClient.updateMember(id, data))
     }
-
-    async deleteMember(id: string): Promise<Member> {
-        // Call backend
-        let member = await MemberClient.deleteMember(id)
-        // Update member index
-        member = this.resolveItem(member)
-        // Update find index
-        this.removeFromFindIndex(member)
-        // Update user index
-        this.removeFromFindUserIndex(member)
-        // Return member
-        return this.getResolveItem(id)
+    async deleteMember(id: string) {
+        return this.delete(id, MemberClient.deleteMember(id))
     }
 }
 
