@@ -44,8 +44,14 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
 
     // EFFECTS
     
-    useEffect(() => { props.product && VersionManager.findVersions(props.product.id).then(setVersions) }, [props.product])
+    useEffect(() => {
+        let exec = true
+        props.product && VersionManager.findVersions(props.product.id).then(versions => exec && setVersions(versions))
+        return () => { exec = false }
+    }, [props.product])
+    
     useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
+
     useEffect(() => { setHighlighted((props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.highlighted])
     useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.marked])
     useEffect(() => { setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.selected])

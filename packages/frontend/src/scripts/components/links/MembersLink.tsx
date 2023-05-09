@@ -1,38 +1,48 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
-import { MemberManager } from '../../managers/member'
+import { useAsyncHistory } from '../../hooks/history'
+import { useMembers } from '../../hooks/route'
+import { PRODUCTS_4 } from '../../pattern'
 
 import MemberIcon from '/src/images/user.png'
 
 export const MembersLink = (props: {product: Product}) => {
 
-    // INITIAL STATES
+    const { pathname } = useLocation()
+    const { go, goBack, replace } = useAsyncHistory()
 
-    const initialMembers = MemberManager.findMembersFromCache(props.product.id)
-    const initialCount = initialMembers ? initialMembers.length : undefined
+    // HOOKS
 
-    // STATES
+    const members = useMembers(props.product.id)
 
-    const [count, setCount] = useState<number>(initialCount)
+    // FUNCTIONS
 
-    // EFFECTS
-
-    useEffect(() => { MemberManager.findMembers(props.product.id).then(members => setCount(members.length)) }, [props])
+    async function handleClick(event: React.UIEvent) {
+        event.preventDefault()
+        const products4 = PRODUCTS_4.exec(pathname)
+        if (products4) {
+            if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
+                await go(-2)
+            } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
+                await go(-2)
+            } else {
+                await goBack()
+            }
+        }
+        await replace(`/products/${props.product.id}/members`)
+    }
 
     // RETURN
 
     return (
         <span>
-            <NavLink to={`/products/${props.product.id}/members`}>
+            <NavLink to={`/products/${props.product.id}/members`} onClick={handleClick}>
                 <img src={MemberIcon} className='icon small'/>
-                <span>
-                    <span>Members</span>
-                    <span>{count != undefined ? count : '?'}</span>
-                </span>
+                <span className='label'>Members</span>
+                <span className='badge'>{members ? members.length : '?'}</span>
             </NavLink>
         </span>
     )

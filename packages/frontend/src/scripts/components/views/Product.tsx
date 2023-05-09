@@ -1,202 +1,49 @@
 import * as React from 'react'
-import { useState, useEffect, useContext } from 'react'
+import { useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 
-import { Issue, Member, Product, User, Version } from 'productboard-common'
+import { Product } from 'productboard-common'
 
-import { VersionAPI } from '../../clients/mqtt/version'
-import { ProductAPI } from '../../clients/mqtt/product'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { IssueManager } from '../../managers/issue'
-import { MemberManager } from '../../managers/member'
+import { useAsyncHistory } from '../../hooks/history'
+import { useProducts } from '../../hooks/route'
 import { ProductManager } from '../../managers/product'
-import { VersionManager } from '../../managers/version'
-import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
+import { ProductImageWidget } from '../widgets/ProductImage'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { MemberCount } from '../counts/Members'
+import { IssueCount } from '../counts/Issues'
+import { VersionCount } from '../counts/Versions'
+import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
-import LoadIcon from '/src/images/load.png'
-import EmptyIcon from '/src/images/empty.png'
 
 export const ProductView = () => {
+
+    const { push } = useAsyncHistory()
     
     // CONTEXTS
     
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
-    // INITIAL STATES
-    
-    const initialProducts = ProductManager.findProductsFromCache()
-    const initialUsers: {[productId: string]: User} = {}
-    for (const product of initialProducts || []) {
-        const user = UserManager.getUserFromCache(product.userId)
-        if (user) {
-            initialUsers[product.id] = user
-        }
-    }
-    const initialVersions: {[productId: string]: Version[]} = {}
-    for (const product of initialProducts || []) {
-        const versions = VersionManager.findVersionsFromCache(product.id)
-        if (versions) {
-            initialVersions[product.id] = versions
-        }
-    }
-    const initialLatestVersions: {[productId: string]: Version} = {}
-    for (const product of initialProducts || []) {
-        const versions = VersionManager.findVersionsFromCache(product.id)
-        if (versions && versions.length > 0) {
-            initialLatestVersions[product.id] = versions[versions.length - 1]
-        }
-    }
-    const initialIssues: {[productId: string]: Issue[]} = {}
-    for (const product of initialProducts || []) {
-        const issues = IssueManager.findIssuesFromCache(product.id, undefined, undefined)
-        if (issues) {
-            initialIssues[product.id] = issues
-        }
-    }
-    const initialMembers: {[productId: string]: Member[]} = {}
-    for (const product of initialProducts || []) {
-        const members = MemberManager.findMembersFromCache(product.id) 
-        if (members) {
-            initialMembers[product.id] = members
-        }
-    }
-    
-    // STATES
+    // HOOKS
 
-    // - Entities
-    const [products, setProducts] = useState<Product[]>(initialProducts)
-    const [users, setUsers] = useState<{[productId: string]: User}>(initialUsers)
-    const [versions, setVersions] = useState<{[productId: string]: Version[]}>(initialVersions)
-    const [latestVersions, setLatestVersions] = useState<{[productId: string]: Version}>(initialLatestVersions)
-    const [issues, setIssues] = useState<{[productId: string]: Issue[]}>(initialIssues)
-    const [members, setMembers] = useState<{[productId: string]: Member[]}>(initialMembers)
+    const products = useProducts()
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => { setContextVersion(undefined) }, [])
-    useEffect(() => { ProductManager.findProducts().then(setProducts) }, [])
-    useEffect(() => {
-        if (products) {
-            Promise.all(products.map(product => UserManager.getUser(product.userId))).then(productUsers => {
-                const newUsers = {...users}
-                for (let index = 0; index < products.length; index++) {
-                    newUsers[products[index].id] = productUsers[index]
-                }
-                setUsers(newUsers)
-            })
-        }
-    }, [products])
-    useEffect(() => {
-        if (products) {
-            Promise.all(products.map(product => VersionManager.findVersions(product.id))).then(productVersions => {
-                const newVersions = {...versions}
-                for (let index = 0; index < products.length; index++) {
-                    newVersions[products[index].id] = productVersions[index]
-                }
-                setVersions(newVersions)
-            })
-        }
-    }, [products])
-    useEffect(() => {
-        if (versions) {
-            const latestVersions: {[productId: string]: Version} = {}
-            for (const productId of Object.keys(versions)) {
-                if (versions[productId].length > 0) {
-                    latestVersions[productId] = versions[productId][versions[productId].length - 1]
-                } else {
-                    latestVersions[productId] = null
-                }
-            }
-            setLatestVersions(latestVersions)
-        }
-    }, [versions])
-    useEffect(() => {
-        if (products) {
-            Promise.all(products.map(product => IssueManager.findIssues(product.id))).then(productIssues => {
-                const newIssues = {...issues}
-                for (let index = 0; index < products.length; index++) {
-                    newIssues[products[index].id] = productIssues[index]
-                }
-                setIssues(newIssues)
-            })
-        }
-    }, [products])
-    useEffect(() => {
-        if (products) {
-            Promise.all(products.map(product => MemberManager.findMembers(product.id))).then(productMembers => {
-                const newMembers = {...members}
-                for (let index = 0; index < products.length; index++) {
-                    newMembers[products[index].id] = productMembers[index]
-                }
-                setMembers(newMembers)
-            })
-        }
-    }, [products])
-
-    // - Events
-    useEffect(() => {
-        return ProductAPI.register({
-            create(product) {
-                setProducts([...products.filter(other => other.id != product.id), product])
-            },
-            update(product) {
-                setProducts(products.map(other => other.id != product.id ? other : product))
-            },
-            delete(product) {
-                setProducts(products.filter(other => other.id != product.id))
-            },
-        })
-    })
-    useEffect(() => {
-        return VersionAPI.register({
-            create(version) {
-                const newVersions: {[productId: string]: Version[]} = {}
-                for (const productId of Object.keys(versions)) {
-                    if (version.productId == productId) {
-                        newVersions[productId] = [ ...versions[productId].filter(other => other.id != version.id), version ]
-                    } else {
-                        newVersions[productId] = versions[productId]
-                    }
-                }
-                setVersions(newVersions)
-            },
-            update(version) {
-                const newVersions: {[productId: string]: Version[]} = {}
-                for (const productId of Object.keys(versions)) {
-                    if (version.productId == productId) {
-                        newVersions[productId] = versions[productId].map(other => other.id != version.id ? other : version)
-                    } else {
-                        newVersions[productId] = versions[productId]
-                    }
-                }
-                setVersions(newVersions)
-            },
-            delete(version) {
-                const newVersions: {[productId: string]: Version[]} = {}
-                for (const productId of Object.keys(versions)) {
-                    if (version.productId == productId) {
-                        newVersions[productId] = versions[productId].filter(other => other.id != version.id)
-                    } else {
-                        newVersions[productId] = versions[productId]
-                    }
-                }
-                setVersions(newVersions)
-            },
-        })
-    })
+    useEffect(() => { setContextVersion(undefined) })
 
     // FUNCTIONS
 
-    async function deleteProduct(product: Product) {
+    async function deleteProduct(event: React.UIEvent, product: Product) {
+        // TODO handle unmount!
+        event.stopPropagation()
         if (confirm('Do you really want to delete this Product?')) {
             await ProductManager.deleteProduct(product.id)
-            setProducts(products.filter(other => other.id != product.id))
         }
     }
 
@@ -204,64 +51,35 @@ export const ProductView = () => {
     
     const columns: Column<Product>[] = [
         { label: '📷', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {product.id in latestVersions ? (
-                    latestVersions[product.id] ? (
-                        latestVersions[product.id].imageType ? (
-                            <div style={ { backgroundImage: `url("/rest/files/${latestVersions[product.id].id}.${latestVersions[product.id].imageType}")` } } className="model"/>
-                        ) : (
-                            <div className="model">
-                                <img src={LoadIcon} className='icon small position center animation spin'/>
-                            </div>
-                        )
+            <ProductImageWidget productId={product.id}/>
+        ) },
+        { label: 'Name / Description', class: 'left fill', content: product => (
+            <>
+                <div>
+                    <strong>{product.name}</strong>
+                    {product.public ? (
+                        <span className='badge public'>public</span>
                     ) : (
-                        <div className="model" >
-                            <img src={EmptyIcon} className='icon medium position center'/>
-                        </div>
-                    )
-                ) : (
-                    <div className="model" >
-                        <img src={LoadIcon} className='icon small position center animation spin'/>
-                    </div>
-                )}
-            </Link>
-        ) },
-        { label: 'Name', class: 'left nowrap', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {product.name}
-            </Link>
-        ) },
-        { label: 'Description', class: 'left fill', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {product.description}
-            </Link>
+                        <span className='badge private'>private</span>
+                    )}
+                </div>
+                <div>{product.description}</div>
+            </>
         ) },
         { label: 'Versions', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {product.id in versions ? versions[product.id].length : '?'}
-            </Link>
+            <VersionCount productId={product.id}/>
         ) },
         { label: 'Issues', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {product.id in issues ? issues[product.id].length : '?'}
-            </Link>
+            <IssueCount productId={product.id} state='open'/>
         ) },
         { label: 'Members', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {product.id in members ? members[product.id].length : '?'}
-            </Link>
+            <MemberCount productId={product.id}/>
         ) },
         { label: '👤', class: 'center', content: product => (
-            <Link to={`/products/${product.id}/versions`}>
-                {users[product.id] && members[product.id] ? (
-                    <ProductUserPictureWidget user={users[product.id]} members={members[product.id]} class='icon medium round'/>
-                ) : (
-                    <img src={LoadIcon} className='icon small animation spin'/>
-                )}
-            </Link>
+            <ProductUserPictureWidget userId={product.userId} productId={product.id} class='icon medium round'/>
         ) },
         { label: '🛠️', content: product => (
-            <a onClick={() => deleteProduct(product)}>
+            <a onClick={event => deleteProduct(event, product)}>
                 <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
@@ -270,22 +88,27 @@ export const ProductView = () => {
     // RETURN
 
     return (
-        <main className="view product">
-            <div>
-                {contextUser ? (
-                    <Link to='/products/new/settings' className='button fill green'>
-                        New product
-                    </Link>
-                ) : (
-                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                        New product (requires login)
-                    </a>
-                )}
-                {products && (
-                    <Table columns={columns} items={products.map(p => p).reverse()}/>
-                )}
-            </div>
-        </main>
+        products ? (
+            <main className="view product">
+                <div>
+                    <div>
+                        {contextUser ? (
+                            <Link to='/products/new/settings' className='button fill green'>
+                                New product
+                            </Link>
+                        ) : (
+                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                New product (requires login)
+                            </a>
+                        )}
+                        <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
+                    </div>
+                    <LegalFooter/>
+                </div>
+            </main>
+        ) : (
+            <LoadingView/>
+        )
     )
 
 }

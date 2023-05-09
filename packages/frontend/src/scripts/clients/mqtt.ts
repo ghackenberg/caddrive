@@ -42,6 +42,6 @@ client.on('error', error => {
     console.error('MQTT client error', error)
 })
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-client.on('message', (topic, _message) => {
+client.on('message', topic => {
     console.log(`MQTT client message`, topic)
 })

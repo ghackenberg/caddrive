@@ -1,18 +1,15 @@
 import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
-import { Redirect, useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
-
-import { Comment, Issue, Milestone, Product } from 'productboard-common'
+import { Redirect, useParams } from 'react-router'
 
 import { calculateActual } from '../../functions/burndown'
-import { CommentManager } from '../../managers/comment'
-import { IssueManager } from '../../managers/issue'
+import { useAsyncHistory } from '../../hooks/history'
+import { useIssues, useMilestone, useIssuesComments, useProduct } from '../../hooks/route'
 import { MilestoneManager } from '../../managers/milestone'
-import { ProductManager } from '../../managers/product'
 import { DateInput } from '../inputs/DateInput'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { LoadingView } from './Loading'
@@ -20,67 +17,48 @@ import { LoadingView } from './Loading'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/chart.png'
 
-export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product: string, milestone: string }>) => {
+export const ProductMilestoneSettingView = () => {
     
-    const { goBack, replace } = useHistory()
+    const { goBack, replace } = useAsyncHistory()
 
     // PARAMS
 
-    const productId = props.match.params.product
-    const milestoneId = props.match.params.milestone
+    const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const milestone = useMilestone(milestoneId)
+    const issues = useIssues(productId, milestoneId)
+    const comments = useIssuesComments(productId, milestoneId)
 
     // INITIAL STATES
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMilestone = milestoneId == 'new' ? undefined : MilestoneManager.getMilestoneFromCache(milestoneId)
-    const initialIssues = milestoneId == 'new' ? undefined: IssueManager.findIssuesFromCache(productId, milestoneId)
-    const initialComments: {[id: string]: Comment[]} = {}
-    for (const issue of initialIssues || []) {
-        initialComments[issue.id] = CommentManager.findCommentsFromCache(issue.id)
-    } 
-    const initialLabel = initialMilestone ? initialMilestone.label : ''
-    const initialStart = initialMilestone ? new Date(initialMilestone.start) : new Date(new Date().setHours(0,0,0,0))
-    const initialEnd = initialMilestone ? new Date(initialMilestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
+
+    const initialLabel = milestone ? milestone.label : ''
+    const initialStart = milestone ? new Date(milestone.start) : new Date(new Date().setHours(0,0,0,0))
+    const initialEnd = milestone ? new Date(milestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
 
     // STATES
 
-    // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [milestone, setMilstone] = useState<Milestone>(initialMilestone)
-    const [issues, setIssues] = useState<Issue[]>(initialIssues)
-    const [comments, setComments] = useState<{[id: string]: Comment[]}>(initialComments)
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [start, setStart] = useState<Date>(initialStart)
     const [end, setEnd] = useState<Date>(initialEnd)
+
     // - Computations
     const [total, setTotalIssueCount] = useState<number>() 
     const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
+
     // - Interactions
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
-
-    // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { milestoneId != 'new' && MilestoneManager.getMilestone(milestoneId).then(setMilstone) }, [props])
-    useEffect(() => { IssueManager.findIssues(productId, milestoneId).then(setIssues) }, [props, milestoneId])
-
-    useEffect(() => {
-        if (issues) {
-            Promise.all(issues.map(issue => CommentManager.findComments(issue.id))).then(issueComments => {
-                const newComments = {...comments}
-                for (let index = 0; index < issues.length; index++) {
-                    newComments[issues[index].id] = issueComments[index]
-                }
-                setComments(newComments)
-            })
-        }
-    }, [issues])
     
     // - Values
     useEffect(() => { milestone && setLabel(milestone.label) }, [milestone])
     useEffect(() => { milestone && setStart(new Date(milestone.start)) }, [milestone])
     useEffect(() => { milestone && setEnd(new Date(milestone.end)) }, [milestone])
+
     // - Computations
     useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
     useEffect(() => {
@@ -92,13 +70,14 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
     // FUNCTIONS
 
     async function submitMilestone(event: FormEvent){
+        // TODO handle unmount!
         event.preventDefault()
         if(milestoneId == 'new') {
-            await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })
-            replace(`/products/${productId}/milestones/`)
+            const milestone = await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })
+            await replace(`/products/${productId}/milestones/${milestone.id}/issues`)
         } else {
             await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.getTime(), end: end.getTime() })
-            goBack()
+            await goBack()
         }
     }
 
@@ -119,13 +98,16 @@ export const ProductMilestoneSettingView = (props: RouteComponentProps<{ product
                 <>
                     <main className={`view product-milestone-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={submitMilestone} onReset={goBack}>
-                                <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
-                                <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
-                                <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
-                                <SubmitInput value='Save'/>
-                            </form>
+                            <div>
+                                <h1>{milestoneId == 'new' ? 'New milestone' : 'Milestone settings'}</h1>
+                                <form onSubmit={submitMilestone} onReset={goBack}>
+                                    <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
+                                    <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
+                                    <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
+                                    <SubmitInput value='Save'/>
+                                </form>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>

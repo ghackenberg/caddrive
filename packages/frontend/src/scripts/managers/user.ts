@@ -21,13 +21,13 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserUpda
 
     findUsersFromCache() { 
         if (this.findIndex) { 
-            return Object.keys(this.findIndex).map(id => this.load(id))
+            return Object.keys(this.findIndex).map(id => this.getResolveItem(id))
         } else { 
             return undefined 
         } 
     }
     getUserFromCache(userId: string) { 
-        return this.load(userId)
+        return this.getResolveItem(userId)
     }
 
     private addToFindIndex(user: User) {
@@ -44,16 +44,16 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserUpda
     // MQTT
 
     create(user: User): void {
-        user = this.store(user)
+        user = this.resolveItem(user)
         this.addToFindIndex(user)
     }
     update(user: User): void {
-        user = this.store(user)
+        user = this.resolveItem(user)
         this.removeFromFindIndex(user)
         this.addToFindIndex(user)
     }
     delete(user: User): void {
-        user = this.store(user)
+        user = this.resolveItem(user)
         this.removeFromFindIndex(user)
     }
 
@@ -67,50 +67,50 @@ class UserManagerImpl extends AbstractManager<User> implements UserREST<UserUpda
             // Call backend
             let users = await UserClient.findUsers(query, product)
             // Update user index
-            users = users.map(user => this.store(user))
+            users = users.map(user => this.resolveItem(user))
             // Init find index
             this.findIndex = {}
             // Update find index
             users.map(user => this.addToFindIndex(user))
         }
         // Return users
-        return Object.keys(this.findIndex).map(id => this.load(id)).filter(user => !user.deleted)
+        return Object.keys(this.findIndex).map(id => this.getResolveItem(id)).filter(user => !user.deleted)
     }
 
     async getUser(id: string): Promise<User> {
-        if (!this.has(id)) {
+        if (!this.hasResolveItem(id)) {
             // Call backend
             let user = await UserClient.getUser(id)
             // Update user index
-            user = this.store(user)
+            user = this.resolveItem(user)
             // Update find index
             this.addToFindIndex(user)
         }
         // Return user
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: File): Promise<User> {
         // Call backend
         let user = await UserClient.updateUser(id, data, file)
         // Update user index
-        user = this.store(user)
+        user = this.resolveItem(user)
         // Update find result
         this.removeFromFindIndex(user)
         this.addToFindIndex(user)
         // Return user
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 
     async deleteUser(id: string): Promise<User> {
         // Call backend
         let user = await UserClient.deleteUser(id)
         // Update user index
-        user = this.store(user)
+        user = this.resolveItem(user)
         // Update user set
         this.removeFromFindIndex(user)
         // Return user
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 }
 

@@ -63,16 +63,18 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     // EFFECTS
     
     useEffect(() => {
+        let exec = true
         if (props.path) {
             setGroup(undefined)
             if (props.path.endsWith('.glb')) {
-                getGLTFModel(props.path).then(gltfModel => setGroup(gltfModel.scene))
+                getGLTFModel(props.path).then(gltfModel => exec && setGroup(gltfModel.scene))
             } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
-                getLDrawModel(props.path).then(setGroup)
+                getLDrawModel(props.path).then(group => exec && setGroup(group))
             }
         } else {
             setGroup(undefined)
         }
+        return () => { exec = false }
     }, [props.path])
 
     useEffect(() => { setSelected(props.selected) }, [props.selected])

@@ -1,79 +1,54 @@
 import  * as React from 'react'
-import { useState, useEffect, useContext } from 'react'
-import { Redirect } from 'react-router'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { useState, useContext } from 'react'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
-import { Member, Product, User } from 'productboard-common'
+import { Member } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
+import { useMembers, useProduct } from '../../hooks/route'
 import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
-import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
+import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
-import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductMemberView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductMemberView = () => {
 
-    // PARAMS
-
-    const productId = props.match.params.product
+    const { push } = useAsyncHistory()
 
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
-    // INITIAL STATES
+    // PARAMS
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialUsers : {[id: string]: User} = {}
-    for (const member of initialMembers || []) {
-        const user = UserManager.getUserFromCache(member.userId)
-        if (user) {
-            initialUsers[member.id] = user
-        }
-    }
+    const { productId } = useParams<{ productId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const members = useMembers(productId)
     
     // STATES
 
-    // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [users, setUsers] = useState<{[id: string]: User}>(initialUsers)
-    // - Interactions
     const [active, setActive] = useState<string>('left')
-
-    // EFFECTS
-
-    // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => {
-        if (members) {
-            Promise.all(members.map(member => UserManager.getUser(member.userId))).then(memberUsers => {
-                const newUsers = {...users}
-                for (let index = 0; index < members.length; index++) {
-                    newUsers[members[index].id] = memberUsers[index]
-                }
-                setUsers(newUsers)
-            })
-        }
-    }, [members])
 
     // FUNCTIONS
 
-    async function deleteMember(member:Member) {
+    async function deleteMember(event: React.UIEvent, member:Member) {
+        // TODO handle unmount!
+        event.stopPropagation()
         if (confirm('Do you really want to delete this member?')) {
             await MemberManager.deleteMember(member.id)
-            setMembers(members.filter(other => other.id != member.id))  
         }
     }
 
@@ -81,30 +56,16 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
 
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
-            member.id in users ? (
-                <Link to={`/products/${productId}/members/${member.id}/settings`}>
-                    <ProductUserPictureWidget user={users[member.id]} members={members} class='icon medium round middle'/>
-                </Link> 
-            ) : (
-                <img src={LoadIcon} className='icon medium pad animation spin'/>
-            )
+            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round middle'/>
         ) },
-        { label: 'Name', class: 'left nowrap', content: (
-            member => member.id in users ? (
-                <Link to={`/products/${productId}/members/${member.id}/settings`}>
-                    {users[member.id].name}
-                </Link>
-             ) : '?'
+        { label: 'Name', class: 'left nowrap', content: member => (
+            <ProductUserNameWidget userId={member.userId} productId={productId}/>
         ) },
-        { label: 'Role', class: 'fill left nowrap', content: (
-            member => member.id in users ? (
-                <Link to={`/products/${productId}/members/${member.id}/settings`}>
-                    {member.role}
-                </Link>
-             ) : '?'
+        { label: 'Role', class: 'fill left nowrap', content: member => (
+            <span className='badge role'>{member.role}</span>
         ) },
         { label: '🛠️', class: 'center', content: member => (
-            <a onClick={() => deleteMember(member)}>
+            <a onClick={event => deleteMember(event, member)}>
                 <img src={DeleteIcon} className='icon medium pad'/>
             </a>
         ) }
@@ -125,24 +86,25 @@ export const ProductMemberView = (props: RouteComponentProps<{product: string}>)
                 <>
                     <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
                         <div>
-                            {contextUser ? (
-                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                    <Link to={`/products/${productId}/members/new/settings`} className='button fill green'>
-                                        New member
-                                    </Link>
+                            <div>
+                                {contextUser ? (
+                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                        <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
+                                            New member
+                                        </NavLink>
+                                    ) : (
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New member (requires role)
+                                        </a>
+                                    )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New member (requires role)
+                                        New member (requires login)
                                     </a>
-                                )
-                            ) : (
-                                <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                    New member (requires login)
-                                </a>
-                            )}
-                            {members && (
-                                <Table columns={columns} items={members}/>
-                            )}
+                                )}
+                                <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)}/>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true}/>

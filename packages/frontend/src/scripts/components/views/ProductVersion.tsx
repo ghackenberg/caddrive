@@ -1,18 +1,15 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, Fragment } from 'react'
-import { Redirect, RouteComponentProps } from 'react-router'
-import { Link } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
-import { Member, Product, User, Version } from 'productboard-common'
+import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { VersionAPI } from '../../clients/mqtt/version'
+import { useProduct, useMembers, useVersions } from '../../hooks/route'
 import { computeTree } from '../../functions/tree'
-import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
-import { UserManager } from '../../managers/user'
-import { VersionManager } from '../../managers/version'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserEmailWidget } from '../widgets/ProductUserEmail'
@@ -24,7 +21,7 @@ import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/version.png'
 import RightIcon from '/src/images/part.png'
 
-export const ProductVersionView = (props: RouteComponentProps<{product: string}>) => {
+export const ProductVersionView = () => {
 
     // CONTEXTS
 
@@ -33,28 +30,20 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
 
     // PARAMS
 
-    const productId = props.match.params.product
+    const { productId } = useParams<{ productId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const members = useMembers(productId)
+    const versions = useVersions(productId)
 
     // INITIAL STATES
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? undefined : MemberManager.findMembersFromCache(productId)
-    const initialVersions = productId == 'new' ? undefined : VersionManager.findVersionsFromCache(productId)
-    const initialUsers : {[id: string]: User} = {}
-    for (const version of initialVersions || []) {
-        const user = UserManager.getUserFromCache(version.userId)
-        if (user) {
-            initialUsers[version.id] = user
-        }
-    }
-    const initialTree = computeTree(initialVersions)
+
+    const initialTree = computeTree(versions)
 
     // STATES
 
-    // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
-    const [versions, setVersions] = useState<Version[]>(initialVersions)
-    const [users, setUsers] = useState<{[versionId: string]: User}>(initialUsers)
     // - Computations
     const [children, setChildren] = useState<{[versionId: string]: Version[]}>(initialTree.children)
     const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
@@ -62,45 +51,12 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
     const [siblings, setSiblings] = useState<{[versionId: string]: Version[]}>(initialTree.siblings)
     const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
+    
     // - Interactions
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
-    // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { VersionManager.findVersions(productId).then(setVersions) }, [props])
-    useEffect(() => {
-        if (versions) {
-            Promise.all(versions.map(version => UserManager.getUser(version.userId))).then(versionUsers => {
-                const newUsers: {[versionId: string]: User} = {}
-                for (let index = 0; index < versions.length; index++) {
-                    newUsers[versions[index].id] = versionUsers[index]
-                }
-                setUsers(newUsers)
-            })
-        }
-    }, [versions])
-
-    // - Events
-    useEffect(() =>  {
-        return VersionAPI.register({
-            create(version) {
-                if (version.productId == productId) {
-                    setVersions([...versions.filter(other => other.id != version.id), version])
-                }
-            },
-            update(version) {
-                setVersions(versions.map(other => other.id != version.id ? other : version))
-            },
-            delete(version) {
-                setVersions(versions.filter(other => other.id != version.id))
-            },
-        })
-    })
-
-    // - Computations
     useEffect(() => { 
         const tree = computeTree(versions)
         setChildren(tree.children)
@@ -135,99 +91,90 @@ export const ProductVersionView = (props: RouteComponentProps<{product: string}>
                 <>
                     <main className={`view product-version sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
                         <div>
-                            {contextUser ? (
-                                members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                    <Link to={`/products/${productId}/versions/new/settings`} className='button green fill'>
-                                        New version
-                                    </Link>
+                            <div>
+                                {contextUser ? (
+                                    members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
+                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                            New version
+                                        </NavLink>
+                                    ) : (
+                                        <a className='button green fill' style={{fontStyle: 'italic'}}>
+                                            New version (requires role)
+                                        </a>
+                                    )
                                 ) : (
                                     <a className='button green fill' style={{fontStyle: 'italic'}}>
-                                        New version (requires role)
+                                        New version (requires login)
                                     </a>
-                                )
-                            ) : (
-                                <a className='button green fill' style={{fontStyle: 'italic'}}>
-                                    New version (requires login)
-                                </a>
-                            )}
-                            <div className="widget version_tree">
-                                {versions.map(version => version).reverse().map((vers, index) => (
-                                    <Fragment key={vers.id}>
-                                        {index > 0 && (
-                                            <div className="between">
+                                )}
+                                <div className="widget version_tree">
+                                    {versions.map(version => version).reverse().map((vers, index) => (
+                                        <Fragment key={vers.id}>
+                                            {index > 0 && (
+                                                <div className="between">
+                                                    <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
+                                                        {vers.id in siblings && siblings[vers.id].map(sibling => (
+                                                            <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        ))}
+                                                        {vers.id in children && children[vers.id].map(child => (
+                                                            <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        ))}
+                                                    </div>
+                                                    <div className="text" style={{color: 'orange'}}/>
+                                                </div>
+                                            )}
+                                            <div className={`version${contextVersion && contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
                                                 <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
                                                     {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                         <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
                                                     ))}
-                                                    {vers.id in children && children[vers.id].map(child => (
-                                                        <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0}}/>
-                                                    ))}
-                                                </div>
-                                                <div className="text" style={{color: 'orange'}}/>
-                                            </div>
-                                        )}
-                                        <div className={`version${contextVersion && contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
-                                            <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
-                                                {vers.id in siblings && siblings[vers.id].map(sibling => (
-                                                    <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
-                                                ))}
-                                                {vers.id in childrenMin && vers.id in childrenMax && (
-                                                    <span className='line horizontal parent' style={{top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
-                                                )}
-                                                {vers.id in children && children[vers.id].map(child => (
-                                                    <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)'}}/>
-                                                ))}
-                                                {vers.id in indents && (
-                                                    <span className='line vertical parent' style={{top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
-                                                )}
-                                                {vers.id in indents && (
-                                                    <span className='dot parent' style={{top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
-                                                )}
-                                            </div>
-                                            <div className="text">
-                                                <div>
-                                                    <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                    {users[vers.id] && members ? (
-                                                        <ProductUserPictureWidget user={users[vers.id]} members={members} class='icon medium round middle'/>
-                                                    ) : (
-                                                        <img src={LoadIcon} className='icon medium animation spin'/> 
+                                                    {vers.id in childrenMin && vers.id in childrenMax && (
+                                                        <span className='line horizontal parent' style={{top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
                                                     )}
-                                                    <span className="user">
-                                                        <span className="name">
-                                                            {vers.id in users && users[vers.id] && members ? (
-                                                                <ProductUserNameWidget user={users[vers.id]} members={members}/>
-                                                            ) : (
-                                                                '?'
-                                                            )}
-                                                        </span>
-                                                        <span className="email">
-                                                            {vers.id in users && members ? (
-                                                                <ProductUserEmailWidget user={users[vers.id]} members={members}/>
-                                                            ) : (
-                                                                '?'
-                                                            )} 
-                                                        </span>
-                                                    </span>
+                                                    {vers.id in children && children[vers.id].map(child => (
+                                                        <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)'}}/>
+                                                    ))}
+                                                    {vers.id in indents && (
+                                                        <span className='line vertical parent' style={{top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                    )}
+                                                    {vers.id in indents && (
+                                                        <span className='dot parent' style={{top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
+                                                    )}
                                                 </div>
-                                                <div>
-                                                    <span className="description">{vers.description}</span>
+                                                <div className="text">
+                                                    <div>
+                                                        <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
+                                                        <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle'/>
+                                                        <span className="user">
+                                                            <span className="name">
+                                                                <ProductUserNameWidget userId={vers.userId} productId={productId}/>
+                                                            </span>
+                                                            <span className="email">
+                                                                <ProductUserEmailWidget userId={vers.userId} productId={productId}/>
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="description">{vers.description}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="model">
+                                                    {vers.imageType ? (
+                                                        <em>
+                                                            <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image"/>
+                                                        </em>
+                                                    ) : (
+                                                        <span>
+                                                            <img src={LoadIcon} className='icon small animation spin'/>
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <div className="model">
-                                                {vers.imageType ? (
-                                                    <em>
-                                                        <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image"/>
-                                                    </em>
-                                                ) : (
-                                                    <span>
-                                                        <img src={LoadIcon} className='icon small animation spin'/>
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </Fragment>
-                                ))}
+                                        </Fragment>
+                                    ))}
+                                </div>
                             </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true}/>

@@ -66,3 +66,7 @@ h2 > a::after {
 h2 > a:last-child::after {
     content: "";
 }
+
+h3 > strong {
+    color: orange;
+}

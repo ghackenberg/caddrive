@@ -1,3 +1,0 @@
-# ProductBoard Worker Package
-
-TODO

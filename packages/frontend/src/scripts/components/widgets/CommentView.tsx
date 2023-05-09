@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useContext, ReactElement, MouseEvent } from 'react'
 
-import { Comment, Issue, Member, User } from 'productboard-common'
+import { Comment, Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { ProductUserPictureWidget } from './ProductUserPicture'
@@ -18,7 +18,7 @@ interface Part {
     objectName: string
 }
 
-export const CommentView = (props: { class: string, comment: Issue | Comment, user?: User, html: ReactElement, parts: Part[], mouseover: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, users: {[id: string]: User}, members: Member[] }) => {
+export const CommentView = (props: { class: string, productId: string, comment: Issue | Comment, html: ReactElement, parts: Part[], mouseover: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
 
     // CONTEXTS
 
@@ -26,9 +26,8 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
 
     // CONSTANTS
 
+    const productId = props.productId
     const comment = props.comment
-    const users = props.users
-    const members = props.members
 
     // RETURN
 
@@ -37,12 +36,12 @@ export const CommentView = (props: { class: string, comment: Issue | Comment, us
             <div className="head">
                 <div className="icon">
                     <a href={`/users/${comment.userId}`}>
-                        { comment.userId in users && members ? <ProductUserPictureWidget user={users[comment.userId]} members={members} class='big'/> : '?' }
+                        <ProductUserPictureWidget userId={comment.userId} productId={productId} class='big'/>
                     </a>
                 </div>
                 <div className="text">
                     <p>
-                        <strong>{props.user ? comment.userId in users && members ? <ProductUserNameWidget user={users[comment.userId]} members={members}/> : '?' : ''}</strong> commented on {new Date(comment.created).toISOString().substring(0, 10)}
+                        <strong><ProductUserNameWidget userId={comment.userId} productId={productId}/></strong> commented on {new Date(comment.created).toISOString().substring(0, 10)}
                     </p>
                 </div>
             </div>

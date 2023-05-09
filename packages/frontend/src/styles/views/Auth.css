@@ -1,23 +1,21 @@
 main.view.auth > div {
-    padding-top: 0;
-    padding-left: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-
     background-color: rgb(245,245,245);
 }
 
-main.view.auth > div > div {
+main.view.auth > div > div:first-child {
     display: flex;
 
     justify-content: center;
 
     align-items: center;
 
-    min-height: 100%;
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0.5em;
 }
 
-main.view.auth > div > div > div {
+main.view.auth > div > div:first-child > div {
     display: flex;
 
     flex-direction: column;
@@ -37,7 +35,7 @@ main.view.auth > div > div > div {
     border-radius: 1em;
 }
 
-main.view.auth > div > div > div > img {
+main.view.auth > div > div:first-child > div > img {
     display: block;
 
     width: 5em;
@@ -46,35 +44,35 @@ main.view.auth > div > div > div > img {
     margin: 1em;
 }
 
-main.view.auth > div > div > div > h5 {
+main.view.auth > div > div:first-child > div > h5 {
     color: gray;
 }
 
-main.view.auth > div > div > div > h1 > span {
+main.view.auth > div > div:first-child > div > h1 > span {
     white-space: nowrap;
 }
 
-main.view.auth > div > div > div > div {
+main.view.auth > div > div:first-child > div > div {
     padding-top: 1em;
     padding-bottom: 1em;
 }
 
-main.view.auth > div > div > div > div > input {
+main.view.auth > div > div:first-child > div > div > input {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 
     max-width: calc(100vw - 10em);
 }
 
-main.view.auth > div > div > div > div > button {
+main.view.auth > div > div:first-child > div > div > button {
     margin-left: 0.25em;
     margin-right: 0.25em;
 
     width: 7.5em;
 }
 
-main.view.auth > div > div > div > div > input[type = 'email'] + button,
-main.view.auth > div > div > div > div > input[type = 'text'] + button {
+main.view.auth > div > div:first-child > div > div > input[type = 'email'] + button,
+main.view.auth > div > div:first-child > div > div > input[type = 'text'] + button {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 

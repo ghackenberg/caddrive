@@ -22,13 +22,13 @@ class IssueManagerImpl extends AbstractManager<Issue> implements IssueREST<Issue
     findIssuesFromCache(productId: string, milestoneId?: string, state?: string) {
         const key = `${productId}-${milestoneId}-${state}`
         if (key in this.findIndex) { 
-            return Object.keys(this.findIndex[key]).map(id => this.load(id))
+            return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id))
         } else { 
             return undefined 
         } 
     }
     getIssueFromCache(issueId: string) { 
-        return this.load(issueId)
+        return this.getResolveItem(issueId)
     }
 
     private addToFindIndex(issue: Issue) {
@@ -56,16 +56,16 @@ class IssueManagerImpl extends AbstractManager<Issue> implements IssueREST<Issue
     // MQTT
 
     create(issue: Issue): void {
-        issue = this.store(issue)
+        issue = this.resolveItem(issue)
         this.addToFindIndex(issue)
     }
     update(issue: Issue): void {
-        issue = this.store(issue)
+        issue = this.resolveItem(issue)
         this.removeFromFindIndex(issue)
         this.addToFindIndex(issue)
     }
     delete(issue: Issue): void {
-        issue = this.store(issue)
+        issue = this.resolveItem(issue)
         this.removeFromFindIndex(issue)
     }
 
@@ -77,61 +77,61 @@ class IssueManagerImpl extends AbstractManager<Issue> implements IssueREST<Issue
             // Call backend
             let issues = await IssueClient.findIssues(productId, milestoneId, state)
             // Update issue index
-            issues = issues.map(issue => this.store(issue))
+            issues = issues.map(issue => this.resolveItem(issue))
             // Init find index
             this.findIndex[key] = {}
             // Update find index
             issues.forEach(issue => this.addToFindIndex(issue))
         }
         // Return issues
-        return Object.keys(this.findIndex[key]).map(id => this.load(id)).filter(issue => !issue.deleted)
+        return Object.keys(this.findIndex[key]).map(id => this.getResolveItem(id)).filter(issue => !issue.deleted)
     }
 
     async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
         // Call backend
         let issue = await IssueClient.addIssue(data, files)
         // Update issue index
-        issue = this.store(issue)
+        issue = this.resolveItem(issue)
         // Update find index
         this.addToFindIndex(issue)
         // Return issue
-        return this.load(issue.id)
+        return this.getResolveItem(issue.id)
     }
 
     async getIssue(id: string): Promise<Issue> {
-        if (!this.has(id)) {
+        if (!this.hasResolveItem(id)) {
             // Call backend
             let issue = await IssueClient.getIssue(id)
             // Update issue index
-            issue = this.store(issue)
+            issue = this.resolveItem(issue)
             // Update find index
             this.addToFindIndex(issue)
         }
         // Return issue
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 
     async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
         // Call backend
         let issue = await IssueClient.updateIssue(id, data, files)
         // Update issue index
-        issue = this.store(issue)
+        issue = this.resolveItem(issue)
         // Update find index
         this.removeFromFindIndex(issue)
         this.addToFindIndex(issue)
         // Return issue
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 
     async deleteIssue(id: string): Promise<Issue> {
         // Call backend
         let issue = await IssueClient.deleteIssue(id)
         // Update issue index
-        issue = this.store(issue)
+        issue = this.resolveItem(issue)
         // Update find index
         this.removeFromFindIndex(issue)
         // Return issue
-        return this.load(id)
+        return this.getResolveItem(id)
     }
 }
 

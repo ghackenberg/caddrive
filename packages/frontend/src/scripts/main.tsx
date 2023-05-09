@@ -3,6 +3,7 @@ import 'process/browser'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
+import { BrowserRouter } from 'react-router-dom'
 
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
 import { LoadingView } from './components/views/Loading'
@@ -28,12 +29,12 @@ const root = document.createElement('div')
 document.body.appendChild(root)
 // Render root
 ReactDOM.render((
-    <>
+    <BrowserRouter>
         <Helmet>
             <link rel="icon" href={AppIcon}/>
         </Helmet>
         <React.Suspense fallback={<Fallback/>}>
             <Root/>
         </React.Suspense>
-    </>
+    </BrowserRouter>
 ), root)

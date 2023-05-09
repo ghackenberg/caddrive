@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 
-import { UserManager } from '../../managers/user'
+import { useUser } from '../../hooks/route'
 import { UserLink } from '../links/UserLink'
 
 import SettingIcon from '/src/images/setting.png'
@@ -9,36 +9,28 @@ import SettingIcon from '/src/images/setting.png'
 export const UserHeader = () => {
     // PARAMS
 
-    const params = useParams<{ user: string }>()
+    const { userId } = useParams<{ userId: string }>()
 
-    // INITIAL STATES
+    // HOOKS
 
-    const initialUser = params.user == 'new' ? undefined : UserManager.getUserFromCache(params.user)
+    const user = useUser(userId)
 
-    // STATES
-
-    const [user, setUser] = React.useState(initialUser)
-
-    // EFFECTS
-
-    React.useEffect(() => {
-        params.user == 'new' ? setUser(undefined) : UserManager.getUser(params.user).then(setUser)
-    }, [params.user])
+    // RETURN
 
     return (
-        <header className='view large'>
-            <div>
+        <header className='view user'>
+            <div className='entity'>
                 <UserLink user={user}/>
             </div>
-            <div>
+            <div className='tabs'>
                 <span>
-                    {params.user == 'new' ? (
+                    {userId == 'new' ? (
                         <a className="active">
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </a>
                     ) : (
-                        <NavLink to={`/users/${params.user}`}>
+                        <NavLink to={`/users/${userId}`} replace={true}>
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </NavLink>

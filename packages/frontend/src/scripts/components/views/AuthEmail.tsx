@@ -1,13 +1,15 @@
 import * as React from 'react'
-import { useHistory } from 'react-router'
 
 import { TokenClient } from '../../clients/rest/token'
 import { AuthContext } from '../../contexts/Auth'
+import { useAsyncHistory } from '../../hooks/history'
+import { LegalFooter } from '../snippets/LegalFooter'
 
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthEmailView = () => {
-    const { push } = useHistory()
+
+    const { push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -16,13 +18,13 @@ export const AuthEmailView = () => {
     // STATES
 
     const [email, setEmail] = React.useState<string>('')
-
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
 
     // EVENTS
 
     async function handleSubmit(event: React.UIEvent) {
+        // TODO handle unmount!
         try {
             event.preventDefault()
             setLoad(true)
@@ -30,7 +32,7 @@ export const AuthEmailView = () => {
             const token = await TokenClient.createToken({ email })
             setAuthContextToken(token.id)
             setLoad(false)
-            push(`/auth/code`)
+            await push(`/auth/code`)
         } catch (e) {
             setError('Action failed.')
             setLoad(false)
@@ -58,6 +60,7 @@ export const AuthEmailView = () => {
                         {error && <p style={{color: 'red'}}>{error}</p>}
                     </div>
                 </div>
+                <LegalFooter/>
             </div>
         </main>
     )

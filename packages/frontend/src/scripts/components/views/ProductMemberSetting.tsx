@@ -1,16 +1,17 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect, useHistory } from 'react-router'
-import { RouteComponentProps } from 'react-router-dom'
+import { Redirect, useParams } from 'react-router'
 
-import { Member, MemberRole, Product, User } from 'productboard-common'
+import { MemberRole, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useAsyncHistory } from '../../hooks/history'
+import { useMember, useMembers, useProduct } from '../../hooks/route'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
-import { ProductManager } from '../../managers/product'
 import { UserManager } from '../../managers/user'
+import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -23,35 +24,34 @@ import RightIcon from '/src/images/part.png'
 
 const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 
-export const ProductMemberSettingView = (props: RouteComponentProps<{product: string, member: string}>) => {
+export const ProductMemberSettingView = () => {
     
-    const { goBack } = useHistory()
-
-    // PARAMS
-
-    const productId = props.match.params.product
-    const memberId = props.match.params.member
+    const { goBack } = useAsyncHistory()
 
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // PARAMS
+
+    const { productId, memberId } = useParams<{ productId: string, memberId: string }>()
+
+    // HOOKS
+
+    const product = useProduct(productId)
+    const members = useMembers(productId)
+    const member = useMember(memberId)
+    
     // INITIAL STATES
 
-    const initialProduct = productId == 'new' ? undefined : ProductManager.getProductFromCache(productId)
-    const initialMembers = productId == 'new' ? [] : MemberManager.findMembersFromCache(productId)
-    const initialMember = memberId == 'new' ? undefined : MemberManager.getMemberFromCache(memberId)
-    const initialUser = initialMember ? UserManager.getUserFromCache(initialMember.userId) : undefined
-    const initialRole = initialMember ? initialMember.role : 'customer'
+    const initialUser = member ? UserManager.getUserFromCache(member.userId) : undefined
+    const initialRole = member ? member.role : 'customer'
 
     // STATES
     
     // - Entities
-    const [product, setProduct] = useState<Product>(initialProduct)
-    const [members, setMembers] = useState<Member[]>(initialMembers)
     const [users, setUsers] = useState<User[]>()
     const [user, setUser] = useState<User>(initialUser)
-    const [member, setMember] = useState<Member>(initialMember)
     // - Computations
     const [names, setNames] = useState<React.ReactNode[]>()
     // - Values
@@ -63,11 +63,18 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // EFFECTS
 
     // - Entities
-    useEffect(() => { ProductManager.getProduct(productId).then(setProduct) }, [props])
-    useEffect(() => { MemberManager.findMembers(productId).then(setMembers) }, [props])
-    useEffect(() => { UserManager.findUsers(query, productId).then(setUsers) }, [props, query])
-    useEffect(() => { memberId != 'new' && MemberManager.getMember(memberId).then(setMember) }, [props])
-    useEffect(() => { member && UserManager.getUser(member.userId).then(setUser) }, [member] )
+    useEffect(() => {
+        let exec = true
+        UserManager.findUsers(query, productId).then(users => exec && setUsers(users))
+        return () => { exec = false }
+    }, [productId, query])
+    useEffect(() => {
+        let exec = true
+        member && UserManager.getUser(member.userId).then(user => exec && setUser(user))
+        return () => { exec = false }
+    }, [member] )
+
+    // - Values
     useEffect(() => { member && setRole(member.role) }, [member] )
 
     // - Computations
@@ -87,22 +94,22 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
     // FUNCTIONS
 
     async function onSubmit(event: FormEvent) {
+        // TODO handle unmount!
         event.preventDefault()
         if (memberId == 'new') {
             if (confirm('Do you really want to add this member?')) {
                 await MemberManager.addMember({ productId, userId: user.id, role: role })
-                goBack()
+                await goBack()
             }
         } else {
             if (confirm('Do you really want to change this member?')) {
                 await MemberManager.updateMember(memberId,{...member, role: role})
-                goBack()
+                await goBack()
             }
         }
     }
 
-    function selectUser(user: User) {
-        setQuery('')
+    function handleClick(user: User) {
         setUser(user)
     }
 
@@ -126,14 +133,10 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
 
     const queriedUserColumns: Column<User>[] = [
         { label: '👤', class: 'center', content: user => (
-            <a onClick={() => selectUser(user)}>
-                <UserPictureWidget user={user} class='icon medium round'/>
-            </a>
+            <UserPictureWidget user={user} class='icon medium round'/>
         ) },
-        { label: 'Name', class: 'left fill', content: (user, index) => (
-            <a onClick={() => selectUser(user)}>
-                {names ? names[index] : '?'}
-            </a>
+        { label: 'Name', class: 'left fill', content: (_, index) => (
+            names ? names[index] : '?'
         ) }
     ]
 
@@ -152,62 +155,59 @@ export const ProductMemberSettingView = (props: RouteComponentProps<{product: st
                 <>
                     <main className={`view product-member-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <h1>Settings</h1>
-                            <form onSubmit={onSubmit}>
-                                {user ? (
-                                    <div>
-                                        <div>
-                                            <label>User</label>
-                                        </div>
-                                        <div>
-                                            {users && user && (
-                                                <Table items={[user]} columns={selectedUserColumns}/>
+                            <div>
+                                <h1>{memberId == 'new' ? 'New member' : 'Member settings'}</h1>
+                                <form onSubmit={onSubmit}>
+                                    {user ? (
+                                        <>
+                                            <div>
+                                                <div>
+                                                    <label>User</label>
+                                                </div>
+                                                <div>
+                                                    <Table items={[user]} columns={selectedUserColumns}/>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div>
+                                                    <label>Role</label>
+                                                </div>
+                                                <div>
+                                                    <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
+                                                        {ROLES.map(role => (
+                                                            <option key={role} value={role}>
+                                                                {role}
+                                                            </option>
+                                                        ))}    
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            {contextUser ? (
+                                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                                    <SubmitInput value='Save'/>
+                                                ) : (
+                                                    <SubmitInput value='Save (requires role)' disabled={true}/>
+                                                )
+                                            ) : (
+                                                <SubmitInput value='Save (requires login)' disabled={true}/>
                                             )}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <TextInput label='Query' placeholder='Type query' value={query} change={setQuery} input={setQuery}/>
-                                )}
-                                {query && (
-                                        <div>
-                                            <div>
-                                                <label>User</label>
-                                            </div>
-                                            <div>
-                                                {users && (
-                                                    <Table items={users} columns={queriedUserColumns}/>
-                                                )}
-                                            </div>
-                                        </div>
-                                )}
-                                {user && (
-                                    <div>
-                                        <div>
-                                            <label>Role</label>
-                                        </div>
-                                        <div>
-                                            <select value={role} onChange={(event) => setRole(event.currentTarget.value as MemberRole)} className='button fill lightgray'> 
-                                                {ROLES.map(role => (
-                                                    <option key={role} value={role}>
-                                                        {role}
-                                                    </option>
-                                                ))}    
-                                            </select>
-                                        </div>
-                                    </div>
-                                )}
-                                {user && (
-                                    contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                            <SubmitInput value='Save'/>
-                                        ) : (
-                                            <SubmitInput value='Save (requires role)' disabled={true}/>
-                                        )
+                                        </>
                                     ) : (
-                                        <SubmitInput value='Save (requires login)' disabled={true}/>
-                                    )
-                                )}
-                            </form>
+                                        <>
+                                            <TextInput label='Search user' placeholder='Type name or full email' value={query} change={setQuery} input={setQuery}/>
+                                            <div>
+                                                <div>
+                                                    <label>Matching users</label>
+                                                </div>
+                                                <div>
+                                                    <Table items={users} columns={queriedUserColumns} onClick={handleClick}/>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </form>
+                            </div>
+                            <LegalFooter/>
                         </div>
                         <div>
                             <ProductView3D product={product} mouse={true}/>
