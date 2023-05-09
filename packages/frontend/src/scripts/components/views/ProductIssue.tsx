@@ -7,7 +7,7 @@ import { Issue, Tag, TagAssignment } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssuesComments, useIssues, useMembers, useProduct } from '../../hooks/route'
+import { useIssuesComments, useIssues, useMembers, useProduct} from '../../hooks/route'
 import { IssueManager } from '../../managers/issue'
 import { TagManager } from '../../managers/tag'
 import { TagAssignmentManager } from '../../managers/tagAssignment'
@@ -53,11 +53,10 @@ export const ProductIssueView = () => {
     const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
 
     // STATES
-
+    
+    // - Computations
     const [assignedTags, setAssignedTags] = useState<{ [id: string]: Tag[] }>()
     const [tagAssignments, setTagAssignments] = useState<{ [id: string]: TagAssignment[] }>()
-
-    // - Computations
     const [issueParts, setIssueParts] = useState<{ [id: string]: Part[] }>(initialIssueParts)
     const [commentParts, setCommentParts] = useState<{ [id: string]: Part[] }>(initialCommentParts)
     const [partsCount, setPartsCount] = useState<{ [id: string]: number }>(initialPartsCount)

@@ -1,11 +1,9 @@
 import * as React from 'react'
 import { Redirect, useParams } from 'react-router'
 
-import { Tag } from 'productboard-common'
-
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { useProduct, useMembers } from '../../hooks/route'
+import { useProduct, useMembers, useTags } from '../../hooks/route'
 import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { SubmitInput } from '../inputs/SubmitInput'
@@ -14,7 +12,6 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
-import { TagManager } from '../../managers/tag'
 import { TagInput } from '../inputs/TagInput'
 
 import LeftIcon from '/src/images/setting.png'
@@ -36,6 +33,7 @@ export const ProductSettingView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
+    const tags = useTags(productId)
 
     // INITIAL STATES
 
@@ -44,8 +42,6 @@ export const ProductSettingView = () => {
     const initialPublic = product ? product.public : false
 
     // STATES
-
-    const [tags, setTags] = React.useState<Tag[]>()
 
     // - Values
     const [name, setName] = React.useState<string>(initialName)
@@ -57,7 +53,6 @@ export const ProductSettingView = () => {
     
     // EFFECTS
 
-    React.useEffect(() => { productId != 'new' && TagManager.findTags(productId).then(setTags) }, [productId])
     // - Values
     
     React.useEffect(() => { product && setName(product.name) }, [product])

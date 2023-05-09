@@ -66,7 +66,7 @@ export const TagView = (props: { tags: Tag[], productId: string, assignable: boo
                         : tag
                 })
             })
-            setAssignedTags((prev) => {
+            props.assignable && setAssignedTags((prev) => {
                 return prev.map((tag) => {
                     return tag.id === selectedTag.id
                         ? { tag, ...selectedTag, ...updatedData }
