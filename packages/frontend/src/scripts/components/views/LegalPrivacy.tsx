@@ -11,7 +11,7 @@ export const LegalPrivacyView = () => {
                         Privacy
                     </h1>
                     <p>
-                        CADDrive stores the following <strong>user data</strong> and <strong>product data</strong>.
+                        CADdrive stores the following <strong>user data</strong> and <strong>product data</strong>.
                         You always can request to delete your personal data from our platform.
                         For such inquiries please send an email to <a href="mailto:mail@caddrive.com">mail@caddrive.com</a>
                     </p>
