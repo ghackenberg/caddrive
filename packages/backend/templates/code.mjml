@@ -3,7 +3,10 @@
         <mj-section background-color="lightgray">
             <mj-column>
                 <mj-text align="center" font-size="20px" color="gray">
-                    CADdrive - Your collaborative workspace for LDraw&trade; models
+                    CADdrive
+                </mj-text>
+                <mj-text align="center" color="gray">
+                    Your collaborative workspace for LDraw&trade; models
                 </mj-text>
             </mj-column>
         </mj-section>
