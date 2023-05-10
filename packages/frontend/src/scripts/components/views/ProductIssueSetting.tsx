@@ -9,8 +9,9 @@ import { Member, Version, Tag } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
+import { useIssue, useProduct} from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssue, useMembers, useMilestones, useProduct, useTagAssignments, useTags } from '../../hooks/route'
+import { useMembers, useMilestones, useTags, useTagAssignments } from '../../hooks/list'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
 import { SubmitInput } from '../inputs/SubmitInput'
@@ -176,7 +177,6 @@ export const ProductIssueSettingView = () => {
                     storypoints: 4,
                     progress: 4,
                     description: text, 
-                    state: 'open', 
                     assigneeIds, 
                     milestoneId: milestoneId ? milestoneId : null 
                     }, 

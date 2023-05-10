@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { Tag } from 'productboard-common';
 
-import { useTag } from '../../hooks/route'
+import { useTag } from '../../hooks/entity'
 
 import LoadIcon from '/src/images/load.png'
 

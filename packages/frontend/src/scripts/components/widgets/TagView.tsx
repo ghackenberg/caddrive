@@ -96,14 +96,14 @@ export const TagView = (props: { tags: Tag[], productId: string, assignable: boo
             setAssignedTags((prev) => [...prev, tags.find(tag => assignment.tagId === tag.id)])
         }
     }
-    async function deassignTag(event: React.FormEvent) {
-        event.preventDefault()
-        if (selectedTag && assignedTags.includes(selectedTag)) {
-            const assignment = await TagAssignmentManager.findTagAssignments(productId).then(assignments => assignments.find(assignment => assignment.tagId === selectedTag.id))
-            await TagAssignmentManager.deleteTagAssignment(assignment.id)
-            setAssignedTags(assignedTags.filter(other => other.id != selectedTag.id))
-        }
-    }
+    // async function deassignTag(event: React.FormEvent) {
+    //     event.preventDefault()
+    //     if (selectedTag && assignedTags.includes(selectedTag)) {
+    //         const assignment = await TagAssignmentManager.findTagAssignments(productId).then(assignments => assignments.find(assignment => assignment.tagId === selectedTag.id))
+    //         await TagAssignmentManager.deleteTagAssignment(assignment.id)
+    //         setAssignedTags(assignedTags.filter(other => other.id != selectedTag.id))
+    //     }
+    // }
 
     return (
         <div className={`widget tag_view button fill lightgray ${expanded ? 'expanded' : 'collapsed'}`}>
@@ -157,7 +157,7 @@ export const TagView = (props: { tags: Tag[], productId: string, assignable: boo
                         </button>
                     }
                     {props.assignable &&
-                        <button className='button fill red' onClick={deassignTag}>
+                        <button className='button fill red'>
                             deassign
                         </button>
                     }

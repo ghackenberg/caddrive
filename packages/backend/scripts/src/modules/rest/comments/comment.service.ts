@@ -2,7 +2,6 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
@@ -10,16 +9,14 @@ import { FindOptionsWhere, IsNull } from 'typeorm'
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 import { CommentEntity, Database } from 'productboard-database'
 
-import { convertComment, convertIssue } from '../../../functions/convert'
+import { convertComment } from '../../../functions/convert'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
 export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
-        private readonly request: AuthorizedRequest,
-        @Inject('MQTT')
-        private readonly client: ClientProxy
+        private readonly request: AuthorizedRequest
     ) {
         if (!existsSync('./uploads')) {
             mkdirSync('./uploads')
@@ -48,7 +45,6 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         } else {
             comment = await Database.get().commentRepository.save({ id, created, userId, ...data })
         }
-        await this.client.emit(`/api/v1/comments/${comment.id}/create`, convertComment(comment))
         if (comment.action != 'none') {
             const issue = await Database.get().issueRepository.findOneBy({ id: comment.issueId })
             issue.updated = Date.now()
@@ -59,7 +55,6 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
                 issue.state = 'open'
                 await Database.get().issueRepository.save(issue)
             }
-            await this.client.emit(`/api/v1/issues/${issue.id}/update`, convertIssue(issue))
         }
         return convertComment(comment)
     }
@@ -78,7 +73,6 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
         }
-        await this.client.emit(`/api/v1/comments/${comment.id}/update`, convertComment(comment))
         return convertComment(comment)
     }
 
@@ -86,7 +80,6 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         const comment = await Database.get().commentRepository.findOneByOrFail({ id })
         comment.deleted = Date.now()
         await Database.get().commentRepository.save(comment)
-        await this.client.emit(`/api/v1/comments/${comment.id}/delete`, convertComment(comment))
         return convertComment(comment)
     }
 }

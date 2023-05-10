@@ -3,14 +3,14 @@ import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue, TagAssignment } from 'productboard-common'
+import { Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssuesComments, useIssues, useMembers, useProduct} from '../../hooks/route'
+import { useIssues, useMembers } from '../../hooks/list'
+import { useIssuesComments } from '../../hooks/map'
 import { IssueManager } from '../../managers/issue'
-//import { TagManager } from '../../managers/tag'
-import { TagAssignmentManager } from '../../managers/tagAssignment'
 import { countParts } from '../../functions/counter'
 import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { IssueCount } from '../counts/Issues'
@@ -56,7 +56,6 @@ export const ProductIssueView = () => {
     
     // - Computations
     //const [assignedTags, setAssignedTags] = useState<{ [id: string]: Tag[] }>()
-    const [tagAssignments, setTagAssignments] = useState<{ [id: string]: TagAssignment[] }>()
     const [issueParts, setIssueParts] = useState<{ [id: string]: Part[] }>(initialIssueParts)
     const [commentParts, setCommentParts] = useState<{ [id: string]: Part[] }>(initialCommentParts)
     const [partsCount, setPartsCount] = useState<{ [id: string]: number }>(initialPartsCount)
@@ -70,18 +69,6 @@ export const ProductIssueView = () => {
     // EFFECTS
 
     // - Entities
-
-    useEffect(() => {
-        if (issues) {
-            Promise.all(issues.map(issue => TagAssignmentManager.findTagAssignments(issue.id))).then(assignments => {
-                const newAssignment = { ...tagAssignments }
-                for (let index = 0; index < issues.length; index++) {
-                    newAssignment[issues[index].id] = assignments[index]
-                }
-                setTagAssignments(newAssignment)
-            })
-        }
-    }, [issues])
 
     // - Computations
     useEffect(() => {

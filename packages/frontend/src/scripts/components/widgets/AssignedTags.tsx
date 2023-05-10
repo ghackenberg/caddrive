@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { useTagAssignments } from "../../hooks/route"
+import { useTagAssignments } from "../../hooks/list"
 import { TagWidget } from '../widgets/Tag'
 
 import LoadIcon from '/src/images/load.png'

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { NavLink, useLocation, useParams } from 'react-router-dom'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useProduct } from '../../hooks/route'
+import { useProduct } from '../../hooks/entity'
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 import { MilestonesLink } from '../links/MilestonesLink'

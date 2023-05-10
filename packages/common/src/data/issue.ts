@@ -6,8 +6,6 @@ export class IssueUpdateData {
     @ApiProperty()
     description: string
     @ApiProperty()
-    state: 'open' | 'closed'
-    @ApiProperty()
     assigneeIds: string[]
     @ApiProperty()
     milestoneId: string
@@ -40,6 +38,9 @@ export class Issue extends IssueAddData {
     updated: number
     @ApiProperty()
     deleted: number
+    
+    @ApiProperty()
+    state: 'open' | 'closed'
 
     @ApiProperty()
     userId: string

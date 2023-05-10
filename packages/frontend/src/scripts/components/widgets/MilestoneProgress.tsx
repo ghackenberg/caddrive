@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { useIssues } from '../../hooks/route'
+import { useIssues } from '../../hooks/list'
 
 export const MilestoneProgressWidget = (props: { productId: string, milestoneId: string }) => {
     const open = useIssues(props.productId, props.milestoneId, 'open')

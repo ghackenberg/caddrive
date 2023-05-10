@@ -5,8 +5,9 @@ import { Redirect, useParams } from 'react-router'
 import { MemberRole, User } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useMember, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMember, useMembers, useProduct } from '../../hooks/route'
+import { useMembers } from '../../hooks/list'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
@@ -64,14 +65,10 @@ export const ProductMemberSettingView = () => {
 
     // - Entities
     useEffect(() => {
-        let exec = true
-        UserManager.findUsers(query, productId).then(users => exec && setUsers(users))
-        return () => { exec = false }
+        return UserManager.findUsers(query, productId, setUsers)
     }, [productId, query])
     useEffect(() => {
-        let exec = true
-        member && UserManager.getUser(member.userId).then(user => exec && setUser(user))
-        return () => { exec = false }
+        return member && UserManager.getUser(member.userId, setUser)
     }, [member] )
 
     // - Values

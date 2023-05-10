@@ -2,7 +2,6 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ClientProxy } from '@nestjs/microservices'
 
 import 'multer'
 import shortid from 'shortid'
@@ -18,9 +17,7 @@ import { AuthorizedRequest } from '../../../request'
 export class UserService implements UserREST<UserUpdateData, Express.Multer.File> {
     constructor(
         @Inject(REQUEST)
-        private readonly request: AuthorizedRequest,
-        @Inject('MQTT')
-        private readonly client: ClientProxy
+        private readonly request: AuthorizedRequest
     ) {
         if (!existsSync('./uploads')) {
             mkdirSync('./uploads')
@@ -62,7 +59,6 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
             writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
         await Database.get().userRepository.save(user)
-        await this.client.emit(`/api/v1/users/${user.id}/update`, convertUser(user, false))
         return convertUser(user, this.request.user && this.request.user.id == id)
     }
 
@@ -71,7 +67,6 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         await Database.get().memberRepository.update({ userId: user.id }, { deleted: Date.now() })
         user.deleted = Date.now()
         await Database.get().userRepository.save(user)
-        await this.client.emit(`/api/v1/users/${user.id}/delete`, convertUser(user, false))
         return convertUser(user, this.request.user && this.request.user.id == id)
     }
 }

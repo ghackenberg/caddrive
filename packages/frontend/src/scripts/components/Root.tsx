@@ -74,7 +74,13 @@ const Root = () => {
     }, [payload])
 
     React.useEffect(() => {
-        userId && UserManager.getUser(userId).then(setContextUser).catch(() => setContextUser(null))
+        userId && UserManager.getUser(userId, (user, error) => {
+            if (error) {
+                setContextUser(null)
+            } else {
+                setContextUser(user)
+            }
+        })
     }, [userId])
 
     React.useEffect(() => {
