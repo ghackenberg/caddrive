@@ -19,7 +19,7 @@ export const LegalPrivacyView = () => {
                         1. User data
                     </h2>
                     <h3>
-                        1.1. ... visible to <strong>you only</strong>
+                        1.1. User data visible to you only
                     </h3>
                     <ul>
                         <li>
@@ -27,7 +27,7 @@ export const LegalPrivacyView = () => {
                         </li>
                     </ul>
                     <h3>
-                        1.2. ... visible to <strong>all other users</strong>
+                        1.2. User data visible to all other users
                     </h3>
                     <ul>
                         <li>
@@ -41,7 +41,7 @@ export const LegalPrivacyView = () => {
                         2. Product data
                     </h2>
                     <h3>
-                        2.1. ... visible to <strong>other product members only</strong>
+                        2.1. Product data visible to other product members only
                     </h3>
                     <ul>
                         <li>
@@ -94,7 +94,7 @@ export const LegalPrivacyView = () => {
                         </li>
                     </ul>
                     <h3>
-                        2.2. ... visible to <strong>all other users</strong>
+                        2.2. Product data visible to all other users
                     </h3>
                     <ul>
                         <li>
