@@ -24,16 +24,16 @@ class ProductManagerImpl extends AbstractManager<Product> {
         )
     }
     async addProduct(data: ProductAddData) {
-        return this.add(ProductClient.addProduct(data))
+        return this.resolveItem(await ProductClient.addProduct(data))
     }
     getProduct(id: string, callback: (product: Product, error?: string) => void) {
-        return this.get(id, () => ProductClient.getProduct(id), callback)
+        return this.observeItem(id, () => ProductClient.getProduct(id), callback)
     }
     async updateProduct(id: string, data: ProductUpdateData) {
-        return this.update(id, ProductClient.updateProduct(id, data))
+        return this.promiseItem(id, ProductClient.updateProduct(id, data))
     }
     async deleteProduct(id: string) {
-        return this.delete(id, ProductClient.deleteProduct(id))
+        return this.promiseItem(id, ProductClient.deleteProduct(id))
     }
 }
 

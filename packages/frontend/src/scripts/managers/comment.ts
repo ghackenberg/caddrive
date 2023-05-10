@@ -21,16 +21,16 @@ class CommentManagerImpl extends AbstractManager<Comment> {
         )
     }
     async addComment(data: CommentAddData, files: { audio?: Blob }) {
-        return this.add(CommentClient.addComment(data, files))
+        return this.resolveItem(await CommentClient.addComment(data, files))
     }
     getComment(id: string, callback: (comment: Comment, error?: string) => void) {
-        return this.get(id, () => CommentClient.getComment(id), callback)
+        return this.observeItem(id, () => CommentClient.getComment(id), callback)
     }
     async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }) {
-        return this.delete(id, CommentClient.updateComment(id, data, files))
+        return this.promiseItem(id, CommentClient.updateComment(id, data, files))
     }
     async deleteComment(id: string) {
-        return this.delete(id, CommentClient.deleteComment(id))
+        return this.promiseItem(id, CommentClient.deleteComment(id))
     }
 }
 

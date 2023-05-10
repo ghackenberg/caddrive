@@ -148,7 +148,7 @@ export const ProductIssueSettingView = () => {
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ productId, label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                const issue = await IssueManager.addIssue({ productId, label: label, text: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 await replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {

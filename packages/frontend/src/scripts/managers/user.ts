@@ -24,13 +24,13 @@ class UserManagerImpl extends AbstractManager<User> {
         )
     }
     getUser(id: string, callback: (user: User, error?: string) => void) {
-        return this.get(id, () => UserClient.getUser(id), callback)
+        return this.observeItem(id, () => UserClient.getUser(id), callback)
     }
     async updateUser(id: string, data: UserUpdateData, file?: File) {
-        return this.update(id, UserClient.updateUser(id, data, file))
+        return this.promiseItem(id, UserClient.updateUser(id, data, file))
     }
     async deleteUser(id: string) {
-        return this.delete(id, UserClient.deleteUser(id))
+        return this.promiseItem(id, UserClient.deleteUser(id))
     }
 }
 

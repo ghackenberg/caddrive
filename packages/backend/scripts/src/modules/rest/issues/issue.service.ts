@@ -46,13 +46,14 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         const id = shortid()
         const created = Date.now()
         const userId = this.request.user.id
+        const state = 'open'
         let issue: IssueEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             const audioId = shortid()
-            issue = await Database.get().issueRepository.save({ id, created, userId, audioId, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, userId, audioId, state, ...data })
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         } else {
-            issue = await Database.get().issueRepository.save({ id, created, userId, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, userId, state, ...data })
         }
         await this.client.emit(`/api/v1/issues/${issue.id}/create`, convertIssue(issue))
         return convertIssue(issue)

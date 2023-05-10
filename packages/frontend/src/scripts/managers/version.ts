@@ -24,16 +24,16 @@ class VersionManagerImpl extends AbstractManager<Version> {
         )
     }
     async addVersion(data: VersionAddData, files: {model: File, image: Blob}) {
-        return this.add(VersionClient.addVersion(data, files))
+        return this.resolveItem(await VersionClient.addVersion(data, files))
     }
     getVersion(id: string, callback: (version: Version, error?: string) => void) {
-        return this.get(id, () => VersionClient.getVersion(id), callback)
+        return this.observeItem(id, () => VersionClient.getVersion(id), callback)
     }
     async updateVersion(id: string, data: VersionUpdateData, files?: {model: File, image: Blob}) {
-        return this.update(id, VersionClient.updateVersion(id, data, files))
+        return this.promiseItem(id, VersionClient.updateVersion(id, data, files))
     }
     async deleteVersion(id: string) {
-        return this.delete(id, VersionClient.deleteVersion(id))
+        return this.promiseItem(id, VersionClient.deleteVersion(id))
     }
 }
 

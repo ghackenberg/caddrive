@@ -24,16 +24,16 @@ class MemberManagerImpl extends AbstractManager<Member> {
         )
     }
     async addMember(data: MemberAddData) {
-        return this.add(MemberClient.addMember(data))
+        return this.resolveItem(await MemberClient.addMember(data))
     }
     getMember(id: string, callback: (member: Member, error?: string) => void) {
-        return this.get(id, () => MemberClient.getMember(id), callback)
+        return this.observeItem(id, () => MemberClient.getMember(id), callback)
     }
     async updateMember(id: string, data: MemberUpdateData) {
-        return this.update(id, MemberClient.updateMember(id, data))
+        return this.promiseItem(id, MemberClient.updateMember(id, data))
     }
     async deleteMember(id: string) {
-        return this.delete(id, MemberClient.deleteMember(id))
+        return this.promiseItem(id, MemberClient.deleteMember(id))
     }
 }
 

@@ -1,182 +1,239 @@
 export class AbstractManager<T extends { id: string, created: number, updated: number, deleted: number }> {
 
-    public clear() {
-        this.promiseItemIndex = {}
-        this.resolveItemIndex = {}
+    // COMMON
 
-        this.promiseFindIndex = {}
-        this.resolveFindIndex = {}
+    // ... private fields
+
+    private readonly MIN_TIMEOUT = 30 // in seconds
+    private readonly MAX_TIMEOUT = 90 // in seconds
+
+    private readonly DELTA_TIMEOUT = this.MAX_TIMEOUT - this.MIN_TIMEOUT
+
+    // ... private methods
+
+    private random() {
+        return (Math.random() * this.DELTA_TIMEOUT + this.MIN_TIMEOUT) * 1000
+    }
+
+    // ... public methods
+
+    public clear() {
+        this.clearItem()
+        this.clearFind()
     }
 
     // ITEM
 
-    private promiseItemIndex:  {[id: string]: Promise<T>} = {}
-    private resolveItemIndex:  {[id: string]: T} = {}
-    private callbackItemIndex: {[id: string]: ((item: T) => void)[]} = {}
+    // ... private fields
 
-    private async promiseItem(id: string, promise: Promise<T>) {
-        if (!(id in this.callbackItemIndex)) {
-            this.callbackItemIndex[id] = []
-        }
-        this.promiseItemIndex[id] = promise
-        const item = await promise
-        this.resolveItem(item)
-        return item
+    private itemGetters: {[id: string]: () => Promise<T>} = {}
+    private itemPromises: {[id: string]: Promise<T>} = {}
+    private itemTimeouts: {[id: string]: NodeJS.Timeout} = {}
+    private itemTimestamps: {[id: string]: number} = {}
+    private itemObservers: {[id: string]: ((item: T) => void)[]} = {}
+    private items: {[id: string]: T} = {}
+
+    // ... private methods
+
+    private clearItem() {
+        this.itemGetters = {}
+        this.itemPromises = {}
+        this.itemTimeouts = {}
+        this.itemTimestamps = {}
+        this.itemObservers = {}
+        this.items = {}
     }
-    private resolveItem(item: T) {
-        if (!(item.id in this.callbackItemIndex)) {
-            this.callbackItemIndex[item.id] = []
+
+    private observeItemInternal(id: string, getter: () => Promise<T>, observer: (item: T) => void) {
+        this.itemGetters[id] = getter
+        if (!(id in this.itemObservers)) {
+            this.itemObservers[id] = []
         }
-        this.resolveItemIndex[item.id] = item
-        return item
+        this.itemObservers[id].push(observer)
+        if (this.hasItem(id)) {
+            observer(this.getItem(id))
+            if (!this.hasItemTimeout(id)) {
+                this.scheduleItem(id)
+            }
+        } else if (!this.hasItemPromise(id)) {
+            this.reloadItem(id)
+        }
     }
-    
+
+    private unobserveItemInternal(id: string, callback: (item: T) => void) {
+        this.itemObservers[id].splice(this.itemObservers[id].indexOf(callback), 1)
+        if (this.itemObservers[id].length == 0 && this.itemTimeouts[id]) {
+            clearTimeout(this.itemTimeouts[id])
+            delete this.itemTimeouts[id]
+        }
+    }
+
+    private hasItemTimeout(id: string) {
+        return id in this.itemTimeouts
+    }
     private hasItemPromise(id: string) {
-        return id in this.promiseItemIndex
+        return id in this.itemPromises
     }
     private hasItem(id: string) {
-        return id in this.resolveItemIndex
+        return id in this.items
+    }
+
+    private async reloadItem(id: string) {
+        delete this.itemTimeouts[id]
+        this.resolveItem(await this.itemGetters[id]())
+    }
+
+    private async scheduleItem(id: string) {
+        if ((this.itemObservers[id] || []).length > 0) {
+            const duration = Math.max(this.random() - (Date.now() - this.itemTimestamps[id]), 0)
+            this.itemTimeouts[id] = setTimeout(() => this.reloadItem(id), duration)
+        }
+    }
+
+    // ... protected methods
+
+    protected async promiseItem(id: string, promise: Promise<T>) {
+        this.itemPromises[id] = promise
+        const item = this.resolveItem(await promise)
+        delete this.itemPromises[id]
+        return item
+    }
+
+    protected resolveItem(item: T) {
+        this.itemTimestamps[item.id] = Date.now()
+        this.items[item.id] = item
+        for (const observer of this.itemObservers[item.id] || []) {
+            if (item.deleted === null) {
+                observer(item)
+            } else {
+                observer(undefined)
+            }
+        }
+        this.scheduleItem(item.id)
+        this.patchFindIndices(item)
+        return item
     }
 
     protected getItem(id: string)  {
-        return this.resolveItemIndex[id]
+        return this.items[id]
     }
 
-    protected async add(promise: Promise<T>) {
-        const item = this.resolveItem(await promise)
-        for (const key of Object.keys(this.resolveFindIndex)) {
-            if (this.includeFindIndex[key](item)) {
-                this.resolveFindIndex[key][item.id] = true
-            } else {
-                delete this.resolveFindIndex[key][item.id]
-            }
-            for (const callback of this.callbackFindIndex[key]) {
-                callback(this.getFind(key))
-            }
-        }
-        return item
-    }
-
-    protected get(id: string, get: () => Promise<T>, callback: (item: T, error?: string) => void) {
-        if (this.hasItem(id)) {
-            callback(this.getItem(id))
-            this.callbackItemIndex[id].push(callback)
-        } else if (this.hasItemPromise(id)) {
-            this.callbackItemIndex[id].push(callback)
-        } else {
-            this.callbackItemIndex[id] = [callback]
-            const impl = () => {
-                this.promiseItem(id, get()).then(item => {
-                    for (const callback of this.callbackItemIndex[id]) {
-                        callback(item)
-                    }
-                    if (this.callbackItemIndex[id].length > 0) {
-                        setTimeout(impl, 1000 * 60)
-                    }
-                })
-            }
-            impl()
-        }
-        return () => {
-            this.callbackItemIndex[id].splice(this.callbackItemIndex[id].indexOf(callback), 1)
-        }
-    }
-
-    protected async update(id: string, promise: Promise<T>) {
-        const item = await this.promiseItem(id, promise)
-        for (const callback of this.callbackItemIndex[id]) {
-            callback(item)
-        }
-        for (const key of Object.keys(this.resolveFindIndex)) {
-            if (this.includeFindIndex[key](item)) {
-                this.resolveFindIndex[key][item.id] = true
-            } else {
-                delete this.resolveFindIndex[key][item.id]
-            }
-            for (const callback of this.callbackFindIndex[key]) {
-                callback(this.getFind(key))
-            }
-        }
-        return item
-    }
-
-    protected async delete(id: string, promise: Promise<T>) {
-        const item = await this.promiseItem(id, promise)
-        for (const callback of this.callbackItemIndex[id]) {
-            callback(undefined)
-        }
-        for (const key of Object.keys(this.resolveFindIndex)) {
-            delete this.resolveFindIndex[key][item.id]
-            for (const callback of this.callbackFindIndex[key]) {
-                callback(this.getFind(key))
-            }
-        }
-        return promise
+    protected observeItem(id: string, getter: () => Promise<T>, observer: (item: T, error?: string) => void) {
+        this.observeItemInternal(id, getter, observer)
+        return () => this.unobserveItemInternal(id, observer)
     }
 
     // FIND
 
-    private promiseFindIndex:  {[key: string]: Promise<T[]>} = {}
-    private includeFindIndex:  {[key: string]: (item: T) => boolean} = {}
-    private resolveFindIndex:  {[key: string]: {[id: string]: boolean}} = {}
-    private callbackFindIndex: {[key: string]: ((item: T[]) => void)[]} = {}
+    // ... private fields
 
-    private async promiseFind(key: string, promise: Promise<T[]>, include: (item: T) => boolean) {
-        if (!(key in this.callbackFindIndex)) {
-            this.callbackFindIndex[key] = []
-        }
-        this.promiseFindIndex[key] = promise
-        this.includeFindIndex[key] = include
-        const find = await promise
-        return this.resolveFind(key, find)
+    private findGetters: {[key: string]: () => Promise<T[]>} = {}
+    private findSelectors: {[key: string]: (item: T) => boolean} = {}
+    private findPromises: {[key: string]: Promise<T[]>} = {}
+    private findTimeouts: {[key: string]: NodeJS.Timeout} = {}
+    private findTimestamps: {[key: string]: number} = {}
+    private findObservers: {[key: string]: ((item: T[]) => void)[]} = {}
+    private finds: {[key: string]: {[id: string]: boolean}} = {}
+
+    // ... private methods
+
+    private clearFind() {
+        this.findGetters = {}
+        this.findSelectors = {}
+        this.findPromises = {}
+        this.findTimeouts = {}
+        this.findTimestamps = {}
+        this.findObservers = {}
+        this.finds = {}
     }
+
+    private observeFindInternal(key: string, getter: () => Promise<T[]>, selector: (item: T) => boolean, observer: (items: T[]) => void) {
+        this.findGetters[key] = getter
+        this.findSelectors[key] = selector
+        if (!(key in this.findObservers)) {
+            this.findObservers[key] = []
+        }
+        this.findObservers[key].push(observer)
+        if (this.hasFind(key)) {
+            observer(this.getFind(key))
+            if (!this.hasFindTimeout(key)) {
+                this.scheduleFind(key)
+            }
+        } else if (!this.hasFindPromise(key)) {
+            this.reloadFind(key)
+        }
+    }
+
+    private unobserveFindInternal(key: string, callback: (items: T[]) => void) {
+        this.findObservers[key].splice(this.findObservers[key].indexOf(callback), 1)
+        if (this.findObservers[key].length == 0 && this.findTimeouts[key]) {
+            clearTimeout(this.findTimeouts[key])
+            delete this.findTimeouts[key]
+        }
+    }
+
+    private hasFindTimeout(key: string) {
+        return key in this.findTimeouts
+    }
+    private hasFindPromise(key: string) {
+        return key in this.findPromises
+    }
+    private hasFind(key: string) {
+        return key in this.finds
+    }
+
+    private async reloadFind(key: string) {
+        delete this.findTimeouts[key]
+        const promise = this.findGetters[key]()
+        this.findPromises[key] = promise
+        const item = this.resolveFind(key, await promise)
+        delete this.findPromises[key]
+        return item
+    }
+
+    private scheduleFind(key: string) {
+        if ((this.findObservers[key] || []).length > 0) {
+            const duration = Math.max(this.random() - (Date.now() - this.findTimestamps[key]), 0)
+            this.findTimeouts[key] = setTimeout(() => this.reloadFind(key), duration)
+        }
+    }
+
+    private patchFindIndices(item: T) {
+        for (const key of Object.keys(this.finds)) {
+            if (item.deleted === null && this.findSelectors[key](item)) {
+                this.finds[key][item.id] = true
+            } else {
+                delete this.finds[key][item.id]
+            }
+            for (const callback of this.findObservers[key]) {
+                callback(this.getFind(key))
+            }
+        }
+    }
+
+    // ... protected methods
+
     private resolveFind(key: string, find: T[]) {
-        this.resolveFindIndex[key] = {}
+        this.findTimestamps[key] = Date.now()
+        this.finds[key] = {}
         for (const item of find) {
             this.resolveItem(item)
-            this.resolveFindIndex[key][item.id] = true
+            this.finds[key][item.id] = true
         }
+        for (const callback of this.findObservers[key]) {
+            callback(find)
+        }
+        this.scheduleFind(key)
         return find
     }
 
-    private hasFindPromise(key: string) {
-        return key in this.promiseFindIndex
-    }
-    private hasFind(key: string) {
-        return key in this.resolveFindIndex
-    }
-
     protected getFind(key: string) {
-        if (key in this.resolveFindIndex) {
-            return Object.keys(this.resolveFindIndex[key]).map(id => this.getItem(id)).filter(t => t && t.deleted === null)
-        } else {
-            return undefined
-        }
+        return Object.keys(this.finds[key] || {}).map(id => this.getItem(id)).filter(t => t && t.deleted === null)
     }
 
-    protected find(key: string, find: () => Promise<T[]>, include: (item: T) => boolean, callback: (items: T[], error?: string) => void) {
-        if (this.hasFind(key)) {
-            callback(this.getFind(key))
-            this.callbackFindIndex[key].push(callback)
-        } else if (this.hasFindPromise(key)) {
-            this.callbackFindIndex[key].push(callback)
-        } else {
-            this.callbackFindIndex[key] = [callback]
-            const impl = () => {
-                this.promiseFind(key, find(), include).then(items => {
-                    for (const callback of this.callbackFindIndex[key]) {
-                        callback(items)
-                    }
-                    if (this.callbackFindIndex[key].length > 0) {
-                        setTimeout(impl, 1000 * 60)
-                    }
-                })
-            }
-            impl()
-        }
-        return () => {
-            this.callbackFindIndex[key].splice(this.callbackFindIndex[key].indexOf(callback), 1)
-        }
+    protected find(key: string, reload: () => Promise<T[]>, include: (item: T) => boolean, callback: (items: T[], error?: string) => void) {
+        this.observeFindInternal(key, reload, include, callback)
+        return () => { this.unobserveFindInternal(key, callback) }
     }
     
 }

@@ -19,7 +19,7 @@ function useEntities<T extends { id: string, created: number }>(id: string, cach
     const [values, setValues] = React.useState(initialValue && initialValue.sort(compare))
 
     React.useEffect(() => {
-        if (id && !id.includes('new')) {
+        if (id !== undefined && id !== null && !id.includes('new')) {
             return get(values => setValues(values.sort(compare)))
         } else {
             setValues(undefined)

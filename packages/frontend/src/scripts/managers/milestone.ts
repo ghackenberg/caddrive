@@ -24,16 +24,16 @@ class MilestoneManagerImpl extends AbstractManager<Milestone> {
         )
     }
     async addMilestone(data: MilestoneAddData) {
-        return this.add(MilestoneClient.addMilestone(data))
+        return this.resolveItem(await MilestoneClient.addMilestone(data))
     }
     getMilestone(id: string, callback: (milestone: Milestone, error?: string) => void) {
-        return this.get(id, () => MilestoneClient.getMilestone(id), callback)
+        return this.observeItem(id, () => MilestoneClient.getMilestone(id), callback)
     }
     async updateMilestone(id: string, data: MilestoneUpdateData) {
-        return this.update(id, MilestoneClient.updateMilestone(id, data))
+        return this.promiseItem(id, MilestoneClient.updateMilestone(id, data))
     }
     async deleteMilestone(id: string) {
-        return this.delete(id, MilestoneClient.deleteMilestone(id))
+        return this.promiseItem(id, MilestoneClient.deleteMilestone(id))
     }
 }
 
