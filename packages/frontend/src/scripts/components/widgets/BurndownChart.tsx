@@ -46,7 +46,7 @@ export const BurndownChartWidget = (props: { start: Date, end: Date, total: numb
                     <YAxis name='Open issue count' dataKey='target' domain={[0, total]} allowDecimals={false} interval={0} tickFormatter={value => `${Math.round(value)}`} padding={{top: padding}}/>
                     <Legend/>
                     {now >= start && now <= end && (
-                        <ReferenceLine x={now} label={{value: 'Today', position: 'right', fill: 'black'}} stroke='gray' strokeWidth={2} strokeDasharray='6 6'/>
+                        <ReferenceLine x={now} label={{value: 'Today', position: now <= (start + end) / 2 ? 'right' : 'left', fill: 'black'}} stroke='gray' strokeWidth={2} strokeDasharray='6 6'/>
                     )}
                     <ReferenceLine x={start} label={{value: 'Start', position: 'left', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
                     <ReferenceLine x={end} label={{value: 'End', position: 'right', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
