@@ -10,7 +10,8 @@ import { Version } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
-import { useComments, useIssue, useMembers, useProduct } from '../../hooks/route'
+import { useIssue, useProduct } from '../../hooks/entity'
+import { useComments, useMembers } from '../../hooks/list'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
@@ -228,6 +229,7 @@ export const ProductIssueCommentView = () => {
         event.preventDefault()
         if (text) {
             await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
+            await IssueManager.updateIssue(issueId, { ...issue })
             setText('')
         }
     }
@@ -237,8 +239,8 @@ export const ProductIssueCommentView = () => {
         event.preventDefault()
         if (text) {
             await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
+            await IssueManager.updateIssue(issueId, { ...issue })
             setText('')
-            await IssueManager.updateIssue(issueId, { label: issue.label, text: issue.text, state: 'open', assigneeIds: issue.assigneeIds })
         }
     }
 

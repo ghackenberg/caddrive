@@ -2,7 +2,6 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
@@ -17,9 +16,7 @@ import { AuthorizedRequest } from '../../../request'
 export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
-        private readonly request: AuthorizedRequest,
-        @Inject('MQTT')
-        private readonly client: ClientProxy
+        private readonly request: AuthorizedRequest
     ) {
         if (!existsSync('./uploads')) {
             mkdirSync('./uploads')
@@ -46,15 +43,15 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         const id = shortid()
         const created = Date.now()
         const userId = this.request.user.id
+        const state = 'open'
         let issue: IssueEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             const audioId = shortid()
-            issue = await Database.get().issueRepository.save({ id, created, userId, audioId, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, userId, audioId, state, ...data })
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         } else {
-            issue = await Database.get().issueRepository.save({ id, created, userId, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, userId, state, ...data })
         }
-        await this.client.emit(`/api/v1/issues/${issue.id}/create`, convertIssue(issue))
         return convertIssue(issue)
     }
 
@@ -69,13 +66,11 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.assigneeIds = data.assigneeIds
         issue.label = data.label
         issue.milestoneId =  data.milestoneId
-        issue.state = data.state
         issue.text = data.text
         await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         }
-        await this.client.emit(`/api/v1/issues/${issue.id}/update`, convertIssue(issue))
         return convertIssue(issue)
     }
 
@@ -84,7 +79,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: Date.now() })
         issue.deleted = Date.now()
         await Database.get().issueRepository.save(issue)
-        await this.client.emit(`/api/v1/issues/${issue.id}/delete`, convertIssue(issue))
         return convertIssue(issue)
     }
 }

@@ -9,8 +9,9 @@ import { Member, Version } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
+import { useIssue, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssue, useMembers, useMilestones, useProduct } from '../../hooks/route'
+import { useMembers, useMilestones } from '../../hooks/list'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { IssueManager } from '../../managers/issue'
@@ -147,7 +148,7 @@ export const ProductIssueSettingView = () => {
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ productId, label: label, text: text, state: 'open', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                const issue = await IssueManager.addIssue({ productId, label: label, text: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 await replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {

@@ -21,7 +21,7 @@ class FileManagerImpl implements FileREST<ArrayBuffer> {
 
     // REST
 
-    async getFile(id: string): Promise<ArrayBuffer> {
+    async getFile(id: string) {
         if (!(id in this.fileIndex)) {
             // Call backend
             const file = await FileClient.getFile(id)

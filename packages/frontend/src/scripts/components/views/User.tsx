@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { User } from 'productboard-common'
 
-import { useUsers } from '../../hooks/route'
+import { useUsers } from '../../hooks/list'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { UserPictureWidget } from '../widgets/UserPicture'
