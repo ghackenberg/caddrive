@@ -5,7 +5,6 @@ const app = express()
 
 app.use('/rest', proxy({ target: 'http://localhost:3001' }))
 app.use('/rest-doc', proxy({ target: 'http://localhost:3001' }))
-app.use('/scripts/worker', proxy({ target: 'http://localhost:3002' }))
-app.use('/', proxy({ target: 'http://localhost:3003' }))
+app.use('/', proxy({ target: 'http://localhost:3002' }))
 
 app.listen(3000)

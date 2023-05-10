@@ -35,7 +35,7 @@
     "scripts": {
         "clean": "rm -rf public",
         "build": "webpack --config webpack.prod.js",
-        "start": "http-server -p 3003 -s",
+        "start": "http-server -p 3002 -s",
         "devel": "webpack serve --config webpack.dev.js",
         "lint": "eslint src/scripts",
         "loc": "sloc src/scripts"

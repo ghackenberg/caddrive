@@ -34,7 +34,6 @@
         "packages/common",
         "packages/database",
         "packages/backend",
-        "packages/worker",
         "packages/frontend",
         "packages/gateway",
         "packages/toolkit"
