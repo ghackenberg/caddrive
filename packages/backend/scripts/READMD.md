@@ -1,3 +1,0 @@
-# ProductBoard Backend Scripts
-
-TODO

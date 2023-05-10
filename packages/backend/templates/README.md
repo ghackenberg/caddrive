@@ -1,3 +1,0 @@
-# ProductBoard Backend Templates
-
-TODO
