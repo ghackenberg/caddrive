@@ -8,7 +8,8 @@ export const LegalImprintView = () => {
             <div>
                 <div>
                     <h1>Imprint</h1>
-                    <h2>Project coordinator</h2>
+                    <h2>Persons</h2>
+                    <h3>Project coordinator</h3>
                     <p>
                         <strong>Dr. Georg Hackenberg, M.Sc.</strong><br/>
                         <strong>Professor for Industrial Informatics</strong><br/>
@@ -17,7 +18,7 @@ export const LegalImprintView = () => {
                         Stelzhammerstr. 23, 4600 Wels, Austria<br/>
                         <a href="mailto:georg@caddrive.com">georg@caddrive.com</a>
                     </p>
-                    <h2>Project sponsor</h2>
+                    <h3>Project sponsor</h3>
                     <p>
                         <strong>FH-Prof. Dr. DI Christian Zehetner</strong><br/>
                         <strong>Professor for Product Development</strong><br/>
@@ -26,7 +27,7 @@ export const LegalImprintView = () => {
                         Stelzhammerstr. 23, 4600 Wels, Austria<br/>
                         <a href="mailto:christian@caddrive.com">christian@caddrive.com</a>
                     </p>
-                    <h2>Software engineer</h2>
+                    <h3>Software engineer</h3>
                     <p>
                         <strong>Dominik Frühwirth, M.Sc.</strong><br/>
                         <strong>Researcher</strong><br/>
@@ -34,6 +35,15 @@ export const LegalImprintView = () => {
                         University of Applied Sciences Upper Austria<br/>
                         Stelzhammerstr. 23, 4600 Wels, Austria<br/>
                         <a href="mailto:dominik@caddrive.com">dominik@caddrive.com</a>
+                    </p>
+                    <h2>Libraries</h2>
+                    <h3>Parts</h3>
+                    <p>
+                        We use the <a href="https://ldraw.org" target="_blank">LDraw&trade;</a> parts library.
+                    </p>
+                    <h3>Icons</h3>
+                    <p>
+                        We use the <a href="https://uxwing.com" target="_blank">uxwing.com</a> icons library.
                     </p>
                 </div>
                 <LegalFooter replace={true}/>
