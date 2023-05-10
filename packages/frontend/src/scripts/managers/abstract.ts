@@ -104,8 +104,8 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     protected resolveItem(item: T) {
         const previous = this.items[item.id]
         this.itemTimestamps[item.id] = Date.now()
-        this.items[item.id] = item
         if (!previous || !deepEqual(previous, item)) {
+            this.items[item.id] = item
             for (const observer of this.itemObservers[item.id] || []) {
                 if (item.deleted === null) {
                     observer(item)
@@ -221,13 +221,13 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     private resolveFind(key: string, find: T[]) {
         const previous = this.finds[key]
         this.findTimestamps[key] = Date.now()
-        this.finds[key] = {}
         if (
             !previous ||
             Object.keys(previous).length != find.length ||
             !find.map(item => item.id in previous).reduce((a, b) => a && b, true) ||
             !find.map(item => deepEqual(item, this.getItem(item.id))).reduce((a, b) => a && b, true)
         ) {
+            this.finds[key] = {}
             for (const item of find) {
                 this.resolveItem(item)
                 this.finds[key][item.id] = true
