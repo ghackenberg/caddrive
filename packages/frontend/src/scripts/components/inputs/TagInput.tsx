@@ -6,17 +6,17 @@ import { GenericDropdownWidget } from '../widgets/GenericDropdown'
 import { TagWidget } from '../widgets/Tag'
 import { GenericInput } from './GenericInput'
 
-export const TagInput = (props: { label: string, tags: Tag[], productId: string, assignedTags: Tag[], issueId: string }) => {
+export const TagInput = (props: { label: string, tags: Tag[], assignedTags: Tag[], onClick: (tag: Tag) => void }) => {
 
     const handleClick = (tag: Tag) => {
-        console.log(tag.id);
+        props.onClick(tag)
       }
 
     return (
         <GenericInput label={props.label}>
             <GenericDropdownWidget>
                     {props.tags.map(tag => 
-                        <TagWidget onClick={handleClick} key={tag.id} tagId={tag.id}/> 
+                        <TagWidget onClick={handleClick} key={tag.id} tagId={tag.id} active={props.assignedTags.includes(tag)}/> 
                     )}
             </GenericDropdownWidget>
         </GenericInput>

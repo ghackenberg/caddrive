@@ -13,6 +13,7 @@ import { useIssue, useProduct} from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useMilestones, useTags, useTagAssignments } from '../../hooks/list'
 import { IssueManager } from '../../managers/issue'
+import { TagAssignmentManager } from '../../managers/tagAssignment'
 import { AudioRecorder } from '../../services/recorder'
 import { SubmitInput } from '../inputs/SubmitInput'
 import { TagInput } from '../inputs/TagInput'
@@ -186,6 +187,20 @@ export const ProductIssueSettingView = () => {
             }
         } else {
             if (label && text) {
+                // add 
+                assignedTags && assignedTags.forEach(assignedTag => {
+                    const tagAssignment = tagAssignments.find(tagAssignment => tagAssignment.tagId == assignedTag.id)
+                    if (!tagAssignment) {
+                        TagAssignmentManager.addTagAssignment({tagId: assignedTag.id, issueId: issueId})
+                    }
+                })
+                // delete
+                tagAssignments && tagAssignments.forEach(tagAssignment => {
+                    const assignedTag = assignedTags.find(assignedTag => assignedTag.id == tagAssignment.tagId)
+                    if (!assignedTag) {
+                        TagAssignmentManager.deleteTagAssignment(tagAssignment.id)
+                    }
+                })
                 await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 await goBack()    
             }
@@ -201,6 +216,17 @@ export const ProductIssueSettingView = () => {
             newAssignees.splice(index, 1)
         }
         setAssigneeIds(newAssignees)
+    }
+
+    async function selectTag(tag: Tag) {
+        const newAssignedTags = [...assignedTags]
+        const index = newAssignedTags.indexOf(tag)
+        if (index == -1) {
+            newAssignedTags.push(tag)
+        } else {
+            newAssignedTags.splice(index, 1)
+        }
+        setAssignedTags(newAssignedTags)
     }
 
     // CONSTANTS
@@ -245,7 +271,7 @@ export const ProductIssueSettingView = () => {
                                         </div>
                                     </div>
                                     {issueId != 'new' &&
-                                    <TagInput label='Tags' tags= {tags} productId= {productId} assignedTags = {assignedTags} issueId = {issueId}/>
+                                    <TagInput label='Tags' tags= {tags} assignedTags = {assignedTags} onClick ={selectTag}/>
                                     }
                                     <div>
                                         <div>

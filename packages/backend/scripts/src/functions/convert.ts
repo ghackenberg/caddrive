@@ -1,4 +1,4 @@
-import { CommentEntity, IssueEntity, MemberEntity, MilestoneEntity, ProductEntity, UserEntity, VersionEntity } from "productboard-database"
+import { CommentEntity, IssueEntity, MemberEntity, MilestoneEntity, ProductEntity, TagAssignmentEntity, TagEntity, UserEntity, VersionEntity } from "productboard-database"
 
 export function convertUser(user: UserEntity, full: boolean) {
     return {
@@ -104,5 +104,28 @@ export function convertMember(member: MemberEntity) {
         userId: member.userId,
         productId: member.productId,
         role: member.role
+    }
+}
+
+export function convertTag(tag: TagEntity) {
+    return {
+        id: tag.id,
+        created: tag.created,
+        updated: tag.updated,
+        deleted: tag.deleted,
+        productId: tag.productId,
+        name: tag.name,
+        color: tag.color
+    }
+}
+
+export function convertTagAssignment(tagAssignment: TagAssignmentEntity) {
+    return {
+        id: tagAssignment.id,
+        issueId: tagAssignment.issueId,
+        tagId: tagAssignment.tagId,
+        created: tagAssignment.created,
+        updated: tagAssignment.updated,
+        deleted: tagAssignment.deleted
     }
 }
