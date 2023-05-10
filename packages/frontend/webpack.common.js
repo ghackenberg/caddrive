@@ -59,7 +59,7 @@ export default {
         }),
         new HtmlWebpackPlugin({
             publicPath: '/',
-            title: 'CADDrive',
+            title: 'CADdrive',
             filename: '404.html'
         })
     ],

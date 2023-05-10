@@ -54,7 +54,7 @@ export const PageHeaderRoot = () => {
                             <NavLink to="/products" replace={true}>
                                 <img src={AppIcon} className='icon small'/>
                                 <span>CAD</span>
-                                <span>Drive</span>
+                                <span>drive</span>
                             </NavLink>
                         </Route>
                     </Switch>
