@@ -45,7 +45,6 @@
         "buffer": "^5.7.1",
         "http-server": "^14.1.0",
         "jose": "^4.11.2",
-        "mqtt": "^4.2.6",
         "process": "^0.11.10",
         "productboard-common": "^0.0.1",
         "react": "^17.0.2",
