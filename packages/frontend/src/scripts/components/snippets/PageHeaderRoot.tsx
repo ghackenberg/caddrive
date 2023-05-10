@@ -55,6 +55,7 @@ export const PageHeaderRoot = () => {
                                 <img src={AppIcon} className='icon small'/>
                                 <span>CAD</span>
                                 <span>drive</span>
+                                <span>Your collaborative workspace for LDraw&trade; models</span>
                             </NavLink>
                         </Route>
                     </Switch>

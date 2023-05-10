@@ -59,7 +59,7 @@ export default {
         }),
         new HtmlWebpackPlugin({
             publicPath: '/',
-            title: 'CADdrive',
+            title: 'CADdrive - Your collaborative workspace for LDraw&trade; models',
             filename: '404.html'
         })
     ],

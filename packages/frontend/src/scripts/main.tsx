@@ -31,7 +31,7 @@ document.body.appendChild(root)
 ReactDOM.render((
     <BrowserRouter>
         <Helmet>
-            <title>CADdrive - A collaborative workspace for LDraw(TM) models</title>
+            <title>CADdrive - Your collaborative workspace for LDraw&trade; models</title>
             <link rel="icon" href={AppIcon}/>
         </Helmet>
         <React.Suspense fallback={<Fallback/>}>
