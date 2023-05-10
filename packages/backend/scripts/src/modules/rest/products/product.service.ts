@@ -1,6 +1,5 @@
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
@@ -8,16 +7,14 @@ import { FindOptionsWhere, IsNull } from 'typeorm'
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 import { Database, ProductEntity } from 'productboard-database'
 
-import { convertMember, convertProduct } from '../../../functions/convert'
+import { convertProduct } from '../../../functions/convert'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {
     public constructor(
         @Inject(REQUEST)
-        private readonly request: AuthorizedRequest,
-        @Inject('MQTT')
-        private readonly client: ClientProxy
+        private readonly request: AuthorizedRequest
     ) {}
     
     async findProducts() : Promise<Product[]> {
@@ -41,12 +38,10 @@ export class ProductService implements ProductREST {
         const created = Date.now()
         const userId = this.request.user.id
         const product = await Database.get().productRepository.save({ id: productId, created, userId, ...data })
-        await this.client.emit(`/api/v1/products/${product.id}/create`, convertProduct(product))
         // Create member
         const memberId = shortid()
         const role = 'manager'
-        const member = await Database.get().memberRepository.save({ id: memberId, created, productId, userId, role })
-        await this.client.emit(`/api/v1/members/${member.id}/create`, convertMember(member))
+        await Database.get().memberRepository.save({ id: memberId, created, productId, userId, role })
         // Return product
         return convertProduct(product)
     }
@@ -63,7 +58,6 @@ export class ProductService implements ProductREST {
         product.description = data.description
         product.public = data.public
         await Database.get().productRepository.save(product)
-        await this.client.emit(`/api/v1/products/${product.id}/update`, convertProduct(product))
         return convertProduct(product)
     }
 
@@ -75,7 +69,6 @@ export class ProductService implements ProductREST {
         await Database.get().issueRepository.update({ productId: product.id }, { deleted: Date.now() })
         product.deleted = Date.now()
         await Database.get().productRepository.save(product)
-        await this.client.emit(`/api/v1/products/${product.id}/delete`, convertProduct(product))
         return convertProduct(product)
     }
 }

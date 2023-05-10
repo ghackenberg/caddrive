@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ClientProxy } from '@nestjs/microservices'
 
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
@@ -15,9 +14,7 @@ import { AuthorizedRequest } from '../../../request'
 export class MilestoneService implements MilestoneREST {
     constructor(
         @Inject(REQUEST)
-        private readonly request: AuthorizedRequest,
-        @Inject('MQTT')
-        private readonly client: ClientProxy
+        private readonly request: AuthorizedRequest
     ) {}
 
     async findMilestones(productId: string): Promise<Milestone[]> {
@@ -35,7 +32,6 @@ export class MilestoneService implements MilestoneREST {
         const created = Date.now()
         const userId = this.request.user.id
         const milestone = await Database.get().milestoneRepository.save({ id, created, userId, ...data })
-        await this.client.emit(`/api/v1/milestones/${milestone.id}/create`, convertMilestone(milestone))
         return convertMilestone(milestone)
     }
 
@@ -51,7 +47,6 @@ export class MilestoneService implements MilestoneREST {
         milestone.start = data.start
         milestone.end = data.end
         await Database.get().milestoneRepository.save(milestone)
-        await this.client.emit(`/api/v1/milestones/${milestone.id}/update`, convertMilestone(milestone))
         return convertMilestone(milestone)
     }
 
@@ -60,7 +55,6 @@ export class MilestoneService implements MilestoneREST {
         await Database.get().issueRepository.update({ milestoneId: milestone.id }, { milestoneId: null })
         milestone.deleted = Date.now()
         await Database.get().milestoneRepository.save(milestone)
-        await this.client.emit(`/api/v1/milestones/${milestone.id}/delete`, convertMilestone(milestone))
         return convertMilestone(milestone)
     }
 }

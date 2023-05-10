@@ -2,7 +2,6 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs'
 
 import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ClientProxy } from '@nestjs/microservices'
 
 import Jimp from 'jimp'
 import 'multer'
@@ -20,9 +19,7 @@ import { AuthorizedRequest } from '../../../request'
 export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
-        private readonly request: AuthorizedRequest,
-        @Inject('MQTT')
-        private readonly client: ClientProxy
+        private readonly request: AuthorizedRequest
     ) {
         if (!existsSync('./uploads')) {
             mkdirSync('./uploads')
@@ -46,7 +43,6 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const modelType = await this.processModel(id, null, files)
         const imageType = await this.processImage(id, null, files)
         const version = await Database.get().versionRepository.save({ id, created, userId, modelType, imageType, ...data })
-        await this.client.emit(`/api/v1/versions/${version.id}/create`, convertVersion(version))
         return convertVersion(version)
     }
 
@@ -65,7 +61,6 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.modelType = await this.processModel(id, version.modelType, files)
         version.imageType = await this.processImage(id, version.imageType, files)
         await Database.get().versionRepository.save(version)
-        await this.client.emit(`/api/v1/versions/${version.id}/update`, convertVersion(version))
         return convertVersion(version)
     }
 
@@ -73,7 +68,6 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const version = await Database.get().versionRepository.findOneByOrFail({ id })
         version.deleted = Date.now()
         await Database.get().versionRepository.save(version)
-        await this.client.emit(`/api/v1/versions/${version.id}/delete`, convertVersion(version))
         return convertVersion(version)
     }
 
@@ -154,6 +148,5 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.updated = Date.now()
         version.imageType = 'png'
         await Database.get().versionRepository.save(version)
-        await this.client.emit(`/api/v1/versions/${version.id}/update`, convertVersion(version))
     }
 }
