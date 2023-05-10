@@ -1,3 +1,5 @@
+import deepEqual from "deep-equal"
+
 export class AbstractManager<T extends { id: string, created: number, updated: number, deleted: number }> {
 
     // COMMON
@@ -100,17 +102,20 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     protected resolveItem(item: T) {
+        const previous = this.items[item.id]
         this.itemTimestamps[item.id] = Date.now()
         this.items[item.id] = item
-        for (const observer of this.itemObservers[item.id] || []) {
-            if (item.deleted === null) {
-                observer(item)
-            } else {
-                observer(undefined)
+        if (!previous || !deepEqual(previous, item)) {
+            for (const observer of this.itemObservers[item.id] || []) {
+                if (item.deleted === null) {
+                    observer(item)
+                } else {
+                    observer(undefined)
+                }
             }
+            this.patchFindIndices(item)
         }
         this.scheduleItem(item.id)
-        this.patchFindIndices(item)
         return item
     }
 
@@ -214,21 +219,33 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     // ... protected methods
 
     private resolveFind(key: string, find: T[]) {
+        const previous = this.finds[key]
         this.findTimestamps[key] = Date.now()
         this.finds[key] = {}
-        for (const item of find) {
-            this.resolveItem(item)
-            this.finds[key][item.id] = true
-        }
-        for (const callback of this.findObservers[key]) {
-            callback(find)
+        if (
+            !previous ||
+            Object.keys(previous).length != find.length ||
+            !find.map(item => item.id in previous).reduce((a, b) => a && b, true) ||
+            !find.map(item => deepEqual(item, this.getItem(item.id))).reduce((a, b) => a && b, true)
+        ) {
+            for (const item of find) {
+                this.resolveItem(item)
+                this.finds[key][item.id] = true
+            }
+            for (const callback of this.findObservers[key]) {
+                callback(find)
+            }
         }
         this.scheduleFind(key)
         return find
     }
 
     protected getFind(key: string) {
-        return Object.keys(this.finds[key] || {}).map(id => this.getItem(id)).filter(t => t && t.deleted === null)
+        if (key in this.finds) {
+            return Object.keys(this.finds[key]).map(id => this.getItem(id)).filter(t => t && t.deleted === null)
+        } else {
+            return undefined
+        }
     }
 
     protected find(key: string, reload: () => Promise<T[]>, include: (item: T) => boolean, callback: (items: T[], error?: string) => void) {
