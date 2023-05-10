@@ -33,7 +33,6 @@
     "workspaces": [
         "packages/common",
         "packages/database",
-        "packages/broker",
         "packages/backend",
         "packages/worker",
         "packages/frontend",
@@ -42,7 +41,7 @@
     ],
     "scripts": {
         "clean": "workspaces-run -- npm run clean",
-        "build": "workspaces-run --ignore=\"productboard-{broker,gateway}\" -- npm run build",
+        "build": "workspaces-run --ignore=\"productboard-{gateway}\" -- npm run build",
         "start": "workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run start",
         "devel": "workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run devel",
         "toolkit-start": "workspaces-run --only=\"productboard-toolkit\" -- npm run start",
