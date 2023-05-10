@@ -2,14 +2,23 @@ import * as React from 'react'
 
 import { Tag } from 'productboard-common'
 
-import { TagView } from '../widgets/TagView'
+import { GenericDropdownWidget } from '../widgets/GenericDropdown'
+import { TagWidget } from '../widgets/Tag'
 import { GenericInput } from './GenericInput'
 
-export const TagInput = (props: { label: string, tags: Tag[], productId: string, assignable: boolean, assignedTags?: Tag[], issueId?: string }) => {
+export const TagInput = (props: { label: string, tags: Tag[], productId: string, assignedTags: Tag[], issueId: string }) => {
+
+    const handleClick = (tag: Tag) => {
+        console.log(tag.id);
+      }
 
     return (
         <GenericInput label={props.label}>
-            <TagView tags={props.tags} productId={props.productId} assignable={props.assignable} assignedTags= {props.assignedTags} issueId = {props.issueId}></TagView>
+            <GenericDropdownWidget>
+                    {props.tags.map(tag => 
+                        <TagWidget onClick={handleClick} key={tag.id} tagId={tag.id}/> 
+                    )}
+            </GenericDropdownWidget>
         </GenericInput>
     )
 }

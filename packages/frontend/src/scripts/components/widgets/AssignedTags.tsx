@@ -15,7 +15,7 @@ export const AssignedTagsWidget = (props: { issueId: string }) => {
 
     return (
         <>
-            {tagAssignments ? tagAssignments.map((assignment) => <TagWidget tagId={assignment.tagId} />) : <img src={LoadIcon} className='icon medium pad animation spin' />}
+            {tagAssignments ? tagAssignments.map((assignment) => <TagWidget key={assignment.id} tagId={assignment.tagId} />) : <img src={LoadIcon} className='icon medium pad animation spin' />}
         </>
     )
 }

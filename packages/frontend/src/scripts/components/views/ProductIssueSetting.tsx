@@ -6,26 +6,27 @@ import { Object3D } from 'three'
 
 import { Member, Version, Tag } from 'productboard-common'
 
-import { TagInput } from '../inputs/TagInput'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useAsyncHistory } from '../../hooks/history'
 import { useIssue, useMembers, useMilestones, useProduct, useTagAssignments, useTags } from '../../hooks/route'
-import { SubmitInput } from '../inputs/SubmitInput'
-import { TextInput } from '../inputs/TextInput'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
+import { SubmitInput } from '../inputs/SubmitInput'
+import { TagInput } from '../inputs/TagInput'
+import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { Column, Table } from '../widgets/Table'
-import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
-import { LoadingView } from './Loading'
+import { ProductView3D } from '../widgets/ProductView3D'
+import { Column, Table } from '../widgets/Table'
 
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
+
+import { LoadingView } from './Loading'
 
 export const ProductIssueSettingView = () => {
 
@@ -62,10 +63,6 @@ export const ProductIssueSettingView = () => {
     collectParts(initialText, initialMarked)
     
     // STATES
-    
-    // - Entities
-
-    const [assignedTags, setAssignedTags] = React.useState<Tag[]>()
 
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
@@ -73,6 +70,7 @@ export const ProductIssueSettingView = () => {
     const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
+    const [assignedTags, setAssignedTags] = React.useState<Tag[]>()
 
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
@@ -247,7 +245,7 @@ export const ProductIssueSettingView = () => {
                                         </div>
                                     </div>
                                     {issueId != 'new' &&
-                                    <TagInput label='Tags' tags= {tags} productId= {productId} assignable= {true} assignedTags = {assignedTags} issueId = {issueId}/>
+                                    <TagInput label='Tags' tags= {tags} productId= {productId} assignedTags = {assignedTags} issueId = {issueId}/>
                                     }
                                     <div>
                                         <div>
