@@ -32,7 +32,6 @@ export const ProductTagSettingView = () => {
     // HOOKS
 
     const tag = useTag(tagId)
-    console.log(tag)
     const members = useMembers(productId)
 
     // INITIAL STATES
@@ -57,9 +56,9 @@ export const ProductTagSettingView = () => {
 
     // - Values
     
-    React.useEffect(() => { tag && setName(tag.name) }, [tag])
-    React.useEffect(() => { tag && setDescription(tag.productId) }, [tag])
-    React.useEffect(() => { tag && setColor(tag.color) }, [tag])
+    // React.useEffect(() => { tag && setName(tag.name) }, [tag])
+    // React.useEffect(() => { tag && setDescription(tag.productId) }, [tag])
+    // React.useEffect(() => { tag && setColor(tag.color) }, [tag])
 
     // FUNCTIONS
 
@@ -68,14 +67,14 @@ export const ProductTagSettingView = () => {
         event.preventDefault()
         if (tagId == 'new') {
             if (name && color) {
-                console.log('save')
                 await TagManager.addTag({productId, name, description, color })
                 replace(`/products/${productId}/tags`)
             }
         } else {
             if (name && color) {
-                await TagManager.updateTag(productId, { name, description, color })
+                await TagManager.updateTag(tagId, { name, description, color })
                 await replace(`/products/${productId}/tags`)
+                
             }
         }
     }
@@ -101,7 +100,7 @@ export const ProductTagSettingView = () => {
                                 <h1>{tagId == 'new' ? 'New tag' : 'Tag settings'}</h1>
                                 <form onSubmit={submit}>
                                     <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
-                                    <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
+                                    <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
                                     <div>
                                     <p>color:</p>
                                     <div>

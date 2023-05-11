@@ -16,7 +16,7 @@ export const TagWidget = (props: { tagId: string, onClick?: (tag: Tag) => void, 
 
     return (
         <>
-            {tag && <span onClick={handleClick} className={`badge ${tag.color} ${props.active ? 'active' : ''}`}>{tag.name}</span>}
+            {tag && tag.deleted == null && <span onClick={handleClick} className={`badge ${tag.color} ${props.active ? 'active' : ''}`}>{tag.name}</span>}
         </>
     )
 }
