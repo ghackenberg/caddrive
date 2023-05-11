@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
 import { LoadingView } from './components/views/Loading'
+import './plausible'
 
 import AppIcon from '/src/images/app.png'
 
