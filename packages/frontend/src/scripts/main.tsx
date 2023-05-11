@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
 import { LoadingView } from './components/views/Loading'
+import './plausible'
 
 import AppIcon from '/src/images/app.png'
 
@@ -31,6 +32,7 @@ document.body.appendChild(root)
 ReactDOM.render((
     <BrowserRouter>
         <Helmet>
+            <title>CADdrive - Your collaborative workspace for LDraw&trade; models</title>
             <link rel="icon" href={AppIcon}/>
         </Helmet>
         <React.Suspense fallback={<Fallback/>}>

@@ -16,7 +16,7 @@ function useEntities<T extends { id: string, created: number }>(id: string, cach
         return a.created - b.created
     }
 
-    const initialValue = !id.includes('new') && cache()
+    const initialValue = id !== undefined && id !== null && !id.includes('new') && cache()
 
     const [values, setValues] = React.useState(initialValue && initialValue.sort(compare))
 

@@ -1,5 +1,6 @@
 import * as React from 'react'
 
+import { CommentManager } from '../managers/comment'
 import { IssueManager } from '../managers/issue'
 import { MemberManager } from '../managers/member'
 import { MilestoneManager } from '../managers/milestone'
@@ -55,6 +56,14 @@ export function useIssue(issueId: string) {
         issueId,
         () => IssueManager.getIssueFromCache(issueId),
         callback => IssueManager.getIssue(issueId, callback)
+    )
+}
+
+export function useComment(commentId: string) {
+    return useEntity(
+        commentId,
+        () => CommentManager.getCommentFromCache(commentId),
+        callback => CommentManager.getComment(commentId, callback)
     )
 }
 

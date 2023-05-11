@@ -37,4 +37,4 @@ class IssueManagerImpl extends AbstractManager<Issue> {
     }
 }
 
-export const IssueManager = new IssueManagerImpl()
+export const IssueManager = new IssueManagerImpl('issue')

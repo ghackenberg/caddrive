@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { useState, useEffect, FormEvent, useContext } from 'react'
+import  * as React from 'react'
+import { useState, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -9,11 +9,10 @@ import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useIssues, useMembers } from '../../hooks/list'
-import { useIssuesComments } from '../../hooks/map'
 import { IssueManager } from '../../managers/issue'
-import { countParts } from '../../functions/counter'
-import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
+import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
+import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { AssignedTagsWidget } from '../widgets/AssignedTags'
@@ -42,78 +41,15 @@ export const ProductIssueView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const issues = useIssues(productId)
-    const comments = useIssuesComments(productId)
-
-    // INITIAL STATES
-
-    // - Computations
-
-    const initialIssueParts = collectIssueParts(issues)
-    const initialCommentParts = collectCommentParts(comments)
-    const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
 
     // STATES
-    
-    // - Computations
-    //const [assignedTags, setAssignedTags] = useState<{ [id: string]: Tag[] }>()
-    const [issueParts, setIssueParts] = useState<{ [id: string]: Part[] }>(initialIssueParts)
-    const [commentParts, setCommentParts] = useState<{ [id: string]: Part[] }>(initialCommentParts)
-    const [partsCount, setPartsCount] = useState<{ [id: string]: number }>(initialPartsCount)
 
     // - Interactions
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
-    const [hightlighted, setHighlighted] = useState<Part[]>()
     const [active, setActive] = useState<string>('left')
 
-    // EFFECTS
-
-    // - Entities
-
-    // - Computations
-    useEffect(() => {
-        setIssueParts(collectIssueParts(issues))
-        updateHightlighted()
-    }, [issues])
-
-    useEffect(() => {
-        setCommentParts(collectCommentParts(comments))
-        updateHightlighted()
-    }, [comments])
-
-    useEffect(() => {
-        setPartsCount(countParts(issues, comments, issueParts, commentParts))
-    }, [issueParts, commentParts])
-
-    // - Interactions
-    useEffect(() => {
-        updateHightlighted()
-    }, [hovered])
-
     // FUNCTIONS
-
-    function updateHightlighted() {
-        if (hovered) {
-            const hightlighted: Part[] = []
-            if (hovered.id in issueParts) {
-                issueParts[hovered.id].forEach(part => {
-                    hightlighted.push(part)
-                })
-            }
-            if (hovered.id in comments) {
-                for (const comment of comments[hovered.id] || []) {
-                    if (comment.id in commentParts) {
-                        for (const part of commentParts[comment.id] || []) {
-                            hightlighted.push(part)
-                        }
-                    }
-                }
-            }
-            setHighlighted(hightlighted)
-        } else {
-            setHighlighted([])
-        }
-    }
 
     let timeout: NodeJS.Timeout
 
@@ -154,47 +90,35 @@ export const ProductIssueView = () => {
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
-        {
-            label: '👤', content: issue => (
-                <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round' />
-            )
-        },
-        {
-            label: 'Label', class: 'left fill', content: issue => (
-                <>
-                    <div>
-                        {issue.name}
-                    </div>
-                    <div>
-                        <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
-                    </div>
-                </>
-            )
-        },
-        {
-            label: 'Assignees', class: 'nowrap', content: issue => (
-                issue.assigneeIds.map((assignedId) => (
-                    <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round' />
-                ))
-            )
-        },
-        {
-            label: 'Comments', class: 'center', content: issue => (
-                issue.id in comments && comments[issue.id] ? comments[issue.id].length : '?'
-            )
-        },
-        {
-            label: 'Parts', class: 'center', content: issue => (
-                issue.id in partsCount ? partsCount[issue.id] : '?'
-            )
-        },
-        {
-            label: '🛠️', class: 'center', content: issue => (
-                <a onClick={event => deleteIssue(event, issue)}>
-                    <img src={DeleteIcon} className='icon medium pad' />
-                </a>
-            )
-        }
+        { label: '👤', content: issue => (
+            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
+        ) },
+        { label: 'Label', class: 'left fill', content: issue => (
+            <>
+            <div>
+                {issue.name}
+            </div>
+            <div>
+                <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
+            </div>
+        </>
+        ) },
+        { label: 'Assignees', class: 'nowrap', content: issue => (
+            issue.assigneeIds.map((assignedId) => (
+                <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
+            ))
+        ) },
+        { label: 'Comments', class: 'center', content: issue => (
+            <CommentCount issueId={issue.id}/>
+        ) },
+        { label: 'Parts', class: 'center', content: issue => (
+            <PartCount issueId={issue.id}/>
+        ) },
+        { label: '🛠️', class: 'center', content: issue => (
+            <a onClick={event => deleteIssue(event, issue)}>
+                <img src={DeleteIcon} className='icon medium pad'/>
+            </a>
+        ) }
     ]
 
     const items: ProductFooterItem[] = [
@@ -239,7 +163,7 @@ export const ProductIssueView = () => {
                             <LegalFooter />
                         </div>
                         <div>
-                            <ProductView3D product={product} highlighted={hightlighted} mouse={true} />
+                            <ProductView3D productId={productId} issueId={hovered && hovered.id} mouse={true}/>
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive} />

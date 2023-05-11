@@ -28,7 +28,7 @@ export class TokenService implements TokenREST {
         const token = await Database.get().tokenRepository.save({ id, created, email, code, count })
         const transporter = await TRANSPORTER
         const info = await transporter.sendMail({
-            from: 'CADDrive <mail@caddrive.com>',
+            from: 'CADdrive <mail@caddrive.com>',
             to: email,
             subject: 'Verification code',
             templateName: 'code',

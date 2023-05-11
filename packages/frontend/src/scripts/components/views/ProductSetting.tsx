@@ -116,7 +116,7 @@ export const ProductSettingView = () => {
                             <LegalFooter/>
                         </div>
                         <div>
-                            <ProductView3D product={product} mouse={true}/>
+                            <ProductView3D productId={productId} mouse={true}/>
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive}/>

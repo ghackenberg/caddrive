@@ -37,4 +37,4 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> {
     }
 }
 
-export const TagAssignmentManager = new TagAssignmentManagerImpl()
+export const TagAssignmentManager = new TagAssignmentManagerImpl('tagAssignment')

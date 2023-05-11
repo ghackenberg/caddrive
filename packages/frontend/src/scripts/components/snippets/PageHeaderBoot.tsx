@@ -10,7 +10,8 @@ export const PageHeaderBoot = () => {
                     <a>
                         <img src={AppIcon} className='icon small'/>
                         <span>CAD</span>
-                        <span>Drive</span>
+                        <span>drive</span>
+                        <span>Your collaborative workspace for LDraw&trade; models</span>
                     </a>
                 </span>
             </div>

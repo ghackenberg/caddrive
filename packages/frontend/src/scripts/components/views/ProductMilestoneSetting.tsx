@@ -40,32 +40,49 @@ export const ProductMilestoneSettingView = () => {
     const initialStart = milestone ? new Date(milestone.start) : new Date(new Date().setHours(0,0,0,0))
     const initialEnd = milestone ? new Date(milestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
 
+    const initialTotal = issues && issues.length
+    const initialActual = milestone && issues && comments && calculateActual(milestone, issues, comments)
+
     // STATES
 
     // - Values
+    
     const [label, setLabel] = useState<string>(initialLabel)
     const [start, setStart] = useState<Date>(initialStart)
     const [end, setEnd] = useState<Date>(initialEnd)
 
     // - Computations
-    const [total, setTotalIssueCount] = useState<number>() 
-    const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
+
+    const [total, setTotalIssueCount] = useState(initialTotal) 
+    const [actual, setActualBurndown] = useState(initialActual)
 
     // - Interactions
+    
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
     
     // - Values
+
     useEffect(() => { milestone && setLabel(milestone.label) }, [milestone])
     useEffect(() => { milestone && setStart(new Date(milestone.start)) }, [milestone])
     useEffect(() => { milestone && setEnd(new Date(milestone.end)) }, [milestone])
 
     // - Computations
-    useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
+    
+    useEffect(() => {
+        if (issues) {
+            setTotalIssueCount(issues.length)
+        } else {
+            setTotalIssueCount(undefined)
+        }
+    }, [issues])
+
     useEffect(() => {
         if (milestone && issues && comments) {
             setActualBurndown(calculateActual(milestone, issues, comments))
+        } else {
+            setActualBurndown(undefined)
         }
     }, [milestone, issues, comments])
 

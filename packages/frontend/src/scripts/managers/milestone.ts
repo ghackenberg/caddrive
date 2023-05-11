@@ -37,4 +37,4 @@ class MilestoneManagerImpl extends AbstractManager<Milestone> {
     }
 }
 
-export const MilestoneManager = new MilestoneManagerImpl()
+export const MilestoneManager = new MilestoneManagerImpl('milestone')

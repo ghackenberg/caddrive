@@ -1,9 +1,8 @@
 import * as React from 'react'
-import { useContext, ReactElement, MouseEvent } from 'react'
-
-import { Comment, Issue } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
+import { useComment, useIssue } from '../../hooks/entity'
+import { collectParts, createProcessor } from '../../functions/markdown'
 import { ProductUserPictureWidget } from './ProductUserPicture'
 import { ProductUserNameWidget } from './ProductUserName'
 
@@ -18,68 +17,92 @@ interface Part {
     objectName: string
 }
 
-export const CommentView = (props: { class: string, productId: string, comment: Issue | Comment, html: ReactElement, parts: Part[], mouseover: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
+export const CommentView = (props: { class: string, productId: string, issueId: string, commentId?: string, mouseover: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
 
     // CONTEXTS
 
-    const { contextUser } = useContext(UserContext)
+    const { contextUser } = React.useContext(UserContext)
 
     // CONSTANTS
 
-    const productId = props.productId
-    const comment = props.comment
+    const entity = props.commentId ? useComment(props.commentId) : useIssue(props.issueId)
+    const textEntity = props.commentId ? useComment(props.commentId).text : useIssue(props.issueId).description
+
+    // INITIAL STATES
+
+    const initialHtml = entity && createProcessor(props.mouseover, props.mouseout, props.click).processSync(textEntity).result
+    const initialParts = entity && collectParts(textEntity)
+
+    // STATES
+
+    const [html, setHtml] = React.useState(initialHtml)
+    const [parts, setParts] = React.useState(initialParts)
+
+    // EFFECTS
+
+    React.useEffect(() => {
+        if (entity) {
+            setHtml(createProcessor(props.mouseover, props.mouseout, props.click).processSync(textEntity).result)
+            setParts(collectParts(textEntity))
+        } else {
+            setParts(undefined)
+            setHtml(undefined)
+        }
+    }, [entity])
 
     // RETURN
 
     return (
-        <div key={comment.id} className={`widget comment_view ${props.class} ${contextUser && comment.userId == contextUser.id ? 'self' : ''}`}>
-            <div className="head">
-                <div className="icon">
-                    <a href={`/users/${comment.userId}`}>
-                        <ProductUserPictureWidget userId={comment.userId} productId={productId} class='big'/>
-                    </a>
-                </div>
-                <div className="text">
-                    <p>
-                        <strong><ProductUserNameWidget userId={comment.userId} productId={productId}/></strong> commented on {new Date(comment.created).toISOString().substring(0, 10)}
-                    </p>
-                </div>
-            </div>
-            <div className="body">
-                <div className="free"/>
-                <div className="text">
-                    {props.html}
-                    {props.comment.audioId && <audio src={`/rest/files/${props.comment.audioId}.webm`} controls/>}
-                </div>
-            </div>
-            {props.parts && props.parts.map((part, index) => (
-                <div key={index} className="note part">
-                    <div className="free"/>
-                    <div className="text">
-                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
-                            <span>
-                                <img src={PartIcon}/>
-                            </span>
-                            {part.objectName}
+        entity && (
+            <div key={entity.id} className={`widget comment_view ${props.class} ${contextUser && entity.userId == contextUser.id ? 'self' : ''}`}>
+                <div className="head">
+                    <div className="icon">
+                        <a href={`/users/${entity.userId}`}>
+                            <ProductUserPictureWidget userId={entity.userId} productId={props.productId} class='big'/>
                         </a>
-                        was mentioned
+                    </div>
+                    <div className="text">
+                        <p>
+                            <strong><ProductUserNameWidget userId={entity.userId} productId={props.productId}/></strong> commented on {new Date(entity.created).toISOString().substring(0, 10)}
+                        </p>
                     </div>
                 </div>
-            ))}
-            {'action' in comment && comment.action != 'none' && (
-                <div className={`note action ${comment.action}`}>
+                <div className="body">
                     <div className="free"/>
                     <div className="text">
-                        <a>
-                            <span>
-                                <img src={comment.action == 'close' ? CloseIcon : ReopenIcon}/>
-                            </span>
-                        </a>
-                        {comment.action == 'close' ? 'closed' : 'reopened'}
+                        {html}
+                        {entity.audioId && <audio src={`/rest/files/${entity.audioId}.webm`} controls/>}
                     </div>
                 </div>
-            )}
-        </div>
+                {parts && parts.map((part, index) => (
+                    <div key={index} className="note part">
+                        <div className="free"/>
+                        <div className="text">
+                            <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
+                                <span>
+                                    <img src={PartIcon}/>
+                                </span>
+                                {part.objectName}
+                            </a>
+                            was mentioned
+                        </div>
+                    </div>
+                ))}
+                {'action' in entity && entity.action != 'none' && (
+                    <div className={`note action ${entity.action}`}>
+                        <div className="free"/>
+                        <div className="text">
+                            <a>
+                                <span>
+                                    <img src={entity.action == 'close' ? CloseIcon : ReopenIcon}/>
+                                </span>
+                            </a>
+                            {entity.action == 'close' ? 'closed' : 'reopened'}
+                        </div>
+                    </div>
+                )}
+            </div>
+        )
     )
     
 }

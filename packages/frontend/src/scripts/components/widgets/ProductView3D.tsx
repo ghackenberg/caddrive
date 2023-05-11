@@ -3,10 +3,12 @@ import { useEffect, useState, useContext } from 'react'
 
 import { Object3D } from 'three'
 
-import { Product, Version } from 'productboard-common'
+import { Version } from 'productboard-common'
 
 import { VersionContext } from '../../contexts/Version'
-import { useVersions } from '../../hooks/list'
+import { collectParts } from '../../functions/markdown'
+import { useIssue } from '../../hooks/entity'
+import { useComments, useVersions } from '../../hooks/list'
 import { VersionView3D } from './VersionView3D'
 
 import LoadIcon from '/src/images/load.png'
@@ -19,37 +21,86 @@ interface Part {
     objectName: string
 }
 
-export const ProductView3D = (props: { product: Product, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
+export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
 
     // CONTEXTS
 
-    const versionContext = useContext(VersionContext)
-
-    const { contextVersion, setContextVersion } = versionContext
+    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // HOOKS
 
-    const versions = useVersions(props.product.id)
+    const versions = useVersions(props.productId)
+    const issue = useIssue(props.issueId)
+    const comments = useComments(props.issueId)
 
     // INITIAL STATES
 
-    const initialHighlighted = (props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
+    const initialIssueParts = issue && collectParts(issue.description)
+    const initialCommentsParts = comments && comments.map(comment => collectParts(comment.text))
+    
+    let initialParts: Part[] = undefined
+    if (initialIssueParts && initialCommentsParts) {
+        initialParts = [...initialIssueParts]
+        for (const initialCommentParts of initialCommentsParts) {
+            initialParts = initialParts.concat(initialCommentParts)
+        }
+    }
+
+    const initialHighlighted = initialParts && initialParts.filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
     const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
     const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
 
     // STATES
 
-    const [highlighted, setHighlighted] = useState<string[]>(initialHighlighted)
-    const [marked, setMarked] = useState<string[]>(initialMarked)
-    const [selected, setSelected] = useState<string[]>(initialSelected)
+    const [issueParts, setIssueParts] = useState(initialIssueParts)
+    const [commentsParts, setCommentsParts] = useState(initialCommentsParts)
+    const [parts, setParts] = useState(initialParts)
+
+    const [highlighted, setHighlighted] = useState(initialHighlighted)
+    const [marked, setMarked] = useState(initialMarked)
+    const [selected, setSelected] = useState(initialSelected)
 
     // EFFECTS
     
-    useEffect(() => { !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])}, [versions])
+    useEffect(() => {
+        !contextVersion && versions && versions.length > 0 && setContextVersion(versions[versions.length - 1])
+    }, [versions])
 
-    useEffect(() => { setHighlighted((props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.highlighted])
-    useEffect(() => { setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.marked])
-    useEffect(() => { setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)) }, [versionContext, props.selected])
+    useEffect(() => {
+        if (issue) {
+            setIssueParts(collectParts(issue.description))
+        } else {
+            setIssueParts(undefined)
+        }
+    }, [issue])
+    useEffect(() => {
+        if (comments) {
+            setCommentsParts(comments.map(comment => collectParts(comment.text)))
+        } else {
+            setCommentsParts(undefined)
+        }
+    }, [comments])
+    useEffect(() => {
+        if (issueParts && commentsParts) {
+            let parts = [...issueParts]
+            for (const commentParts of commentsParts) {
+                parts = parts.concat(commentParts)
+            }
+            setParts(parts)
+        } else {
+            setParts(undefined)
+        }
+    }, [issueParts, commentsParts])
+
+    useEffect(() => {
+        setHighlighted((parts || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath))
+    }, [contextVersion, parts])
+    useEffect(() => {
+        setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath))
+    }, [contextVersion, props.marked])
+    useEffect(() => {
+        setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath))
+    }, [contextVersion, props.selected])
 
     // FUNCTIONS
 
@@ -62,22 +113,20 @@ export const ProductView3D = (props: { product: Product, mouse: boolean, highlig
     
     return (
         <div className="widget product_view_3d">
-            {!versions ? (
+            {props.productId != 'new' && (!versions || !contextVersion) ? (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             ) : (
-                versions.length > 0 ? (
-                    contextVersion && (
-                        <>
-                            <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
-                                {versions.map(v => v).reverse().map((version, index) => (
-                                    <option key={index} value={version.id}>
-                                        {version.major}.{version.minor}.{version.patch}: {version.description}
-                                    </option>
-                                ))}
-                            </select>
-                            <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} over={props.over && (object => props.over(contextVersion, object))} out={props.out && (object => props.out(contextVersion, object))} click={props.click && (object => props.click(contextVersion, object))}/>
-                        </>
-                    )
+                props.productId != 'new' && versions.length > 0 ? (
+                    <>
+                        <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
+                            {versions.map(v => v).reverse().map((version, index) => (
+                                <option key={index} value={version.id}>
+                                    {version.major}.{version.minor}.{version.patch}: {version.description}
+                                </option>
+                            ))}
+                        </select>
+                        <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} over={props.over && (object => props.over(contextVersion, object))} out={props.out && (object => props.out(contextVersion, object))} click={props.click && (object => props.click(contextVersion, object))}/>
+                    </>
                 ) : (
                     <img src={EmptyIcon} className='icon medium position center'/>
                 )
