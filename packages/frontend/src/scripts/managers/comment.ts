@@ -9,6 +9,9 @@ class CommentManagerImpl extends AbstractManager<Comment> {
     findCommentsFromCache(issueId: string) { 
         return this.getFind(issueId)
     }
+    getCommentFromCache(commentId: string) { 
+        return this.getItem(commentId)
+    }
 
     // REST
     
@@ -34,4 +37,4 @@ class CommentManagerImpl extends AbstractManager<Comment> {
     }
 }
 
-export const CommentManager = new CommentManagerImpl()
+export const CommentManager = new CommentManagerImpl('comment')

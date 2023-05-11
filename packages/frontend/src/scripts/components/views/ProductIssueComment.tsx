@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent, ReactElement } from 'react'
+import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -8,7 +8,7 @@ import { Object3D } from 'three'
 import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { collectParts, createProcessor, Part } from '../../functions/markdown'
+import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers } from '../../hooks/list'
@@ -48,47 +48,11 @@ export const ProductIssueCommentView = () => {
     const issue = useIssue(issueId)
     const comments = useComments(issueId)
 
-    // INITIAL STATES
-
-    const initialIssueParts: Part[] = []
-    const initialIssueHtml = issue ? createProcessor(initialIssueParts, handleMouseOver, handleMouseOut, handleClick).processSync(issue.text).result : undefined
-
-    const initialCommentsParts: { [id: string]: Part[] } = {}
-    const initialCommentsHtml: { [id: string]: ReactElement } = {}
-    for (const comment of comments || []) {
-        const parts: Part[] = []
-        initialCommentsHtml[comment.id] = createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(comment.text).result
-        initialCommentsParts[comment.id] = parts
-    }
-
-    const initialHighlighted: Part[] = []
-    if (initialIssueParts) {
-        for (const part of initialIssueParts) {
-            initialHighlighted.push(part)
-        }
-    }
-    if (comments && initialCommentsParts) {
-        for (const comment of comments) {
-            if (comment.id in initialCommentsParts) {
-                for (const part of initialCommentsParts[comment.id]) {
-                    initialHighlighted.push(part)
-                }
-            }
-        }
-    }
-
     // STATES
 
     // - Values
     const [text, setText] = useState<string>('')
     const [audio, setAudio] = useState<Blob>()
-
-    // - Computations
-    const [issueHtml, setIssueHtml] = useState<ReactElement>(initialIssueHtml)
-    const [issueParts, setIssueParts] = useState<Part[]>(initialIssueParts)
-    const [commentsHtml, setCommentsHtml] = useState<{ [id: string]: ReactElement }>(initialCommentsHtml)
-    const [commentsParts, setCommentsParts] = useState<{ [id: string]: Part[] }>(initialCommentsParts)
-    const [highlighted, setHighlighted] = useState<Part[]>(initialHighlighted)
 
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
@@ -100,50 +64,7 @@ export const ProductIssueCommentView = () => {
     // EFFECTS
 
     useEffect(() => {
-        if (issue) {
-            const parts: Part[] = []
-            setIssueHtml(createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(issue.text).result)
-            setIssueParts(parts)
-        }
-    }, [issue])
-
-    useEffect(() => {
-        if (comments) {
-            const commentsHtml: { [id: string]: ReactElement } = {}
-            const commentsParts: { [id: string]: Part[] } = {}
-            for (const comment of comments) {
-                const parts: Part[] = []
-                commentsHtml[comment.id] = createProcessor(parts, handleMouseOver, handleMouseOut, handleClick).processSync(comment.text).result
-                commentsParts[comment.id] = parts
-            }
-            setCommentsHtml(commentsHtml)
-            setCommentsParts(commentsParts)
-        }
-    }, [comments])
-
-    useEffect(() => {
-        const highlighted: Part[] = []
-        if (issueParts) {
-            for (const part of issueParts) {
-                highlighted.push(part)
-            }
-        }
-        if (comments && commentsParts) {
-            for (const comment of comments) {
-                if (comment.id in commentsParts) {
-                    for (const part of commentsParts[comment.id]) {
-                        highlighted.push(part)
-                    }
-                }
-            }
-        }
-        setHighlighted(highlighted)
-    }, [issueParts, commentsParts])
-
-    useEffect(() => {
-        const parts: Part[] = []
-        collectParts(text || '', parts)
-        setMarked(parts)
+        setMarked(collectParts(text || ''))
     }, [text])
 
     // FUNCTIONS
@@ -294,9 +215,9 @@ export const ProductIssueCommentView = () => {
                                     </>
                                 </p>
                                 <div className="widget issue_thread">
-                                    <CommentView class="issue" comment={issue} productId={productId} html={issueHtml} parts={issueParts} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                    <CommentView class="issue" productId={productId} issueId={issueId} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     {comments && comments.map(comment => (
-                                        <CommentView key={comment.id} class="comment" comment={comment} productId={productId} html={commentsHtml[comment.id]} parts={commentsParts[comment.id]} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                        <CommentView key={comment.id} class="comment" productId={productId} issueId={issueId} commentId={comment.id} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     ))}
                                     <div className="comment self">
                                         <div className="head">
@@ -402,7 +323,7 @@ export const ProductIssueCommentView = () => {
                             <LegalFooter/>
                         </div>
                         <div>
-                            <ProductView3D product={product} mouse={true} highlighted={highlighted} marked={marked} selected={selected} over={overObject} out={outObject} click={selectObject}/>
+                            <ProductView3D productId={productId} issueId={issueId} mouse={true} marked={marked} selected={selected} over={overObject} out={outObject} click={selectObject}/>
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive} />

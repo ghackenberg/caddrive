@@ -37,4 +37,4 @@ class VersionManagerImpl extends AbstractManager<Version> {
     }
 }
 
-export const VersionManager = new VersionManagerImpl()
+export const VersionManager = new VersionManagerImpl('version')

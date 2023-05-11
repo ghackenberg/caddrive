@@ -37,4 +37,4 @@ class MemberManagerImpl extends AbstractManager<Member> {
     }
 }
 
-export const MemberManager = new MemberManagerImpl()
+export const MemberManager = new MemberManagerImpl('member')

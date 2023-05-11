@@ -34,4 +34,4 @@ class UserManagerImpl extends AbstractManager<User> {
     }
 }
 
-export const UserManager = new UserManagerImpl()
+export const UserManager = new UserManagerImpl('user')

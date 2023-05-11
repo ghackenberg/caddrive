@@ -21,7 +21,7 @@ const icons: {[key: string]: string} = {
     PerspectiveCamera: CameraIcon
 }
 
-const NodeItem = (props: { path: string, object: Object3D, highlighted: string[], marked: string[], selected: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
+const NodeItem = (props: { path: string, object: Object3D, highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
     const path = props.path
     const object = props.object
 
@@ -29,9 +29,9 @@ const NodeItem = (props: { path: string, object: Object3D, highlighted: string[]
     const out = props.out || function() {/*empty*/}
     const click = props.click || function() {/*empty*/}
 
-    const highlighted = props.highlighted.filter(prefix => comparePath(prefix, path)).length != 0
-    const marked = props.marked.filter(prefix => comparePath(prefix, path)).length != 0
-    const selected = props.selected.filter(prefix => comparePath(prefix, path)).length != 0
+    const highlighted = (props.highlighted || []).filter(prefix => comparePath(prefix, path)).length != 0
+    const marked = (props.marked || []).filter(prefix => comparePath(prefix, path)).length != 0
+    const selected = (props.selected || []).filter(prefix => comparePath(prefix, path)).length != 0
 
     const classes = [highlighted && 'highlighted', marked && 'marked', selected && 'selected'].filter(v => !!v).join(' ')
 
@@ -54,7 +54,7 @@ const NodeItem = (props: { path: string, object: Object3D, highlighted: string[]
     )
 }
 
-const NodeList = (props: { path: string, list: Object3D[], highlighted: string[], marked: string[], selected: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
+const NodeList = (props: { path: string, list: Object3D[], highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
     const path = props.path
     return (
         <div>
@@ -69,7 +69,7 @@ const NodeList = (props: { path: string, list: Object3D[], highlighted: string[]
     )
 }
 
-export const ModelGraph = (props: { model: Group, highlighted: string[], marked: string[], selected: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
+export const ModelGraph = (props: { model: Group, highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
     return (
         <div className="widget model_graph">
             <NodeItem path='0' object={props.model} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>

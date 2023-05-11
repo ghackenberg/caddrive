@@ -11,10 +11,10 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useIssues } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { calculateActual } from '../../functions/burndown'
-import { countParts } from '../../functions/counter'
-import { collectCommentParts, collectIssueParts, Part } from '../../functions/markdown'
 import { IssueManager } from '../../managers/issue'
+import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
+import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
@@ -48,18 +48,14 @@ export const ProductMilestoneIssueView = () => {
 
     // INITIAL STATES
 
-    const initialIssueParts = collectIssueParts(issues)
-    const initialCommentParts = collectCommentParts(comments)
-    const initialPartsCount = countParts(issues, comments, initialIssueParts, initialCommentParts)
+    const initialTotal = issues && issues.length
+    const initialActual = milestone && issues && comments && calculateActual(milestone, issues, comments)
     
     // STATES
 
     // - Computations
-    const [issueParts, setIssueParts] = useState<{[id: string]: Part[]}>(initialIssueParts)
-    const [commentParts, setCommentParts] = useState<{[id: string]: Part[]}>(initialCommentParts)
-    const [partsCount, setPartsCount] = useState<{[id: string]: number}>(initialPartsCount)
-    const [total, setTotalIssueCount] = useState<number>() 
-    const [actual, setActualBurndown] = useState<{ time: number, actual: number}[]>([])
+    const [total, setTotalIssueCount] = useState(initialTotal)
+    const [actual, setActualBurndown] = useState(initialActual)
 
     // - Interactions
     const [state, setState] = useState('open')
@@ -68,22 +64,18 @@ export const ProductMilestoneIssueView = () => {
     // EFFECTS
 
     useEffect(() => {
-        setIssueParts(collectIssueParts(issues))
+        if (issues) {
+            setTotalIssueCount(issues.length)
+        } else {
+            setTotalIssueCount(undefined)
+        }
     }, [issues])
-
-    useEffect(() => {
-        setCommentParts(collectCommentParts(comments)) 
-    }, [comments])
-
-    useEffect(() => {
-        setPartsCount(countParts(issues, comments, issueParts, commentParts))
-    }, [issueParts, commentParts])
-
-    useEffect(() => { issues && setTotalIssueCount(issues.length) }, [issues])
 
     useEffect(() => {
         if (milestone && issues && comments) {
             setActualBurndown(calculateActual(milestone, issues, comments))
+        } else {
+            setActualBurndown(undefined)
         }
     }, [milestone, issues, comments])
 
@@ -137,10 +129,10 @@ export const ProductMilestoneIssueView = () => {
             ))
         ) },
         { label: 'Comments', class: 'center', content: issue => (
-            issue.id in comments ? comments[issue.id].length : '?'
+            <CommentCount issueId={issue.id}/>
         ) },
         { label: 'Parts', class: 'center', content: issue => (
-            issue.id in partsCount ? partsCount[issue.id] : '?'
+            <PartCount issueId={issue.id}/>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
             <a onClick={event => deleteIssue(event, issue)}>
