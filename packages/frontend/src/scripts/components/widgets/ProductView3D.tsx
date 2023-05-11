@@ -35,8 +35,8 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
 
     // INITIAL STATES
 
-    const initialIssueParts = issue && collectParts(issue.text)
-    const initialCommentsParts = comments && comments.map(comment => collectParts(comment.text))
+    const initialIssueParts = props.issueId ? (issue && collectParts(issue.text)) : []
+    const initialCommentsParts = props.issueId ? (comments && comments.map(comment => collectParts(comment.text))) : []
     
     let initialParts: Part[] = undefined
     if (initialIssueParts && initialCommentsParts) {
@@ -69,14 +69,14 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     useEffect(() => {
         if (issue) {
             setIssueParts(collectParts(issue.text))
-        } else {
+        } else if (props.issueId) {
             setIssueParts(undefined)
         }
     }, [issue])
     useEffect(() => {
         if (comments) {
             setCommentsParts(comments.map(comment => collectParts(comment.text)))
-        } else {
+        } else if (props.issueId) {
             setCommentsParts(undefined)
         }
     }, [comments])
