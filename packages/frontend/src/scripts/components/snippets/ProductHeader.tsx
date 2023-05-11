@@ -7,6 +7,7 @@ import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 import { MilestonesLink } from '../links/MilestonesLink'
 import { ProductLink } from '../links/ProductLink'
+import { TagsLink } from '../links/TagsLink'
 import { VersionsLink } from '../links/VersionsLink'
 import { PRODUCTS_4 } from '../../pattern'
 
@@ -57,6 +58,7 @@ export const ProductHeader = () => {
                         <IssuesLink product={product}/>
                         <MilestonesLink product={product}/>
                         <MembersLink product={product}/>
+                        <TagsLink product={product}/>
                     </>
                 )}
                 <span>
