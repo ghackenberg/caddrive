@@ -61,9 +61,9 @@ export const ProductTagView = () => {
             <TagWidget tagId={tag.id} ></TagWidget>
         ) },
         { label: 'description', class: 'left nowrap', content: tag => (
-            <TagWidget tagId={tag.productId} ></TagWidget>
+            <div>{tag.description ? tag.description : ''} </div>
         ) },
-        { label: 'assgin count', class: 'left nowrap', content: tag => (
+        { label: 'tag assignments', class: 'left nowrap', content: tag => (
             <TagAssignmentCount productId={productId} tagId={tag.id}></TagAssignmentCount>
         ) },
         { label: '🛠️', class: 'center', content: tag => (
@@ -91,20 +91,20 @@ export const ProductTagView = () => {
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
-                                            New member
+                                        <NavLink to={`/products/${productId}/tags/new/settings`} className='button fill green'>
+                                            New tag
                                         </NavLink>
                                     ) : (
                                         <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New member (requires role)
+                                            New tag (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New member (requires login)
+                                        New tag (requires login)
                                     </a>
                                 )}
-                                <Table columns={columns} items={tags} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)}/>
+                                <Table columns={columns} items={tags} onClick={tag => push(`/products/${productId}/tags/${tag.id}/settings`)}/>
                             </div>
                             <LegalFooter/>
                         </div>

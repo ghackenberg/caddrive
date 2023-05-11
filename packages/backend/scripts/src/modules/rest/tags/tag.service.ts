@@ -35,6 +35,7 @@ export class TagService implements TagREST {
         const tag = await Database.get().tagRepository.findOneByOrFail({ id })
         tag.updated = Date.now()
         tag.name = data.name
+        tag.description = data.description
         tag.color = data.color
         await Database.get().tagRepository.save(tag)
         return convertTag(tag)

@@ -1,13 +1,10 @@
 import * as React from 'react'
 
-import { useMembers } from '../../hooks/list'
-
 export const TagAssignmentCount = (props: { productId?: string, tagId?: string }) => {
-    const members = useMembers(props.productId)
-    
+    console.log(props)
     return (
         <>
-            {members ? members.length : '?'}
+            {'not implemented'}
         </>
     )
 }

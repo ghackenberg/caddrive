@@ -25,6 +25,9 @@ export class TagEntity extends Tag {
     @Column({ nullable: false })
     override name: string
 
+    @Column({ nullable: true })
+    override description: string
+
     @Column({nullable: false})
     override color: string
 

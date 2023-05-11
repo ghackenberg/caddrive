@@ -61,14 +61,14 @@ const comments: Comment[] = [
 ]
 
 const tags: Tag[] = [
-    { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'roof', color: 'brown' },
-    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'wheels', color: 'orange' },
-    { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'safety', color: 'yellow' },
-    { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'entertainment', color: 'green' },
-    { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'motor', color: 'blue' },
-    { id: 'demo-6', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'comfort', color: 'purple' },
-    { id: 'demo-7', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'breaks', color: 'pink' },
-    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'design', color: 'red' },
+    { id: 'demo-1', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'roof', description:'test-description 1', color: 'brown' },
+    { id: 'demo-2', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'wheels', description:'test-description 2', color: 'orange' },
+    { id: 'demo-3', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'safety', description: null, color: 'yellow' },
+    { id: 'demo-4', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'entertainment', description:'test-description 4', color: 'green' },
+    { id: 'demo-5', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'motor', description:'test-description 5', color: 'blue' },
+    { id: 'demo-6', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'comfort', description: null, color: 'purple' },
+    { id: 'demo-7', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'breaks', description:'test-description 7', color: 'pink' },
+    { id: 'demo-8', created: Date.now(), updated: null, deleted: null,  productId: 'demo-1', name: 'design', description:'test-description 8', color: 'red' },
 ]
 
 const tagAssignments: TagAssignment[] = [

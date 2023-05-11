@@ -4,6 +4,8 @@ export class TagUpdateData {
     @ApiProperty()
     name: string
     @ApiProperty()
+    description: string
+    @ApiProperty()
     color: string
 }
 

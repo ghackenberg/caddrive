@@ -1,109 +1,125 @@
-import  * as React from 'react'
-import { useState, useContext } from 'react'
+import * as React from 'react'
 import { Redirect, useParams } from 'react-router'
-import { NavLink } from 'react-router-dom'
-
-import { Member } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
+import { useTag } from '../../hooks/entity'
 import { useMembers } from '../../hooks/list'
-import { MemberManager } from '../../managers/member'
+import { TagManager } from '../../managers/tag'
+import { SubmitInput } from '../inputs/SubmitInput'
+import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
-import { Column, Table } from '../widgets/Table'
-import { ProductUserNameWidget } from '../widgets/ProductUserName'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { LoadingView } from './Loading'
 
-import DeleteIcon from '/src/images/delete.png'
-import LeftIcon from '/src/images/list.png'
+import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
 
 export const ProductTagSettingView = () => {
 
-    const { push } = useAsyncHistory()
+    const { replace } = useAsyncHistory()
 
     // CONTEXTS
 
-    const { contextUser } = useContext(UserContext)
+    const { contextUser } = React.useContext(UserContext)
 
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
+    const { tagId } = useParams<{ tagId: string }>()
 
     // HOOKS
 
-    const product = useProduct(productId)
+    const tag = useTag(tagId)
+    console.log(tag)
     const members = useMembers(productId)
-    
+
+    // INITIAL STATES
+
+    const initialName = tag ? tag.name : ''
+    const initialDescription = tag ? tag.description : ''
+
+    const colors: string[] = ['brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red' ]
+    const initialColor = tag ? tag.color : colors[Math.floor(colors.length * Math.random())]
+
     // STATES
 
-    const [active, setActive] = useState<string>('left')
+    // - Values
+    const [name, setName] = React.useState<string>(initialName)
+    const [description, setDescription] = React.useState<string>(initialDescription)
+    const [color, setColor] = React.useState<string>(initialColor)
+
+    // - Interactions
+    const [active, setActive] = React.useState<string>('left')
+    
+    // EFFECTS
+
+    // - Values
+    
+    React.useEffect(() => { tag && setName(tag.name) }, [tag])
+    React.useEffect(() => { tag && setDescription(tag.productId) }, [tag])
+    React.useEffect(() => { tag && setColor(tag.color) }, [tag])
 
     // FUNCTIONS
 
-    async function deleteMember(event: React.UIEvent, member:Member) {
+    async function submit(event: React.FormEvent){
         // TODO handle unmount!
-        event.stopPropagation()
-        if (confirm('Do you really want to delete this member?')) {
-            await MemberManager.deleteMember(member.id)
+        event.preventDefault()
+        if (tagId == 'new') {
+            if (name && color) {
+                console.log('save')
+                await TagManager.addTag({productId, name, description, color })
+                replace(`/products/${productId}/tags`)
+            }
+        } else {
+            if (name && color) {
+                await TagManager.updateTag(productId, { name, description, color })
+                await replace(`/products/${productId}/tags`)
+            }
         }
     }
 
     // CONSTANTS
 
-    const columns: Column<Member>[] = [
-        { label: '👤', content: member => (
-            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round middle'/>
-        ) },
-        { label: 'Name', class: 'left nowrap', content: member => (
-            <ProductUserNameWidget userId={member.userId} productId={productId}/>
-        ) },
-        { label: 'Role', class: 'fill left nowrap', content: member => (
-            <span className='badge role'>{member.role}</span>
-        ) },
-        { label: '🛠️', class: 'center', content: member => (
-            <a onClick={event => deleteMember(event, member)}>
-                <img src={DeleteIcon} className='icon medium pad'/>
-            </a>
-        ) }
-    ]
-
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'List view', image: LeftIcon },
+        { name: 'left', text: 'Form view', image: LeftIcon },
         { name: 'right', text: 'Model view', image: RightIcon }
     ]
 
     // RETURN
 
     return (
-        (product && members) ? (
-            product.deleted ? (
+        (tagId == 'new' || ( members && tag)) ? (
+            (tag && tag.deleted) ? (
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
+                    <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
-                                            New member
-                                        </NavLink>
+                                <h1>{tagId == 'new' ? 'New tag' : 'Tag settings'}</h1>
+                                <form onSubmit={submit}>
+                                    <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
+                                    <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
+                                    <div>
+                                    <p>color:</p>
+                                    <div>
+                                        <select className='button fill lightgray' value={color} onChange={event => setColor(event.currentTarget.value)}>
+                                            { colors.map((color) => <option key={color} value={color}>{color}</option>) }
+                                        </select>
+                                    </div>
+                                </div>
+                                    {contextUser ? (
+                                        (tagId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
+                                            <SubmitInput value='Save'/>
+                                        ) : (
+                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                        )
                                     ) : (
-                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New member (requires role)
-                                        </a>
-                                    )
-                                ) : (
-                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New member (requires login)
-                                    </a>
-                                )}
-                                <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)}/>
+                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                    )}
+                                </form>
                             </div>
                             <LegalFooter/>
                         </div>

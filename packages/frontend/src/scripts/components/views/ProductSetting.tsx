@@ -13,7 +13,6 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
-import { TagInput2 } from '../inputs/TagInput2'
 
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
@@ -101,7 +100,6 @@ export const ProductSettingView = () => {
                                     <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
                                     <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
                                     <BooleanInput label='Public' value={_public} change={setPublic}/>
-                                    <TagInput2 label='Tags' tags= {tags} productId= {productId} assignable= {false}/>
                                     {contextUser ? (
                                         (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
                                             <SubmitInput value='Save'/>

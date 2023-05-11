@@ -115,6 +115,7 @@ export function convertTag(tag: TagEntity) {
         deleted: tag.deleted,
         productId: tag.productId,
         name: tag.name,
+        description: tag.description,
         color: tag.color
     }
 }
