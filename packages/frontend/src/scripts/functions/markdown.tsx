@@ -43,8 +43,9 @@ export function collectCommentParts(comments: {[id: string]: Comment[]}) {
     return commentPartsNew
 }
 
-export function collectParts(text: string, parts: Part[]) {
+export function collectParts(text: string, parts: Part[] = []) {
     collectPartsInternal(unified().use(remarkParse).parse(text), parts)
+    return parts
 }
 
 function collectPartsInternal(parent: Parent, parts: Part[]) {
@@ -66,11 +67,12 @@ function collectPartsInternal(parent: Parent, parts: Part[]) {
     }
 }
 
-export function createProcessor(parts: Part[], handleMouseOver: Handler, handleMouseOut: Handler, handleClick: Handler) {
+export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handler, handleClick: Handler) {
     return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
         createElement, components: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             a: (props: any) => {
+                console.log('anchor', props)
                 const match = regex.exec(props.href || '')
                 if (match) {
                     const productId = match[1]
@@ -78,7 +80,6 @@ export function createProcessor(parts: Part[], handleMouseOver: Handler, handleM
                     const objectPath = match[3]
                     const objectName = props.children[0]
                     const part = { productId, versionId, objectPath, objectName }
-                    parts.push(part)
                     return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
                 } else {
                     return <a {...props}/>

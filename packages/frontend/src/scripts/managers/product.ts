@@ -37,4 +37,4 @@ class ProductManagerImpl extends AbstractManager<Product> {
     }
 }
 
-export const ProductManager = new ProductManagerImpl()
+export const ProductManager = new ProductManagerImpl('product')

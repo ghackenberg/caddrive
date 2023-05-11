@@ -6,4 +6,4 @@ export const plausible = Plausible({
 })
 
 plausible.enableAutoPageviews()
-plausible.enableAutoOutboundTracking()
+//plausible.enableAutoOutboundTracking()

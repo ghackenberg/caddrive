@@ -19,6 +19,8 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
 
     // ... public methods
 
+    constructor(private readonly type: string) {}
+
     public clear() {
         this.clearItem()
         this.clearFind()
@@ -81,6 +83,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private async reloadItem(id: string) {
+        console.log('reload', `${this.type}`, id)
         delete this.itemTimeouts[id]
         this.resolveItem(await this.itemGetters[id]())
     }
@@ -105,6 +108,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         const previous = this.items[item.id]
         this.itemTimestamps[item.id] = Date.now()
         if (!previous || !deepEqual(previous, item)) {
+            console.log('resolve', this.type, item.id)
             this.items[item.id] = item
             for (const observer of this.itemObservers[item.id] || []) {
                 if (item.deleted === null) {
@@ -188,6 +192,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private async reloadFind(key: string) {
+        console.log('reload', `${this.type}s`, key)
         delete this.findTimeouts[key]
         const promise = this.findGetters[key]()
         this.findPromises[key] = promise
@@ -227,9 +232,12 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
             !find.map(item => item.id in previous).reduce((a, b) => a && b, true) ||
             !find.map(item => deepEqual(item, this.getItem(item.id))).reduce((a, b) => a && b, true)
         ) {
-            this.finds[key] = {}
+            console.log('resolve', `${this.type}s`, key)
             for (const item of find) {
                 this.resolveItem(item)
+            }
+            this.finds[key] = {}
+            for (const item of find) {
                 this.finds[key][item.id] = true
             }
             for (const callback of this.findObservers[key]) {

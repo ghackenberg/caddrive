@@ -54,11 +54,9 @@ export const ProductIssueSettingView = () => {
 
     const initialLabel = issue ? issue.label : ''
     const initialText = issue ? issue.text : ''
+    const initialMarked = collectParts(initialText)
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
     const initialAssigneeIds = issue ? issue.assigneeIds : []
-
-    const initialMarked: Part[] = []
-    collectParts(initialText, initialMarked)
     
     // STATES
 
@@ -86,9 +84,7 @@ export const ProductIssueSettingView = () => {
 
     // - Computations
     useEffect(() => {
-        const parts: Part[] = []
-        collectParts(text || '', parts)
-        setMarked(parts)
+        setMarked(collectParts(text || ''))
     }, [text])
     
     // FUNCTIONS
@@ -269,7 +265,7 @@ export const ProductIssueSettingView = () => {
                             <LegalFooter/>
                         </div>
                         <div>
-                            <ProductView3D product={product} selected={selected} marked={marked} mouse={true} over={overObject} out={outObject} click={selectObject}/>
+                            <ProductView3D productId={productId} selected={selected} marked={marked} mouse={true} over={overObject} out={outObject} click={selectObject}/>
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive}/>
