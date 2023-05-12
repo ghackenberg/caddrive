@@ -7,7 +7,7 @@ export class TokenEntity {
     
     @Column({ nullable: false })
     created: number
-    @Column({ nullable: false })
+    @Column({ nullable: false, default: 0 })
     updated: number
     @Column({ nullable: true })
     deleted: number
