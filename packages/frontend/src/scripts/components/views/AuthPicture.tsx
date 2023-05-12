@@ -37,7 +37,7 @@ export const AuthPictureView = () => {
                 const picture = fileInput.current.files[0]
                 const user = await UserManager.updateUser(authContextUser.id, { consent: authContextUser.consent, name: authContextUser.name }, picture)
                 setAuthContextUser(user)
-                await push('/auth/welcome')
+                await push('/auth/download')
             } catch (e) {
                 setError('Action failed.')
                 setLoad(false)
@@ -52,7 +52,7 @@ export const AuthPictureView = () => {
 
     async function handleSkip(event: React.UIEvent) {
         event.preventDefault()
-        await push('/auth/welcome')
+        await push('/auth/download')
     }
 
     return (
