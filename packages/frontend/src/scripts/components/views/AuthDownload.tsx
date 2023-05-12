@@ -21,11 +21,11 @@ export const AuthDownloadView = () => {
     async function handleDownload(event: React.UIEvent) {
         event.preventDefault()
         if (WINDOWS) {
-            window.open('https://todo/', '_blank') // TODO Download URL
+            window.open('https://todo/windows', '_blank') // TODO Download URL
         } else if (MAC) {            
-            window.open('https://todo/', '_blank') // TODO Download URL
+            window.open('https://todo/mac', '_blank') // TODO Download URL
         } else if (LINUX) {
-            window.open('https://todo/', '_blank') // TODO Download URL
+            window.open('https://todo/linux', '_blank') // TODO Download URL
         } else {
             alert('We do not support your platform yet!')
         }
