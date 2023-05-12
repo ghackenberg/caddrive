@@ -95,16 +95,16 @@ export const ProductVersionView = () => {
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill block-when-responsive'>
                                             <strong>New</strong> version
                                         </NavLink>
                                     ) : (
-                                        <a className='button green fill' style={{fontStyle: 'italic'}}>
+                                        <a className='button green fill block-when-responsive' style={{fontStyle: 'italic'}}>
                                             <strong>New</strong> version (requires role)
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button green fill' style={{fontStyle: 'italic'}}>
+                                    <a className='button green fill block-when-responsive' style={{fontStyle: 'italic'}}>
                                         <strong>New</strong> version (requires login)
                                     </a>
                                 )}

@@ -98,11 +98,11 @@ export const ProductView = () => {
                 <div>
                     <div>
                         {contextUser ? (
-                            <Link to={`/products/new/settings?public=${_public}`} className='button fill green'>
+                            <Link to={`/products/new/settings?public=${_public}`} className='button fill green block-when-responsive'>
                                 <strong>New</strong> product
                             </Link>
                         ) : (
-                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
                                 <strong>New</strong> product (requires login)
                             </a>
                         )}

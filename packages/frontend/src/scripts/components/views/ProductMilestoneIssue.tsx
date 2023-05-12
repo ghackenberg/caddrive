@@ -189,7 +189,7 @@ export const ProductMilestoneIssueView = () => {
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
                                         <strong>New</strong> issue (requires login)
                                     </a>
                                 )}
