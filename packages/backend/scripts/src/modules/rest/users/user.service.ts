@@ -64,8 +64,9 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
 
     async deleteUser(id: string): Promise<User> {
         const user = await Database.get().userRepository.findOneByOrFail({ id })
-        await Database.get().memberRepository.update({ userId: user.id }, { deleted: Date.now() })
         user.deleted = Date.now()
+        user.updated = user.deleted
+        await Database.get().memberRepository.update({ userId: user.id }, { deleted: user.deleted, updated: user.updated })
         await Database.get().userRepository.save(user)
         return convertUser(user, this.request.user && this.request.user.id == id)
     }

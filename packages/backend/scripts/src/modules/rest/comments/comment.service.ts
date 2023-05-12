@@ -36,18 +36,19 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     async addComment(data: CommentAddData, files: { audio?: Express.Multer.File[] }): Promise<Comment> {
         const id = shortid()
         const created = Date.now()
+        const updated = created
         const userId = this.request.user.id
         let comment: CommentEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             const audioId = shortid()
-            comment = await Database.get().commentRepository.save({ id, created, userId, audioId, ...data })
+            comment = await Database.get().commentRepository.save({ id, created, updated, userId, audioId, ...data })
             writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
         } else {
-            comment = await Database.get().commentRepository.save({ id, created, userId, ...data })
+            comment = await Database.get().commentRepository.save({ id, created, updated, userId, ...data })
         }
         if (comment.action != 'none') {
             const issue = await Database.get().issueRepository.findOneBy({ id: comment.issueId })
-            issue.updated = Date.now()
+            issue.updated = created
             if (comment.action == 'close') {
                 issue.state = 'closed'
                 await Database.get().issueRepository.save(issue)
@@ -79,6 +80,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
     async deleteComment(id: string): Promise<Comment> {
         const comment = await Database.get().commentRepository.findOneByOrFail({ id })
         comment.deleted = Date.now()
+        comment.updated = comment.deleted
         await Database.get().commentRepository.save(comment)
         return convertComment(comment)
     }

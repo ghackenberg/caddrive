@@ -5,11 +5,11 @@ export class TokenEntity {
     @PrimaryColumn({ nullable: false })
     id: string
     
-    @Column({ nullable: false})
+    @Column({ nullable: false })
     created: number
-    @Column({ nullable: true})
+    @Column({ nullable: false })
     updated: number
-    @Column({ nullable: true})
+    @Column({ nullable: true })
     deleted: number
 
     @Column({ nullable: false })

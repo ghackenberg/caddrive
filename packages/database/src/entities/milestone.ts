@@ -13,7 +13,7 @@ export class MilestoneEntity extends Milestone {
 
     @Column({ nullable: false })
     override created: number
-    @Column({ nullable: true })
+    @Column({ nullable: false })
     override updated: number
     @Column({ nullable: true })
     override deleted: number
