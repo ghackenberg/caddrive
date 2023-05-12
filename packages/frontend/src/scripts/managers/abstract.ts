@@ -137,7 +137,8 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     // ... private fields
 
     private findGetters: {[key: string]: () => Promise<T[]>} = {}
-    private findSelectors: {[key: string]: (item: T) => boolean} = {}
+    private findFilters: {[key: string]: (item: T) => boolean} = {}
+    private findOrders: {[key: string]: (a: T, b: T) => number} = {}
     private findPromises: {[key: string]: Promise<T[]>} = {}
     private findTimeouts: {[key: string]: NodeJS.Timeout} = {}
     private findTimestamps: {[key: string]: number} = {}
@@ -148,7 +149,8 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
 
     private clearFind() {
         this.findGetters = {}
-        this.findSelectors = {}
+        this.findFilters = {}
+        this.findOrders = {}
         this.findPromises = {}
         this.findTimeouts = {}
         this.findTimestamps = {}
@@ -156,9 +158,10 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         this.finds = {}
     }
 
-    private observeFindInternal(key: string, getter: () => Promise<T[]>, selector: (item: T) => boolean, observer: (items: T[]) => void) {
+    private observeFindInternal(key: string, getter: () => Promise<T[]>, filter: (item: T) => boolean, order: (a: T, b: T) => number, observer: (items: T[]) => void) {
         this.findGetters[key] = getter
-        this.findSelectors[key] = selector
+        this.findFilters[key] = filter
+        this.findOrders[key] = order
         if (!(key in this.findObservers)) {
             this.findObservers[key] = []
         }
@@ -210,7 +213,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
 
     private patchFindIndices(item: T) {
         for (const key of Object.keys(this.finds)) {
-            if (item.deleted === null && this.findSelectors[key](item)) {
+            if (item.deleted === null && this.findFilters[key](item)) {
                 this.finds[key][item.id] = true
             } else {
                 delete this.finds[key][item.id]
@@ -250,14 +253,14 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
 
     protected getFind(key: string) {
         if (key in this.finds) {
-            return Object.keys(this.finds[key]).map(id => this.getItem(id)).filter(t => t && t.deleted === null)
+            return Object.keys(this.finds[key]).map(id => this.getItem(id)).filter(t => t && t.deleted === null).sort(this.findOrders[key])
         } else {
             return undefined
         }
     }
 
-    protected find(key: string, reload: () => Promise<T[]>, include: (item: T) => boolean, callback: (items: T[], error?: string) => void) {
-        this.observeFindInternal(key, reload, include, callback)
+    protected find(key: string, reload: () => Promise<T[]>, filter: (item: T) => boolean, order: (a: T, b: T) => number, callback: (items: T[], error?: string) => void) {
+        this.observeFindInternal(key, reload, filter, order, callback)
         return () => { this.unobserveFindInternal(key, callback) }
     }
     

@@ -20,6 +20,7 @@ class UserManagerImpl extends AbstractManager<User> {
             `${query}-${product}`,
             () => UserClient.findUsers(query, product),
             () => false,
+            (a, b) => a.updated - b.updated,
             callback
         )
     }

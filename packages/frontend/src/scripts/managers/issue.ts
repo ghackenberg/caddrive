@@ -20,6 +20,7 @@ class IssueManagerImpl extends AbstractManager<Issue> {
             `${productId}-${milestoneId}-${state}`,
             () => IssueClient.findIssues(productId, milestoneId, state),
             issue => (!productId || issue.productId == productId) && (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state),
+            (a, b) => a.created - b.created,
             callback
         )
     }

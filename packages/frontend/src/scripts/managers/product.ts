@@ -20,6 +20,7 @@ class ProductManagerImpl extends AbstractManager<Product> {
             '',
             () => ProductClient.findProducts(),
             () => true,
+            (a, b) => a.updated - b.updated,
             callback
         )
     }

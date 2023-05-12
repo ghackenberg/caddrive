@@ -20,6 +20,7 @@ class CommentManagerImpl extends AbstractManager<Comment> {
             issueId,
             () => CommentClient.findComments(issueId),
             comment => comment.issueId == issueId,
+            (a, b) => a.created - b.created,
             callback
         )
     }
