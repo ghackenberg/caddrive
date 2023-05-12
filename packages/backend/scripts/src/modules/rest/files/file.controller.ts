@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, StreamableFile, UseGuards } from '@nestjs/common'
+import { Controller, Get, Header, Inject, Param, StreamableFile, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger'
 
@@ -20,6 +20,7 @@ export class FileController implements FileREST<StreamableFile> {
     ) {}
 
     @Get(':id')
+    @Header('Cache-Control', 'max-age=31536000')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: StreamableFile })
     async getFile(
