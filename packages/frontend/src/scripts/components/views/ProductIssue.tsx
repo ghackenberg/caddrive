@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, FormEvent, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -36,6 +36,10 @@ export const ProductIssueView = () => {
 
     const { productId } = useParams<{ productId: string }>()
 
+    // QUERIES
+
+    const state = new URLSearchParams(location.search).get('state') || 'open'
+
     // HOOKS
 
     const product = useProduct(productId)
@@ -45,7 +49,6 @@ export const ProductIssueView = () => {
     // STATES
     
     // - Interactions
-    const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
     const [active, setActive] = useState<string>('left')
 
@@ -75,16 +78,6 @@ export const ProductIssueView = () => {
         if (confirm('Do you really want to delete this issue?')) {
             await IssueManager.deleteIssue(issue.id)    
         }
-    }
-    
-    async function showClosedIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('closed')
-   
-    }
-    async function showOpenIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('open')
     }
 
     // CONSTANTS
@@ -145,12 +138,12 @@ export const ProductIssueView = () => {
                                         <strong>New</strong> issue (requires login)
                                     </a>
                                 )}
-                                <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                <NavLink to={`/products/${productId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Open</strong> issues (<IssueCount productId={productId} state={'open'}/>)
-                                </a>
-                                <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                </NavLink>
+                                <NavLink to={`/products/${productId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Closed</strong> issues (<IssueCount productId={productId} state={'closed'}/>)
-                                </a>
+                                </NavLink>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)}/>
                             </div>
                             <LegalFooter/>

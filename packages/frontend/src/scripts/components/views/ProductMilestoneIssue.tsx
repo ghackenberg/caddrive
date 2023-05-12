@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, FormEvent, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -38,6 +38,10 @@ export const ProductMilestoneIssueView = () => {
 
     const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
 
+    // QUERIES
+
+    const state = new URLSearchParams(location.search).get('state') || 'open'
+
     // HOOKS
 
     const product = useProduct(productId)
@@ -58,7 +62,6 @@ export const ProductMilestoneIssueView = () => {
     const [actual, setActualBurndown] = useState(initialActual)
 
     // - Interactions
-    const [state, setState] = useState('open')
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
@@ -80,16 +83,6 @@ export const ProductMilestoneIssueView = () => {
     }, [milestone, issues, comments])
 
     // FUNCTIONS
-
-    async function showClosedIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('closed')
-    }
-
-    async function showOpenIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('open')
-    }
 
     async function deleteIssue(event: React.UIEvent, issue: Issue) {
         // TODO handle unmount!
@@ -200,12 +193,12 @@ export const ProductMilestoneIssueView = () => {
                                         <strong>New</strong> issue (requires login)
                                     </a>
                                 )}
-                                <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Open</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
-                                </a>
-                                <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                </NavLink>
+                                <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Closed</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
-                                </a>
+                                </NavLink>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
                             </div>
                             <LegalFooter/>
