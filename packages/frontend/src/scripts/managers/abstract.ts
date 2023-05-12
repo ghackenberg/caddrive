@@ -34,7 +34,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     private itemPromises: {[id: string]: Promise<T>} = {}
     private itemTimeouts: {[id: string]: NodeJS.Timeout} = {}
     private itemTimestamps: {[id: string]: number} = {}
-    private itemObservers: {[id: string]: ((item: T) => void)[]} = {}
+    private itemObservers: {[id: string]: ((item: T, error: string) => void)[]} = {}
     private items: {[id: string]: T} = {}
 
     // ... private methods
@@ -48,14 +48,14 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         this.items = {}
     }
 
-    private observeItemInternal(id: string, getter: () => Promise<T>, observer: (item: T) => void) {
+    private observeItemInternal(id: string, getter: () => Promise<T>, observer: (item: T, error: string) => void) {
         this.itemGetters[id] = getter
         if (!(id in this.itemObservers)) {
             this.itemObservers[id] = []
         }
         this.itemObservers[id].push(observer)
         if (this.hasItem(id)) {
-            observer(this.getItem(id))
+            observer(this.getItem(id), undefined)
             if (!this.hasItemTimeout(id) && !this.hasItemPromise(id)) {
                 this.scheduleItem(id)
             }
@@ -98,10 +98,17 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     // ... protected methods
 
     protected async promiseItem(id: string, promise: Promise<T>) {
-        this.itemPromises[id] = promise
-        const item = this.resolveItem(await promise)
-        delete this.itemPromises[id]
-        return item
+        try {
+            this.itemPromises[id] = promise
+            const item = this.resolveItem(await promise)
+            delete this.itemPromises[id]
+            return item
+        } catch (e) {
+            for (const observer of this.itemObservers[id] || []) {
+                observer(undefined, `${e}`)
+            }
+            return undefined
+        }
     }
 
     protected resolveItem(item: T) {
@@ -112,9 +119,9 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
             this.items[item.id] = item
             for (const observer of this.itemObservers[item.id] || []) {
                 if (item.deleted === null) {
-                    observer(item)
+                    observer(item, undefined)
                 } else {
-                    observer(undefined)
+                    observer(undefined, undefined)
                 }
             }
             this.patchFindIndices(item)
@@ -142,7 +149,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     private findPromises: {[key: string]: Promise<T[]>} = {}
     private findTimeouts: {[key: string]: NodeJS.Timeout} = {}
     private findTimestamps: {[key: string]: number} = {}
-    private findObservers: {[key: string]: ((item: T[]) => void)[]} = {}
+    private findObservers: {[key: string]: ((item: T[], error: string) => void)[]} = {}
     private finds: {[key: string]: {[id: string]: boolean}} = {}
 
     // ... private methods
@@ -158,7 +165,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         this.finds = {}
     }
 
-    private observeFindInternal(key: string, getter: () => Promise<T[]>, filter: (item: T) => boolean, order: (a: T, b: T) => number, observer: (items: T[]) => void) {
+    private observeFindInternal(key: string, getter: () => Promise<T[]>, filter: (item: T) => boolean, order: (a: T, b: T) => number, observer: (items: T[], error: string) => void) {
         this.findGetters[key] = getter
         this.findFilters[key] = filter
         this.findOrders[key] = order
@@ -167,7 +174,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         }
         this.findObservers[key].push(observer)
         if (this.hasFind(key)) {
-            observer(this.getFind(key))
+            observer(this.getFind(key), undefined)
             if (!this.hasFindTimeout(key) && !this.hasFindPromise(key)) {
                 this.scheduleFind(key)
             }
@@ -176,7 +183,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         }
     }
 
-    private unobserveFindInternal(key: string, callback: (items: T[]) => void) {
+    private unobserveFindInternal(key: string, callback: (items: T[], error: string) => void) {
         this.findObservers[key].splice(this.findObservers[key].indexOf(callback), 1)
         if (this.findObservers[key].length == 0 && this.findTimeouts[key]) {
             clearTimeout(this.findTimeouts[key])
@@ -195,13 +202,20 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private async reloadFind(key: string) {
-        console.log('reload', `${this.type}s`, key)
-        delete this.findTimeouts[key]
-        const promise = this.findGetters[key]()
-        this.findPromises[key] = promise
-        const item = this.resolveFind(key, await promise)
-        delete this.findPromises[key]
-        return item
+        try {
+            console.log('reload', `${this.type}s`, key)
+            delete this.findTimeouts[key]
+            const promise = this.findGetters[key]()
+            this.findPromises[key] = promise
+            const item = this.resolveFind(key, await promise)
+            delete this.findPromises[key]
+            return item
+        } catch (e) {
+            for (const observer of this.findObservers[key] || []) {
+                observer(undefined, `${e}`)
+            }
+            return undefined
+        }
     }
 
     private scheduleFind(key: string) {
@@ -219,7 +233,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
                 delete this.finds[key][item.id]
             }
             for (const callback of this.findObservers[key]) {
-                callback(this.getFind(key))
+                callback(this.getFind(key), undefined)
             }
         }
     }
@@ -244,7 +258,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
                 this.finds[key][item.id] = true
             }
             for (const callback of this.findObservers[key]) {
-                callback(find)
+                callback(find, undefined)
             }
         }
         this.scheduleFind(key)
