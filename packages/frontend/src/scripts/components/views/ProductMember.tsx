@@ -90,16 +90,16 @@ export const ProductMemberView = () => {
                             <div>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green block-when-responsive'>
+                                        <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
                                             <strong>New</strong> member
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
                                             <strong>New</strong> member (requires role)
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
                                         <strong>New</strong> member (requires login)
                                     </a>
                                 )}

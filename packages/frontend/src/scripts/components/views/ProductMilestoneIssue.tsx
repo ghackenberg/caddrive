@@ -149,7 +149,7 @@ export const ProductMilestoneIssueView = () => {
                 <>
                     <main className= {`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>

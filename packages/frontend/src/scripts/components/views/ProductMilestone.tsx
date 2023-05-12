@@ -101,7 +101,7 @@ export const ProductMilestoneView = () => {
                 <>
                     <main className={`view product-milestone sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
@@ -117,6 +117,8 @@ export const ProductMilestoneView = () => {
                                         <strong>New</strong> milestone (requires login)
                                     </a>
                                 )}
+                            </div>
+                            <div className='main'>
                                 <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.id}/issues`)}/>
                             </div>
                             <LegalFooter/>

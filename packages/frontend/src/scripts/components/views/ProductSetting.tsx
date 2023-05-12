@@ -99,7 +99,7 @@ export const ProductSettingView = () => {
                 <>
                     <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 <h1>{productId == 'new' ? 'New product' : 'Product settings'}</h1>
                                 <form onSubmit={submit}>
                                     <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>

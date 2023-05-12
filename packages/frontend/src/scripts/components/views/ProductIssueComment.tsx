@@ -182,7 +182,7 @@ export const ProductIssueCommentView = () => {
                 <>
                     <main className={`view product-issue-comment sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>

@@ -36,7 +36,7 @@ export const UserView = () => {
         users ? (
             <main className="view user">
                 <div>
-                    <div>
+                    <div className='main'>
                         <Table columns={columns} items={users}/>
                     </div>
                     <LegalFooter/>

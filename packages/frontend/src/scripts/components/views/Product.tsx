@@ -96,7 +96,7 @@ export const ProductView = () => {
         products ? (
             <main className="view product">
                 <div>
-                    <div>
+                    <div className='header'>
                         {contextUser ? (
                             <Link to={`/products/new/settings?public=${_public}`} className='button fill green block-when-responsive'>
                                 <strong>New</strong> product
@@ -112,6 +112,8 @@ export const ProductView = () => {
                         <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
                             <strong>Private</strong> products (<ProductCount public='false'/>)
                         </NavLink>
+                    </div>
+                    <div className='main'>
                         <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
                     </div>
                     <LegalFooter/>

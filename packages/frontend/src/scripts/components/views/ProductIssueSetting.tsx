@@ -195,7 +195,7 @@ export const ProductIssueSettingView = () => {
                 <>
                     <main className={`view product-issue-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 <h1>{issueId == 'new' ? 'New issue' : 'Issue settings'}</h1>
                                 <form onSubmit={submitIssue} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>

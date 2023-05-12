@@ -42,7 +42,7 @@ export const AuthEmailView = () => {
     return (
         <main className="view auth email">
             <div>
-                <div>
+                <div className='main'>
                     <div>
                         <img src={AuthIcon}/>
                         <h5>Authentication process</h5>

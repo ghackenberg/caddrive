@@ -117,7 +117,7 @@ export const ProductMilestoneSettingView = () => {
                 <>
                     <main className={`view product-milestone-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 <h1>{milestoneId == 'new' ? 'New milestone' : 'Milestone settings'}</h1>
                                 <form onSubmit={submitMilestone} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>

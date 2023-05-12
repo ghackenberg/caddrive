@@ -6,7 +6,7 @@ export const LegalImprintView = () => {
     return (
         <main className="view legal imprint">
             <div>
-                <div>
+                <div className='main'>
                     <h1>Imprint</h1>
                     <h2>Persons</h2>
                     <h3>Project coordinator</h3>

@@ -113,7 +113,7 @@ export const AuthCodeView = () => {
     return (
         <main className="view auth code">
             <div>
-                <div>
+                <div className='main'>
                     <div>
                         <img src={AuthIcon}/>
                         <h5>Authentication process</h5>

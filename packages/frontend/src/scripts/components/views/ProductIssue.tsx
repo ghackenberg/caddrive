@@ -122,7 +122,7 @@ export const ProductIssueView = () => {
                 <>
                     <main className={`view product-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
@@ -144,6 +144,8 @@ export const ProductIssueView = () => {
                                 <NavLink to={`/products/${productId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Closed</strong> issues (<IssueCount productId={productId} state={'closed'}/>)
                                 </NavLink>
+                            </div>
+                            <div className='main'>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)}/>
                             </div>
                             <LegalFooter/>
