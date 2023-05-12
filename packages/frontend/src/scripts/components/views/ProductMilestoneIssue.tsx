@@ -160,16 +160,16 @@ export const ProductMilestoneIssueView = () => {
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
-                                            Edit milestone
+                                            <strong>Edit</strong> milestone
                                         </NavLink>
                                     ) : (
                                         <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                            Edit milestone (requires role)
+                                            <strong>Edit</strong> milestone (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                        Edit milestone (requires login)
+                                        <strong>Edit</strong> milestone (requires login)
                                     </a>
                                 )}
                                 <h1>
@@ -188,23 +188,23 @@ export const ProductMilestoneIssueView = () => {
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
-                                            New issue
+                                            <strong>New</strong> issue
                                         </NavLink>
                                     ) : (
                                         <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                            New issue (requires role)
+                                            <strong>New</strong> issue (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New issue (requires login)
+                                        <strong>New</strong> issue (requires login)
                                     </a>
                                 )}
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
+                                    <strong>Open</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
                                 </a>
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
+                                    <strong>Closed</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
                                 </a>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
                             </div>

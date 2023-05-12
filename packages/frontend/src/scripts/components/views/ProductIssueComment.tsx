@@ -186,16 +186,16 @@ export const ProductIssueCommentView = () => {
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
-                                            Edit issue
+                                            <strong>Edit</strong> issue
                                         </NavLink>
                                     ) : (
                                         <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
-                                            Edit issue (requires role)
+                                            <strong>Edit</strong> issue (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
-                                        Edit issue (requires login)
+                                        <strong>Edit</strong> issue (requires login)
                                     </a>
                                 )}
                                 <h1>

@@ -99,18 +99,18 @@ export const ProductView = () => {
                     <div>
                         {contextUser ? (
                             <Link to={`/products/new/settings?public=${_public}`} className='button fill green'>
-                                New product
+                                <strong>New</strong> product
                             </Link>
                         ) : (
                             <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                New product (requires login)
+                                <strong>New</strong> product (requires login)
                             </a>
                         )}
                         <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
-                            Public products (<ProductCount public='true'/>)
+                            <strong>Public</strong> products (<ProductCount public='true'/>)
                         </NavLink>
                         <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
-                            Private products (<ProductCount public='false'/>)
+                            <strong>Private</strong> products (<ProductCount public='false'/>)
                         </NavLink>
                         <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
                     </div>

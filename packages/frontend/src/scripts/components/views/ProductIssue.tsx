@@ -133,23 +133,23 @@ export const ProductIssueView = () => {
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
-                                            New issue
+                                            <strong>New</strong> issue
                                         </NavLink>
                                     ) : (
                                         <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                            New issue (requires role)
+                                            <strong>New</strong> issue (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New issue (requires login)
+                                        <strong>New</strong> issue (requires login)
                                     </a>
                                 )}
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues (<IssueCount productId={productId} state={'open'}/>)
+                                    <strong>Open</strong> issues (<IssueCount productId={productId} state={'open'}/>)
                                 </a>
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues (<IssueCount productId={productId} state={'closed'}/>)
+                                    <strong>Closed</strong> issues (<IssueCount productId={productId} state={'closed'}/>)
                                 </a>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)}/>
                             </div>

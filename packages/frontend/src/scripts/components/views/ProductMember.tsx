@@ -91,16 +91,16 @@ export const ProductMemberView = () => {
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
-                                            New member
+                                            <strong>New</strong> member
                                         </NavLink>
                                     ) : (
                                         <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New member (requires role)
+                                            <strong>New</strong> member (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New member (requires login)
+                                        <strong>New</strong> member (requires login)
                                     </a>
                                 )}
                                 <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)}/>
