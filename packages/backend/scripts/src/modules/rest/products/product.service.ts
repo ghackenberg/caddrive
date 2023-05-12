@@ -17,15 +17,25 @@ export class ProductService implements ProductREST {
         private readonly request: AuthorizedRequest
     ) {}
     
-    async findProducts() : Promise<Product[]> {
+    async findProducts(_public: 'true' | 'false') : Promise<Product[]> {
         let where: FindOptionsWhere<ProductEntity> | FindOptionsWhere<ProductEntity>[]
         if (this.request.user)
-            where = [
-                { members: [ { userId: this.request.user.id, deleted: IsNull() } ], deleted: IsNull() },
-                { public: true, deleted: IsNull() }
-            ]
+            if (_public == 'true')
+                where = { public: true, deleted: IsNull() }
+            else if (_public == 'false')
+                where = { public: false, members: [ { userId: this.request.user.id, deleted: IsNull() } ], deleted: IsNull() }
+            else
+                where = [
+                    { public: true, deleted: IsNull() },
+                    { public: false, members: [ { userId: this.request.user.id, deleted: IsNull() } ], deleted: IsNull() }
+                ]
         else
-            where = { public: true, deleted: IsNull() }
+            if (_public == 'true')
+                where = { public: true, deleted: IsNull() }
+            else if (_public == 'false')
+                return []
+            else
+                where = { public: true, deleted: IsNull() }
         const result: Product[] = []
         for (const product of await Database.get().productRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
             result.push(convertProduct(product))

@@ -6,8 +6,8 @@ import { AbstractManager } from './abstract'
 class ProductManagerImpl extends AbstractManager<Product> {
     // CACHE
 
-    findProductsFromCache() {
-        return this.getFind('')
+    findProductsFromCache(_public: 'true' | 'false') {
+        return this.getFind(`${_public}`)
     }
     getProductFromCache(productId: string) { 
         return this.getItem(productId)
@@ -15,11 +15,11 @@ class ProductManagerImpl extends AbstractManager<Product> {
 
     // REST
     
-    findProducts(callback: (products: Product[], error?: string) => void) {
+    findProducts(_public: 'true' | 'false', callback: (products: Product[], error?: string) => void) {
         return this.find(
-            '',
-            () => ProductClient.findProducts(),
-            () => true,
+            `${_public}`,
+            () => ProductClient.findProducts(_public),
+            product => _public === undefined || product.public == (_public == 'true'),
             (a, b) => a.updated - b.updated,
             callback
         )

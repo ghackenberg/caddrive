@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
@@ -9,6 +9,7 @@ import { VersionContext } from '../../contexts/Version'
 import { useAsyncHistory } from '../../hooks/history'
 import { useProducts } from '../../hooks/list'
 import { ProductManager } from '../../managers/product'
+import { ProductCount } from '../counts/Products'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductImageWidget } from '../widgets/ProductImage'
@@ -29,9 +30,13 @@ export const ProductView = () => {
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
+    // QUERIES
+
+    const _public = new URLSearchParams(location.search).get('public') == 'false' ? 'false' : 'true'
+
     // HOOKS
 
-    const products = useProducts()
+    const products = useProducts(_public)
 
     // EFFECTS
 
@@ -93,7 +98,7 @@ export const ProductView = () => {
                 <div>
                     <div>
                         {contextUser ? (
-                            <Link to='/products/new/settings' className='button fill green'>
+                            <Link to={`/products/new/settings?public=${_public}`} className='button fill green'>
                                 New product
                             </Link>
                         ) : (
@@ -101,6 +106,12 @@ export const ProductView = () => {
                                 New product (requires login)
                             </a>
                         )}
+                        <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
+                            Public products (<ProductCount public='true'/>)
+                        </NavLink>
+                        <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
+                            Private products (<ProductCount public='false'/>)
+                        </NavLink>
                         <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
                     </div>
                     <LegalFooter/>
