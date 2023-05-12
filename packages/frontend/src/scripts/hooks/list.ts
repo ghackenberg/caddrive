@@ -40,11 +40,11 @@ export function useUsers(query?: string, productId?: string) {
     )
 }
 
-export function useProducts() {
+export function useProducts(_public?: 'true' | 'false') {
     return useEntities(
-        '',
-        () => ProductManager.findProductsFromCache(),
-        callback => ProductManager.findProducts(callback)
+        `${_public}`,
+        () => ProductManager.findProductsFromCache(_public),
+        callback => ProductManager.findProducts(_public, callback)
     )
 }
 

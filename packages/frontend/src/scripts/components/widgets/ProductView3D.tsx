@@ -113,7 +113,7 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     
     return (
         <div className="widget product_view_3d">
-            {props.productId != 'new' && (!versions || !contextVersion) ? (
+            { props.productId != 'new' && (!versions || (versions.length > 0 && !contextVersion)) ? (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             ) : (
                 props.productId != 'new' && versions.length > 0 ? (

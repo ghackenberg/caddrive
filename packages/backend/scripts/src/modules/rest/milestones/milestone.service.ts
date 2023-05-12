@@ -30,8 +30,9 @@ export class MilestoneService implements MilestoneREST {
     async addMilestone(data: MilestoneAddData): Promise<Milestone> {
         const id = shortid()
         const created = Date.now()
+        const updated = created
         const userId = this.request.user.id
-        const milestone = await Database.get().milestoneRepository.save({ id, created, userId, ...data })
+        const milestone = await Database.get().milestoneRepository.save({ id, created, updated, userId, ...data })
         return convertMilestone(milestone)
     }
 
@@ -52,8 +53,9 @@ export class MilestoneService implements MilestoneREST {
 
     async deleteMilestone(id: string): Promise<Milestone> {
         const milestone = await Database.get().milestoneRepository.findOneByOrFail({ id })
-        await Database.get().issueRepository.update({ milestoneId: milestone.id }, { milestoneId: null })
         milestone.deleted = Date.now()
+        milestone.updated = milestone.deleted
+        await Database.get().issueRepository.update({ milestoneId: milestone.id }, { updated: milestone.updated, milestoneId: null })
         await Database.get().milestoneRepository.save(milestone)
         return convertMilestone(milestone)
     }

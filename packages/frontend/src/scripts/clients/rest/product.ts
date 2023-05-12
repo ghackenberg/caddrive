@@ -5,8 +5,8 @@ import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'product
 import { auth } from '../auth'
 
 class ProductClientImpl implements ProductREST {
-    async findProducts(): Promise<Product[]> {
-        return (await axios.get<Product[]>(`/rest/products`, { ...auth })).data
+    async findProducts(_public?: 'true' | 'false'): Promise<Product[]> {
+        return (await axios.get<Product[]>(`/rest/products`, { params: { public: _public }, ...auth })).data
     }
     async addProduct(data: ProductAddData): Promise<Product> {
         return (await axios.post<Product>('/rest/products', data, { ...auth })).data

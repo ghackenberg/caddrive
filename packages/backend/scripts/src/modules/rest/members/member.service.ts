@@ -27,7 +27,8 @@ export class MemberService implements MemberREST {
         const user = await Database.get().userRepository.findOneByOrFail({ id: data.userId })
         const id = shortid()
         const created = Date.now()
-        const member = await Database.get().memberRepository.save({ id, created, product, user, ...data })
+        const updated = created
+        const member = await Database.get().memberRepository.save({ id, created, updated, product, user, ...data })
         return convertMember(member)
     }
 
@@ -47,6 +48,7 @@ export class MemberService implements MemberREST {
     async deleteMember(id: string): Promise<Member> {
         const member = await Database.get().memberRepository.findOneByOrFail({ id })
         member.deleted = Date.now()
+        member.updated = member.deleted
         await Database.get().memberRepository.save(member)
         return convertMember(member)
     }

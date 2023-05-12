@@ -6,7 +6,7 @@ export const LegalPrivacyView = () => {
     return (
         <main className="view legal privacy">
             <div>
-                <div>
+                <div className='main'>
                     <h1>
                         Privacy
                     </h1>

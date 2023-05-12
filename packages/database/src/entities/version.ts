@@ -12,7 +12,7 @@ export class VersionEntity extends Version {
 
     @Column({ nullable: false })
     override created: number
-    @Column({ nullable: true })
+    @Column({ nullable: false, default: 0 })
     override updated: number
     @Column({ nullable: true })
     override deleted: number

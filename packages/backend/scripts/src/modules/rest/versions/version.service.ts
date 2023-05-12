@@ -39,10 +39,11 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
         const id = shortid()
         const created = Date.now()
+        const updated = created
         const userId = this.request.user.id
         const modelType = await this.processModel(id, null, files)
         const imageType = await this.processImage(id, null, files)
-        const version = await Database.get().versionRepository.save({ id, created, userId, modelType, imageType, ...data })
+        const version = await Database.get().versionRepository.save({ id, created, updated, userId, modelType, imageType, ...data })
         return convertVersion(version)
     }
 
@@ -67,6 +68,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     async deleteVersion(id: string): Promise<Version> {
         const version = await Database.get().versionRepository.findOneByOrFail({ id })
         version.deleted = Date.now()
+        version.updated = version.deleted
         await Database.get().versionRepository.save(version)
         return convertVersion(version)
     }

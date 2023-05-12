@@ -74,7 +74,7 @@ export const UserSettingView = () => {
             ) : (
                 <main className="view user-setting">
                     <div>
-                        <div>
+                        <div className='main'>
                             <h1>{userId == 'new' ? 'New user' : 'User settings'}</h1>
                             <form onSubmit={onSubmit}>
                                 <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>

@@ -1,5 +1,5 @@
 import  * as React from 'react'
-import { useState, useEffect, FormEvent, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -22,6 +22,7 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
+import IssueIcon from '/src/images/issue.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
@@ -37,6 +38,10 @@ export const ProductMilestoneIssueView = () => {
     // PARAMS
 
     const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
+
+    // QUERIES
+
+    const state = new URLSearchParams(location.search).get('state') || 'open'
 
     // HOOKS
 
@@ -58,7 +63,6 @@ export const ProductMilestoneIssueView = () => {
     const [actual, setActualBurndown] = useState(initialActual)
 
     // - Interactions
-    const [state, setState] = useState('open')
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
@@ -80,16 +84,6 @@ export const ProductMilestoneIssueView = () => {
     }, [milestone, issues, comments])
 
     // FUNCTIONS
-
-    async function showClosedIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('closed')
-    }
-
-    async function showOpenIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('open')
-    }
 
     async function deleteIssue(event: React.UIEvent, issue: Issue) {
         // TODO handle unmount!
@@ -156,20 +150,20 @@ export const ProductMilestoneIssueView = () => {
                 <>
                     <main className= {`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
-                                            Edit milestone
+                                            <strong>Edit</strong> milestone
                                         </NavLink>
                                     ) : (
                                         <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                            Edit milestone (requires role)
+                                            <strong>Edit</strong> milestone (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                        Edit milestone (requires login)
+                                        <strong>Edit</strong> milestone (requires login)
                                     </a>
                                 )}
                                 <h1>
@@ -188,26 +182,37 @@ export const ProductMilestoneIssueView = () => {
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
-                                            New issue
+                                            <strong>New</strong> issue
                                         </NavLink>
                                     ) : (
                                         <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                            New issue (requires role)
+                                            <strong>New</strong> issue (requires role)
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New issue (requires login)
+                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                        <strong>New</strong> issue (requires login)
                                     </a>
                                 )}
-                                <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
-                                </a>
-                                <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
-                                </a>
-                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
+                                <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                    <strong>Open</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
+                                </NavLink>
+                                <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                    <strong>Closed</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
+                                </NavLink>
                             </div>
+                            { issues.filter(issue => issue.state == state).length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={IssueIcon}/>
+                                        <p>No <strong>{state}</strong> issue found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
+                                </div>
+                            ) }
                             <LegalFooter/>
                         </div>
                         <div>

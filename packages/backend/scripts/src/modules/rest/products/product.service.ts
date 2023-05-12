@@ -17,17 +17,27 @@ export class ProductService implements ProductREST {
         private readonly request: AuthorizedRequest
     ) {}
     
-    async findProducts() : Promise<Product[]> {
+    async findProducts(_public: 'true' | 'false') : Promise<Product[]> {
         let where: FindOptionsWhere<ProductEntity> | FindOptionsWhere<ProductEntity>[]
         if (this.request.user)
-            where = [
-                { members: [ { userId: this.request.user.id, deleted: IsNull() } ], deleted: IsNull() },
-                { public: true, deleted: IsNull() }
-            ]
+            if (_public == 'true')
+                where = { public: true, deleted: IsNull() }
+            else if (_public == 'false')
+                where = { public: false, members: [ { userId: this.request.user.id, deleted: IsNull() } ], deleted: IsNull() }
+            else
+                where = [
+                    { public: true, deleted: IsNull() },
+                    { public: false, members: [ { userId: this.request.user.id, deleted: IsNull() } ], deleted: IsNull() }
+                ]
         else
-            where = { public: true, deleted: IsNull() }
+            if (_public == 'true')
+                where = { public: true, deleted: IsNull() }
+            else if (_public == 'false')
+                return []
+            else
+                where = { public: true, deleted: IsNull() }
         const result: Product[] = []
-        for (const product of await Database.get().productRepository.find({ where }))
+        for (const product of await Database.get().productRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
             result.push(convertProduct(product))
         return result
     }
@@ -36,12 +46,13 @@ export class ProductService implements ProductREST {
         // Create product
         const productId = shortid()
         const created = Date.now()
+        const updated = created
         const userId = this.request.user.id
-        const product = await Database.get().productRepository.save({ id: productId, created, userId, ...data })
+        const product = await Database.get().productRepository.save({ id: productId, created, updated, userId, ...data })
         // Create member
         const memberId = shortid()
         const role = 'manager'
-        await Database.get().memberRepository.save({ id: memberId, created, productId, userId, role })
+        await Database.get().memberRepository.save({ id: memberId, created, updated, productId, userId, role })
         // Return product
         return convertProduct(product)
     }
@@ -63,11 +74,13 @@ export class ProductService implements ProductREST {
 
     async deleteProduct(id: string): Promise<Product> {
         const product = await Database.get().productRepository.findOneByOrFail({ id })
-        await Database.get().memberRepository.update({ productId: product.id }, { deleted: Date.now() })
-        await Database.get().versionRepository.update({ productId: product.id }, { deleted: Date.now() })
-        await Database.get().milestoneRepository.update({ productId: product.id }, { deleted: Date.now() })
-        await Database.get().issueRepository.update({ productId: product.id }, { deleted: Date.now() })
         product.deleted = Date.now()
+        product.updated = product.deleted
+        await Database.get().memberRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
+        await Database.get().versionRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
+        await Database.get().milestoneRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
+        await Database.get().issueRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
+        await Database.get().commentRepository.update({ issue: { productId: product.id } }, { deleted: product.deleted, updated: product.updated })
         await Database.get().productRepository.save(product)
         return convertProduct(product)
     }

@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common"
+import { Controller, Get, Header } from "@nestjs/common"
 
 import { JWK } from "jose"
 
@@ -13,6 +13,7 @@ export class KeyController implements KeyREST {
     ) {}
 
     @Get()
+    @Header('Cache-Control', 'max-age=31536000')
     async getPublicJWK(): Promise<JWK> {
         return this.keyService.getPublicJWK()
     }

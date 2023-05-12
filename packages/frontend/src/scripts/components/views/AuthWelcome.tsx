@@ -29,7 +29,7 @@ export const AuthWelcomeView = () => {
         authContextUser ? (
             <main className='view auth welcome'>
                 <div>
-                    <div>
+                    <div className='main center'>
                         <div>
                             <img src={AuthIcon}/>
                             <h5>Authentication process</h5>

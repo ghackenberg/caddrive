@@ -19,7 +19,7 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductSettingView = () => {
 
-    const { replace } = useAsyncHistory()
+    const { goBack, replace, push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -28,6 +28,10 @@ export const ProductSettingView = () => {
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
+
+    // QUERIES
+
+    const _initialPublic = new URLSearchParams(location.search).get('public') == 'false' ? 'false' : 'true'
 
     // HOOKS
 
@@ -38,7 +42,7 @@ export const ProductSettingView = () => {
 
     const initialName = product ? product.name : ''
     const initialDescription = product ? product.description : ''
-    const initialPublic = product ? product.public : false
+    const initialPublic = product ? product.public : _initialPublic == 'true'
 
     // STATES
 
@@ -63,13 +67,17 @@ export const ProductSettingView = () => {
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductManager.addProduct({ name, description, public: _public})
-                replace(`/products/${product.id}`)
+                const product = await ProductManager.addProduct({ name, description, public: _public })
+                await goBack()
+                await replace(`/products?public=${_public}`)
+                await push(`/products/${product.id}`)
             }
         } else {
             if (name && description) {
                 await ProductManager.updateProduct(product.id, { name, description, public: _public })
-                await replace(`/products/${product.id}`)
+                await goBack()
+                await replace(`/products?public=${_public}`)
+                await push(`/products/${product.id}`)
             }
         }
     }
@@ -91,7 +99,7 @@ export const ProductSettingView = () => {
                 <>
                     <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 <h1>{productId == 'new' ? 'New product' : 'Product settings'}</h1>
                                 <form onSubmit={submit}>
                                     <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>

@@ -152,7 +152,7 @@ export const ProductMemberSettingView = () => {
                 <>
                     <main className={`view product-member-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 <h1>{memberId == 'new' ? 'New member' : 'Member settings'}</h1>
                                 <form onSubmit={onSubmit}>
                                     {user ? (

@@ -42,15 +42,16 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const id = shortid()
         const created = Date.now()
+        const updated = created
         const userId = this.request.user.id
         const state = 'open'
         let issue: IssueEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             const audioId = shortid()
-            issue = await Database.get().issueRepository.save({ id, created, userId, audioId, state, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, updated, userId, audioId, state, ...data })
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         } else {
-            issue = await Database.get().issueRepository.save({ id, created, userId, state, ...data })
+            issue = await Database.get().issueRepository.save({ id, created, updated, userId, state, ...data })
         }
         return convertIssue(issue)
     }
@@ -76,8 +77,9 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
 
     async deleteIssue(id: string): Promise<Issue> {
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
-        await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: Date.now() })
         issue.deleted = Date.now()
+        issue.updated = issue.deleted
+        await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: issue.deleted, updated: issue.updated })
         await Database.get().issueRepository.save(issue)
         return convertIssue(issue)
     }

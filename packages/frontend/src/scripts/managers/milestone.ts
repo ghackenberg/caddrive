@@ -20,6 +20,7 @@ class MilestoneManagerImpl extends AbstractManager<Milestone> {
             productId,
             () => MilestoneClient.findMilestones(productId),
             milestone => milestone.productId == productId,
+            (a, b) => a.created - b.created,
             callback
         )
     }

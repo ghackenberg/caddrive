@@ -19,6 +19,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
+import MilestoneIcon from '/src/images/milestone.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
@@ -101,24 +102,35 @@ export const ProductMilestoneView = () => {
                 <>
                     <main className={`view product-milestone sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
-                                            New milestone
+                                            <strong>New</strong> milestone
                                         </NavLink>
                                     ) : (
                                         <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New milestone (requires role)
+                                            <strong>New</strong> milestone (requires role)
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New milestone (requires login)
+                                        <strong>New</strong> milestone (requires login)
                                     </a>
                                 )}
-                                <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.id}/issues`)}/>
                             </div>
+                            { milestones.length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={MilestoneIcon}/>
+                                        <p>No milestones found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.id}/issues`)}/>
+                                </div>
+                            ) }
                             <LegalFooter/>
                         </div>
                         <div>

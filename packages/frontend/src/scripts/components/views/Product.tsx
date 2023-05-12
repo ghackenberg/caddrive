@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
@@ -9,6 +9,7 @@ import { VersionContext } from '../../contexts/Version'
 import { useAsyncHistory } from '../../hooks/history'
 import { useProducts } from '../../hooks/list'
 import { ProductManager } from '../../managers/product'
+import { ProductCount } from '../counts/Products'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductImageWidget } from '../widgets/ProductImage'
@@ -18,6 +19,7 @@ import { IssueCount } from '../counts/Issues'
 import { VersionCount } from '../counts/Versions'
 import { LoadingView } from './Loading'
 
+import ProductIcon from '/src/images/product.png'
 import DeleteIcon from '/src/images/delete.png'
 
 export const ProductView = () => {
@@ -29,9 +31,13 @@ export const ProductView = () => {
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
+    // QUERIES
+
+    const _public = new URLSearchParams(location.search).get('public') == 'false' ? 'false' : 'true'
+
     // HOOKS
 
-    const products = useProducts()
+    const products = useProducts(_public)
 
     // EFFECTS
 
@@ -91,18 +97,35 @@ export const ProductView = () => {
         products ? (
             <main className="view product">
                 <div>
-                    <div>
+                    <div className='header'>
                         {contextUser ? (
-                            <Link to='/products/new/settings' className='button fill green'>
-                                New product
+                            <Link to={`/products/new/settings?public=${_public}`} className='button fill green block-when-responsive'>
+                                <strong>New</strong> product
                             </Link>
                         ) : (
-                            <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                New product (requires login)
+                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                <strong>New</strong> product (requires login)
                             </a>
                         )}
-                        <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
+                        <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
+                            <strong>Public</strong> products (<ProductCount public='true'/>)
+                        </NavLink>
+                        <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
+                            <strong>Private</strong> products (<ProductCount public='false'/>)
+                        </NavLink>
                     </div>
+                    { products.length == 0 ? (
+                        <div className='main center'>
+                            <div>
+                                <img src={ProductIcon}/>
+                                <p>No <strong>{_public == 'true' ? 'public' : 'private'}</strong> products found.</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className='main'>
+                            <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
+                        </div>
+                    ) }
                     <LegalFooter/>
                 </div>
             </main>

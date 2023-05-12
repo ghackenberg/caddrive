@@ -177,7 +177,7 @@ export const ProductVersionSettingView = () => {
                 <>
                     <main className= {`view sidebar product-version-setting ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='main'>
                                 <h1>{versionId == 'new' ? 'New version' : 'Version settings'}</h1>
                                 <form onSubmit={onSubmit}>
                                     <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>

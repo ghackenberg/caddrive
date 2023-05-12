@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBody, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger'
 
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 
@@ -20,9 +20,12 @@ export class ProductController implements ProductREST {
     ) {}
 
     @Get()
+    @ApiQuery({ name: 'public', type: 'boolean', required: false })
     @ApiResponse({ type: [Product] })
-    async findProducts(): Promise<Product[]> {
-        return this.productService.findProducts()
+    async findProducts(
+        @Query('public') _public: 'true' | 'false'
+    ): Promise<Product[]> {
+        return this.productService.findProducts(_public)
     }
 
     @Post()
