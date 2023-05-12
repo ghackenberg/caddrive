@@ -22,6 +22,7 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
+import IssueIcon from '/src/images/issue.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
@@ -149,7 +150,7 @@ export const ProductMilestoneIssueView = () => {
                 <>
                     <main className= {`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div className='main'>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
@@ -199,8 +200,19 @@ export const ProductMilestoneIssueView = () => {
                                 <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Closed</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
                                 </NavLink>
-                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
                             </div>
+                            { issues.filter(issue => issue.state == state).length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={IssueIcon}/>
+                                        <p>No <strong>{state}</strong> issue found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
+                                </div>
+                            ) }
                             <LegalFooter/>
                         </div>
                         <div>

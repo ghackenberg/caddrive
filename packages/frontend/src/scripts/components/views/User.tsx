@@ -9,6 +9,8 @@ import { Column, Table } from '../widgets/Table'
 import { UserPictureWidget } from '../widgets/UserPicture'
 import { LoadingView } from './Loading'
 
+import UserIcon from '/src/images/user.png'
+
 export const UserView = () => {
 
     // HOOKS
@@ -36,9 +38,18 @@ export const UserView = () => {
         users ? (
             <main className="view user">
                 <div>
-                    <div className='main'>
-                        <Table columns={columns} items={users}/>
-                    </div>
+                    { users.length == 0 ? (
+                        <div className='main center'>
+                            <div>
+                                <img src={UserIcon}/>
+                                <p>No user found.</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className='main'>
+                            <Table columns={columns} items={users}/>
+                        </div>
+                    ) }
                     <LegalFooter/>
                 </div>
             </main>

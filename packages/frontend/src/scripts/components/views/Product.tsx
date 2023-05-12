@@ -19,6 +19,7 @@ import { IssueCount } from '../counts/Issues'
 import { VersionCount } from '../counts/Versions'
 import { LoadingView } from './Loading'
 
+import ProductIcon from '/src/images/product.png'
 import DeleteIcon from '/src/images/delete.png'
 
 export const ProductView = () => {
@@ -113,9 +114,18 @@ export const ProductView = () => {
                             <strong>Private</strong> products (<ProductCount public='false'/>)
                         </NavLink>
                     </div>
-                    <div className='main'>
-                        <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
-                    </div>
+                    { products.length == 0 ? (
+                        <div className='main center'>
+                            <div>
+                                <img src={ProductIcon}/>
+                                <p>No <strong>{_public == 'true' ? 'public' : 'private'}</strong> products found.</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className='main'>
+                            <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
+                        </div>
+                    ) }
                     <LegalFooter/>
                 </div>
             </main>

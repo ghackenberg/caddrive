@@ -20,6 +20,7 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
+import IssueIcon from '/src/images/issue.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
@@ -145,9 +146,18 @@ export const ProductIssueView = () => {
                                     <strong>Closed</strong> issues (<IssueCount productId={productId} state={'closed'}/>)
                                 </NavLink>
                             </div>
-                            <div className='main'>
-                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)}/>
-                            </div>
+                            { issues.filter(issue => issue.state == state).length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={IssueIcon}/>
+                                        <p>No <strong>{state}</strong> issues found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)}/>
+                                </div>
+                            ) }
                             <LegalFooter/>
                         </div>
                         <div>

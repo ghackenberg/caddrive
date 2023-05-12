@@ -51,6 +51,35 @@ main.view > div:nth-child(1) > div.main {
     flex: 1;
 }
 
+main.view > div:nth-child(1) > div.main.center {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+}
+main.view > div:nth-child(1) > div.main.center > div {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-items: center;
+
+    align-items: center;
+
+    text-align: center;
+}
+main.view > div:nth-child(1) > div.main.center > div > img {
+    display: block;
+
+    margin: 1em;
+
+    width: 5em;
+    height: 5em;
+}
+
 main.view > div:nth-child(1) > div.footer {
     flex: 0;
 

@@ -19,8 +19,8 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
 import LoadIcon from '/src/images/load.png'
-import LeftIcon from '/src/images/version.png'
-import RightIcon from '/src/images/part.png'
+import VersionIcon from '/src/images/version.png'
+import PartIcon from '/src/images/part.png'
 
 export const ProductVersionView = () => {
 
@@ -78,8 +78,8 @@ export const ProductVersionView = () => {
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Tree view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { name: 'left', text: 'Tree view', image: VersionIcon },
+        { name: 'right', text: 'Model view', image: PartIcon }
     ]
 
     // RETURN
@@ -109,10 +109,17 @@ export const ProductVersionView = () => {
                                     </a>
                                 )}
                             </div>
-                            <div className='main'>
-                                {versions.length > 0 ? (
+                            { versions.length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={VersionIcon}/>
+                                        <p>No version found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
                                     <div className="widget version_tree">
-                                        {versions.map(version => version).reverse().map((vers, index) => (
+                                        { versions.map(version => version).reverse().map((vers, index) => (
                                             <Fragment key={vers.id}>
                                                 {index > 0 && (
                                                     <div className="between">
@@ -177,10 +184,8 @@ export const ProductVersionView = () => {
                                             </Fragment>
                                         ))}
                                     </div>
-                                ) : (
-                                    <p>No versions yet 😉</p>
-                                )}
-                            </div>
+                                </div>
+                            )}
                             <LegalFooter/>
                         </div>
                         <div>
