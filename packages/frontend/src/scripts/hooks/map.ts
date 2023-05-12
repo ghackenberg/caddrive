@@ -13,26 +13,32 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
 
     const issues = useIssues(productId, milestoneId)
 
-    const initialComments: {[issueId: string]: Comment[]} = {}
+    const initialIssuesComments: {[issueId: string]: Comment[]} = {}
     for (const issue of issues || []) {
         const value = CommentManager.findCommentsFromCache(issue.id)
-        initialComments[issue.id] = value && value.sort(compare)
+        initialIssuesComments[issue.id] = value && value.sort(compare)
     }
 
-    const [comments, setComments] = React.useState(initialComments)
+    const [issuesComments, setIssuesComments] = React.useState(initialIssuesComments)
 
     React.useEffect(() => {
         const callbacks: (() => void)[] = []
         if (issues) {
+            const issuesComments: {[issueId: string]: Comment[]} = {}
             for (const issue of issues) {
-                const callback = CommentManager.findComments(issue.id, (newComments, error) => {
+                callbacks.push(CommentManager.findComments(issue.id, (comments, error) => {
                     if (error) {
-                        setComments({...comments, [issue.id]: undefined})
+                        // At least one promise rejected
+                        setIssuesComments(undefined)
                     } else {
-                        setComments({...comments, [issue.id]: newComments})
+                        // At least one promise resolved
+                        issuesComments[issue.id] = comments
+                        // Did all promises resolve?
+                        if (Object.keys(issuesComments).length == issues.length) {
+                            setIssuesComments(issuesComments)
+                        }
                     }
-                })
-                callbacks.push(callback)
+                }))
             }
         }
         return () => {
@@ -42,5 +48,5 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
         }
     }, [issues])
 
-    return comments
+    return issuesComments
 }
