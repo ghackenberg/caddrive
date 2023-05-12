@@ -31,7 +31,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         else
             where = { deleted: IsNull() }
         const result: User[] = []
-        for (const user of await Database.get().userRepository.findBy(where))
+        for (const user of await Database.get().userRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
             try {
                 if (productId) {
                     await getMemberOrFail({ userId: user.id, productId }, Error)

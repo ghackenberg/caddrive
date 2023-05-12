@@ -27,7 +27,7 @@ export class ProductService implements ProductREST {
         else
             where = { public: true, deleted: IsNull() }
         const result: Product[] = []
-        for (const product of await Database.get().productRepository.find({ where }))
+        for (const product of await Database.get().productRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
             result.push(convertProduct(product))
         return result
     }
