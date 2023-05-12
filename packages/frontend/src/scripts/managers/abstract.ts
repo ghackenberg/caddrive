@@ -56,7 +56,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         this.itemObservers[id].push(observer)
         if (this.hasItem(id)) {
             observer(this.getItem(id))
-            if (!this.hasItemTimeout(id)) {
+            if (!this.hasItemTimeout(id) && !this.hasItemPromise(id)) {
                 this.scheduleItem(id)
             }
         } else if (!this.hasItemPromise(id)) {
@@ -165,7 +165,7 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
         this.findObservers[key].push(observer)
         if (this.hasFind(key)) {
             observer(this.getFind(key))
-            if (!this.hasFindTimeout(key)) {
+            if (!this.hasFindTimeout(key) && !this.hasFindPromise(key)) {
                 this.scheduleFind(key)
             }
         } else if (!this.hasFindPromise(key)) {
