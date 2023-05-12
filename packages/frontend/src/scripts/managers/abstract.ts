@@ -65,10 +65,12 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private unobserveItemInternal(id: string, callback: (item: T) => void) {
-        this.itemObservers[id].splice(this.itemObservers[id].indexOf(callback), 1)
-        if (this.itemObservers[id].length == 0 && this.itemTimeouts[id]) {
-            clearTimeout(this.itemTimeouts[id])
-            delete this.itemTimeouts[id]
+        if (id in this.itemObservers) {
+            this.itemObservers[id].splice(this.itemObservers[id].indexOf(callback), 1)
+            if (this.itemObservers[id].length == 0 && this.itemTimeouts[id]) {
+                clearTimeout(this.itemTimeouts[id])
+                delete this.itemTimeouts[id]
+            }
         }
     }
 
@@ -184,10 +186,12 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private unobserveFindInternal(key: string, callback: (items: T[], error: string) => void) {
-        this.findObservers[key].splice(this.findObservers[key].indexOf(callback), 1)
-        if (this.findObservers[key].length == 0 && this.findTimeouts[key]) {
-            clearTimeout(this.findTimeouts[key])
-            delete this.findTimeouts[key]
+        if (key in this.findObservers) {
+            this.findObservers[key].splice(this.findObservers[key].indexOf(callback), 1)
+            if (this.findObservers[key].length == 0 && this.findTimeouts[key]) {
+                clearTimeout(this.findTimeouts[key])
+                delete this.findTimeouts[key]
+            }
         }
     }
 

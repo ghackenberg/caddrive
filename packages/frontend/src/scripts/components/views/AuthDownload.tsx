@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Redirect } from 'react-router'
 
+import { DESKTOP, LINUX, MAC, WINDOWS } from '../../platform'
 import { AuthContext } from '../../contexts/Auth'
 import { useAsyncHistory } from '../../hooks/history'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -19,7 +20,15 @@ export const AuthDownloadView = () => {
 
     async function handleDownload(event: React.UIEvent) {
         event.preventDefault()
-        window.open('https://todo/', '_blank') // TODO Download URL
+        if (WINDOWS) {
+            window.open('https://todo/', '_blank') // TODO Download URL
+        } else if (MAC) {            
+            window.open('https://todo/', '_blank') // TODO Download URL
+        } else if (LINUX) {
+            window.open('https://todo/', '_blank') // TODO Download URL
+        } else {
+            alert('We do not support your platform yet!')
+        }
         await push('/auth/welcome')
     }
 
@@ -29,7 +38,7 @@ export const AuthDownloadView = () => {
     }
 
     return (
-        authContextUser ? (
+        authContextUser && DESKTOP ? (
             <main className='view auth download'>
                 <div>
                     <div className='main center'>
