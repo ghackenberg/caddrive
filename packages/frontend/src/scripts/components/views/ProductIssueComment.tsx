@@ -182,7 +182,7 @@ export const ProductIssueCommentView = () => {
                 <>
                     <main className={`view product-issue-comment sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div className='main'>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
@@ -214,6 +214,8 @@ export const ProductIssueCommentView = () => {
                                         opened issue on {new Date(issue.created).toISOString().substring(0, 10)}
                                     </>
                                 </p>
+                            </div>
+                            <div className='main'>
                                 <div className="widget issue_thread">
                                     <CommentView class="issue" productId={productId} issueId={issueId} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     {comments && comments.map(comment => (
