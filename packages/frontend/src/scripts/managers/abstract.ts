@@ -40,6 +40,9 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     // ... private methods
 
     private clearItem() {
+        for (const id in this.itemTimeouts) {
+            clearTimeout(this.itemTimeouts[id])
+        }
         this.itemGetters = {}
         this.itemPromises = {}
         this.itemTimeouts = {}
@@ -65,10 +68,12 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private unobserveItemInternal(id: string, callback: (item: T) => void) {
-        this.itemObservers[id].splice(this.itemObservers[id].indexOf(callback), 1)
-        if (this.itemObservers[id].length == 0 && this.itemTimeouts[id]) {
-            clearTimeout(this.itemTimeouts[id])
-            delete this.itemTimeouts[id]
+        if (id in this.itemObservers) {
+            this.itemObservers[id].splice(this.itemObservers[id].indexOf(callback), 1)
+            if (this.itemObservers[id].length == 0 && this.itemTimeouts[id]) {
+                clearTimeout(this.itemTimeouts[id])
+                delete this.itemTimeouts[id]
+            }
         }
     }
 
@@ -98,14 +103,22 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     // ... protected methods
 
     protected async promiseItem(id: string, promise: Promise<T>) {
+        this.itemPromises[id] = promise
         try {
-            this.itemPromises[id] = promise
-            const item = this.resolveItem(await promise)
-            delete this.itemPromises[id]
-            return item
+            const item = await promise
+            if (id in this.itemPromises) {
+                const temp = this.resolveItem(item)
+                delete this.itemPromises[id]
+                return temp
+            } else {
+                return undefined
+            }
         } catch (e) {
-            for (const observer of this.itemObservers[id] || []) {
-                observer(undefined, `${e}`)
+            if (id in this.itemPromises) {
+                for (const observer of this.itemObservers[id] || []) {
+                    observer(undefined, `${e}`)
+                }
+                delete this.itemPromises[id]
             }
             return undefined
         }
@@ -155,6 +168,9 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     // ... private methods
 
     private clearFind() {
+        for (const key in this.findTimeouts) {
+            clearTimeout(this.findTimeouts[key])
+        }
         this.findGetters = {}
         this.findFilters = {}
         this.findOrders = {}
@@ -184,10 +200,12 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private unobserveFindInternal(key: string, callback: (items: T[], error: string) => void) {
-        this.findObservers[key].splice(this.findObservers[key].indexOf(callback), 1)
-        if (this.findObservers[key].length == 0 && this.findTimeouts[key]) {
-            clearTimeout(this.findTimeouts[key])
-            delete this.findTimeouts[key]
+        if (key in this.findObservers) {
+            this.findObservers[key].splice(this.findObservers[key].indexOf(callback), 1)
+            if (this.findObservers[key].length == 0 && this.findTimeouts[key]) {
+                clearTimeout(this.findTimeouts[key])
+                delete this.findTimeouts[key]
+            }
         }
     }
 
@@ -202,17 +220,25 @@ export class AbstractManager<T extends { id: string, created: number, updated: n
     }
 
     private async reloadFind(key: string) {
+        console.log('reload', `${this.type}s`, key)
+        delete this.findTimeouts[key]
+        const promise = this.findGetters[key]()
+        this.findPromises[key] = promise
         try {
-            console.log('reload', `${this.type}s`, key)
-            delete this.findTimeouts[key]
-            const promise = this.findGetters[key]()
-            this.findPromises[key] = promise
-            const item = this.resolveFind(key, await promise)
-            delete this.findPromises[key]
-            return item
+            const find = await promise
+            if (key in this.findPromises) {
+                const temp = this.resolveFind(key, find)
+                delete this.findPromises[key]
+                return temp
+            } else {
+                return undefined
+            }
         } catch (e) {
-            for (const observer of this.findObservers[key] || []) {
-                observer(undefined, `${e}`)
+            if (key in this.findPromises) {
+                for (const observer of this.findObservers[key] || []) {
+                    observer(undefined, `${e}`)
+                }
+                delete this.findPromises[key]
             }
             return undefined
         }

@@ -33,7 +33,7 @@ export const BurndownChartWidget = (props: { start: Date, end: Date, total: numb
             value -= delta
         }
         setTargetBurndown(target)
-    }, [total])
+    }, [start, end, total])
 
     // RETURN
 
