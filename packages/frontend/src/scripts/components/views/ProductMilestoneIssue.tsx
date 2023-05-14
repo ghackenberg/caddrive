@@ -54,7 +54,7 @@ export const ProductMilestoneIssueView = () => {
     // INITIAL STATES
 
     const initialTotal = issues && issues.length
-    const initialActual = milestone && issues && comments && calculateActual(milestone, issues, comments)
+    const initialActual = milestone && issues && comments && calculateActual(milestone.start, milestone.end, issues, comments)
     
     // STATES
 
@@ -77,7 +77,7 @@ export const ProductMilestoneIssueView = () => {
 
     useEffect(() => {
         if (milestone && issues && comments) {
-            setActualBurndown(calculateActual(milestone, issues, comments))
+            setActualBurndown(calculateActual(milestone.start, milestone.end, issues, comments))
         } else {
             setActualBurndown(undefined)
         }

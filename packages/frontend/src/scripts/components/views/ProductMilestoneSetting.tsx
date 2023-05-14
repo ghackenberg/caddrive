@@ -41,7 +41,7 @@ export const ProductMilestoneSettingView = () => {
     const initialEnd = milestone ? new Date(milestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
 
     const initialTotal = issues && issues.length
-    const initialActual = milestone && issues && comments && calculateActual(milestone, issues, comments)
+    const initialActual = milestone && issues && comments && calculateActual(milestone.start, milestone.end, issues, comments)
 
     // STATES
 
@@ -80,11 +80,11 @@ export const ProductMilestoneSettingView = () => {
 
     useEffect(() => {
         if (milestone && issues && comments) {
-            setActualBurndown(calculateActual(milestone, issues, comments))
+            setActualBurndown(calculateActual(start.getTime(), end.getTime(), issues, comments))
         } else {
             setActualBurndown(undefined)
         }
-    }, [milestone, issues, comments])
+    }, [start, end, issues, comments])
 
     // FUNCTIONS
 

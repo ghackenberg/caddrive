@@ -1,4 +1,4 @@
-import { Comment, Issue, Milestone } from "productboard-common"
+import { Comment, Issue } from "productboard-common"
 
 const TIME_STEP = 1000 * 60 * 60 * 24
 
@@ -8,7 +8,7 @@ export function cropTimestamp(timestamp: number) {
     return date.getTime()
 }
 
-export function calculateActual(milestone: Milestone, issues: Issue[], comments: {[id: string]: Comment[]}) {
+export function calculateActual(startDate: number, endDate: number, issues: Issue[], comments: {[id: string]: Comment[]}) {
     // Calculate detlas
     const deltas: { time: number, delta: number }[] = []
     for (const issue of issues) {
@@ -46,8 +46,8 @@ export function calculateActual(milestone: Milestone, issues: Issue[], comments:
 
     // Calculate actual
     const actual: { time: number, actual: number }[] = []
-    const start = cropTimestamp(milestone.start)
-    const end = cropTimestamp(milestone.end)
+    const start = cropTimestamp(startDate)
+    const end = cropTimestamp(endDate)
     const now = cropTimestamp(Date.now())
     const min = deltas.length > 0 ? deltas[0].time : Number.MAX_VALUE
     const max = deltas.length > 0 ? deltas[deltas.length - 1].time : Number.MAX_VALUE
