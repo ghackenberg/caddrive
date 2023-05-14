@@ -23,12 +23,16 @@ function initializeCamera(aspect = 1, near = 1, far = 1) {
     return camera
 }
 
-function initializeCanvas(width = 1, height = 1) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function initializeCanvas(context: any, width = 1, height = 1) {
     return {
         width,
         height,
         style: {
             touchAction: 'none'
+        },
+        getContext: () => {
+            return context
         },
         addEventListener: () => {
             // empty
@@ -90,11 +94,11 @@ function render(model: Group, width: number, height: number): Promise<Jimp> {
         const camera = initializeCamera()
         camera.aspect = width / height
 
-        // Orbit
-        const canvas = initializeCanvas(width, height)
-
         // Context
         const context = initializeContext(width, height)
+
+        // Canvas
+        const canvas = initializeCanvas(context, width, height)
 
         // Renderer
         const renderer = initializeRenderer(canvas, context)
