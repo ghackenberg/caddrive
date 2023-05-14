@@ -142,9 +142,9 @@ const LOADING_MANAGER = new LoadingManager()
 
 LOADING_MANAGER.setURLModifier(url => {
     if (url.indexOf('/') == -1) {
-        return `http://localhost:3000/rest/parts/${url}`
+        return `http://localhost:3001/rest/parts/${url}`
     } else {
-        return `http://localhost:3000/rest/parts/${url.substring(url.lastIndexOf('/') + 1)}`
+        return `http://localhost:3001/rest/parts/${url.substring(url.lastIndexOf('/') + 1)}`
     }
 })
 
