@@ -22,7 +22,6 @@ interface Part {
 }
 
 export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
-
     // CONTEXTS
 
     const { contextVersion, setContextVersion } = useContext(VersionContext)
@@ -69,14 +68,14 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     useEffect(() => {
         if (issue) {
             setIssueParts(collectParts(issue.text))
-        } else if (props.issueId) {
+        } else {
             setIssueParts(undefined)
         }
     }, [issue])
     useEffect(() => {
         if (comments) {
             setCommentsParts(comments.map(comment => collectParts(comment.text)))
-        } else if (props.issueId) {
+        } else {
             setCommentsParts(undefined)
         }
     }, [comments])
