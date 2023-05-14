@@ -80,7 +80,9 @@ export class ProductService implements ProductREST {
         await Database.get().versionRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
         await Database.get().milestoneRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
         await Database.get().issueRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
-        await Database.get().commentRepository.update({ issue: { productId: product.id } }, { deleted: product.deleted, updated: product.updated })
+        for (const issue of await Database.get().issueRepository.findBy({ productId: product.id })) {
+            await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: product.deleted, updated: product.updated })
+        }
         await Database.get().productRepository.save(product)
         return convertProduct(product)
     }
