@@ -104,7 +104,7 @@ export interface TagREST {
 }
 
 export interface TagAssignmentREST {
-    findTagAssignments(issueId: string): Promise<TagAssignment[]>
+    findTagAssignments(issueId?: string, tagId?: string): Promise<TagAssignment[]>
     addTagAssignment(data: TagAssignmentAddData): Promise<TagAssignment>
     getTagAssignment(id: string): Promise<TagAssignment>
     updateTagAssignment(id: string, data: TagAssignmentUpdateData): Promise<TagAssignment>

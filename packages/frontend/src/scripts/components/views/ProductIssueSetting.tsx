@@ -53,7 +53,7 @@ export const ProductIssueSettingView = () => {
     const milestones = useMilestones(productId)
     const issue = useIssue(issueId)
     const tags = useTags(productId)
-    const tagAssignments = useTagAssignments(issueId)
+    const tagAssignments = useTagAssignments(issueId, undefined)
 
     // INITIAL STATES
 

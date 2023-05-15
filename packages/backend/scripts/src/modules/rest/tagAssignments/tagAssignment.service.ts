@@ -11,12 +11,14 @@ import { convertTagAssignment } from '../../../functions/convert'
 @Injectable()
 export class TagAssignmentService implements TagAssignmentREST {
  
-    async findTagAssignments(issueId: string) : Promise<TagAssignment[]> {
+    async findTagAssignments(issueId?: string, tagId?: string) : Promise<TagAssignment[]> {
         let where: FindOptionsWhere<TagAssignmentEntity>
-        if (issueId)
+        if (issueId && !tagId) 
             where = { issueId, deleted: IsNull() }
+        else if (!issueId && tagId) 
+            where = { tagId, deleted: IsNull() }
         const result: TagAssignment[] = []
-        for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy(where))
+        for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy(where)) 
             result.push(convertTagAssignment(tagAssignment))
         return result
     }

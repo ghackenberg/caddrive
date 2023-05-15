@@ -77,6 +77,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     async deleteIssue(id: string): Promise<Issue> {
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: Date.now() })
+        await Database.get().tagAssignmentRepository.update({ issueId: issue.id }, { deleted: Date.now() })
         issue.deleted = Date.now()
         await Database.get().issueRepository.save(issue)
         return convertIssue(issue)

@@ -52,6 +52,7 @@ export const ProductTagView = () => {
         if (confirm('Do you really want to delete this member?')) {
             await TagManager.deleteTag(tag.id)
         }
+
     }
 
     // CONSTANTS
@@ -63,7 +64,7 @@ export const ProductTagView = () => {
         { label: 'description', class: 'left nowrap', content: tag => (
             <div>{tag.description ? tag.description : ''} </div>
         ) },
-        { label: 'tag assignments', class: 'left nowrap', content: tag => (
+        { label: 'assignments', class: 'left nowrap', content: tag => (
             <TagAssignmentCount productId={productId} tagId={tag.id}></TagAssignmentCount>
         ) },
         { label: '🛠️', class: 'center', content: tag => (

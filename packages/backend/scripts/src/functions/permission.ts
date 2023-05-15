@@ -391,17 +391,36 @@ export async function canDeleteTagOrFail(user: User, tagId: string) {
 
 // TAGASSIGNMENT
 
-export async function canFindTagAssignmentOrFail(user: User, issueId: string) {
-    const issue = await getIssueOrFail({ id: issueId, deleted: null }, NotFoundException)
-    try {
-        await getProductOrFail({ id: issue.productId, public: true, deleted: null }, Error)
-    } catch (error) {
-        if (user) {
-            await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
-        } else {
-            throw new ForbiddenException()
+export async function canFindTagAssignmentOrFail(user: User, issueId?: string, tagId?: string) {
+    if (issueId && !tagId) {
+        const issue = await getIssueOrFail({ id: issueId, deleted: null }, NotFoundException)
+        try {
+            await getProductOrFail({ id: issue.productId, public: true, deleted: null }, Error)
+        } catch (error) {
+            if (user) {
+                await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
+            } 
+            else {
+                throw new ForbiddenException()
+            }
         }
     }
+    if (!issueId && tagId) {
+        const tag = await getTagOrFail({ id: tagId, deleted: null }, NotFoundException)
+        try {
+            await getProductOrFail({ id: tag.productId, public: true, deleted: null }, Error)
+        } catch (error) {
+            if (user) {
+                await getMemberOrFail({ userId: user.id, product: { id: tag.productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
+            } 
+            else {
+                throw new ForbiddenException()
+            }
+        }
+    }
+    if (issueId && tagId) {
+            throw new ForbiddenException()
+        }
 }
 export async function canCreateTagAssignmentOrFail(user: User, tagAssignmentId: string) {
     const tagAssignment = await getTagAssignmentOrFail({ id: tagAssignmentId, deleted: null }, NotFoundException)

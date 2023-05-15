@@ -6,8 +6,8 @@ import { AbstractManager } from './abstract'
 class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> {
     // CACHE
 
-    findTagAssignmentsFromCache(issueId: string) { 
-        return this.getFind(issueId)
+    findTagAssignmentsFromCache(issueId?: string, tagId?: string) { 
+        return this.getFind(`${issueId}-${tagId}`)
     }
     getTagAssignmentFromCache(tagAssignmentId: string) { 
         return this.getItem(tagAssignmentId)
@@ -15,11 +15,12 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> {
 
     // REST
 
-    findTagAssignments(issueId: string, callback: (tagAssignments: TagAssignment[], error?: string) => void) {
+    findTagAssignments(issueId: string, tagId: string, callback: (tagAssignments: TagAssignment[], error?: string) => void) {
         return this.find(
-            issueId,
-            () => TagAssignmentClient.findTagAssignments(issueId),
-            tagAssignment => tagAssignment.issueId == issueId,
+            `${issueId}-${tagId}`,
+            () => TagAssignmentClient.findTagAssignments(issueId, tagId),
+            tagAssignment => (!issueId || tagAssignment.issueId == issueId) && (!tagId || tagAssignment.tagId == tagId),
+            // member => (!productId || member.productId == productId) && (!userId || member.userId == userId),
             callback
         )
     }

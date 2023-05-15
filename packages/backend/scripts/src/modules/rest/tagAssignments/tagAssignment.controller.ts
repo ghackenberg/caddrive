@@ -20,13 +20,15 @@ export class TagAssignmentController implements TagAssignmentREST {
     ) {}
 
     @Get()
-    @ApiQuery({ name: 'issue', type: 'string', required: true })
+    @ApiQuery({ name: 'issue', type: 'string', required: false })
+    @ApiQuery({ name: 'tag', type: 'string', required: false })
     @ApiResponse({ type: [TagAssignment] })
     async findTagAssignments(
-        @Query('issue') issueId: string
+        @Query('issue') issueId: string,
+        @Query('tag') tagId: string
     ): Promise<TagAssignment[]> {
-        await canFindTagAssignmentOrFail(this.request.user, issueId)
-        return await this.tagAssignmentService.findTagAssignments(issueId)
+        await canFindTagAssignmentOrFail(this.request.user, issueId, tagId)
+        return await this.tagAssignmentService.findTagAssignments(issueId, tagId)
     }
 
     @Post()

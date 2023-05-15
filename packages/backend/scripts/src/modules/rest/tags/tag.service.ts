@@ -42,6 +42,7 @@ export class TagService implements TagREST {
     }
     async deleteTag(id: string): Promise<Tag> {
         const tag = await Database.get().tagRepository.findOneByOrFail({ id })
+        await Database.get().tagAssignmentRepository.update({tagId: tag.id}, { deleted: Date.now()})
         tag.deleted = Date.now()
         await Database.get().tagRepository.save(tag)
         return convertTag(tag)

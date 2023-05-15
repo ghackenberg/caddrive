@@ -98,10 +98,10 @@ export function useTags(productId: string) {
     )
 }
 
-export function useTagAssignments(issueId: string) {
+export function useTagAssignments(issueId: string, tagId: string) {
     return useEntities(
-        issueId ,
-        () => TagAssignmentManager.findTagAssignmentsFromCache(issueId),
-        callback => TagAssignmentManager.findTagAssignments(issueId, callback)
+        `${issueId}-${tagId}`,
+        () => TagAssignmentManager.findTagAssignmentsFromCache(issueId, tagId),
+        callback => TagAssignmentManager.findTagAssignments(issueId,tagId, callback)
     )
 }

@@ -9,7 +9,7 @@ export const AssignedTagsWidget = (props: { issueId: string }) => {
 
     // HOOKS
 
-    const tagAssignments = useTagAssignments(props.issueId)
+    const tagAssignments = useTagAssignments(props.issueId, undefined)
 
     // RETURN
 

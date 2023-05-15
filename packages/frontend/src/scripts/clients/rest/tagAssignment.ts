@@ -5,8 +5,8 @@ import { TagAssignment, TagAssignmentAddData, TagAssignmentREST, TagAssignmentUp
 import { auth } from '../auth'
 
 class TagAssignmentClientImpl implements TagAssignmentREST {
-    async findTagAssignments(issue: string): Promise<TagAssignment[]> {
-        return (await axios.get<TagAssignment[]>('/rest/tagassignments', { params: { issue }, ...auth } )).data
+    async findTagAssignments(issue?: string, tag?: string): Promise<TagAssignment[]> {
+        return (await axios.get<TagAssignment[]>('/rest/tagassignments', { params: { issue, tag }, ...auth } )).data
     }
     async addTagAssignment(data: TagAssignmentAddData): Promise<TagAssignment> {
         return (await axios.post<TagAssignment>('/rest/tagassignments', data, { ...auth })).data
