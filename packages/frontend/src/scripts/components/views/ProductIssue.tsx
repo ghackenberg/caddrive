@@ -3,16 +3,17 @@ import { useState, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue } from 'productboard-common'
+import { Issue, Tag } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssues, useMembers } from '../../hooks/list'
+import { useIssues, useMembers, useTags } from '../../hooks/list'
 import { IssueManager } from '../../managers/issue'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
+import { IssueFilterInput } from '../inputs/IssueFilterInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { AssignedTagsWidget } from '../widgets/AssignedTags'
@@ -41,6 +42,7 @@ export const ProductIssueView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const issues = useIssues(productId)
+    const tags = useTags(productId)
 
     // STATES
 
@@ -48,6 +50,7 @@ export const ProductIssueView = () => {
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
     const [active, setActive] = useState<string>('left')
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 
     // FUNCTIONS
 
@@ -85,6 +88,17 @@ export const ProductIssueView = () => {
     async function showOpenIssues(event: FormEvent) {
         event.preventDefault()
         setState('open')
+    }
+
+    async function selectTag(tag: Tag) {
+        const newSelectedTags = [...selectedTags]
+        const index = newSelectedTags.indexOf(tag)
+        if (index == -1) {
+            newSelectedTags.push(tag)
+        } else {
+            newSelectedTags.splice(index, 1)
+        }
+        setSelectedTags(newSelectedTags)
     }
 
     // CONSTANTS
@@ -129,7 +143,7 @@ export const ProductIssueView = () => {
     // RETURN
 
     return (
-        (product && members && issues) ? (
+        (product && members && issues && tags) ? (
             product.deleted ? (
                 <Redirect to='/' />
             ) : (
@@ -152,6 +166,7 @@ export const ProductIssueView = () => {
                                     New issue (requires login)
                                 </a>
                                 )}
+                                <IssueFilterInput label= 'Issue filter' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                     Open issues (<IssueCount productId={productId} state={'open'} />)
                                 </a>
