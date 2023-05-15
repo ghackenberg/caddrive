@@ -6,6 +6,7 @@ import UpIcon from '/src/images/up.png'
 export const GenericDropdownWidget = (props: { children?: React.ReactNode }) => {
 
     // - Interactions
+    
     const [expanded, setExpanded] = React.useState<boolean>(false)
 
     return (

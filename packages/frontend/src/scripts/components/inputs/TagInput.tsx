@@ -8,6 +8,8 @@ import { GenericInput } from './GenericInput'
 
 export const TagInput = (props: { label: string, tags: Tag[], assignedTags: Tag[], onClick: (tag: Tag) => void }) => {
 
+    // FUNCTIONS
+        
     const handleClick = (tag: Tag) => {
         props.onClick(tag)
       }

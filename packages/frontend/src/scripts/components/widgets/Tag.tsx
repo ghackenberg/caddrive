@@ -8,11 +8,13 @@ export const TagWidget = (props: { tagId: string, onClick?: (tag: Tag) => void, 
 
     // HOOKS
 
+    const tag = useTag(props.tagId)
+
+    // FUNCTIONS
+
     const handleClick = () => {
         props.onClick && props.onClick(tag);
       };
-
-    const tag = useTag(props.tagId)
 
     return (
         <>

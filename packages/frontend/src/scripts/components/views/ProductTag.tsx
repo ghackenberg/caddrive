@@ -49,7 +49,7 @@ export const ProductTagView = () => {
     async function deleteTag(event: React.UIEvent, tag: Tag) {
         // TODO handle unmount!
         event.stopPropagation()
-        if (confirm('Do you really want to delete this member?')) {
+        if (confirm('Do you really want to delete this tag?')) {
             await TagManager.deleteTag(tag.id)
         }
 
@@ -65,7 +65,7 @@ export const ProductTagView = () => {
             <div>{tag.description ? tag.description : ''} </div>
         ) },
         { label: 'assignments', class: 'left nowrap', content: tag => (
-            <TagAssignmentCount productId={productId} tagId={tag.id}></TagAssignmentCount>
+            <TagAssignmentCount tagId={tag.id}></TagAssignmentCount>
         ) },
         { label: '🛠️', class: 'center', content: tag => (
             <a onClick={event => deleteTag(event, tag)}>
