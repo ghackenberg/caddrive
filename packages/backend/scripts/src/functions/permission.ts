@@ -190,7 +190,7 @@ export async function canDeleteFileOrFail(_user: User, _fileId: string) {
 
 // ISSUE
 
-export async function canFindIssuenOrFail(user: User, productId: string) {
+export async function canFindIssuesOrFail(user: User, productId: string) {
     try {
         await getProductOrFail({ id: productId, public: true, deleted: null }, Error)
     } catch (error) {

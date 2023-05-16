@@ -41,7 +41,7 @@ export const ProductIssueView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
-    const issues = useIssues(productId)
+    const issues = useIssues(productId, undefined, 'open', 'XiYMqmygf')
     const tags = useTags(productId)
 
     // STATES
