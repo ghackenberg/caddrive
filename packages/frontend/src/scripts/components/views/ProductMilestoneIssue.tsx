@@ -186,12 +186,12 @@ export const ProductMilestoneIssueView = () => {
                                         </NavLink>
                                     ) : (
                                         <a className='button fill green block-when-responsive'>
-                                            <strong>New</strong> issue (requires role)
+                                            <strong>New</strong> issue <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
                                     <a className='button fill green block-when-responsive'>
-                                        <strong>New</strong> issue (requires login)
+                                        <strong>New</strong> issue <span className='badge'>requires login</span>
                                     </a>
                                 )}
                                 <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>

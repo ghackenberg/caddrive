@@ -10,7 +10,6 @@ import { UserManager } from '../../managers/user'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { EmailInput } from '../inputs/EmailInput'
 import { FileInput } from '../inputs/FileInput'
-import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { LoadingView } from './Loading'
@@ -75,22 +74,34 @@ export const UserSettingView = () => {
                 <main className="view user-setting">
                     <div>
                         <div className='main'>
-                            <h1>{userId == 'new' ? 'New user' : 'User settings'}</h1>
+                            <h1>
+                                {userId == 'new' ? (
+                                    'New user'
+                                ) : (
+                                    'User settings'
+                                )}
+                            </h1>
                             <form onSubmit={onSubmit}>
-                                <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
+                                {email && (
+                                    <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
+                                )}
                                 {contextUser && contextUser.id == userId && (
                                     <TextInput label='Token' disabled={true} value={localStorage.getItem('jwt')}/>
                                 )}
-                                <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
-                                <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
+                                {true && (
+                                    <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
+                                )}
+                                {true && (
+                                    <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
+                                )}
                                 {contextUser ? (
                                     userId == contextUser.id ? (
-                                        <SubmitInput value='Save'/>
+                                        <ButtonInput value='Save'/>
                                     ) : (
-                                        <SubmitInput value='Save (requires permission)' disabled={true}/>
+                                        <ButtonInput value='Save' badge='requires permission' disabled={true}/>
                                     )
                                 ) : (
-                                    <SubmitInput value="Save (requires login)" disabled={true}/>
+                                    <ButtonInput value="Save" badge='requires login' disabled={true}/>
                                 )}
                                 {contextUser && contextUser.id == userId && (
                                     <ButtonInput value='Leave' class='red' click={onClick}/>

@@ -16,10 +16,10 @@ import { useAsyncHistory } from '../../hooks/history'
 import { VersionManager } from '../../managers/version'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel } from '../../loaders/ldraw'
+import { ButtonInput } from '../inputs/ButtonInput'
 import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
 import { NumberInput } from '../inputs/NumberInput'
-import { SubmitInput } from '../inputs/SubmitInput'
 import { TextareaInput } from '../inputs/TextareaInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -178,7 +178,13 @@ export const ProductVersionSettingView = () => {
                     <main className= {`view sidebar product-version-setting ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
-                                <h1>{versionId == 'new' ? 'New version' : 'Version settings'}</h1>
+                                <h1>
+                                    {versionId == 'new' ? (
+                                        'New version'
+                                    ) : (
+                                        'Version settings'
+                                    )}
+                                </h1>
                                 <form onSubmit={onSubmit}>
                                     <NumberInput label='Major' placeholder='Type major' value={major} change={setMajor}/>
                                     <NumberInput label='Minor' placeholder='Type minor' value={minor} change={setMinor}/>
@@ -206,15 +212,15 @@ export const ProductVersionSettingView = () => {
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
                                             blob ? (
-                                                <SubmitInput value='Save'/>
+                                                <ButtonInput value='Save'/>
                                             ) : (
-                                                <SubmitInput value='Save (requires file)' disabled={true}/>
+                                                <ButtonInput value='Save' badge='requires file' disabled={true}/>
                                             )
                                         ) : (
-                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            <ButtonInput value='Save' badge='requires role' disabled={true}/>
                                         )
                                     ) : (
-                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        <ButtonInput value='Save' badge='requires login' disabled={true}/>
                                     )}
                                 </form>
                             </div>

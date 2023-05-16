@@ -282,18 +282,22 @@ export const ProductIssueCommentView = () => {
                                                     ) : (
                                                         <>
                                                             <button className='button fill gray block-when-responsive'>
-                                                                Start recording <span className='badge'>requires role</span>
+                                                                <span>Start recording</span>
+                                                                <span className='badge'>requires role</span>
                                                             </button>                                                                
                                                             <button className='button fill blue'>
-                                                                Save <span className='badge'>requires role</span>
+                                                                <span>Save</span>
+                                                                <span className='badge'>requires role</span>
                                                             </button>
                                                             {issue.state == 'open' ? (
                                                                 <button className='button stroke blue'>
-                                                                    Close <span className='badge'>requires role</span>
+                                                                    <span>Close</span>
+                                                                    <span className='badge'>requires role</span>
                                                                 </button>
                                                             ) : (
                                                                 <button className='button stroke blue'>
-                                                                    Reopen <span className='badge'>requires role</span>
+                                                                    <span>Reopen</span>
+                                                                    <span className='badge'>requires role</span>
                                                                 </button>
                                                             )}
                                                         </>
@@ -301,18 +305,22 @@ export const ProductIssueCommentView = () => {
                                                 ) : (
                                                     <>
                                                         <button className='button fill gray block-when-responsive'>
-                                                                Start recording <span className='badge'>requires login</span>
+                                                                <span>Start recording</span>
+                                                                <span className='badge'>requires login</span>
                                                             </button>
                                                         <button className='button fill blue'>
-                                                            Save <span className='badge'>requires login</span>
+                                                            <span>Save</span>
+                                                            <span className='badge'>requires login</span>
                                                         </button>
                                                         {issue.state == 'open' ? (
                                                             <button className='button stroke blue'>
-                                                                Close <span className='badge'>requires login</span>
+                                                                <span>Close</span>
+                                                                <span className='badge'>requires login</span>
                                                             </button>
                                                         ) : (
                                                             <button className='button stroke blue'>
-                                                                Reopen <span className='badge'>requires login</span>
+                                                                <span>Reopen</span>
+                                                                <span className='badge'>requires login</span>
                                                             </button>
                                                         )}
                                                     </>

@@ -12,7 +12,7 @@ import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useMilestones } from '../../hooks/list'
-import { SubmitInput } from '../inputs/SubmitInput'
+import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
@@ -196,7 +196,13 @@ export const ProductIssueSettingView = () => {
                     <main className={`view product-issue-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
-                                <h1>{issueId == 'new' ? 'New issue' : 'Issue settings'}</h1>
+                                <h1>
+                                    {issueId == 'new' ? (
+                                        'New issue'
+                                    ) : (
+                                        'Issue settings'
+                                    )}
+                                </h1>
                                 <form onSubmit={submitIssue} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <div>
@@ -253,12 +259,12 @@ export const ProductIssueSettingView = () => {
                                     </div>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                            <SubmitInput value='Save'/>
+                                            <ButtonInput value='Save'/>
                                         ) : (
-                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            <ButtonInput value='Save' badge='requires role' disabled={true}/>
                                         )
                                     ) : (
-                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        <ButtonInput value='Save' badge='requires login' disabled={true}/>
                                     )}
                                 </form>
                             </div>
