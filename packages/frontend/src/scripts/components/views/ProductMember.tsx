@@ -95,13 +95,13 @@ export const ProductMemberView = () => {
                                             <strong>New</strong> member
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            <strong>New</strong> member (requires role)
+                                        <a className='button fill green'>
+                                            <strong>New</strong> member <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        <strong>New</strong> member (requires login)
+                                    <a className='button fill green'>
+                                        <strong>New</strong> member <span className='badge'>requires login</span>
                                     </a>
                                 )}
                             </div>

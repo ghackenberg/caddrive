@@ -103,15 +103,15 @@ export const ProductView = () => {
                                 <strong>New</strong> product
                             </Link>
                         ) : (
-                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                <strong>New</strong> product (requires login)
+                            <a className='button fill green block-when-responsive'>
+                                <strong>New</strong> product <span className='badge'>requires login</span>
                             </a>
                         )}
                         <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
-                            <strong>Public</strong> products (<ProductCount public='true'/>)
+                            <strong>Public</strong> products <span className='badge'><ProductCount public='true'/></span>
                         </NavLink>
                         <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
-                            <strong>Private</strong> products (<ProductCount public='false'/>)
+                            <strong>Private</strong> products <span className='badge'><ProductCount public='false'/></span>
                         </NavLink>
                     </div>
                     { products.length == 0 ? (

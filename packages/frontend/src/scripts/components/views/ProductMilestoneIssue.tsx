@@ -157,13 +157,13 @@ export const ProductMilestoneIssueView = () => {
                                             <strong>Edit</strong> milestone
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                            <strong>Edit</strong> milestone (requires role)
+                                        <a className='button fill gray right'>
+                                            <strong>Edit</strong> milestone <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                        <strong>Edit</strong> milestone (requires login)
+                                    <a className='button fill gray right'>
+                                        <strong>Edit</strong> milestone <span className='badge'>requires login</span>
                                     </a>
                                 )}
                                 <h1>
@@ -185,20 +185,20 @@ export const ProductMilestoneIssueView = () => {
                                             <strong>New</strong> issue
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                        <a className='button fill green block-when-responsive'>
                                             <strong>New</strong> issue (requires role)
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                    <a className='button fill green block-when-responsive'>
                                         <strong>New</strong> issue (requires login)
                                     </a>
                                 )}
                                 <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Open</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
+                                    <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='open'/></span>
                                 </NavLink>
                                 <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Closed</strong> issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
+                                    <strong>Closed</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='closed'/></span>
                                 </NavLink>
                             </div>
                             { issues.filter(issue => issue.state == state).length == 0 ? (

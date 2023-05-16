@@ -109,13 +109,13 @@ export const ProductMilestoneView = () => {
                                             <strong>New</strong> milestone
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            <strong>New</strong> milestone (requires role)
+                                        <a className='button fill green'>
+                                            <strong>New</strong> milestone <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        <strong>New</strong> milestone (requires login)
+                                    <a className='button fill green'>
+                                        <strong>New</strong> milestone <span className='badge'>requires login</span>
                                     </a>
                                 )}
                             </div>
