@@ -130,20 +130,20 @@ export const ProductIssueView = () => {
                                             <strong>New</strong> issue
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                            <strong>New</strong> issue (requires role)
+                                        <a className='button fill green block-when-responsive'>
+                                            <strong>New</strong> issue <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                        <strong>New</strong> issue (requires login)
+                                    <a className='button fill green block-when-responsive'>
+                                        <strong>New</strong> issue <span className='badge'>requires login</span>
                                     </a>
                                 )}
                                 <NavLink to={`/products/${productId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Open</strong> issues (<IssueCount productId={productId} state={'open'}/>)
+                                    <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} state={'open'}/></span>
                                 </NavLink>
                                 <NavLink to={`/products/${productId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Closed</strong> issues (<IssueCount productId={productId} state={'closed'}/>)
+                                    <strong>Closed</strong> issues <span className='badge'><IssueCount productId={productId} state={'closed'}/></span>
                                 </NavLink>
                             </div>
                             { issues.filter(issue => issue.state == state).length == 0 ? (

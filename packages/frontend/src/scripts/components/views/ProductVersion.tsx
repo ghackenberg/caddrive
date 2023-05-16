@@ -99,13 +99,13 @@ export const ProductVersionView = () => {
                                             <strong>New</strong> version
                                         </NavLink>
                                     ) : (
-                                        <a className='button green fill' style={{fontStyle: 'italic'}}>
-                                            <strong>New</strong> version (requires role)
+                                        <a className='button green fill'>
+                                            <strong>New</strong> version <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button green fill' style={{fontStyle: 'italic'}}>
-                                        <strong>New</strong> version (requires login)
+                                    <a className='button green fill'>
+                                        <strong>New</strong> version <span className='badge'>requires login</span>
                                     </a>
                                 )}
                             </div>

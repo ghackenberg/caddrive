@@ -2,11 +2,11 @@ import * as React from 'react'
 
 import { GenericInput } from './GenericInput'
 
-export const ButtonInput = (props: {class?: string, label?: string, click: (event: React.MouseEvent<HTMLInputElement>) => void, value: string, disabled?: boolean}) => {
+export const ButtonInput = (props: {label?: string, value: string, badge?: string, class?: string, click?: (event: React.MouseEvent<HTMLInputElement>) => void, disabled?: boolean}) => {
     const label = props.label
-    const type = 'button'
-    const className = `button fill ${props.class || 'gray'}`
     const value = props.value
+    const badge = props.badge
+    const className = `button fill ${props.class || 'gray'}`
     const disabled = props.disabled
 
     function onClick(event: React.MouseEvent<HTMLInputElement>) {
@@ -15,7 +15,14 @@ export const ButtonInput = (props: {class?: string, label?: string, click: (even
 
     return (
         <GenericInput label={label}>
-            <input type={type} className={className} value={value} disabled={disabled} onClick={onClick}/>
+            <button className={className} disabled={disabled} onClick={onClick}>
+                {true && (
+                    <span>{value}</span>
+                )}
+                {badge && (
+                    <span className='badge'>{badge}</span>
+                )}
+            </button>
         </GenericInput>
     )
 }

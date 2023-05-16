@@ -8,7 +8,7 @@ import { UserContext } from '../../contexts/User'
 import { useMember, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers } from '../../hooks/list'
-import { SubmitInput } from '../inputs/SubmitInput'
+import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
 import { MemberManager } from '../../managers/member'
 import { UserManager } from '../../managers/user'
@@ -153,7 +153,13 @@ export const ProductMemberSettingView = () => {
                     <main className={`view product-member-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
-                                <h1>{memberId == 'new' ? 'New member' : 'Member settings'}</h1>
+                                <h1>
+                                    {memberId == 'new' ? (
+                                        'New member'
+                                    ) : (
+                                        'Member settings'
+                                    )}
+                                </h1>
                                 <form onSubmit={onSubmit}>
                                     {user ? (
                                         <>
@@ -181,12 +187,12 @@ export const ProductMemberSettingView = () => {
                                             </div>
                                             {contextUser ? (
                                                 members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                                    <SubmitInput value='Save'/>
+                                                    <ButtonInput value='Save'/>
                                                 ) : (
-                                                    <SubmitInput value='Save (requires role)' disabled={true}/>
+                                                    <ButtonInput value='Save' badge='requires role' disabled={true}/>
                                                 )
                                             ) : (
-                                                <SubmitInput value='Save (requires login)' disabled={true}/>
+                                                <ButtonInput value='Save' badge='requires login' disabled={true}/>
                                             )}
                                         </>
                                     ) : (

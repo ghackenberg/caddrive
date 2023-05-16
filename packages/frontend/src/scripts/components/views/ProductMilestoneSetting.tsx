@@ -8,8 +8,8 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useIssues } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { MilestoneManager } from '../../managers/milestone'
+import { ButtonInput } from '../inputs/ButtonInput'
 import { DateInput } from '../inputs/DateInput'
-import { SubmitInput } from '../inputs/SubmitInput'
 import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -118,12 +118,18 @@ export const ProductMilestoneSettingView = () => {
                     <main className={`view product-milestone-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
-                                <h1>{milestoneId == 'new' ? 'New milestone' : 'Milestone settings'}</h1>
+                                <h1>
+                                    {milestoneId == 'new' ? (
+                                        'New milestone'
+                                    ) : (
+                                        'Milestone settings'
+                                    )}
+                                </h1>
                                 <form onSubmit={submitMilestone} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
                                     <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
-                                    <SubmitInput value='Save'/>
+                                    <ButtonInput value='Save'/>
                                 </form>
                             </div>
                             <LegalFooter/>
