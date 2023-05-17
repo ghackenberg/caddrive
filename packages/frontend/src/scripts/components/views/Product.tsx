@@ -73,13 +73,19 @@ export const ProductView = () => {
             </>
         ) },
         { label: 'Versions', class: 'center', content: product => (
-            <VersionCount productId={product.id}/>
+            <span className='badge'>
+                <VersionCount productId={product.id}/>
+            </span>
         ) },
         { label: 'Issues', class: 'center', content: product => (
-            <IssueCount productId={product.id} state='open'/>
+            <span className='badge'>
+                <IssueCount productId={product.id} state='open'/>
+            </span>
         ) },
         { label: 'Members', class: 'center', content: product => (
-            <MemberCount productId={product.id}/>
+            <span className='badge'>
+                <MemberCount productId={product.id}/>
+            </span>
         ) },
         { label: '👤', class: 'center', content: product => (
             <ProductUserPictureWidget userId={product.userId} productId={product.id} class='icon medium round'/>
