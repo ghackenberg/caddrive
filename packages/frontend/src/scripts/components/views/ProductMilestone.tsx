@@ -72,10 +72,14 @@ export const ProductMilestoneView = () => {
             new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })
         ) },
         { label: 'Open', class: 'center', content: milestone => (
-            <IssueCount productId={productId} milestoneId={milestone.id} state='open'/>
+            <span className='badge'>
+                <IssueCount productId={productId} milestoneId={milestone.id} state='open'/>
+            </span>
         ) },
         { label: 'Closed', class: 'center', content: milestone => (
-            <IssueCount productId={productId} milestoneId={milestone.id} state='closed'/>
+            <span className='badge'>
+                <IssueCount productId={productId} milestoneId={milestone.id} state='closed'/>
+            </span>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
             <MilestoneProgressWidget productId={productId} milestoneId={milestone.id}/>

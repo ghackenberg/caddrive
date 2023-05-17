@@ -96,10 +96,14 @@ export const ProductIssueView = () => {
             ))
         ) },
         { label: 'Comments', class: 'center', content: issue => (
-            <CommentCount issueId={issue.id}/>
+            <span className='badge'>
+                <CommentCount issueId={issue.id}/>
+            </span>
         ) },
         { label: 'Parts', class: 'center', content: issue => (
-            <PartCount issueId={issue.id}/>
+            <span className='badge'>
+                <PartCount issueId={issue.id}/>
+            </span>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
             <a onClick={event => deleteIssue(event, issue)}>
