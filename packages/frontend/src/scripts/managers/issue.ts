@@ -15,12 +15,11 @@ class IssueManagerImpl extends AbstractManager<Issue> {
 
     // REST
 
-    findIssues(productId: string, milestoneId: string, state: string, callback: (issues: Issue[], error?: string) => void, tagId: string) {
-        console.log(tagId)
+    findIssues(productId: string, milestoneId: string, state: string, tagId: string, callback: (issues: Issue[], error?: string) => void) {
         return this.find(
             `${productId}-${milestoneId}-${state}-${tagId}`,
             () => IssueClient.findIssues(productId, milestoneId, state, tagId),
-            issue => (!productId || issue.productId == productId) && (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state),
+            issue => (!productId || issue.productId == productId) && (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state) && !tagId,
             callback
         )
     }

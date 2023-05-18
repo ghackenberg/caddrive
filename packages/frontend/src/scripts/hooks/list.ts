@@ -59,11 +59,10 @@ export function useVersions(productId: string) {
 }
 
 export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string) {
-    console.log(tagId)
     return useEntities(
         `${productId}-${milestoneId}-${state}-${tagId}`,
         () => IssueManager.findIssuesFromCache(productId, milestoneId, state, tagId),
-        callback => IssueManager.findIssues(productId, milestoneId, state, callback, tagId)
+        callback => IssueManager.findIssues(productId, milestoneId, state, tagId, callback)
     )
 }
 

@@ -17,9 +17,9 @@ import { IssueFilterInput } from '../inputs/IssueFilterInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { AssignedTagsWidget } from '../widgets/AssignedTags'
-import { Column, Table } from '../widgets/Table'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
 import DeleteIcon from '/src/images/delete.png'
@@ -41,16 +41,16 @@ export const ProductIssueView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
-    const issues = useIssues(productId, undefined, 'open', 'XiYMqmygf')
     const tags = useTags(productId)
-
+    
     // STATES
-
+    
     // - Interactions
     const [state, setState] = useState('open')
     const [hovered, setHovered] = useState<Issue>()
     const [active, setActive] = useState<string>('left')
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+    const issues = useIssues(productId, undefined, undefined, selectedTags.length > 0 ? selectedTags[0].id : undefined)
 
     // FUNCTIONS
 
@@ -94,7 +94,8 @@ export const ProductIssueView = () => {
         const newSelectedTags = [...selectedTags]
         const index = newSelectedTags.indexOf(tag)
         if (index == -1) {
-            newSelectedTags.push(tag)
+            //newSelectedTags.push(tag) full array
+            newSelectedTags[0] = tag   
         } else {
             newSelectedTags.splice(index, 1)
         }

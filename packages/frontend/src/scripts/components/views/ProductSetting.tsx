@@ -12,6 +12,7 @@ import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
+import { TestWidget } from '../widgets/test'
 import { LoadingView } from './Loading'
 
 import LeftIcon from '/src/images/setting.png'
@@ -100,6 +101,7 @@ export const ProductSettingView = () => {
                                     <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
                                     <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
                                     <BooleanInput label='Public' value={_public} change={setPublic}/>
+                                    <TestWidget productId={productId} tagId='XiYMqmygf'></TestWidget>
                                     {contextUser ? (
                                         (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
                                             <SubmitInput value='Save'/>

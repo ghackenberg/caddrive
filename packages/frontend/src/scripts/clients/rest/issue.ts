@@ -5,10 +5,8 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 import { auth } from '../auth'
 
 class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
-    async findIssues(product: string, milestone?: string, state?: string, tagId?: string): Promise<Issue[]> {
-        console.log(state)
-        console.log(tagId)
-        return (await axios.get<Issue[]>(`/rest/issues`, { params: { product, milestone, state, tagId }, ...auth })).data
+    async findIssues(product: string, milestone?: string, state?: string, tag?: string): Promise<Issue[]> {
+        return (await axios.get<Issue[]>(`/rest/issues`, { params: { product, milestone, state, tag }, ...auth })).data
     }
     async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
         const body = new FormData()

@@ -35,7 +35,6 @@ export class IssueController implements IssueREST<string, string, Express.Multer
         @Query('state') state?: 'open' | 'closed',
         @Query('tag') tag?: string
     ): Promise<Issue[]> {
-        console.log(tag)
         await canFindIssuesOrFail(this.request.user, productId)
         return this.issueService.findIssues(productId, milestoneId, state, tag)
     }
