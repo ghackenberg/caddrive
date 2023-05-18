@@ -24,7 +24,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
 
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagIds?: string[]): Promise<Issue[]> {
-        console.log(tagIds)
         const result: Issue[] = []
         let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
