@@ -24,6 +24,8 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
 
     async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string): Promise<Issue[]> {
+        //const tagIds = ['XiYMqmygf','Ke1sb6p85','cG78oOp1d']
+        const tagIds = [tagId]
         const result: Issue[] = []
         let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
@@ -36,20 +38,26 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             where = { productId, deleted: IsNull() }
         if (tagId) {
             const tagAssignments: TagAssignment[] = []
-            for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy({ tagId, deleted: IsNull() })) {
-                tagAssignments.push(tagAssignment)
+            for (const tagId of tagIds) {
+                for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy({ tagId, deleted: IsNull() })) {
+                    tagAssignments.push(tagAssignment)
+                }
             }
-            for (const tagAssignment of tagAssignments) {
-                const mergedWhere = { id: tagAssignment.issueId, ...where  }
-                const issue = await Database.get().issueRepository.findOneBy(mergedWhere)
-                issue && result.push(convertIssue(issue))
+                for (const tagAssignment of tagAssignments) {
+                    if (!result.find(res => res.id == tagAssignment.issueId)) {
+                        const allTagIdsPresent = tagIds.every(tagId => tagAssignments.filter(assignment => assignment.issueId == tagAssignment.issueId).some(assignment => assignment.tagId === tagId));
+                        if (allTagIdsPresent) {
+                            const mergedWhere = { id: tagAssignment.issueId, ...where  }
+                            const issue = await Database.get().issueRepository.findOneBy(mergedWhere)
+                            issue && result.push(convertIssue(issue))
+                        }
+                    }
             }
         }
         else if (!tagId) {
             for (const issue of await Database.get().issueRepository.findBy(where))
                 result.push(convertIssue(issue))
         }
-        //console.log(result)
         return result
     }
 
