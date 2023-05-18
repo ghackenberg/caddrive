@@ -40,8 +40,9 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
                 tagAssignments.push(tagAssignment)
             }
             for (const tagAssignment of tagAssignments) {
-                const issue = await Database.get().issueRepository.findOneByOrFail({ id: tagAssignment.issueId, ...where })
-                result.push(convertIssue(issue))
+                const mergedWhere = { id: tagAssignment.issueId, ...where  }
+                const issue = await Database.get().issueRepository.findOneBy(mergedWhere)
+                issue && result.push(convertIssue(issue))
             }
         }
         else if (!tagId) {
