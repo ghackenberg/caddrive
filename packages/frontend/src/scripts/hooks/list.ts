@@ -58,11 +58,11 @@ export function useVersions(productId: string) {
     )
 }
 
-export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string) {
+export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagIds?: string[]) {
     return useEntities(
-        `${productId}-${milestoneId}-${state}-${tagId}`,
-        () => IssueManager.findIssuesFromCache(productId, milestoneId, state, tagId),
-        callback => IssueManager.findIssues(productId, milestoneId, state, tagId, callback)
+        `${productId}-${milestoneId}-${state}-${tagIds}`,
+        () => IssueManager.findIssuesFromCache(productId, milestoneId, state, tagIds),
+        callback => IssueManager.findIssues(productId, milestoneId, state, tagIds, callback)
     )
 }
 

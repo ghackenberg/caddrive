@@ -10,7 +10,7 @@ import { useIssues } from '../../hooks/list'
 
 //import { IssueClient } from '../../clients/rest/issue'
 
-export const TestWidget = (props: { productId: string, tagId: string }) => {
+export const TestWidget = (props: { productId: string, tagId: string[] }) => {
 
     // HOOKS
 

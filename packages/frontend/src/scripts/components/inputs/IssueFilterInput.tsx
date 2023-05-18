@@ -17,7 +17,6 @@ export const IssueFilterInput = (props: { label: string, tags: Tag[], selectedTa
     return (
         <GenericInput label={props.label}>
             <GenericDropdownWidget>
-            
                     {props.tags.map(tag => 
                         <TagWidget onClick={handleClick} key={tag.id} tagId={tag.id} active={props.selectedTags.includes(tag)} count={true}/> 
                     )}

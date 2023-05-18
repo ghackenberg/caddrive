@@ -27,16 +27,16 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiQuery({ name: 'milestone', type: 'string', required: false })
     @ApiQuery({ name: 'state', type: 'string', required: false })
-    @ApiQuery({ name: 'tag', type: 'string', required: false })
+    @ApiQuery({ name: 'tags', type: 'string', required: false })
     @ApiResponse({ type: [Issue] })
     async findIssues(
         @Query('product') productId: string,
         @Query('milestone') milestoneId?: string,
         @Query('state') state?: 'open' | 'closed',
-        @Query('tag') tag?: string
+        @Query('tags') tags?: string[]
     ): Promise<Issue[]> {
         await canFindIssuesOrFail(this.request.user, productId)
-        return this.issueService.findIssues(productId, milestoneId, state, tag)
+        return this.issueService.findIssues(productId, milestoneId, state, tags)
     }
 
     @Post()

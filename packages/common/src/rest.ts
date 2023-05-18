@@ -60,7 +60,7 @@ export interface VersionREST<DA, DU, M, I> {
 }
 
 export interface IssueREST<DA, DU, A> {
-    findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string): Promise<Issue[]>
+    findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string[]): Promise<Issue[]>
     addIssue(data: DA, files: { audio?: A }): Promise<Issue>
     getIssue(id: string): Promise<Issue>
     updateIssue(id: string, data: DU, files?: { audio?: A }): Promise<Issue>

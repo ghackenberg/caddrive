@@ -23,9 +23,10 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
     }
 
-    async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string): Promise<Issue[]> {
+    async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagIds?: string[]): Promise<Issue[]> {
         //const tagIds = ['XiYMqmygf','Ke1sb6p85','cG78oOp1d']
-        const tagIds = [tagId]
+        //const tagIds = [...tagId]
+        console.log(tagIds)
         const result: Issue[] = []
         let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
@@ -36,7 +37,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             where = { productId, state, deleted: IsNull() }
         else if (productId)
             where = { productId, deleted: IsNull() }
-        if (tagId) {
+        if (tagIds) {
             const tagAssignments: TagAssignment[] = []
             for (const tagId of tagIds) {
                 for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy({ tagId, deleted: IsNull() })) {
@@ -54,10 +55,11 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
                     }
             }
         }
-        else if (!tagId) {
+        else if (!tagIds) {
             for (const issue of await Database.get().issueRepository.findBy(where))
                 result.push(convertIssue(issue))
         }
+        //console.log(result)
         return result
     }
 

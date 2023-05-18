@@ -50,7 +50,8 @@ export const ProductIssueView = () => {
     const [hovered, setHovered] = useState<Issue>()
     const [active, setActive] = useState<string>('left')
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
-    const issues = useIssues(productId, undefined, undefined, selectedTags.length > 0 ? selectedTags[0].id : undefined)
+    const [selectedTagIds, setSelectedTagsIds] = useState<string[]>()
+    const issues = useIssues(productId, undefined, undefined, selectedTagIds)
 
     // FUNCTIONS
 
@@ -94,12 +95,13 @@ export const ProductIssueView = () => {
         const newSelectedTags = [...selectedTags]
         const index = newSelectedTags.indexOf(tag)
         if (index == -1) {
-            //newSelectedTags.push(tag) full array
-            newSelectedTags[0] = tag   
+            newSelectedTags.push(tag)    // full array
+            //newSelectedTags[0] = tag   // first entry
         } else {
             newSelectedTags.splice(index, 1)
         }
         setSelectedTags(newSelectedTags)
+        setSelectedTagsIds(newSelectedTags.length > 0 ? newSelectedTags.map(tag => tag.id) : undefined)
     }
 
     // CONSTANTS
@@ -169,10 +171,10 @@ export const ProductIssueView = () => {
                                 )}
                                 <IssueFilterInput label= 'Issue filter' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues (<IssueCount productId={productId} state={'open'} tagId= {selectedTags.length > 0 ? selectedTags[0].id : undefined} />)
+                                    Open issues (<IssueCount productId={productId} state={'open'} tags= {selectedTagIds} />)
                                 </a>
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues (<IssueCount productId={productId} state={'closed'} tagId= {selectedTags.length > 0 ? selectedTags[0].id : undefined} />)
+                                    Closed issues (<IssueCount productId={productId} state={'closed'} tags= {selectedTagIds} />)
                                 </a>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)} />
                             </div>
