@@ -7,7 +7,7 @@ import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST, TagAssignment } from 'productboard-common'
-import { Database, IssueEntity, TagAssignmentEntity } from 'productboard-database'
+import { Database, IssueEntity } from 'productboard-database'
 
 import { convertIssue } from '../../../functions/convert'
 import { AuthorizedRequest } from '../../../request'
@@ -23,37 +23,35 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
     }
 
-    async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string) : Promise<Issue[]> {
-         const result: Issue[] = []
-         console.log( productId + '  ' + milestoneId + '  ' + state + '  ' + tagId )
-        if (productId && tagId) {
-            const tagAssignmentsWhere: FindOptionsWhere<TagAssignmentEntity> = { tagId, deleted: IsNull() }
+    async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string): Promise<Issue[]> {
+        const result: Issue[] = []
+        let where: FindOptionsWhere<IssueEntity>
+        if (productId && milestoneId && state)
+            where = { productId, milestoneId, state, deleted: IsNull() }
+        else if (productId && milestoneId)
+            where = { productId, milestoneId, deleted: IsNull() }
+        else if (productId && state)
+            where = { productId, state, deleted: IsNull() }
+        else if (productId)
+            where = { productId, deleted: IsNull() }
+        if (tagId) {
             const tagAssignments: TagAssignment[] = []
-            for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy(tagAssignmentsWhere)) {
+            for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy({ tagId, deleted: IsNull() })) {
                 tagAssignments.push(tagAssignment)
             }
             for (const tagAssignment of tagAssignments) {
-                const issue = await Database.get().issueRepository.findOneByOrFail({ id: tagAssignment.issueId, productId: productId, deleted: IsNull() })
+                const issue = await Database.get().issueRepository.findOneByOrFail({ id: tagAssignment.issueId, ...where })
                 result.push(convertIssue(issue))
-            }   
-        } 
-        else {
-            let where: FindOptionsWhere<IssueEntity>
-            if (productId && milestoneId && state)
-                where = { productId, milestoneId, state, deleted: IsNull() }
-            else if (productId && milestoneId)
-                where = { productId, milestoneId, deleted: IsNull() }
-            else if (productId && state)
-                where = { productId, state, deleted: IsNull() }
-            else if (productId)
-                where = { productId, deleted: IsNull() }
+            }
+        }
+        else if (!tagId) {
             for (const issue of await Database.get().issueRepository.findBy(where))
                 result.push(convertIssue(issue))
         }
         //console.log(result)
         return result
     }
-  
+
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const id = shortid()
         const created = Date.now()
@@ -80,7 +78,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.updated = Date.now()
         issue.assigneeIds = data.assigneeIds
         issue.name = data.name
-        issue.milestoneId =  data.milestoneId
+        issue.milestoneId = data.milestoneId
         issue.description = data.description
         await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {

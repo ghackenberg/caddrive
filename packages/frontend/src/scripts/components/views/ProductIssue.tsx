@@ -169,10 +169,10 @@ export const ProductIssueView = () => {
                                 )}
                                 <IssueFilterInput label= 'Issue filter' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues (<IssueCount productId={productId} state={'open'} />)
+                                    Open issues (<IssueCount productId={productId} state={'open'} tagId= {selectedTags.length > 0 ? selectedTags[0].id : undefined} />)
                                 </a>
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues (<IssueCount productId={productId} state={'closed'} />)
+                                    Closed issues (<IssueCount productId={productId} state={'closed'} tagId= {selectedTags.length > 0 ? selectedTags[0].id : undefined} />)
                                 </a>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)} />
                             </div>
