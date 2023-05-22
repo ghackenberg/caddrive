@@ -3,20 +3,22 @@ import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue } from 'productboard-common'
+import { Issue, Tag } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMembers, useIssues } from '../../hooks/list'
+import { useMembers, useIssues, useTags } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { calculateActual } from '../../functions/burndown'
 import { IssueManager } from '../../managers/issue'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
+import { IssueFilterInput } from '../inputs/IssueFilterInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
+import { AssignedTagsWidget } from '../widgets/AssignedTags'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
@@ -43,8 +45,9 @@ export const ProductMilestoneIssueView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const milestone = useMilestone(milestoneId)
-    const issues = useIssues(productId, milestoneId)
+    let issues = useIssues(productId, milestoneId)
     const comments = useIssuesComments(productId, milestoneId)
+    const tags = useTags(productId)
 
     // INITIAL STATES
 
@@ -60,6 +63,9 @@ export const ProductMilestoneIssueView = () => {
     // - Interactions
     const [state, setState] = useState('open')
     const [active, setActive] = useState<string>('left')
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+    const [selectedTagIds, setSelectedTagsIds] = useState<string[]>()
+    issues = useIssues(productId, milestoneId, undefined, selectedTagIds)
 
     // EFFECTS
 
@@ -113,6 +119,19 @@ export const ProductMilestoneIssueView = () => {
         await replace(`/products/${productId}/issues`)
         await push(`/products/${productId}/issues/${issue.id}/comments`)
     }
+
+    async function selectTag(tag: Tag) {
+        const newSelectedTags = [...selectedTags]
+        const index = newSelectedTags.indexOf(tag)
+        if (index == -1) {
+            newSelectedTags.push(tag)    // full array
+            //newSelectedTags[0] = tag   // first entry
+        } else {
+            newSelectedTags.splice(index, 1)
+        }
+        setSelectedTags(newSelectedTags)
+        setSelectedTagsIds(newSelectedTags.length > 0 ? newSelectedTags.map(tag => tag.id) : undefined)
+    }
     
     // CONSTANTS
 
@@ -121,7 +140,14 @@ export const ProductMilestoneIssueView = () => {
             <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
-            issue.name
+            <>
+            <div>
+                {issue.name}
+            </div>
+            <div>
+                <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
+            </div>
+        </>
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
             issue.assigneeIds.map((assignedId) => (
@@ -206,6 +232,7 @@ export const ProductMilestoneIssueView = () => {
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
                                 </a>
+                                <IssueFilterInput label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
                             </div>
                             <LegalFooter/>

@@ -42,6 +42,7 @@ export const ProductIssueView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const tags = useTags(productId)
+    let issues = useIssues(productId)
     
     // STATES
     
@@ -51,7 +52,7 @@ export const ProductIssueView = () => {
     const [active, setActive] = useState<string>('left')
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
     const [selectedTagIds, setSelectedTagsIds] = useState<string[]>()
-    const issues = useIssues(productId, undefined, undefined, selectedTagIds)
+    issues = useIssues(productId, undefined, undefined, selectedTagIds)
 
     // FUNCTIONS
 
