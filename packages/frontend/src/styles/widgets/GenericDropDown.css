@@ -15,3 +15,6 @@ div.widget.generic_dropdown > div.dropdown_toggle {
     right: 0em;
     display: inline-block;
 }
+div.widget.generic_dropdown > div.dropdown_content {
+    width: 95%;
+}

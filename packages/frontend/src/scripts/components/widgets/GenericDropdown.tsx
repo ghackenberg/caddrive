@@ -14,7 +14,7 @@ export const GenericDropdownWidget = (props: { children?: React.ReactNode }) => 
             <div className='dropdown_toggle' onClick={() => setExpanded((expanded) => !expanded)}>
                 <img src={expanded ? UpIcon : DownIcon} className='icon medium pad' />
             </div>
-            <div>
+            <div className='dropdown_content'>
                 {props.children}
             </div>
         </div>

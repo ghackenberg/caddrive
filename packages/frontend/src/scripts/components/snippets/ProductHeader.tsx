@@ -57,8 +57,8 @@ export const ProductHeader = () => {
                         <VersionsLink product={product}/>
                         <IssuesLink product={product}/>
                         <MilestonesLink product={product}/>
-                        <MembersLink product={product}/>
                         <TagsLink product={product}/>
+                        <MembersLink product={product}/>
                     </>
                 )}
                 <span>

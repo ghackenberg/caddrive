@@ -35,21 +35,22 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         else if (productId)
             where = { productId, deleted: IsNull() }
         if (tagIds) {
+            // TODO: Optimize Performence
             const tagAssignments: TagAssignment[] = []
             for (const tagId of tagIds) {
                 for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy({ tagId, deleted: IsNull() })) {
                     tagAssignments.push(tagAssignment)
                 }
             }
-                for (const tagAssignment of tagAssignments) {
-                    if (!result.find(res => res.id == tagAssignment.issueId)) {
-                        const allTagIdsPresent = tagIds.every(tagId => tagAssignments.filter(assignment => assignment.issueId == tagAssignment.issueId).some(assignment => assignment.tagId === tagId));
-                        if (allTagIdsPresent) {
-                            const mergedWhere = { id: tagAssignment.issueId, ...where  }
-                            const issue = await Database.get().issueRepository.findOneBy(mergedWhere)
-                            issue && result.push(convertIssue(issue))
-                        }
+            for (const tagAssignment of tagAssignments) {
+                if (!result.find(res => res.id == tagAssignment.issueId)) {
+                    const allTagIdsPresent = tagIds.every(tagId => tagAssignments.filter(assignment => assignment.issueId == tagAssignment.issueId).some(assignment => assignment.tagId === tagId));
+                    if (allTagIdsPresent) {
+                        const mergedWhere = { id: tagAssignment.issueId, ...where  }
+                        const issue = await Database.get().issueRepository.findOneBy(mergedWhere)
+                        issue && result.push(convertIssue(issue))
                     }
+                }
             }
         }
         else if (!tagIds) {

@@ -169,13 +169,13 @@ export const ProductIssueView = () => {
                                     New issue (requires login)
                                 </a>
                                 )}
-                                <IssueFilterInput label= 'Issue filter' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
                                 <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                     Open issues (<IssueCount productId={productId} state={'open'} tags= {selectedTagIds} />)
                                 </a>
                                 <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
                                     Closed issues (<IssueCount productId={productId} state={'closed'} tags= {selectedTagIds} />)
                                 </a>
+                                <IssueFilterInput label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)} />
                             </div>
                             <LegalFooter />
