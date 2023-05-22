@@ -92,16 +92,18 @@ export const ProductView = () => {
             <main className="view product">
                 <div>
                     <div>
-                        {contextUser ? (
-                            <Link to='/products/new/settings' className='button fill green'>
-                                New product
-                            </Link>
-                        ) : (
-                            <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                New product (requires login)
-                            </a>
-                        )}
-                        <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
+                        <div className='button-bar'>
+                            {contextUser ? (
+                                <Link to='/products/new/settings' className='button fill green'>
+                                    New product
+                                </Link>
+                            ) : (
+                                <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                    New product (requires login)
+                                </a>
+                            )}
+                            <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.id}/versions`)}/>
+                        </div>
                     </div>
                     <LegalFooter/>
                 </div>

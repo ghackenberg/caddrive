@@ -1,12 +1,17 @@
 div.widget.generic_dropdown {
     position: relative;
 }
+
 div.widget.generic_dropdown.expanded {
     height: fit-content; 
+    width: 100%;
 }
+
 div.widget.generic_dropdown.collapsed {
     height: 40px; 
     overflow-y: hidden;
+    min-width: 10em;
+    flex: 1;
 }
 
 div.widget.generic_dropdown > div.dropdown_toggle {

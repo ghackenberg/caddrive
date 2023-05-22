@@ -46,19 +46,19 @@ export const ProductVersionView = () => {
     // STATES
 
     // - Computations
-    const [children, setChildren] = useState<{[versionId: string]: Version[]}>(initialTree.children)
-    const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
-    const [childrenMax, setChildrenMax] = useState<{[versionId: string]: number}>(initialTree.childrenMax)
-    const [siblings, setSiblings] = useState<{[versionId: string]: Version[]}>(initialTree.siblings)
-    const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
+    const [children, setChildren] = useState<{ [versionId: string]: Version[] }>(initialTree.children)
+    const [childrenMin, setChildrenMin] = useState<{ [versionId: string]: number }>(initialTree.childrenMin)
+    const [childrenMax, setChildrenMax] = useState<{ [versionId: string]: number }>(initialTree.childrenMax)
+    const [siblings, setSiblings] = useState<{ [versionId: string]: Version[] }>(initialTree.siblings)
+    const [indents, setIndents] = useState<{ [versionId: string]: number }>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
-    
+
     // - Interactions
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
-    useEffect(() => { 
+    useEffect(() => {
         const tree = computeTree(versions)
         setChildren(tree.children)
         setSiblings(tree.siblings)
@@ -87,71 +87,73 @@ export const ProductVersionView = () => {
     return (
         (product && members && versions) ? (
             (product && product.deleted) ? (
-                <Redirect to='/'/>
+                <Redirect to='/' />
             ) : (
                 <>
-                    <main className={`view product-version sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
+                    <main className={`view product-version sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
-                                            New version
-                                        </NavLink>
+                                <div className='button-bar'>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
+                                            <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                                New version
+                                            </NavLink>
+                                        ) : (
+                                            <a className='button green fill' style={{ fontStyle: 'italic' }}>
+                                                New version (requires role)
+                                            </a>
+                                        )
                                     ) : (
-                                        <a className='button green fill' style={{fontStyle: 'italic'}}>
-                                            New version (requires role)
+                                        <a className='button green fill' style={{ fontStyle: 'italic' }}>
+                                            New version (requires login)
                                         </a>
-                                    )
-                                ) : (
-                                    <a className='button green fill' style={{fontStyle: 'italic'}}>
-                                        New version (requires login)
-                                    </a>
-                                )}
+                                    )}
+                                </div>
                                 <div className="widget version_tree">
                                     {versions.map(version => version).reverse().map((vers, index) => (
                                         <Fragment key={vers.id}>
                                             {index > 0 && (
                                                 <div className="between">
-                                                    <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
+                                                    <div className="tree" style={{ width: `${indent * 1.5 + 1.5}em` }}>
                                                         {vers.id in siblings && siblings[vers.id].map(sibling => (
-                                                            <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                            <span key={sibling.id} className='line vertical sibling' style={{ top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0 }} />
                                                         ))}
                                                         {vers.id in children && children[vers.id].map(child => (
-                                                            <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                            <span className='line vertical child' key={child.id} style={{ top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0 }} />
                                                         ))}
                                                     </div>
-                                                    <div className="text" style={{color: 'orange'}}/>
+                                                    <div className="text" style={{ color: 'orange' }} />
                                                 </div>
                                             )}
                                             <div className={`version${contextVersion && contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
-                                                <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
+                                                <div className="tree" style={{ width: `${indent * 1.5 + 1.5}em` }}>
                                                     {vers.id in siblings && siblings[vers.id].map(sibling => (
-                                                        <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        <span key={sibling.id} className='line vertical sibling' style={{ top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0 }} />
                                                     ))}
                                                     {vers.id in childrenMin && vers.id in childrenMax && (
-                                                        <span className='line horizontal parent' style={{top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
+                                                        <span className='line horizontal parent' style={{ top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)` }} />
                                                     )}
                                                     {vers.id in children && children[vers.id].map(child => (
-                                                        <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)'}}/>
+                                                        <span className='line vertical child' key={child.id} style={{ top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)' }} />
                                                     ))}
                                                     {vers.id in indents && (
-                                                        <span className='line vertical parent' style={{top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        <span className='line vertical parent' style={{ top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0 }} />
                                                     )}
                                                     {vers.id in indents && (
-                                                        <span className='dot parent' style={{top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
+                                                        <span className='dot parent' style={{ top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em` }} />
                                                     )}
                                                 </div>
                                                 <div className="text">
                                                     <div>
                                                         <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                        <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle'/>
+                                                        <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle' />
                                                         <span className="user">
                                                             <span className="name">
-                                                                <ProductUserNameWidget userId={vers.userId} productId={productId}/>
+                                                                <ProductUserNameWidget userId={vers.userId} productId={productId} />
                                                             </span>
                                                             <span className="email">
-                                                                <ProductUserEmailWidget userId={vers.userId} productId={productId}/>
+                                                                <ProductUserEmailWidget userId={vers.userId} productId={productId} />
                                                             </span>
                                                         </span>
                                                     </div>
@@ -162,11 +164,11 @@ export const ProductVersionView = () => {
                                                 <div className="model">
                                                     {vers.imageType ? (
                                                         <em>
-                                                            <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image"/>
+                                                            <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image" />
                                                         </em>
                                                     ) : (
                                                         <span>
-                                                            <img src={LoadIcon} className='icon small animation spin'/>
+                                                            <img src={LoadIcon} className='icon small animation spin' />
                                                         </span>
                                                     )}
                                                 </div>
@@ -175,17 +177,17 @@ export const ProductVersionView = () => {
                                     ))}
                                 </div>
                             </div>
-                            <LegalFooter/>
+                            <LegalFooter />
                         </div>
                         <div>
-                            <ProductView3D productId={productId} mouse={true}/>
+                            <ProductView3D productId={productId} mouse={true} />
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 

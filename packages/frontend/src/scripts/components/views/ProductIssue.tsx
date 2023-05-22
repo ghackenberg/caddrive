@@ -13,7 +13,7 @@ import { IssueManager } from '../../managers/issue'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
-import { IssueFilterInput } from '../inputs/IssueFilterInput'
+import { TagIssueFilterWidget } from '../widgets/TagIssueFilter'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { AssignedTagsWidget } from '../widgets/AssignedTags'
@@ -96,8 +96,7 @@ export const ProductIssueView = () => {
         const newSelectedTags = [...selectedTags]
         const index = newSelectedTags.indexOf(tag)
         if (index == -1) {
-            newSelectedTags.push(tag)    // full array
-            //newSelectedTags[0] = tag   // first entry
+            newSelectedTags.push(tag)
         } else {
             newSelectedTags.splice(index, 1)
         }
@@ -155,28 +154,30 @@ export const ProductIssueView = () => {
                     <main className={`view product-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
-                                            New issue
-                                        </NavLink>
-                                    ) : (
-                                        <a className='button fill green block-when-responsive' style={{ fontStyle: 'italic' }}>
-                                            New issue (requires role)
-                                        </a>
-                                    )
-                                ) : (
-                                    <a className='button fill green' style={{ fontStyle: 'italic' }}>
-                                    New issue (requires login)
-                                </a>
-                                )}
-                                <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues (<IssueCount productId={productId} state={'open'} tags= {selectedTagIds} />)
-                                </a>
-                                <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues (<IssueCount productId={productId} state={'closed'} tags= {selectedTagIds} />)
-                                </a>
-                                <IssueFilterInput label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
+                                <div className='button-bar'>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                            <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
+                                                New issue
+                                            </NavLink>
+                                        ) : (
+                                            <a className='button fill green block-when-responsive' style={{ fontStyle: 'italic' }}>
+                                                New issue (requires role)
+                                            </a>
+                                        )
+                                        ) : (
+                                            <a className='button fill green' style={{ fontStyle: 'italic' }}>
+                                        New issue (requires login)
+                                    </a>
+                                    )}
+                                    <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                        Open issues (<IssueCount productId={productId} state={'open'} tags= {selectedTagIds} />)
+                                    </a>
+                                    <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                        Closed issues (<IssueCount productId={productId} state={'closed'} tags= {selectedTagIds} />)
+                                    </a>
+                                    <TagIssueFilterWidget label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></TagIssueFilterWidget>
+                                </div>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)} />
                             </div>
                             <LegalFooter />

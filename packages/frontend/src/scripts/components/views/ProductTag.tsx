@@ -1,4 +1,4 @@
-import  * as React from 'react'
+import * as React from 'react'
 import { useState, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
@@ -39,7 +39,7 @@ export const ProductTagView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const tags = useTags(productId)
-    
+
     // STATES
 
     const [active, setActive] = useState<string>('left')
@@ -58,20 +58,28 @@ export const ProductTagView = () => {
     // CONSTANTS
 
     const columns: Column<Tag>[] = [
-        { label: 'tag', class: 'left nowrap', content: tag => (
-            <TagWidget tagId={tag.id} ></TagWidget>
-        ) },
-        { label: 'description', class: 'left nowrap', content: tag => (
-            <div>{tag.description ? tag.description : ''} </div>
-        ) },
-        { label: 'assignments', class: 'left nowrap', content: tag => (
-            <TagAssignmentCount tagId={tag.id}></TagAssignmentCount>
-        ) },
-        { label: '🛠️', class: 'center', content: tag => (
-            <a onClick={event => deleteTag(event, tag)}>
-                <img src={DeleteIcon} className='icon medium pad'/>
-            </a>
-        ) }
+        {
+            label: 'tag', class: 'left nowrap', content: tag => (
+                <TagWidget tagId={tag.id} ></TagWidget>
+            )
+        },
+        {
+            label: 'description', class: 'left nowrap', content: tag => (
+                <div>{tag.description ? tag.description : ''} </div>
+            )
+        },
+        {
+            label: 'assignments', class: 'left nowrap', content: tag => (
+                <TagAssignmentCount tagId={tag.id}></TagAssignmentCount>
+            )
+        },
+        {
+            label: '🛠️', class: 'center', content: tag => (
+                <a onClick={event => deleteTag(event, tag)}>
+                    <img src={DeleteIcon} className='icon medium pad' />
+                </a>
+            )
+        }
     ]
 
     const items: ProductFooterItem[] = [
@@ -84,40 +92,42 @@ export const ProductTagView = () => {
     return (
         (product && members) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Redirect to='/' />
             ) : (
                 <>
-                    <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
+                    <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
-                                {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/tags/new/settings`} className='button fill green'>
-                                            New tag
-                                        </NavLink>
+                                <div className='button-bar'>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                            <NavLink to={`/products/${productId}/tags/new/settings`} className='button fill green'>
+                                                New tag
+                                            </NavLink>
+                                        ) : (
+                                            <a className='button fill green' style={{ fontStyle: 'italic' }}>
+                                                New tag (requires role)
+                                            </a>
+                                        )
                                     ) : (
-                                        <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New tag (requires role)
+                                        <a className='button fill green' style={{ fontStyle: 'italic' }}>
+                                            New tag (requires login)
                                         </a>
-                                    )
-                                ) : (
-                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New tag (requires login)
-                                    </a>
-                                )}
-                                <Table columns={columns} items={tags} onClick={tag => push(`/products/${productId}/tags/${tag.id}/settings`)}/>
+                                    )}
+                                </div>
+                                <Table columns={columns} items={tags} onClick={tag => push(`/products/${productId}/tags/${tag.id}/settings`)} />
                             </div>
-                            <LegalFooter/>
+                            <LegalFooter />
                         </div>
                         <div>
-                            <ProductView3D productId={productId} mouse={true}/>
+                            <ProductView3D productId={productId} mouse={true} />
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 }

@@ -15,7 +15,7 @@ import { IssueManager } from '../../managers/issue'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
-import { IssueFilterInput } from '../inputs/IssueFilterInput'
+import { TagIssueFilterWidget } from '../widgets/TagIssueFilter'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { AssignedTagsWidget } from '../widgets/AssignedTags'
@@ -124,8 +124,7 @@ export const ProductMilestoneIssueView = () => {
         const newSelectedTags = [...selectedTags]
         const index = newSelectedTags.indexOf(tag)
         if (index == -1) {
-            newSelectedTags.push(tag)    // full array
-            //newSelectedTags[0] = tag   // first entry
+            newSelectedTags.push(tag)
         } else {
             newSelectedTags.splice(index, 1)
         }
@@ -211,28 +210,30 @@ export const ProductMilestoneIssueView = () => {
                                         {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
                                     </em>
                                 </p>
-                                {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
-                                            New issue
-                                        </NavLink>
-                                    ) : (
-                                        <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                            New issue (requires role)
+                                <div className='button-bar'>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                            <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
+                                                New issue
+                                            </NavLink>
+                                        ) : (
+                                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
+                                                New issue (requires role)
+                                            </a>
+                                        )
+                                        ) : (
+                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
+                                            New issue (requires login)
                                         </a>
-                                    )
-                                ) : (
-                                    <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                        New issue (requires login)
+                                    )}
+                                    <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                        Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
                                     </a>
-                                )}
-                                <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
-                                </a>
-                                <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
-                                </a>
-                                <IssueFilterInput label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></IssueFilterInput>
+                                    <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                        Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
+                                    </a>
+                                    <TagIssueFilterWidget label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></TagIssueFilterWidget>
+                                </div>
                                 <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
                             </div>
                             <LegalFooter/>
