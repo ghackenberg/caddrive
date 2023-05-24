@@ -19,6 +19,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
+import MilestoneIcon from '/src/images/milestone.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
@@ -80,12 +81,16 @@ export const ProductMilestoneView = () => {
         },
         {
             label: 'Open', class: 'center', content: milestone => (
-                <IssueCount productId={productId} milestoneId={milestone.id} state='open' />
+                <span className='badge'>
+                    <IssueCount productId={productId} milestoneId={milestone.id} state='open' />
+                </span>
             )
         },
         {
             label: 'Closed', class: 'center', content: milestone => (
-                <IssueCount productId={productId} milestoneId={milestone.id} state='closed' />
+                <span className='badge'>
+                    <IssueCount productId={productId} milestoneId={milestone.id} state='closed' />
+                </span>
             )
         },
         {
@@ -117,32 +122,43 @@ export const ProductMilestoneView = () => {
                 <>
                     <main className={`view product-milestone sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 <div className='button-bar'>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                             <NavLink to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
-                                                New milestone
+                                                <strong>New</strong> milestone
                                             </NavLink>
                                         ) : (
-                                            <a className='button fill green' style={{ fontStyle: 'italic' }}>
-                                                New milestone (requires role)
+                                            <a className='button fill green'>
+                                                <strong>New</strong> milestone <span className='badge'>requires role</span>
                                             </a>
                                         )
                                     ) : (
-                                        <a className='button fill green' style={{ fontStyle: 'italic' }}>
-                                            New milestone (requires login)
+                                        <a className='button fill green'>
+                                            <strong>New</strong> milestone <span className='badge'>requires login</span>
                                         </a>
                                     )}
                                 </div>
-                                <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.id}/issues`)} />
                             </div>
+                            {milestones.length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={MilestoneIcon} />
+                                        <p>No milestones found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.id}/issues`)} />
+                                </div>
+                            )}
                             <LegalFooter />
-                        </div>
+                        </div >
                         <div>
                             <ProductView3D productId={productId} mouse={true} />
                         </div>
-                    </main>
+                    </main >
                     <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )

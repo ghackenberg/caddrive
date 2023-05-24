@@ -182,20 +182,20 @@ export const ProductIssueCommentView = () => {
                 <>
                     <main className={`view product-issue-comment sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
-                                            Edit issue
+                                            <strong>Edit</strong> issue
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
-                                            Edit issue (requires role)
+                                        <a className='button fill gray right'>
+                                            <strong>Edit</strong> issue <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill gray right' style={{ fontStyle: 'italic' }}>
-                                        Edit issue (requires login)
+                                    <a className='button fill gray right'>
+                                        <strong>Edit</strong> issue <span className='badge'>requires login</span>
                                     </a>
                                 )}
                                 <h1>
@@ -214,6 +214,8 @@ export const ProductIssueCommentView = () => {
                                         opened issue on {new Date(issue.created).toISOString().substring(0, 10)}
                                     </>
                                 </p>
+                            </div>
+                            <div className='main'>
                                 <div className="widget issue_thread">
                                     <CommentView class="issue" productId={productId} issueId={issueId} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     {comments && comments.map(comment => (
@@ -246,19 +248,19 @@ export const ProductIssueCommentView = () => {
                                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                                         <>
                                                             {recorder ? (
-                                                                <button onClick={stopRecordAudio} className='button fill gray block-when-responsive' >
+                                                                <button onClick={stopRecordAudio} className='button fill gray block-when-responsive'>
                                                                     Stop recording
                                                                 </button>
                                                             ) : (
                                                                 audio ? (
                                                                     <>
                                                                         <audio src={audioUrl} controls />
-                                                                        <button onClick={removeAudio} className='button fill gray block-when-responsive' >
+                                                                        <button onClick={removeAudio} className='button fill gray block-when-responsive'>
                                                                             Remove recording
                                                                         </button>
                                                                     </>
                                                                 ) : (
-                                                                    <button onClick={startRecordAudio} className='button fill gray block-when-responsive' >
+                                                                    <button onClick={startRecordAudio} className='button fill gray block-when-responsive'>
                                                                         Start recording
                                                                     </button>
                                                                 )
@@ -279,38 +281,46 @@ export const ProductIssueCommentView = () => {
 
                                                     ) : (
                                                         <>
-                                                            <button className='button fill gray block-when-responsive' style={{ fontStyle: 'italic' }} >
-                                                                Start recording (requires role)
+                                                            <button className='button fill gray block-when-responsive'>
+                                                                <span>Start recording</span>
+                                                                <span className='badge'>requires role</span>
                                                             </button>                                                                
-                                                            <button className='button fill blue' style={{ fontStyle: 'italic' }}>
-                                                                Save (requires role)
+                                                            <button className='button fill blue'>
+                                                                <span>Save</span>
+                                                                <span className='badge'>requires role</span>
                                                             </button>
                                                             {issue.state == 'open' ? (
-                                                                <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                                    Close (requires role)
+                                                                <button className='button stroke blue'>
+                                                                    <span>Close</span>
+                                                                    <span className='badge'>requires role</span>
                                                                 </button>
                                                             ) : (
-                                                                <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                                    Reopen (requires role)
+                                                                <button className='button stroke blue'>
+                                                                    <span>Reopen</span>
+                                                                    <span className='badge'>requires role</span>
                                                                 </button>
                                                             )}
                                                         </>
                                                     )
                                                 ) : (
                                                     <>
-                                                        <button className='button fill gray block-when-responsive' style={{ fontStyle: 'italic' }} >
-                                                                Start recording (requires login)
+                                                        <button className='button fill gray block-when-responsive'>
+                                                                <span>Start recording</span>
+                                                                <span className='badge'>requires login</span>
                                                             </button>
-                                                        <button className='button fill blue' style={{ fontStyle: 'italic' }}>
-                                                            Save (requires login)
+                                                        <button className='button fill blue'>
+                                                            <span>Save</span>
+                                                            <span className='badge'>requires login</span>
                                                         </button>
                                                         {issue.state == 'open' ? (
-                                                            <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                                Close (requires login)
+                                                            <button className='button stroke blue'>
+                                                                <span>Close</span>
+                                                                <span className='badge'>requires login</span>
                                                             </button>
                                                         ) : (
-                                                            <button className='button stroke blue' style={{ fontStyle: 'italic' }}>
-                                                                Reopen (requires login)
+                                                            <button className='button stroke blue'>
+                                                                <span>Reopen</span>
+                                                                <span className='badge'>requires login</span>
                                                             </button>
                                                         )}
                                                     </>

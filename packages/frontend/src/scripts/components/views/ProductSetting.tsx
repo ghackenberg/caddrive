@@ -7,7 +7,7 @@ import { useProduct } from '../../hooks/entity'
 import { useMembers, useTags } from '../../hooks/list'
 import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
-import { SubmitInput } from '../inputs/SubmitInput'
+import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -19,7 +19,7 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductSettingView = () => {
 
-    const { replace } = useAsyncHistory()
+    const { goBack, replace, push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -28,6 +28,10 @@ export const ProductSettingView = () => {
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
+
+    // QUERIES
+
+    const _initialPublic = new URLSearchParams(location.search).get('public') == 'false' ? 'false' : 'true'
 
     // HOOKS
 
@@ -39,7 +43,7 @@ export const ProductSettingView = () => {
 
     const initialName = product ? product.name : ''
     const initialDescription = product ? product.description : ''
-    const initialPublic = product ? product.public : false
+    const initialPublic = product ? product.public : _initialPublic == 'true'
 
     // STATES
 
@@ -67,12 +71,16 @@ export const ProductSettingView = () => {
         if (productId == 'new') {
             if (name && description) {
                 const product = await ProductManager.addProduct({ name, description, public: _public })
-                replace(`/products/${product.id}`)
+                await goBack()
+                await replace(`/products?public=${_public}`)
+                await push(`/products/${product.id}`)
             }
         } else {
             if (name && description) {
                 await ProductManager.updateProduct(product.id, { name, description, public: _public })
-                await replace(`/products/${product.id}`)
+                await goBack()
+                await replace(`/products?public=${_public}`)
+                await push(`/products/${product.id}`)
             }
         }
     }
@@ -94,20 +102,26 @@ export const ProductSettingView = () => {
                 <>
                     <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
-                                <h1>{productId == 'new' ? 'New product' : 'Product settings'}</h1>
+                            <div className='main'>
+                                <h1>
+                                    {productId == 'new' ? (
+                                        'New product'
+                                    ) : (
+                                        'Product settings'
+                                    )}
+                                </h1>
                                 <form onSubmit={submit}>
                                     <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
                                     <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
                                     <BooleanInput label='Public' value={_public} change={setPublic}/>
                                     {contextUser ? (
                                         (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
-                                            <SubmitInput value='Save'/>
+                                            <ButtonInput value='Save'/>
                                         ) : (
-                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            <ButtonInput value='Save' badge='requires role' disabled={true}/>
                                         )
                                     ) : (
-                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        <ButtonInput value='Save' badge='requires login' disabled={true}/>
                                     )}
                                 </form>
                             </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, StreamableFile } from "@nestjs/common"
+import { Controller, Get, Header, Param, StreamableFile } from "@nestjs/common"
 
 import { PartService } from "./part.service"
 
@@ -7,6 +7,7 @@ export class PartController {
     constructor(private readonly service: PartService) {}
 
     @Get(':name')
+    @Header('Cache-Control', 'max-age=31536000')
     async getPart(
         @Param('name') name: string
     ): Promise<StreamableFile> {

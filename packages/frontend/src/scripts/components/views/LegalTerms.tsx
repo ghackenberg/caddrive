@@ -6,7 +6,7 @@ export const LegalTermsView = () => {
     return (
         <main className="view legal terms">
             <div>
-                <div>
+                <div className='main'>
                     <h1>Terms</h1>
                     <h2>1. Our rights and obligations</h2>
                     <ol>

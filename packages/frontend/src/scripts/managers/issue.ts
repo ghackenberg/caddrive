@@ -17,9 +17,11 @@ class IssueManagerImpl extends AbstractManager<Issue> {
 
     findIssues(productId: string, milestoneId: string, state: string, tagIds: string[], callback: (issues: Issue[], error?: string) => void) {
         return this.find(
+            //TODO: fix tagIds for caching
             `${productId}-${milestoneId}-${state}-${tagIds}`,
             () => IssueClient.findIssues(productId, milestoneId, state, tagIds),
             issue => (!productId || issue.productId == productId) && (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state) && !tagIds,
+            (a, b) => a.created - b.created,
             callback
         )
     }

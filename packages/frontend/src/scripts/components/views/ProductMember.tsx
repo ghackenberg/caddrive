@@ -18,6 +18,7 @@ import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { LoadingView } from './Loading'
 
+import MemberIcon from '/src/images/user.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
@@ -95,26 +96,37 @@ export const ProductMemberView = () => {
                 <>
                     <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 <div className='button-bar'>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                             <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
-                                                New member
+                                                <strong>New</strong> member
                                             </NavLink>
                                         ) : (
-                                            <a className='button fill green' style={{ fontStyle: 'italic' }}>
-                                                New member (requires role)
+                                            <a className='button fill green'>
+                                                <strong>New</strong> member <span className='badge'>requires role</span>
                                             </a>
                                         )
                                     ) : (
-                                        <a className='button fill green' style={{ fontStyle: 'italic' }}>
-                                            New member (requires login)
+                                        <a className='button fill green'>
+                                            <strong>New</strong> member <span className='badge'>requires login</span>
                                         </a>
                                     )}
-                                    <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)} />
                                 </div>
                             </div>
+                            {members.length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={MemberIcon} />
+                                        <p>No members found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)} />
+                                </div>
+                            )}
                             <LegalFooter />
                         </div>
                         <div>

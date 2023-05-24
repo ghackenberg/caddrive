@@ -19,8 +19,8 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
 import LoadIcon from '/src/images/load.png'
-import LeftIcon from '/src/images/version.png'
-import RightIcon from '/src/images/part.png'
+import VersionIcon from '/src/images/version.png'
+import PartIcon from '/src/images/part.png'
 
 export const ProductVersionView = () => {
 
@@ -78,8 +78,8 @@ export const ProductVersionView = () => {
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Tree view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { name: 'left', text: 'Tree view', image: VersionIcon },
+        { name: 'right', text: 'Model view', image: PartIcon }
     ]
 
     // RETURN
@@ -92,91 +92,102 @@ export const ProductVersionView = () => {
                 <>
                     <main className={`view product-version sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 <div className='button-bar'>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
                                             <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
-                                                New version
+                                                <strong>New</strong> version
                                             </NavLink>
                                         ) : (
-                                            <a className='button green fill' style={{ fontStyle: 'italic' }}>
-                                                New version (requires role)
+                                            <a className='button green fill'>
+                                                <strong>New</strong> version <span className='badge'>requires role</span>
                                             </a>
                                         )
                                     ) : (
-                                        <a className='button green fill' style={{ fontStyle: 'italic' }}>
-                                            New version (requires login)
+                                        <a className='button green fill'>
+                                            <strong>New</strong> version <span className='badge'>requires login</span>
                                         </a>
                                     )}
                                 </div>
-                                <div className="widget version_tree">
-                                    {versions.map(version => version).reverse().map((vers, index) => (
-                                        <Fragment key={vers.id}>
-                                            {index > 0 && (
-                                                <div className="between">
+                            </div>
+                            {versions.length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={VersionIcon} />
+                                        <p>No version found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <div className="widget version_tree">
+                                        {versions.map(version => version).reverse().map((vers, index) => (
+                                            <Fragment key={vers.id}>
+                                                {index > 0 && (
+                                                    <div className="between">
+                                                        <div className="tree" style={{ width: `${indent * 1.5 + 1.5}em` }}>
+                                                            {vers.id in siblings && siblings[vers.id].map(sibling => (
+                                                                <span key={sibling.id} className='line vertical sibling' style={{ top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0 }} />
+                                                            ))}
+                                                            {vers.id in children && children[vers.id].map(child => (
+                                                                <span className='line vertical child' key={child.id} style={{ top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0 }} />
+                                                            ))}
+                                                        </div>
+                                                        <div className="text" style={{ color: 'orange' }} />
+                                                    </div>
+                                                )}
+                                                <div className={`version${contextVersion && contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
                                                     <div className="tree" style={{ width: `${indent * 1.5 + 1.5}em` }}>
                                                         {vers.id in siblings && siblings[vers.id].map(sibling => (
                                                             <span key={sibling.id} className='line vertical sibling' style={{ top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0 }} />
                                                         ))}
+                                                        {vers.id in childrenMin && vers.id in childrenMax && (
+                                                            <span className='line horizontal parent' style={{ top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)` }} />
+                                                        )}
                                                         {vers.id in children && children[vers.id].map(child => (
-                                                            <span className='line vertical child' key={child.id} style={{ top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0 }} />
+                                                            <span className='line vertical child' key={child.id} style={{ top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)' }} />
                                                         ))}
+                                                        {vers.id in indents && (
+                                                            <span className='line vertical parent' style={{ top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0 }} />
+                                                        )}
+                                                        {vers.id in indents && (
+                                                            <span className='dot parent' style={{ top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em` }} />
+                                                        )}
                                                     </div>
-                                                    <div className="text" style={{ color: 'orange' }} />
-                                                </div>
-                                            )}
-                                            <div className={`version${contextVersion && contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
-                                                <div className="tree" style={{ width: `${indent * 1.5 + 1.5}em` }}>
-                                                    {vers.id in siblings && siblings[vers.id].map(sibling => (
-                                                        <span key={sibling.id} className='line vertical sibling' style={{ top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0 }} />
-                                                    ))}
-                                                    {vers.id in childrenMin && vers.id in childrenMax && (
-                                                        <span className='line horizontal parent' style={{ top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)` }} />
-                                                    )}
-                                                    {vers.id in children && children[vers.id].map(child => (
-                                                        <span className='line vertical child' key={child.id} style={{ top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)' }} />
-                                                    ))}
-                                                    {vers.id in indents && (
-                                                        <span className='line vertical parent' style={{ top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0 }} />
-                                                    )}
-                                                    {vers.id in indents && (
-                                                        <span className='dot parent' style={{ top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em` }} />
-                                                    )}
-                                                </div>
-                                                <div className="text">
-                                                    <div>
-                                                        <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
-                                                        <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle' />
-                                                        <span className="user">
-                                                            <span className="name">
-                                                                <ProductUserNameWidget userId={vers.userId} productId={productId} />
+                                                    <div className="text">
+                                                        <div>
+                                                            <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
+                                                            <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle' />
+                                                            <span className="user">
+                                                                <span className="name">
+                                                                    <ProductUserNameWidget userId={vers.userId} productId={productId} />
+                                                                </span>
+                                                                <span className="email">
+                                                                    <ProductUserEmailWidget userId={vers.userId} productId={productId} />
+                                                                </span>
                                                             </span>
-                                                            <span className="email">
-                                                                <ProductUserEmailWidget userId={vers.userId} productId={productId} />
+                                                        </div>
+                                                        <div>
+                                                            <span className="description">{vers.description}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="model">
+                                                        {vers.imageType ? (
+                                                            <em>
+                                                                <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image" />
+                                                            </em>
+                                                        ) : (
+                                                            <span>
+                                                                <img src={LoadIcon} className='icon small animation spin' />
                                                             </span>
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="description">{vers.description}</span>
+                                                        )}
                                                     </div>
                                                 </div>
-                                                <div className="model">
-                                                    {vers.imageType ? (
-                                                        <em>
-                                                            <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image" />
-                                                        </em>
-                                                    ) : (
-                                                        <span>
-                                                            <img src={LoadIcon} className='icon small animation spin' />
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </Fragment>
-                                    ))}
+                                            </Fragment>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                             <LegalFooter />
                         </div>
                         <div>

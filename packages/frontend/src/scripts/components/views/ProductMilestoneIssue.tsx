@@ -1,5 +1,5 @@
-import  * as React from 'react'
-import { useState, useEffect, FormEvent, useContext } from 'react'
+import * as React from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -24,12 +24,13 @@ import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
+import IssueIcon from '/src/images/issue.png'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = () => {
-    
+
     const { goBack, replace, push } = useAsyncHistory()
 
     // CONTEXTS
@@ -39,6 +40,10 @@ export const ProductMilestoneIssueView = () => {
     // PARAMS
 
     const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
+
+    // QUERIES
+
+    const state = new URLSearchParams(location.search).get('state') || 'open'
 
     // HOOKS
 
@@ -52,8 +57,8 @@ export const ProductMilestoneIssueView = () => {
     // INITIAL STATES
 
     const initialTotal = issues && issues.length
-    const initialActual = milestone && issues && comments && calculateActual(milestone, issues, comments)
-    
+    const initialActual = milestone && issues && comments && calculateActual(milestone.start, milestone.end, issues, comments)
+
     // STATES
 
     // - Computations
@@ -61,7 +66,6 @@ export const ProductMilestoneIssueView = () => {
     const [actual, setActualBurndown] = useState(initialActual)
 
     // - Interactions
-    const [state, setState] = useState('open')
     const [active, setActive] = useState<string>('left')
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
     const [selectedTagIds, setSelectedTagsIds] = useState<string[]>()
@@ -79,23 +83,13 @@ export const ProductMilestoneIssueView = () => {
 
     useEffect(() => {
         if (milestone && issues && comments) {
-            setActualBurndown(calculateActual(milestone, issues, comments))
+            setActualBurndown(calculateActual(milestone.start, milestone.end, issues, comments))
         } else {
             setActualBurndown(undefined)
         }
     }, [milestone, issues, comments])
 
     // FUNCTIONS
-
-    async function showClosedIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('closed')
-    }
-
-    async function showOpenIssues(event: FormEvent) {
-        event.preventDefault()
-        setState('open')
-    }
 
     async function deleteIssue(event: React.UIEvent, issue: Issue) {
         // TODO handle unmount!
@@ -131,39 +125,55 @@ export const ProductMilestoneIssueView = () => {
         setSelectedTags(newSelectedTags)
         setSelectedTagsIds(newSelectedTags.length > 0 ? newSelectedTags.map(tag => tag.id) : undefined)
     }
-    
+
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
-        { label: '👤', content: issue => (
-            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
-        ) },
-        { label: 'Label', class: 'left fill', content: issue => (
-            <>
-            <div>
-                {issue.name}
-            </div>
-            <div className='badge_container'>
-                <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
-            </div>
-        </>
-        ) },
-        { label: 'Assignees', class: 'nowrap', content: issue => (
-            issue.assigneeIds.map((assignedId) => (
-                <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
-            ))
-        ) },
-        { label: 'Comments', class: 'center', content: issue => (
-            <CommentCount issueId={issue.id}/>
-        ) },
-        { label: 'Parts', class: 'center', content: issue => (
-            <PartCount issueId={issue.id}/>
-        ) },
-        { label: '🛠️', class: 'center', content: issue => (
-            <a onClick={event => deleteIssue(event, issue)}>
-                <img src={DeleteIcon} className='icon medium pad'/>
-            </a>
-        ) }
+        {
+            label: '👤', content: issue => (
+                <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round' />
+            )
+        },
+        {
+            label: 'Label', class: 'left fill', content: issue => (
+                <>
+                    <div>
+                        {issue.name}
+                    </div>
+                    <div className='badge_container'>
+                        <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
+                    </div>
+                </>
+            )
+        },
+        {
+            label: 'Assignees', class: 'nowrap', content: issue => (
+                issue.assigneeIds.map((assignedId) => (
+                    <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round' />
+                ))
+            )
+        },
+        {
+            label: 'Comments', class: 'center', content: issue => (
+                <span className='badge'>
+                    <CommentCount issueId={issue.id} />
+                </span>
+            )
+        },
+        {
+            label: 'Parts', class: 'center', content: issue => (
+                <span className='badge'>
+                    <PartCount issueId={issue.id} />
+                </span>
+            )
+        },
+        {
+            label: '🛠️', class: 'center', content: issue => (
+                <a onClick={event => deleteIssue(event, issue)}>
+                    <img src={DeleteIcon} className='icon medium pad' />
+                </a>
+            )
+        }
     ]
 
     const items: ProductFooterItem[] = [
@@ -176,77 +186,89 @@ export const ProductMilestoneIssueView = () => {
     return (
         (issues && product && milestone) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Redirect to='/' />
             ) : (
                 <>
-                    <main className= {`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
-                                            Edit milestone
+                                            <strong>Edit</strong> milestone
                                         </NavLink>
                                     ) : (
-                                        <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                            Edit milestone (requires role)
+                                        <a className='button fill gray right'>
+                                            <strong>Edit</strong> milestone <span className='badge'>requires role</span>
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill gray right' style={{fontStyle: 'italic'}}>
-                                        Edit milestone (requires login)
+                                    <a className='button fill gray right'>
+                                        <strong>Edit</strong> milestone <span className='badge'>requires login</span>
                                     </a>
                                 )}
                                 <h1>
                                     {milestone.label}
                                 </h1>
                                 <p>
-                                    <span>Start: </span>    
+                                    <span>Start: </span>
                                     <em>
-                                        {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
                                     </em>
-                                    <span> / End: </span>  
+                                    <span> / End: </span>
                                     <em>
-                                        {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
                                     </em>
                                 </p>
                                 <div className='button-bar'>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                             <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
-                                                New issue
+                                                <strong>New</strong> issue
                                             </NavLink>
                                         ) : (
-                                            <a className='button fill green block-when-responsive' style={{fontStyle: 'italic'}}>
-                                                New issue (requires role)
+                                            <a className='button fill green block-when-responsive'>
+                                                <strong>New</strong> issue <span className='badge'>requires role</span>
                                             </a>
                                         )
-                                        ) : (
-                                            <a className='button fill green' style={{fontStyle: 'italic'}}>
-                                            New issue (requires login)
+                                    ) : (
+                                        <a className='button fill green block-when-responsive'>
+                                            <strong>New</strong> issue <span className='badge'>requires login</span>
                                         </a>
                                     )}
-                                    <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                        Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open' tags= {selectedTagIds}/>)
-                                    </a>
-                                    <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                        Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed' tags= {selectedTagIds}/>)
-                                    </a>
-                                    <TagIssueFilterWidget label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></TagIssueFilterWidget>
+                                    <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                        <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='open' tags={selectedTagIds} /></span>
+                                    </NavLink>
+                                    <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                        <strong>Closed</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='closed' tags={selectedTagIds} /></span>
+                                    </NavLink>
+                                    <TagIssueFilterWidget label='' tags={tags} selectedTags={selectedTags} onClick={selectTag}></TagIssueFilterWidget>
                                 </div>
-                                <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
+
                             </div>
-                            <LegalFooter/>
+                            {issues.filter(issue => issue.state == state).length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={IssueIcon} />
+                                        <p>No <strong>{state}</strong> issue found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue} />
+                                </div>
+                            )}
+                            <LegalFooter />
                         </div>
                         <div>
-                            <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
+                            <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual} />
                         </div>
-                    </main>                            
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 }

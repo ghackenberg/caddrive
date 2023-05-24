@@ -3,12 +3,6 @@ main.view.auth > div {
 }
 
 main.view.auth > div > div:first-child {
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
     padding-top: 0;
     padding-left: 0;
     padding-right: 0;
@@ -16,14 +10,6 @@ main.view.auth > div > div:first-child {
 }
 
 main.view.auth > div > div:first-child > div {
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    text-align: center;
-
     background-color: white;
 
     box-shadow: 0.25em 0.25em 0.5em rgba(0,0,0,0.05);
@@ -33,15 +19,6 @@ main.view.auth > div > div:first-child > div {
     max-width: 30em;
 
     border-radius: 1em;
-}
-
-main.view.auth > div > div:first-child > div > img {
-    display: block;
-
-    width: 5em;
-    height: 5em;
-
-    margin: 1em;
 }
 
 main.view.auth > div > div:first-child > div > h5 {

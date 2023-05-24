@@ -20,6 +20,7 @@ class VersionManagerImpl extends AbstractManager<Version> {
             productId,
             () => VersionClient.findVersions(productId),
             version => version.productId == productId,
+            (a, b) => a.created - b.created,
             callback
         )
     }

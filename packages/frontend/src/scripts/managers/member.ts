@@ -20,6 +20,7 @@ class MemberManagerImpl extends AbstractManager<Member> {
             `${productId}-${userId}`,
             () => MemberClient.findMembers(productId, userId),
             member => (!productId || member.productId == productId) && (!userId || member.userId == userId),
+            (a, b) => a.created - b.created,
             callback
         )
     }

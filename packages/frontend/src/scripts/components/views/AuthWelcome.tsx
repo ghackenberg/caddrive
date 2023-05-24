@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Redirect } from 'react-router-dom'
 
+import { DESKTOP } from '../../platform'
 import { AuthContext } from '../../contexts/Auth'
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
@@ -22,14 +23,14 @@ export const AuthWelcomeView = () => {
     async function handleSubmit(event: React.UIEvent) {
         event.preventDefault()
         setContextUser(authContextUser)
-        await go(-5) // picture, name, consent, email, root
+        await go(DESKTOP ? -6 : -5) // [download,] picture, name, consent, email, root
     }
 
     return (
         authContextUser ? (
             <main className='view auth welcome'>
                 <div>
-                    <div>
+                    <div className='main center'>
                         <div>
                             <img src={AuthIcon}/>
                             <h5>Authentication process</h5>

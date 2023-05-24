@@ -22,7 +22,6 @@ interface Part {
 }
 
 export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
-
     // CONTEXTS
 
     const { contextVersion, setContextVersion } = useContext(VersionContext)
@@ -35,8 +34,8 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
 
     // INITIAL STATES
 
-    const initialIssueParts = issue && collectParts(issue.description)
-    const initialCommentsParts = comments && comments.map(comment => collectParts(comment.text))
+    const initialIssueParts = props.issueId ? (issue && collectParts(issue.description)) : []
+    const initialCommentsParts = props.issueId ? (comments && comments.map(comment => collectParts(comment.text))) : []
     
     let initialParts: Part[] = undefined
     if (initialIssueParts && initialCommentsParts) {
@@ -113,7 +112,7 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     
     return (
         <div className="widget product_view_3d">
-            {props.productId != 'new' && (!versions || !contextVersion) ? (
+            { props.productId != 'new' && (!versions || (versions.length > 0 && !contextVersion)) ? (
                 <img src={LoadIcon} className='icon medium position center animation spin'/>
             ) : (
                 props.productId != 'new' && versions.length > 0 ? (

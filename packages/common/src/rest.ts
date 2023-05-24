@@ -44,7 +44,7 @@ export interface UserREST<D, F> {
 }
 
 export interface ProductREST {
-    findProducts(): Promise<Product[]>
+    findProducts(_public?: 'true' | 'false'): Promise<Product[]>
     addProduct(data: ProductAddData): Promise<Product>
     getProduct(id: string): Promise<Product>
     updateProduct(id: string, data: ProductUpdateData): Promise<Product>

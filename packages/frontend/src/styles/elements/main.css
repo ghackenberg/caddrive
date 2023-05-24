@@ -29,8 +29,6 @@ main.view > div:nth-child(1) > div {
 }
 
 main.view > div:nth-child(1) > div:first-child {
-    flex: 1;
-
     padding-top: 0.5em;
 }
 
@@ -43,7 +41,12 @@ main.view > div:nth-child(1) > div:first-child > div.button-bar {
     padding-bottom: 0.5em;
 }
 
-main.view > div:nth-child(1) > div:first-child > a.button.right {
+main.view > div:nth-child(1) > div:last-child {    
+    padding-bottom: 0.5rem;
+}
+
+
+main.view > div:nth-child(1) > div.header > a.button.right {
     float: right;
 
     margin-left: 1em;
@@ -51,10 +54,41 @@ main.view > div:nth-child(1) > div:first-child > a.button.right {
     margin-bottom: 0.5em;
 }
 
-main.view > div:nth-child(1) > div:last-child {
+main.view > div:nth-child(1) > div.main {
+    flex: 1;
+}
+
+main.view > div:nth-child(1) > div.main.center {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+}
+main.view > div:nth-child(1) > div.main.center > div {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-items: center;
+
+    align-items: center;
+
+    text-align: center;
+}
+main.view > div:nth-child(1) > div.main.center > div > img {
+    display: block;
+
+    margin: 1em;
+
+    width: 5em;
+    height: 5em;
+}
+
+main.view > div:nth-child(1) > div.footer {
     flex: 0;
-    
-    padding-bottom: 0.5rem;
 
     text-align: center;
 
@@ -62,12 +96,12 @@ main.view > div:nth-child(1) > div:last-child {
 
     color: rgb(128,128,128);
 }
-main.view > div:nth-child(1) > div:last-child > a {
+main.view > div:nth-child(1) > div.footer > a {
     margin-left: 0.5rem;
 
     color: rgb(192,192,192);
 }
-main.view > div:nth-child(1) > div:last-child > a:hover {
+main.view > div:nth-child(1) > div.footer > a:hover {
     color: black;
 }
 

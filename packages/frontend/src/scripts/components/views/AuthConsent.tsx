@@ -49,7 +49,7 @@ export const AuthConsentView = () => {
         authContextUser ? (
             <main className='view auth consent'>
                 <div>
-                    <div>
+                    <div className='main center'>
                         <div>
                             <img src={AuthIcon}/>
                             <h5>Authentication process</h5>

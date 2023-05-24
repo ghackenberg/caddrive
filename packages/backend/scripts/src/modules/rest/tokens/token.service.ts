@@ -22,10 +22,11 @@ export class TokenService implements TokenREST {
     async createToken(request: CreateTokenRequest): Promise<CreateTokenResponse> {
         const id = shortid()
         const created = Date.now()
+        const updated = created
         const email = request.email
         const code = shortid().substring(0, 6)
         const count = 0
-        const token = await Database.get().tokenRepository.save({ id, created, email, code, count })
+        const token = await Database.get().tokenRepository.save({ id, created, updated, email, code, count })
         const transporter = await TRANSPORTER
         const info = await transporter.sendMail({
             from: 'CADdrive <mail@caddrive.com>',
@@ -45,6 +46,7 @@ export class TokenService implements TokenREST {
         // Find token
         const token = await getTokenOrFail({ id }, NotFoundException)
         // Update count
+        token.updated = Date.now()
         token.count++
         await Database.get().tokenRepository.save(token)
         // Check count
@@ -66,9 +68,10 @@ export class TokenService implements TokenREST {
         } catch (e) {
             // ... for new user
             const id = shortid()
-            const created = Date.now()
+            const created = token.updated
+            const updated = token.updated
             const email = token.email
-            const user = await Database.get().userRepository.save({ id, created, email })
+            const user = await Database.get().userRepository.save({ id, created, updated, email })
             await registerNewUserAsMemberForDemo(id)
             // Return JWT
             return createJWT(user)
