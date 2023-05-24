@@ -24,8 +24,3 @@ div.widget.generic_dropdown > div.dropdown_content {
     width: 95%;
 }
 
-div.widget.generic_dropdown > div.dropdown_content > span.badge {
-    margin-left: 0;
-    margin-right: 1em;
-    margin-bottom: 1em; 
-}

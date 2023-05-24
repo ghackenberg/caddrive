@@ -15,9 +15,11 @@ export const TagIssueFilterWidget = (props: { label: string, tags: Tag[], select
 
     return (
             <GenericDropdownWidget>
+                <div className='badge_container'>
                     {props.tags.map(tag => 
                         <TagWidget onClick={handleClick} key={tag.id} tagId={tag.id} active={props.selectedTags.includes(tag)} count={true}/> 
-                    )}
+                        )}
+                </div>
             </GenericDropdownWidget>
     )
 }

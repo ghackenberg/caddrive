@@ -18,6 +18,7 @@
 @import url(./classes/icon.css);
 @import url(./classes/position.css);
 @import url(./classes/state.css);
+@import url(./classes/badgeContainer.css);
 
 /* Widget specific styles */
 
@@ -30,6 +31,7 @@
 @import url(./widgets/VersionTree.css);
 @import url(./widgets/VersionView3D.css);
 @import url(./widgets/GenericDropDown.css);
+
 
 /* View specific styles */
 

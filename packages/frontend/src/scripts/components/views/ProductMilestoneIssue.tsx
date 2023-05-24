@@ -143,7 +143,7 @@ export const ProductMilestoneIssueView = () => {
             <div>
                 {issue.name}
             </div>
-            <div>
+            <div className='badge_container'>
                 <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
             </div>
         </>

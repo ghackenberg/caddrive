@@ -17,9 +17,11 @@ export const TagInput = (props: { label: string, tags: Tag[], assignedTags: Tag[
     return (
         <GenericInput label={props.label}>
             <GenericDropdownWidget>
+            <div className='badge_container'>
                     {props.tags.map(tag => 
                         <TagWidget onClick={handleClick} key={tag.id} tagId={tag.id} active={props.assignedTags.includes(tag)}/> 
                     )}
+                    </div>
             </GenericDropdownWidget>
         </GenericInput>
     )
