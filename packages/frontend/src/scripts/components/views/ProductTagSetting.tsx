@@ -6,7 +6,7 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useTag } from '../../hooks/entity'
 import { useMembers } from '../../hooks/list'
 import { TagManager } from '../../managers/tag'
-import { SubmitInput } from '../inputs/SubmitInput'
+import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -51,14 +51,6 @@ export const ProductTagSettingView = () => {
 
     // - Interactions
     const [active, setActive] = React.useState<string>('left')
-    
-    // EFFECTS
-
-    // - Values
-    
-    // React.useEffect(() => { tag && setName(tag.name) }, [tag])
-    // React.useEffect(() => { tag && setDescription(tag.productId) }, [tag])
-    // React.useEffect(() => { tag && setColor(tag.color) }, [tag])
 
     // FUNCTIONS
 
@@ -111,12 +103,12 @@ export const ProductTagSettingView = () => {
                                 </div>
                                     {contextUser ? (
                                         (tagId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
-                                            <SubmitInput value='Save'/>
+                                            <ButtonInput value='Save'/>
                                         ) : (
-                                            <SubmitInput value='Save (requires role)' disabled={true}/>
+                                            <ButtonInput value='Save (requires role)' disabled={true}/>
                                         )
                                     ) : (
-                                        <SubmitInput value='Save (requires login)' disabled={true}/>
+                                        <ButtonInput value='Save (requires login)' disabled={true}/>
                                     )}
                                 </form>
                             </div>

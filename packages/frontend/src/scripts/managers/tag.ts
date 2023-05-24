@@ -20,6 +20,7 @@ class TagManagerImpl extends AbstractManager<Tag> {
             productId,
             () => TagClient.findTags(productId),
             tag => tag.productId == productId,
+            (a, b) => a.created - b.created,
             callback
         )
     }

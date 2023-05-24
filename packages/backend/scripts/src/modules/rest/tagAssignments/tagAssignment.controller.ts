@@ -37,7 +37,10 @@ export class TagAssignmentController implements TagAssignmentREST {
     async addTagAssignment(
         @Body() data: TagAssignment
     ): Promise<TagAssignment> {
-        await canCreateTagAssignmentOrFail(this.request.user, data.id)
+        console.log('call')
+        await canCreateTagAssignmentOrFail(this.request.user, data.issueId)
+        console.log('permission')
+
         return await this.tagAssignmentService.addTagAssignment(data)
     }
     @Get(':id')

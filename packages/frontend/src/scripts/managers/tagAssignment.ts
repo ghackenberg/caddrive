@@ -20,7 +20,7 @@ class TagAssignmentManagerImpl extends AbstractManager<TagAssignment> {
             `${issueId}-${tagId}`,
             () => TagAssignmentClient.findTagAssignments(issueId, tagId),
             tagAssignment => (!issueId || tagAssignment.issueId == issueId) && (!tagId || tagAssignment.tagId == tagId),
-            // member => (!productId || member.productId == productId) && (!userId || member.userId == userId),
+            (a, b) => a.created - b.created,
             callback
         )
     }
