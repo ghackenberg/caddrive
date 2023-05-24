@@ -38,20 +38,17 @@ main.view > div:nth-child(1) > div:first-child > div.button-bar {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-}
-
-main.view > div:nth-child(1) > div:first-child > div.button-bar > * {
-    margin-top: 0.5em;
-    margin-right: 1em;
-    margin-bottom: 0.5em;
-    flex-shrink: 0;
+    gap: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 main.view > div:nth-child(1) > div:first-child > a.button.right {
     float: right;
 
     margin-left: 1em;
-    margin-right: 0em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 main.view > div:nth-child(1) > div:last-child {

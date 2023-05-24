@@ -11,6 +11,7 @@ div.widget.generic_dropdown.collapsed {
     height: 40px; 
     overflow-y: hidden;
     min-width: 10em;
+    /* width: 100%; */
     flex: 1;
 }
 

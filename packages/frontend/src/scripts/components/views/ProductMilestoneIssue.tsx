@@ -227,10 +227,10 @@ export const ProductMilestoneIssueView = () => {
                                         </a>
                                     )}
                                     <a onClick={showOpenIssues} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                        Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open'/>)
+                                        Open issues (<IssueCount productId={productId} milestoneId={milestoneId} state='open' tags= {selectedTagIds}/>)
                                     </a>
                                     <a onClick={showClosedIssues} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                        Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed'/>)
+                                        Closed issues (<IssueCount productId={productId} milestoneId={milestoneId} state='closed' tags= {selectedTagIds}/>)
                                     </a>
                                     <TagIssueFilterWidget label= '' tags={tags} selectedTags={selectedTags} onClick={selectTag}></TagIssueFilterWidget>
                                 </div>
