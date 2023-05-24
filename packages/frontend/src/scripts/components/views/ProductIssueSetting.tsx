@@ -4,28 +4,31 @@ import { Redirect, useParams } from 'react-router'
 
 import { Object3D } from 'three'
 
-import { Member, Version } from 'productboard-common'
+import { Member, Version, Tag } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
-import { useIssue, useProduct } from '../../hooks/entity'
+import { useIssue, useProduct} from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMembers, useMilestones } from '../../hooks/list'
-import { ButtonInput } from '../inputs/ButtonInput'
-import { TextInput } from '../inputs/TextInput'
+import { useMembers, useMilestones, useTags, useTagAssignments } from '../../hooks/list'
 import { IssueManager } from '../../managers/issue'
+import { TagAssignmentManager } from '../../managers/tagAssignment'
 import { AudioRecorder } from '../../services/recorder'
+import { ButtonInput } from '../inputs/ButtonInput'
+import { TagInput } from '../inputs/TagInput'
+import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { Column, Table } from '../widgets/Table'
-import { ProductView3D } from '../widgets/ProductView3D'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
-import { LoadingView } from './Loading'
+import { ProductView3D } from '../widgets/ProductView3D'
+import { Column, Table } from '../widgets/Table'
 
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
+
+import { LoadingView } from './Loading'
 
 export const ProductIssueSettingView = () => {
 
@@ -49,12 +52,15 @@ export const ProductIssueSettingView = () => {
     const members = useMembers(productId)
     const milestones = useMilestones(productId)
     const issue = useIssue(issueId)
+    const tags = useTags(productId)
+    const tagAssignments = useTagAssignments(issueId, undefined)
 
     // INITIAL STATES
 
-    const initialLabel = issue ? issue.label : ''
-    const initialText = issue ? issue.text : ''
+    const initialLabel = issue ? issue.name : ''
+    const initialText = issue ? issue.description : ''
     const initialMarked = collectParts(initialText)
+
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
     const initialAssigneeIds = issue ? issue.assigneeIds : []
     
@@ -66,6 +72,7 @@ export const ProductIssueSettingView = () => {
     const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
+    const [assignedTags, setAssignedTags] = React.useState<Tag[]>()
 
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
@@ -76,9 +83,24 @@ export const ProductIssueSettingView = () => {
 
     // EFFECTS
 
+    // - Entities
+    useEffect(() => {
+        if (tagAssignments && tags) {
+            const result: Tag[] = []
+            tagAssignments.map(assignment => {
+                for (let index = 0; index < tags.length; index++) {
+                    if (assignment.tagId === tags[index].id) {
+                        result.push(tags[index])
+                    }
+                }
+            })
+            setAssignedTags(result)
+        }
+    }, [tagAssignments, tags])
+
     // - Values
-    useEffect(() => { issue && setLabel(issue.label) }, [issue])
-    useEffect(() => { issue && setText(issue.text) }, [issue])
+    useEffect(() => { issue && setLabel(issue.name) }, [issue])
+    useEffect(() => { issue && setText(issue.description) }, [issue])
     useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
 
@@ -144,12 +166,40 @@ export const ProductIssueSettingView = () => {
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ productId, label: label, text: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                const issue = await IssueManager.addIssue({ 
+                    productId, 
+                    name: label, 
+                    parentIssueId: 'demo1',
+                    stateId: 'demo1',
+                    issueTypeId: 'demo1',
+                    priority: 'demo1',
+                    storypoints: 4,
+                    progress: 4,
+                    description: text, 
+                    assigneeIds, 
+                    milestoneId: milestoneId ? milestoneId : null 
+                    }, 
+                    { audio }
+                )
                 await replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
         } else {
             if (label && text) {
-                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
+                // add 
+                assignedTags && assignedTags.forEach(assignedTag => {
+                    const tagAssignment = tagAssignments.find(tagAssignment => tagAssignment.tagId == assignedTag.id)
+                    if (!tagAssignment) {
+                        TagAssignmentManager.addTagAssignment({tagId: assignedTag.id, issueId: issueId})
+                    }
+                })
+                // delete
+                tagAssignments && tagAssignments.forEach(tagAssignment => {
+                    const assignedTag = assignedTags.find(assignedTag => assignedTag.id == tagAssignment.tagId)
+                    if (!assignedTag) {
+                        TagAssignmentManager.deleteTagAssignment(tagAssignment.id)
+                    }
+                })
+                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
                 await goBack()    
             }
         }
@@ -164,6 +214,17 @@ export const ProductIssueSettingView = () => {
             newAssignees.splice(index, 1)
         }
         setAssigneeIds(newAssignees)
+    }
+
+    async function selectTag(tag: Tag) {
+        const newAssignedTags = [...assignedTags]
+        const index = newAssignedTags.indexOf(tag)
+        if (index == -1) {
+            newAssignedTags.push(tag)
+        } else {
+            newAssignedTags.splice(index, 1)
+        }
+        setAssignedTags(newAssignedTags)
     }
 
     // CONSTANTS
@@ -188,7 +249,7 @@ export const ProductIssueSettingView = () => {
     // RETURN
 
     return (
-        ((issueId == 'new' || issue) && product && members) ? (
+        ((issueId == 'new' || (issue && tagAssignments && assignedTags)) && product && members && tags ) ? (
             issue && issue.deleted ? (
                 <Redirect to='/'/>
             ) : (
@@ -213,6 +274,9 @@ export const ProductIssueSettingView = () => {
                                             <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
                                         </div>
                                     </div>
+                                    {issueId != 'new' &&
+                                    <TagInput label='Tags' tags= {tags} assignedTags = {assignedTags} onClick ={selectTag}/>
+                                    }
                                     <div>
                                         <div>
                                             <label>Audio</label>

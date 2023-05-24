@@ -8,7 +8,7 @@ export const PartCount = (props: { issueId: string }) => {
     const issue = useIssue(props.issueId)
     const comments = useComments(props.issueId)
 
-    const initialIssuePartCount = issue && collectParts(issue.text).length
+    const initialIssuePartCount = issue && collectParts(issue.description).length
     const initialCommentsPartCount = comments && comments.map(comment => collectParts(comment.text).length)
     const initialPartCount = initialIssuePartCount && initialCommentsPartCount && initialIssuePartCount + initialCommentsPartCount.reduce((a, b) => a + b, 0)
 
@@ -18,7 +18,7 @@ export const PartCount = (props: { issueId: string }) => {
 
     React.useEffect(() => {
         if (issue) {
-            setIssuePartCount(collectParts(issue.text).length)
+            setIssuePartCount(collectParts(issue.description).length)
         } else {
             setIssuePartCount(undefined)
         }

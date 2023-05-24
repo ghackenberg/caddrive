@@ -8,11 +8,27 @@ import { MemberModule } from './rest/members/member.module'
 import { MilestoneModule } from './rest/milestones/milestone.module'
 import { PartModule } from './rest/parts/part.module'
 import { ProductModule } from './rest/products/product.module'
+import { TagAssignmentModule } from './rest/tagAssignments/tagAssignment.module'
+import { TagModule } from './rest/tags/tag.module'
 import { TokenModule } from './rest/tokens/token.module'
 import { UserModule } from './rest/users/user.module'
 import { VersionModule } from './rest/versions/version.module'
 
 @Module({
-    imports: [KeyModule, TokenModule, UserModule, PartModule, ProductModule, VersionModule, IssueModule, CommentModule, FileModule, MilestoneModule, MemberModule]
+    imports: [
+        KeyModule, 
+        TokenModule, 
+        UserModule, 
+        PartModule, 
+        ProductModule, 
+        VersionModule, 
+        IssueModule, 
+        CommentModule, 
+        FileModule, 
+        MilestoneModule, 
+        MemberModule,
+        TagModule,
+        TagAssignmentModule
+    ]
 })
 export class RESTModule {}

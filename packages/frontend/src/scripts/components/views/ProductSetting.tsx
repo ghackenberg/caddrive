@@ -4,7 +4,7 @@ import { Redirect, useParams } from 'react-router'
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
 import { useProduct } from '../../hooks/entity'
-import { useMembers } from '../../hooks/list'
+import { useMembers, useTags } from '../../hooks/list'
 import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { ButtonInput } from '../inputs/ButtonInput'
@@ -37,6 +37,7 @@ export const ProductSettingView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
+    const tags = useTags(productId)
 
     // INITIAL STATES
 
@@ -55,6 +56,8 @@ export const ProductSettingView = () => {
     const [active, setActive] = React.useState<string>('left')
     
     // EFFECTS
+
+    // - Values
     
     React.useEffect(() => { product && setName(product.name) }, [product])
     React.useEffect(() => { product && setDescription(product.description) }, [product])
@@ -65,7 +68,7 @@ export const ProductSettingView = () => {
     async function submit(event: React.FormEvent){
         // TODO handle unmount!
         event.preventDefault()
-        if(productId == 'new') {
+        if (productId == 'new') {
             if (name && description) {
                 const product = await ProductManager.addProduct({ name, description, public: _public })
                 await goBack()
@@ -92,7 +95,7 @@ export const ProductSettingView = () => {
     // RETURN
 
     return (
-        (productId == 'new' || (product && members)) ? (
+        (productId == 'new' || (product && members && tags)) ? (
             (product && product.deleted) ? (
                 <Redirect to='/'/>
             ) : (

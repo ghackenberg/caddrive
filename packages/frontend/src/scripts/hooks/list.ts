@@ -5,6 +5,8 @@ import { IssueManager } from '../managers/issue'
 import { MemberManager } from '../managers/member'
 import { MilestoneManager } from '../managers/milestone'
 import { ProductManager } from '../managers/product'
+import { TagManager } from '../managers/tag'
+import { TagAssignmentManager } from '../managers/tagAssignment'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 
@@ -56,11 +58,11 @@ export function useVersions(productId: string) {
     )
 }
 
-export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') {
+export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagIds?: string[]) {
     return useEntities(
-        `${productId}-${milestoneId}-${state}`,
-        () => IssueManager.findIssuesFromCache(productId, milestoneId, state),
-        callback => IssueManager.findIssues(productId, milestoneId, state, callback)
+        `${productId}-${milestoneId}-${state}-${tagIds}`,
+        () => IssueManager.findIssuesFromCache(productId, milestoneId, state, tagIds),
+        callback => IssueManager.findIssues(productId, milestoneId, state, tagIds, callback)
     )
 }
 
@@ -85,5 +87,21 @@ export function useMembers(productId: string, userId?: string) {
         productId,
         () => MemberManager.findMembersFromCache(productId),
         callback => MemberManager.findMembers(productId, userId, callback)
+    )
+}
+
+export function useTags(productId: string) {
+    return useEntities(
+        productId,
+        () => TagManager.findTagsFromCache(productId),
+        callback => TagManager.findTags(productId, callback)
+    )
+}
+
+export function useTagAssignments(issueId: string, tagId: string) {
+    return useEntities(
+        `${issueId}-${tagId}`,
+        () => TagAssignmentManager.findTagAssignmentsFromCache(issueId, tagId),
+        callback => TagAssignmentManager.findTagAssignments(issueId,tagId, callback)
     )
 }

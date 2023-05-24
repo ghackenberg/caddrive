@@ -6,7 +6,7 @@ import { REQUEST } from '@nestjs/core'
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
 
-import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST, TagAssignment } from 'productboard-common'
 import { Database, IssueEntity } from 'productboard-database'
 
 import { convertIssue } from '../../../functions/convert'
@@ -23,7 +23,8 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
     }
 
-    async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
+    async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagIds?: string[]): Promise<Issue[]> {
+        const result: Issue[] = []
         let where: FindOptionsWhere<IssueEntity>
         if (productId && milestoneId && state)
             where = { productId, milestoneId, state, deleted: IsNull() }
@@ -33,12 +34,32 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             where = { productId, state, deleted: IsNull() }
         else if (productId)
             where = { productId, deleted: IsNull() }
-        const result: Issue[] = []
-        for (const issue of await Database.get().issueRepository.findBy(where))
-            result.push(convertIssue(issue))
+        if (tagIds) {
+            // TODO: Optimize Performence
+            const tagAssignments: TagAssignment[] = []
+            for (const tagId of tagIds) {
+                for (const tagAssignment of await Database.get().tagAssignmentRepository.findBy({ tagId, deleted: IsNull() })) {
+                    tagAssignments.push(tagAssignment)
+                }
+            }
+            for (const tagAssignment of tagAssignments) {
+                if (!result.find(res => res.id == tagAssignment.issueId)) {
+                    const allTagIdsPresent = tagIds.every(tagId => tagAssignments.filter(assignment => assignment.issueId == tagAssignment.issueId).some(assignment => assignment.tagId === tagId));
+                    if (allTagIdsPresent) {
+                        const mergedWhere = { id: tagAssignment.issueId, ...where  }
+                        const issue = await Database.get().issueRepository.findOneBy(mergedWhere)
+                        issue && result.push(convertIssue(issue))
+                    }
+                }
+            }
+        }
+        else if (!tagIds) {
+            for (const issue of await Database.get().issueRepository.findBy(where))
+                result.push(convertIssue(issue))
+        }
         return result
     }
-  
+
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         const id = shortid()
         const created = Date.now()
@@ -65,9 +86,9 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         issue.updated = Date.now()
         issue.assigneeIds = data.assigneeIds
-        issue.label = data.label
-        issue.milestoneId =  data.milestoneId
-        issue.text = data.text
+        issue.name = data.name
+        issue.milestoneId = data.milestoneId
+        issue.description = data.description
         await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
@@ -80,6 +101,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.deleted = Date.now()
         issue.updated = issue.deleted
         await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: issue.deleted, updated: issue.updated })
+        await Database.get().tagAssignmentRepository.update({ issueId: issue.id }, {  deleted: issue.deleted, updated: issue.updated })
         await Database.get().issueRepository.save(issue)
         return convertIssue(issue)
     }

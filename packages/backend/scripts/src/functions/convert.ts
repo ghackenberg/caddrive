@@ -1,4 +1,4 @@
-import { CommentEntity, IssueEntity, MemberEntity, MilestoneEntity, ProductEntity, UserEntity, VersionEntity } from "productboard-database"
+import { CommentEntity, IssueEntity, MemberEntity, MilestoneEntity, ProductEntity, TagAssignmentEntity, TagEntity, UserEntity, VersionEntity } from "productboard-database"
 
 export function convertUser(user: UserEntity, full: boolean) {
     return {
@@ -35,7 +35,7 @@ export function convertVersion(version: VersionEntity) {
         userId: version.userId,
         productId: version.productId,
         baseVersionIds: version.baseVersionIds,
-        major:version.major,
+        major: version.major,
         minor: version.minor,
         patch: version.patch,
         description: version.description,
@@ -50,14 +50,20 @@ export function convertIssue(issue: IssueEntity) {
         created: issue.created,
         updated: issue.updated,
         deleted: issue.deleted,
+        audioId: issue.audioId,
         userId: issue.userId,
         productId: issue.productId,
-        milestoneId: issue.milestoneId,
+        name: issue.name,
+        description: issue.description,
+        state: issue.state,
         assigneeIds: issue.assigneeIds,
-        audioId: issue.audioId,
-        label: issue.label,
-        text: issue.text,
-        state: issue.state
+        milestoneId: issue.milestoneId,
+        stateId: issue.stateId,
+        parentIssueId: issue.parentIssueId,
+        issueTypeId: issue.issueTypeId,
+        priority: issue.priority,
+        progress: issue.progress,
+        storypoints: issue.storypoints
     }
 }
 
@@ -98,5 +104,29 @@ export function convertMember(member: MemberEntity) {
         userId: member.userId,
         productId: member.productId,
         role: member.role
+    }
+}
+
+export function convertTag(tag: TagEntity) {
+    return {
+        id: tag.id,
+        created: tag.created,
+        updated: tag.updated,
+        deleted: tag.deleted,
+        productId: tag.productId,
+        name: tag.name,
+        description: tag.description,
+        color: tag.color
+    }
+}
+
+export function convertTagAssignment(tagAssignment: TagAssignmentEntity) {
+    return {
+        id: tagAssignment.id,
+        issueId: tagAssignment.issueId,
+        tagId: tagAssignment.tagId,
+        created: tagAssignment.created,
+        updated: tagAssignment.updated,
+        deleted: tagAssignment.deleted
     }
 }

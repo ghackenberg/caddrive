@@ -7,7 +7,7 @@ import "multer"
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 
-import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
+import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canFindIssuesOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
 import { IssueService } from './issue.service'
@@ -27,14 +27,16 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     @ApiQuery({ name: 'product', type: 'string', required: true })
     @ApiQuery({ name: 'milestone', type: 'string', required: false })
     @ApiQuery({ name: 'state', type: 'string', required: false })
+    @ApiQuery({ name: 'tags', type: 'string', required: false })
     @ApiResponse({ type: [Issue] })
     async findIssues(
         @Query('product') productId: string,
         @Query('milestone') milestoneId?: string,
-        @Query('state') state?: 'open' | 'closed'
+        @Query('state') state?: 'open' | 'closed',
+        @Query('tags') tags?: string[]
     ): Promise<Issue[]> {
-        await canReadProductOrFail(this.request.user, productId)
-        return this.issueService.findIssues(productId, milestoneId, state)
+        await canFindIssuesOrFail(this.request.user, productId)
+        return this.issueService.findIssues(productId, milestoneId, state, tags)
     }
 
     @Post()

@@ -1,20 +1,54 @@
 import 'reflect-metadata'
 import { DataSource, DataSourceOptions, FindOptionsWhere, Repository } from 'typeorm'
 
+import { ActionEntity } from './entities/action'
+import { AdditionalPropertyEntity } from './entities/additonalProperty'
+import { AttachmentEntity } from './entities/attachment'
 import { CommentEntity } from './entities/comment'
+import { DoneCriterionEntity } from './entities/doneCriterion'
+import { DonePropertyEntity } from './entities/doneProperty'
+import { GuardEntity } from './entities/guard'
 import { IssueEntity } from './entities/issue'
+import { IssueTypeEntity } from './entities/issueType'
+import { IssueTypeHierarchyEntity } from './entities/issueTypeHierarchy'
 import { MemberEntity } from './entities/member'
 import { MilestoneEntity } from './entities/milestone'
 import { ProductEntity } from './entities/product'
+import { PropertyEntity } from './entities/property'
+import { PropertyTypeEntity } from './entities/propertyType'
+import { ReadyCriterionEntity } from './entities/readyCriterion'
+import { ReadyPropertyEntity } from './entities/readyProperty'
+import { RelationEntity } from './entities/relation'
+import { StateEntity } from './entities/state'
+import { TagEntity } from './entities/tag'
+import { TagAssignmentEntity } from './entities/tagAssignment'
 import { TokenEntity } from './entities/token'
+import { TransitionEntity } from './entities/transition'
 import { UserEntity } from './entities/user'
 import { VersionEntity } from './entities/version'
 
+export { ActionEntity } from './entities/action'
+export { AdditionalPropertyEntity } from './entities/additonalProperty'
+export { AttachmentEntity } from './entities/attachment'
 export { CommentEntity } from './entities/comment'
+export { DoneCriterionEntity } from './entities/doneCriterion'
+export { DonePropertyEntity } from './entities/doneProperty'
+export { GuardEntity } from './entities/guard'
 export { IssueEntity } from './entities/issue'
+export { IssueTypeEntity } from './entities/issueType'
+export { IssueTypeHierarchyEntity } from './entities/issueTypeHierarchy'
 export { MemberEntity } from './entities/member'
 export { MilestoneEntity } from './entities/milestone'
 export { ProductEntity } from './entities/product'
+export { PropertyEntity } from './entities/property'
+export { PropertyTypeEntity } from './entities/propertyType'
+export { ReadyCriterionEntity } from './entities/readyCriterion'
+export { ReadyPropertyEntity } from './entities/readyProperty'
+export { RelationEntity } from './entities/relation'
+export { StateEntity } from './entities/state'
+export { TagEntity } from './entities/tag'
+export { TagAssignmentEntity } from './entities/tagAssignment'
+export { TransitionEntity } from './entities/transition'
 export { TokenEntity } from './entities/token'
 export { UserEntity } from './entities/user'
 export { VersionEntity } from './entities/version'
@@ -33,7 +67,7 @@ export class Database {
                 const username = process.env['TYPEORM_USERNAME'] || 'postgres'
                 const password = process.env['TYPEORM_PASSWORD'] || 'test'
 
-                this.instance  = new Database({
+                this.instance = new Database({
                     type,
                     host,
                     port,
@@ -42,19 +76,71 @@ export class Database {
                     password,
                     synchronize: true,
                     logging: false,
-                    entities: [TokenEntity, UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    entities: [
+                        TokenEntity,
+                        ActionEntity,
+                        AdditionalPropertyEntity,
+                        AttachmentEntity,
+                        CommentEntity,
+                        DoneCriterionEntity,
+                        DonePropertyEntity,
+                        GuardEntity,
+                        IssueEntity,
+                        IssueTypeEntity,
+                        IssueTypeHierarchyEntity,
+                        MemberEntity,
+                        MilestoneEntity,
+                        ProductEntity,
+                        PropertyEntity,
+                        PropertyTypeEntity,
+                        ReadyCriterionEntity,
+                        ReadyPropertyEntity,
+                        RelationEntity,
+                        StateEntity,
+                        TagEntity,
+                        TagAssignmentEntity,
+                        TransitionEntity,
+                        UserEntity,
+                        VersionEntity
+                    ],
                     subscribers: [],
                     migrations: []
                 })
             } else if (type == 'sqlite') {
                 const database = process.env['TYPEORM_DATABASE'] || '../../database.sqlite'
 
-                this.instance  = new Database({
+                this.instance = new Database({
                     type,
                     database,
                     synchronize: true,
                     logging: false,
-                    entities: [TokenEntity, UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
+                    entities: [
+                        TokenEntity,
+                        ActionEntity,
+                        AdditionalPropertyEntity,
+                        AttachmentEntity,
+                        CommentEntity,
+                        DoneCriterionEntity,
+                        DonePropertyEntity,
+                        GuardEntity,
+                        IssueEntity,
+                        IssueTypeEntity,
+                        IssueTypeHierarchyEntity,
+                        MemberEntity,
+                        MilestoneEntity,
+                        ProductEntity,
+                        PropertyEntity,
+                        PropertyTypeEntity,
+                        ReadyCriterionEntity,
+                        ReadyPropertyEntity,
+                        RelationEntity,
+                        StateEntity,
+                        TagEntity,
+                        TagAssignmentEntity,
+                        TransitionEntity,
+                        UserEntity,
+                        VersionEntity
+                    ],
                     subscribers: [],
                     migrations: []
                 })
@@ -81,6 +167,8 @@ export class Database {
     public readonly issueRepository: Repository<IssueEntity>
     public readonly commentRepository: Repository<CommentEntity>
     public readonly milestoneRepository: Repository<MilestoneEntity>
+    public readonly tagRepository: Repository<TagEntity>
+    public readonly tagAssignmentRepository: Repository<TagAssignmentEntity>
 
     private constructor(options: DataSourceOptions) {
         this.dataSource = new DataSource(options)
@@ -93,6 +181,8 @@ export class Database {
         this.issueRepository = this.dataSource.getRepository(IssueEntity)
         this.commentRepository = this.dataSource.getRepository(CommentEntity)
         this.milestoneRepository = this.dataSource.getRepository(MilestoneEntity)
+        this.tagRepository = this.dataSource.getRepository(TagEntity)
+        this.tagAssignmentRepository = this.dataSource.getRepository(TagAssignmentEntity)
     }
 }
 
@@ -127,4 +217,10 @@ export async function getIssueOrFail<E>(where: FindOptionsWhere<IssueEntity>, Er
 }
 export async function getCommentOrFail<E>(where: FindOptionsWhere<CommentEntity>, ErrorType: { new(): E }) {
     return getEntityOrFail(Database.get().commentRepository, where, ErrorType)
+}
+export async function getTagOrFail<E>(where: FindOptionsWhere<TagEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().tagRepository, where, ErrorType)
+}
+export async function getTagAssignmentOrFail<E>(where: FindOptionsWhere<TagAssignmentEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().tagAssignmentRepository, where, ErrorType)
 }

@@ -26,11 +26,12 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
     // CONSTANTS
 
     const entity = props.commentId ? useComment(props.commentId) : useIssue(props.issueId)
+    const textEntity = props.commentId ? useComment(props.commentId).text : useIssue(props.issueId).description
 
     // INITIAL STATES
 
-    const initialHtml = entity && createProcessor(props.mouseover, props.mouseout, props.click).processSync(entity.text).result
-    const initialParts = entity && collectParts(entity.text)
+    const initialHtml = entity && createProcessor(props.mouseover, props.mouseout, props.click).processSync(textEntity).result
+    const initialParts = entity && collectParts(textEntity)
 
     // STATES
 
@@ -41,8 +42,8 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
 
     React.useEffect(() => {
         if (entity) {
-            setHtml(createProcessor(props.mouseover, props.mouseout, props.click).processSync(entity.text).result)
-            setParts(collectParts(entity.text))
+            setHtml(createProcessor(props.mouseover, props.mouseout, props.click).processSync(textEntity).result)
+            setParts(collectParts(textEntity))
         } else {
             setParts(undefined)
             setHtml(undefined)

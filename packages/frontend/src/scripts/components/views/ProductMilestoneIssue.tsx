@@ -1,22 +1,24 @@
-import  * as React from 'react'
+import * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue } from 'productboard-common'
+import { Issue, Tag } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useMembers, useIssues } from '../../hooks/list'
+import { useMembers, useIssues, useTags } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { calculateActual } from '../../functions/burndown'
 import { IssueManager } from '../../managers/issue'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
+import { TagIssueFilterWidget } from '../widgets/TagIssueFilter'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
+import { AssignedTagsWidget } from '../widgets/AssignedTags'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
 import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
@@ -28,7 +30,7 @@ import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = () => {
-    
+
     const { goBack, replace, push } = useAsyncHistory()
 
     // CONTEXTS
@@ -48,14 +50,15 @@ export const ProductMilestoneIssueView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const milestone = useMilestone(milestoneId)
-    const issues = useIssues(productId, milestoneId)
+    let issues = useIssues(productId, milestoneId)
     const comments = useIssuesComments(productId, milestoneId)
+    const tags = useTags(productId)
 
     // INITIAL STATES
 
     const initialTotal = issues && issues.length
     const initialActual = milestone && issues && comments && calculateActual(milestone.start, milestone.end, issues, comments)
-    
+
     // STATES
 
     // - Computations
@@ -64,6 +67,9 @@ export const ProductMilestoneIssueView = () => {
 
     // - Interactions
     const [active, setActive] = useState<string>('left')
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+    const [selectedTagIds, setSelectedTagsIds] = useState<string[]>()
+    issues = useIssues(productId, milestoneId, undefined, selectedTagIds)
 
     // EFFECTS
 
@@ -107,36 +113,67 @@ export const ProductMilestoneIssueView = () => {
         await replace(`/products/${productId}/issues`)
         await push(`/products/${productId}/issues/${issue.id}/comments`)
     }
-    
+
+    async function selectTag(tag: Tag) {
+        const newSelectedTags = [...selectedTags]
+        const index = newSelectedTags.indexOf(tag)
+        if (index == -1) {
+            newSelectedTags.push(tag)
+        } else {
+            newSelectedTags.splice(index, 1)
+        }
+        setSelectedTags(newSelectedTags)
+        setSelectedTagsIds(newSelectedTags.length > 0 ? newSelectedTags.map(tag => tag.id) : undefined)
+    }
+
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
-        { label: '👤', content: issue => (
-            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
-        ) },
-        { label: 'Label', class: 'left fill', content: issue => (
-            issue.label
-        ) },
-        { label: 'Assignees', class: 'nowrap', content: issue => (
-            issue.assigneeIds.map((assignedId) => (
-                <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
-            ))
-        ) },
-        { label: 'Comments', class: 'center', content: issue => (
-            <span className='badge'>
-                <CommentCount issueId={issue.id}/>
-            </span>
-        ) },
-        { label: 'Parts', class: 'center', content: issue => (
-            <span className='badge'>
-                <PartCount issueId={issue.id}/>
-            </span>
-        ) },
-        { label: '🛠️', class: 'center', content: issue => (
-            <a onClick={event => deleteIssue(event, issue)}>
-                <img src={DeleteIcon} className='icon medium pad'/>
-            </a>
-        ) }
+        {
+            label: '👤', content: issue => (
+                <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round' />
+            )
+        },
+        {
+            label: 'Label', class: 'left fill', content: issue => (
+                <>
+                    <div>
+                        {issue.name}
+                    </div>
+                    <div className='badge_container'>
+                        <AssignedTagsWidget issueId={issue.id}></AssignedTagsWidget>
+                    </div>
+                </>
+            )
+        },
+        {
+            label: 'Assignees', class: 'nowrap', content: issue => (
+                issue.assigneeIds.map((assignedId) => (
+                    <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round' />
+                ))
+            )
+        },
+        {
+            label: 'Comments', class: 'center', content: issue => (
+                <span className='badge'>
+                    <CommentCount issueId={issue.id} />
+                </span>
+            )
+        },
+        {
+            label: 'Parts', class: 'center', content: issue => (
+                <span className='badge'>
+                    <PartCount issueId={issue.id} />
+                </span>
+            )
+        },
+        {
+            label: '🛠️', class: 'center', content: issue => (
+                <a onClick={event => deleteIssue(event, issue)}>
+                    <img src={DeleteIcon} className='icon medium pad' />
+                </a>
+            )
+        }
     ]
 
     const items: ProductFooterItem[] = [
@@ -149,10 +186,10 @@ export const ProductMilestoneIssueView = () => {
     return (
         (issues && product && milestone) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Redirect to='/' />
             ) : (
                 <>
-                    <main className= {`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
                                 {contextUser ? (
@@ -174,60 +211,64 @@ export const ProductMilestoneIssueView = () => {
                                     {milestone.label}
                                 </h1>
                                 <p>
-                                    <span>Start: </span>    
+                                    <span>Start: </span>
                                     <em>
-                                        {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
                                     </em>
-                                    <span> / End: </span>  
+                                    <span> / End: </span>
                                     <em>
-                                        {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })}
                                     </em>
                                 </p>
-                                {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                        <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
-                                            <strong>New</strong> issue
-                                        </NavLink>
+                                <div className='button-bar'>
+                                    {contextUser ? (
+                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                            <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
+                                                <strong>New</strong> issue
+                                            </NavLink>
+                                        ) : (
+                                            <a className='button fill green block-when-responsive'>
+                                                <strong>New</strong> issue <span className='badge'>requires role</span>
+                                            </a>
+                                        )
                                     ) : (
                                         <a className='button fill green block-when-responsive'>
-                                            <strong>New</strong> issue <span className='badge'>requires role</span>
+                                            <strong>New</strong> issue <span className='badge'>requires login</span>
                                         </a>
-                                    )
-                                ) : (
-                                    <a className='button fill green block-when-responsive'>
-                                        <strong>New</strong> issue <span className='badge'>requires login</span>
-                                    </a>
-                                )}
-                                <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='open'/></span>
-                                </NavLink>
-                                <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Closed</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='closed'/></span>
-                                </NavLink>
+                                    )}
+                                    <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
+                                        <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='open' tags={selectedTagIds} /></span>
+                                    </NavLink>
+                                    <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
+                                        <strong>Closed</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='closed' tags={selectedTagIds} /></span>
+                                    </NavLink>
+                                    <TagIssueFilterWidget label='' tags={tags} selectedTags={selectedTags} onClick={selectTag}></TagIssueFilterWidget>
+                                </div>
+
                             </div>
-                            { issues.filter(issue => issue.state == state).length == 0 ? (
+                            {issues.filter(issue => issue.state == state).length == 0 ? (
                                 <div className='main center'>
                                     <div>
-                                        <img src={IssueIcon}/>
+                                        <img src={IssueIcon} />
                                         <p>No <strong>{state}</strong> issue found.</p>
                                     </div>
                                 </div>
                             ) : (
                                 <div className='main'>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue}/>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onClick={handleClickIssue} />
                                 </div>
-                            ) }
-                            <LegalFooter/>
+                            )}
+                            <LegalFooter />
                         </div>
                         <div>
-                            <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
+                            <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual} />
                         </div>
-                    </main>                            
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    </main>
+                    <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 }

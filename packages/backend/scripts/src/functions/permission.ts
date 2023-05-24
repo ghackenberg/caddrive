@@ -3,7 +3,16 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common'
 import { In } from 'typeorm'
 
 import { User } from 'productboard-common'
-import { getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getVersionOrFail } from 'productboard-database'
+import { 
+    getCommentOrFail, 
+    getIssueOrFail, 
+    getMemberOrFail, 
+    getMilestoneOrFail, 
+    getProductOrFail, 
+    getVersionOrFail,
+    getTagOrFail,
+    getTagAssignmentOrFail
+} from 'productboard-database'
 
 // USER
 
@@ -181,7 +190,7 @@ export async function canDeleteFileOrFail(_user: User, _fileId: string) {
 
 // ISSUE
 
-export async function canFindIssuenOrFail(user: User, productId: string) {
+export async function canFindIssuesOrFail(user: User, productId: string) {
     try {
         await getProductOrFail({ id: productId, public: true, deleted: null }, Error)
     } catch (error) {
@@ -326,6 +335,129 @@ export async function canDeleteMilestoneOrFail(user: User, milestoneId: string) 
     const milestone = await getMilestoneOrFail({ id: milestoneId, deleted: null }, NotFoundException)
     if (user) {
         await getMemberOrFail({ userId: user.id, product: { id: milestone.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
+    } else {
+        throw new ForbiddenException()
+    }
+}
+
+// TAG
+
+export async function canFindTagOrFail(user: User, productId: string) {
+    try {
+        await getProductOrFail({ id: productId, public: true, deleted: null }, Error)
+    } catch (error) {
+        if (user) {
+            await getMemberOrFail({ userId: user.id, product: { id: productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
+        } else {
+            throw new ForbiddenException()
+        }
+    }
+}
+export async function canCreateTagOrFail(user: User, productId: string) {
+    if (user) {
+        await getMemberOrFail({ userId: user.id, product: { id: productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
+    } else {
+        throw new ForbiddenException()
+    }
+}
+export async function canReadTagOrFail(user: User, tagId: string) {
+    const tag = await getTagOrFail({ id: tagId, deleted: null }, NotFoundException)
+    try {
+        await getProductOrFail({ id: tag.productId, public: true, deleted: null }, Error)
+    } catch (error) {
+        if (user) {
+            await getMemberOrFail({ userId: user.id, product: { id: tag.productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
+        } else {
+            throw new ForbiddenException()
+        }
+    }
+}
+export async function canUpdateTagOrFail(user: User, tagId: string) {
+    const tag = await getTagOrFail({ id: tagId, deleted: null }, NotFoundException)
+    if (user) {
+        await getMemberOrFail({ userId: user.id, product: { id: tag.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
+    } else {
+        throw new ForbiddenException()
+    }
+}
+export async function canDeleteTagOrFail(user: User, tagId: string) {
+    const tag = await getTagOrFail({ id: tagId, deleted: null }, NotFoundException)
+    if (user) {
+        await getMemberOrFail({ userId: user.id, product: { id: tag.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
+    } else {
+        throw new ForbiddenException()
+    }
+}
+
+// TAGASSIGNMENT
+
+export async function canFindTagAssignmentOrFail(user: User, issueId?: string, tagId?: string) {
+    if (issueId && !tagId) {
+        const issue = await getIssueOrFail({ id: issueId, deleted: null }, NotFoundException)
+        try {
+            await getProductOrFail({ id: issue.productId, public: true, deleted: null }, Error)
+        } catch (error) {
+            if (user) {
+                await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
+            } 
+            else {
+                throw new ForbiddenException()
+            }
+        }
+    }
+    if (!issueId && tagId) {
+        const tag = await getTagOrFail({ id: tagId, deleted: null }, NotFoundException)
+        try {
+            await getProductOrFail({ id: tag.productId, public: true, deleted: null }, Error)
+        } catch (error) {
+            if (user) {
+                await getMemberOrFail({ userId: user.id, product: { id: tag.productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
+            } 
+            else {
+                throw new ForbiddenException()
+            }
+        }
+    }
+    if (issueId && tagId) {
+            throw new ForbiddenException()
+        }
+}
+export async function canCreateTagAssignmentOrFail(user: User, issueId: string) {
+    const issue = await getIssueOrFail({ id: issueId, deleted: null }, NotFoundException)
+    console.log(issue)
+    if (user) {
+        await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
+    } else {
+        throw new ForbiddenException()
+    }
+}
+export async function canReadTagAssignmentOrFail(user: User, tagAssignmentId: string) {
+    const tagAssignment = await getTagAssignmentOrFail({ id: tagAssignmentId, deleted: null }, NotFoundException)
+    const issue = await getIssueOrFail({ id: tagAssignment.issueId, deleted: null }, NotFoundException)
+    try {
+        await getProductOrFail({ id: issue.productId, public: true, deleted: null }, Error)
+    } catch (error) {
+        if (user) {
+            await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer', 'customer']), deleted: null}, ForbiddenException)
+        } else {
+            throw new ForbiddenException()
+        }
+    }
+}
+export async function canUpdateTagAssignmentOrFail(user: User, tagAssignmentId: string) {
+    const tagAssignment = await getTagAssignmentOrFail({ id: tagAssignmentId, deleted: null }, NotFoundException)
+    const issue = await getIssueOrFail({ id: tagAssignment.issueId, deleted: null }, NotFoundException)
+    if (user) {
+        await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
+    } else {
+        throw new ForbiddenException()
+    }
+}
+export async function canDeleteTagAssignmentOrFail(user: User, tagAssignmentId: string) {
+    const tagAssignment = await getTagAssignmentOrFail({ id: tagAssignmentId, deleted: null }, NotFoundException)
+    const issue = await getIssueOrFail({ id: tagAssignment.issueId, deleted: null }, NotFoundException)
+    if (user) {
+        await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
     } else {
         throw new ForbiddenException()
     }

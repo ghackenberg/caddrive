@@ -2,13 +2,25 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class IssueUpdateData {
     @ApiProperty()
-    label: string
+    name: string
     @ApiProperty()
-    text: string
+    description: string
     @ApiProperty()
     assigneeIds: string[]
     @ApiProperty()
-    milestoneId?: string
+    milestoneId: string
+    @ApiProperty()
+    parentIssueId: string
+    @ApiProperty()
+    stateId: string
+    @ApiProperty()
+    issueTypeId: string
+    @ApiProperty()
+    priority: string
+    @ApiProperty()
+    storypoints: number
+    @ApiProperty()
+    progress: number
 }
 
 export class IssueAddData extends IssueUpdateData {

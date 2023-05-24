@@ -5,6 +5,7 @@ import { Issue } from 'productboard-common'
 import { CommentEntity } from './comment'
 import { MilestoneEntity } from './milestone'
 import { ProductEntity } from './product'
+import { TagAssignmentEntity } from './tagAssignment'
 import { UserEntity } from './user'
 
 @Entity()
@@ -48,14 +49,35 @@ export class IssueEntity extends Issue {
     override assigneeIds: string[]
 
     @Column({nullable: false})
-    override label: string
+    override name: string
 
     @Column({nullable: false})
-    override text: string
+    override description: string
 
     @Column({nullable: false, default: 'open'})
     override state: 'open' | 'closed'
 
+    @Column({ nullable: true })
+    override parentIssueId: string
+    
+    @Column({ nullable: false })
+    override stateId: string
+    
+    @Column({ nullable: false })
+    override issueTypeId: string
+    
+    @Column({ nullable: false })
+    override priority: string
+    
+    @Column({ nullable: true })
+    override storypoints: number
+    
+    @Column({ nullable: true })
+    override progress: number
+
     @OneToMany(() => CommentEntity, comment => comment.issue)
     comments: CommentEntity[]
+
+    @OneToMany(() => TagAssignmentEntity, TagAssignment => TagAssignment.tag)
+    tagAssignment: TagAssignmentEntity[]
 }

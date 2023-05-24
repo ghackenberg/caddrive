@@ -5,6 +5,8 @@ import { IssueManager } from '../managers/issue'
 import { MemberManager } from '../managers/member'
 import { MilestoneManager } from '../managers/milestone'
 import { ProductManager } from '../managers/product'
+import { TagManager } from '../managers/tag'
+import { TagAssignmentManager } from '../managers/tagAssignment'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 
@@ -78,5 +80,21 @@ export function useMember(memberId: string) {
         memberId,
         () => MemberManager.getMemberFromCache(memberId),
         callback => MemberManager.getMember(memberId, callback)
+    )
+}
+
+export function useTag(tagId: string) {
+    return useEntity(
+        tagId,
+        () => TagManager.getTagFromCache(tagId),
+        callback => TagManager.getTag(tagId, callback)
+    )
+}
+
+export function useTagAssignment(tagAssignmentId: string) {
+    return useEntity(
+        tagAssignmentId,
+        () => TagAssignmentManager.getTagAssignmentFromCache(tagAssignmentId),
+        callback => TagAssignmentManager.getTagAssignment(tagAssignmentId, callback)
     )
 }

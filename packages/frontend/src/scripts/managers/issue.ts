@@ -6,8 +6,8 @@ import { AbstractManager } from './abstract'
 class IssueManagerImpl extends AbstractManager<Issue> {
     // CACHE
     
-    findIssuesFromCache(productId: string, milestoneId?: string, state?: string) {
-        return this.getFind(`${productId}-${milestoneId}-${state}`)
+    findIssuesFromCache(productId: string, milestoneId?: string, state?: string, tagIds?: string[]) {
+        return this.getFind(`${productId}-${milestoneId}-${state}-${tagIds}`)
     }
     getIssueFromCache(issueId: string) { 
         return this.getItem(issueId)
@@ -15,11 +15,12 @@ class IssueManagerImpl extends AbstractManager<Issue> {
 
     // REST
 
-    findIssues(productId: string, milestoneId: string, state: string, callback: (issues: Issue[], error?: string) => void) {
+    findIssues(productId: string, milestoneId: string, state: string, tagIds: string[], callback: (issues: Issue[], error?: string) => void) {
         return this.find(
-            `${productId}-${milestoneId}-${state}`,
-            () => IssueClient.findIssues(productId, milestoneId, state),
-            issue => (!productId || issue.productId == productId) && (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state),
+            //TODO: fix tagIds for caching
+            `${productId}-${milestoneId}-${state}-${tagIds}`,
+            () => IssueClient.findIssues(productId, milestoneId, state, tagIds),
+            issue => (!productId || issue.productId == productId) && (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state) && !tagIds,
             (a, b) => a.created - b.created,
             callback
         )

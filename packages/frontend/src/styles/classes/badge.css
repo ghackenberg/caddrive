@@ -16,30 +16,84 @@ span.badge {
 
     vertical-align: top;
 
-    background-color: rgb(225,225,225);
+    background-color: rgb(225, 225, 225);
 
     color: gray;
 }
+
 span.badge:first-child {
     margin-left: 0;
 }
+
 span.badge.public {
     background-color: green;
 
     color: white;
 }
+
 span.badge.private {
     background-color: red;
 
     color: white;
 }
+
 span.badge.role {
     background-color: black;
 
     color: white;
 }
 
-.button.fill span.badge {
+span.badge.active {
+    box-shadow: 4px 4px;
+  
+}
+
+span.badge.gray {
+    background-color: rgba(200, 200, 200, 0.6);
+    color: black;
+}
+
+span.badge.brown {
+    background-color: rgba(165, 115, 40, 0.6);
+    color: black;
+}
+
+span.badge.orange {
+    background-color: rgba(255, 150, 0, 0.6);
+    color: black;
+}
+
+span.badge.yellow {
+    background-color: rgba(255, 255, 0, 0.6);
+    color: black;
+}
+
+span.badge.green {
+    background-color: rgba(0, 255, 0, 0.6);
+    color: black;
+}
+
+span.badge.blue {
+    background-color: rgba(0, 0, 255, 0.6);
+    color: black;
+}
+
+span.badge.purple {
+    background-color: rgba(165, 0, 255, 0.6);
+    color: black;
+}
+
+span.badge.pink {
+    background-color: rgba(255, 0, 255, 0.6);
+    color: black;
+}
+
+span.badge.red {
+    background-color: rgba(255, 0, 0, 0.6);
+    color: black;
+}
+
+.button.fill > span.badge {
     background-color: rgba(255,255,255,0.5);
 
     color: white;
@@ -53,4 +107,5 @@ span.badge.role {
 }
 .button.stroke.green span.badge {
     background-color: rgba(0,255,0,0.5);
+
 }

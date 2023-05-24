@@ -31,20 +31,27 @@ main.view > div:nth-child(1) > div {
 main.view > div:nth-child(1) > div:first-child {
     padding-top: 0.5em;
 }
+
+main.view > div:nth-child(1) > div:first-child > div.button-bar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
 main.view > div:nth-child(1) > div:last-child {    
     padding-bottom: 0.5rem;
 }
 
-main.view > div:nth-child(1) > div.header > a.button {
-    margin-top: 0.5em;
-    margin-right: 1em;
-    margin-bottom: 0.5em;
-}
+
 main.view > div:nth-child(1) > div.header > a.button.right {
     float: right;
 
     margin-left: 1em;
-    margin-right: 0em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 main.view > div:nth-child(1) > div.main {

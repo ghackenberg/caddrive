@@ -199,7 +199,7 @@ export const ProductIssueCommentView = () => {
                                     </a>
                                 )}
                                 <h1>
-                                    {issue.label}
+                                    {issue.name}
                                 </h1>
                                 <p>
                                     <span className={`state ${issue.state}`}>
