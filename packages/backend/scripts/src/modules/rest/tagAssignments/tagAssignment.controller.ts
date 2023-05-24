@@ -7,7 +7,7 @@ import { TagAssignment, TagAssignmentREST, TagAssignmentAddData, TagAssignmentUp
 import { canReadTagAssignmentOrFail, canDeleteTagAssignmentOrFail, canUpdateTagAssignmentOrFail, canCreateTagAssignmentOrFail, canFindTagAssignmentOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import {TagAssignmentService } from './tagAssignment.service'
+import { TagAssignmentService } from './tagAssignment.service'
 
 @Controller('rest/tagassignments')
 @UseGuards(TokenOptionalGuard)
