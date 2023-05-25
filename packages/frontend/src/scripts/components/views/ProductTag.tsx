@@ -10,7 +10,7 @@ import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useTags } from '../../hooks/list'
 import { TagManager } from '../../managers/tag'
-import { TagAssignmentCount } from '../counts/TagAssignments'
+import { IssueCount } from '../counts/Issues'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -70,7 +70,7 @@ export const ProductTagView = () => {
         },
         {
             label: 'assignments', class: 'left nowrap', content: tag => (
-                <TagAssignmentCount tagId={tag.id}></TagAssignmentCount>
+                <IssueCount productId={productId} tags={[tag.id]}></IssueCount>
             )
         },
         {
