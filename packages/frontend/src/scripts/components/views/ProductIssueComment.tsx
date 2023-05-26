@@ -217,11 +217,10 @@ export const ProductIssueCommentView = () => {
                             </div>
                             <div className='main'>
                                 <div className="widget issue_thread">
-                                    {/* <CommentView class="issue" productId={productId} issueId={issueId} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/> */}
                                     {comments && comments.map((comment, index) => (
                                         <CommentView key={comment.id} class={`${index == 0 ? 'first' : 'comment'}`} productId={productId} issueId={issueId} commentId={comment.id} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     ))}
-                                    <div className={`${comments.length == 0 ? 'first' : 'comment'} self`}>
+                                    <div className={`${comments && comments.length == 0 ? 'first' : 'comment'} self`}>
                                         <div className="head">
                                             <div className="icon">
                                                 {contextUser ? (

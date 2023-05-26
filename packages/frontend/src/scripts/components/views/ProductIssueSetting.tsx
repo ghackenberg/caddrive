@@ -14,7 +14,6 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useMilestones, useTags, useTagAssignments } from '../../hooks/list'
 import { IssueManager } from '../../managers/issue'
 import { TagAssignmentManager } from '../../managers/tagAssignment'
-import { AudioRecorder } from '../../services/recorder'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { TagInput } from '../inputs/TagInput'
 import { TextInput } from '../inputs/TextInput'
@@ -69,14 +68,11 @@ export const ProductIssueSettingView = () => {
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
     const [text, setText] = useState<string>(initialText)
-    const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
     const [assignedTags, setAssignedTags] = React.useState<Tag[]>([])
 
     // - Interactions
-    const [recorder, setRecorder] = useState<AudioRecorder>()
-    const [audioUrl, setAudioUrl] = useState<string>('')
     const [selected, setSelected] = useState<Part[]>([])
     const [marked, setMarked] = useState<Part[]>(initialMarked)
     const [active, setActive] = useState<string>('left')
@@ -110,29 +106,6 @@ export const ProductIssueSettingView = () => {
     }, [text])
 
     // FUNCTIONS
-
-    async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
-        // TODO handle unmount!
-        event.preventDefault()
-        const recorder = new AudioRecorder()
-        await recorder.start()
-        setRecorder(recorder)
-    }
-
-    async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
-        // TODO handle unmount!
-        event.preventDefault()
-        const data = await recorder.stop()
-        setAudio(data)
-        setAudioUrl(URL.createObjectURL(data))
-        setRecorder(null)
-    }
-
-    async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault()
-        setAudio(null)
-        setAudioUrl('')
-    }
 
     function overObject(version: Version, object: Object3D) {
         const path = computePath(object)
@@ -180,7 +153,7 @@ export const ProductIssueSettingView = () => {
                     assigneeIds,
                     milestoneId: milestoneId ? milestoneId : null
                 },
-                    { audio }
+                    {}
                 )
                 assignedTags.length > 0 && assignedTags.forEach(assignedTag => {
                     TagAssignmentManager.addTagAssignment({ tagId: assignedTag.id, issueId: issue.id })
@@ -202,7 +175,7 @@ export const ProductIssueSettingView = () => {
                         TagAssignmentManager.deleteTagAssignment(tagAssignment.id)
                     }
                 })
-                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, {})
                 await goBack()
             }
 
@@ -285,25 +258,6 @@ export const ProductIssueSettingView = () => {
                                         </div>
                                     </div>
                                     <TagInput label='Tags' tags={tags} assignedTags={assignedTags} onClick={selectTag} />
-                                    <div>
-                                        <div>
-                                            <label>Audio</label>
-                                        </div>
-                                        <div>
-                                            {recorder ? (
-                                                <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray' />
-                                            ) : (
-                                                audio ? (
-                                                    <>
-                                                        <audio src={audioUrl} controls />
-                                                        <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray' />
-                                                    </>
-                                                ) : (
-                                                    <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray' />
-                                                )
-                                            )}
-                                        </div>
-                                    </div>
                                     <div>
                                         <div>
                                             <label>Milestone</label>
