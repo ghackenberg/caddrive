@@ -1,4 +1,4 @@
-import  * as React from 'react'
+import * as React from 'react'
 import { useState, useEffect, useContext, useRef, FormEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 
@@ -9,7 +9,7 @@ import { Member, Version, Tag } from 'productboard-common'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
-import { useIssue, useProduct} from '../../hooks/entity'
+import { useIssue, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useMilestones, useTags, useTagAssignments } from '../../hooks/list'
 import { IssueManager } from '../../managers/issue'
@@ -63,7 +63,7 @@ export const ProductIssueSettingView = () => {
 
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
     const initialAssigneeIds = issue ? issue.assigneeIds : []
-    
+
     // STATES
 
     // - Values
@@ -72,7 +72,7 @@ export const ProductIssueSettingView = () => {
     const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
-    const [assignedTags, setAssignedTags] = React.useState<Tag[]>()
+    const [assignedTags, setAssignedTags] = React.useState<Tag[]>([])
 
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
@@ -101,14 +101,14 @@ export const ProductIssueSettingView = () => {
     // - Values
     useEffect(() => { issue && setLabel(issue.name) }, [issue])
     useEffect(() => { issue && setText(issue.description) }, [issue])
-    useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
+    useEffect(() => { issue && setMilestoneId(issue.milestoneId) }, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
 
     // - Computations
     useEffect(() => {
         setMarked(collectParts(text || ''))
     }, [text])
-    
+
     // FUNCTIONS
 
     async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
@@ -138,7 +138,7 @@ export const ProductIssueSettingView = () => {
         const path = computePath(object)
         setSelected([{ productId: version.productId, versionId: version.id, objectPath: path, objectName: object.name }])
     }
-    
+
     function outObject() {
         setSelected([])
     }
@@ -161,47 +161,51 @@ export const ProductIssueSettingView = () => {
         }
     }
 
-    async function submitIssue(event: FormEvent){
+    async function submitIssue(event: FormEvent) {
         // TODO handle unmount!
         event.preventDefault()
-        if (issueId == 'new') {
-            if (label && text) {
-                const issue = await IssueManager.addIssue({ 
-                    productId, 
-                    name: label, 
+        if (label && text) {
+            // add tags
+            if (issueId == 'new') {      
+                const issue = await IssueManager.addIssue({
+                    productId,
+                    name: label,
                     parentIssueId: 'demo1',
                     stateId: 'demo1',
                     issueTypeId: 'demo1',
                     priority: 'demo1',
                     storypoints: 4,
                     progress: 4,
-                    description: text, 
-                    assigneeIds, 
-                    milestoneId: milestoneId ? milestoneId : null 
-                    }, 
+                    description: text,
+                    assigneeIds,
+                    milestoneId: milestoneId ? milestoneId : null
+                },
                     { audio }
                 )
+                assignedTags.length > 0 && assignedTags.forEach(assignedTag => {
+                    TagAssignmentManager.addTagAssignment({ tagId: assignedTag.id, issueId: issue.id })
+                })
                 await replace(`/products/${productId}/issues/${issue.id}/comments`)
             }
-        } else {
-            if (label && text) {
-                // add 
-                assignedTags && assignedTags.forEach(assignedTag => {
+            else {
+                // add tags
+                assignedTags.length > 0 && assignedTags.forEach(assignedTag => {
                     const tagAssignment = tagAssignments.find(tagAssignment => tagAssignment.tagId == assignedTag.id)
                     if (!tagAssignment) {
-                        TagAssignmentManager.addTagAssignment({tagId: assignedTag.id, issueId: issueId})
+                        TagAssignmentManager.addTagAssignment({ tagId: assignedTag.id, issueId: issueId })
                     }
                 })
-                // delete
-                tagAssignments && tagAssignments.forEach(tagAssignment => {
+                // delete tags
+                tagAssignments.length > 0 && tagAssignments.forEach(tagAssignment => {
                     const assignedTag = assignedTags.find(assignedTag => assignedTag.id == tagAssignment.tagId)
                     if (!assignedTag) {
                         TagAssignmentManager.deleteTagAssignment(tagAssignment.id)
                     }
                 })
                 await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
-                await goBack()    
+                await goBack()
             }
+
         }
     }
 
@@ -230,15 +234,21 @@ export const ProductIssueSettingView = () => {
     // CONSTANTS
 
     const columns: Column<Member>[] = [
-        { label: '👤', content: member => (
-            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round'/>
-        ) },
-        { label: 'Name', class: 'fill left nowrap', content: member => (
-            <ProductUserNameWidget userId={member.userId} productId={productId}/>
-        ) },
-        { label: '🛠️', class: 'fill center nowrap', content: member => (
-            <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>
-        ) },
+        {
+            label: '👤', content: member => (
+                <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round' />
+            )
+        },
+        {
+            label: 'Name', class: 'fill left nowrap', content: member => (
+                <ProductUserNameWidget userId={member.userId} productId={productId} />
+            )
+        },
+        {
+            label: '🛠️', class: 'fill center nowrap', content: member => (
+                <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)} />
+            )
+        },
     ]
 
     const items: ProductFooterItem[] = [
@@ -249,9 +259,9 @@ export const ProductIssueSettingView = () => {
     // RETURN
 
     return (
-        ((issueId == 'new' || (issue && tagAssignments && assignedTags)) && product && members && tags ) ? (
+        ((issueId == 'new' || (issue && tagAssignments && assignedTags)) && product && members && tags) ? (
             issue && issue.deleted ? (
-                <Redirect to='/'/>
+                <Redirect to='/' />
             ) : (
                 <>
                     <main className={`view product-issue-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
@@ -265,33 +275,31 @@ export const ProductIssueSettingView = () => {
                                     )}
                                 </h1>
                                 <form onSubmit={submitIssue} onReset={goBack}>
-                                    <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
+                                    <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required />
                                     <div>
                                         <div>
                                             <label>Text</label>
                                         </div>
                                         <div>
-                                            <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required/>
+                                            <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required />
                                         </div>
                                     </div>
-                                    {issueId != 'new' &&
-                                    <TagInput label='Tags' tags= {tags} assignedTags = {assignedTags} onClick ={selectTag}/>
-                                    }
+                                    <TagInput label='Tags' tags={tags} assignedTags={assignedTags} onClick={selectTag} />
                                     <div>
                                         <div>
                                             <label>Audio</label>
                                         </div>
                                         <div>
                                             {recorder ? (
-                                                <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray'/>
+                                                <input type='button' value='Stop recording' onClick={stopRecordAudio} className='button fill gray' />
                                             ) : (
                                                 audio ? (
                                                     <>
-                                                        <audio src={audioUrl} controls/>
-                                                        <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray'/>
+                                                        <audio src={audioUrl} controls />
+                                                        <input type='button' value='Remove recording' onClick={removeAudio} className='button fill gray' />
                                                     </>
                                                 ) : (
-                                                    <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray'/>
+                                                    <input type='button' value='Start recording' onClick={startRecordAudio} className='button fill gray' />
                                                 )
                                             )}
                                         </div>
@@ -317,32 +325,32 @@ export const ProductIssueSettingView = () => {
                                         </div>
                                         <div>
                                             {members && (
-                                                <Table columns={columns} items={members}/>
+                                                <Table columns={columns} items={members} />
                                             )}
                                         </div>
                                     </div>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                            <ButtonInput value='Save'/>
+                                            <ButtonInput value='Save' />
                                         ) : (
-                                            <ButtonInput value='Save' badge='requires role' disabled={true}/>
+                                            <ButtonInput value='Save' badge='requires role' disabled={true} />
                                         )
                                     ) : (
-                                        <ButtonInput value='Save' badge='requires login' disabled={true}/>
+                                        <ButtonInput value='Save' badge='requires login' disabled={true} />
                                     )}
                                 </form>
                             </div>
-                            <LegalFooter/>
+                            <LegalFooter />
                         </div>
                         <div>
-                            <ProductView3D productId={productId} selected={selected} marked={marked} mouse={true} over={overObject} out={outObject} click={selectObject}/>
+                            <ProductView3D productId={productId} selected={selected} marked={marked} mouse={true} over={overObject} out={outObject} click={selectObject} />
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 }

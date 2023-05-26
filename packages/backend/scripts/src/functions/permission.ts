@@ -424,7 +424,6 @@ export async function canFindTagAssignmentOrFail(user: User, issueId?: string, t
 }
 export async function canCreateTagAssignmentOrFail(user: User, issueId: string) {
     const issue = await getIssueOrFail({ id: issueId, deleted: null }, NotFoundException)
-    console.log(issue)
     if (user) {
         await getMemberOrFail({ userId: user.id, product: { id: issue.productId, deleted: null }, role: In(['manager', 'engineer']), deleted: null}, ForbiddenException)
     } else {

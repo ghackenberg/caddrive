@@ -11,6 +11,12 @@ export class TagAssignmentEntity extends TagAssignment {
     @PrimaryColumn({ nullable: false })
     override id: string
 
+    @Column({ nullable: false })
+    override created: number
+
+    @Column({ nullable: false, default: 0 })
+    override updated: number
+    
     @Column({ nullable: true })
     override deleted: number
 
