@@ -1,14 +1,10 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, useRef, FormEvent } from 'react'
+import { useState, useEffect, useContext, FormEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 
-import { Object3D } from 'three'
-
-import { Member, Version, Tag } from 'productboard-common'
+import { Member, Tag } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { collectParts, Part } from '../../functions/markdown'
-import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useMilestones, useTags, useTagAssignments } from '../../hooks/list'
@@ -33,10 +29,6 @@ export const ProductIssueSettingView = () => {
 
     const { goBack, replace } = useAsyncHistory()
 
-    // REFERENCES
-
-    const textReference = useRef<HTMLTextAreaElement>()
-
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
@@ -57,9 +49,6 @@ export const ProductIssueSettingView = () => {
     // INITIAL STATES
 
     const initialLabel = issue ? issue.name : ''
-    const initialText = issue ? issue.description : ''
-    const initialMarked = collectParts(initialText)
-
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
     const initialAssigneeIds = issue ? issue.assigneeIds : []
 
@@ -67,14 +56,11 @@ export const ProductIssueSettingView = () => {
 
     // - Values
     const [label, setLabel] = useState<string>(initialLabel)
-    const [text, setText] = useState<string>(initialText)
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
     const [assignedTags, setAssignedTags] = React.useState<Tag[]>([])
 
     // - Interactions
-    const [selected, setSelected] = useState<Part[]>([])
-    const [marked, setMarked] = useState<Part[]>(initialMarked)
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
@@ -96,48 +82,15 @@ export const ProductIssueSettingView = () => {
 
     // - Values
     useEffect(() => { issue && setLabel(issue.name) }, [issue])
-    useEffect(() => { issue && setText(issue.description) }, [issue])
     useEffect(() => { issue && setMilestoneId(issue.milestoneId) }, [issue])
     useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
 
-    // - Computations
-    useEffect(() => {
-        setMarked(collectParts(text || ''))
-    }, [text])
-
     // FUNCTIONS
-
-    function overObject(version: Version, object: Object3D) {
-        const path = computePath(object)
-        setSelected([{ productId: version.productId, versionId: version.id, objectPath: path, objectName: object.name }])
-    }
-
-    function outObject() {
-        setSelected([])
-    }
-
-    function selectObject(version: Version, object: Object3D) {
-        const path = computePath(object)
-        const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
-        if (document.activeElement == textReference.current) {
-            const before = text.substring(0, textReference.current.selectionStart)
-            const after = text.substring(textReference.current.selectionEnd)
-            setText(`${before}${markdown}${after}`)
-            setTimeout(() => {
-                textReference.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
-            }, 0)
-        } else {
-            setText(`${text}${markdown}`)
-            setTimeout(() => {
-                textReference.current.focus()
-            }, 0)
-        }
-    }
 
     async function submitIssue(event: FormEvent) {
         // TODO handle unmount!
         event.preventDefault()
-        if (label && text) {
+        if (label) {
             // add tags
             if (issueId == 'new') {      
                 const issue = await IssueManager.addIssue({
@@ -149,7 +102,7 @@ export const ProductIssueSettingView = () => {
                     priority: 'demo1',
                     storypoints: 4,
                     progress: 4,
-                    description: text,
+                    description: 'demo1',
                     assigneeIds,
                     milestoneId: milestoneId ? milestoneId : null
                 },
@@ -175,7 +128,7 @@ export const ProductIssueSettingView = () => {
                         TagAssignmentManager.deleteTagAssignment(tagAssignment.id)
                     }
                 })
-                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, {})
+                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: 'demo', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, {})
                 await goBack()
             }
 
@@ -249,14 +202,6 @@ export const ProductIssueSettingView = () => {
                                 </h1>
                                 <form onSubmit={submitIssue} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required />
-                                    <div>
-                                        <div>
-                                            <label>Text</label>
-                                        </div>
-                                        <div>
-                                            <textarea ref={textReference} className='button fill lightgray' placeholder='Type label' value={text} onChange={event => setText(event.currentTarget.value)} required />
-                                        </div>
-                                    </div>
                                     <TagInput label='Tags' tags={tags} assignedTags={assignedTags} onClick={selectTag} />
                                     <div>
                                         <div>
@@ -297,7 +242,7 @@ export const ProductIssueSettingView = () => {
                             <LegalFooter />
                         </div>
                         <div>
-                            <ProductView3D productId={productId} selected={selected} marked={marked} mouse={true} over={overObject} out={outObject} click={selectObject} />
+                            <ProductView3D productId={productId}mouse={true}/>
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive} />
