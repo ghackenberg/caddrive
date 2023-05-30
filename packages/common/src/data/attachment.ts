@@ -14,7 +14,9 @@ export class AttachmentUpdateData {
 
 export class AttachmentAddData extends AttachmentUpdateData {
     @ApiProperty()
-    issueId: string
+    commentId: string
+    @ApiProperty()
+    userId: string
 }
 
 export class Attachment extends AttachmentAddData {
@@ -22,12 +24,9 @@ export class Attachment extends AttachmentAddData {
     id: string
     
     @ApiProperty()
-    created: string
+    created: number
     @ApiProperty()
-    updated: string
+    updated: number
     @ApiProperty()
     deleted: number
-
-    @ApiProperty()
-    userId: string
 }

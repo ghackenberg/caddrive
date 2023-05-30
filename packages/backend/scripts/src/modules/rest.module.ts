@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 
+import { AttachmentModule } from './rest/attachments/attachment.module'
 import { CommentModule } from './rest/comments/comment.module'
 import { FileModule } from './rest/files/file.module'
 import { IssueModule } from './rest/issues/issue.module'
@@ -28,7 +29,8 @@ import { VersionModule } from './rest/versions/version.module'
         MilestoneModule, 
         MemberModule,
         TagModule,
-        TagAssignmentModule
+        TagAssignmentModule,
+        AttachmentModule
     ]
 })
 export class RESTModule {}

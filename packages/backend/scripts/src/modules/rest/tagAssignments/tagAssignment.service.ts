@@ -44,6 +44,7 @@ export class TagAssignmentService implements TagAssignmentREST {
     async deleteTagAssignment(id: string): Promise<TagAssignment> {
         const tagAssignment = await Database.get().tagAssignmentRepository.findOneByOrFail({ id })
         tagAssignment.deleted = Date.now()
+        tagAssignment.updated = Date.now()
         await Database.get().tagAssignmentRepository.save(tagAssignment)
         return convertTagAssignment(tagAssignment)
     } 

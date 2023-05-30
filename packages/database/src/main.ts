@@ -101,7 +101,8 @@ export class Database {
                         TagAssignmentEntity,
                         TransitionEntity,
                         UserEntity,
-                        VersionEntity
+                        VersionEntity,
+                        AttachmentEntity
                     ],
                     subscribers: [],
                     migrations: []
@@ -139,7 +140,8 @@ export class Database {
                         TagAssignmentEntity,
                         TransitionEntity,
                         UserEntity,
-                        VersionEntity
+                        VersionEntity,
+                        AttachmentEntity
                     ],
                     subscribers: [],
                     migrations: []
@@ -169,6 +171,7 @@ export class Database {
     public readonly milestoneRepository: Repository<MilestoneEntity>
     public readonly tagRepository: Repository<TagEntity>
     public readonly tagAssignmentRepository: Repository<TagAssignmentEntity>
+    public readonly attachmentRepository: Repository<AttachmentEntity>
 
     private constructor(options: DataSourceOptions) {
         this.dataSource = new DataSource(options)
@@ -183,6 +186,7 @@ export class Database {
         this.milestoneRepository = this.dataSource.getRepository(MilestoneEntity)
         this.tagRepository = this.dataSource.getRepository(TagEntity)
         this.tagAssignmentRepository = this.dataSource.getRepository(TagAssignmentEntity)
+        this.attachmentRepository = this.dataSource.getRepository(AttachmentEntity)
     }
 }
 
@@ -223,4 +227,7 @@ export async function getTagOrFail<E>(where: FindOptionsWhere<TagEntity>, ErrorT
 }
 export async function getTagAssignmentOrFail<E>(where: FindOptionsWhere<TagAssignmentEntity>, ErrorType: { new(): E }) {
     return getEntityOrFail(Database.get().tagAssignmentRepository, where, ErrorType)
+}
+export async function getAttachmentOrFail<E>(where: FindOptionsWhere<TagAssignmentEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().attachmentRepository, where, ErrorType)
 }

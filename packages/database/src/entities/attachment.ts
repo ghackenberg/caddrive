@@ -8,23 +8,20 @@ export class AttachmentEntity extends Attachment {
     @PrimaryColumn({ nullable: false })
     override id: string
 
+    @Column({ nullable: false })
+    override created: number
+    @Column({ nullable: false, default: 0 })
+    override updated: number
     @Column({ nullable: true })
     override deleted: number
-
     @Column({ nullable: false })
-    override issueId: string
+    override commentId: string
 
     @Column({nullable: false})
     override userId: string
 
     @Column({nullable: false})
     override name: string
-
-    @Column({nullable: false})
-    override created: string
-
-    @Column({nullable: false})
-    override updated: string
 
     @Column({nullable: false})
     override description: string

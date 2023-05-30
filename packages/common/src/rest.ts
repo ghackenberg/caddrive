@@ -112,7 +112,7 @@ export interface TagAssignmentREST {
 }
 
 export interface AttachmentREST {
-    findAttachments(issueId: string): Promise<Attachment[]>
+    findAttachments(commentId?: string, issueId?: string): Promise<Attachment[]>
     addAttachment(data: AttachmentAddData): Promise<Attachment>
     getAttachment(id: string): Promise<Attachment>
     updateAttachment(id: string, data: AttachmentUpdateData): Promise<Attachment>
