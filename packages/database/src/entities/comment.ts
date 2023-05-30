@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 
 import { Comment } from 'productboard-common'
 
+import { AttachmentEntity } from './attachment'
 import { IssueEntity } from './issue'
 import { UserEntity } from './user'
 
@@ -39,4 +40,7 @@ export class CommentEntity extends Comment {
 
     @Column({ nullable: false, default: 'none' })
     override action: 'none' | 'close' | 'reopen'
+
+    @OneToMany(() => AttachmentEntity, (attachment) => attachment.comment)
+    attachments: AttachmentEntity[]
 }

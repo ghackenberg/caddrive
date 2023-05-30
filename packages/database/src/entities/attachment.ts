@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
 import { Attachment } from 'productboard-common'
+
+import { CommentEntity } from './comment'
 
 @Entity()
 export class AttachmentEntity extends Attachment {
@@ -31,4 +33,8 @@ export class AttachmentEntity extends Attachment {
 
     @Column({nullable: false})
     override data: string
+
+    @ManyToOne(() => CommentEntity)
+    @JoinColumn({ name: 'commentId' })
+    comment: CommentEntity
 }
