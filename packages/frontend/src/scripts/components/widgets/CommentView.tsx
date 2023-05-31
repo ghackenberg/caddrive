@@ -3,6 +3,7 @@ import * as React from 'react'
 import { UserContext } from '../../contexts/User'
 import { useComment } from '../../hooks/entity'
 import { collectParts, createProcessor } from '../../functions/markdown'
+import { useAttachments } from '../../hooks/list'
 import { ProductUserPictureWidget } from './ProductUserPicture'
 import { ProductUserNameWidget } from './ProductUserName'
 
@@ -26,6 +27,8 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
     // CONSTANTS
 
     const comment = useComment(props.commentId)
+    const attachments = useAttachments(props.commentId)
+    console.log(attachments)
 
     // INITIAL STATES
 
@@ -57,29 +60,39 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                 <div className="head">
                     <div className="icon">
                         <a href={`/users/${comment.userId}`}>
-                            <ProductUserPictureWidget userId={comment.userId} productId={props.productId} class='big'/>
+                            <ProductUserPictureWidget userId={comment.userId} productId={props.productId} class='big' />
                         </a>
                     </div>
                     <div className="text">
                         <p>
-                            <strong><ProductUserNameWidget userId={comment.userId} productId={props.productId}/></strong> commented on {new Date(comment.created).toISOString().substring(0, 10)}
+                            <strong><ProductUserNameWidget userId={comment.userId} productId={props.productId} /></strong> commented on {new Date(comment.created).toISOString().substring(0, 10)}
                         </p>
                     </div>
                 </div>
                 <div className="body">
-                    <div className="free"/>
+                    <div className="free" />
                     <div className="text">
                         {html}
-                        {comment.audioId && <audio src={`/rest/files/${comment.audioId}.webm`} controls/>}
+                        {/* {comment.audioId && <audio src={`/rest/files/${comment.audioId}.webm`} controls />} */}
+                        {attachments &&
+                            attachments.map(attachment => {
+                                return attachment.type == 'webm'
+                                    ? <audio key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`} controls />
+                                    : attachment.type == 'png' || attachment.type == 'jpg' || attachment.type == 'jpeg'
+                                    ? <img key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`}></img>
+                                    : <> </>
+                            })
+                        }
+
                     </div>
                 </div>
                 {parts && parts.map((part, index) => (
                     <div key={index} className="note part">
-                        <div className="free"/>
+                        <div className="free" />
                         <div className="text">
                             <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
                                 <span>
-                                    <img src={PartIcon}/>
+                                    <img src={PartIcon} />
                                 </span>
                                 {part.objectName}
                             </a>
@@ -89,11 +102,11 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                 ))}
                 {'action' in comment && comment.action != 'none' && (
                     <div className={`note action ${comment.action}`}>
-                        <div className="free"/>
+                        <div className="free" />
                         <div className="text">
                             <a>
                                 <span>
-                                    <img src={comment.action == 'close' ? CloseIcon : ReopenIcon}/>
+                                    <img src={comment.action == 'close' ? CloseIcon : ReopenIcon} />
                                 </span>
                             </a>
                             {comment.action == 'close' ? 'closed' : 'reopened'}
@@ -103,5 +116,5 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
             </div>
         )
     )
-    
+
 }
