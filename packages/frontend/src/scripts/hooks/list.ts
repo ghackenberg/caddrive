@@ -1,5 +1,6 @@
 import * as React from 'react'
 
+import { AttachmentManager } from '../managers/attachment'
 import { CommentManager } from '../managers/comment'
 import { IssueManager } from '../managers/issue'
 import { MemberManager } from '../managers/member'
@@ -103,5 +104,13 @@ export function useTagAssignments(issueId: string, tagId: string) {
         `${issueId}-${tagId}`,
         () => TagAssignmentManager.findTagAssignmentsFromCache(issueId, tagId),
         callback => TagAssignmentManager.findTagAssignments(issueId,tagId, callback)
+    )
+}
+
+export function useAttachments(commentId?: string, issueId?: string) {
+    return useEntities(
+        `${commentId}-${issueId}`,
+        () => AttachmentManager.findAttachmentsFromCache(commentId, issueId),
+        callback => AttachmentManager.findAttachments(commentId,issueId, callback)
     )
 }

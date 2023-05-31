@@ -1,10 +1,13 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { FileFieldsInterceptor } from '@nestjs/platform-express'
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
-import { Attachment, AttachmentREST, AttachmentAddData, AttachmentUpdateData } from "productboard-common"
+import "multer"
 
-import { canReadAttachmentOrFail, canDeleteAttachmentOrFail, canUpdateAttachmentOrFail, canCreateAttachmentOrFail, canFindAttachmentOrFail } from '../../../functions/permission'
+import { Attachment, AttachmentAddData, AttachmentUpdateData, AttachmentREST } from 'productboard-common'
+
+import { canReadAttachmentOrFail, canUpdateAttachmentOrFail, canDeleteAttachmentOrFail, canCreateAttachmentOrFail, canFindAttachmentOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
 import { AttachmentService } from './attachment.service'
@@ -12,7 +15,8 @@ import { AttachmentService } from './attachment.service'
 @Controller('rest/attachments')
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
-export class AttachmentController implements AttachmentREST {
+@ApiExtraModels(AttachmentAddData, AttachmentUpdateData)
+export class AttachmentController implements AttachmentREST<string, string, Express.Multer.File[]> {
     constructor(
         private readonly attachmentService: AttachmentService,
         @Inject(REQUEST)
@@ -24,22 +28,41 @@ export class AttachmentController implements AttachmentREST {
     @ApiQuery({ name: 'issue', type: 'string', required: false })
     @ApiResponse({ type: [Attachment] })
     async findAttachments(
-        @Query('comment') commentId: string,
-        @Query('issue') issueId: string
+        @Query('comment') commentId?: string,
+        @Query('issue') issueId?: string,
     ): Promise<Attachment[]> {
         await canFindAttachmentOrFail(this.request.user, commentId, issueId)
-        return await this.attachmentService.findAttachments(commentId, issueId)
+        return this.attachmentService.findAttachments(commentId, issueId)
     }
 
     @Post()
-    @ApiBody({ type: AttachmentAddData })
+    @UseInterceptors(
+        FileFieldsInterceptor(
+            [{ name: 'audio', maxCount: 1 }]
+        )
+    )
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: { $ref: getSchemaPath(AttachmentAddData) },
+                audio: { type: 'string', format: 'binary' }
+            },
+            required: ['data']
+        },
+        required: true
+    })
     @ApiResponse({ type: Attachment })
     async addAttachment(
-        @Body() data: Attachment
+        @Body('data') data: string,
+        @UploadedFiles() files: { audio?: Express.Multer.File[] }
     ): Promise<Attachment> {
-        await canCreateAttachmentOrFail(this.request.user, data.commentId)
-        return await this.attachmentService.addAttachment(data)
-    }
+        const parsedData = JSON.parse(data) as AttachmentAddData
+        await canCreateAttachmentOrFail(this.request.user, parsedData.commentId)
+        return this.attachmentService.addAttachment(parsedData, files)
+    }  
+
     @Get(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: Attachment })
@@ -48,21 +71,41 @@ export class AttachmentController implements AttachmentREST {
     ): Promise<Attachment> {
         await canReadAttachmentOrFail(this.request.user, id)
         return this.attachmentService.getAttachment(id)
-    }
+    } 
+
     @Put(':id')
+    @UseInterceptors(
+        FileFieldsInterceptor(
+            [{ name: 'audio', maxCount: 1 }]
+        )
+    )
     @ApiParam({ name: 'id', type: 'string', required: true })
-    @ApiBody({ type: AttachmentUpdateData })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: { $ref: getSchemaPath(AttachmentUpdateData) },
+                audio: { type: 'string', format: 'binary' }
+            },
+            required: ['data']
+        },
+        required: true
+    })
     @ApiResponse({ type: Attachment })
     async updateAttachment(
         @Param('id') id: string,
-        @Body() data: AttachmentUpdateData
+        @Body('data') data: string,
+        @UploadedFiles() files?: { audio?: Express.Multer.File[] }
     ): Promise<Attachment> {
+        const parsedData = JSON.parse(data) as AttachmentUpdateData
         await canUpdateAttachmentOrFail(this.request.user, id)
-        return this.attachmentService.updateAttachment(id, data)
+        return this.attachmentService.updateAttachment(id, parsedData, files)
     }
+
     @Delete(':id')
     @ApiParam({ name: 'id', type: 'string', required: true })
-    @ApiResponse({ type: Attachment })
+    @ApiResponse({ type: [Attachment] })
     async deleteAttachment(
         @Param('id') id: string
     ): Promise<Attachment> {

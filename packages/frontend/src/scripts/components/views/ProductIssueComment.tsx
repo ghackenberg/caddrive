@@ -12,6 +12,7 @@ import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers } from '../../hooks/list'
+import { AttachmentManager } from '../../managers/attachment'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
@@ -136,12 +137,13 @@ export const ProductIssueCommentView = () => {
     async function submitComment(event: FormEvent) {
         // TODO handle unmount!
         event.preventDefault()
-        if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
+        if (text || audio) {
+            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { })  
             setText('')
-        }
-        if (audio) {
-            setAudio(undefined)
+            if (audio) {
+                await AttachmentManager.addAttachment({commentId: comment.id, userId: contextUser.id, name: 'recording', type: 'webm', description: 'recording', data: 'data'}, { audio})
+                setAudio(undefined)
+            }
         }
     }
 

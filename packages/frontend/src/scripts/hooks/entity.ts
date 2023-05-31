@@ -1,5 +1,6 @@
 import * as React from 'react'
 
+import { AttachmentManager } from '../managers/attachment'
 import { CommentManager } from '../managers/comment'
 import { IssueManager } from '../managers/issue'
 import { MemberManager } from '../managers/member'
@@ -96,5 +97,13 @@ export function useTagAssignment(tagAssignmentId: string) {
         tagAssignmentId,
         () => TagAssignmentManager.getTagAssignmentFromCache(tagAssignmentId),
         callback => TagAssignmentManager.getTagAssignment(tagAssignmentId, callback)
+    )
+}
+
+export function useAttachment(attachmentid: string) {
+    return useEntity(
+        attachmentid,
+        () => AttachmentManager.getAttachmentFromCache(attachmentid),
+        callback => AttachmentManager.getAttachment(attachmentid, callback)
     )
 }

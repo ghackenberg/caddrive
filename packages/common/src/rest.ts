@@ -2,7 +2,7 @@ import { JWK } from 'jose'
 
 import { Action, ActionAddData, ActionUpdateData } from './data/action'
 import { AdditionalProperty, AdditionalPropertyAddData, AdditionalPropertyUpdateData } from './data/additionalProperty'
-import { Attachment, AttachmentAddData, AttachmentUpdateData } from './data/attachment'
+import { Attachment } from './data/attachment'
 import { Comment } from './data/comment'
 import { DoneCriterion, DoneCriterionAddData, DoneCriterionUpdateData } from './data/doneCriterion'
 import { DoneProperty, DonePropertyAddData, DonePropertyUpdateData } from './data/doneProperty'
@@ -111,11 +111,11 @@ export interface TagAssignmentREST {
     deleteTagAssignment(id: string): Promise<TagAssignment>
 }
 
-export interface AttachmentREST {
+export interface AttachmentREST<DA, DU, A> {
     findAttachments(commentId?: string, issueId?: string): Promise<Attachment[]>
-    addAttachment(data: AttachmentAddData): Promise<Attachment>
+    addAttachment(data: DA, files: { audio?: A }): Promise<Attachment>
     getAttachment(id: string): Promise<Attachment>
-    updateAttachment(id: string, data: AttachmentUpdateData): Promise<Attachment>
+    updateAttachment(id: string, data: DU, files?: { audio?: A }): Promise<Attachment>
     deleteAttachment(id: string): Promise<Attachment>
 }
 
