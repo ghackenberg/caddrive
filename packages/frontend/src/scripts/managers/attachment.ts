@@ -25,13 +25,13 @@ class AttachmentManagerImpl extends AbstractManager<Attachment> {
             callback
         )
     }
-    async addAttachment(data: AttachmentAddData, files: { audio?: Blob }) {
+    async addAttachment(data: AttachmentAddData, files: { audio?: Blob, image?: File }) {
         return this.resolveItem(await AttachmentClient.addAttachment(data, files))
     }
     getAttachment(id: string, callback: (comment: Attachment, error?: string) => void) {
         return this.observeItem(id, () => AttachmentClient.getAttachment(id), callback)
     }
-    async updateAttachment(id: string, data: AttachmentUpdateData, files?: { audio?: Blob }) {
+    async updateAttachment(id: string, data: AttachmentUpdateData, files?: { audio?: Blob, image?: File }) {
         return this.promiseItem(id, AttachmentClient.updateAttachment(id, data, files))
     }
     async deleteAttachment(id: string) {

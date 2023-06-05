@@ -11,7 +11,7 @@ import { Database, AttachmentEntity } from 'productboard-database'
 import { convertAttachment } from '../../../functions/convert'
 
 @Injectable()
-export class AttachmentService implements AttachmentREST<AttachmentAddData, AttachmentUpdateData, Express.Multer.File[]> {
+export class AttachmentService implements AttachmentREST<AttachmentAddData, AttachmentUpdateData, Express.Multer.File[], Express.Multer.File[]> {
     //TODO: Request like in issueservice?
     constructor(
     ) {
@@ -39,13 +39,19 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         return result
     }
 
-    async addAttachment(data: AttachmentAddData, files: { audio?: Express.Multer.File[] }): Promise<Attachment> {
-        const id = shortid()
-        const created = Date.now()
+    async addAttachment(data: AttachmentAddData, files: { audio?: Express.Multer.File[], image?: Express.Multer.File[] }): Promise<Attachment> {
         let attachment: AttachmentEntity
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) { 
+            const id = shortid()
+            const created = Date.now()
             attachment = await Database.get().attachmentRepository.save({id: id, created: created, ...data})
             writeFileSync(`./uploads/${id}.${data.type}`, files.audio[0].buffer)
+        } 
+        if (files && files.image && files.image.length == 1 && files.image[0].mimetype.endsWith('/jpeg')) { 
+            const id = shortid()
+            const created = Date.now()
+            attachment = await Database.get().attachmentRepository.save({id: id, created: created, ...data})
+            writeFileSync(`./uploads/${id}.${data.type}`, files.image[0].buffer)
         } 
         return convertAttachment(attachment)
     }
@@ -54,7 +60,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         const attachment = await Database.get().attachmentRepository.findOneByOrFail({ id })
         return convertAttachment(attachment)
     }
-    async updateAttachment(id: string, data: AttachmentUpdateData, files: { audio?: Express.Multer.File[] }): Promise<Attachment> {
+    async updateAttachment(id: string, data: AttachmentUpdateData, files: { audio?: Express.Multer.File[], image?: Express.Multer.File[] }): Promise<Attachment> {
         const attachment = await Database.get().attachmentRepository.findOneByOrFail({ id })
         attachment.updated = Date.now()
         attachment.name = data.name
@@ -65,6 +71,9 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${id}.${data.type}`, files.audio[0].buffer)
         }
+        if (files && files.image && files.image.length == 1 && files.image[0].mimetype.endsWith('/jpg')) { 
+            writeFileSync(`./uploads/${id}.${data.type}`, files.image[0].buffer)
+        } 
         return convertAttachment(attachment)
     }
     async deleteAttachment(id: string): Promise<Attachment> {

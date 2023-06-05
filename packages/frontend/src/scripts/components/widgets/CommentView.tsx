@@ -28,7 +28,6 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
 
     const comment = useComment(props.commentId)
     const attachments = useAttachments(props.commentId)
-    console.log(attachments)
 
     // INITIAL STATES
 
@@ -73,7 +72,6 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                     <div className="free" />
                     <div className="text">
                         {html}
-                        {/* {comment.audioId && <audio src={`/rest/files/${comment.audioId}.webm`} controls />} */}
                         {attachments &&
                             attachments.map(attachment => {
                                 return attachment.type == 'webm'

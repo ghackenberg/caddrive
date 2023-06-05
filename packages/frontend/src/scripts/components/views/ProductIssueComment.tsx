@@ -16,6 +16,7 @@ import { AttachmentManager } from '../../managers/attachment'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
+import { FileInput } from '../inputs/FileInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { CommentView } from '../widgets/CommentView'
@@ -54,6 +55,8 @@ export const ProductIssueCommentView = () => {
     // - Values
     const [text, setText] = useState<string>('')
     const [audio, setAudio] = useState<Blob>()
+    const [image, setImage] = useState<File>()
+    console.log(image)
 
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
@@ -137,12 +140,17 @@ export const ProductIssueCommentView = () => {
     async function submitComment(event: FormEvent) {
         // TODO handle unmount!
         event.preventDefault()
-        if (text || audio) {
+        if (text || audio || image) {
             const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { })  
             setText('')
             if (audio) {
-                await AttachmentManager.addAttachment({commentId: comment.id, userId: contextUser.id, name: 'recording', type: 'webm', description: 'recording', data: 'data'}, { audio})
+                await AttachmentManager.addAttachment({commentId: comment.id, userId: contextUser.id, name: 'recording', type: 'webm', description: 'recording', data: 'data'}, { audio })
                 setAudio(undefined)
+            }
+            if (image) {
+                console.log(image)
+                await AttachmentManager.addAttachment({commentId: comment.id, userId: contextUser.id, name: 'picture', type: 'jpg', description: 'picture', data: 'data'}, { image })
+                setImage(undefined)
             }
         }
     }
@@ -186,7 +194,7 @@ export const ProductIssueCommentView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                    members && members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
                                             <strong>Edit</strong> issue
                                         </NavLink>
@@ -248,6 +256,9 @@ export const ProductIssueCommentView = () => {
                                                 {contextUser ? (
                                                     members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                                         <>
+                                                        <form>
+                                                            <FileInput label= {''} required= {false} placeholder='Select' change={setImage}></FileInput>
+                                                        </form>
                                                             {recorder ? (
                                                                 <button onClick={stopRecordAudio} className='button fill gray block-when-responsive'>
                                                                     Stop recording
