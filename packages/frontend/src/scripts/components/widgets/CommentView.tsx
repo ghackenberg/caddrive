@@ -77,7 +77,7 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                                 return attachment.type == 'webm'
                                     ? <audio key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`} controls />
                                     : attachment.type == 'png' || attachment.type == 'jpg' || attachment.type == 'jpeg'
-                                    ? <img key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`}></img>
+                                    ? <img className='icon xxlarge' key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`}></img>
                                     : <> </>
                             })
                         }

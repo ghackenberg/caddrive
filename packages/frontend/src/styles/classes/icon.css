@@ -29,6 +29,19 @@
     width: 4.5em;
     height: 4.5em;
 }
+*.icon.xlarge {
+
+    width: 10em;
+    height: auto;
+}
+*.icon.xxlarge {
+
+    width: 20em;
+    height: auto;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+    border-radius: 1em;
+}
 
 *.icon.small.pad {
     width: 1em;

@@ -21,6 +21,7 @@ import { LoadingView } from './Loading'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
+import TagsIcon from '/src/images/tag.png'
 
 export const ProductTagView = () => {
 
@@ -90,14 +91,14 @@ export const ProductTagView = () => {
     // RETURN
 
     return (
-        (product && members) ? (
+        (product && members && tags) ? (
             product.deleted ? (
                 <Redirect to='/' />
             ) : (
                 <>
                     <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
-                            <div>
+                            <div className='header'>
                                 <div className='button-bar'>
                                     {contextUser ? (
                                         members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
@@ -115,8 +116,19 @@ export const ProductTagView = () => {
                                         </a>
                                     )}
                                 </div>
-                                <Table columns={columns} items={tags} onClick={tag => push(`/products/${productId}/tags/${tag.id}/settings`)} />
                             </div>
+                            {tags.length == 0 ? (
+                                <div className='main center'>
+                                    <div>
+                                        <img src={TagsIcon} />
+                                        <p>No tags found.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='main'>
+                                    <Table columns={columns} items={tags} onClick={tag => push(`/products/${productId}/tags/${tag.id}/settings`)} />                                    
+                                </div>
+                            )}
                             <LegalFooter />
                         </div>
                         <div>

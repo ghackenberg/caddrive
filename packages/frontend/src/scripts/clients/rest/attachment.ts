@@ -30,6 +30,9 @@ class AttachmentClientImpl implements AttachmentREST<AttachmentAddData, Attachme
             if (files.audio) {
                 body.append('audio', files.audio)
             }
+            if (files.image) {
+                body.append('image', files.image)
+            }
         }
         return (await axios.put<Attachment>(`/rest/attachments/${id}`, body, { ...auth })).data
     }
