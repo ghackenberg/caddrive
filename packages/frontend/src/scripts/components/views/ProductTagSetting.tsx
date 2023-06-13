@@ -7,6 +7,7 @@ import { useTag } from '../../hooks/entity'
 import { useMembers } from '../../hooks/list'
 import { TagManager } from '../../managers/tag'
 import { ButtonInput } from '../inputs/ButtonInput'
+import { ColorInput } from '../inputs/ColorInput'
 import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -38,9 +39,7 @@ export const ProductTagSettingView = () => {
 
     const initialName = tag ? tag.name : ''
     const initialDescription = tag ? tag.description : ''
-
-    const colors: string[] = ['brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red' ]
-    const initialColor = tag ? tag.color : colors[Math.floor(colors.length * Math.random())]
+    const initialColor = tag ? tag.color : generateRandomColor()
 
     // STATES
 
@@ -54,22 +53,32 @@ export const ProductTagSettingView = () => {
 
     // FUNCTIONS
 
-    async function submit(event: React.FormEvent){
+    async function submit(event: React.FormEvent) {
         // TODO handle unmount!
         event.preventDefault()
         if (tagId == 'new') {
             if (name && color) {
-                await TagManager.addTag({productId, name, description, color })
+                await TagManager.addTag({ productId, name, description, color })
                 replace(`/products/${productId}/tags`)
             }
         } else {
             if (name && color) {
                 await TagManager.updateTag(tagId, { name, description, color })
                 await replace(`/products/${productId}/tags`)
-                
+
             }
         }
     }
+
+    function generateRandomColor(): string {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256); 
+        const hexR = r.toString(16).padStart(2, '0');
+        const hexG = g.toString(16).padStart(2, '0');
+        const hexB = b.toString(16).padStart(2, '0');
+        return "#" + hexR + hexG + hexB;
+      }
 
     // CONSTANTS
 
@@ -81,48 +90,42 @@ export const ProductTagSettingView = () => {
     // RETURN
 
     return (
-        (tagId == 'new' || ( members && tag)) ? (
+        (tagId == 'new' || (members && tag)) ? (
             (tag && tag.deleted) ? (
-                <Redirect to='/'/>
+                <Redirect to='/' />
             ) : (
                 <>
-                    <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
                         <div>
                             <div>
                                 <h1>{tagId == 'new' ? 'New tag' : 'Tag settings'}</h1>
                                 <form onSubmit={submit}>
-                                    <TextInput label='Name' placeholder='Type name' value={name} change={setName} required/>
-                                    <TextInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                    <div>
-                                    <p>color:</p>
-                                    <div>
-                                        <select className='button fill lightgray' value={color} onChange={event => setColor(event.currentTarget.value)}>
-                                            { colors.map((color) => <option key={color} value={color}>{color}</option>) }
-                                        </select>
-                                    </div>
-                                </div>
+                                    <TextInput label='Name' placeholder='Type name' value={name} change={setName} required />
+                                    <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} />
+                                    <ColorInput label= 'Color' value={color} change={setColor}></ColorInput>
+                                    
                                     {contextUser ? (
                                         (tagId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
-                                            <ButtonInput value='Save'/>
+                                            <ButtonInput value='Save' />
                                         ) : (
-                                            <ButtonInput value='Save (requires role)' disabled={true}/>
+                                            <ButtonInput value='Save (requires role)' disabled={true} />
                                         )
                                     ) : (
-                                        <ButtonInput value='Save (requires login)' disabled={true}/>
+                                        <ButtonInput value='Save (requires login)' disabled={true} />
                                     )}
                                 </form>
                             </div>
-                            <LegalFooter/>
+                            <LegalFooter />
                         </div>
                         <div>
-                            <ProductView3D productId={productId} mouse={true}/>
+                            <ProductView3D productId={productId} mouse={true} />
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 }

@@ -48,51 +48,6 @@ span.badge.active {
   
 }
 
-span.badge.gray {
-    background-color: rgba(200, 200, 200, 0.6);
-    color: black;
-}
-
-span.badge.brown {
-    background-color: rgba(165, 115, 40, 0.6);
-    color: black;
-}
-
-span.badge.orange {
-    background-color: rgba(255, 150, 0, 0.6);
-    color: black;
-}
-
-span.badge.yellow {
-    background-color: rgba(255, 255, 0, 0.6);
-    color: black;
-}
-
-span.badge.green {
-    background-color: rgba(0, 255, 0, 0.6);
-    color: black;
-}
-
-span.badge.blue {
-    background-color: rgba(0, 0, 255, 0.6);
-    color: black;
-}
-
-span.badge.purple {
-    background-color: rgba(165, 0, 255, 0.6);
-    color: black;
-}
-
-span.badge.pink {
-    background-color: rgba(255, 0, 255, 0.6);
-    color: black;
-}
-
-span.badge.red {
-    background-color: rgba(255, 0, 0, 0.6);
-    color: black;
-}
-
 .button.fill > span.badge {
     background-color: rgba(255,255,255,0.5);
 
