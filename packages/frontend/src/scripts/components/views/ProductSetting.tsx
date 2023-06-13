@@ -6,6 +6,7 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useProduct } from '../../hooks/entity'
 import { useMembers, useTags } from '../../hooks/list'
 import { ProductManager } from '../../managers/product'
+import { TagManager } from '../../managers/tag'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
@@ -45,6 +46,14 @@ export const ProductSettingView = () => {
     const initialDescription = product ? product.description : ''
     const initialPublic = product ? product.public : _initialPublic == 'true'
 
+    // INITIAL VALUES
+    
+    const initialTags = [
+        {name: 'task', description: 'a todo', color: '#ff0000' },
+        {name: 'bug', description: 'please fix me', color: '#00ff00'},
+        {name: 'story', description: 'a userstory', color: '#0000ff' }
+    ]
+
     // STATES
 
     // - Values
@@ -71,6 +80,10 @@ export const ProductSettingView = () => {
         if (productId == 'new') {
             if (name && description) {
                 const product = await ProductManager.addProduct({ name, description, public: _public })
+                for (const initialTag of initialTags) {
+                    await TagManager.addTag({ productId: product.id, name: initialTag.name, description: initialTag.description, color: initialTag.color })
+
+                }
                 await goBack()
                 await replace(`/products?public=${_public}`)
                 await push(`/products/${product.id}`)
