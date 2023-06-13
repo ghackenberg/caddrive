@@ -65,12 +65,12 @@ export const ProductTagView = () => {
             )
         },
         {
-            label: 'description', class: 'left nowrap', content: tag => (
+            label: 'description', class: 'left fill', content: tag => (
                 <div>{tag.description ? tag.description : ''} </div>
             )
         },
         {
-            label: 'assignments', class: 'left nowrap', content: tag => (
+            label: 'assignments', class: 'center', content: tag => (
                 <IssueCount productId={productId} tags={[tag.id]}></IssueCount>
             )
         },
