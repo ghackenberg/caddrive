@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, useRef, FormEvent, MouseEvent } from 'react'
+import { useState, useEffect, useContext, useRef, MouseEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -12,22 +12,24 @@ import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers } from '../../hooks/list'
-import { AttachmentManager } from '../../managers/attachment'
-import { CommentManager } from '../../managers/comment'
-import { IssueManager } from '../../managers/issue'
-import { AudioRecorder } from '../../services/recorder'
-import { FileInput } from '../inputs/FileInput'
+// import { AttachmentManager } from '../../managers/attachment'
+// import { CommentManager } from '../../managers/comment'
+// import { IssueManager } from '../../managers/issue'
+// import { AudioRecorder } from '../../services/recorder'
+// import { FileInput } from '../inputs/FileInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { CommentView } from '../widgets/CommentView'
+//import { CommentView } from '../widgets/CommentView'
+// import { CommentView2 } from '../widgets/CommentView2'
+import { CommentView3 } from '../widgets/CommentView3'
 import { ProductUserNameWidget } from '../widgets/ProductUserName'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+// import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
 import LeftIcon from '/src/images/comment.png'
 import RightIcon from '/src/images/part.png'
-import UserIcon from '/src/images/user.png'
+// import UserIcon from '/src/images/user.png'
 
 export const ProductIssueCommentView = () => {
 
@@ -54,13 +56,13 @@ export const ProductIssueCommentView = () => {
 
     // - Values
     const [text, setText] = useState<string>('')
-    const [audio, setAudio] = useState<Blob>()
-    const [image, setImage] = useState<File>()
-    console.log(image)
+    // const [audio, setAudio] = useState<Blob>()
+    // const [image, setImage] = useState<File>()
+    // console.log(image)
 
     // - Interactions
-    const [recorder, setRecorder] = useState<AudioRecorder>()
-    const [audioUrl, setAudioUrl] = useState<string>('')
+    // const [recorder, setRecorder] = useState<AudioRecorder>()
+    // const [audioUrl, setAudioUrl] = useState<string>('')
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
     const [active, setActive] = useState<string>('left')
@@ -73,28 +75,28 @@ export const ProductIssueCommentView = () => {
 
     // FUNCTIONS
 
-    async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
-        // TODO handle unmount!
-        event.preventDefault()
-        const recorder = new AudioRecorder()
-        await recorder.start()
-        setRecorder(recorder)
-    }
+    // async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    //     // TODO handle unmount!
+    //     event.preventDefault()
+    //     const recorder = new AudioRecorder()
+    //     await recorder.start()
+    //     setRecorder(recorder)
+    // }
 
-    async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
-        // TODO handle unmount!
-        event.preventDefault()
-        const data = await recorder.stop()
-        setAudio(data)
-        setAudioUrl(URL.createObjectURL(data))
-        setRecorder(null)
-    }
+    // async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    //     // TODO handle unmount!
+    //     event.preventDefault()
+    //     const data = await recorder.stop()
+    //     setAudio(data)
+    //     setAudioUrl(URL.createObjectURL(data))
+    //     setRecorder(null)
+    // }
 
-    async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault()
-        setAudio(null)
-        setAudioUrl('')
-    }
+    // async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    //     event.preventDefault()
+    //     setAudio(null)
+    //     setAudioUrl('')
+    // }
 
     function handleMouseOver(event: MouseEvent<HTMLAnchorElement>, part: Part) {
         event.preventDefault()
@@ -114,7 +116,7 @@ export const ProductIssueCommentView = () => {
         const path = computePath(object)
         setSelected([{ productId: version.productId, versionId: version.id, objectPath: path, objectName: object.name }])
     }
-    
+
     function outObject() {
         setSelected([])
     }
@@ -137,43 +139,40 @@ export const ProductIssueCommentView = () => {
         }
     }
 
-    async function submitComment(event: FormEvent) {
-        // TODO handle unmount!
-        event.preventDefault()
-        if (text || audio || image) {
-            const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { })  
-            setText('')
-            if (audio) {
-                await AttachmentManager.addAttachment({commentId: comment.id, userId: contextUser.id, name: 'recording', type: 'webm', description: 'recording', data: 'data'}, { audio })
-                setAudio(undefined)
-            }
-            if (image) {
-                console.log(image)
-                await AttachmentManager.addAttachment({commentId: comment.id, userId: contextUser.id, name: 'picture', type: 'jpg', description: 'picture', data: 'data'}, { image })
-                setImage(undefined)
-            }
-        }
-    }
+    // async function submitComment() {
+    //     // TODO handle unmount!
+    //     if (text || audio || image) {
+    //         const comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, {})
+    //         setText('')
+    //         if (audio) {
+    //             await AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: 'recording', type: 'webm', description: 'recording', data: 'data' }, { audio })
+    //             setAudio(undefined)
+    //         }
+    //         if (image) {
+    //             console.log(image)
+    //             await AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: 'picture', type: 'jpg', description: 'picture', data: 'data' }, { image })
+    //             setImage(undefined)
+    //         }
+    //     }
+    // }
 
-    async function submitCommentAndClose(event: FormEvent) {
-        // TODO handle unmount!
-        event.preventDefault()
-        if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
-            await IssueManager.updateIssue(issueId, { ...issue })
-            setText('')
-        }
-    }
+    // async function submitCommentAndClose() {
+    //     // TODO handle unmount!
+    //     if (text) {
+    //         await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
+    //         await IssueManager.updateIssue(issueId, { ...issue })
+    //         setText('')
+    //     }
+    // }
 
-    async function submitCommentAndReopen(event: FormEvent) {
-        // TODO handle unmount!
-        event.preventDefault()
-        if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
-            await IssueManager.updateIssue(issueId, { ...issue })
-            setText('')
-        }
-    }
+    // async function submitCommentAndReopen() {
+    //     // TODO handle unmount!
+    //     if (text) {
+    //         await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
+    //         await IssueManager.updateIssue(issueId, { ...issue })
+    //         setText('')
+    //     }
+    // }
 
     // CONSTANTS
 
@@ -217,7 +216,7 @@ export const ProductIssueCommentView = () => {
                                     </span>
                                     &nbsp;
                                     <strong>
-                                        <ProductUserNameWidget userId={issue.userId} productId={productId}/>
+                                        <ProductUserNameWidget userId={issue.userId} productId={productId} />
                                     </strong>
                                     &nbsp;
                                     <>
@@ -228,131 +227,22 @@ export const ProductIssueCommentView = () => {
                             <div className='main'>
                                 <div className="widget issue_thread">
                                     {comments && comments.map((comment, index) => (
-                                        <CommentView key={comment.id} class={`${index == 0 ? 'first' : 'comment'}`} productId={productId} issueId={issueId} commentId={comment.id} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                        <CommentView3 key={comment.id} class={`${index == 0 ? 'first' : 'comment'}`} productId={productId} issueId={issueId} commentId={comment.id} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} />
                                     ))}
-                                    <div className={`${comments && comments.length == 0 ? 'first' : 'comment'} self`}>
-                                        <div className="head">
-                                            <div className="icon">
-                                                {contextUser ? (
-                                                    <NavLink to={`/users/${contextUser.id}`}>
-                                                        <ProductUserPictureWidget userId={contextUser.id} productId={productId} />
-                                                    </NavLink>
-                                                ) : (
-                                                    <a>
-                                                        <img src={UserIcon} className='icon small round' />
-                                                    </a>
-                                                )}
-                                            </div>
-                                            <div className="text">
-                                                <p>
-                                                    <strong>New comment</strong>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="body">
-                                            <div className="free" />
-                                            <div className="text">
-                                                <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
-                                                {contextUser ? (
-                                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
-                                                        <>
-                                                        <form>
-                                                            <FileInput label= {''} required= {false} placeholder='Select' change={setImage}></FileInput>
-                                                        </form>
-                                                            {recorder ? (
-                                                                <button onClick={stopRecordAudio} className='button fill gray block-when-responsive'>
-                                                                    Stop recording
-                                                                </button>
-                                                            ) : (
-                                                                audio ? (
-                                                                    <>
-                                                                        <audio src={audioUrl} controls />
-                                                                        <button onClick={removeAudio} className='button fill gray block-when-responsive'>
-                                                                            Remove recording
-                                                                        </button>
-                                                                    </>
-                                                                ) : (
-                                                                    <button onClick={startRecordAudio} className='button fill gray block-when-responsive'>
-                                                                        Start recording
-                                                                    </button>
-                                                                )
-                                                            )}
-                                                            <button className='button fill blue' onClick={submitComment}>
-                                                                Save
-                                                            </button>
-                                                            {issue.state == 'open' ? (
-                                                                <button className='button stroke blue' onClick={submitCommentAndClose}>
-                                                                    Close
-                                                                </button>
-                                                            ) : (
-                                                                <button className='button stroke blue' onClick={submitCommentAndReopen}>
-                                                                    Reopen
-                                                                </button>
-                                                            )}
-                                                        </>
-
-                                                    ) : (
-                                                        <>
-                                                            <button className='button fill gray block-when-responsive'>
-                                                                <span>Start recording</span>
-                                                                <span className='badge'>requires role</span>
-                                                            </button>                                                                
-                                                            <button className='button fill blue'>
-                                                                <span>Save</span>
-                                                                <span className='badge'>requires role</span>
-                                                            </button>
-                                                            {issue.state == 'open' ? (
-                                                                <button className='button stroke blue'>
-                                                                    <span>Close</span>
-                                                                    <span className='badge'>requires role</span>
-                                                                </button>
-                                                            ) : (
-                                                                <button className='button stroke blue'>
-                                                                    <span>Reopen</span>
-                                                                    <span className='badge'>requires role</span>
-                                                                </button>
-                                                            )}
-                                                        </>
-                                                    )
-                                                ) : (
-                                                    <>
-                                                        <button className='button fill gray block-when-responsive'>
-                                                                <span>Start recording</span>
-                                                                <span className='badge'>requires login</span>
-                                                            </button>
-                                                        <button className='button fill blue'>
-                                                            <span>Save</span>
-                                                            <span className='badge'>requires login</span>
-                                                        </button>
-                                                        {issue.state == 'open' ? (
-                                                            <button className='button stroke blue'>
-                                                                <span>Close</span>
-                                                                <span className='badge'>requires login</span>
-                                                            </button>
-                                                        ) : (
-                                                            <button className='button stroke blue'>
-                                                                <span>Reopen</span>
-                                                                <span className='badge'>requires login</span>
-                                                            </button>
-                                                        )}
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
+                                        <CommentView3 class={`${comments && comments.length == 0 ? 'first' : 'comment'} self`} productId={productId} issueId={issueId} commentId={'new'} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} />
                                 </div>
                             </div>
-                            <LegalFooter/>
+                            <LegalFooter />
                         </div>
                         <div>
-                            <ProductView3D productId={productId} issueId={issueId} mouse={true} marked={marked} selected={selected} over={overObject} out={outObject} click={selectObject}/>
+                            <ProductView3D productId={productId} issueId={issueId} mouse={true} marked={marked} selected={selected} over={overObject} out={outObject} click={selectObject} />
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive} />
                 </>
             )
         ) : (
-            <LoadingView/>
+            <LoadingView />
         )
     )
 }

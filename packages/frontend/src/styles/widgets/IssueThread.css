@@ -90,6 +90,14 @@ div.widget.issue_thread > div > div.head > div.text {
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
 }
+div.widget.issue_thread > div > div.head > div.text > button.editIcon {
+    position: absolute;
+    background-color: inherit;
+    border-style: none;
+    right: 1em;
+    top: 0.75em;
+
+}
 div.widget.issue_thread > div > div.head > div.text::before {
     content: "";
 
