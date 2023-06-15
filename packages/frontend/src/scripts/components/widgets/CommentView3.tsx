@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import shortid from 'shortid'
+
 import { Attachment } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
@@ -9,6 +11,8 @@ import { useAttachments, useMembers } from '../../hooks/list'
 import { AttachmentManager } from '../../managers/attachment'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
+import { TextInput } from '../inputs/TextInput'
+import { FileInputButton } from './FileInputButton'
 import { ProductUserNameWidget } from './ProductUserName'
 import { ProductUserPictureWidget } from './ProductUserPicture'
 
@@ -38,7 +42,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
 
     // CONSTANTS
 
-    const comment = useComment(props.commentId)
+    let comment = useComment(props.commentId)
     const issue = useIssue(props.issueId)
     const members = useMembers(props.productId)
     const initialAttachments = useAttachments(props.commentId)
@@ -53,14 +57,17 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     const [text, setText] = React.useState<string>('')
     const [html, setHtml] = React.useState(initialHtml)
     const [parts, setParts] = React.useState(initialParts)
+
+    // INTERACTIONS
     const [editMode, setEditMode] = React.useState<boolean>(!comment)
+    const [files] = React.useState<{ id: string, file: File }[]>([])
 
     // EFFECTS
 
     React.useEffect(() => {
-        setAttachments(initialAttachments)
-        console.log(attachments)
+        setAttachments(initialAttachments || [])
     }, [initialAttachments]);
+    console.log(attachments)
 
     React.useEffect(() => {
         if (comment) {
@@ -76,21 +83,36 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
 
     const columns: Column<Attachment>[] = [
         {
-            label: 'Name', class: 'left', content: attachment => (
-                <div>
-                    {attachment.name}
+            label: 'Name', class: 'left nowrap', content: attachment => (
+                
+                editMode ? (
+
+                    <div>
+                       
+                    <TextInput value={attachment.name} change={(text) => handleTextChange(attachments.indexOf(attachment), 'name' ,text)} ></TextInput>
                 </div>
+                    ) :
+                    ( <div>
+                        {attachment.name}
+                    </div>)
             )
         },
         {
             label: 'Description', class: 'center', content: attachment => (
-                <div>
-                    {attachment.description}
+                editMode ? (
+
+                    <div>
+                       
+                    <TextInput value={attachment.description} change={(text) => handleTextChange(attachments.indexOf(attachment), 'description' ,text)} ></TextInput>
                 </div>
+                    ) :
+                    ( <div>
+                        {attachment.description}
+                    </div>)
             )
         },
         {
-            label: 'Type', class: 'center', content: attachment => (
+            label: 'Type', class: 'center nowrap', content: attachment => (
                 <div>
                     {attachment.type}
                 </div>
@@ -105,25 +127,49 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         }
     ]
 
+    function handleTextChange(index: number, property: string, text: string) {
+        setAttachments(attachments => {
+          return attachments.map((attachment, idx) => {
+            if (idx === index) {
+              return { ...attachment, [property]: text };
+            }
+            return attachment;
+          })
+        })
+      }
+
     async function submitComment() {
         // TODO handle unmount!
         if (text) {
             if (comment) {
-                // delete attachments      
-                initialAttachments.length > 0 && initialAttachments.forEach(initialAttachment => {
-                    const attachment = attachments.find(attachment => attachment.id == initialAttachment.id)
-                    if (!attachment) {
-                        console.log('lösche ' + initialAttachment.name)
-                        AttachmentManager.deleteAttachment(initialAttachment.id)
-                    }
-                })
-
-                await CommentManager.updateComment(comment.id, { ...comment, text: text }, {})
+                comment = await CommentManager.updateComment(comment.id, { ...comment, text: text }, {})
                 setEditMode(false)
             }
             else {
-                await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, {})
+                comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, {})
+                setAttachments([])
             }
+            // delete attachments      
+            (initialAttachments || []).forEach(initialAttachment => {
+                const attachment = (attachments || []).find(attachment => attachment.id == initialAttachment.id)
+                if (!attachment) {
+                    console.log('lösche ' + initialAttachment.name)
+                    AttachmentManager.deleteAttachment(initialAttachment.id)
+                }
+            })
+            // add attachments
+            attachments.length > 0 && (attachments || []).forEach(attachment => {
+                const initialAttachment = (initialAttachments || []).find(initialAttachment => initialAttachment.id == attachment.id)
+                if (!initialAttachment) {
+                    const attachmentFile = files.find(file => file.id == attachment.id)
+                    const image = attachmentFile.file
+                    AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: attachment.name, type: attachment.type, description: attachment.description }, { image })
+                }
+                // update attachments
+                else if (initialAttachment) {
+                    AttachmentManager.updateAttachment(attachment.id, { name: attachment.name, description: attachment.description, type: attachment.type }, { })
+                }
+            })
             setText('')
         }
     }
@@ -163,6 +209,12 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
             console.log(attachment)
             setAttachments(attachments => attachments.filter(prev => prev.id != attachment.id))
         }
+    }
+    function addAttachment(file: File) {
+        const id = shortid()
+        const newAttachment: Attachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: file.name.split('.')[0], description: 'description', type: file.type.split('/')[1] }
+        setAttachments((prev) => [...prev, newAttachment])
+        files.push({ id: id, file: file })
     }
 
     // RETURN
@@ -253,6 +305,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                                         </>
                                                     )
                                                     }
+                                                    <FileInputButton class='button fill gray' label='upload' change={(file) => { addAttachment(file) }} required={false}></FileInputButton>
                                                 </>
 
                                             ) : (

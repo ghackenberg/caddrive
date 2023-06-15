@@ -66,7 +66,6 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         attachment.name = data.name
         attachment.description = data.description
         attachment.type = data.type
-        attachment.data = data.data
         await Database.get().attachmentRepository.save(attachment)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${id}.${data.type}`, files.audio[0].buffer)

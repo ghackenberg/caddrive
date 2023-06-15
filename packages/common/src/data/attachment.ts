@@ -7,9 +7,6 @@ export class AttachmentUpdateData {
     description: string
     @ApiProperty()
     type: string
-    @ApiProperty()
-    data: string
-    
 }
 
 export class AttachmentAddData extends AttachmentUpdateData {

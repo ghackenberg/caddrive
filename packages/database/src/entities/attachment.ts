@@ -31,9 +31,6 @@ export class AttachmentEntity extends Attachment {
     @Column({nullable: false})
     override type: string
 
-    @Column({nullable: false})
-    override data: string
-
     @ManyToOne(() => CommentEntity)
     @JoinColumn({ name: 'commentId' })
     comment: CommentEntity
