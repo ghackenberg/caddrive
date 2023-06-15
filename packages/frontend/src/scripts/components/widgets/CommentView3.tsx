@@ -1,9 +1,12 @@
 import * as React from 'react'
 
+import { Attachment } from 'productboard-common'
+
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor } from '../../functions/markdown'
 import { useComment, useIssue } from '../../hooks/entity'
-import { useMembers } from '../../hooks/list'
+import { useAttachments, useMembers } from '../../hooks/list'
+import { AttachmentManager } from '../../managers/attachment'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
 import { ProductUserNameWidget } from './ProductUserName'
@@ -12,6 +15,9 @@ import { ProductUserPictureWidget } from './ProductUserPicture'
 import PartIcon from '/src/images/part.png'
 import CloseIcon from '/src/images/close.png'
 import ReopenIcon from '/src/images/reopen.png'
+import DeleteIcon from '/src/images/delete.png'
+
+import { Column, Table } from './Table'
 
 interface Part {
     productId: string
@@ -35,6 +41,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     const comment = useComment(props.commentId)
     const issue = useIssue(props.issueId)
     const members = useMembers(props.productId)
+    const initialAttachments = useAttachments(props.commentId)
 
     // INITIAL STATES
 
@@ -42,13 +49,18 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     const initialParts = comment && collectParts(comment.text)
 
     // STATES
-
+    const [attachments, setAttachments] = React.useState<Attachment[]>()
     const [text, setText] = React.useState<string>('')
     const [html, setHtml] = React.useState(initialHtml)
     const [parts, setParts] = React.useState(initialParts)
     const [editMode, setEditMode] = React.useState<boolean>(!comment)
 
     // EFFECTS
+
+    React.useEffect(() => {
+        setAttachments(initialAttachments)
+        console.log(attachments)
+    }, [initialAttachments]);
 
     React.useEffect(() => {
         if (comment) {
@@ -60,10 +72,52 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         }
     }, [comment])
 
+    // CONSTANTS
+
+    const columns: Column<Attachment>[] = [
+        {
+            label: 'Name', class: 'left', content: attachment => (
+                <div>
+                    {attachment.name}
+                </div>
+            )
+        },
+        {
+            label: 'Description', class: 'center', content: attachment => (
+                <div>
+                    {attachment.description}
+                </div>
+            )
+        },
+        {
+            label: 'Type', class: 'center', content: attachment => (
+                <div>
+                    {attachment.type}
+                </div>
+            )
+        },
+        {
+            label: '🛠️', class: 'center', content: attachment => (
+                <a onClick={event => deleteAttachment(event, attachment)}>
+                    <img src={DeleteIcon} className='icon medium pad' />
+                </a>
+            )
+        }
+    ]
+
     async function submitComment() {
         // TODO handle unmount!
         if (text) {
             if (comment) {
+                // delete attachments      
+                initialAttachments.length > 0 && initialAttachments.forEach(initialAttachment => {
+                    const attachment = attachments.find(attachment => attachment.id == initialAttachment.id)
+                    if (!attachment) {
+                        console.log('lösche ' + initialAttachment.name)
+                        AttachmentManager.deleteAttachment(initialAttachment.id)
+                    }
+                })
+
                 await CommentManager.updateComment(comment.id, { ...comment, text: text }, {})
                 setEditMode(false)
             }
@@ -95,6 +149,20 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     function enterEditMode() {
         setText(comment.text)
         setEditMode(true)
+    }
+    function exitEditMode() {
+        setText('')
+        setAttachments(initialAttachments)
+        setEditMode(false)
+    }
+
+    async function deleteAttachment(event: React.UIEvent, attachment: Attachment) {
+        // TODO handle unmount!
+        event.stopPropagation()
+        if (confirm('Do you really want to delete this attachment?')) {
+            console.log(attachment)
+            setAttachments(attachments => attachments.filter(prev => prev.id != attachment.id))
+        }
     }
 
     // RETURN
@@ -131,31 +199,59 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                 {comment && editMode == false && contextUser.id == comment.userId &&
                                     <button className='editIcon' onClick={enterEditMode}>🛠️</button>
                                 }
+
                             </div>
                         </div>
                         <div className="body">
                             <div className="free" />
                             <div className="text">
-                                {editMode == false && html}
+                                {
+                                    editMode == false && (
+                                        <>
+                                            {html}
+                                            {attachments &&
+                                                attachments.map(attachment => {
+                                                    return attachment.type == 'webm'
+                                                        ? <audio key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`} controls />
+                                                        : attachment.type == 'png' || attachment.type == 'jpg' || attachment.type == 'jpeg'
+                                                            ? <img className='icon xxlarge' key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`}></img>
+                                                            : <> </>
+                                                })
+                                            }
+                                            {attachments && attachments.length > 0 && <Table columns={columns.slice(0, columns.length - 1)} items={attachments} />}
+                                        </>
+                                    )
+                                }
                                 {editMode == true &&
                                     <>
                                         <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
+                                        {attachments && attachments.length > 0 && <Table columns={columns} items={attachments} />}
                                         {contextUser ? (
                                             members && members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                                 <>
-                                                    <button className='button fill blue' onClick={submitComment}>
-                                                        Save
-                                                    </button>
+                                                    {comment && (
+                                                        contextUser.id == comment.userId && (
+                                                            <>
+                                                                <button className='button fill blue' onClick={submitComment}>Update</button>
+                                                                <button className='button fill red' onClick={exitEditMode}>Cancel</button>
+                                                            </>
+                                                        )
+
+                                                    )}
                                                     {!comment && (
-                                                        issue.state == 'open' ? (
-                                                            <button className='button stroke blue' onClick={submitCommentAndClose}>
-                                                                Close
-                                                            </button>
-                                                        ) : (
-                                                            <button className='button stroke blue' onClick={submitCommentAndReopen}>
-                                                                Reopen
-                                                            </button>
-                                                        ))
+                                                        <>
+                                                            <button className='button fill blue' onClick={submitComment}>Save</button>
+                                                            {issue.state == 'open' ? (
+                                                                <button className='button stroke blue' onClick={submitCommentAndClose}>
+                                                                    Close
+                                                                </button>
+                                                            ) : (
+                                                                <button className='button stroke blue' onClick={submitCommentAndReopen}>
+                                                                    Reopen
+                                                                </button>
+                                                            )}
+                                                        </>
+                                                    )
                                                     }
                                                 </>
 
