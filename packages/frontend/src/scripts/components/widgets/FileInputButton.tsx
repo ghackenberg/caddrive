@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import AttachmentIcon from '/src/images/attachment.png'
+
 export const FileInputButton = (props: {class?: string, label: string, change: (value: File) => void, accept?: string, placeholder?: string, disabled?: boolean, required: boolean}) => {
 
     // REFERENCES
@@ -22,7 +24,7 @@ export const FileInputButton = (props: {class?: string, label: string, change: (
     return (
         <>
             <input style={{display: 'none'}} type='file' accept={props.accept} required={props.required} ref={fileInput} onChange={onChange}/>
-            <button className={props.class} onClick={onClick} >{props.label}</button>
+            <button className={props.class} onClick={onClick} ><img className='icon' src={AttachmentIcon}></img></button>
         </>
     )
 

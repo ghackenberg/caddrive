@@ -11,6 +11,7 @@ import { useAttachments, useMembers } from '../../hooks/list'
 import { AttachmentManager } from '../../managers/attachment'
 import { CommentManager } from '../../managers/comment'
 import { IssueManager } from '../../managers/issue'
+import { AudioRecorder } from '../../services/recorder'
 import { TextInput } from '../inputs/TextInput'
 import { FileInputButton } from './FileInputButton'
 import { ProductUserNameWidget } from './ProductUserName'
@@ -20,6 +21,8 @@ import PartIcon from '/src/images/part.png'
 import CloseIcon from '/src/images/close.png'
 import ReopenIcon from '/src/images/reopen.png'
 import DeleteIcon from '/src/images/delete.png'
+import StartRecordingIcon from '/src/images/startRecording.png'
+import StopRecordingIcon from '/src/images/stopRecording.png'
 
 import { Column, Table } from './Table'
 
@@ -60,14 +63,16 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
 
     // INTERACTIONS
     const [editMode, setEditMode] = React.useState<boolean>(!comment)
-    const [files] = React.useState<{ id: string, file: File }[]>([])
+    const [files] = React.useState<{ id: string, image: File, audio: Blob }[]>([])
+    const [recorder, setRecorder] = React.useState<AudioRecorder>()
+    const [audio, setAudio] = React.useState<Blob>()
+    //const [audioUrl, setAudioUrl] = React.useState<string>('')
 
     // EFFECTS
 
     React.useEffect(() => {
         setAttachments(initialAttachments || [])
     }, [initialAttachments]);
-    console.log(attachments)
 
     React.useEffect(() => {
         if (comment) {
@@ -127,6 +132,31 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         }
     ]
 
+    async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
+        event.preventDefault()
+        const recorder = new AudioRecorder()
+        await recorder.start()
+        setRecorder(recorder)
+    }
+
+    async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        // TODO handle unmount!
+        event.preventDefault()
+        const data = await recorder.stop()
+        // setAudio(data)
+        addAttachment(undefined, data)
+        // setAudio(null)
+        setRecorder(null)
+        // setAudioUrl(URL.createObjectURL(data))
+    }
+
+    async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        setAudio(null)
+        // setAudioUrl('')
+    }
+
     function handleTextChange(index: number, property: string, text: string) {
         setAttachments(attachments => {
           return attachments.map((attachment, idx) => {
@@ -153,7 +183,6 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
             (initialAttachments || []).forEach(initialAttachment => {
                 const attachment = (attachments || []).find(attachment => attachment.id == initialAttachment.id)
                 if (!attachment) {
-                    console.log('lösche ' + initialAttachment.name)
                     AttachmentManager.deleteAttachment(initialAttachment.id)
                 }
             })
@@ -162,8 +191,9 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                 const initialAttachment = (initialAttachments || []).find(initialAttachment => initialAttachment.id == attachment.id)
                 if (!initialAttachment) {
                     const attachmentFile = files.find(file => file.id == attachment.id)
-                    const image = attachmentFile.file
-                    AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: attachment.name, type: attachment.type, description: attachment.description }, { image })
+                    const image = attachmentFile.image
+                    const audio = attachmentFile.audio 
+                    AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: attachment.name, type: attachment.type, description: attachment.description }, { audio, image })
                 }
                 // update attachments
                 else if (initialAttachment) {
@@ -206,15 +236,27 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this attachment?')) {
-            console.log(attachment)
             setAttachments(attachments => attachments.filter(prev => prev.id != attachment.id))
         }
     }
-    function addAttachment(file: File) {
+    function addAttachment(image?: File, audio?: Blob) {
         const id = shortid()
-        const newAttachment: Attachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: file.name.split('.')[0], description: 'description', type: file.type.split('/')[1] }
+        let newAttachment: Attachment
+        if (image && !audio) {
+            newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: image.name.split('.')[0], description: 'description', type: image.type.split('/')[1] }
+        }
+        if (!image && audio) {
+            newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: 'recording', description: 'description', type: 'webm' }
+        }
         setAttachments((prev) => [...prev, newAttachment])
-        files.push({ id: id, file: file })
+        files.push({ id: id, image: image? image : undefined, audio: audio? audio : undefined })
+    }
+    
+    function openInNewTab(attachment: Attachment) {
+        console.log(attachment)
+        const url = `/rest/files/${attachment.id}.${attachment.type}`
+  
+        window.open(url, '_blank');
     }
 
     // RETURN
@@ -261,7 +303,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                     editMode == false && (
                                         <>
                                             {html}
-                                            {attachments &&
+                                            {/* {attachments &&
                                                 attachments.map(attachment => {
                                                     return attachment.type == 'webm'
                                                         ? <audio key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`} controls />
@@ -269,15 +311,15 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                                             ? <img className='icon xxlarge' key={attachment.id} src={`/rest/files/${attachment.id}.${attachment.type}`}></img>
                                                             : <> </>
                                                 })
-                                            }
-                                            {attachments && attachments.length > 0 && <Table columns={columns.slice(0, columns.length - 1)} items={attachments} />}
+                                            } */}
+                                            {attachments && attachments.length > 0 && <Table columns={columns.slice(0, columns.length - 1)} items={attachments} onClick={(entry) => {openInNewTab(entry)}} />}
                                         </>
                                     )
                                 }
                                 {editMode == true &&
                                     <>
                                         <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
-                                        {attachments && attachments.length > 0 && <Table columns={columns} items={attachments} />}
+                                        {attachments && attachments.length > 0 && <Table columns={columns} items={attachments}  />}
                                         {contextUser ? (
                                             members && members.filter(member => member.userId == contextUser.id).length == 1 ? (
                                                 <>
@@ -305,7 +347,25 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                                         </>
                                                     )
                                                     }
-                                                    <FileInputButton class='button fill gray' label='upload' change={(file) => { addAttachment(file) }} required={false}></FileInputButton>
+                                                    <FileInputButton class='button stroke gray' label='upload' change={(file) => { addAttachment(file) }} required={false}></FileInputButton>
+                                                    {recorder ? (
+                                                                <button onClick={stopRecordAudio} className='button stroke gray block-when-responsive'>
+                                                                    <img className='icon' src={StopRecordingIcon}></img>
+                                                                </button>
+                                                            ) : (
+                                                                audio ? (
+                                                                    <>
+                                                                        {/* <audio src={audioUrl} controls /> */}
+                                                                        <button onClick={removeAudio} className='button stroke gray block-when-responsive'>
+                                                                            Remove recording
+                                                                        </button>
+                                                                    </>
+                                                                ) : (
+                                                                    <button onClick={startRecordAudio} className='button stroke gray block-when-responsive'>
+                                                                        <img className='icon' src={StartRecordingIcon}></img>
+                                                                    </button>
+                                                                )
+                                                            )}
                                                 </>
 
                                             ) : (

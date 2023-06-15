@@ -26,6 +26,7 @@ packages/backend/uploads/*.gif
 packages/backend/uploads/*.jpg
 packages/backend/uploads/*.jpeg
 packages/backend/uploads/*.png
+packages/backend/uploads/*.type
 
 # Audios
 packages/backend/uploads/*.webm
