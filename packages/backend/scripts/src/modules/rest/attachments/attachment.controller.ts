@@ -16,7 +16,7 @@ import { AttachmentService } from './attachment.service'
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(AttachmentAddData, AttachmentUpdateData)
-export class AttachmentController implements AttachmentREST<string, string, Express.Multer.File[], Express.Multer.File[]> {
+export class AttachmentController implements AttachmentREST<string, string, Express.Multer.File[], Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         private readonly attachmentService: AttachmentService,
         @Inject(REQUEST)
@@ -40,7 +40,8 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         FileFieldsInterceptor(
             [   
                 { name: 'audio', maxCount: 1 },
-                { name: 'image', maxCount: 1 }
+                { name: 'image', maxCount: 1 },
+                { name: 'pdf', maxCount: 1 }
             ]
         )
     )
@@ -51,7 +52,8 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
             properties: {
                 data: { $ref: getSchemaPath(AttachmentAddData) },
                 audio: { type: 'string', format: 'binary' },
-                image: { type: 'string', format: 'binary' }
+                image: { type: 'string', format: 'binary' },
+                pdf: { type: 'string', format: 'binary' }
             },
             required: ['data']
         },
@@ -60,8 +62,10 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
     @ApiResponse({ type: Attachment })
     async addAttachment(
         @Body('data') data: string,
-        @UploadedFiles() files: { audio?: Express.Multer.File[], image?: Express.Multer.File[] }
+        @UploadedFiles() files: { audio?: Express.Multer.File[], image?: Express.Multer.File[], pdf?: Express.Multer.File[]}
     ): Promise<Attachment> {
+        console.log('_____________________________')
+        console.log('controller ' + files.pdf)
         const parsedData = JSON.parse(data) as AttachmentAddData
         await canCreateAttachmentOrFail(this.request.user, parsedData.commentId)
         return this.attachmentService.addAttachment(parsedData, files)
@@ -82,7 +86,8 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         FileFieldsInterceptor(
             [
                 { name: 'audio', maxCount: 1 },
-                { name: 'image', maxCount: 1 }
+                { name: 'image', maxCount: 1 },
+                { name: 'pdf', maxCount: 1 }
             ]
         )
     )
@@ -94,7 +99,8 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
             properties: {
                 data: { $ref: getSchemaPath(AttachmentUpdateData) },
                 audio: { type: 'string', format: 'binary' },
-                image: { type: 'string', format: 'binary' }
+                image: { type: 'string', format: 'binary' },
+                pdf: { type: 'string', format: 'binary' }
             },
             required: ['data']
         },
@@ -104,7 +110,7 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
     async updateAttachment(
         @Param('id') id: string,
         @Body('data') data: string,
-        @UploadedFiles() files?: { audio?: Express.Multer.File[], image?: Express.Multer.File[] }
+        @UploadedFiles() files?: { audio?: Express.Multer.File[], image?: Express.Multer.File[], pdf?: Express.Multer.File[] }
     ): Promise<Attachment> {
         const parsedData = JSON.parse(data) as AttachmentUpdateData
         await canUpdateAttachmentOrFail(this.request.user, id)

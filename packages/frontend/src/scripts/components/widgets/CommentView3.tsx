@@ -63,7 +63,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
 
     // INTERACTIONS
     const [editMode, setEditMode] = React.useState<boolean>(!comment)
-    const [files] = React.useState<{ id: string, image: File, audio: Blob }[]>([])
+    const [files] = React.useState<{ id: string, image: File, audio: Blob, pdf: File }[]>([])
     const [recorder, setRecorder] = React.useState<AudioRecorder>()
     const [audio, setAudio] = React.useState<Blob>()
 
@@ -189,7 +189,8 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                     const attachmentFile = files.find(file => file.id == attachment.id)
                     const image = attachmentFile.image
                     const audio = attachmentFile.audio 
-                    AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: attachment.name, type: attachment.type, description: attachment.description }, { audio, image })
+                    const pdf = attachmentFile.pdf
+                    AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: attachment.name, type: attachment.type, description: attachment.description }, { audio, image, pdf })
                 }
                 // update attachments
                 else if (initialAttachment) {
@@ -236,23 +237,28 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         }
     }
     function addAttachment(file?: File, audio?: Blob) {
-        console.log(file.type)
         const id = shortid()
         let newAttachment: Attachment
         if (file && !audio) {
+            console.log(file.type.includes('pdf'))
             newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: file.name.split('.')[0], description: 'description', type: file.type.split('/')[1] }
+            if (file.type.includes('pdf')) {
+                files.push({ id: id, image: undefined, audio: undefined, pdf: file})
+            }
+            if (file.type.includes('image')) {
+                files.push({ id: id, image: file, audio: undefined, pdf: undefined})
+            }
         }
         if (!file && audio) {
             newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: 'recording', description: 'description', type: 'webm' }
+            files.push({ id: id, image: undefined, audio: audio, pdf: undefined})
         }
         setAttachments((prev) => [...prev, newAttachment])
-        files.push({ id: id, image: file? file : undefined, audio: audio? audio : undefined })
     }
     
     function openInNewTab(attachment: Attachment) {
         console.log(attachment)
         const url = `/rest/files/${attachment.id}.${attachment.type}`
-  
         window.open(url, '_blank');
     }
 
