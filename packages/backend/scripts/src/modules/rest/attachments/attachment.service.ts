@@ -47,7 +47,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
             attachment = await Database.get().attachmentRepository.save({id: id, created: created, ...data})
             writeFileSync(`./uploads/${id}.${data.type}`, files.audio[0].buffer)
         } 
-        if (files && files.image && files.image.length == 1 && files.image[0].mimetype.endsWith('/jpeg')) { 
+        if (files && files.image && files.image.length == 1 && ['/jpeg', 'jpg', '/png'].some(mimeType => files.image[0].mimetype.endsWith(mimeType))) { 
             const id = shortid()
             const created = Date.now()
             attachment = await Database.get().attachmentRepository.save({id: id, created: created, ...data})

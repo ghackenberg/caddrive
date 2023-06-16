@@ -66,7 +66,6 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     const [files] = React.useState<{ id: string, image: File, audio: Blob }[]>([])
     const [recorder, setRecorder] = React.useState<AudioRecorder>()
     const [audio, setAudio] = React.useState<Blob>()
-    //const [audioUrl, setAudioUrl] = React.useState<string>('')
 
     // EFFECTS
 
@@ -144,9 +143,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         // TODO handle unmount!
         event.preventDefault()
         const data = await recorder.stop()
-        // setAudio(data)
         addAttachment(undefined, data)
-        // setAudio(null)
         setRecorder(null)
         // setAudioUrl(URL.createObjectURL(data))
     }
@@ -154,14 +151,13 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         setAudio(null)
-        // setAudioUrl('')
     }
 
     function handleTextChange(index: number, property: string, text: string) {
         setAttachments(attachments => {
           return attachments.map((attachment, idx) => {
             if (idx === index) {
-              return { ...attachment, [property]: text };
+              return { ...attachment, [property]: text }
             }
             return attachment;
           })
@@ -239,17 +235,18 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
             setAttachments(attachments => attachments.filter(prev => prev.id != attachment.id))
         }
     }
-    function addAttachment(image?: File, audio?: Blob) {
+    function addAttachment(file?: File, audio?: Blob) {
+        console.log(file.type)
         const id = shortid()
         let newAttachment: Attachment
-        if (image && !audio) {
-            newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: image.name.split('.')[0], description: 'description', type: image.type.split('/')[1] }
+        if (file && !audio) {
+            newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: file.name.split('.')[0], description: 'description', type: file.type.split('/')[1] }
         }
-        if (!image && audio) {
+        if (!file && audio) {
             newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: 'recording', description: 'description', type: 'webm' }
         }
         setAttachments((prev) => [...prev, newAttachment])
-        files.push({ id: id, image: image? image : undefined, audio: audio? audio : undefined })
+        files.push({ id: id, image: file? file : undefined, audio: audio? audio : undefined })
     }
     
     function openInNewTab(attachment: Attachment) {
@@ -347,7 +344,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                                         </>
                                                     )
                                                     }
-                                                    <FileInputButton class='button stroke gray' label='upload' change={(file) => { addAttachment(file) }} required={false}></FileInputButton>
+                                                    <FileInputButton class='button stroke gray' label='upload' change={(file) => { addAttachment(file, undefined) }} accept='.jpg,.jpeg,.png,.pdf' required={false}></FileInputButton>
                                                     {recorder ? (
                                                                 <button onClick={stopRecordAudio} className='button stroke gray block-when-responsive'>
                                                                     <img className='icon' src={StopRecordingIcon}></img>
