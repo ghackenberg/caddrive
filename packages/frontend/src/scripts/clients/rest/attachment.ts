@@ -4,13 +4,11 @@ import { Attachment, AttachmentAddData, AttachmentREST, AttachmentUpdateData } f
 
 import { auth } from '../auth'
 
-class AttachmentClientImpl implements AttachmentREST<AttachmentAddData, AttachmentUpdateData, Blob, File, File> {
+class AttachmentClientImpl implements AttachmentREST<AttachmentAddData, AttachmentUpdateData, Blob, File, File, File> {
     async findAttachments(comment?: string, issue?: string): Promise<Attachment[]> {
         return (await axios.get<Attachment[]>('/rest/attachments', { params: { comment, issue }, ...auth } )).data
     }
-    async addAttachment(data: AttachmentAddData, files: { audio?: Blob, image?: File, pdf?: File }): Promise<Attachment> {
-        console.log('_____________________________')
-        console.log('frontend rest ' + files.pdf)
+    async addAttachment(data: AttachmentAddData, files: { audio?: Blob, image?: File, pdf?: File, video?: File }): Promise<Attachment> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files.audio) {
@@ -22,12 +20,15 @@ class AttachmentClientImpl implements AttachmentREST<AttachmentAddData, Attachme
         if (files.pdf) {
             body.append('pdf', files.pdf)
         }
+        if (files.video) {
+            body.append('video', files.video)
+        }
         return (await axios.post<Attachment>('/rest/attachments', body, { ...auth })).data
     }
     async getAttachment(id: string): Promise<Attachment> {
         return (await axios.get<Attachment>(`/rest/attachments/${id}`, { ...auth })).data
     }
-    async updateAttachment(id: string, data: AttachmentUpdateData, files?: { audio?: Blob, image?: File , pdf?: File}): Promise<Attachment> {
+    async updateAttachment(id: string, data: AttachmentUpdateData, files?: { audio?: Blob, image?: File , pdf?: File, video?: File}): Promise<Attachment> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files) {
@@ -39,6 +40,9 @@ class AttachmentClientImpl implements AttachmentREST<AttachmentAddData, Attachme
             }
             if (files.pdf) {
                 body.append('pdf', files.pdf)
+            }
+            if (files.video) {
+                body.append('video', files.video)
             }
         }
         return (await axios.put<Attachment>(`/rest/attachments/${id}`, body, { ...auth })).data

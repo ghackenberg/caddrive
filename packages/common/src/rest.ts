@@ -111,11 +111,11 @@ export interface TagAssignmentREST {
     deleteTagAssignment(id: string): Promise<TagAssignment>
 }
 
-export interface AttachmentREST<DA, DU, A, I, P> {
+export interface AttachmentREST<DA, DU, A, I, P, V> {
     findAttachments(commentId?: string, issueId?: string): Promise<Attachment[]>
-    addAttachment(data: DA, files: { audio?: A, image?: I, pdf?: P }): Promise<Attachment>
+    addAttachment(data: DA, files: { audio?: A, image?: I, pdf?: P, video?: V }): Promise<Attachment>
     getAttachment(id: string): Promise<Attachment>
-    updateAttachment(id: string, data: DU, files?: { audio?: A, image?: I, pdf?: P}): Promise<Attachment>
+    updateAttachment(id: string, data: DU, files?: { audio?: A, image?: I, pdf?: P, video?: V}): Promise<Attachment>
     deleteAttachment(id: string): Promise<Attachment>
 }
 

@@ -63,7 +63,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
 
     // INTERACTIONS
     const [editMode, setEditMode] = React.useState<boolean>(!comment)
-    const [files] = React.useState<{ id: string, image: File, audio: Blob, pdf: File }[]>([])
+    const [files] = React.useState<{ id: string, image: File, audio: Blob, pdf: File, video: File }[]>([])
     const [recorder, setRecorder] = React.useState<AudioRecorder>()
     const [audio, setAudio] = React.useState<Blob>()
 
@@ -190,7 +190,8 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                     const image = attachmentFile.image
                     const audio = attachmentFile.audio 
                     const pdf = attachmentFile.pdf
-                    AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: attachment.name, type: attachment.type, description: attachment.description }, { audio, image, pdf })
+                    const video = attachmentFile.video
+                    AttachmentManager.addAttachment({ commentId: comment.id, userId: contextUser.id, name: attachment.name, type: attachment.type, description: attachment.description }, { audio, image, pdf, video })
                 }
                 // update attachments
                 else if (initialAttachment) {
@@ -240,24 +241,25 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         const id = shortid()
         let newAttachment: Attachment
         if (file && !audio) {
-            console.log(file.type.includes('pdf'))
             newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: file.name.split('.')[0], description: 'description', type: file.type.split('/')[1] }
             if (file.type.includes('pdf')) {
-                files.push({ id: id, image: undefined, audio: undefined, pdf: file})
+                files.push({ id: id, image: undefined, audio: undefined, pdf: file, video: undefined})
             }
             if (file.type.includes('image')) {
-                files.push({ id: id, image: file, audio: undefined, pdf: undefined})
+                files.push({ id: id, image: file, audio: undefined, pdf: undefined, video: undefined})
+            }
+            if (file.type.includes('video')) {
+                files.push({ id: id, image: undefined, audio: undefined, pdf: undefined, video: file})
             }
         }
         if (!file && audio) {
             newAttachment = { id: id, created: Date.now(), updated: Date.now(), deleted: null, userId: contextUser.id, commentId: props.commentId, name: 'recording', description: 'description', type: 'webm' }
-            files.push({ id: id, image: undefined, audio: audio, pdf: undefined})
+            files.push({ id: id, image: undefined, audio: audio, pdf: undefined, video: undefined })
         }
         setAttachments((prev) => [...prev, newAttachment])
     }
     
     function openInNewTab(attachment: Attachment) {
-        console.log(attachment)
         const url = `/rest/files/${attachment.id}.${attachment.type}`
         window.open(url, '_blank');
     }
@@ -350,7 +352,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                                         </>
                                                     )
                                                     }
-                                                    <FileInputButton class='button stroke gray' label='upload' change={(file) => { addAttachment(file, undefined) }} accept='.jpg,.jpeg,.png,.pdf' required={false}></FileInputButton>
+                                                    <FileInputButton class='button stroke gray' label='upload' change={(file) => { addAttachment(file, undefined) }} accept='.jpg,.jpeg,.png,.pdf,.mp4,.webm' required={false}></FileInputButton>
                                                     {recorder ? (
                                                                 <button onClick={stopRecordAudio} className='button stroke gray block-when-responsive'>
                                                                     <img className='icon' src={StopRecordingIcon}></img>

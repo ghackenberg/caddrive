@@ -31,9 +31,9 @@ packages/backend/uploads/*.type
 # Pdfs
 packages/backend/uploads/*.pdf
 
-
-# Audios
+# Audios / Videos
 packages/backend/uploads/*.webm
+packages/backend/uploads/*.mp4
 
 manuscripts/*/*.aux
 manuscripts/*/*.bbl
