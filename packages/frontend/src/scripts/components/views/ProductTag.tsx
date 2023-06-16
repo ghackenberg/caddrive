@@ -71,7 +71,7 @@ export const ProductTagView = () => {
         },
         {
             label: 'assignments', class: 'center', content: tag => (
-                <IssueCount productId={productId} tags={[tag.id]}></IssueCount>
+                <span className='badge'><IssueCount productId={productId} tags={[tag.id]}></IssueCount></span>
             )
         },
         {

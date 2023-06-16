@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, useRef, MouseEvent } from 'react'
+import { useState, useContext, MouseEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -8,7 +8,7 @@ import { Object3D } from 'three'
 import { Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
-import { collectParts, Part } from '../../functions/markdown'
+import { Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers } from '../../hooks/list'
@@ -35,8 +35,6 @@ export const ProductIssueCommentView = () => {
 
     // REFERENCES
 
-    const textReference = useRef<HTMLTextAreaElement>()
-
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
@@ -55,7 +53,7 @@ export const ProductIssueCommentView = () => {
     // STATES
 
     // - Values
-    const [text, setText] = useState<string>('')
+
     // const [audio, setAudio] = useState<Blob>()
     // const [image, setImage] = useState<File>()
     // console.log(image)
@@ -66,12 +64,11 @@ export const ProductIssueCommentView = () => {
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
     const [active, setActive] = useState<string>('left')
+    const [selectedTimeStamp, setSelectedTimeStamp] = useState<number>()
+    const [selectedVersion, setSelectedVersion] = useState<Version>()
+    const [selectedObject, setSelectedObject] = useState<Object3D>()
 
     // EFFECTS
-
-    useEffect(() => {
-        setMarked(collectParts(text || ''))
-    }, [text])
 
     // FUNCTIONS
 
@@ -122,21 +119,26 @@ export const ProductIssueCommentView = () => {
     }
 
     function selectObject(version: Version, object: Object3D) {
-        const path = computePath(object)
-        const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
-        if (document.activeElement == textReference.current) {
-            const before = text.substring(0, textReference.current.selectionStart)
-            const after = text.substring(textReference.current.selectionEnd)
-            setText(`${before}${markdown}${after}`)
-            setTimeout(() => {
-                textReference.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
-            }, 0)
-        } else {
-            setText(`${text}${markdown}`)
-            setTimeout(() => {
-                textReference.current.focus()
-            }, 0)
-        }
+
+        setSelectedTimeStamp(Date.now())
+        setSelectedVersion(version)
+        setSelectedObject(object)
+
+        // const path = computePath(object)
+        // const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
+        // if (document.activeElement == textReference.current) {
+        //     const before = text.substring(0, textReference.current.selectionStart)
+        //     const after = text.substring(textReference.current.selectionEnd)
+        //     setText(`${before}${markdown}${after}`)
+        //     setTimeout(() => {
+        //         textReference.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+        //     }, 0)
+        // } else {
+        //     setText(`${text}${markdown}`)
+        //     setTimeout(() => {
+        //         textReference.current.focus()
+        //     }, 0)
+        // }
     }
 
     // async function submitComment() {
@@ -227,9 +229,9 @@ export const ProductIssueCommentView = () => {
                             <div className='main'>
                                 <div className="widget issue_thread">
                                     {comments && comments.map((comment, index) => (
-                                        <CommentView3 key={comment.id} class={`${index == 0 ? 'first' : 'comment'}`} productId={productId} issueId={issueId} commentId={comment.id} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} />
+                                        <CommentView3 key={comment.id} class={`${index == 0 ? 'first' : 'comment'}`} productId={productId} issueId={issueId} commentId={comment.id} selectedTimestamp={selectedTimeStamp} selectedVersion={selectedVersion} selectedObject={selectedObject} setMarked={setMarked} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} />
                                     ))}
-                                        <CommentView3 class={`${comments && comments.length == 0 ? 'first' : 'comment'} self`} productId={productId} issueId={issueId} commentId={'new'} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} />
+                                        <CommentView3 class={`${comments && comments.length == 0 ? 'first' : 'comment'} self`} productId={productId} issueId={issueId} commentId={'new'} selectedTimestamp={selectedTimeStamp} selectedVersion={selectedVersion} selectedObject={selectedObject} setMarked={setMarked} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick} />
                                 </div>
                             </div>
                             <LegalFooter />

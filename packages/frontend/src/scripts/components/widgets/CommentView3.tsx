@@ -1,11 +1,13 @@
 import * as React from 'react'
 
 import shortid from 'shortid'
+import { Object3D } from 'three'
 
-import { Attachment } from 'productboard-common'
+import { Attachment, Version } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { collectParts, createProcessor } from '../../functions/markdown'
+import { computePath } from '../../functions/path'
 import { useComment, useIssue } from '../../hooks/entity'
 import { useAttachments, useMembers } from '../../hooks/list'
 import { AttachmentManager } from '../../managers/attachment'
@@ -33,7 +35,7 @@ interface Part {
     objectName: string
 }
 
-export const CommentView3 = (props: { class: string, productId: string, issueId: string, commentId: string, mouseover: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
+export const CommentView3 = (props: { class: string, productId: string, issueId: string, commentId: string, selectedTimestamp?: number, selectedVersion?: Version, selectedObject?: Object3D, setMarked:(parts: Part[])=> void, mouseover: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
 
     // REFERENCES
 
@@ -60,7 +62,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     const [text, setText] = React.useState<string>('')
     const [html, setHtml] = React.useState(initialHtml)
     const [parts, setParts] = React.useState(initialParts)
-
+    
     // INTERACTIONS
     const [editMode, setEditMode] = React.useState<boolean>(!comment)
     const [files] = React.useState<{ id: string, image: File, audio: Blob, pdf: File, video: File }[]>([])
@@ -74,6 +76,10 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     }, [initialAttachments]);
 
     React.useEffect(() => {
+        props.setMarked(collectParts(text || ''))
+    }, [text])
+
+    React.useEffect(() => {
         if (comment) {
             setHtml(createProcessor(props.mouseover, props.mouseout, props.click).processSync(comment.text).result)
             setParts(collectParts(comment.text))
@@ -83,8 +89,28 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         }
     }, [comment])
 
-    // CONSTANTS
+    React.useEffect(() => {
+        if (props.selectedTimestamp && props.selectedObject && props.selectedVersion) {
+            const path = computePath(props.selectedObject)
+            const markdown = `[${props.selectedObject.name || props.selectedObject.type}](/products/${props.productId}/versions/${props.selectedVersion.id}/objects/${path})`
+            if (document.activeElement == textReference.current) {
+                const before = text.substring(0, textReference.current.selectionStart)
+                const after = text.substring(textReference.current.selectionEnd)
+                setText(`${before}${markdown}${after}`)
+                setTimeout(() => {
+                    textReference.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+                }, 0)
+            } else {
+                setText(`${text}${markdown}`)
+                setTimeout(() => {
+                    textReference.current.focus()
+                }, 0)
+            }
+        }
+    }, [props.selectedTimestamp]);
 
+    // CONSTANTS
+    
     const columns: Column<Attachment>[] = [
         {
             label: 'Name', class: 'left nowrap', content: attachment => (
@@ -102,7 +128,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
             )
         },
         {
-            label: 'Description', class: 'center', content: attachment => (
+            label: 'Description', class: 'left fill', content: attachment => (
                 editMode ? (
 
                     <div>
@@ -118,7 +144,8 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         {
             label: 'Type', class: 'center nowrap', content: attachment => (
                 <div>
-                    {attachment.type}
+                    {/* {attachment.type} */}
+                    <span className='badge'>{attachment.type}</span>
                 </div>
             )
         },

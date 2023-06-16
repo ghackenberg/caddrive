@@ -22,9 +22,11 @@ table > thead > tr > th {
 }
 table > thead > tr > th:first-child {
     border-top-left-radius: 1em;
+    padding-left: 1em;
 }
 table > thead > tr > th:last-child {
     border-top-right-radius: 1em;
+    padding-right: 1em;
 }
 table > tbody > tr > td {
     padding-top: calc(0.75rem - 0.25em);
@@ -38,6 +40,10 @@ table > tbody > tr > td {
 table > tbody > tr > td:first-child {
     padding-top: calc(0.75rem - 0.25em);
     padding-bottom: calc(0.75rem - 0.25em);
+    padding-left: 1em;
+}
+table > tbody > tr > td:last-child {
+    padding-right: 1em;
 }
 table > tbody > tr:last-child > td:first-child {
     border-bottom-left-radius: 1em;
