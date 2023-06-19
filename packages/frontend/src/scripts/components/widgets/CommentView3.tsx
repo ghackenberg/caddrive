@@ -114,11 +114,8 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     const columns: Column<Attachment>[] = [
         {
             label: 'Name', class: 'left nowrap', content: attachment => (
-                
                 editMode ? (
-
                     <div>
-                       
                     <TextInput value={attachment.name} change={(text) => handleTextChange(attachments.indexOf(attachment), 'name' ,text)} ></TextInput>
                 </div>
                     ) :
@@ -130,9 +127,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         {
             label: 'Description', class: 'left fill', content: attachment => (
                 editMode ? (
-
                     <div>
-                       
                     <TextInput value={attachment.description} change={(text) => handleTextChange(attachments.indexOf(attachment), 'description' ,text)} ></TextInput>
                 </div>
                     ) :
@@ -172,7 +167,6 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         const data = await recorder.stop()
         addAttachment(undefined, data)
         setRecorder(null)
-        // setAudioUrl(URL.createObjectURL(data))
     }
 
     async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
@@ -191,7 +185,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
         })
       }
 
-    async function submitComment() {
+    async function submitComment(action?: 'none' | 'close' | 'reopen') {
         // TODO handle unmount!
         if (text) {
             if (comment) {
@@ -199,7 +193,8 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                 setEditMode(false)
             }
             else {
-                comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, {})
+                console.log(action)
+                comment = await CommentManager.addComment({ issueId: issue.id, text: text, action: action }, {})
                 setAttachments([])
             }
             // delete attachments      
@@ -232,18 +227,16 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
     async function submitCommentAndClose() {
         // TODO handle unmount!
         if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
+            await submitComment('close')
             await IssueManager.updateIssue(issue.id, { ...issue })
-            setText('')
         }
     }
 
     async function submitCommentAndReopen() {
         // TODO handle unmount!
         if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
+            await submitComment('reopen')
             await IssueManager.updateIssue(issue.id, { ...issue })
-            setText('')
         }
     }
 
@@ -358,7 +351,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                                     {comment && (
                                                         contextUser.id == comment.userId && (
                                                             <>
-                                                                <button className='button fill blue' onClick={submitComment}>Update</button>
+                                                                <button className='button fill blue' onClick={() => submitComment('none')}>Update</button>
                                                                 <button className='button fill red' onClick={exitEditMode}>Cancel</button>
                                                             </>
                                                         )
@@ -366,7 +359,7 @@ export const CommentView3 = (props: { class: string, productId: string, issueId:
                                                     )}
                                                     {!comment && (
                                                         <>
-                                                            <button className='button fill blue' onClick={submitComment}>Save</button>
+                                                            <button className='button fill blue' onClick={() => submitComment('none')}>Save</button>
                                                             {issue.state == 'open' ? (
                                                                 <button className='button stroke blue' onClick={submitCommentAndClose}>
                                                                     Close

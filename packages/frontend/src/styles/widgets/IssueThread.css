@@ -155,10 +155,7 @@ div.widget.issue_thread > div > div.body > div.text > table {
    margin-bottom: 0;
    border-top: 1px solid;
    border-color: rgb(215,215,215);
-   /* font-size: small; */
    background-color: rgb(245,245,245);
-   /* background-color: red; */
-   /* border-radius: 0; */
    border-top-left-radius: 0;
    border-top-right-radius: 0;
 }
