@@ -61,8 +61,6 @@ export class IssueService implements IssueREST {
     }
 
     async addIssue(data: IssueAddData): Promise<Issue> {
-        console.table('service')
-        console.table(data)
         const id = shortid()
         const created = Date.now()
         const updated = created

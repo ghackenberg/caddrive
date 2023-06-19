@@ -43,7 +43,6 @@ export class IssueController implements IssueREST {
     async addIssue(
         @Body() data: Issue,
     ): Promise<Issue> {
-        console.log(data)
         await canCreateIssueOrFail(this.request.user, data.productId)
         return this.issueService.addIssue(data)
     }  
