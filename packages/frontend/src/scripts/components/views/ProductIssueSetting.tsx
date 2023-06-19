@@ -105,9 +105,7 @@ export const ProductIssueSettingView = () => {
                     description: 'demo1',
                     assigneeIds,
                     milestoneId: milestoneId ? milestoneId : null
-                },
-                    {}
-                )
+                })
                 assignedTags.length > 0 && assignedTags.forEach(assignedTag => {
                     TagAssignmentManager.addTagAssignment({ tagId: assignedTag.id, issueId: issue.id })
                 })
@@ -128,7 +126,7 @@ export const ProductIssueSettingView = () => {
                         TagAssignmentManager.deleteTagAssignment(tagAssignment.id)
                     }
                 })
-                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: 'demo', assigneeIds, milestoneId: milestoneId ? milestoneId : null }, {})
+                await IssueManager.updateIssue(issue.id, { ...issue, name: label, description: 'demo', assigneeIds, milestoneId: milestoneId ? milestoneId : null })
                 await goBack()
             }
 

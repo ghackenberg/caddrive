@@ -7,7 +7,7 @@ import { Comment } from './data/comment'
 import { DoneCriterion, DoneCriterionAddData, DoneCriterionUpdateData } from './data/doneCriterion'
 import { DoneProperty, DonePropertyAddData, DonePropertyUpdateData } from './data/doneProperty'
 import { Guard, GuardAddData, GuardUpdateData } from './data/guard'
-import { Issue } from './data/issue'
+import { Issue, IssueAddData, IssueUpdateData } from './data/issue'
 import { IssueType, IssueTypeAddData, IssueTypeUpdateData } from './data/issueType'
 import { IssueTypeHierarchy, IssueTypeHierarchyAddData, IssueTypeHierarchyUpdateData } from './data/issueTypeHierarchy'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
@@ -59,11 +59,11 @@ export interface VersionREST<DA, DU, M, I> {
     deleteVersion(id: string): Promise<Version>
 }
 
-export interface IssueREST<DA, DU, A> {
+export interface IssueREST {
     findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed', tagId?: string[]): Promise<Issue[]>
-    addIssue(data: DA, files: { audio?: A }): Promise<Issue>
+    addIssue(data: IssueAddData): Promise<Issue>
     getIssue(id: string): Promise<Issue>
-    updateIssue(id: string, data: DU, files?: { audio?: A }): Promise<Issue>
+    updateIssue(id: string, data: IssueUpdateData): Promise<Issue>
     deleteIssue(id: string): Promise<Issue>
 }
 

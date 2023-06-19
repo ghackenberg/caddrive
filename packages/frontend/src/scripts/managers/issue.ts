@@ -25,14 +25,14 @@ class IssueManagerImpl extends AbstractManager<Issue> {
             callback
         )
     }
-    async addIssue(data: IssueAddData, files: { audio?: Blob }) {
-        return this.resolveItem(await IssueClient.addIssue(data, files))
+    async addIssue(data: IssueAddData) {
+        return this.resolveItem(await IssueClient.addIssue(data))
     }
     getIssue(id: string, callback: (issue: Issue, error?: string) => void) {
         return this.observeItem(id, () => IssueClient.getIssue(id), callback)
     }
-    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }) {
-        return this.promiseItem(id, IssueClient.updateIssue(id, data, files))
+    async updateIssue(id: string, data: IssueUpdateData) {
+        return this.promiseItem(id, IssueClient.updateIssue(id, data))
     }
     async deleteIssue(id: string) {
         return this.promiseItem(id, IssueClient.deleteIssue(id))

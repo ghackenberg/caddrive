@@ -44,6 +44,4 @@ export class Issue extends IssueAddData {
 
     @ApiProperty()
     userId: string
-    @ApiProperty()
-    audioId: string
 }

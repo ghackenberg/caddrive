@@ -50,7 +50,6 @@ export function convertIssue(issue: IssueEntity) {
         created: issue.created,
         updated: issue.updated,
         deleted: issue.deleted,
-        audioId: issue.audioId,
         userId: issue.userId,
         productId: issue.productId,
         name: issue.name,

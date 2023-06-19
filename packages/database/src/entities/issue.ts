@@ -21,9 +21,6 @@ export class IssueEntity extends Issue {
     @Column({ nullable: true })
     override deleted: number
 
-    @Column({ nullable: true })
-    override audioId: string
-
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     user: UserEntity

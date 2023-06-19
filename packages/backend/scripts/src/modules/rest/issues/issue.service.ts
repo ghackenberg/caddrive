@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
@@ -13,7 +13,7 @@ import { convertIssue } from '../../../functions/convert'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
-export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
+export class IssueService implements IssueREST {
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
@@ -60,20 +60,15 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         return result
     }
 
-    async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async addIssue(data: IssueAddData): Promise<Issue> {
+        console.table('service')
+        console.table(data)
         const id = shortid()
         const created = Date.now()
         const updated = created
         const userId = this.request.user.id
         const state = 'open'
-        let issue: IssueEntity
-        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            const audioId = shortid()
-            issue = await Database.get().issueRepository.save({ id, created, updated, userId, audioId, state, ...data })
-            writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
-        } else {
-            issue = await Database.get().issueRepository.save({ id, created, updated, userId, state, ...data })
-        }
+        const issue = await Database.get().issueRepository.save({ id, created, updated, userId, state, ...data })
         return convertIssue(issue)
     }
 
@@ -82,7 +77,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         return convertIssue(issue)
     }
 
-    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async updateIssue(id: string, data: IssueUpdateData): Promise<Issue> {
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         issue.updated = Date.now()
         issue.assigneeIds = data.assigneeIds
@@ -90,9 +85,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.milestoneId = data.milestoneId
         issue.description = data.description
         await Database.get().issueRepository.save(issue)
-        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
-        }
         return convertIssue(issue)
     }
 
