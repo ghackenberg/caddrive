@@ -26,6 +26,7 @@ import DeleteIcon from '/src/images/delete.png'
 import StartRecordingIcon from '/src/images/startRecording.png'
 import StopRecordingIcon from '/src/images/stopRecording.png'
 import AttachmentIcon from '/src/images/attachment.png'
+import UserIcon from '/src/images/user.png'
 
 import { Column, Table } from './Table'
 
@@ -291,9 +292,15 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                                         <ProductUserPictureWidget userId={comment.userId} productId={props.productId} class='big' />
                                     </a>
                                 ) : (
-                                    <a href={`/users/${contextUser.id}`}>
-                                        <ProductUserPictureWidget userId={contextUser.id} productId={props.productId} class='big' />
-                                    </a>
+                                    contextUser ? (
+                                        <a href={`/users/${contextUser.id}`}>
+                                            <ProductUserPictureWidget userId={contextUser.id} productId={props.productId} class='big' />
+                                        </a>
+                                    ) : (
+                                        <a>
+                                            <img src={UserIcon} className='icon small round' />
+                                        </a>
+                                    )
                                 )
                                 }
                             </div>
@@ -308,7 +315,7 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                                     </p>
                                 )
                                 }
-                                {comment && editMode == false && contextUser.id == comment.userId &&
+                                {comment && contextUser && editMode == false && contextUser.id == comment.userId &&
                                     <button className='editIcon' onClick={enterEditMode}>🛠️</button>
                                 }
 
