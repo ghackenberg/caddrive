@@ -59,6 +59,7 @@
         "axios": "^0.26.1",
         "jose": "^4.14.1",
         "mqtt": "^4.3.7",
+        "mqtt-pattern": "^2.1.0",
         "reflect-metadata": "^0.1.13",
         "three": "^0.151.3",
         "ts-node": "^10.9.1",

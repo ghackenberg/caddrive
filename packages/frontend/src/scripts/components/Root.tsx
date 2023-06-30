@@ -1,10 +1,13 @@
 import * as React from 'react'
 import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 
-import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike} from 'jose'
+import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike } from 'jose'
 
 import { User, Version } from 'productboard-common'
 
+import { PageHeaderRoot } from './snippets/PageHeaderRoot'
+import { LoadingView } from './views/Loading'
+import { MissingView } from './views/Missing'
 import { TokenClient } from '../clients/rest/token'
 import { AuthContext } from '../contexts/Auth'
 import { UserContext } from '../contexts/User'
@@ -20,9 +23,6 @@ import { ProductManager } from '../managers/product'
 import { UserManager } from '../managers/user'
 import { VersionManager } from '../managers/version'
 import { AUTH_0, AUTH_1, LEGAL_0, LEGAL_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, USERS_0, USERS_1, USERS_2 } from '../pattern'
-import { PageHeaderRoot } from './snippets/PageHeaderRoot'
-import { LoadingView } from './views/Loading'
-import { MissingView } from './views/Missing'
 
 const AuthRouter = React.lazy(() => import('./routers/Auth'))
 const LegalRouter = React.lazy(() => import('./routers/Legal'))
