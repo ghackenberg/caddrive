@@ -33,6 +33,7 @@
     "workspaces": [
         "packages/common",
         "packages/database",
+        "packages/broker",
         "packages/backend",
         "packages/frontend",
         "packages/gateway",
