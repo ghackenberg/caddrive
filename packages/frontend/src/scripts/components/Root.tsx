@@ -8,6 +8,7 @@ import { User, Version } from 'productboard-common'
 import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
+import { MqttAPI } from '../clients/mqtt'
 import { TokenClient } from '../clients/rest/token'
 import { AuthContext } from '../contexts/Auth'
 import { UserContext } from '../contexts/User'
@@ -194,6 +195,7 @@ const Root = () => {
         MilestoneManager.clear()
         MemberManager.clear()
         FileManager.clear()
+        MqttAPI.reconnect()
     }
 
     // RETURN
