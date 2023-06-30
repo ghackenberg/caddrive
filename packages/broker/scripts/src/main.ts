@@ -12,31 +12,38 @@ import { Database } from 'productboard-database'
 
 // Variables
 
-let key: KeyLike | Uint8Array
+let PUBLIC_KEY: KeyLike | Uint8Array // Load JWT public key from Nest.js backend later!
 
 // Constants
 
 const NET_PORT = 3003
 const HTTP_PORT = 3004
 
-const USER_IDS: { [clientId: string]: string } = {}
+const USER_IDS: { [clientId: string]: string } = {} // Remember user ID of each MQTT client!
 
-// Contants - MQTT Broker
+// Constants - MQTT Broker
 
 const aedes = new Aedes()
+
+// Constants - MQTT Broker - Authenticate
+
 aedes.authenticate = async (client, username, _password, callback) => {
-    console.log('authneticate', client.id)
     try {
+        console.log('authenticate', client.id)
         if (username) {
-            if (!key) {
+            // Load JWT public key from Nest.js backend if necessary!
+            if (!PUBLIC_KEY) {
                 const request = axios.get<JWK>('http://localhost:3001/rest/keys')
                 const response = await request
-                key = await importJWK(response.data, "PS256")
+                PUBLIC_KEY = await importJWK(response.data, "PS256")
             }
-            const result = await jwtVerify(username, key)
+            // Verify JWT
+            const result = await jwtVerify(username, PUBLIC_KEY)
+            // Remember user ID of MQTT client!
             const payload = result.payload as { userId: string }
             const userId = payload.userId
             USER_IDS[client.id] = userId
+            // Success
             callback(null, true)
         } else {
             USER_IDS[client.id] = null
@@ -46,9 +53,12 @@ aedes.authenticate = async (client, username, _password, callback) => {
         callback(e, false)
     }
 }
+
+// Constants - MQTT Broker - Authorize
+
 aedes.authorizeSubscribe = async (client, subscription, callback) => {
-    console.log('authorizeSubscribe', client.id, subscription.topic)
     try {
+        console.log('authorizeSubscribe', client.id, subscription.topic)
         // User topics are fine for everybody
         const userMatch = exec('/users/+id', subscription.topic)
         if (userMatch) {
@@ -85,6 +95,9 @@ aedes.authorizeForward = (client, packet) => {
     console.log('authorizeForward', client.id, packet.topic)
     return packet
 }
+
+// Constants - MQTT Broker - Events
+
 aedes.on('subscribe', (subscriptions, client) => {
     console.log('subscribe', client.id, subscriptions[0].topic)
 })
@@ -92,9 +105,7 @@ aedes.on('unsubscribe', (unsubscriptions, client) => {
     console.log('unsubscribe', client.id, unsubscriptions[0])
 })
 aedes.on('publish', (packet, client) => {
-    if (client) {
-        console.log('publish', client.id, packet.topic)
-    }
+    client && console.log('publish', client.id, packet.topic)
 })
 aedes.on('clientDisconnect', client => {
     console.log('clientDisconnect', client.id)
