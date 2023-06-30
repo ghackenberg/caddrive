@@ -1,5 +1,6 @@
 import { connect, MqttClient } from 'mqtt'
 import { matches } from 'mqtt-pattern'
+import shortid from 'shortid'
 
 type handler = (topic: string, payload: string | Buffer) => void
 
@@ -13,7 +14,7 @@ const port = parseInt(location.port)
 
 function init() {
     // Connect client
-    client = connect({ protocol, hostname, port, path: '/mqtt', username: localStorage.getItem('jwt') })
+    client = connect({ protocol, hostname, port, path: '/mqtt', clientId: `productboard-frontend-${shortid()}`, username: localStorage.getItem('jwt') })
 
     // Subscribe after connecting
     client.on('connect', packet => {
