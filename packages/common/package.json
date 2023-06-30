@@ -39,20 +39,5 @@
         "build": "tsc",
         "lint": "eslint src",
         "loc": "sloc src"
-    },
-    "dependencies": {
-        "@nestjs/common": "^8.1.2",
-        "@nestjs/core": "^8.1.2",
-        "@nestjs/swagger": "^5.1.4",
-        "jose": "^4.14.1",
-        "reflect-metadata": "^0.1.13",
-        "typescript": "^4.9.3"
-    },
-    "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.44.0",
-        "@typescript-eslint/parser": "^5.44.0",
-        "eslint": "^8.28.0",
-        "eslint-plugin-import": "^2.26.0",
-        "sloc": "^0.2.1"
     }
 }

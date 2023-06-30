@@ -43,16 +43,9 @@
     "dependencies": {
         "pg": "^8.9.0",
         "productboard-common": "^0.0.1",
-        "reflect-metadata": "^0.1.13",
-        "typeorm": "^0.3.11",
-        "typescript": "^4.9.3"
+        "typeorm": "^0.3.11"
     },
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.44.0",
-        "@typescript-eslint/parser": "^5.44.0",
-        "eslint": "^8.28.0",
-        "eslint-plugin-import": "^2.26.0",
-        "sloc": "^0.2.1",
         "sqlite3": "^5.1.4"
     }
 }
