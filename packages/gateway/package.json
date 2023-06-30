@@ -43,7 +43,6 @@
     "dependencies": {
         "@types/express": "^4.17.12",
         "@types/http-proxy-middleware": "^0.19.1",
-        "@types/node": "^18.11.9",
         "express": "^4.17.1",
         "http-proxy-middleware": "^0.19.1",
         "ts-node": "^10.9.1",

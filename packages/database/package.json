@@ -41,7 +41,6 @@
         "loc": "sloc src"
     },
     "dependencies": {
-        "@types/node": "^18.11.9",
         "pg": "^8.9.0",
         "productboard-common": "^0.0.1",
         "reflect-metadata": "^0.1.13",

@@ -48,14 +48,12 @@
         "lint": "workspaces-run -- npm run lint",
         "loc": "workspaces-run -- npm run loc"
     },
-    "devDependencies": {
-        "@types/node": "^18.15.13"
-    },
     "dependencies": {
+        "@types/node": "^16.18.37",
         "workspaces-run": "^1.0.1"
     },
     "engines": {
         "node": "^16",
-        "npm": "^8"
+        "npm": "^9"
     }
 }

@@ -41,7 +41,6 @@
         "loc": "sloc src"
     },
     "dependencies": {
-        "@types/node": "^18.11.9",
         "productboard-common": "^0.0.1",
         "productboard-database": "^0.0.1",
         "ts-node": "^10.9.1",
