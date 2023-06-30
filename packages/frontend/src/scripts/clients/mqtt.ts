@@ -22,11 +22,13 @@ function init() {
         for (const pattern in handlers) {
             client.subscribe(pattern)
         }
+        // TODO remove test subscription!
+        client.subscribe("#")
     })
 
     // Forward message to handlers
     client.on('message', (topic, payload, packet) => {
-        console.log('message', topic, payload, packet)
+        console.log('message', topic, JSON.parse(payload.toString()), packet)
         for (const pattern in handlers) {
             if (matches(pattern, topic)) {
                 for (const handler of handlers[pattern]) {

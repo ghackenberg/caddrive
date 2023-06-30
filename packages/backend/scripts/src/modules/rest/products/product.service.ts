@@ -8,6 +8,7 @@ import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'product
 import { Database, ProductEntity } from 'productboard-database'
 
 import { convertProduct } from '../../../functions/convert'
+import { emitComment, emitIssue, emitMember, emitMilestone, emitProduct, emitVersion } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -52,7 +53,10 @@ export class ProductService implements ProductREST {
         // Create member
         const memberId = shortid()
         const role = 'manager'
-        await Database.get().memberRepository.save({ id: memberId, created, updated, productId, userId, role })
+        const member = await Database.get().memberRepository.save({ id: memberId, created, updated, productId, userId, role })
+        // Emit changes
+        emitProduct(product)
+        emitMember(member)
         // Return product
         return convertProduct(product)
     }
@@ -63,27 +67,68 @@ export class ProductService implements ProductREST {
     }
 
     async updateProduct(id: string, data: ProductUpdateData): Promise<Product> {
+        // Update product
         const product = await Database.get().productRepository.findOneByOrFail({ id })
         product.updated = Date.now()
         product.name = data.name
         product.description = data.description
         product.public = data.public
         await Database.get().productRepository.save(product)
+        // Emit changes
+        emitProduct(product)
+        // Return product
         return convertProduct(product)
     }
 
     async deleteProduct(id: string): Promise<Product> {
+        // Delete product
         const product = await Database.get().productRepository.findOneByOrFail({ id })
         product.deleted = Date.now()
         product.updated = product.deleted
-        await Database.get().memberRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
-        await Database.get().versionRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
-        await Database.get().milestoneRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
-        await Database.get().issueRepository.update({ productId: product.id }, { deleted: product.deleted, updated: product.updated })
-        for (const issue of await Database.get().issueRepository.findBy({ productId: product.id })) {
-            await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: product.deleted, updated: product.updated })
-        }
         await Database.get().productRepository.save(product)
+        // Delete members
+        const members = await Database.get().memberRepository.findBy({ productId: id, deleted: IsNull() })
+        for (const member of members) {
+            member.deleted = product.deleted
+            member.updated = product.updated
+            await Database.get().memberRepository.save(member)
+        }
+        // Delete issues
+        const issues = await Database.get().issueRepository.findBy({ productId: id, deleted: IsNull() })
+        for (const issue of issues) {
+            issue.deleted = product.deleted
+            issue.updated = product.updated
+            await Database.get().issueRepository.save(issue)
+        }
+        // Delete comments
+        const comments = await Database.get().commentRepository.findBy({ issue: { productId: id }, deleted: IsNull() })
+        for (const comment of comments) {
+            comment.deleted = product.deleted
+            comment.updated = product.updated
+            await Database.get().commentRepository.save(comment)
+        }
+        // Delete milestones
+        const milestones = await Database.get().milestoneRepository.findBy({ productId: id, deleted: IsNull() })
+        for (const milestone of milestones) {
+            milestone.deleted = product.deleted
+            milestone.updated = product.updated
+            await Database.get().milestoneRepository.save(milestone)
+        }
+        // Delete versions
+        const versions = await Database.get().versionRepository.findBy({ productId: id, deleted: IsNull() })
+        for (const version of versions) {
+            version.deleted = product.deleted
+            version.updated = product.updated
+            await Database.get().versionRepository.save(version)
+        }
+        // Emit changes
+        emitProduct(product)
+        members.forEach(emitMember)
+        issues.forEach(emitIssue)
+        comments.forEach(emitComment)
+        milestones.forEach(emitMilestone)
+        versions.forEach(emitVersion)
+        // Return product
         return convertProduct(product)
     }
 }

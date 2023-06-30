@@ -12,6 +12,7 @@ import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'product
 import { Database, VersionEntity } from 'productboard-database'
 
 import { convertVersion } from '../../../functions/convert'
+import { emitVersion } from '../../../functions/emit'
 import { renderGlb, renderLDraw } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
@@ -37,6 +38,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     }
  
     async addVersion(data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
+        // Create version
         const id = shortid()
         const created = Date.now()
         const updated = created
@@ -45,6 +47,9 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const imageType = await processImage(id, null, files)
         const version = await Database.get().versionRepository.save({ id, created, updated, userId, modelType, imageType, ...data })
         renderImage(id, files)
+        // Emit changes
+        emitVersion(version)
+        // Return version
         return convertVersion(version)
     }
 
@@ -54,6 +59,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
     }
 
     async updateVersion(id: string, data: VersionUpdateData, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
+        // Update version
         const version = await Database.get().versionRepository.findOneByOrFail({ id })
         version.updated = Date.now()
         version.major = data.major
@@ -64,14 +70,21 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.imageType = await processImage(id, version.imageType, files)
         await Database.get().versionRepository.save(version)
         renderImage(id, files)
+        // Emit changes
+        emitVersion(version)
+        // Return version
         return convertVersion(version)
     }
 
     async deleteVersion(id: string): Promise<Version> {
+        // Delete version
         const version = await Database.get().versionRepository.findOneByOrFail({ id })
         version.deleted = Date.now()
         version.updated = version.deleted
         await Database.get().versionRepository.save(version)
+        // Emit changes
+        emitVersion(version)
+        // Return version
         return convertVersion(version)
     }
 }
@@ -170,4 +183,6 @@ async function updateImage(id: string, image: Jimp) {
     version.updated = Date.now()
     version.imageType = 'png'
     await Database.get().versionRepository.save(version)
+    // Emit changes
+    emitVersion(version)
 }

@@ -42,19 +42,28 @@ aedes.authenticate = async (client, username, password, callback) => {
         callback(e, false)
     }
 }
-aedes.authorizePublish = async (client, packet, callback) => {
-    console.log('authorizePublish', client.id, packet.topic)
-    callback(null)
-}
 aedes.authorizeSubscribe = async (client, subscription, callback) => {
     console.log('authorizeSubscribe', client.id, subscription.topic)
     callback(null, subscription)
+}
+aedes.authorizePublish = async (client, packet, callback) => {
+    console.log('authorizePublish', client.id, packet.topic)
+    callback(null)
 }
 aedes.authorizeForward = (client, packet) => {
     console.log('authorizeForward', client.id, packet.topic)
     return packet
 }
-aedes.on('clientDisconnect', async client => {
+aedes.on('subscribe', (subscriptions, client) => {
+    console.log('subscribe', subscriptions, client.id)
+})
+aedes.on('unsubscribe', (unsubscriptions, client) => {
+    console.log('unsubscribe', unsubscriptions, client.id)
+})
+aedes.on('publish', (packet, client) => {
+    console.log('publish', packet.topic, client && client.id)
+})
+aedes.on('clientDisconnect', client => {
     console.log('clientDisconnect', client.id)
     delete USER_IDS[client.id]
 })

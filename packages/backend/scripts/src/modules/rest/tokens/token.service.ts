@@ -8,6 +8,7 @@ import shortid from "shortid"
 import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse, TokenREST, User } from "productboard-common"
 import { Database, getTokenOrFail, getUserOrFail } from "productboard-database"
 
+import { emitUser } from "../../../functions/emit"
 import { TRANSPORTER } from "../../../functions/mail"
 import { KEY_PAIR } from "../../../key"
 import { AuthorizedRequest } from "../../../request"
@@ -72,6 +73,8 @@ export class TokenService implements TokenREST {
             const updated = token.updated
             const email = token.email
             const user = await Database.get().userRepository.save({ id, created, updated, email })
+            // Emit changes
+            emitUser(user)
             // Return JWT
             return createJWT(user)
         }

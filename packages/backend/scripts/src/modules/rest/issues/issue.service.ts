@@ -10,6 +10,7 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 import { Database, IssueEntity } from 'productboard-database'
 
 import { convertIssue } from '../../../functions/convert'
+import { emitComment, emitIssue } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -40,19 +41,21 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
   
     async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
+        // Add issue
         const id = shortid()
         const created = Date.now()
         const updated = created
         const userId = this.request.user.id
         const state = 'open'
-        let issue: IssueEntity
+        let audioId: string
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            const audioId = shortid()
-            issue = await Database.get().issueRepository.save({ id, created, updated, userId, audioId, state, ...data })
-            writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
-        } else {
-            issue = await Database.get().issueRepository.save({ id, created, updated, userId, state, ...data })
+            audioId = shortid()
+            writeFileSync(`./uploads/${audioId}.webm`, files.audio[0].buffer)
         }
+        const issue = await Database.get().issueRepository.save({ id, created, updated, userId, audioId, state, ...data })
+        // Emit changes
+        emitIssue(issue)
+        // Return issue
         return convertIssue(issue)
     }
 
@@ -62,25 +65,40 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
     }
 
     async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
+        // Update issue
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         issue.updated = Date.now()
         issue.assigneeIds = data.assigneeIds
         issue.label = data.label
         issue.milestoneId =  data.milestoneId
         issue.text = data.text
-        await Database.get().issueRepository.save(issue)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         }
+        await Database.get().issueRepository.save(issue)
+        // Emit changes
+        emitIssue(issue)
+        // Return issue
         return convertIssue(issue)
     }
 
     async deleteIssue(id: string): Promise<Issue> {
+        // Delete issue
         const issue = await Database.get().issueRepository.findOneByOrFail({ id })
         issue.deleted = Date.now()
         issue.updated = issue.deleted
-        await Database.get().commentRepository.update({ issueId: issue.id }, { deleted: issue.deleted, updated: issue.updated })
         await Database.get().issueRepository.save(issue)
+        // Delete comments
+        const comments = await Database.get().commentRepository.findBy({ issueId: issue.id, deleted: IsNull() })
+        for (const comment of comments) {
+            comment.deleted = issue.deleted
+            comment.updated = issue.updated
+            await Database.get().commentRepository.save(comment)
+        }
+        // Emit changes
+        emitIssue(issue)
+        comments.forEach(emitComment)
+        // Return issue
         return convertIssue(issue)
     }
 }

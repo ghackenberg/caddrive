@@ -7,6 +7,7 @@ import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboar
 import { Database, MemberEntity } from 'productboard-database'
 
 import { convertMember } from '../../../functions/convert'
+import { emitMember } from '../../../functions/emit'
 
 @Injectable()
 export class MemberService implements MemberREST {
@@ -23,12 +24,16 @@ export class MemberService implements MemberREST {
     }
 
     async addMember(data: MemberAddData): Promise<Member> {
+        // Create member
         const product = await Database.get().productRepository.findOneByOrFail({ id: data.productId })
         const user = await Database.get().userRepository.findOneByOrFail({ id: data.userId })
         const id = shortid()
         const created = Date.now()
         const updated = created
         const member = await Database.get().memberRepository.save({ id, created, updated, product, user, ...data })
+        // Emit changes
+        emitMember(member)
+        // Return member
         return convertMember(member)
     }
 
@@ -38,18 +43,26 @@ export class MemberService implements MemberREST {
     }
 
     async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
+        // Update member
         const member = await Database.get().memberRepository.findOneByOrFail({ id })
         member.updated = Date.now()
         member.role = data.role
         await Database.get().memberRepository.save(member)
+        // Emit changes
+        emitMember(member)
+        // Return member
         return convertMember(member)
     }
     
     async deleteMember(id: string): Promise<Member> {
+        // Update member
         const member = await Database.get().memberRepository.findOneByOrFail({ id })
         member.deleted = Date.now()
         member.updated = member.deleted
         await Database.get().memberRepository.save(member)
+        // Emit changes
+        emitMember(member)
+        // Return member
         return convertMember(member)
     }
 }

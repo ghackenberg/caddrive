@@ -11,6 +11,7 @@ import { User, UserUpdateData, UserREST } from 'productboard-common'
 import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
 
 import { convertUser } from '../../../functions/convert'
+import { emitMember, emitUser } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -50,6 +51,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
     }
 
     async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
+        // Update user
         const user = await Database.get().userRepository.findOneByOrFail({ id })
         user.updated = Date.now()
         user.consent = data.consent
@@ -59,15 +61,29 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
             writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
         await Database.get().userRepository.save(user)
+        // Emit changes
+        emitUser(user)
+        // Return user
         return convertUser(user, this.request.user && this.request.user.id == id)
     }
 
     async deleteUser(id: string): Promise<User> {
+        // Delete user
         const user = await Database.get().userRepository.findOneByOrFail({ id })
         user.deleted = Date.now()
         user.updated = user.deleted
-        await Database.get().memberRepository.update({ userId: user.id }, { deleted: user.deleted, updated: user.updated })
         await Database.get().userRepository.save(user)
+        // Delete members
+        const members = await Database.get().memberRepository.findBy({ userId: user.id, deleted: IsNull() })
+        for (const member of members) {
+            member.deleted = user.deleted
+            member.updated = user.deleted
+            await Database.get().memberRepository.save(member)
+        }
+        // Emit changes
+        emitUser(user)
+        members.forEach(emitMember)
+        // Return user
         return convertUser(user, this.request.user && this.request.user.id == id)
     }
 }
