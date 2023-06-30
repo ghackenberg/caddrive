@@ -12,7 +12,7 @@ let key: KeyLike | Uint8Array
 
 // Constants
 
-const KEY_DATA = axios.get<JWK>('http://localhost:3000/rest/keys')
+const KEY_DATA = axios.get<JWK>('http://localhost:3001/rest/keys')
 
 const NET_PORT = 3003
 const HTTP_PORT = 3004
@@ -22,7 +22,8 @@ const USER_IDS: { [clientId: string]: string } = {}
 // Contants - MQTT Broker
 
 const aedes = new Aedes()
-aedes.authenticate = async (client, username, _password, callback) => {
+aedes.authenticate = async (client, username, password, callback) => {
+    console.log('authneticate', client.id, username, password)
     try {
         if (username) {
             key = key || await importJWK((await KEY_DATA).data, "PS256")

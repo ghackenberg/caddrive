@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 import { Database } from 'productboard-database'
 
+import './mqtt'
 import { RESTModule } from './modules/rest.module'
 
 async function bootstrap() {
