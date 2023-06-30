@@ -12,8 +12,6 @@ let key: KeyLike | Uint8Array
 
 // Constants
 
-const KEY_DATA = axios.get<JWK>('http://localhost:3001/rest/keys')
-
 const NET_PORT = 3003
 const HTTP_PORT = 3004
 
@@ -26,7 +24,11 @@ aedes.authenticate = async (client, username, password, callback) => {
     console.log('authneticate', client.id, username, password)
     try {
         if (username) {
-            key = key || await importJWK((await KEY_DATA).data, "PS256")
+            if (!key) {
+                const request = axios.get<JWK>('http://localhost:3001/rest/keys')
+                const response = await request
+                key = await importJWK(response.data, "PS256")
+            }
             const result = await jwtVerify(username, key)
             const payload = result.payload as { userId: string }
             const userId = payload.userId
