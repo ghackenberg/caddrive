@@ -22,8 +22,6 @@ function init() {
         for (const pattern in handlers) {
             client.subscribe(pattern)
         }
-        // TODO remove test subscription!
-        client.subscribe("#")
     })
 
     // Forward message to handlers
@@ -68,10 +66,7 @@ export const MqttAPI = {
             }
         }
     },
-    publish(topic: string, message: string | Buffer) {
-        client.publish(topic, message)
-    },
     reconnect() {
         client.end()
-    }  
+    }
 }
