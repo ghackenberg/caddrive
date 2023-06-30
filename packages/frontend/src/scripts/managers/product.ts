@@ -1,7 +1,7 @@
 import { Product, ProductAddData, ProductUpdateData } from 'productboard-common'
 
-import { ProductClient } from '../clients/rest/product'
 import { AbstractManager } from './abstract'
+import { ProductClient } from '../clients/rest/product'
 
 class ProductManagerImpl extends AbstractManager<Product> {
     // CACHE

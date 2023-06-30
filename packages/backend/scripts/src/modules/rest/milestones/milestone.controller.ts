@@ -4,10 +4,10 @@ import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs
 
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 
+import { MilestoneService } from './milestone.service'
 import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { MilestoneService } from './milestone.service'
 
 @Controller('rest/milestones')
 @UseGuards(TokenOptionalGuard)

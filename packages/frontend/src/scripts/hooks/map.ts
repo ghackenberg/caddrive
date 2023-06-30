@@ -2,8 +2,8 @@ import * as React from 'react'
 
 import { Comment } from 'productboard-common'
 
-import { CommentManager } from '../managers/comment'
 import { useIssues } from './list'
+import { CommentManager } from '../managers/comment'
 
 export function useIssuesComments(productId: string, milestoneId?: string) {
 

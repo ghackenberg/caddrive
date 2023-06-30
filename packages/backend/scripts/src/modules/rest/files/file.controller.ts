@@ -4,10 +4,10 @@ import { ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger'
 
 import { FileREST } from 'productboard-common'
 
+import { FileService } from './file.service'
 import { canReadFileOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { FileService } from './file.service'
 
 @Controller('rest/files')
 @UseGuards(TokenOptionalGuard)

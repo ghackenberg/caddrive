@@ -1,7 +1,7 @@
 import { Member, MemberAddData, MemberUpdateData } from 'productboard-common'
 
-import { MemberClient } from '../clients/rest/member'
 import { AbstractManager } from './abstract'
+import { MemberClient } from '../clients/rest/member'
 
 class MemberManagerImpl extends AbstractManager<Member> {
     // CACHE

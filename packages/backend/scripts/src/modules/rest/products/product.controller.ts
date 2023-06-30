@@ -4,10 +4,10 @@ import { ApiBody, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs
 
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
 
+import { ProductService } from './product.service'
 import { canReadProductOrFail, canUpdateProductOrFail, canDeleteProductOrFail, canCreateProductOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { ProductService } from './product.service'
 
 @Controller('rest/products')
 @UseGuards(TokenOptionalGuard)

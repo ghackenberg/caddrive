@@ -1,7 +1,7 @@
 import { Milestone, MilestoneAddData, MilestoneUpdateData } from 'productboard-common'
 
-import { MilestoneClient } from '../clients/rest/milestone'
 import { AbstractManager } from './abstract'
+import { MilestoneClient } from '../clients/rest/milestone'
 
 class MilestoneManagerImpl extends AbstractManager<Milestone> {
     // CACHE

@@ -7,10 +7,10 @@ import 'multer'
 
 import { User, UserREST, UserUpdateData } from 'productboard-common'
 
+import { UserService } from './user.service'
 import { canFindUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(TokenOptionalGuard)

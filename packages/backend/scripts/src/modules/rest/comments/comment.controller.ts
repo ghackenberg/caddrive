@@ -7,10 +7,10 @@ import 'multer'
 
 import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 
+import { CommentService } from './comment.service'
 import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { CommentService } from './comment.service'
 
 @Controller('rest/comments')
 @UseGuards(TokenOptionalGuard)

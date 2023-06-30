@@ -2,6 +2,7 @@ import  * as React from 'react'
 import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 
+import { LoadingView } from './Loading'
 import { auth } from '../../clients/auth'
 import { UserContext } from '../../contexts/User'
 import { useUser } from '../../hooks/entity'
@@ -12,7 +13,6 @@ import { EmailInput } from '../inputs/EmailInput'
 import { FileInput } from '../inputs/FileInput'
 import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
-import { LoadingView } from './Loading'
 
 export const UserSettingView = () => {
     

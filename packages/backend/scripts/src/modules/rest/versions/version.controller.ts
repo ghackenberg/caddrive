@@ -7,10 +7,10 @@ import 'multer'
 
 import { Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
 
+import { VersionService } from './version.service'
 import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { VersionService } from './version.service'
 
 @Controller('rest/versions')
 @UseGuards(TokenOptionalGuard)

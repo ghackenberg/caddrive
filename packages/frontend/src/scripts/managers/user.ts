@@ -1,7 +1,7 @@
 import { User, UserUpdateData } from 'productboard-common'
 
-import { UserClient } from '../clients/rest/user'
 import { AbstractManager } from './abstract'
+import { UserClient } from '../clients/rest/user'
 
 class UserManagerImpl extends AbstractManager<User> {
     // CACHE

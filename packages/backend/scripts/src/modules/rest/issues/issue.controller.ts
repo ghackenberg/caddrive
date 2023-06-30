@@ -7,10 +7,10 @@ import "multer"
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 
+import { IssueService } from './issue.service'
 import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { IssueService } from './issue.service'
 
 @Controller('rest/issues')
 @UseGuards(TokenOptionalGuard)

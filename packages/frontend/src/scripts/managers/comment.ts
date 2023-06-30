@@ -1,7 +1,7 @@
 import { Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
 
-import { CommentClient } from '../clients/rest/comment'
 import { AbstractManager } from './abstract'
+import { CommentClient } from '../clients/rest/comment'
 
 class CommentManagerImpl extends AbstractManager<Comment> {
     // CACHE

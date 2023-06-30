@@ -1,7 +1,7 @@
 import { Issue, IssueAddData, IssueUpdateData } from 'productboard-common'
 
-import { IssueClient } from '../clients/rest/issue'
 import { AbstractManager } from './abstract'
+import { IssueClient } from '../clients/rest/issue'
 
 class IssueManagerImpl extends AbstractManager<Issue> {
     // CACHE

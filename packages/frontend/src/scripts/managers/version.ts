@@ -1,7 +1,7 @@
 import { Version, VersionAddData, VersionUpdateData } from 'productboard-common'
 
-import { VersionClient } from '../clients/rest/version'
 import { AbstractManager } from './abstract'
+import { VersionClient } from '../clients/rest/version'
 
 class VersionManagerImpl extends AbstractManager<Version> {
     // CACHE

@@ -4,10 +4,10 @@ import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs
 
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 
+import { MemberService } from './member.service'
 import { canReadMemberOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail, canFindMemberOrFail, canCreateMemberOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { MemberService } from './member.service'
 
 @Controller('rest/members')
 @UseGuards(TokenOptionalGuard)
