@@ -27,7 +27,7 @@ The comments view enables discussion between stakeholders and engineers around i
 **CADDrive** requires the following tools:
 
 - node@^16
-- npm@^8
+- npm@^9
 
 ## Scripts
 
