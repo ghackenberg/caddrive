@@ -2,7 +2,9 @@ import { connect, MqttClient } from 'mqtt'
 import { matches } from 'mqtt-pattern'
 import shortid from 'shortid'
 
-type handler = (topic: string, payload: string | Buffer) => void
+import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
+
+type handler = (topic: string, data: unknown) => void
 
 const handlers: { [topic: string]: handler[] } = {}
 
@@ -27,10 +29,11 @@ function init() {
     // Forward message to handlers
     client.on('message', (topic, payload, packet) => {
         console.log('message', topic, JSON.parse(payload.toString()), packet)
+        const data = JSON.parse(payload.toString())
         for (const pattern in handlers) {
             if (matches(pattern, topic)) {
                 for (const handler of handlers[pattern]) {
-                    handler(topic, payload)
+                    handler(topic, data)
                 }
             }
         }
@@ -41,30 +44,73 @@ function init() {
         init()
     })
 }
+    
+function subscribe<T>(topic: string, handler: (topic: string, data: T) => void) {
+    // Initialize handlers
+    if (!(topic in handlers)) {
+        handlers[topic] = []
+        if (client.connected) {
+            client.subscribe(topic)
+        }
+    }
+    // Add handler
+    handlers[topic].push(handler)
+    // Return unsubscribe function
+    return () => {
+        handlers[topic].splice(handlers[topic].indexOf(handler), 1)
+        if (handlers[topic].length == 0) {
+            delete handlers[topic]
+            if (client.connected) {
+                client.unsubscribe(topic)
+            }
+        }
+    }
+}
 
 init()
 
 export const MqttAPI = {
-    subscribe(topic: string, handler: (topic: string, payload: string | Buffer) => void) {
-        // Initialize handlers
-        if (!(topic in handlers)) {
-            handlers[topic] = []
-            if (client.connected) {
-                client.subscribe(topic)
-            }
-        }
-        // Add handler
-        handlers[topic].push(handler)
-        // Return unsubscribe function
-        return () => {
-            handlers[topic].splice(handlers[topic].indexOf(handler), 1)
-            if (handlers[topic].length == 0) {
-                delete handlers[topic]
-                if (client.connected) {
-                    client.unsubscribe(topic)
-                }
-            }
-        }
+    user(userId: string, callback: (user: User) => void) {
+        const topic = `/users/${userId}`
+        return subscribe<User>(topic, (_topic, data) => {
+            data.id == userId && callback(data)
+        })
+    },
+    product(productId: string, callback: (product: Product) => void) {
+        const topic = `/products/${productId}`
+        return subscribe<Product>(topic, (_topic, data) => {
+            data.id == productId && callback(data)
+        })
+    },
+    member(productId: string, memberId: string, callback: (member: Member) => void) {
+        const topic = `/products/${productId}/members/+`
+        return subscribe<Member>(topic, (_topic, data) => {
+            data.id == memberId && data.productId == productId && callback(data)
+        })
+    },
+    issue(productId: string, issueId: string, callback: (issue: Issue) => void) {
+        const topic = `/products/${productId}/issues/+`
+        return subscribe<Issue>(topic, (_topic, data) => {
+            data.id == issueId && data.productId == productId && callback(data)
+        })
+    },
+    comment(productId: string, issueId: string, commentId: string, callback: (comment: Comment) => void) {
+        const topic = `/products/${productId}/issues/+/comments/+`
+        return subscribe<Comment>(topic, (_topic, data) => {
+            data.id == commentId && data.issueId == issueId && callback(data)
+        })
+    },
+    milestone(productId: string, milestoneId: string, callback: (milestone: Milestone) => void) {
+        const topic = `/products/${productId}/milestones/+`
+        return subscribe<Milestone>(topic, (_topic, data) => {
+            data.id == milestoneId && data.productId == productId && callback(data)
+        })
+    },
+    version(productId: string, versionId: string, callback: (version: Version) => void) {
+        const topic = `/products/${productId}/versions/+`
+        return subscribe<Version>(topic, (_topic, data) => {
+            data.id == versionId && data.productId == productId && callback(data)
+        })
     },
     reconnect() {
         client.end()
