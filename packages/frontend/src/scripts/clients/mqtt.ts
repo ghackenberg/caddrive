@@ -45,7 +45,7 @@ function init() {
 init()
 
 export const MqttAPI = {
-    subscribe(topic: string, handler: (topic: string, message: string | Buffer) => void) {
+    subscribe(topic: string, handler: (topic: string, payload: string | Buffer) => void) {
         // Initialize handlers
         if (!(topic in handlers)) {
             handlers[topic] = []

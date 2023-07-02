@@ -30,7 +30,7 @@ export const ProductMilestoneSettingView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const milestone = useMilestone(milestoneId)
+    const milestone = useMilestone(productId, milestoneId)
     const issues = useIssues(productId, milestoneId)
     const comments = useIssuesComments(productId, milestoneId)
 

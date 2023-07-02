@@ -48,7 +48,7 @@ export const ProductIssueSettingView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const milestones = useMilestones(productId)
-    const issue = useIssue(issueId)
+    const issue = useIssue(productId, issueId)
 
     // INITIAL STATES
 
@@ -89,7 +89,7 @@ export const ProductIssueSettingView = () => {
     
     // FUNCTIONS
 
-    async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    async function startRecordAudio(event: React.MouseEvent<HTMLInputElement>) {
         // TODO handle unmount!
         event.preventDefault()
         const recorder = new AudioRecorder()
@@ -97,7 +97,7 @@ export const ProductIssueSettingView = () => {
         setRecorder(recorder)
     }
 
-    async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    async function stopRecordAudio(event: React.MouseEvent<HTMLInputElement>) {
         // TODO handle unmount!
         event.preventDefault()
         const data = await recorder.stop()
@@ -106,7 +106,7 @@ export const ProductIssueSettingView = () => {
         setRecorder(null)
     }
 
-    async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    async function removeAudio(event: React.MouseEvent<HTMLInputElement>) {
         event.preventDefault()
         setAudio(null)
         setAudioUrl('')

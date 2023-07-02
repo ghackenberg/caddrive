@@ -45,7 +45,7 @@ export const ProductIssueCommentView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
-    const issue = useIssue(issueId)
+    const issue = useIssue(productId, issueId)
     const comments = useComments(issueId)
 
     // STATES

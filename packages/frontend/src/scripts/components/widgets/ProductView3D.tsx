@@ -22,20 +22,25 @@ interface Part {
 }
 
 export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
+    // CONSTANTS
+    
+    const productId = props.productId
+    const issueId = props.issueId
+
     // CONTEXTS
 
     const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // HOOKS
 
-    const versions = useVersions(props.productId)
-    const issue = useIssue(props.issueId)
-    const comments = useComments(props.issueId)
+    const versions = useVersions(productId)
+    const issue = useIssue(productId, issueId)
+    const comments = useComments(issueId)
 
     // INITIAL STATES
 
-    const initialIssueParts = props.issueId ? (issue && collectParts(issue.text)) : []
-    const initialCommentsParts = props.issueId ? (comments && comments.map(comment => collectParts(comment.text))) : []
+    const initialIssueParts = issueId ? (issue && collectParts(issue.text)) : []
+    const initialCommentsParts = issueId ? (comments && comments.map(comment => collectParts(comment.text))) : []
     
     let initialParts: Part[] = undefined
     if (initialIssueParts && initialCommentsParts) {

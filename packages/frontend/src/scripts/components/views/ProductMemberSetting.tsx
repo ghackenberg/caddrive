@@ -41,7 +41,7 @@ export const ProductMemberSettingView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
-    const member = useMember(memberId)
+    const member = useMember(productId, memberId)
     
     // INITIAL STATES
 

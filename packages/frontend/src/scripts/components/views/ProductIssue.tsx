@@ -102,7 +102,7 @@ export const ProductIssueView = () => {
         ) },
         { label: 'Parts', class: 'center', content: issue => (
             <span className='badge'>
-                <PartCount issueId={issue.id}/>
+                <PartCount productId={productId} issueId={issue.id}/>
             </span>
         ) },
         { label: '🛠️', class: 'center', content: issue => (

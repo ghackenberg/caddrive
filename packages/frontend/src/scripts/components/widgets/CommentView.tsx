@@ -25,7 +25,13 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
 
     // CONSTANTS
 
-    const entity = props.commentId ? useComment(props.commentId) : useIssue(props.issueId)
+    const productId = props.productId
+    const issueId = props.issueId
+    const commentId = props.commentId
+
+    // HOOKS
+
+    const entity = commentId ? useComment(productId, issueId, commentId) : useIssue(productId, issueId)
 
     // INITIAL STATES
 

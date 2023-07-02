@@ -47,7 +47,7 @@ export const ProductMilestoneIssueView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
-    const milestone = useMilestone(milestoneId)
+    const milestone = useMilestone(productId, milestoneId)
     const issues = useIssues(productId, milestoneId)
     const comments = useIssuesComments(productId, milestoneId)
 
@@ -129,7 +129,7 @@ export const ProductMilestoneIssueView = () => {
         ) },
         { label: 'Parts', class: 'center', content: issue => (
             <span className='badge'>
-                <PartCount issueId={issue.id}/>
+                <PartCount productId={productId} issueId={issue.id}/>
             </span>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
