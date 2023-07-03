@@ -22,7 +22,7 @@ export function useUsers() {
         let exec = true
         UserClient.findUsers().then(users => exec && setValue(users))
         return () => { exec = false }
-    })
+    }, [true])
 
     return value
 }
@@ -38,7 +38,7 @@ export function useProducts(_public: "true" | "false") {
         let exec = true
         ProductClient.findProducts(_public).then(products => exec && setValue(products))
         return () => { exec = false }
-    })
+    }, [_public])
 
     return value
 }

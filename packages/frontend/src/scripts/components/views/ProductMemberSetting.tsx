@@ -72,7 +72,7 @@ export const ProductMemberSettingView = () => {
     }, [productId, query])
     useEffect(() => {
         let exec = true
-        UserClient.getUser(member.userId).then(user => exec && setUser(user))
+        member && UserClient.getUser(member.userId).then(user => exec && setUser(user))
         return () => { exec = false }
     }, [member] )
 
