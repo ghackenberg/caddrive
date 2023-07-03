@@ -4,7 +4,7 @@ import shortid from 'shortid'
 
 import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
 
-import { COMMENT_CACHE, ISSUE_CACHE, MEMBER_CACHE, MILESTONE_CACHE, PRODUCT_CACHE, USER_CACHE, VERSION_CACHE } from './cache'
+import { COMMENT_CACHE, COMMENTS_CACHE, ISSUE_CACHE, ISSUES_CACHE, MEMBER_CACHE, MEMBERS_CACHE, MILESTONE_CACHE, MILESTONES_CACHE, PRODUCT_CACHE, USER_CACHE, VERSION_CACHE, VERSIONS_CACHE } from './cache'
 
 type handler = (topic: string, object: unknown) => void
 
@@ -74,18 +74,33 @@ function publishLocal<T>(topic: string, object: T) {
     } else if (matches('/products/+/members/+', topic)) {
         const member = object as Member
         MEMBER_CACHE[member.id] = member
+        if (member.productId in MEMBERS_CACHE) {
+            MEMBERS_CACHE[member.productId][member.id] = true
+        }
     } else if (matches('/products/+/issues/+', topic)) {
         const issue = object as Issue
         ISSUE_CACHE[issue.id] = issue
+        if (issue.productId in ISSUES_CACHE) {
+            ISSUES_CACHE[issue.productId][issue.id] = true
+        }
     } else if (matches('/products/+/issues/+/comments/+', topic)) {
         const comment = object as Comment
         COMMENT_CACHE[comment.id] = comment
+        if (comment.issueId in COMMENTS_CACHE) {
+            COMMENTS_CACHE[comment.issueId][comment.id] = true
+        }
     } else if (matches('/products/+/milestones/+', topic)) {
         const milestone = object as Milestone
         MILESTONE_CACHE[milestone.id] = milestone
+        if (milestone.productId in MILESTONES_CACHE) {
+            MILESTONES_CACHE[milestone.productId][milestone.id] = true
+        }
     } else if (matches('/products/+/versions/+', topic)) {
         const version = object as Version
         VERSION_CACHE[version.id] = version
+        if (version.productId in VERSIONS_CACHE) {
+            VERSIONS_CACHE[version.productId][version.id] = true
+        }
     } else {
         console.warn('MQTT topic not supported', topic, object)
     }
@@ -142,12 +157,6 @@ export const MqttAPI = {
             product.id == productId && callback(product)
         })
     },
-    subscribeMembers(productId: string, _callback: (members: Member[]) => void) {
-        const topic = `/products/${productId}/members/+`
-        return subscribe<Member>(topic, (_topic, _data) => {
-            // TODO
-        })
-    },
     subscribeMember(productId: string, memberId: string, callback: (member: Member) => void) {
         const topic = `/products/${productId}/members/+`
         return subscribe<Member>(topic, (_topic, member) => {
@@ -176,6 +185,56 @@ export const MqttAPI = {
         const topic = `/products/${productId}/versions/+`
         return subscribe<Version>(topic, (_topic, version) => {
             version.id == versionId && version.productId == productId && callback(version)
+        })
+    },
+    subscribeMembers(productId: string, callback: (members: Member[]) => void) {
+        const topic = `/products/${productId}/members/+`
+        return subscribe<Member>(topic, (_topic, member) => {
+            if (productId in MEMBERS_CACHE && member.productId == productId) {
+                const memberIds = Object.keys(MEMBER_CACHE[productId])
+                const members = memberIds.map(memberId => MEMBER_CACHE[memberId])
+                callback(members.filter(member => !member.deleted))
+            }
+        })
+    },
+    subscribeIssues(productId: string, callback: (issues: Issue[]) => void) {
+        const topic = `/products/${productId}/issues/+`
+        return subscribe<Issue>(topic, (_topic, issue) => {
+            if (productId in ISSUES_CACHE && issue.productId == productId) {
+                const issueIds = Object.keys(ISSUES_CACHE[productId])
+                const issues = issueIds.map(issueId => ISSUE_CACHE[issueId])
+                callback(issues.filter(issue => !issue.deleted))
+            }
+        })
+    },
+    subscribeComments(productId: string, issueId: string, callback: (comments: Comment[]) => void) {
+        const topic = `/products/${productId}/issues/+/comments/+`
+        return subscribe<Comment>(topic, (_topic, comment) => {
+            if (issueId in COMMENT_CACHE && comment.issueId == issueId) {
+                const commentIds = Object.keys(COMMENTS_CACHE[issueId])
+                const comments = commentIds.map(commentId => COMMENT_CACHE[commentId])
+                callback(comments.filter(comment => !comment.deleted))
+            }
+        })
+    },
+    subscribeMilestones(productId: string, callback: (milestones: Milestone[]) => void) {
+        const topic = `/products/${productId}/milestones/+`
+        return subscribe<Milestone>(topic, (_topic, milestone) => {
+            if (productId in MILESTONES_CACHE && milestone.productId == productId) {
+                const milestoneIds = Object.keys(MILESTONES_CACHE[productId])
+                const milestones = milestoneIds.map(milestoneId => MILESTONE_CACHE[milestoneId])
+                callback(milestones.filter(milestone => !milestone.deleted))
+            }
+        })
+    },
+    subscribeVersions(productId: string, callback: (versions: Version[]) => void) {
+        const topic = `/products/${productId}/versions/+`
+        return subscribe<Version>(topic, (_topic, version) => {
+            if (productId in VERSIONS_CACHE && version.productId == productId) {
+                const versionIds = Object.keys(VERSIONS_CACHE[productId])
+                const versions = versionIds.map(versionId => VERSION_CACHE[versionId])
+                callback(versions.filter(version => !version.deleted))
+            }
         })
     },
     reconnect() {
