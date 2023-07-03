@@ -26,171 +26,186 @@ const PRODUCT_CACHE: { [productId: string]: boolean } = {}
 
 const PRODUCT_MEMBER_CACHE: { [productId: string]: string[] }= {}
 
-// Constants - MQTT Broker
+// Functions
 
-const aedes = new Aedes()
+async function boot() {
+    // Database
 
-// Constants - MQTT Broker - Authenticate
+    await Database.init()
 
-aedes.authenticate = async (client, username, _password, callback) => {
-    try {
-        console.log('authenticate', client.id)
-        if (username) {
-            // Load JWT public key from Nest.js backend if necessary!
-            if (!JWT_PUBLIC_KEY) {
-                const request = axios.get<JWK>('http://localhost:3001/rest/keys')
-                const response = await request
-                JWT_PUBLIC_KEY = await importJWK(response.data, "PS256")
+    // MQTT Broker
+
+    const aedes = new Aedes()
+
+    // MQTT Broker - Authenticate
+
+    aedes.authenticate = async (client, username, _password, callback) => {
+        try {
+            console.log('authenticate', client.id)
+            if (username) {
+                // Load JWT public key from Nest.js backend if necessary!
+                if (!JWT_PUBLIC_KEY) {
+                    const request = axios.get<JWK>('http://localhost:3001/rest/keys')
+                    const response = await request
+                    JWT_PUBLIC_KEY = await importJWK(response.data, "PS256")
+                }
+                // Verify JWT
+                const result = await jwtVerify(username, JWT_PUBLIC_KEY)
+                // Remember user ID of MQTT client!
+                const payload = result.payload as { userId: string }
+                const userId = payload.userId
+                CLIENT_USER_IDS[client.id] = userId
+                // Success
+                callback(null, true)
+            } else {
+                CLIENT_USER_IDS[client.id] = null
+                callback(null, true)
             }
-            // Verify JWT
-            const result = await jwtVerify(username, JWT_PUBLIC_KEY)
-            // Remember user ID of MQTT client!
-            const payload = result.payload as { userId: string }
-            const userId = payload.userId
-            CLIENT_USER_IDS[client.id] = userId
-            // Success
-            callback(null, true)
-        } else {
-            CLIENT_USER_IDS[client.id] = null
-            callback(null, true)
+        } catch (e) {
+            callback(e, false)
         }
-    } catch (e) {
-        callback(e, false)
     }
-}
 
-// Constants - MQTT Broker - Authorize
+    // MQTT Broker - Authorize
 
-aedes.authorizeSubscribe = async (client, subscription, callback) => {
-    try {
-        console.log('authorizeSubscribe', client.id, subscription.topic)
-        // User topics are visible to everybody
-        const userMatch = exec('/users/+userId', subscription.topic)
-        if (userMatch) {
-            return callback(null, subscription)
+    aedes.authorizeSubscribe = async (client, subscription, callback) => {
+        try {
+            console.log('authorizeSubscribe', client.id, subscription.topic)
+            // User topics are visible to everybody
+            const userMatch = exec('/users/+userId', subscription.topic)
+            if (userMatch) {
+                return callback(null, subscription)
+            }
+            // Product topics have to be checked more carefully
+            const productMatch = exec('/products/#path', subscription.topic)
+            if (productMatch) {
+                // Load data
+                const productId = productMatch.path[0]
+                // Load product
+                if (!(productId in PRODUCT_CACHE)) {
+                    const product = await Database.get().productRepository.findOneByOrFail({ productId, deleted: IsNull() })
+                    PRODUCT_CACHE[productId] = product.public
+                }
+                // Load product members
+                if (!(productId in PRODUCT_MEMBER_CACHE)) {
+                    const members = await Database.get().memberRepository.findBy({ productId, deleted: IsNull() })
+                    PRODUCT_MEMBER_CACHE[productId] = members.map(member => member.userId)
+                }
+                // Check permission
+                const userId = CLIENT_USER_IDS[client.id]
+                // Public product topics are visible to everybody
+                if (PRODUCT_CACHE[productId]) {
+                    return callback(null, subscription)
+                }
+                // Non-public product topics are visible to product members only
+                if (PRODUCT_MEMBER_CACHE[productId].indexOf(userId) != -1) {
+                    return callback(null, subscription)
+                }
+                console.log('Product not allowed')
+                return callback(new Error('Product not allowed!'), null)
+            }
+            // Other topics do not exist
+            console.log('Topic not allowed')
+            return callback(new Error('Topic not supported!'), null)
+        } catch (e) {
+            console.log('Other not allowed', e)
+            return callback(e, null)
         }
-        // Product topics have to be checked more carefully
-        const productMatch = exec('/products/#path', subscription.topic)
-        if (productMatch) {
-            // Load data
-            const productId = productMatch.path[0]
-            // Load product
-            if (!(productId in PRODUCT_CACHE)) {
-                const product = await Database.get().productRepository.findOneByOrFail({ productId, deleted: IsNull() })
+    }
+    aedes.authorizePublish = async (client, packet, callback) => {
+        console.log('authorizePublish', client.id, packet.topic)
+        // Only backend can publish messages!
+        if (CLIENT_USER_IDS[client.id] == 'backend') {
+            // Allow publishing
+            callback(null)
+            // Update product cache
+            const productMatch = exec('/products/+productId', packet.topic)
+            if (productMatch) {
+                const productId = productMatch.productId
+                const product = JSON.parse(packet.payload.toString()) as Product
                 PRODUCT_CACHE[productId] = product.public
             }
-            // Load product members
-            if (!(productId in PRODUCT_MEMBER_CACHE)) {
-                const members = await Database.get().memberRepository.findBy({ productId, deleted: IsNull() })
-                PRODUCT_MEMBER_CACHE[productId] = members.map(member => member.userId)
-            }
-            // Check permission
-            const userId = CLIENT_USER_IDS[client.id]
-            // Public product topics are visible to everybody
-            if (PRODUCT_CACHE[productId]) {
-                return callback(null, subscription)
-            }
-            // Non-public product topics are visible to product members only
-            if (PRODUCT_MEMBER_CACHE[productId].indexOf(userId) != -1) {
-                return callback(null, subscription)
-            }
-            return callback(new Error('Product not allowed!'), null)
-        }
-        // Other topics do not exist
-        return callback(new Error('Topic not supported!'), null)
-    } catch (e) {
-        return callback(e, null)
-    }
-}
-aedes.authorizePublish = async (client, packet, callback) => {
-    console.log('authorizePublish', client.id, packet.topic)
-    // Only backend can publish messages!
-    if (CLIENT_USER_IDS[client.id] == 'backend') {
-        // Allow publishing
-        callback(null)
-        // Update product cache
-        const productMatch = exec('/products/+productId', packet.topic)
-        if (productMatch) {
-            const productId = productMatch.productId
-            const product = JSON.parse(packet.payload.toString()) as Product
-            PRODUCT_CACHE[productId] = product.public
-        }
-        // Update product member cache
-        const memberMatch = exec('/products/+productId/members/+memberId', packet.topic)
-        if (memberMatch) {
-            const productId = memberMatch.productId
-            if (productId in PRODUCT_MEMBER_CACHE) {
-                const member = JSON.parse(packet.payload.toString()) as Member
-                if (member.deleted) {
-                    const userId = member.userId
-                    PRODUCT_MEMBER_CACHE[productId].splice(PRODUCT_MEMBER_CACHE[productId].indexOf(userId), 1)
+            // Update product member cache
+            const memberMatch = exec('/products/+productId/members/+memberId', packet.topic)
+            if (memberMatch) {
+                const productId = memberMatch.productId
+                if (productId in PRODUCT_MEMBER_CACHE) {
+                    const member = JSON.parse(packet.payload.toString()) as Member
+                    if (member.deleted) {
+                        const userId = member.userId
+                        PRODUCT_MEMBER_CACHE[productId].splice(PRODUCT_MEMBER_CACHE[productId].indexOf(userId), 1)
+                    }
                 }
             }
+        } else {
+            callback(new Error('Only backend can publish!'))
         }
-    } else {
-        callback(new Error('Only backend can publish!'))
     }
-}
-aedes.authorizeForward = (client, packet) => {
-    console.log('authorizeForward', client.id, packet.topic)
-    // User topics can be forwarded without further checks
-    const userMatch = exec('/products/+userId', packet.topic)
-    if (userMatch) {
-        return packet
-    }
-    // Product topics have to be checked more carefully
-    const productMatch = exec('/products/#path', packet.topic)
-    if (productMatch) {
-        // Check product cache
-        const productId = productMatch.path[0]
-        if (PRODUCT_CACHE[productId]) {
+    aedes.authorizeForward = (client, packet) => {
+        console.log('authorizeForward', client.id, packet.topic)
+        // User topics can be forwarded without further checks
+        const userMatch = exec('/products/+userId', packet.topic)
+        if (userMatch) {
             return packet
         }
-        // Check product member cache
-        const userId = CLIENT_USER_IDS[client.id]
-        if (PRODUCT_MEMBER_CACHE[productId].indexOf(userId) != -1) {
-            return packet
+        // Product topics have to be checked more carefully
+        const productMatch = exec('/products/#path', packet.topic)
+        if (productMatch) {
+            // Check product cache
+            const productId = productMatch.path[0]
+            if (PRODUCT_CACHE[productId]) {
+                return packet
+            }
+            // Check product member cache
+            const userId = CLIENT_USER_IDS[client.id]
+            if (PRODUCT_MEMBER_CACHE[productId].indexOf(userId) != -1) {
+                return packet
+            }
+            return null
         }
+        // Other topics do not exist
         return null
     }
-    // Other topics do not exist
-    return null
+
+    // MQTT Broker - Events
+
+    aedes.on('subscribe', (subscriptions, client) => {
+        console.log('subscribe', client.id, subscriptions[0].topic)
+    })
+    aedes.on('unsubscribe', (unsubscriptions, client) => {
+        console.log('unsubscribe', client.id, unsubscriptions[0])
+    })
+    aedes.on('publish', (packet, client) => {
+        client && console.log('publish', client.id, packet.topic)
+    })
+    aedes.on('clientDisconnect', client => {
+        console.log('clientDisconnect', client.id)
+        delete CLIENT_USER_IDS[client.id]
+    })
+
+    // Net server
+
+    const netServer = createNetServer(aedes.handle)
+    netServer.listen(NET_PORT, () => {
+        console.log('NET server listening')
+    })
+
+    // HTTP server
+
+    const httpServer = createHttpServer()
+    httpServer.listen(HTTP_PORT, () => {
+        console.log('HTTP server listening')
+    })
+
+    // WebSocket server
+
+    const wsServer = new WebSocketServer({ server: httpServer })
+    wsServer.on('connection', socket => {
+        const stream = createWebSocketStream(socket)
+        aedes.handle(stream)
+    })
 }
 
-// Constants - MQTT Broker - Events
+// Calls
 
-aedes.on('subscribe', (subscriptions, client) => {
-    console.log('subscribe', client.id, subscriptions[0].topic)
-})
-aedes.on('unsubscribe', (unsubscriptions, client) => {
-    console.log('unsubscribe', client.id, unsubscriptions[0])
-})
-aedes.on('publish', (packet, client) => {
-    client && console.log('publish', client.id, packet.topic)
-})
-aedes.on('clientDisconnect', client => {
-    console.log('clientDisconnect', client.id)
-    delete CLIENT_USER_IDS[client.id]
-})
-
-// Contants - Net server
-
-const netServer = createNetServer(aedes.handle)
-netServer.listen(NET_PORT, () => {
-    console.log('NET server listening')
-})
-
-// Contants - HTTP server
-
-const httpServer = createHttpServer()
-httpServer.listen(HTTP_PORT, () => {
-    console.log('HTTP server listening')
-})
-
-// WebSocket server
-
-const wsServer = new WebSocketServer({ server: httpServer })
-wsServer.on('connection', socket => {
-    const stream = createWebSocketStream(socket)
-    aedes.handle(stream)
-})
+boot()
