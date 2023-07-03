@@ -49,8 +49,10 @@ function subscribe<T>(topic: string, handler: (topic: string, object: T) => void
             client.subscribe(topic)
         }
     }
+    
     // Add handler
     handlers[topic].push(handler)
+
     // Return unsubscribe function
     return () => {
         handlers[topic].splice(handlers[topic].indexOf(handler), 1)
@@ -65,6 +67,7 @@ function subscribe<T>(topic: string, handler: (topic: string, object: T) => void
 
 function publishLocal<T>(topic: string, object: T) {
     // Update cache
+
     if (matches('/users/+', topic)) {
         const user = object as User
         USER_CACHE[user.id] = user
@@ -104,7 +107,9 @@ function publishLocal<T>(topic: string, object: T) {
     } else {
         console.warn('MQTT topic not supported', topic, object)
     }
+
     // Call handlers
+
     for (const pattern in handlers) {
         if (matches(pattern, topic)) {
             for (const handler of handlers[pattern]) {
@@ -117,6 +122,9 @@ function publishLocal<T>(topic: string, object: T) {
 init()
 
 export const MqttAPI = {
+
+    // Publish
+
     publishUserLocal(userId: string, user: User) {
         const topic = `/users/${userId}`
         publishLocal(topic, user)
@@ -145,6 +153,9 @@ export const MqttAPI = {
         const topic = `/products/${productId}/versions/${versionId}`
         publishLocal(topic, version)
     },
+
+    // Subscribe entity
+
     subscribeUser(userId: string, callback: (user: User) => void) {
         const topic = `/users/${userId}`
         return subscribe<User>(topic, (_topic, user) => {
@@ -187,6 +198,9 @@ export const MqttAPI = {
             version.id == versionId && version.productId == productId && callback(version)
         })
     },
+
+    // Subscribe list
+
     subscribeMembers(productId: string, callback: (members: Member[]) => void) {
         const topic = `/products/${productId}/members/+`
         return subscribe<Member>(topic, (_topic, member) => {
@@ -237,7 +251,11 @@ export const MqttAPI = {
             }
         })
     },
+
+    // Other
+
     reconnect() {
         client.end()
     }
+
 }
