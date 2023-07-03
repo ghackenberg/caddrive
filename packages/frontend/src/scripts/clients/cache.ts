@@ -44,7 +44,6 @@ const ISSUE_CACHE: { [issueId: string]: Issue } = {}
 const COMMENT_CACHE: { [commentId: string]: Comment } = {}
 const MILESTONE_CACHE: { [milestoneId: string]: Milestone } = {}
 const VERSION_CACHE: { [versionId: string]: Version } = {}
-
 const FILE_CACHE: { [fileId: string]: ArrayBuffer } = {}
 
 const MEMBERS_CACHE: { [productId: string]: IdIndex } = {}
@@ -52,6 +51,12 @@ const ISSUES_CACHE: { [productId: string]: IdIndex } = {}
 const COMMENTS_CACHE: { [productId: string]: { [issueId: string]: IdIndex } } = {}
 const MILESTONES_CACHE: { [productId: string]: IdIndex } = {}
 const VERSIONS_CACHE: { [productId: string]: IdIndex } = {}
+
+function clear<T>(cache: { [key: string]: T }) {
+    for (const key in cache) {
+        delete cache[key]
+    }
+}
 
 function compare<T extends { created: number }>(a: T, b: T) {
     return a.created - b.created
@@ -315,6 +320,38 @@ export const CacheAPI = {
     // Other
 
     clear() {
-        // TODO clear!
+        // Request
+
+        clear(USER_REQUEST)
+        clear(PRODUCT_REQUEST)
+        clear(MEMBER_REQUEST)
+        clear(ISSUE_REQUEST)
+        clear(COMMENT_REQUEST)
+        clear(MILESTONE_REQUEST)
+        clear(VERSION_REQUEST)
+        clear(FILE_REQUEST)
+
+        clear(MEMBERS_REQUEST)
+        clear(ISSUES_REQUEST)
+        clear(COMMENTS_REQUEST)
+        clear(MILESTONES_REQUEST)
+        clear(VERSIONS_REQUEST)
+
+        // Cache
+
+        clear(USER_CACHE)
+        clear(PRODUCT_CACHE)
+        clear(MEMBER_CACHE)
+        clear(ISSUE_CACHE)
+        clear(COMMENT_CACHE)
+        clear(MILESTONE_CACHE)
+        clear(VERSION_CACHE)
+        clear(FILE_CACHE)
+
+        clear(MEMBERS_CACHE)
+        clear(ISSUES_CACHE)
+        clear(COMMENTS_CACHE)
+        clear(MILESTONES_CACHE)
+        clear(VERSIONS_CACHE)
     }
 }
