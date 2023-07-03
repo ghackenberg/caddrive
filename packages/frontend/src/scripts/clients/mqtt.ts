@@ -15,10 +15,14 @@ let client: MqttClient
 const protocol = location.protocol == 'http:' ? 'ws' : 'wss'
 const hostname = location.hostname
 const port = parseInt(location.port)
+const path = '/mqtt'
+const clientId = `productboard-frontend-${shortid()}`
 
 function init() {
+    const username = localStorage.getItem('jwt')
+    
     // Connect client
-    client = connect({ protocol, hostname, port, path: '/mqtt', clientId: `productboard-frontend-${shortid()}`, username: localStorage.getItem('jwt') })
+    client = connect({ protocol, hostname, port, path, clientId, username })
 
     // Subscribe after connecting
     client.on('connect', packet => {
@@ -49,7 +53,7 @@ function subscribe<T>(topic: string, handler: (topic: string, object: T) => void
             client.subscribe(topic)
         }
     }
-    
+
     // Add handler
     handlers[topic].push(handler)
 
