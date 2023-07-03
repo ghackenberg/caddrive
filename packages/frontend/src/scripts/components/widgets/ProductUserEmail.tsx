@@ -14,7 +14,7 @@ export const ProductUserEmailWidget = (props: { productId: string, userId: strin
                     &lt;<del style={{opacity: 0.5}}>{user.email}</del>&gt;
                 </>
             ) : (
-                members.map(member => member.userId).includes(user.id) ? (
+                members.map(member => member.userId).includes(user.userId) ? (
                     <>
                         &lt;{user.email}&gt;
                     </>

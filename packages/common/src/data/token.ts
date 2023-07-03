@@ -8,7 +8,7 @@ export class CreateTokenRequest {
 }
 export class CreateTokenResponse {
     @ApiProperty()
-    id: string
+    tokenId: string
 }
 
 // Activate token

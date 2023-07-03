@@ -8,8 +8,19 @@ import { UserEntity } from './user'
 
 @Entity()
 export class MilestoneEntity extends Milestone {
+    @Column({ nullable: false })
+    override productId: string
     @PrimaryColumn({ nullable: false })
-    override id: string
+    override milestoneId: string
+    @Column({nullable: false})
+    override userId: string
+
+    @ManyToOne(() => ProductEntity)
+    @JoinColumn({ name: 'productId' })
+    product: ProductEntity
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity
 
     @Column({ nullable: false })
     override created: number
@@ -18,28 +29,13 @@ export class MilestoneEntity extends Milestone {
     @Column({ nullable: true })
     override deleted: number
 
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'userId' })
-    user: UserEntity
-
-    @Column({nullable: false})
-    override userId: string
-
-    @ManyToOne(() => ProductEntity)
-    @JoinColumn({ name: 'productId' })
-    product: ProductEntity
-
-    @Column({ nullable: false })
-    override productId: string
-
-    @Column({ nullable: false })
-    override label: string
-
     @Column({ nullable: false })
     override start: number
     @Column({ nullable: false })
     override end: number
+    @Column({ nullable: false })
+    override label: string
 
-    @OneToMany(() => IssueEntity, issue => issue.milestoneId)
+    @OneToMany(() => IssueEntity, issue => issue.milestone)
     issues: IssueEntity[]
 }

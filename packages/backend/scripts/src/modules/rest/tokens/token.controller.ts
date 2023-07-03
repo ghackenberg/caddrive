@@ -21,15 +21,15 @@ export class TokenController implements TokenREST {
         return this.tokenService.createToken(request)
     }
     
-    @Put(':id')
-    @ApiParam({ name: 'id', type: 'string' })
+    @Put(':tokenId')
+    @ApiParam({ name: 'tokenId', type: 'string' })
     @ApiBody({ type: ActivateTokenRequest })
     @ApiResponse({ type: ActivateTokenResponse })
     async activateToken(
-        @Param('id') id: string,
+        @Param('tokenId') tokenId: string,
         @Body() request: ActivateTokenRequest
     ): Promise<ActivateTokenResponse> {
-        return this.tokenService.activateToken(id, request)
+        return this.tokenService.activateToken(tokenId, request)
     }
 
     @UseGuards(TokenRequiredGuard)

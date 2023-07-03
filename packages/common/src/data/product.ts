@@ -10,12 +10,11 @@ export class ProductUpdateData {
 }
 
 export class ProductAddData extends ProductUpdateData {
-    // same as update!
 }
 
 export class Product extends ProductAddData {
     @ApiProperty()
-    id: string
+    productId: string
 
     @ApiProperty()
     created: number

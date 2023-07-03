@@ -94,7 +94,7 @@ export const ProductVersionView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
+                                    members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
                                         <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
                                             <strong>New</strong> version
                                         </NavLink>
@@ -120,36 +120,36 @@ export const ProductVersionView = () => {
                                 <div className='main'>
                                     <div className="widget version_tree">
                                         { versions.map(version => version).reverse().map((vers, index) => (
-                                            <Fragment key={vers.id}>
+                                            <Fragment key={vers.versionId}>
                                                 {index > 0 && (
                                                     <div className="between">
                                                         <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
-                                                            {vers.id in siblings && siblings[vers.id].map(sibling => (
-                                                                <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                            {vers.versionId in siblings && siblings[vers.versionId].map(sibling => (
+                                                                <span key={sibling.versionId} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
                                                             ))}
-                                                            {vers.id in children && children[vers.id].map(child => (
-                                                                <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                            {vers.versionId in children && children[vers.versionId].map(child => (
+                                                                <span className='line vertical child' key={child.versionId} style={{top: 0, left: `calc(${1.5 + indents[child.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
                                                             ))}
                                                         </div>
                                                         <div className="text" style={{color: 'orange'}}/>
                                                     </div>
                                                 )}
-                                                <div className={`version${contextVersion && contextVersion.id == vers.id ? ' selected' : ''}`} onClick={() => onClick(vers)}>
+                                                <div className={`version${contextVersion && contextVersion.versionId == vers.versionId ? ' selected' : ''}`} onClick={() => onClick(vers)}>
                                                     <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
-                                                        {vers.id in siblings && siblings[vers.id].map(sibling => (
-                                                            <span key={sibling.id} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        {vers.versionId in siblings && siblings[vers.versionId].map(sibling => (
+                                                            <span key={sibling.versionId} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
                                                         ))}
-                                                        {vers.id in childrenMin && vers.id in childrenMax && (
-                                                            <span className='line horizontal parent' style={{top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.id] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.id] - childrenMin[vers.id]) * 1.5}em - 2px)`}}/>
+                                                        {vers.versionId in childrenMin && vers.versionId in childrenMax && (
+                                                            <span className='line horizontal parent' style={{top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.versionId] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.versionId] - childrenMin[vers.versionId]) * 1.5}em - 2px)`}}/>
                                                         )}
-                                                        {vers.id in children && children[vers.id].map(child => (
-                                                            <span className='line vertical child' key={child.id} style={{top: 0, left: `calc(${1.5 + indents[child.id] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)'}}/>
+                                                        {vers.versionId in children && children[vers.versionId].map(child => (
+                                                            <span className='line vertical child' key={child.versionId} style={{top: 0, left: `calc(${1.5 + indents[child.versionId] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)'}}/>
                                                         ))}
-                                                        {vers.id in indents && (
-                                                            <span className='line vertical parent' style={{top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.id] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        {vers.versionId in indents && (
+                                                            <span className='line vertical parent' style={{top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
                                                         )}
-                                                        {vers.id in indents && (
-                                                            <span className='dot parent' style={{top: '1.75em', left: `${0.75 + indents[vers.id] * 1.5}em`}}/>
+                                                        {vers.versionId in indents && (
+                                                            <span className='dot parent' style={{top: '1.75em', left: `${0.75 + indents[vers.versionId] * 1.5}em`}}/>
                                                         )}
                                                     </div>
                                                     <div className="text">
@@ -172,7 +172,7 @@ export const ProductVersionView = () => {
                                                     <div className="model">
                                                         {vers.imageType ? (
                                                             <em>
-                                                                <img src={`/rest/files/${vers.id}.${vers.imageType}`} className="image"/>
+                                                                <img src={`/rest/files/${vers.versionId}.${vers.imageType}`} className="image"/>
                                                             </em>
                                                         ) : (
                                                             <span>

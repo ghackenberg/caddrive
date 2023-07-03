@@ -11,7 +11,7 @@ export const ProductImageWidget = (props: { productId: string }) => {
         versions ? (
             versions.length > 0 ? (
                 versions[versions.length - 1].imageType ? (
-                    <div style={ { backgroundImage: `url("/rest/files/${versions[versions.length - 1].id}.${versions[versions.length - 1].imageType}")` } } className="model"/>
+                    <div style={ { backgroundImage: `url("/rest/files/${versions[versions.length - 1].versionId}.${versions[versions.length - 1].imageType}")` } } className="model"/>
                 ) : (
                     <div className="model">
                         <img src={LoadIcon} className='icon small position center animation spin'/>

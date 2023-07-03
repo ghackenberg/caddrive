@@ -34,39 +34,39 @@ export class ProductController implements ProductREST {
     async addProduct(
         @Body() data: ProductAddData
     ): Promise<Product> {
-        await canCreateProductOrFail(this.request.user)
+        await canCreateProductOrFail(this.request.user && this.request.user.userId)
         return this.productService.addProduct(data)
     }
 
-    @Get(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Get(':productId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiResponse({ type: Product, })
     async getProduct(
-        @Param('id') id: string
+        @Param('productId') productId: string
     ): Promise<Product> {
-        await canReadProductOrFail(this.request.user, id)
-        return this.productService.getProduct(id)
+        await canReadProductOrFail(this.request.user && this.request.user.userId, productId)
+        return this.productService.getProduct(productId)
     }
 
-    @Put(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Put(':productId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiBody({ type: Product })
     @ApiResponse({ type: Product })
     async updateProduct(
-        @Param('id') id: string,
+        @Param('productId') productId: string,
         @Body() data: ProductUpdateData
     ): Promise<Product> {
-        await canUpdateProductOrFail(this.request.user, id)
-        return this.productService.updateProduct(id, data)
+        await canUpdateProductOrFail(this.request.user && this.request.user.userId, productId)
+        return this.productService.updateProduct(productId, data)
     }
 
-    @Delete(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Delete(':productId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiResponse({ type: Product })
     async deleteProduct(
-        @Param('id') id: string
+        @Param('productId') productId: string
     ): Promise<Product> {
-        await canDeleteProductOrFail(this.request.user, id)
-        return this.productService.deleteProduct(id)
+        await canDeleteProductOrFail(this.request.user && this.request.user.userId, productId)
+        return this.productService.deleteProduct(productId)
     }
 }

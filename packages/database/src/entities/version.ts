@@ -7,8 +7,21 @@ import { UserEntity } from './user'
 
 @Entity()
 export class VersionEntity extends Version {
+    @Column({ nullable: false })
+    override productId: string
     @PrimaryColumn({ nullable: false })
-    override id: string
+    override versionId: string
+    @Column({ nullable: false })
+    override userId: string
+    @Column('simple-array')
+    override baseVersionIds: string[]
+
+    @ManyToOne(() => ProductEntity)
+    @JoinColumn({ name: 'productId' })
+    product: ProductEntity
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity
 
     @Column({ nullable: false })
     override created: number
@@ -16,23 +29,6 @@ export class VersionEntity extends Version {
     override updated: number
     @Column({ nullable: true })
     override deleted: number
-
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'userId' })
-    user: UserEntity
-
-    @Column({ nullable: false })
-    override userId: string
-
-    @ManyToOne(() => ProductEntity)
-    @JoinColumn({ name: 'productId' })
-    product: ProductEntity
-
-    @Column({ nullable: false })
-    override productId: string
-    
-    @Column('simple-array')
-    override baseVersionIds: string[]
 
     @Column({ nullable: false })
     override major: number

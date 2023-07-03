@@ -9,7 +9,7 @@ export const PartCount = (props: { productId: string, issueId: string }) => {
     const issueId = props.issueId
 
     const issue = useIssue(productId, issueId)
-    const comments = useComments(issueId)
+    const comments = useComments(productId, issueId)
 
     const initialIssuePartCount = issue && collectParts(issue.text).length
     const initialCommentsPartCount = comments && comments.map(comment => collectParts(comment.text).length)

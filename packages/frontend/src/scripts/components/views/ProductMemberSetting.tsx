@@ -4,14 +4,15 @@ import { Redirect, useParams } from 'react-router'
 
 import { MemberRole, User } from 'productboard-common'
 
+import { CacheAPI } from '../../clients/cache'
+import { MemberClient } from '../../clients/rest/member'
+import { UserClient } from '../../clients/rest/user'
 import { UserContext } from '../../contexts/User'
 import { useMember, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers } from '../../hooks/list'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
-import { MemberManager } from '../../managers/member'
-import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
@@ -45,7 +46,7 @@ export const ProductMemberSettingView = () => {
     
     // INITIAL STATES
 
-    const initialUser = member ? UserManager.getUserFromCache(member.userId) : undefined
+    const initialUser = member ? CacheAPI.getUser(member.userId) : undefined
     const initialRole = member ? member.role : 'customer'
 
     // STATES
@@ -65,10 +66,14 @@ export const ProductMemberSettingView = () => {
 
     // - Entities
     useEffect(() => {
-        return UserManager.findUsers(query, productId, setUsers)
+        let exec = true
+        UserClient.findUsers(query, productId).then(users => exec && setUsers(users))
+        return () => { exec = false }
     }, [productId, query])
     useEffect(() => {
-        return member && UserManager.getUser(member.userId, setUser)
+        let exec = true
+        UserClient.getUser(member.userId).then(user => exec && setUser(user))
+        return () => { exec = false }
     }, [member] )
 
     // - Values
@@ -95,12 +100,12 @@ export const ProductMemberSettingView = () => {
         event.preventDefault()
         if (memberId == 'new') {
             if (confirm('Do you really want to add this member?')) {
-                await MemberManager.addMember({ productId, userId: user.id, role: role })
+                await MemberClient.addMember(productId, { userId: user.userId, role: role })
                 await goBack()
             }
         } else {
             if (confirm('Do you really want to change this member?')) {
-                await MemberManager.updateMember(memberId,{...member, role: role})
+                await MemberClient.updateMember(productId, memberId, { role: role })
                 await goBack()
             }
         }
@@ -186,7 +191,7 @@ export const ProductMemberSettingView = () => {
                                                 </div>
                                             </div>
                                             {contextUser ? (
-                                                members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                                members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                                     <ButtonInput value='Save'/>
                                                 ) : (
                                                     <ButtonInput value='Save' badge='requires role' disabled={true}/>

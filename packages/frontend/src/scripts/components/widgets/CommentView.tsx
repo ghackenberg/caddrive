@@ -59,7 +59,7 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
 
     return (
         entity && (
-            <div key={entity.id} className={`widget comment_view ${props.class} ${contextUser && entity.userId == contextUser.id ? 'self' : ''}`}>
+            <div key={'commentId' in entity ? entity.commentId : entity.issueId} className={`widget comment_view ${props.class} ${contextUser && entity.userId == contextUser.userId ? 'self' : ''}`}>
                 <div className="head">
                     <div className="icon">
                         <a href={`/users/${entity.userId}`}>

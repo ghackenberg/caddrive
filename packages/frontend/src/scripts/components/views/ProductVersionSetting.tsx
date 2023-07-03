@@ -7,13 +7,13 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { Version } from 'productboard-common'
 
+import { VersionClient } from '../../clients/rest/version'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { useProduct, useVersion } from '../../hooks/entity'
 import { useMembers, useVersions } from '../../hooks/list'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
-import { VersionManager } from '../../managers/version'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel } from '../../loaders/ldraw'
 import { ButtonInput } from '../inputs/ButtonInput'
@@ -32,7 +32,6 @@ import EmptyIcon from '/src/images/empty.png'
 import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
-
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
 
@@ -137,10 +136,10 @@ export const ProductVersionSettingView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionManager.addVersion({ productId: product.id, baseVersionIds, major, minor, patch, description }, { model: file, image: blob })
+            const version = await VersionClient.addVersion(productId, { baseVersionIds, major, minor, patch, description }, { model: file, image: blob })
             setContextVersion(version)
         } else {
-            await VersionManager.updateVersion(version.id, { ...version, major, minor, patch, description }, { model: file, image: blob })
+            await VersionClient.updateVersion(productId, versionId, { major, minor, patch, description }, { model: file, image: blob })
             setContextVersion(version)
         }
         await goBack()
@@ -150,7 +149,7 @@ export const ProductVersionSettingView = () => {
 
     const columns: Column<Version>[] = [
         { label: '📷', class: 'center', content: version => (
-            <div className='model' style={{backgroundImage: `url(/rest/files/${version.id}.png)`, width: '5em', height: '5em'}}/>
+            <div className='model' style={{backgroundImage: `url(/rest/files/${version.versionId}.png)`, width: '5em', height: '5em'}}/>
         ) },
         { label: 'Number', class: 'left fill', content: version => (
             <span>
@@ -158,7 +157,7 @@ export const ProductVersionSettingView = () => {
             </span>
         ) },
         { label: '🛠️', class: 'center', content: version => (
-            <input type="checkbox" value={version.id} onChange={onChange}/>
+            <input type="checkbox" value={version.versionId} onChange={onChange}/>
         ) }
     ]
 
@@ -210,7 +209,7 @@ export const ProductVersionSettingView = () => {
                                         )}
                                     </GenericInput>
                                     {contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id && member.role != 'customer').length == 1 ? (
+                                        members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
                                             blob ? (
                                                 <ButtonInput value='Save'/>
                                             ) : (

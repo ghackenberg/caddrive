@@ -76,8 +76,8 @@ aedes.authorizeSubscribe = async (client, subscription, callback) => {
             const productId = productMatch.path[0]
             // Load product
             if (!(productId in PRODUCT_CACHE)) {
-                const product = await Database.get().productRepository.findOneByOrFail({ id: productId, deleted: IsNull() })
-                PRODUCT_CACHE[product.id] = product.public
+                const product = await Database.get().productRepository.findOneByOrFail({ productId, deleted: IsNull() })
+                PRODUCT_CACHE[productId] = product.public
             }
             // Load product members
             if (!(productId in PRODUCT_MEMBER_CACHE)) {

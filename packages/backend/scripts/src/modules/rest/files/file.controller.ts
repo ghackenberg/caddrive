@@ -19,14 +19,14 @@ export class FileController implements FileREST<StreamableFile> {
         private readonly request: AuthorizedRequest
     ) {}
 
-    @Get(':id')
+    @Get(':fileId')
     @Header('Cache-Control', 'max-age=31536000')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @ApiParam({ name: 'fileId', type: 'string', required: true })
     @ApiResponse({ type: StreamableFile })
     async getFile(
-        @Param('id') id: string
+        @Param('fileId') fileId: string
     ): Promise<StreamableFile> {
-        await canReadFileOrFail(this.request.user, id)
-        return new StreamableFile(await this.fileService.getFile(id))
+        await canReadFileOrFail(this.request.user && this.request.user.userId, fileId)
+        return new StreamableFile(await this.fileService.getFile(fileId))
     }
 }

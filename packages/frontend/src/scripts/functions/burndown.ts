@@ -13,8 +13,8 @@ export function calculateActual(startDate: number, endDate: number, issues: Issu
     const deltas: { time: number, delta: number }[] = []
     for (const issue of issues) {
         deltas.push({ time: cropTimestamp(issue.created), delta: 1 })
-        if (issue.id in comments) {
-            for (const comment of comments[issue.id]) {
+        if (issue.issueId in comments) {
+            for (const comment of comments[issue.issueId]) {
                 if (comment.action == 'close') {
                     deltas.push({ time: cropTimestamp(comment.created), delta: -1 })
                 } else if (comment.action == 'reopen') {

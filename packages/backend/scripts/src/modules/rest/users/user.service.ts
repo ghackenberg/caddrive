@@ -25,7 +25,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         }
     }
 
-    async findUsers(query?: string, productId?: string) : Promise<User[]> {
+    async findUsers(productId?: string, query?: string) : Promise<User[]> {
         let where: FindOptionsWhere<UserEntity>
         if (query)
             where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`), deleted: IsNull() }
@@ -35,24 +35,24 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         for (const user of await Database.get().userRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
             try {
                 if (productId) {
-                    await getMemberOrFail({ userId: user.id, productId }, Error)
+                    await getMemberOrFail({ productId, userId: user.userId, deleted: IsNull() }, Error)
                 } else {
                     throw new Error()
                 }
             } catch (error) {
-                result.push(convertUser(user, this.request.user && this.request.user.id == user.id))
+                result.push(convertUser(user, this.request.user && this.request.user.userId == user.userId))
             }
         return result
     }
 
-    async getUser(id: string): Promise<User> {
-        const user = await Database.get().userRepository.findOneByOrFail({ id })
-        return convertUser(user, this.request.user && this.request.user.id == id)
+    async getUser(userId: string): Promise<User> {
+        const user = await Database.get().userRepository.findOneByOrFail({ userId })
+        return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
 
-    async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
+    async updateUser(userId: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
         // Update user
-        const user = await Database.get().userRepository.findOneByOrFail({ id })
+        const user = await Database.get().userRepository.findOneByOrFail({ userId })
         user.updated = Date.now()
         user.consent = data.consent
         user.name = data.name
@@ -64,17 +64,17 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         // Emit changes
         emitUser(user)
         // Return user
-        return convertUser(user, this.request.user && this.request.user.id == id)
+        return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
 
-    async deleteUser(id: string): Promise<User> {
+    async deleteUser(userId: string): Promise<User> {
         // Delete user
-        const user = await Database.get().userRepository.findOneByOrFail({ id })
+        const user = await Database.get().userRepository.findOneByOrFail({ userId })
         user.deleted = Date.now()
         user.updated = user.deleted
         await Database.get().userRepository.save(user)
         // Delete members
-        const members = await Database.get().memberRepository.findBy({ userId: user.id, deleted: IsNull() })
+        const members = await Database.get().memberRepository.findBy({ userId, deleted: IsNull() })
         for (const member of members) {
             member.deleted = user.deleted
             member.updated = user.deleted
@@ -84,6 +84,6 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         emitUser(user)
         members.forEach(emitMember)
         // Return user
-        return convertUser(user, this.request.user && this.request.user.id == id)
+        return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
 }

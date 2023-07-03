@@ -2,9 +2,9 @@ import * as React from 'react'
 import { Redirect } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
+import { UserClient } from '../../clients/rest/user'
 import { AuthContext } from '../../contexts/Auth'
 import { useAsyncHistory } from '../../hooks/history'
-import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 
 import AuthIcon from '/src/images/auth.png'
@@ -30,7 +30,7 @@ export const AuthConsentView = () => {
             event.preventDefault()
             setLoad(true)
             setError(undefined)
-            const user = await UserManager.updateUser(authContextUser.id, { consent: true, name: authContextUser.name })
+            const user = await UserClient.updateUser(authContextUser.userId, { consent: true, name: authContextUser.name })
             setAuthContextUser(user)
             setLoad(false)
             await push('/auth/name')

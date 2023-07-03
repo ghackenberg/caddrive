@@ -15,65 +15,65 @@ export interface KeyREST {
 
 export interface TokenREST {
     createToken(request: CreateTokenRequest): Promise<CreateTokenResponse>
-    activateToken(id: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse>
+    activateToken(tokenId: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse>
     refreshToken(): Promise<RefreshTokenResponse>
 }
 
 export interface UserREST<D, F> {
     findUsers(query?: string, productId?: string): Promise<User[]>
-    getUser(id: string): Promise<User>
-    updateUser(id: string, data: D, file?: F): Promise<User>
-    deleteUser(id: string): Promise<User>
+    getUser(userId: string): Promise<User>
+    updateUser(userId: string, data: D, file?: F): Promise<User>
+    deleteUser(userId: string): Promise<User>
 }
 
 export interface ProductREST {
     findProducts(_public?: 'true' | 'false'): Promise<Product[]>
     addProduct(data: ProductAddData): Promise<Product>
-    getProduct(id: string): Promise<Product>
-    updateProduct(id: string, data: ProductUpdateData): Promise<Product>
-    deleteProduct(id: string): Promise<Product>
+    getProduct(productId: string): Promise<Product>
+    updateProduct(productId: string, data: ProductUpdateData): Promise<Product>
+    deleteProduct(productId: string): Promise<Product>
 }
 
 export interface VersionREST<DA, DU, M, I> {
     findVersions(productId: string): Promise<Version[]>
-    addVersion(data: DA, files: { model: M, image: I }): Promise<Version>
-    getVersion(id: string): Promise<Version>
-    updateVersion(id: string, data: DU, files?: {model: M, image: I}): Promise<Version>
-    deleteVersion(id: string): Promise<Version>
+    addVersion(productId: string, data: DA, files: { model: M, image: I }): Promise<Version>
+    getVersion(productId: string, issueId: string): Promise<Version>
+    updateVersion(productId: string, issueId: string, data: DU, files?: {model: M, image: I}): Promise<Version>
+    deleteVersion(productId: string, issueId: string): Promise<Version>
 }
 
 export interface IssueREST<DA, DU, A> {
-    findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed'): Promise<Issue[]>
-    addIssue(data: DA, files: { audio?: A }): Promise<Issue>
-    getIssue(id: string): Promise<Issue>
-    updateIssue(id: string, data: DU, files?: { audio?: A }): Promise<Issue>
-    deleteIssue(id: string): Promise<Issue>
+    findIssues(productId: string): Promise<Issue[]>
+    addIssue(productId: string, data: DA, files: { audio?: A }): Promise<Issue>
+    getIssue(pruductId: string, issueId: string): Promise<Issue>
+    updateIssue(productId: string, issueId: string, data: DU, files?: { audio?: A }): Promise<Issue>
+    deleteIssue(productId: string, issueId: string): Promise<Issue>
 }
 
 export interface CommentREST<DA, DU, A> {
-    findComments(issueId: string): Promise<Comment[]>
-    addComment(data: DA, files: { audio?: A }): Promise<Comment>
-    getComment(id: string): Promise<Comment>
-    updateComment(id: string, data: DU, files?: { audio?: A }): Promise<Comment>
-    deleteComment(id: string): Promise<Comment>
+    findComments(productId: string, issueId: string): Promise<Comment[]>
+    addComment(productId: string, issueId: string, data: DA, files: { audio?: A }): Promise<Comment>
+    getComment(productId: string, issueId: string, commentId: string): Promise<Comment>
+    updateComment(productId: string, issueId: string, commentId: string, data: DU, files?: { audio?: A }): Promise<Comment>
+    deleteComment(productId: string, issueId: string, commentId: string): Promise<Comment>
 }
 
 export interface MilestoneREST {
     findMilestones(productId: string): Promise<Milestone[]>
-    addMilestone(data: MilestoneAddData): Promise<Milestone>
-    getMilestone(id: string): Promise<Milestone>
-    updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone>
-    deleteMilestone(id: string): Promise<Milestone>
+    addMilestone(productId: string, data: MilestoneAddData): Promise<Milestone>
+    getMilestone(productId: string, milestoneId: string): Promise<Milestone>
+    updateMilestone(productId: string, milestoneId: string, data: MilestoneUpdateData): Promise<Milestone>
+    deleteMilestone(productId: string, milestoneId: string): Promise<Milestone>
 }
 
 export interface MemberREST {
-    findMembers(productId: string, userId?: string): Promise<Member[]>
-    addMember(data: MemberAddData): Promise<Member>
-    getMember(id: string): Promise<Member>
-    updateMember(id: string, data: MemberUpdateData): Promise<Member>
-    deleteMember(id: string): Promise<Member>
+    findMembers(productId: string): Promise<Member[]>
+    addMember(productId: string, data: MemberAddData): Promise<Member>
+    getMember(productId: string, memberId: string): Promise<Member>
+    updateMember(productId: string, memberId: string, data: MemberUpdateData): Promise<Member>
+    deleteMember(productId: string, memberId: string): Promise<Member>
 }
 
 export interface FileREST<D> {
-    getFile(id: string): Promise<D>
+    getFile(fileId: string): Promise<D>
 }

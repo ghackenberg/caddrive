@@ -8,21 +8,14 @@ import { User, Version } from 'productboard-common'
 import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
+import { CacheAPI } from '../clients/cache'
 import { MqttAPI } from '../clients/mqtt'
 import { TokenClient } from '../clients/rest/token'
+import { UserClient } from '../clients/rest/user'
 import { AuthContext } from '../contexts/Auth'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
 import { useAsyncHistory } from '../hooks/history'
-import { CommentManager } from '../managers/comment'
-import { FileManager } from '../managers/file'
-import { IssueManager } from '../managers/issue'
-import { KeyManager } from '../managers/key'
-import { MemberManager } from '../managers/member'
-import { MilestoneManager } from '../managers/milestone'
-import { ProductManager } from '../managers/product'
-import { UserManager } from '../managers/user'
-import { VersionManager } from '../managers/version'
 import { AUTH_0, AUTH_1, LEGAL_0, LEGAL_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, USERS_0, USERS_1, USERS_2 } from '../pattern'
 
 const AuthRouter = React.lazy(() => import('./routers/Auth'))
@@ -52,7 +45,7 @@ const Root = () => {
     // EFFECTS
 
     React.useEffect(() => {
-        KeyManager.getPublicJWK().then(setPublicJWK).catch(() => setContextUser(null))
+        CacheAPI.loadPublicJWK().then(setPublicJWK).catch(() => setContextUser(null))
     })
 
     React.useEffect(() => {
@@ -75,12 +68,10 @@ const Root = () => {
     }, [payload])
 
     React.useEffect(() => {
-        userId && UserManager.getUser(userId, (user, error) => {
-            if (error) {
-                setContextUser(null)
-            } else {
-                setContextUser(user)
-            }
+        userId && UserClient.getUser(userId).then(user => {
+            setContextUser(user)
+        }).catch(() => {
+            setContextUser(null)
         })
     }, [userId])
 
@@ -175,7 +166,7 @@ const Root = () => {
     
     function intercept(newContextUser: User) {
         if (contextUser && newContextUser) {
-            if (contextUser.id != newContextUser.id) {
+            if (contextUser.userId != newContextUser.userId) {
                 clear()
             }
         } else if (contextUser) {
@@ -187,14 +178,8 @@ const Root = () => {
     }
 
     function clear() {
-        UserManager.clear()
-        ProductManager.clear()
-        VersionManager.clear()
-        IssueManager.clear()
-        CommentManager.clear()
-        MilestoneManager.clear()
-        MemberManager.clear()
-        FileManager.clear()
+        // TODO check order!
+        CacheAPI.clear()
         MqttAPI.reconnect()
     }
 

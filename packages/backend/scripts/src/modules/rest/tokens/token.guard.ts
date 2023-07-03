@@ -60,7 +60,7 @@ async function loadUser(authorization: string) {
     // Parse token
     const userId = await parseJWT(authorization)
     // Find existing user data in database
-    return await Database.get().userRepository.findOneByOrFail({ id: userId })
+    return await Database.get().userRepository.findOneByOrFail({ userId })
 }
 
 async function parseJWT(authorization: string) {

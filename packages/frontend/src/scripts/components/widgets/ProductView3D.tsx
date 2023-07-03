@@ -35,7 +35,7 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
 
     const versions = useVersions(productId)
     const issue = useIssue(productId, issueId)
-    const comments = useComments(issueId)
+    const comments = useComments(productId, issueId)
 
     // INITIAL STATES
 
@@ -50,9 +50,9 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
         }
     }
 
-    const initialHighlighted = initialParts && initialParts.filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
-    const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
-    const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath)
+    const initialHighlighted = initialParts && initialParts.filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath)
+    const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath)
+    const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath)
 
     // STATES
 
@@ -97,19 +97,19 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     }, [issueParts, commentsParts])
 
     useEffect(() => {
-        setHighlighted((parts || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath))
+        setHighlighted((parts || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath))
     }, [contextVersion, parts])
     useEffect(() => {
-        setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath))
+        setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath))
     }, [contextVersion, props.marked])
     useEffect(() => {
-        setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.id).map(part => part.objectPath))
+        setSelected((props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath))
     }, [contextVersion, props.selected])
 
     // FUNCTIONS
 
     function onChange(event: React.ChangeEvent<HTMLSelectElement>) {
-        const version = versions.filter(version => version.id == event.currentTarget.value)[0]
+        const version = versions.filter(version => version.versionId == event.currentTarget.value)[0]
         setContextVersion(version)
     }
 
@@ -122,9 +122,9 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
             ) : (
                 props.productId != 'new' && versions.length > 0 ? (
                     <>
-                        <select value={contextVersion.id} onChange={onChange} className='button fill lightgray'>
+                        <select value={contextVersion.versionId} onChange={onChange} className='button fill lightgray'>
                             {versions.map(v => v).reverse().map((version, index) => (
-                                <option key={index} value={version.id}>
+                                <option key={index} value={version.versionId}>
                                     {version.major}.{version.minor}.{version.patch}: {version.description}
                                 </option>
                             ))}

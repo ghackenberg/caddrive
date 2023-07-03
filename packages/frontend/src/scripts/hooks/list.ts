@@ -1,89 +1,162 @@
 import * as React from 'react'
 
-import { CommentManager } from '../managers/comment'
-import { IssueManager } from '../managers/issue'
-import { MemberManager } from '../managers/member'
-import { MilestoneManager } from '../managers/milestone'
-import { ProductManager } from '../managers/product'
-import { UserManager } from '../managers/user'
-import { VersionManager } from '../managers/version'
+import { Issue, Member, Product, User } from "productboard-common"
 
-function useEntities<T extends { id: string, created: number }>(id: string, cache: () => T[], get: (callback: (values: T[]) => void) => (() => void)) {
+import { CacheAPI } from '../clients/cache'
+import { MqttAPI } from '../clients/mqtt'
+import { ProductClient } from '../clients/rest/product'
+import { UserClient } from '../clients/rest/user'
 
-    function compare(a: T, b: T) {
-        return a.created - b.created
-    }
+// Users
 
-    const initialValue = id !== undefined && id !== null && !id.includes('new') && cache()
+export function useUsers() {
+    const initialValue: User[] = undefined
 
-    const [values, setValues] = React.useState(initialValue && initialValue.sort(compare))
+    const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        if (id !== undefined && id !== null && !id.includes('new')) {
-            return get(values => setValues(values.sort(compare)))
-        } else {
-            setValues(undefined)
-            return () => {/**/}
-        }
-    }, [id])
+        let exec = true
+        value || UserClient.findUsers().then(users => exec && setValue(users))
+        return () => { exec = false }
+    })
 
-    return values
+    return value
 }
 
-// USERS
+// Products
 
-export function useUsers(query?: string, productId?: string) {
-    return useEntities(
-        '',
-        () => UserManager.findUsersFromCache(),
-        callback => UserManager.findUsers(query, productId, callback)
-    )
+export function useProducts(_public: "true" | "false") {
+    const initialValue: Product[] = undefined
+
+    const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || ProductClient.findProducts(_public).then(products => exec && setValue(products))
+        return () => { exec = false }
+    })
+
+    return value
 }
 
-export function useProducts(_public?: 'true' | 'false') {
-    return useEntities(
-        `${_public}`,
-        () => ProductManager.findProductsFromCache(_public),
-        callback => ProductManager.findProducts(_public, callback)
-    )
-}
+// Verions
 
 export function useVersions(productId: string) {
-    return useEntities(
-        productId,
-        () => VersionManager.findVersionsFromCache(productId),
-        callback => VersionManager.findVersions(productId, callback)
-    )
+    const initialValue = CacheAPI.getVersions(productId)
+
+    const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadVersions(productId).then(versions => exec && setValue(versions))
+        return () => { exec = false }
+    }, [productId])
+
+    React.useEffect(() => {
+        return MqttAPI.subscribeVersions(productId, versions => {
+            setValue(versions)
+        })
+    }, [productId])
+
+    return value
 }
+
+// Issues
 
 export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') {
-    return useEntities(
-        `${productId}-${milestoneId}-${state}`,
-        () => IssueManager.findIssuesFromCache(productId, milestoneId, state),
-        callback => IssueManager.findIssues(productId, milestoneId, state, callback)
-    )
+    function predicate(issue: Issue) {
+        return (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state)
+    }
+
+    const initialIssues = CacheAPI.getIssues(productId)
+
+    const initialValue = initialIssues && initialIssues.filter(predicate)
+
+    const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadIssues(productId).then(issues => exec && setValue(issues.filter(predicate)))
+        return () => { exec = false }
+    }, [productId, milestoneId, state])
+
+    React.useEffect(() => {
+        return MqttAPI.subscribeIssues(productId, issues => {
+            setValue(issues.filter(predicate))
+        })
+    }, [productId, milestoneId, state])
+
+    return value
 }
 
-export function useComments(issueId: string) {
-    return useEntities(
-        issueId,
-        () => CommentManager.findCommentsFromCache(issueId),
-        callback => CommentManager.findComments(issueId, callback)
-    )
+// Comments
+
+export function useComments(productId: string, issueId: string) {
+    const initialValue = CacheAPI.getComments(productId, issueId)
+
+    const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadComments(productId, issueId).then(comments => exec && setValue(comments))
+        return () => { exec = false }
+    }, [productId, issueId])
+
+    React.useEffect(() => {
+        return MqttAPI.subscribeComments(productId, issueId, comments => {
+            setValue(comments)
+        })
+    }, [productId, issueId])
+
+    return value
 }
+
+// Milestones
 
 export function useMilestones(productId: string) {
-    return useEntities(
-        productId,
-        () => MilestoneManager.findMilestonesFromCache(productId),
-        callback => MilestoneManager.findMilestones(productId, callback)
-    )
+    const initialValue = CacheAPI.getMilestones(productId)
+
+    const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadMilestones(productId).then(milestones => exec && setValue(milestones))
+        return () => { exec = false }
+    }, [productId])
+
+    React.useEffect(() => {
+        return MqttAPI.subscribeMilestones(productId, milestones => {
+            setValue(milestones)
+        })
+    }, [productId])
+
+    return value
 }
 
+// Members
+
 export function useMembers(productId: string, userId?: string) {
-    return useEntities(
-        productId,
-        () => MemberManager.findMembersFromCache(productId),
-        callback => MemberManager.findMembers(productId, userId, callback)
-    )
+    function predicate(member: Member) {
+        return !userId || member.userId == userId
+    }
+
+    const initialMembers = CacheAPI.getMembers(productId)
+
+    const initialValue = initialMembers && initialMembers.filter(predicate)
+
+    const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadMembers(productId).then(members => exec && setValue(members.filter(predicate)))
+        return () => { exec = false }
+    }, [productId, userId])
+
+    React.useEffect(() => {
+        return MqttAPI.subscribeMembers(productId, members => {
+            setValue(members.filter(predicate))
+        })
+    }, [productId, userId])
+
+    return value
 }

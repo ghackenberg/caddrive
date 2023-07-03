@@ -26,7 +26,7 @@ export function collectIssueParts(issues: Issue[]) {
     for (const issue of issues || []) {
         const parts: Part[] = []
         collectParts(issue.text, parts)
-        issuePartsNew[issue.id] = parts
+        issuePartsNew[issue.issueId] = parts
     }
     return issuePartsNew
 }
@@ -37,7 +37,7 @@ export function collectCommentParts(comments: {[id: string]: Comment[]}) {
         for (const comment of comments[issueId] || []) {
             const parts: Part[] = []
             collectParts(comment.text, parts)
-            commentPartsNew[comment.id] = parts
+            commentPartsNew[comment.commentId] = parts
         }
     }
     return commentPartsNew

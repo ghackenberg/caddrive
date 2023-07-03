@@ -3,22 +3,29 @@ import axios from 'axios'
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 
 import { auth } from '../auth'
+import { MqttAPI } from '../mqtt'
 
 class MemberClientImpl implements MemberREST {
-    async findMembers(product: string, user?: string): Promise<Member[]> {
-        return (await axios.get<Member[]>('/rest/members', { params: { product, user }, ...auth })).data
+    async findMembers(productId: string): Promise<Member[]> {
+        return (await axios.get<Member[]>(`/rest/products/${productId}/members`, auth)).data
     }
-    async addMember(data: MemberAddData): Promise<Member> {
-        return (await axios.post<Member>('/rest/members', data, { ...auth })).data
+    async addMember(productId: string, data: MemberAddData): Promise<Member> {
+        const member = (await axios.post<Member>(`/rest/products/${productId}/members`, data, auth)).data
+        MqttAPI.publishMemberLocal(member)
+        return member
     }
-    async getMember(id: string): Promise<Member> {
-        return (await axios.get<Member>(`/rest/members/${id}`, { ...auth })).data
+    async getMember(productId: string, memberId: string): Promise<Member> {
+        return (await axios.get<Member>(`/rest/products/${productId}/members/${memberId}`, auth)).data
     }
-    async updateMember(id: string, data: MemberUpdateData): Promise<Member> {
-        return (await axios.put<Member>(`/rest/members/${id}`, data, { ...auth })).data
+    async updateMember(productId: string, memberId: string, data: MemberUpdateData): Promise<Member> {
+        const member = (await axios.put<Member>(`/rest/products/${productId}/members/${memberId}`, data, auth)).data
+        MqttAPI.publishMemberLocal(member)
+        return member
     }
-    async deleteMember(id: string): Promise<Member> {
-        return (await axios.delete<Member>(`/rest/members/${id}`, { ...auth })).data
+    async deleteMember(productId: string, memberId: string): Promise<Member> {
+        const member = (await axios.delete<Member>(`/rest/products/${productId}/members/${memberId}`, auth)).data
+        MqttAPI.publishMemberLocal(member)
+        return member
     }
 
 }

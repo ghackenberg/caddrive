@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { Redirect, useParams } from 'react-router'
 
+import { ProductClient } from '../../clients/rest/product'
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
 import { useProduct } from '../../hooks/entity'
 import { useMembers } from '../../hooks/list'
-import { ProductManager } from '../../managers/product'
 import { BooleanInput } from '../inputs/BooleanInput'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
@@ -67,17 +67,17 @@ export const ProductSettingView = () => {
         event.preventDefault()
         if(productId == 'new') {
             if (name && description) {
-                const product = await ProductManager.addProduct({ name, description, public: _public })
+                const product = await ProductClient.addProduct({ name, description, public: _public })
                 await goBack()
                 await replace(`/products?public=${_public}`)
-                await push(`/products/${product.id}`)
+                await push(`/products/${product.productId}`)
             }
         } else {
             if (name && description) {
-                await ProductManager.updateProduct(product.id, { name, description, public: _public })
+                await ProductClient.updateProduct(productId, { name, description, public: _public })
                 await goBack()
                 await replace(`/products?public=${_public}`)
-                await push(`/products/${product.id}`)
+                await push(`/products/${productId}`)
             }
         }
     }
@@ -112,7 +112,7 @@ export const ProductSettingView = () => {
                                     <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
                                     <BooleanInput label='Public' value={_public} change={setPublic}/>
                                     {contextUser ? (
-                                        (productId == 'new' || members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1) ? (
+                                        (productId == 'new' || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1) ? (
                                             <ButtonInput value='Save'/>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>

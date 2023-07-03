@@ -21,12 +21,12 @@ export const UserView = () => {
 
     const columns: Column<User>[] = [
         { label: '👤', content: user => (
-            <Link to={`/users/${user.id}/settings`}>
+            <Link to={`/users/${user.userId}/settings`}>
                 <UserPictureWidget user={user} class='icon medium round'/>
             </Link>
         ) },
         { label: 'Name', class: 'left nowrap fill', content: user => (
-            <Link to={`/users/${user.id}/settings`}>
+            <Link to={`/users/${user.userId}/settings`}>
                 {user.name}
             </Link>
         ) }

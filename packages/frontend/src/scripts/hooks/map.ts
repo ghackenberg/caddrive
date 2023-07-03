@@ -1,45 +1,41 @@
 import * as React from 'react'
 
-import { Comment } from 'productboard-common'
+import { Comment, Issue } from 'productboard-common'
 
 import { useIssues } from './list'
-import { CommentManager } from '../managers/comment'
+import { CacheAPI } from '../clients/cache'
+import { MqttAPI } from '../clients/mqtt'
+
+function recompute(issues: Issue[]) {
+    const value: {[issueId: string]: Comment[]} = {}
+    for (const issue of issues || []) {
+        value[issue.issueId] = CacheAPI.getComments(issue.productId, issue.issueId)
+    }
+    return value
+}
 
 export function useIssuesComments(productId: string, milestoneId?: string) {
 
-    function compare(a: Comment, b: Comment) {
-        return a.created - b.created
-    }
-
     const issues = useIssues(productId, milestoneId)
 
-    const initialIssuesComments: {[issueId: string]: Comment[]} = {}
-    for (const issue of issues || []) {
-        const value = CommentManager.findCommentsFromCache(issue.id)
-        initialIssuesComments[issue.id] = value && value.sort(compare)
-    }
+    const initialIssuesComments: {[issueId: string]: Comment[]} = recompute(issues)
 
     const [issuesComments, setIssuesComments] = React.useState(initialIssuesComments)
 
     React.useEffect(() => {
-        const callbacks: (() => void)[] = []
-        if (issues) {
-            const issuesComments: {[issueId: string]: Comment[]} = {}
-            for (const issue of issues) {
-                callbacks.push(CommentManager.findComments(issue.id, (comments, error) => {
-                    if (error) {
-                        // At least one promise rejected
-                        setIssuesComments(undefined)
-                    } else {
-                        // At least one promise resolved
-                        issuesComments[issue.id] = comments
-                        // Did all promises resolve?
-                        if (Object.keys(issuesComments).length == issues.length) {
-                            setIssuesComments(issuesComments)
-                        }
-                    }
-                }))
+        let exec = true
+        for (const issue of issues || []) {
+            if (!(issue.issueId in issuesComments)) {
+                CacheAPI.loadComments(productId, issue.issueId).then(() => exec && setIssuesComments(recompute(issues)))
             }
+        }
+        return () => { exec = false }
+    }, [issues])
+
+    React.useEffect(() => {
+        const callbacks: (() => void)[] = []
+        for (const issue of issues || []) {
+            callbacks.push(MqttAPI.subscribeComments(productId, issue.issueId, () => setIssuesComments(recompute(issues))))
         }
         return () => {
             for (const callback of callbacks) {

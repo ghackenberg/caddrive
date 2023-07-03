@@ -5,11 +5,11 @@ import { NavLink } from 'react-router-dom'
 
 import { Issue } from 'productboard-common'
 
+import { IssueClient } from '../../clients/rest/issue'
 import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useIssues, useMembers } from '../../hooks/list'
-import { IssueManager } from '../../managers/issue'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
@@ -77,7 +77,7 @@ export const ProductIssueView = () => {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this issue?')) {
-            await IssueManager.deleteIssue(issue.id)    
+            await IssueClient.deleteIssue(productId, issue.issueId)    
         }
     }
 
@@ -91,18 +91,18 @@ export const ProductIssueView = () => {
             issue.label
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
-            issue.assigneeIds.map((assignedId) => (
-                <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
+            issue.assignedUserIds.map((assignedUserId) => (
+                <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon medium round'/>
             ))
         ) },
         { label: 'Comments', class: 'center', content: issue => (
             <span className='badge'>
-                <CommentCount issueId={issue.id}/>
+                <CommentCount productId={productId} issueId={issue.issueId}/>
             </span>
         ) },
         { label: 'Parts', class: 'center', content: issue => (
             <span className='badge'>
-                <PartCount productId={productId} issueId={issue.id}/>
+                <PartCount productId={productId} issueId={issue.issueId}/>
             </span>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
@@ -129,7 +129,7 @@ export const ProductIssueView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                    members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
                                             <strong>New</strong> issue
                                         </NavLink>
@@ -159,13 +159,13 @@ export const ProductIssueView = () => {
                                 </div>
                             ) : (
                                 <div className='main'>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.id}/comments`)}/>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.issueId}/comments`)}/>
                                 </div>
                             ) }
                             <LegalFooter/>
                         </div>
                         <div>
-                            <ProductView3D productId={productId} issueId={hovered && hovered.id} mouse={true}/>
+                            <ProductView3D productId={productId} issueId={hovered && hovered.issueId} mouse={true}/>
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive}/>

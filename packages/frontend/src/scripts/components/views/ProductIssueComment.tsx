@@ -7,13 +7,12 @@ import { Object3D } from 'three'
 
 import { Version } from 'productboard-common'
 
+import { CommentClient } from '../../clients/rest/comment'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers } from '../../hooks/list'
-import { CommentManager } from '../../managers/comment'
-import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -46,7 +45,7 @@ export const ProductIssueCommentView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const issue = useIssue(productId, issueId)
-    const comments = useComments(issueId)
+    const comments = useComments(productId, issueId)
 
     // STATES
 
@@ -108,7 +107,7 @@ export const ProductIssueCommentView = () => {
 
     function overObject(version: Version, object: Object3D) {
         const path = computePath(object)
-        setSelected([{ productId: version.productId, versionId: version.id, objectPath: path, objectName: object.name }])
+        setSelected([{ productId: version.productId, versionId: version.versionId, objectPath: path, objectName: object.name }])
     }
     
     function outObject() {
@@ -117,7 +116,7 @@ export const ProductIssueCommentView = () => {
 
     function selectObject(version: Version, object: Object3D) {
         const path = computePath(object)
-        const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
+        const markdown = `[${object.name || object.type}](/products/${productId}/versions/${version.versionId}/objects/${path})`
         if (document.activeElement == textReference.current) {
             const before = text.substring(0, textReference.current.selectionStart)
             const after = text.substring(textReference.current.selectionEnd)
@@ -137,7 +136,7 @@ export const ProductIssueCommentView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'none' }, { audio })
+            await CommentClient.addComment(productId, issueId, { text, action: 'none' }, { audio })
             setText('')
         }
         if (audio) {
@@ -149,9 +148,11 @@ export const ProductIssueCommentView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'close' }, {})
-            await IssueManager.updateIssue(issueId, { ...issue })
+            await CommentClient.addComment(productId, issueId, { text, action: 'close' }, { audio })
             setText('')
+        }
+        if (audio) {
+            setAudio(undefined)
         }
     }
 
@@ -159,9 +160,11 @@ export const ProductIssueCommentView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (text) {
-            await CommentManager.addComment({ issueId: issue.id, text: text, action: 'reopen' }, {})
-            await IssueManager.updateIssue(issueId, { ...issue })
+            await CommentClient.addComment(productId, issueId, { text, action: 'reopen' }, { audio })
             setText('')
+        }
+        if (audio) {
+            setAudio(undefined)
         }
     }
 
@@ -184,7 +187,7 @@ export const ProductIssueCommentView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                    members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
                                             <strong>Edit</strong> issue
                                         </NavLink>
@@ -219,14 +222,14 @@ export const ProductIssueCommentView = () => {
                                 <div className="widget issue_thread">
                                     <CommentView class="issue" productId={productId} issueId={issueId} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     {comments && comments.map(comment => (
-                                        <CommentView key={comment.id} class="comment" productId={productId} issueId={issueId} commentId={comment.id} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
+                                        <CommentView key={comment.commentId} class="comment" productId={productId} issueId={issueId} commentId={comment.commentId} mouseover={handleMouseOver} mouseout={handleMouseOut} click={handleClick}/>
                                     ))}
                                     <div className="comment self">
                                         <div className="head">
                                             <div className="icon">
                                                 {contextUser ? (
-                                                    <NavLink to={`/users/${contextUser.id}`}>
-                                                        <ProductUserPictureWidget userId={contextUser.id} productId={productId} />
+                                                    <NavLink to={`/users/${contextUser.userId}`}>
+                                                        <ProductUserPictureWidget userId={contextUser.userId} productId={productId} />
                                                     </NavLink>
                                                 ) : (
                                                     <a>
@@ -245,7 +248,7 @@ export const ProductIssueCommentView = () => {
                                             <div className="text">
                                                 <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
                                                 {contextUser ? (
-                                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                                    members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                                         <>
                                                             {recorder ? (
                                                                 <button onClick={stopRecordAudio} className='button fill gray block-when-responsive'>

@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ApiBody, ApiResponse, ApiParam, ApiQuery, ApiConsumes, getSchemaPath, ApiExtraModels, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiParam, ApiConsumes, getSchemaPath, ApiExtraModels, ApiBearerAuth } from '@nestjs/swagger'
 
 import 'multer'
 
@@ -12,7 +12,7 @@ import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, c
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
 
-@Controller('rest/versions')
+@Controller('rest/products/:productId/versions')
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(VersionAddData, VersionUpdateData)
@@ -24,12 +24,12 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     ) {}
 
     @Get()
-    @ApiQuery({ name: 'product', type: 'string', required: true })
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiResponse({ type: [Version] }) 
     async findVersions(
-        @Query('product') productId: string
+        @Param('productId') productId: string
     ): Promise<Version[]> {
-        await canFindVersionOrFail(this.request.user, productId)
+        await canFindVersionOrFail(this.request.user && this.request.user.userId, productId)
         return this.versionService.findVersions(productId)
     }
 
@@ -40,6 +40,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
             { name: 'image', maxCount: 1 }
         ])
     )
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -55,32 +56,36 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     })
     @ApiResponse({ type: Version })
     async addVersion(
+        @Param('productId') productId: string,
         @Body('data') data: string,
         @UploadedFiles() files: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<Version> {
         const dataParsed = <VersionAddData> JSON.parse(data)
-        await canCreateVersionOrFail(this.request.user, dataParsed.productId)
-        return this.versionService.addVersion(dataParsed, files)
+        await canCreateVersionOrFail(this.request.user && this.request.user.userId, productId)
+        return this.versionService.addVersion(productId, dataParsed, files)
     }
 
-    @Get(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Get(':versionId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'versionId', type: 'string', required: true })
     @ApiResponse({ type: Version })
     async getVersion(
-        @Param('id') id: string
+        @Param('productId') productId: string,
+        @Param('versionId') versionId: string
     ): Promise<Version> {
-        await canReadVersionOrFail(this.request.user, id)
-        return this.versionService.getVersion(id)
+        await canReadVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
+        return this.versionService.getVersion(productId, versionId)
     }
 
-    @Put(':id')
+    @Put(':versionId')
     @UseInterceptors(
         FileFieldsInterceptor([
             { name: 'model', maxCount: 1 },
             { name: 'image', maxCount: 1 }
         ])
     )
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'versionId', type: 'string', required: true })
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -96,21 +101,24 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     })
     @ApiResponse({ type: Version })
     async updateVersion(
-        @Param('id') id: string,
+        @Param('productId') productId: string,
+        @Param('versionId') versionId: string,
         @Body('data') data: string,
         @UploadedFiles() files?: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<Version> {
-        await canUpdateVersionOrFail(this.request.user, id)
-        return this.versionService.updateVersion(id, JSON.parse(data), files)
+        await canUpdateVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
+        return this.versionService.updateVersion(productId, versionId, JSON.parse(data), files)
     }
 
-    @Delete(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Delete(':versionId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'versionId', type: 'string', required: true })
     @ApiResponse({ type: Version })
     async deleteVersion(
-        @Param('id') id: string
+        @Param('productId') productId: string,
+        @Param('versionId') versionId: string
     ): Promise<Version> {
-        await canDeleteVersionOrFail(this.request.user, id)
-        return this.versionService.deleteVersion(id)
+        await canDeleteVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
+        return this.versionService.deleteVersion(productId, versionId)
     }
 }

@@ -4,10 +4,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
 import shortid from 'shortid'
-import { FindOptionsWhere, IsNull } from 'typeorm'
+import { IsNull } from 'typeorm'
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
-import { Database, IssueEntity } from 'productboard-database'
+import { Database } from 'productboard-database'
 
 import { convertIssue } from '../../../functions/convert'
 import { emitComment, emitIssue } from '../../../functions/emit'
@@ -24,51 +24,43 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
     }
 
-    async findIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') : Promise<Issue[]> {
-        let where: FindOptionsWhere<IssueEntity>
-        if (productId && milestoneId && state)
-            where = { productId, milestoneId, state, deleted: IsNull() }
-        else if (productId && milestoneId)
-            where = { productId, milestoneId, deleted: IsNull() }
-        else if (productId && state)
-            where = { productId, state, deleted: IsNull() }
-        else if (productId)
-            where = { productId, deleted: IsNull() }
+    async findIssues(productId: string) : Promise<Issue[]> {
+        const where = { productId, deleted: IsNull() }
         const result: Issue[] = []
         for (const issue of await Database.get().issueRepository.findBy(where))
             result.push(convertIssue(issue))
         return result
     }
   
-    async addIssue(data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async addIssue(productId: string, data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
         // Add issue
-        const id = shortid()
+        const issueId = shortid()
         const created = Date.now()
         const updated = created
-        const userId = this.request.user.id
+        const userId = this.request.user.userId
         const state = 'open'
         let audioId: string
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             audioId = shortid()
             writeFileSync(`./uploads/${audioId}.webm`, files.audio[0].buffer)
         }
-        const issue = await Database.get().issueRepository.save({ id, created, updated, userId, audioId, state, ...data })
+        const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, audioId, state, ...data })
         // Emit changes
         emitIssue(issue)
         // Return issue
         return convertIssue(issue)
     }
 
-    async getIssue(id: string): Promise<Issue> {
-        const issue = await Database.get().issueRepository.findOneByOrFail({ id })
+    async getIssue(productId: string, issueId: string): Promise<Issue> {
+        const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
         return convertIssue(issue)
     }
 
-    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async updateIssue(productId: string, issueId: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
         // Update issue
-        const issue = await Database.get().issueRepository.findOneByOrFail({ id })
+        const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
         issue.updated = Date.now()
-        issue.assigneeIds = data.assigneeIds
+        issue.assignedUserIds = data.assignedUserIds
         issue.label = data.label
         issue.milestoneId =  data.milestoneId
         issue.text = data.text
@@ -82,14 +74,14 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         return convertIssue(issue)
     }
 
-    async deleteIssue(id: string): Promise<Issue> {
+    async deleteIssue(productId: string, issueId: string): Promise<Issue> {
         // Delete issue
-        const issue = await Database.get().issueRepository.findOneByOrFail({ id })
+        const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
         issue.deleted = Date.now()
         issue.updated = issue.deleted
         await Database.get().issueRepository.save(issue)
         // Delete comments
-        const comments = await Database.get().commentRepository.findBy({ issueId: issue.id, deleted: IsNull() })
+        const comments = await Database.get().commentRepository.findBy({ productId, issueId, deleted: IsNull() })
         for (const comment of comments) {
             comment.deleted = issue.deleted
             comment.updated = issue.updated

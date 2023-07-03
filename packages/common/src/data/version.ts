@@ -11,19 +11,20 @@ export class VersionUpdateData {
     minor: number
     @ApiProperty()
     patch: number
+    
     @ApiProperty()
     description: string
 }
 export class VersionAddData extends VersionUpdateData {
-    @ApiProperty()
-    productId: string
     @ApiProperty()
     baseVersionIds: string[]
 }
 
 export class Version extends VersionAddData {
     @ApiProperty()
-    id: string
+    productId: string
+    @ApiProperty()
+    versionId: string
 
     @ApiProperty()
     created: number

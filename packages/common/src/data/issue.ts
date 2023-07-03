@@ -6,19 +6,19 @@ export class IssueUpdateData {
     @ApiProperty()
     text: string
     @ApiProperty()
-    assigneeIds: string[]
+    assignedUserIds: string[]
     @ApiProperty()
-    milestoneId?: string
+    milestoneId: string
 }
 
 export class IssueAddData extends IssueUpdateData {
-    @ApiProperty()
-    productId: string
 }
 
 export class Issue extends IssueAddData {
     @ApiProperty()
-    id: string
+    productId: string
+    @ApiProperty()
+    issueId: string
 
     @ApiProperty()
     created: number

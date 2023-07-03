@@ -12,7 +12,9 @@ import { VersionEntity } from './version'
 @Entity()
 export class UserEntity extends User {
     @PrimaryColumn({ nullable: false })
-    override id: string
+    override userId: string
+    @Column({ nullable: true })
+    override pictureId: string
 
     @Column({ nullable: false })
     override created: number
@@ -28,24 +30,16 @@ export class UserEntity extends User {
     @Column({ nullable: true })
     override name: string
 
-    @Column({ nullable: true })
-    override pictureId: string
-
     @OneToMany(() => ProductEntity, product => product.user)
     products: ProductEntity[]
-    
     @OneToMany(() => MemberEntity, member => member.user)
     members: MemberEntity[]
-
     @OneToMany(() => VersionEntity, version => version.user)
     versions: VersionEntity[]
-
     @OneToMany(() => MilestoneEntity, milestone => milestone.user)
     milestones: MilestoneEntity[]
-
     @OneToMany(() => IssueEntity, issue => issue.user)
     issues: IssueEntity[]
-
     @OneToMany(() => CommentEntity, comment => comment.user)
     comments: CommentEntity[]
 }

@@ -1,12 +1,20 @@
 import * as React from 'react'
 
-import { COMMENT_CACHE, ISSUE_CACHE, MEMBER_CACHE, MILESTONE_CACHE, PRODUCT_CACHE, USER_CACHE, VERSION_CACHE } from '../clients/cache'
+import { CacheAPI } from '../clients/cache'
 import { MqttAPI } from '../clients/mqtt'
 
+// User
+
 export function useUser(userId: string) {
-    const initialValue = USER_CACHE[userId]
+    const initialValue = CacheAPI.getUser(userId)
 
     const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadUser(userId).then(user => exec && setValue(user))
+        return () => { exec = false }
+    }, [userId])
 
     React.useEffect(() => {
         return userId != 'new' && MqttAPI.subscribeUser(userId, user => {
@@ -19,10 +27,18 @@ export function useUser(userId: string) {
     return value
 }
 
+// Product
+
 export function useProduct(productId: string) {
-    const initialValue = PRODUCT_CACHE[productId]
+    const initialValue = CacheAPI.getProduct(productId)
 
     const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadProduct(productId).then(product => exec && setValue(product))
+        return () => { exec = false }
+    }, [productId])
 
     React.useEffect(() => {
         return productId != 'new' && MqttAPI.subscribeProduct(productId, product => {
@@ -35,10 +51,18 @@ export function useProduct(productId: string) {
     return value
 }
 
+// Version
+
 export function useVersion(productId: string, versionId: string) {
-    const initialValue = VERSION_CACHE[versionId]
+    const initialValue = CacheAPI.getVersion(productId, versionId)
 
     const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadVersion(productId, versionId).then(version => exec && setValue(version))
+        return () => { exec = false }
+    }, [productId, versionId])
 
     React.useEffect(() => {
         return versionId != 'new' && MqttAPI.subscribeVersion(productId, versionId, version => {
@@ -51,10 +75,18 @@ export function useVersion(productId: string, versionId: string) {
     return value
 }
 
+// Issue
+
 export function useIssue(productId: string, issueId: string) {
-    const initialValue = ISSUE_CACHE[issueId]
+    const initialValue = CacheAPI.getIssue(productId, issueId)
 
     const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadIssue(productId, issueId).then(issue => exec && setValue(issue))
+        return () => { exec = false }
+    }, [productId, issueId])
 
     React.useEffect(() => {
         return issueId != 'new' && MqttAPI.subscribeIssue(productId, issueId, issue => {
@@ -67,10 +99,18 @@ export function useIssue(productId: string, issueId: string) {
     return value
 }
 
+// Comment
+
 export function useComment(productId: string, issueId: string, commentId: string) {
-    const initialValue = COMMENT_CACHE[commentId]
+    const initialValue = CacheAPI.getComment(productId, issueId, commentId)
 
     const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadComment(productId, issueId, commentId).then(comment => exec && setValue(comment))
+        return () => { exec = false }
+    }, [productId, issueId, commentId])
 
     React.useEffect(() => {
         return commentId != 'new' && MqttAPI.subscribeComment(productId, issueId, commentId, comment => {
@@ -83,10 +123,18 @@ export function useComment(productId: string, issueId: string, commentId: string
     return value
 }
 
+// Milestone
+
 export function useMilestone(productId: string, milestoneId: string) {
-    const initialValue = MILESTONE_CACHE[milestoneId]
+    const initialValue = CacheAPI.getMilestone(productId, milestoneId)
 
     const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadMilestone(productId, milestoneId).then(milestone => exec && setValue(milestone))
+        return () => { exec = false }
+    }, [productId, milestoneId])
 
     React.useEffect(() => {
         return milestoneId != 'new' && MqttAPI.subscribeMilestone(productId, milestoneId, milestone => {
@@ -99,10 +147,18 @@ export function useMilestone(productId: string, milestoneId: string) {
     return value
 }
 
+// Member
+
 export function useMember(productId: string, memberId: string) {
-    const initialValue = MEMBER_CACHE[memberId]
+    const initialValue = CacheAPI.getMember(productId, memberId)
 
     const [value, setValue] = React.useState(initialValue)
+
+    React.useEffect(() => {
+        let exec = true
+        value || CacheAPI.loadMember(productId, memberId).then(member => exec && setValue(member))
+        return () => { exec = false }
+    }, [productId, memberId])
 
     React.useEffect(() => {
         return memberId != 'new' && MqttAPI.subscribeMember(productId, memberId, member => {

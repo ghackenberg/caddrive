@@ -14,7 +14,7 @@ export const ProductUserPictureWidget = (props: { userId: string, productId: str
 
     if (user && members) {       
         const isDeleted = user.deleted
-        const isMember = members.map(member => member.userId).includes(user.id)
+        const isMember = members.map(member => member.userId).includes(user.userId)
 
         const src = isDeleted ? UserIcon : (isMember ? PixelIcon : DiagonalIcon)
         const title = user.name

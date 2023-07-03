@@ -1,7 +1,7 @@
 import { Group, LoadingManager } from "three"
 import { LDrawLoader } from "three/examples/jsm/loaders/LDrawLoader"
 
-import { FileManager } from "../managers/file"
+import { CacheAPI } from "../clients/cache"
 
 const TEXT_DECODER = new TextDecoder()
 
@@ -22,7 +22,7 @@ LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
 })
 
 export async function loadLDrawModel(path: string) {
-    const file = await FileManager.getFile(path)
+    const file = await CacheAPI.loadFile(path)
     return parseLDrawModel(TEXT_DECODER.decode(file))
 }
 
