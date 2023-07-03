@@ -36,6 +36,7 @@ export function useProducts(_public: "true" | "false") {
 
     React.useEffect(() => {
         let exec = true
+        setValue(undefined)
         ProductClient.findProducts(_public).then(products => exec && setValue(products))
         return () => { exec = false }
     }, [_public])

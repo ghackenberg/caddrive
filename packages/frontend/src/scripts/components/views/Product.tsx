@@ -100,27 +100,27 @@ export const ProductView = () => {
     // RETURN
 
     return (
-        products ? (
-            <main className="view product">
-                <div>
-                    <div className='header'>
-                        {contextUser ? (
-                            <Link to={`/products/new/settings?public=${_public}`} className='button fill green block-when-responsive'>
-                                <strong>New</strong> product
-                            </Link>
-                        ) : (
-                            <a className='button fill green block-when-responsive'>
-                                <strong>New</strong> product <span className='badge'>requires login</span>
-                            </a>
-                        )}
-                        <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
-                            <strong>Public</strong> products <span className='badge'><ProductCount public='true'/></span>
-                        </NavLink>
-                        <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
-                            <strong>Private</strong> products <span className='badge'><ProductCount public='false'/></span>
-                        </NavLink>
-                    </div>
-                    { products.length == 0 ? (
+        <main className="view product">
+            <div>
+                <div className='header'>
+                    {contextUser ? (
+                        <Link to={`/products/new/settings?public=${_public}`} className='button fill green block-when-responsive'>
+                            <strong>New</strong> product
+                        </Link>
+                    ) : (
+                        <a className='button fill green block-when-responsive'>
+                            <strong>New</strong> product <span className='badge'>requires login</span>
+                        </a>
+                    )}
+                    <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
+                        <strong>Public</strong> products <span className='badge'><ProductCount public='true'/></span>
+                    </NavLink>
+                    <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
+                        <strong>Private</strong> products <span className='badge'><ProductCount public='false'/></span>
+                    </NavLink>
+                </div>
+                { products ? (
+                    products.length == 0 ? (
                         <div className='main center'>
                             <div>
                                 <img src={ProductIcon}/>
@@ -131,13 +131,13 @@ export const ProductView = () => {
                         <div className='main'>
                             <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.productId}/versions`)}/>
                         </div>
-                    ) }
-                    <LegalFooter/>
-                </div>
-            </main>
-        ) : (
-            <LoadingView/>
-        )
+                    )
+                ) : (
+                    <LoadingView/>
+                ) }
+                <LegalFooter/>
+            </div>
+        </main>
     )
 
 }
