@@ -4,6 +4,8 @@ import shortid from 'shortid'
 
 import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
 
+import { COMMENT_CACHE, ISSUE_CACHE, MEMBER_CACHE, MILESTONE_CACHE, PRODUCT_CACHE, USER_CACHE, VERSION_CACHE } from './cache'
+
 type handler = (topic: string, object: unknown) => void
 
 const handlers: { [topic: string]: handler[] } = {}
@@ -62,6 +64,32 @@ function subscribe<T>(topic: string, handler: (topic: string, object: T) => void
 }
 
 function publishLocal<T>(topic: string, object: T) {
+    // Update cache
+    if (matches('/users/+', topic)) {
+        const user = object as User
+        USER_CACHE[user.id] = user
+    } else if (matches('/products/+', topic)) {
+        const product = object as Product
+        PRODUCT_CACHE[product.id] = product
+    } else if (matches('/products/+/members/+', topic)) {
+        const member = object as Member
+        MEMBER_CACHE[member.id] = member
+    } else if (matches('/products/+/issues/+', topic)) {
+        const issue = object as Issue
+        ISSUE_CACHE[issue.id] = issue
+    } else if (matches('/products/+/issues/+/comments/+', topic)) {
+        const comment = object as Comment
+        COMMENT_CACHE[comment.id] = comment
+    } else if (matches('/products/+/milestones/+', topic)) {
+        const milestone = object as Milestone
+        MILESTONE_CACHE[milestone.id] = milestone
+    } else if (matches('/products/+/versions/+', topic)) {
+        const version = object as Version
+        VERSION_CACHE[version.id] = version
+    } else {
+        console.warn('MQTT topic not supported', topic, object)
+    }
+    // Call handlers
     for (const pattern in handlers) {
         if (matches(pattern, topic)) {
             for (const handler of handlers[pattern]) {

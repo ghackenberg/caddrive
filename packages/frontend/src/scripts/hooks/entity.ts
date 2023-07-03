@@ -1,16 +1,10 @@
 import * as React from 'react'
 
+import { COMMENT_CACHE, ISSUE_CACHE, MEMBER_CACHE, MILESTONE_CACHE, PRODUCT_CACHE, USER_CACHE, VERSION_CACHE } from '../clients/cache'
 import { MqttAPI } from '../clients/mqtt'
-import { CommentManager } from '../managers/comment'
-import { IssueManager } from '../managers/issue'
-import { MemberManager } from '../managers/member'
-import { MilestoneManager } from '../managers/milestone'
-import { ProductManager } from '../managers/product'
-import { UserManager } from '../managers/user'
-import { VersionManager } from '../managers/version'
 
 export function useUser(userId: string) {
-    const initialValue = userId != 'new' && UserManager.getUserFromCache(userId)
+    const initialValue = USER_CACHE[userId]
 
     const [value, setValue] = React.useState(initialValue)
 
@@ -26,7 +20,7 @@ export function useUser(userId: string) {
 }
 
 export function useProduct(productId: string) {
-    const initialValue = productId != 'new' && ProductManager.getProductFromCache(productId)
+    const initialValue = PRODUCT_CACHE[productId]
 
     const [value, setValue] = React.useState(initialValue)
 
@@ -42,7 +36,7 @@ export function useProduct(productId: string) {
 }
 
 export function useVersion(productId: string, versionId: string) {
-    const initialValue = versionId != 'new' && VersionManager.getVersionFromCache(versionId)
+    const initialValue = VERSION_CACHE[versionId]
 
     const [value, setValue] = React.useState(initialValue)
 
@@ -58,7 +52,7 @@ export function useVersion(productId: string, versionId: string) {
 }
 
 export function useIssue(productId: string, issueId: string) {
-    const initialValue = issueId != 'new' && IssueManager.getIssueFromCache(issueId)
+    const initialValue = ISSUE_CACHE[issueId]
 
     const [value, setValue] = React.useState(initialValue)
 
@@ -74,7 +68,7 @@ export function useIssue(productId: string, issueId: string) {
 }
 
 export function useComment(productId: string, issueId: string, commentId: string) {
-    const initialValue = commentId != 'new' && CommentManager.getCommentFromCache(commentId)
+    const initialValue = COMMENT_CACHE[commentId]
 
     const [value, setValue] = React.useState(initialValue)
 
@@ -90,7 +84,7 @@ export function useComment(productId: string, issueId: string, commentId: string
 }
 
 export function useMilestone(productId: string, milestoneId: string) {
-    const initialValue = milestoneId != 'new' && MilestoneManager.getMilestoneFromCache(milestoneId)
+    const initialValue = MILESTONE_CACHE[milestoneId]
 
     const [value, setValue] = React.useState(initialValue)
 
@@ -106,7 +100,7 @@ export function useMilestone(productId: string, milestoneId: string) {
 }
 
 export function useMember(productId: string, memberId: string) {
-    const initialValue = memberId != 'new' && MemberManager.getMemberFromCache(memberId)
+    const initialValue = MEMBER_CACHE[memberId]
 
     const [value, setValue] = React.useState(initialValue)
 
