@@ -48,12 +48,12 @@ export function useVersions(productId: string) {
 
     React.useEffect(() => {
         let exec = true
-        value || CacheAPI.loadVersions(productId).then(versions => exec && setValue(versions))
+        productId != 'new' && CacheAPI.loadVersions(productId).then(versions => exec && setValue(versions))
         return () => { exec = false }
     }, [productId])
 
     React.useEffect(() => {
-        return MqttAPI.subscribeVersions(productId, versions => {
+        return productId != 'new' && MqttAPI.subscribeVersions(productId, versions => {
             setValue(versions)
         })
     }, [productId])
@@ -76,12 +76,12 @@ export function useIssues(productId: string, milestoneId?: string, state?: 'open
 
     React.useEffect(() => {
         let exec = true
-        value || CacheAPI.loadIssues(productId).then(issues => exec && setValue(issues.filter(predicate)))
+        productId != 'new' && CacheAPI.loadIssues(productId).then(issues => exec && setValue(issues.filter(predicate)))
         return () => { exec = false }
     }, [productId, milestoneId, state])
 
     React.useEffect(() => {
-        return MqttAPI.subscribeIssues(productId, issues => {
+        return productId != 'new' && MqttAPI.subscribeIssues(productId, issues => {
             setValue(issues.filter(predicate))
         })
     }, [productId, milestoneId, state])
@@ -98,12 +98,12 @@ export function useComments(productId: string, issueId: string) {
 
     React.useEffect(() => {
         let exec = true
-        value || CacheAPI.loadComments(productId, issueId).then(comments => exec && setValue(comments))
+        productId != 'new' && issueId != 'new' && CacheAPI.loadComments(productId, issueId).then(comments => exec && setValue(comments))
         return () => { exec = false }
     }, [productId, issueId])
 
     React.useEffect(() => {
-        return MqttAPI.subscribeComments(productId, issueId, comments => {
+        return productId != 'new' && issueId != 'new' && MqttAPI.subscribeComments(productId, issueId, comments => {
             setValue(comments)
         })
     }, [productId, issueId])
@@ -120,12 +120,12 @@ export function useMilestones(productId: string) {
 
     React.useEffect(() => {
         let exec = true
-        value || CacheAPI.loadMilestones(productId).then(milestones => exec && setValue(milestones))
+        productId != 'new' && CacheAPI.loadMilestones(productId).then(milestones => exec && setValue(milestones))
         return () => { exec = false }
     }, [productId])
 
     React.useEffect(() => {
-        return MqttAPI.subscribeMilestones(productId, milestones => {
+        return productId != 'new' && MqttAPI.subscribeMilestones(productId, milestones => {
             setValue(milestones)
         })
     }, [productId])
@@ -148,12 +148,12 @@ export function useMembers(productId: string, userId?: string) {
 
     React.useEffect(() => {
         let exec = true
-        value || CacheAPI.loadMembers(productId).then(members => exec && setValue(members.filter(predicate)))
+        productId != 'new' && CacheAPI.loadMembers(productId).then(members => exec && setValue(members.filter(predicate)))
         return () => { exec = false }
     }, [productId, userId])
 
     React.useEffect(() => {
-        return MqttAPI.subscribeMembers(productId, members => {
+        return productId != 'new' && MqttAPI.subscribeMembers(productId, members => {
             setValue(members.filter(predicate))
         })
     }, [productId, userId])
