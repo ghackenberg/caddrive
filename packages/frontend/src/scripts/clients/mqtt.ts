@@ -4,7 +4,7 @@ import shortid from 'shortid'
 
 import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
 
-type handler = (topic: string, data: unknown) => void
+type handler = (topic: string, object: unknown) => void
 
 const handlers: { [topic: string]: handler[] } = {}
 
@@ -29,14 +29,8 @@ function init() {
     // Forward message to handlers
     client.on('message', (topic, payload, packet) => {
         console.log('message', topic, JSON.parse(payload.toString()), packet)
-        const data = JSON.parse(payload.toString())
-        for (const pattern in handlers) {
-            if (matches(pattern, topic)) {
-                for (const handler of handlers[pattern]) {
-                    handler(topic, data)
-                }
-            }
-        }
+        const object = JSON.parse(payload.toString())
+        publishLocal(topic, object)
     })
 
     // Initialize client after disconnection
@@ -45,7 +39,7 @@ function init() {
     })
 }
     
-function subscribe<T>(topic: string, handler: (topic: string, data: T) => void) {
+function subscribe<T>(topic: string, handler: (topic: string, object: T) => void) {
     // Initialize handlers
     if (!(topic in handlers)) {
         handlers[topic] = []
@@ -67,49 +61,93 @@ function subscribe<T>(topic: string, handler: (topic: string, data: T) => void) 
     }
 }
 
+function publishLocal<T>(topic: string, object: T) {
+    for (const pattern in handlers) {
+        if (matches(pattern, topic)) {
+            for (const handler of handlers[pattern]) {
+                handler(topic, object)
+            }
+        }
+    }
+}
+
 init()
 
 export const MqttAPI = {
-    user(userId: string, callback: (user: User) => void) {
+    publishUserLocal(userId: string, user: User) {
         const topic = `/users/${userId}`
-        return subscribe<User>(topic, (_topic, data) => {
-            data.id == userId && callback(data)
-        })
+        publishLocal(topic, user)
     },
-    product(productId: string, callback: (product: Product) => void) {
+    publishProductLocal(productId: string, product: Product) {
         const topic = `/products/${productId}`
-        return subscribe<Product>(topic, (_topic, data) => {
-            data.id == productId && callback(data)
+        publishLocal(topic, product)
+    },
+    publishMemberLocal(productId: string, memberId: string, member: Member) {
+        const topic = `/products/${productId}/members/${memberId}`
+        publishLocal(topic, member)
+    },
+    publishIssueLocal(productId: string, issueId: string, issue: Issue) {
+        const topic = `/products/${productId}/issues/${issueId}`
+        publishLocal(topic, issue)
+    },
+    publishCommentLocal(productId: string, issueId: string, commentId: string, comment: Comment) {
+        const topic = `/products/${productId}/issues/${issueId}/comments/${commentId}`
+        publishLocal(topic, comment)
+    },
+    publishMilestoneLocal(productId: string, milestoneId: string, milestone: Milestone) {
+        const topic = `/products/${productId}/milestones/${milestoneId}`
+        publishLocal(topic, milestone)
+    },
+    publishVersionLocal(productId: string, versionId: string, version: Version) {
+        const topic = `/products/${productId}/versions/${versionId}`
+        publishLocal(topic, version)
+    },
+    subscribeUser(userId: string, callback: (user: User) => void) {
+        const topic = `/users/${userId}`
+        return subscribe<User>(topic, (_topic, user) => {
+            user.id == userId && callback(user)
         })
     },
-    member(productId: string, memberId: string, callback: (member: Member) => void) {
+    subscribeProduct(productId: string, callback: (product: Product) => void) {
+        const topic = `/products/${productId}`
+        return subscribe<Product>(topic, (_topic, product) => {
+            product.id == productId && callback(product)
+        })
+    },
+    subscribeMembers(productId: string, _callback: (members: Member[]) => void) {
         const topic = `/products/${productId}/members/+`
-        return subscribe<Member>(topic, (_topic, data) => {
-            data.id == memberId && data.productId == productId && callback(data)
+        return subscribe<Member>(topic, (_topic, _data) => {
+            // TODO
         })
     },
-    issue(productId: string, issueId: string, callback: (issue: Issue) => void) {
+    subscribeMember(productId: string, memberId: string, callback: (member: Member) => void) {
+        const topic = `/products/${productId}/members/+`
+        return subscribe<Member>(topic, (_topic, member) => {
+            member.id == memberId && member.productId == productId && callback(member)
+        })
+    },
+    subscribeIssue(productId: string, issueId: string, callback: (issue: Issue) => void) {
         const topic = `/products/${productId}/issues/+`
-        return subscribe<Issue>(topic, (_topic, data) => {
-            data.id == issueId && data.productId == productId && callback(data)
+        return subscribe<Issue>(topic, (_topic, issue) => {
+            issue.id == issueId && issue.productId == productId && callback(issue)
         })
     },
-    comment(productId: string, issueId: string, commentId: string, callback: (comment: Comment) => void) {
+    subscribeComment(productId: string, issueId: string, commentId: string, callback: (comment: Comment) => void) {
         const topic = `/products/${productId}/issues/+/comments/+`
-        return subscribe<Comment>(topic, (_topic, data) => {
-            data.id == commentId && data.issueId == issueId && callback(data)
+        return subscribe<Comment>(topic, (_topic, comment) => {
+            comment.id == commentId && comment.issueId == issueId && callback(comment)
         })
     },
-    milestone(productId: string, milestoneId: string, callback: (milestone: Milestone) => void) {
+    subscribeMilestone(productId: string, milestoneId: string, callback: (milestone: Milestone) => void) {
         const topic = `/products/${productId}/milestones/+`
-        return subscribe<Milestone>(topic, (_topic, data) => {
-            data.id == milestoneId && data.productId == productId && callback(data)
+        return subscribe<Milestone>(topic, (_topic, milestone) => {
+            milestone.id == milestoneId && milestone.productId == productId && callback(milestone)
         })
     },
-    version(productId: string, versionId: string, callback: (version: Version) => void) {
+    subscribeVersion(productId: string, versionId: string, callback: (version: Version) => void) {
         const topic = `/products/${productId}/versions/+`
-        return subscribe<Version>(topic, (_topic, data) => {
-            data.id == versionId && data.productId == productId && callback(data)
+        return subscribe<Version>(topic, (_topic, version) => {
+            version.id == versionId && version.productId == productId && callback(version)
         })
     },
     reconnect() {

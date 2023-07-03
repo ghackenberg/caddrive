@@ -15,7 +15,7 @@ export function useUser(userId: string) {
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        return userId != 'new' && MqttAPI.user(userId, user => {
+        return userId != 'new' && MqttAPI.subscribeUser(userId, user => {
             if (!value || value.updated < user.updated) {
                 setValue(user)
             }
@@ -31,7 +31,7 @@ export function useProduct(productId: string) {
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        return productId != 'new' && MqttAPI.product(productId, product => {
+        return productId != 'new' && MqttAPI.subscribeProduct(productId, product => {
             if (!value || value.updated < product.updated) {
                 setValue(product)
             }
@@ -47,7 +47,7 @@ export function useVersion(productId: string, versionId: string) {
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        return versionId != 'new' && MqttAPI.version(productId, versionId, version => {
+        return versionId != 'new' && MqttAPI.subscribeVersion(productId, versionId, version => {
             if (!value || value.updated < version.updated) {
                 setValue(value)
             }
@@ -63,7 +63,7 @@ export function useIssue(productId: string, issueId: string) {
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        return issueId != 'new' && MqttAPI.issue(productId, issueId, issue => {
+        return issueId != 'new' && MqttAPI.subscribeIssue(productId, issueId, issue => {
             if (!value || value.updated < issue.updated) {
                 setValue(issue)
             }
@@ -79,7 +79,7 @@ export function useComment(productId: string, issueId: string, commentId: string
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        return commentId != 'new' && MqttAPI.comment(productId, issueId, commentId, comment => {
+        return commentId != 'new' && MqttAPI.subscribeComment(productId, issueId, commentId, comment => {
             if (!value || value.updated < comment.updated) {
                 setValue(comment)
             }
@@ -95,7 +95,7 @@ export function useMilestone(productId: string, milestoneId: string) {
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        return milestoneId != 'new' && MqttAPI.milestone(productId, milestoneId, milestone => {
+        return milestoneId != 'new' && MqttAPI.subscribeMilestone(productId, milestoneId, milestone => {
             if (!value || value.updated < milestone.updated) {
                 setValue(milestone)
             }
@@ -111,7 +111,7 @@ export function useMember(productId: string, memberId: string) {
     const [value, setValue] = React.useState(initialValue)
 
     React.useEffect(() => {
-        return memberId != 'new' && MqttAPI.member(productId, memberId, member => {
+        return memberId != 'new' && MqttAPI.subscribeMember(productId, memberId, member => {
             if (!value || value.updated < member.updated) {
                 setValue(member)
             }
