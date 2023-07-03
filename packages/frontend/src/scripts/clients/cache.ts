@@ -118,7 +118,7 @@ export const CacheAPI = {
         if (!(productId in ISSUES_CACHE)) {
             if (!(productId in ISSUES_REQUEST)) {
                 ISSUES_REQUEST[productId] = IssueClient.findIssues(productId).then(issues => {
-                    MEMBERS_CACHE[productId] = {}
+                    ISSUES_CACHE[productId] = {}
                     for (const issue of issues) {
                         CacheAPI.putIssue(issue)
                     }
