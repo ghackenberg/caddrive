@@ -20,11 +20,9 @@ let JWT_PUBLIC_KEY: KeyLike | Uint8Array // Load JWT public key from Nest.js bac
 const NET_PORT = 3003
 const HTTP_PORT = 3004
 
-const CLIENT_USER_IDS: { [clientId: string]: string } = {} // Remember user ID of each MQTT client!
-
-const PRODUCT_CACHE: { [productId: string]: boolean } = {}
-
-const PRODUCT_MEMBER_CACHE: { [productId: string]: string[] }= {}
+const CLIENT_USER_IDS: { [clientId: string]: string } = {} // Remember user ID of each MQTT client
+const PRODUCT_PUBLIC: { [productId: string]: boolean } = {} // Remember product public flag
+const PRODUCT_MEMBERS: { [productId: string]: string[] } = {} // Remember product members list
 
 // Functions
 
@@ -49,19 +47,24 @@ async function boot() {
                     const response = await request
                     JWT_PUBLIC_KEY = await importJWK(response.data, "PS256")
                 }
-                // Verify JWT
+                // Verify JWT (throws exception if not valid!)
                 const result = await jwtVerify(username, JWT_PUBLIC_KEY)
-                // Remember user ID of MQTT client!
+                // Parse user ID from token payload
                 const payload = result.payload as { userId: string }
                 const userId = payload.userId
+                // Remember user ID of MQTT client
                 CLIENT_USER_IDS[client.id] = userId
-                // Success
+                // Allow authenticate
                 callback(null, true)
             } else {
+                // Remember user ID of MQTT client
                 CLIENT_USER_IDS[client.id] = null
+                // Allow authenticate
                 callback(null, true)
             }
         } catch (e) {
+            console.error('Authenticate exception', e)
+            // Deny authenticate
             callback(e, false)
         }
     }
@@ -71,99 +74,100 @@ async function boot() {
     aedes.authorizeSubscribe = async (client, subscription, callback) => {
         try {
             console.log('authorizeSubscribe', client.id, subscription.topic)
-            // User topics are visible to everybody
+            // User topics do not require any further action
             const userMatch = exec('/users/+userId', subscription.topic)
             if (userMatch) {
+                // Allow subscribe
                 return callback(null, subscription)
             }
-            // Product topics have to be checked more carefully
+            // For product topics, the product data has to be loaded
             const productMatch = exec('/products/#path', subscription.topic)
             if (productMatch) {
                 // Load data
                 const productId = productMatch.path[0]
-                // Load product
-                if (!(productId in PRODUCT_CACHE)) {
+                // Load product public
+                if (!(productId in PRODUCT_PUBLIC)) {
                     const product = await Database.get().productRepository.findOneByOrFail({ productId, deleted: IsNull() })
-                    PRODUCT_CACHE[productId] = product.public
+                    PRODUCT_PUBLIC[productId] = product.public
                 }
                 // Load product members
-                if (!(productId in PRODUCT_MEMBER_CACHE)) {
+                if (!(productId in PRODUCT_MEMBERS)) {
                     const members = await Database.get().memberRepository.findBy({ productId, deleted: IsNull() })
-                    PRODUCT_MEMBER_CACHE[productId] = members.map(member => member.userId)
+                    PRODUCT_MEMBERS[productId] = members.map(member => member.userId)
                 }
-                // Check permission
-                const userId = CLIENT_USER_IDS[client.id]
-                // Public product topics are visible to everybody
-                if (PRODUCT_CACHE[productId]) {
-                    return callback(null, subscription)
-                }
-                // Non-public product topics are visible to product members only
-                if (PRODUCT_MEMBER_CACHE[productId].indexOf(userId) != -1) {
-                    return callback(null, subscription)
-                }
-                console.log('Product not allowed')
-                return callback(new Error('Product not allowed!'), null)
+                // Allow subscribe
+                return callback(null, subscription)
             }
-            // Other topics do not exist
-            console.log('Topic not allowed')
-            return callback(new Error('Topic not supported!'), null)
+            // Deny subscribe
+            return callback(new Error('Topic does not exist'), null)
         } catch (e) {
-            console.log('Other not allowed', e)
+            console.error('Authorize subscribe exception', e)
+            // Deny subscribe
             return callback(e, null)
         }
     }
+    
     aedes.authorizePublish = async (client, packet, callback) => {
         console.log('authorizePublish', client.id, packet.topic)
         // Only backend can publish messages!
         if (CLIENT_USER_IDS[client.id] == 'backend') {
-            // Allow publishing
+            // Allow publish
             callback(null)
-            // Update product cache
+            // Update product public
             const productMatch = exec('/products/+productId', packet.topic)
             if (productMatch) {
                 const productId = productMatch.productId
                 const product = JSON.parse(packet.payload.toString()) as Product
-                PRODUCT_CACHE[productId] = product.public
+                PRODUCT_PUBLIC[productId] = product.public
             }
-            // Update product member cache
+            // Update product members
             const memberMatch = exec('/products/+productId/members/+memberId', packet.topic)
             if (memberMatch) {
                 const productId = memberMatch.productId
-                if (productId in PRODUCT_MEMBER_CACHE) {
+                if (productId in PRODUCT_MEMBERS) {
                     const member = JSON.parse(packet.payload.toString()) as Member
-                    if (member.deleted) {
-                        const userId = member.userId
-                        PRODUCT_MEMBER_CACHE[productId].splice(PRODUCT_MEMBER_CACHE[productId].indexOf(userId), 1)
+                    const userId = member.userId
+                    // Remove user ID
+                    PRODUCT_MEMBERS[productId].splice(PRODUCT_MEMBERS[productId].indexOf(userId), 1)
+                    // Add user ID (if member not deleted)
+                    if (!member.deleted) {
+                        PRODUCT_MEMBERS[productId].push(userId)
                     }
                 }
             }
         } else {
-            callback(new Error('Only backend can publish!'))
+            // Deny publish
+            callback(new Error('You are not allowed to publish'))
         }
     }
+
     aedes.authorizeForward = (client, packet) => {
         console.log('authorizeForward', client.id, packet.topic)
         // User topics can be forwarded without further checks
         const userMatch = exec('/products/+userId', packet.topic)
         if (userMatch) {
+            // Allow forward
             return packet
         }
         // Product topics have to be checked more carefully
         const productMatch = exec('/products/#path', packet.topic)
         if (productMatch) {
-            // Check product cache
+            // Check product public
             const productId = productMatch.path[0]
-            if (PRODUCT_CACHE[productId]) {
+            if (PRODUCT_PUBLIC[productId]) {
+                // Allow forward
                 return packet
             }
-            // Check product member cache
+            // Check product members
             const userId = CLIENT_USER_IDS[client.id]
-            if (PRODUCT_MEMBER_CACHE[productId].indexOf(userId) != -1) {
+            if (PRODUCT_MEMBERS[productId].indexOf(userId) != -1) {
+                // Allow forward
                 return packet
             }
+            // Deny forward
             return null
         }
-        // Other topics do not exist
+        // Deny forward
         return null
     }
 
