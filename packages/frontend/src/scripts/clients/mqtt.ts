@@ -41,6 +41,9 @@ function init() {
 
     // Initialize client after disconnection
     client.on('end', () => {
+        for (const pattern in handlers) {
+            delete handlers[pattern]
+        }
         init()
     })
 }
