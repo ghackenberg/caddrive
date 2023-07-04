@@ -9,7 +9,7 @@ import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { useAsyncHistory } from '../../hooks/history'
 import { useProducts } from '../../hooks/list'
-import { ProductCount } from '../counts/Products'
+//import { ProductCount } from '../counts/Products'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductImageWidget } from '../widgets/ProductImage'
@@ -113,10 +113,10 @@ export const ProductView = () => {
                         </a>
                     )}
                     <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
-                        <strong>Public</strong> products <span className='badge'><ProductCount public='true'/></span>
+                        <strong>Public</strong> products{/* <span className='badge'><ProductCount public='true'/></span>*/}
                     </NavLink>
                     <NavLink to='/products?public=false' replace={true} className={`button ${_public == 'false' ? 'fill' : 'stroke'} blue`}>
-                        <strong>Private</strong> products <span className='badge'><ProductCount public='false'/></span>
+                        <strong>Private</strong> products{/* <span className='badge'><ProductCount public='false'/></span>*/}
                     </NavLink>
                 </div>
                 { products ? (

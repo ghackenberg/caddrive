@@ -24,12 +24,12 @@ span.badge:first-child {
     margin-left: 0;
 }
 span.badge.public {
-    background-color: green;
+    background-color: gray;
 
     color: white;
 }
 span.badge.private {
-    background-color: red;
+    background-color: gray;
 
     color: white;
 }
