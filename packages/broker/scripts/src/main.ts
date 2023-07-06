@@ -15,7 +15,7 @@ type Index<T> = { [key: string]: T }
 
 // Variables
 
-let JWT_PUBLIC_KEY: KeyLike | Uint8Array // Load JWT public key from Nest.js backend later!
+let JWK_PUBLIC_KEY: KeyLike | Uint8Array // Load JWT public key from Nest.js backend later!
 
 // Constants
 
@@ -26,7 +26,37 @@ const CLIENT_USER_IDS: Index<string> = {} // Remember user ID of each MQTT clien
 const PRODUCT_PUBLIC: Index<boolean> = {} // Remember product public flag
 const PRODUCT_MEMBERS: Index<Index<boolean>> = {} // Remember product members list
 
+const MAX_REPETITIONS = 30
+const REPETITION_TIMEOUT = 2000
+
 // Functions
+
+function tryLoadJWK(repetition: number, resolve: (value: void | PromiseLike<void>) => void, reject: (reason?: unknown) => void) {
+    axios.get<JWK>('http://localhost:3001/rest/keys').then(response => {
+        importJWK(response.data, "PS256").then(jwkPublicKey => {
+            JWK_PUBLIC_KEY = jwkPublicKey
+            console.log('JWK loaded and imported successfully')
+            resolve()
+        }).catch(error => {
+            console.log(`Could not import JWK ${repetition + 1} times (trying again in ${REPETITION_TIMEOUT} ms)`)
+            if (repetition < MAX_REPETITIONS) {
+                setTimeout(() => tryLoadJWK(repetition + 1, resolve, reject), REPETITION_TIMEOUT)
+            } else {
+                reject(error)
+            }
+        })
+    }).catch(error => {
+        console.log(`Could not load JWK ${repetition + 1} times (trying again in ${REPETITION_TIMEOUT} ms)`)
+        if (repetition < MAX_REPETITIONS) {
+            setTimeout(() => tryLoadJWK(repetition + 1, resolve, reject), REPETITION_TIMEOUT)
+        } else {
+            reject(error)
+        }
+    })
+}
+async function loadJWK(): Promise<void> {
+    return new Promise<void>((resolve, reject) => tryLoadJWK(0, resolve, reject))
+}
 
 async function boot() {
     // Database
@@ -44,13 +74,9 @@ async function boot() {
             console.log('authenticate', client.id)
             if (username) {
                 // Load JWT public key from Nest.js backend if necessary!
-                if (!JWT_PUBLIC_KEY) {
-                    const request = axios.get<JWK>('http://localhost:3001/rest/keys')
-                    const response = await request
-                    JWT_PUBLIC_KEY = await importJWK(response.data, "PS256")
-                }
+                !JWK_PUBLIC_KEY && await loadJWK()
                 // Verify JWT (throws exception if not valid!)
-                const result = await jwtVerify(username, JWT_PUBLIC_KEY)
+                const result = await jwtVerify(username, JWK_PUBLIC_KEY)
                 // Parse user ID from token payload
                 const payload = result.payload as { userId: string }
                 const userId = payload.userId
