@@ -12,7 +12,7 @@ import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'product
 import { Database } from 'productboard-database'
 
 import { convertVersion } from '../../../functions/convert'
-import { emitVersion } from '../../../functions/emit'
+import { emitProductMessage } from '../../../functions/emit'
 import { renderGlb, renderLDraw } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
@@ -46,7 +46,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const version = await Database.get().versionRepository.save({ productId, versionId, created, updated, userId, modelType, imageType, ...data })
         renderImage(productId, versionId, files)
         // Emit changes
-        emitVersion(version)
+        emitProductMessage(productId, { versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -69,7 +69,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         await Database.get().versionRepository.save(version)
         renderImage(productId, versionId, files)
         // Emit changes
-        emitVersion(version)
+        emitProductMessage(productId, { versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -81,7 +81,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.updated = version.deleted
         await Database.get().versionRepository.save(version)
         // Emit changes
-        emitVersion(version)
+        emitProductMessage(productId, { versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -182,5 +182,5 @@ async function updateImage(productId: string, versionId: string, image: Jimp) {
     version.imageType = 'png'
     await Database.get().versionRepository.save(version)
     // Emit changes
-    emitVersion(version)
+    emitProductMessage(productId, { versions: [version] })
 }

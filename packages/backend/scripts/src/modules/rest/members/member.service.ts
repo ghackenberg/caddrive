@@ -7,7 +7,7 @@ import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboar
 import { Database } from 'productboard-database'
 
 import { convertMember } from '../../../functions/convert'
-import { emitMember } from '../../../functions/emit'
+import { emitProductMessage } from '../../../functions/emit'
 
 @Injectable()
 export class MemberService implements MemberREST {
@@ -26,7 +26,7 @@ export class MemberService implements MemberREST {
         const updated = created
         const member = await Database.get().memberRepository.save({ productId, memberId, created, updated, ...data })
         // Emit changes
-        emitMember(member)
+        emitProductMessage(productId, { members: [member] })
         // Return member
         return convertMember(member)
     }
@@ -43,7 +43,7 @@ export class MemberService implements MemberREST {
         member.role = data.role
         await Database.get().memberRepository.save(member)
         // Emit changes
-        emitMember(member)
+        emitProductMessage(productId, { members: [member] })
         // Return member
         return convertMember(member)
     }
@@ -55,7 +55,7 @@ export class MemberService implements MemberREST {
         member.updated = member.deleted
         await Database.get().memberRepository.save(member)
         // Emit changes
-        emitMember(member)
+        emitProductMessage(productId, { members: [member] })
         // Return member
         return convertMember(member)
     }

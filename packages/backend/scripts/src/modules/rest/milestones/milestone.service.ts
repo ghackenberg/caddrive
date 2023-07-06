@@ -8,7 +8,7 @@ import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 
 import { Database } from 'productboard-database'
 
 import { convertMilestone } from '../../../functions/convert'
-import { emitIssue, emitMilestone } from '../../../functions/emit'
+import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -34,7 +34,7 @@ export class MilestoneService implements MilestoneREST {
         const userId = this.request.user.userId
         const milestone = await Database.get().milestoneRepository.save({ productId, milestoneId, created, updated, userId, ...data })
         // Emit changes
-        emitMilestone(milestone)
+        emitProductMessage(productId, { milestones: [milestone] })
         // Return milestone
         return convertMilestone(milestone)
     }
@@ -53,7 +53,7 @@ export class MilestoneService implements MilestoneREST {
         milestone.end = data.end
         await Database.get().milestoneRepository.save(milestone)
         // Emit changes
-        emitMilestone(milestone)
+        emitProductMessage(productId, { milestones: [milestone] })
         // Return milestone
         return convertMilestone(milestone)
     }
@@ -72,8 +72,7 @@ export class MilestoneService implements MilestoneREST {
             await Database.get().issueRepository.save(issue)
         }
         // Emit changes
-        emitMilestone(milestone)
-        issues.forEach(emitIssue)
+        emitProductMessage(productId, { milestones: [milestone], issues })
         // Return milestone
         return convertMilestone(milestone)
     }

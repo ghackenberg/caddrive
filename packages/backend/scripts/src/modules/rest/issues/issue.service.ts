@@ -10,7 +10,7 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 import { Database } from 'productboard-database'
 
 import { convertIssue } from '../../../functions/convert'
-import { emitComment, emitIssue } from '../../../functions/emit'
+import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -46,7 +46,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
         const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, audioId, state, ...data })
         // Emit changes
-        emitIssue(issue)
+        emitProductMessage(productId, { issues: [issue] })
         // Return issue
         return convertIssue(issue)
     }
@@ -69,7 +69,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitIssue(issue)
+        emitProductMessage(productId, { issues: [issue] })
         // Return issue
         return convertIssue(issue)
     }
@@ -88,8 +88,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             await Database.get().commentRepository.save(comment)
         }
         // Emit changes
-        emitIssue(issue)
-        comments.forEach(emitComment)
+        emitProductMessage(productId, { issues: [issue], comments })
         // Return issue
         return convertIssue(issue)
     }

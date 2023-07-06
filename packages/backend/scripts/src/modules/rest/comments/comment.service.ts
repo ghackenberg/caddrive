@@ -10,7 +10,7 @@ import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'product
 import { Database } from 'productboard-database'
 
 import { convertComment } from '../../../functions/convert'
-import { emitComment, emitIssue } from '../../../functions/emit'
+import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -54,8 +54,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         }
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitComment(comment)
-        emitIssue(issue)
+        emitProductMessage(productId, { issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }
@@ -79,8 +78,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         issue.updated = comment.updated
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitComment(comment)
-        emitIssue(issue)
+        emitProductMessage(productId, { issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }
@@ -97,8 +95,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         // TODO update state?
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitComment(comment)
-        emitIssue(issue)
+        emitProductMessage(productId, { issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }

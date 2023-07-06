@@ -11,7 +11,7 @@ import { User, UserUpdateData, UserREST } from 'productboard-common'
 import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
 
 import { convertUser } from '../../../functions/convert'
-import { emitMember, emitUser } from '../../../functions/emit'
+import { emitProductMessage, emitUserMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -62,7 +62,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         }
         await Database.get().userRepository.save(user)
         // Emit changes
-        emitUser(user)
+        emitUserMessage(userId, { users: [user] })
         // Return user
         return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
@@ -81,8 +81,10 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
             await Database.get().memberRepository.save(member)
         }
         // Emit changes
-        emitUser(user)
-        members.forEach(emitMember)
+        emitUserMessage(userId, { users: [user] })
+        for (const member of members) {
+            emitProductMessage(member.productId, { members: [member] })
+        }
         // Return user
         return convertUser(user, this.request.user && this.request.user.userId == userId)
     }

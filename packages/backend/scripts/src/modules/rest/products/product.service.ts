@@ -8,7 +8,7 @@ import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'product
 import { Database, ProductEntity } from 'productboard-database'
 
 import { convertProduct } from '../../../functions/convert'
-import { emitComment, emitIssue, emitMember, emitMilestone, emitProduct, emitVersion } from '../../../functions/emit'
+import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable({ scope: Scope.REQUEST })
@@ -57,8 +57,7 @@ export class ProductService implements ProductREST {
         const role = 'manager'
         const member = await Database.get().memberRepository.save({ productId, memberId, created, updated, userId, role })
         // Emit changes
-        emitProduct(product)
-        emitMember(member)
+        emitProductMessage(productId, { products: [product], members: [member] })
         // Return product
         return convertProduct(product)
     }
@@ -77,7 +76,7 @@ export class ProductService implements ProductREST {
         product.public = data.public
         await Database.get().productRepository.save(product)
         // Emit changes
-        emitProduct(product)
+        emitProductMessage(productId, { products: [product] })
         // Return product
         return convertProduct(product)
     }
@@ -124,12 +123,7 @@ export class ProductService implements ProductREST {
             await Database.get().versionRepository.save(version)
         }
         // Emit changes
-        emitProduct(product)
-        members.forEach(emitMember)
-        issues.forEach(emitIssue)
-        comments.forEach(emitComment)
-        milestones.forEach(emitMilestone)
-        versions.forEach(emitVersion)
+        emitProductMessage(productId, { products: [product], members, issues, comments, milestones, versions })
         // Return product
         return convertProduct(product)
     }
