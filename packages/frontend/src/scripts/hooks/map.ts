@@ -4,7 +4,8 @@ import { Comment, Issue } from 'productboard-common'
 
 import { useIssues } from './list'
 import { CacheAPI } from '../clients/cache'
-import { MqttAPI } from '../clients/mqtt'
+
+type Unsubscribe = () => void
 
 function recompute(issues: Issue[]) {
     const value: {[issueId: string]: Comment[]} = {}
@@ -23,23 +24,16 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
     const [issuesComments, setIssuesComments] = React.useState(initialIssuesComments)
 
     React.useEffect(() => {
-        let exec = true
+        const unsubscribes: Unsubscribe[] = []
         for (const issue of issues || []) {
-            if (!(issue.issueId in issuesComments)) {
-                CacheAPI.loadComments(productId, issue.issueId).then(() => exec && setIssuesComments(recompute(issues)))
-            }
-        }
-        return () => { exec = false }
-    }, [issues])
-
-    React.useEffect(() => {
-        const callbacks: (() => void)[] = []
-        for (const issue of issues || []) {
-            callbacks.push(MqttAPI.subscribeComments(productId, issue.issueId, () => setIssuesComments(recompute(issues))))
+            const unsubscribe = CacheAPI.subscribeComments(productId, issue.issueId, () => {
+                setIssuesComments(recompute(issues))
+            })
+            unsubscribes.push(unsubscribe)
         }
         return () => {
-            for (const callback of callbacks) {
-                callback()
+            for (const unsubscribe of unsubscribes) {
+                unsubscribe()
             }
         }
     }, [issues])

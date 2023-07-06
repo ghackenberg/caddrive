@@ -3,7 +3,7 @@ import axios from 'axios'
 import { User, UserUpdateData, UserREST } from 'productboard-common'
 
 import { auth } from '../auth'
-import { MqttAPI } from '../mqtt'
+import { CacheAPI } from '../cache'
 
 class UserClientImpl implements UserREST<UserUpdateData, File> {
     async findUsers(productId?: string, query?: string): Promise<User[]> {
@@ -17,12 +17,12 @@ class UserClientImpl implements UserREST<UserUpdateData, File> {
         body.append('data', JSON.stringify(data))
         body.append('file', file)
         const user = (await axios.put<User>(`/rest/users/${userId}`, body, auth)).data
-        MqttAPI.publishUserLocal(user)
+        CacheAPI.putUser(user)
         return user
     }
     async deleteUser(userId: string): Promise<User> {
         const user = (await axios.delete<User>(`rest/users/${userId}`, auth)).data
-        MqttAPI.publishUserLocal(user)
+        CacheAPI.putUser(user)
         return user
     }
 }

@@ -1,167 +1,110 @@
 import * as React from 'react'
 
-import { Issue, Member, Product, User } from "productboard-common"
-
 import { CacheAPI } from '../clients/cache'
-import { MqttAPI } from '../clients/mqtt'
 import { ProductClient } from '../clients/rest/product'
 import { UserClient } from '../clients/rest/user'
 
-function valid(...ids: string[]) {
+type Entity = { created: number }
+type Predicate<T> = (value: T) => boolean
+type Compare<T> = (a: T, b: T) => number
+type Unsubscribe = () => void
+type Callback<T> = (value: T) => void
+type Subscribe<T> = (callback: Callback<T>) => Unsubscribe
+
+// Helper
+
+function valid(ids: string[]) {
     return ids.map(id => id && id != 'new').reduce((a, b) => a && b, true)
+}
+
+// REST entities
+
+function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
+    const [value, setValue] = React.useState<T[]>()
+
+    React.useEffect(() => {
+        let execute = true
+        load().then(entities => execute && setValue(entities.filter(predicate).sort(compare)))
+        return () => {
+            execute = false
+        }
+    }, ids)
+
+    return value
+}
+
+// MQTT entities
+
+function useMqttEntities<T extends Entity>(ids: string[], initialValue: T[], subscribe: Subscribe<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
+    const [value, setValue] = React.useState(initialValue && initialValue.filter(predicate).sort(compare))
+
+    React.useEffect(() => {
+        return valid(ids) && subscribe(entities => setValue(entities.filter(predicate).sort(compare)))
+    }, ids)
+
+    return value
 }
 
 // Users
 
 export function useUsers() {
-    const initialValue: User[] = undefined
-
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        let exec = true
-        UserClient.findUsers().then(users => exec && setValue(users))
-        return () => { exec = false }
-    }, [true])
-
-    return value
+    return useRestEntites([""], () => UserClient.findUsers())
 }
 
 // Products
 
 export function useProducts(_public: "true" | "false") {
-    const initialValue: Product[] = undefined
-
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        let exec = true
-        setValue(undefined)
-        ProductClient.findProducts(_public).then(products => exec && setValue(products))
-        return () => { exec = false }
-    }, [_public])
-
-    return value
+    return useRestEntites([_public], () => ProductClient.findProducts(_public))
 }
 
 // Verions
 
 export function useVersions(productId: string) {
-    const initialValue = CacheAPI.getVersions(productId)
-
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        let exec = true
-        valid(productId) && CacheAPI.loadVersions(productId).then(versions => exec && setValue(versions))
-        return () => { exec = false }
-    }, [productId])
-
-    React.useEffect(() => {
-        return valid(productId) && MqttAPI.subscribeVersions(productId, versions => {
-            setValue(versions)
-        })
-    }, [productId])
-
-    return value
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getVersions(productId),
+        callback => CacheAPI.subscribeVersions(productId, callback)
+    )
 }
 
 // Issues
 
 export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') {
-    function predicate(issue: Issue) {
-        return (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state)
-    }
-
-    const initialIssues = CacheAPI.getIssues(productId)
-
-    const initialValue = initialIssues && initialIssues.filter(predicate)
-
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        let exec = true
-        valid(productId) && CacheAPI.loadIssues(productId).then(issues => exec && setValue(issues.filter(predicate)))
-        return () => { exec = false }
-    }, [productId, milestoneId, state])
-
-    React.useEffect(() => {
-        return valid(productId) && MqttAPI.subscribeIssues(productId, issues => {
-            setValue(issues.filter(predicate))
-        })
-    }, [productId, milestoneId, state])
-
-    return value
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getIssues(productId),
+        callback => CacheAPI.subscribeIssues(productId, callback),
+        issue => (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state)
+    )
 }
 
 // Comments
 
 export function useComments(productId: string, issueId: string) {
-    const initialValue = CacheAPI.getComments(productId, issueId)
-
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        let exec = true
-        valid(productId, issueId) && CacheAPI.loadComments(productId, issueId).then(comments => exec && setValue(comments))
-        return () => { exec = false }
-    }, [productId, issueId])
-
-    React.useEffect(() => {
-        return valid(productId, issueId) && MqttAPI.subscribeComments(productId, issueId, comments => {
-            setValue(comments)
-        })
-    }, [productId, issueId])
-
-    return value
+    return useMqttEntities(
+        [productId, issueId],
+        CacheAPI.getComments(productId, issueId),
+        callback => CacheAPI.subscribeComments(productId, issueId, callback)
+    )
 }
 
 // Milestones
 
 export function useMilestones(productId: string) {
-    const initialValue = CacheAPI.getMilestones(productId)
-
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        let exec = true
-        valid(productId) && CacheAPI.loadMilestones(productId).then(milestones => exec && setValue(milestones))
-        return () => { exec = false }
-    }, [productId])
-
-    React.useEffect(() => {
-        return valid(productId) && MqttAPI.subscribeMilestones(productId, milestones => {
-            setValue(milestones)
-        })
-    }, [productId])
-
-    return value
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getMilestones(productId),
+        callback => CacheAPI.subscribeMilestones(productId, callback)
+    )
 }
 
 // Members
 
 export function useMembers(productId: string, userId?: string) {
-    function predicate(member: Member) {
-        return !userId || member.userId == userId
-    }
-
-    const initialMembers = CacheAPI.getMembers(productId)
-
-    const initialValue = initialMembers && initialMembers.filter(predicate)
-
-    const [value, setValue] = React.useState(initialValue)
-
-    React.useEffect(() => {
-        let exec = true
-        valid(productId) && CacheAPI.loadMembers(productId).then(members => exec && setValue(members.filter(predicate)))
-        return () => { exec = false }
-    }, [productId, userId])
-
-    React.useEffect(() => {
-        return valid(productId) && MqttAPI.subscribeMembers(productId, members => {
-            setValue(members.filter(predicate))
-        })
-    }, [productId, userId])
-
-    return value
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getMembers(productId),
+        callback => CacheAPI.subscribeMembers(productId, callback),
+        member => !userId || member.userId == userId
+    )
 }

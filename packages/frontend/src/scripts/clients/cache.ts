@@ -2,195 +2,161 @@ import { JWK } from "jose"
 
 import { Comment, Issue, Member, Milestone, Product, User, Version } from "productboard-common"
 
-import { CommentClient } from "./rest/comment"
+import { MqttAPI } from "./mqtt"
 import { FileClient } from "./rest/file"
-import { IssueClient } from "./rest/issue"
 import { KeyClient } from "./rest/key"
-import { MemberClient } from "./rest/member"
-import { MilestoneClient } from "./rest/milestone"
-import { ProductClient } from "./rest/product"
-import { UserClient } from "./rest/user"
-import { VersionClient } from "./rest/version"
 
-type IdIndex = { [id: string]: boolean }
+type Index<T> = { [id: string]: T }
+type Put<T> = (value: T) => T
+type Callback<T> = (value: T) => void
+type Unsubscribe = () => void
+type Entity = { created: number, updated: number, deleted: number }
 
-// Requests
+// Constant requests
 
-let PUBLIC_JWK_REQUEST: Promise<JWK> = undefined
+const PUBLIC_JWK_REQUEST: Promise<JWK> = KeyClient.getPublicJWK()
 
-const USER_REQUEST: { [userId: string]: Promise<User> } = {}
-const PRODUCT_REQUEST: { [productId: string]: Promise<Product> } = {}
-const MEMBER_REQUEST: { [memberId: string]: Promise<Member> } = {}
-const ISSUE_REQUEST: { [issueId: string]: Promise<Issue> } = {}
-const COMMENT_REQUEST: { [commentId: string]: Promise<Comment> } = {}
-const MILESTONE_REQUEST: { [milestoneId: string]: Promise<Milestone> } = {}
-const VERSION_REQUEST: { [versionId: string]: Promise<Version> } = {}
-const FILE_REQUEST: { [fileId: string]: Promise<ArrayBuffer> } = {}
+// Variable requests
 
-const MEMBERS_REQUEST: { [productId: string]: Promise<Member[]> } = {}
-const ISSUES_REQUEST: { [productId: string]: Promise<Issue[]> } = {}
-const COMMENTS_REQUEST: { [productId: string]: { [issueId: string]: Promise<Comment[]> } } = {}
-const MILESTONES_REQUEST: { [productId: string]: Promise<Milestone[]> } = {}
-const VERSIONS_REQUEST: { [productId: string]: Promise<Version[]> } = {}
+const FILE_REQUEST: Index<Promise<ArrayBuffer>> = {}
 
-// Responses
+// Subscriptions
 
-let PUBLIC_JWK_CACHE: JWK = undefined
+const USER_MESSAGE_SUBSCRIPTIONS: Index<Unsubscribe> = {}
+const PRODUCT_MESSAGE_SUBSCRIPTIONS: Index<Unsubscribe> = {}
 
-const USER_CACHE: { [userId: string]: User } = {}
-const PRODUCT_CACHE: { [productId: string]: Product } = {}
-const MEMBER_CACHE: { [memberId: string]: Member } = {}
-const ISSUE_CACHE: { [issueId: string]: Issue } = {}
-const COMMENT_CACHE: { [commentId: string]: Comment } = {}
-const MILESTONE_CACHE: { [milestoneId: string]: Milestone } = {}
-const VERSION_CACHE: { [versionId: string]: Version } = {}
-const FILE_CACHE: { [fileId: string]: ArrayBuffer } = {}
+// Entity callbacks
 
-const MEMBERS_CACHE: { [productId: string]: IdIndex } = {}
-const ISSUES_CACHE: { [productId: string]: IdIndex } = {}
-const COMMENTS_CACHE: { [productId: string]: { [issueId: string]: IdIndex } } = {}
-const MILESTONES_CACHE: { [productId: string]: IdIndex } = {}
-const VERSIONS_CACHE: { [productId: string]: IdIndex } = {}
+const USER_CALLBACKS: Index<Callback<User>[]> = {}
+const PRODUCT_CALLBACKS: Index<Callback<Product>[]> = {}
+const MEMBER_CALLBACKS: Index<Callback<Member>[]> = {}
+const ISSUE_CALLBACKS: Index<Callback<Issue>[]> = {}
+const COMMENT_CALLBACKS: Index<Callback<Comment>[]> = {}
+const MILESTONE_CALLBACKS: Index<Callback<Milestone>[]> = {}
+const VERSION_CALLBACKS: Index<Callback<Version>[]> = {}
 
-function clear<T>(cache: { [key: string]: T }) {
+// Entities callbacks
+
+const MEMBERS_CALLBACKS: Index<Callback<Member[]>[]> = {}
+const ISSUES_CALLBACKS: Index<Callback<Issue[]>[]> = {}
+const COMMENTS_CALLBACKS: Index<Callback<Comment[]>[]> = {}
+const MILESTONES_CALLBACKS: Index<Callback<Milestone[]>[]> = {}
+const VERSIONS_CALLBACKS: Index<Callback<Version[]>[]> = {}
+
+// Entity caches
+
+const USER_CACHE: Index<User> = {}
+const PRODUCT_CACHE: Index<Product> = {}
+const MEMBER_CACHE: Index<Member> = {}
+const ISSUE_CACHE: Index<Issue> = {}
+const COMMENT_CACHE: Index<Comment> = {}
+const MILESTONE_CACHE: Index<Milestone> = {}
+const VERSION_CACHE: Index<Version> = {}
+
+const MEMBERS_CACHE: Index<Index<boolean>> = {}
+const ISSUES_CACHE: Index<Index<boolean>> = {}
+const COMMENTS_CACHE: Index<Index<boolean>> = {}
+const MILESTONES_CACHE: Index<Index<boolean>> = {}
+const VERSIONS_CACHE: Index<Index<boolean>> = {}
+
+// Helper
+
+function notify<T>(callbacks: Index<Callback<T>[]>, id: string, value: T) {
+    for (const callback of callbacks[id] || []) {
+        callback(value)
+    }
+}
+function update<T extends Entity>(entityCache: Index<T>, childCache: Index<Index<boolean>>, entityCallbacks: Index<Callback<T>[]>, childCallbacks: Index<Callback<T[]>[]>, entityId: string, parentId: string, value: T) {
+    if (!(entityId in entityCache) || entityCache[entityId].updated < value.updated) {
+        // Update caches
+        entityCache[entityId] = value
+        if (parentId) {
+            if (!(parentId in childCache)) {
+                childCache[parentId] = {}
+            }
+            childCache[parentId][entityId] = true
+        }
+        // Notify callbacks
+        notify(entityCallbacks, entityId, value)
+        notify(childCallbacks, parentId, resolve(entityCache, childCache, parentId))
+    }
+    return entityCache[entityId]
+}
+function clear<T>(cache: Index<T>) {
     for (const key in cache) {
         delete cache[key]
     }
 }
-
-function compare<T extends { created: number }>(a: T, b: T) {
-    return a.created - b.created
+function putAll<T>(index: Index<T>, putOne: Put<T>) {
+    for (const id in index || {}) {
+        putOne(index[id])
+    }
 }
+function subscribe<T>(index: Index<Callback<T>[]>, id: string, callback: Callback<T>) {
+    if (!(id in index)) {
+        index[id] = []
+    }
+    index[id].push(callback)
+    return () => {
+        index[id].splice(index[id].indexOf(callback), 1)
+    }
+}
+function resolve<T extends Entity>(entityCache: Index<T>, childCache: Index<Index<boolean>>, parentId: string) {
+    if (parentId in childCache) {
+        const entityIds = Object.keys(childCache[parentId])
+        const entities = entityIds.map(entityId => entityCache[`${parentId}-${entityId}`])
+        return entities.filter(issue => !issue.deleted)
+    }
+    return null
+}
+
+// Subscribe
+
+function subscribeUserMessage<T>(userId: string, index: Index<Callback<T>[]>, id: string, callback: Callback<T>, value: T) {
+    const unsubscribe = subscribe(index, id, callback)
+    if (!(userId in USER_MESSAGE_SUBSCRIPTIONS)) {
+        USER_MESSAGE_SUBSCRIPTIONS[userId] = MqttAPI.subscribeUserMessages(userId, message => {
+            putAll(message.data.users, CacheAPI.putUser)
+        })
+    }
+    if (value) {
+        callback(value)
+    }
+    return unsubscribe
+}
+function subscribeProductMessage<T>(productId: string, index: Index<Callback<T>[]>, id: string, callback: Callback<T>, value: T) {
+    const unsubscribe = subscribe(index, id, callback)
+    if (!(productId in PRODUCT_MESSAGE_SUBSCRIPTIONS)) {
+        PRODUCT_MESSAGE_SUBSCRIPTIONS[productId] = MqttAPI.subscribeProductMessages(productId, message => {
+            putAll(message.data.products, CacheAPI.putProduct)
+            putAll(message.data.members, CacheAPI.putMember)
+            putAll(message.data.issues, CacheAPI.putIssue)
+            putAll(message.data.comments, CacheAPI.putComment)
+            putAll(message.data.milestones, CacheAPI.putMilestone)
+            putAll(message.data.versions, CacheAPI.putVersion)
+        })
+    }
+    if (value) {
+        callback(value)
+    }
+    return unsubscribe
+}
+
+// Put
 
 export const CacheAPI = {
 
-    // Load entity
+    // Load
 
     async loadPublicJWK() {
-        return PUBLIC_JWK_CACHE || PUBLIC_JWK_REQUEST || (PUBLIC_JWK_REQUEST = KeyClient.getPublicJWK().then(CacheAPI.putPublicJWK))
-    },
-    async loadUser(userId: string) {
-        const key = `${userId}`
-        return USER_CACHE[key] || USER_REQUEST[key] || (USER_REQUEST[key] = UserClient.getUser(userId).then(CacheAPI.putUser))
-    },
-    async loadProduct(productId: string) {
-        const key = `${productId}`
-        return PRODUCT_CACHE[key] || PRODUCT_REQUEST[key] || (PRODUCT_REQUEST[key] = ProductClient.getProduct(productId).then(CacheAPI.putProduct))
-    },
-    async loadMember(productId: string, memberId: string) {
-        const key = `${productId}-${memberId}`
-        return MEMBER_CACHE[key] || MEMBER_REQUEST[key] || (MEMBER_REQUEST[key] = MemberClient.getMember(productId, memberId).then(CacheAPI.putMember))
-    },
-    async loadIssue(productId: string, issueId: string) {
-        const key = `${productId}-${issueId}`
-        return ISSUE_CACHE[key] || ISSUE_REQUEST[key] || (ISSUE_REQUEST[key] = IssueClient.getIssue(productId, issueId).then(CacheAPI.putIssue))
-    },
-    async loadComment(productId: string, issueId: string, commentId: string) {
-        const key = `${productId}-${issueId}-${commentId}`
-        return COMMENT_CACHE[key] || COMMENT_REQUEST[key] || (COMMENT_REQUEST[key] = CommentClient.getComment(productId, issueId, commentId).then(CacheAPI.putComment))
-    },
-    async loadMilestone(productId: string, milestoneId: string) {
-        const key = `${productId}-${milestoneId}`
-        return MILESTONE_CACHE[key] || MILESTONE_REQUEST[key] || (MILESTONE_REQUEST[key] = MilestoneClient.getMilestone(productId, milestoneId).then(CacheAPI.putMilestone))
-    },
-    async loadVersion(productId: string, versionId: string) {
-        const key = `${productId}-${versionId}`
-        return VERSION_CACHE[key] || VERSION_REQUEST[key] || (VERSION_REQUEST[key] = VersionClient.getVersion(productId, versionId).then(CacheAPI.putVersion))
+        return PUBLIC_JWK_REQUEST
     },
     async loadFile(fileId: string) {
-        const key = `${fileId}`
-        return FILE_CACHE[key] || FILE_REQUEST[key] || (FILE_REQUEST[key] = FileClient.getFile(fileId).then(file => CacheAPI.putFile(fileId, file)))
-    },
-
-    // Load entities
-
-    async loadMembers(productId: string) {
-        if (!(productId in MEMBERS_CACHE)) {
-            if (!(productId in MEMBERS_REQUEST)) {
-                MEMBERS_REQUEST[productId] = MemberClient.findMembers(productId).then(members => {
-                    MEMBERS_CACHE[productId] = {}
-                    for (const member of members) {
-                        CacheAPI.putMember(member)
-                    }
-                    return CacheAPI.getMembers(productId)
-                })
-            }
-            return MEMBERS_REQUEST[productId]
-        }
-        return CacheAPI.getMembers(productId)
-    },
-    async loadIssues(productId: string) {
-        if (!(productId in ISSUES_CACHE)) {
-            if (!(productId in ISSUES_REQUEST)) {
-                ISSUES_REQUEST[productId] = IssueClient.findIssues(productId).then(issues => {
-                    ISSUES_CACHE[productId] = {}
-                    for (const issue of issues) {
-                        CacheAPI.putIssue(issue)
-                    }
-                    return CacheAPI.getIssues(productId)
-                })
-            }
-            return ISSUES_REQUEST[productId]
-        }
-        return CacheAPI.getIssues(productId)
-    },
-    async loadComments(productId: string, issueId: string) {
-        if (!(productId in COMMENTS_CACHE)) {
-            COMMENTS_CACHE[productId] = {}
-        }
-        if (!(issueId in COMMENTS_CACHE[productId])) {
-            if (!(productId in COMMENTS_REQUEST)) {
-                COMMENTS_REQUEST[productId] = {}
-            }
-            if (!(issueId in COMMENTS_REQUEST[productId])) {
-                COMMENTS_REQUEST[productId][issueId] = CommentClient.findComments(productId, issueId).then(comments => {
-                    COMMENTS_CACHE[productId][issueId] = {}
-                    for (const comment of comments) {
-                        CacheAPI.putComment(comment)
-                    }
-                    return CacheAPI.getComments(productId, issueId)
-                })
-            }
-            return COMMENTS_REQUEST[productId][issueId]
-        }
-        return CacheAPI.getComments(productId, issueId)
-    },
-    async loadMilestones(productId: string) {
-        if (!(productId in MILESTONES_CACHE)) {
-            if (!(productId in MILESTONES_REQUEST)) {
-                MILESTONES_REQUEST[productId] = MilestoneClient.findMilestones(productId).then(milestones => {
-                    MILESTONES_CACHE[productId] = {}
-                    for (const milestone of milestones) {
-                        CacheAPI.putMilestone(milestone)
-                    }
-                    return CacheAPI.getMilestones(productId)
-                })
-            }
-            return MILESTONES_REQUEST[productId]
-        }
-        return CacheAPI.getMilestones(productId)
-    },
-    async loadVersions(productId: string) {
-        if (!(productId in VERSIONS_CACHE)) {
-            if (!(productId in VERSIONS_REQUEST)) {
-                VERSIONS_REQUEST[productId] = VersionClient.findVersions(productId).then(versions => {
-                    VERSIONS_CACHE[productId] = {}
-                    for (const version of versions) {
-                        CacheAPI.putVersion(version)
-                    }
-                    return CacheAPI.getVersions(productId)
-                })
-            }
-            return VERSIONS_REQUEST[productId]
-        }
-        return CacheAPI.getVersions(productId)
+        return FILE_REQUEST[fileId] || (FILE_REQUEST[fileId] = FileClient.getFile(fileId))
     },
 
     // Get entity
 
-    getPublicJWK() {
-        return PUBLIC_JWK_CACHE
-    },
     getUser(userId: string) {
         return USER_CACHE[userId]
     },
@@ -212,132 +178,143 @@ export const CacheAPI = {
     getVersion(productId: string, versionId: string) {
         return VERSION_CACHE[`${productId}-${versionId}`]
     },
-    getFile(fileId: string) {
-        return FILE_CACHE[fileId]
-    },
 
     // Get entities
 
     getMembers(productId: string) {
-        if (productId in MEMBERS_CACHE) {
-            const memberIds = Object.keys(MEMBERS_CACHE[productId])
-            const members = memberIds.map(memberId => MEMBER_CACHE[`${productId}-${memberId}`])
-            return members.filter(member => !member.deleted).sort(compare)
-        }
-        return null
+        return resolve(MEMBER_CACHE, MEMBERS_CACHE, productId)
     },
     getIssues(productId: string) {
-        if (productId in ISSUES_CACHE) {
-            const issueIds = Object.keys(ISSUES_CACHE[productId])
-            const issues = issueIds.map(issueId => ISSUE_CACHE[`${productId}-${issueId}`])
-            return issues.filter(issue => !issue.deleted).sort(compare)
-        }
-        return null
+        return resolve(ISSUE_CACHE, ISSUES_CACHE, productId)
     },
     getComments(productId: string, issueId: string) {
-        if (productId in COMMENTS_CACHE) {
-            if (issueId in COMMENTS_CACHE[productId]) {
-                const commentIds = Object.keys(COMMENTS_CACHE[productId][issueId])
-                const comments = commentIds.map(commentId => COMMENT_CACHE[`${productId}-${issueId}-${commentId}`])
-                return comments.filter(comment => !comment.deleted).sort(compare)
-            }
-        }
-        return null
+        return resolve(COMMENT_CACHE, COMMENTS_CACHE, `${productId}-${issueId}`)
     },
     getMilestones(productId: string) {
-        if (productId in MILESTONES_CACHE) {
-            const milestoneIds = Object.keys(MILESTONES_CACHE[productId])
-            const milestones = milestoneIds.map(milestoneId => MILESTONE_CACHE[`${productId}-${milestoneId}`])
-            return milestones.filter(milestone => !milestone.deleted).sort(compare)
-        }
-        return null
+        return resolve(MILESTONE_CACHE, MILESTONES_CACHE, productId)
     },
     getVersions(productId: string) {
-        if (productId in VERSIONS_CACHE) {
-            const versionIds = Object.keys(VERSIONS_CACHE[productId])
-            const versions = versionIds.map(versionId => VERSION_CACHE[`${productId}-${versionId}`])
-            return versions.filter(version => !version.deleted).sort(compare)
-        }
-        return null
+        return resolve(VERSION_CACHE, VERSIONS_CACHE, productId)
     },
 
-    // Put entity and update list
+    // Subscribe entity
 
-    putPublicJWK(key: JWK) {
-        PUBLIC_JWK_CACHE = key
-        return key
+    subscribeUser(userId: string, callback: Callback<User>): Unsubscribe {
+        return subscribeUserMessage(userId, USER_CALLBACKS, userId, callback, CacheAPI.getUser(userId))
     },
+    subscribeProduct(productId: string, callback: Callback<Product>): Unsubscribe {
+        return subscribeProductMessage(productId, PRODUCT_CALLBACKS, productId, callback, CacheAPI.getProduct(productId))
+    },
+    subscribeMember(productId: string, memberId: string, callback: Callback<Member>): Unsubscribe {
+        return subscribeProductMessage(productId, MEMBER_CALLBACKS, `${productId}-${memberId}`, callback, CacheAPI.getMember(productId, memberId))
+    },
+    subscribeIssue(productId: string, issueId: string, callback: Callback<Issue>): Unsubscribe {
+        return subscribeProductMessage(productId, ISSUE_CALLBACKS, `${productId}-${issueId}`, callback, CacheAPI.getIssue(productId, issueId))
+    },
+    subscribeComment(productId: string, issueId: string, commentId: string, callback: Callback<Comment>): Unsubscribe {
+        return subscribeProductMessage(productId, COMMENT_CALLBACKS, `${productId}-${issueId}-${commentId}`, callback, CacheAPI.getComment(productId, issueId, commentId))
+    },
+    subscribeMilestone(productId: string, milestoneId: string, callback: Callback<Milestone>): Unsubscribe {
+        return subscribeProductMessage(productId, MILESTONE_CALLBACKS, `${productId}-${milestoneId}`, callback, CacheAPI.getMilestone(productId, milestoneId))
+    },
+    subscribeVersion(productId: string, versionId: string, callback: Callback<Version>): Unsubscribe {
+        return subscribeProductMessage(productId, VERSION_CALLBACKS, `${productId}-${versionId}`, callback, CacheAPI.getVersion(productId, versionId))
+    },
+
+    // Subscribe entities
+
+    subscribeMembers(productId: string, callback: Callback<Member[]>): Unsubscribe {
+        return subscribeProductMessage(productId, MEMBERS_CALLBACKS, productId, callback, CacheAPI.getMembers(productId))
+    },
+    subscribeIssues(productId: string, callback: Callback<Issue[]>): Unsubscribe {
+        return subscribeProductMessage(productId, ISSUES_CALLBACKS, productId, callback, CacheAPI.getIssues(productId))
+    },
+    subscribeComments(productId: string, issueId: string, callback: Callback<Comment[]>): Unsubscribe {
+        return subscribeProductMessage(productId, COMMENTS_CALLBACKS, `${productId}-${issueId}`, callback, CacheAPI.getComments(productId, issueId))
+    },
+    subscribeMilestones(productId: string, callback: Callback<Milestone[]>): Unsubscribe {
+        return subscribeProductMessage(productId, MILESTONES_CALLBACKS, productId, callback, CacheAPI.getMilestones(productId))
+    },
+    subscribeVersions(productId: string, callback: Callback<Version[]>): Unsubscribe {
+        return subscribeProductMessage(productId, VERSIONS_CALLBACKS, productId, callback, CacheAPI.getVersions(productId))
+    },
+
+    // Publish
+
     putUser(user: User) {
-        USER_CACHE[user.userId] = user
-        return user
+        const entityId = user.userId
+        const parentId: string = null
+        return update(USER_CACHE, {}, USER_CALLBACKS, {}, entityId, parentId, user)
     },
     putProduct(product: Product) {
-        PRODUCT_CACHE[product.productId] = product
-        return product
+        const entityId = product.productId
+        const parentId: string = null
+        return update(PRODUCT_CACHE, {}, PRODUCT_CALLBACKS, {}, entityId, parentId, product)
     },
     putMember(member: Member) {
-        MEMBER_CACHE[`${member.productId}-${member.memberId}`] = member
-        if (member.productId in MEMBERS_CACHE) {
-            MEMBERS_CACHE[member.productId][member.memberId] = true
-        }
-        return member
+        const entityId = `${member.productId}-${member.memberId}`
+        const parentId = member.productId
+        return update(MEMBER_CACHE, MEMBERS_CACHE, MEMBER_CALLBACKS, MEMBERS_CALLBACKS, entityId, parentId, member)
     },
     putIssue(issue: Issue) {
-        ISSUE_CACHE[`${issue.productId}-${issue.issueId}`] = issue
-        if (issue.productId in ISSUES_CACHE) {
-            ISSUES_CACHE[issue.productId][issue.issueId] = true
-        }
-        return issue
+        const entityId = `${issue.productId}-${issue.issueId}`
+        const parentId = issue.productId
+        return update(ISSUE_CACHE, ISSUES_CACHE, ISSUE_CALLBACKS, ISSUES_CALLBACKS, entityId, parentId, issue)
     },
     putComment(comment: Comment) {
-        COMMENT_CACHE[`${comment.productId}-${comment.issueId}-${comment.commentId}`] = comment
-        if (comment.productId in COMMENTS_CACHE) {
-            if (comment.issueId in COMMENTS_CACHE[comment.productId]) {
-                COMMENTS_CACHE[comment.productId][comment.issueId][comment.commentId] = true
-            }
-        }
-        return comment
+        const entityId = `${comment.productId}-${comment.issueId}-${comment.commentId}`
+        const parentId = `${comment.productId}-${comment.issueId}`
+        return update(COMMENT_CACHE, COMMENTS_CACHE, COMMENT_CALLBACKS, COMMENTS_CALLBACKS, entityId, parentId, comment)
     },
     putMilestone(milestone: Milestone) {
-        MILESTONE_CACHE[`${milestone.productId}-${milestone.milestoneId}`] = milestone
-        if (milestone.productId in MILESTONES_CACHE) {
-            MILESTONES_CACHE[milestone.productId][milestone.milestoneId] = true
-        }
-        return milestone
+        const entityId = `${milestone.productId}-${milestone.milestoneId}`
+        const parentId = milestone.productId
+        return update(MILESTONE_CACHE, MILESTONES_CACHE, MILESTONE_CALLBACKS, MILESTONES_CALLBACKS, entityId, parentId, milestone)
     },
     putVersion(version: Version) {
-        VERSION_CACHE[`${version.productId}-${version.versionId}`] = version
-        if (version.productId in VERSIONS_CACHE) {
-            VERSIONS_CACHE[version.productId][version.versionId] = true
-        }
-        return version
-    },
-    putFile(fileId: string, file: ArrayBuffer) {
-        FILE_CACHE[fileId] = file
-        return file
+        const entityId = `${version.productId}-${version.versionId}`
+        const parentId = version.productId
+        return update(VERSION_CACHE, VERSIONS_CACHE, VERSION_CALLBACKS, VERSIONS_CALLBACKS, entityId, parentId, version)
     },
 
     // Other
 
     clear() {
-        // Request
-
-        clear(USER_REQUEST)
-        clear(PRODUCT_REQUEST)
-        clear(MEMBER_REQUEST)
-        clear(ISSUE_REQUEST)
-        clear(COMMENT_REQUEST)
-        clear(MILESTONE_REQUEST)
-        clear(VERSION_REQUEST)
+        // Requests
+        
         clear(FILE_REQUEST)
 
-        clear(MEMBERS_REQUEST)
-        clear(ISSUES_REQUEST)
-        clear(COMMENTS_REQUEST)
-        clear(MILESTONES_REQUEST)
-        clear(VERSIONS_REQUEST)
+        // Subscriptions
 
-        // Cache
+        for (const userId in USER_MESSAGE_SUBSCRIPTIONS) {
+            USER_MESSAGE_SUBSCRIPTIONS[userId]()
+        }
+        for (const productId in PRODUCT_MESSAGE_SUBSCRIPTIONS) {
+            PRODUCT_MESSAGE_SUBSCRIPTIONS[productId]()
+        }
+
+        clear(USER_MESSAGE_SUBSCRIPTIONS)
+        clear(PRODUCT_MESSAGE_SUBSCRIPTIONS)
+
+        // Entity callbacks
+
+        clear(USER_CALLBACKS)
+        clear(PRODUCT_CALLBACKS)
+        clear(MEMBER_CALLBACKS)
+        clear(ISSUE_CALLBACKS)
+        clear(COMMENT_CALLBACKS)
+        clear(MILESTONE_CALLBACKS)
+        clear(VERSION_CALLBACKS)
+
+        // Entities callbacks
+
+        clear(MEMBERS_CALLBACKS)
+        clear(ISSUES_CALLBACKS)
+        clear(COMMENTS_CALLBACKS)
+        clear(MILESTONES_CALLBACKS)
+        clear(VERSIONS_CALLBACKS)
+
+        // Entity caches
 
         clear(USER_CACHE)
         clear(PRODUCT_CACHE)
@@ -346,7 +323,8 @@ export const CacheAPI = {
         clear(COMMENT_CACHE)
         clear(MILESTONE_CACHE)
         clear(VERSION_CACHE)
-        clear(FILE_CACHE)
+
+        // Entities caches
 
         clear(MEMBERS_CACHE)
         clear(ISSUES_CACHE)

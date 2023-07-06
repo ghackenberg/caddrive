@@ -8,3 +8,4 @@ export * from './data/version'
 export * from './data/milestone'
 
 export * from './rest'
+export * from './mqtt'

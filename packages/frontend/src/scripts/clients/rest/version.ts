@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 
 import { auth } from '../auth'
-import { MqttAPI } from '../mqtt'
+import { CacheAPI } from '../cache'
 
 class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob> {
     async findVersions(productId: string): Promise<Version[]> {
@@ -19,7 +19,7 @@ class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData
             body.append('image', files.image)
         }
         const version = (await axios.post<Version>(`/rest/products/${productId}/versions`, body, auth)).data
-        MqttAPI.publishVersionLocal(version)
+        CacheAPI.putVersion(version)
         return version
     }
     async getVersion(productId: string, versionId: string): Promise<Version> {
@@ -37,12 +37,12 @@ class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData
             }
         }
         const version = (await axios.put<Version>(`/rest/products/${productId}/versions/${versionId}`, body, auth)).data
-        MqttAPI.publishVersionLocal(version)
+        CacheAPI.putVersion(version)
         return version
     }
     async deleteVersion(productId: string, versionId: string): Promise<Version> {
         const version = (await axios.delete<Version>(`/rest/products/${productId}/versions/${versionId}`, auth)).data
-        MqttAPI.publishVersionLocal(version)
+        CacheAPI.putVersion(version)
         return version
     }
 }

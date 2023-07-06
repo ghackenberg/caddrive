@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 
 import { auth } from '../auth'
-import { MqttAPI } from '../mqtt'
+import { CacheAPI } from '../cache'
 
 class MilestoneClientImpl implements MilestoneREST {
     async findMilestones(productId: string): Promise<Milestone[]> {
@@ -11,7 +11,7 @@ class MilestoneClientImpl implements MilestoneREST {
     }
     async addMilestone(productId: string, data: MilestoneAddData): Promise<Milestone> {
         const milestone = (await axios.post<Milestone>(`/rest/products/${productId}/milestones`, data, auth)).data
-        MqttAPI.publishMilestoneLocal(milestone)
+        CacheAPI.putMilestone(milestone)
         return milestone
     }
     async getMilestone(productId: string, milestoneId: string): Promise<Milestone> {
@@ -19,12 +19,12 @@ class MilestoneClientImpl implements MilestoneREST {
     }
     async updateMilestone(productId: string, milestoneId: string, data: MilestoneUpdateData): Promise<Milestone> {
         const milestone = (await axios.put<Milestone>(`/rest/products/${productId}/milestones/${milestoneId}`, data, auth)).data
-        MqttAPI.publishMilestoneLocal(milestone)
+        CacheAPI.putMilestone(milestone)
         return milestone
     }
     async deleteMilestone(productId: string, milestoneId: string): Promise<Milestone> {
         const milestone = (await axios.delete<Milestone>(`/rest/products/${productId}/milestones/${milestoneId}`, auth)).data
-        MqttAPI.publishMilestoneLocal(milestone)
+        CacheAPI.putMilestone(milestone)
         return milestone
     }
 }

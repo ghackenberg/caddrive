@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 
 import { auth } from '../auth'
-import { MqttAPI } from '../mqtt'
+import { CacheAPI } from '../cache'
 
 class CommentClientImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {
     async findComments(productId: string, issueId: string): Promise<Comment[]> {
@@ -16,7 +16,7 @@ class CommentClientImpl implements CommentREST<CommentAddData, CommentUpdateData
             body.append('audio', files.audio)
         }
         const comment = (await axios.post<Comment>(`/rest/products/${productId}/issues/${issueId}/comments`, body, auth)).data
-        MqttAPI.publishCommentLocal(comment)
+        CacheAPI.putComment(comment)
         return comment
     }
     async getComment(productId: string, issueId: string, commentId: string): Promise<Comment> {
@@ -31,12 +31,12 @@ class CommentClientImpl implements CommentREST<CommentAddData, CommentUpdateData
             }
         }
         const comment = (await axios.put<Comment>(`/rest/products/${productId}/issues/${issueId}/comments/${commentId}`, body, auth)).data
-        MqttAPI.publishCommentLocal(comment)
+        CacheAPI.putComment(comment)
         return comment
     }
     async deleteComment(productId: string, issueId: string, commentId: string, ): Promise<Comment> {
         const comment = (await axios.delete<Comment>(`/rest/products/${productId}/issues/${issueId}/comments/${commentId}`, auth)).data
-        MqttAPI.publishCommentLocal(comment)
+        CacheAPI.putComment(comment)
         return comment
     }
 }

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 
 import { auth } from '../auth'
-import { MqttAPI } from '../mqtt'
+import { CacheAPI } from '../cache'
 
 class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
     async findIssues(productId: string): Promise<Issue[]> {
@@ -16,7 +16,7 @@ class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> 
             body.append('audio', files.audio)
         }
         const issue = (await axios.post<Issue>(`/rest/products/${productId}/issues`, body, auth)).data
-        MqttAPI.publishIssueLocal(issue)
+        CacheAPI.putIssue(issue)
         return issue
     }
     async getIssue(productId: string, issueId: string): Promise<Issue> {
@@ -31,12 +31,12 @@ class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> 
             }
         }
         const issue = (await axios.put<Issue>(`/rest/products/${productId}/issues/${issueId}`, body, auth)).data
-        MqttAPI.publishIssueLocal(issue)
+        CacheAPI.putIssue(issue)
         return issue
     }
     async deleteIssue(productId: string, issueId: string): Promise<Issue> {
         const issue = (await axios.delete<Issue>(`/rest/products/${productId}/issues/${issueId}`, auth)).data
-        MqttAPI.publishIssueLocal(issue)
+        CacheAPI.putIssue(issue)
         return issue
     }
 }
