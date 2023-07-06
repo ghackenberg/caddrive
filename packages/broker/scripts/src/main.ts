@@ -117,7 +117,11 @@ async function boot() {
                         payload: JSON.stringify(message),
                         qos: 0,
                         retain: false,
-                        topic: subscription.topic
+                        topic: subscription.topic,
+                    }, error => {
+                        if (error) {
+                            console.error('Could not initialize user', error)
+                        }
                     })
                 }, 0)
                 // Allow subscribe
@@ -159,6 +163,10 @@ async function boot() {
                             qos: 0,
                             retain: false,
                             topic: subscription.topic
+                        }, error => {
+                            if (error) {
+                                console.error('Could not initialize product', error)
+                            }
                         })
                     }, 0)
                 }
@@ -208,7 +216,7 @@ async function boot() {
     aedes.authorizeForward = (client, packet) => {
         console.log('authorizeForward', client.id, packet.topic)
         // User topics can be forwarded without further checks
-        const userMatch = exec('/products/+userId', packet.topic)
+        const userMatch = exec('/users/+userId', packet.topic)
         if (userMatch) {
             // Allow forward
             return packet

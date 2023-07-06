@@ -78,7 +78,9 @@ function update<T extends Entity>(entityCache: Index<T>, childCache: Index<Index
         }
         // Notify callbacks
         notify(entityCallbacks, entityId, value)
-        notify(childCallbacks, parentId, resolve(entityCache, childCache, parentId))
+        if (parentId) {
+            notify(childCallbacks, parentId, resolve(entityCache, childCache, parentId))
+        }
     }
     return entityCache[entityId]
 }
@@ -88,8 +90,8 @@ function clear<T>(cache: Index<T>) {
     }
 }
 function putAll<T>(index: Index<T>, putOne: Put<T>) {
-    for (const id in index || {}) {
-        putOne(index[id])
+    for (const entityId in index || {}) {
+        putOne(index[entityId])
     }
 }
 function subscribe<T>(index: Index<Callback<T>[]>, id: string, callback: Callback<T>) {
@@ -104,8 +106,8 @@ function subscribe<T>(index: Index<Callback<T>[]>, id: string, callback: Callbac
 function resolve<T extends Entity>(entityCache: Index<T>, childCache: Index<Index<boolean>>, parentId: string) {
     if (parentId in childCache) {
         const entityIds = Object.keys(childCache[parentId])
-        const entities = entityIds.map(entityId => entityCache[`${parentId}-${entityId}`])
-        return entities.filter(issue => !issue.deleted)
+        const entities = entityIds.map(entityId => entityCache[entityId])
+        return entities.filter(entity => !entity.deleted)
     }
     return null
 }
@@ -129,11 +131,40 @@ function subscribeProductMessage<T>(productId: string, index: Index<Callback<T>[
     if (!(productId in PRODUCT_MESSAGE_SUBSCRIPTIONS)) {
         PRODUCT_MESSAGE_SUBSCRIPTIONS[productId] = MqttAPI.subscribeProductMessages(productId, message => {
             putAll(message.products, CacheAPI.putProduct)
+
             putAll(message.members, CacheAPI.putMember)
+            if (message.members && !(productId in MEMBERS_CACHE)) {
+                MEMBERS_CACHE[productId] = {}
+                notify(MEMBERS_CALLBACKS, productId, [])
+            }
+
             putAll(message.issues, CacheAPI.putIssue)
+            if (message.issues && !(productId in ISSUES_CACHE)) {
+                ISSUES_CACHE[productId] = {}
+                notify(ISSUES_CALLBACKS, productId, [])
+            }
+
             putAll(message.comments, CacheAPI.putComment)
+            if (message.comments) {
+                for (const issueId in ISSUES_CACHE[productId]) {
+                    if (!(`${productId}-${issueId}` in COMMENTS_CACHE)) {
+                        COMMENTS_CACHE[`${productId}-${issueId}`] = {}
+                        notify(COMMENTS_CALLBACKS, `${productId}-${issueId}`, [])
+                    }
+                }
+            }
+
             putAll(message.milestones, CacheAPI.putMilestone)
+            if (message.milestones && !(productId in MILESTONES_CACHE)) {
+                MILESTONES_CACHE[productId] = {}
+                notify(MILESTONES_CALLBACKS, productId, [])
+            }
+
             putAll(message.versions, CacheAPI.putVersion)
+            if (message.versions && !(productId in VERSIONS_CACHE)) {
+                VERSIONS_CACHE[productId] = {}
+                notify(VERSIONS_CALLBACKS, productId, [])
+            }
         })
     }
     if (value) {
@@ -244,12 +275,12 @@ export const CacheAPI = {
     putUser(user: User) {
         const entityId = user.userId
         const parentId: string = null
-        return update(USER_CACHE, {}, USER_CALLBACKS, {}, entityId, parentId, user)
+        return update(USER_CACHE, null, USER_CALLBACKS, null, entityId, parentId, user)
     },
     putProduct(product: Product) {
         const entityId = product.productId
         const parentId: string = null
-        return update(PRODUCT_CACHE, {}, PRODUCT_CALLBACKS, {}, entityId, parentId, product)
+        return update(PRODUCT_CACHE, null, PRODUCT_CALLBACKS, null, entityId, parentId, product)
     },
     putMember(member: Member) {
         const entityId = `${member.productId}-${member.memberId}`
