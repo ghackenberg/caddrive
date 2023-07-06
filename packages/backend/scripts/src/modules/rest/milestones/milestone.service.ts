@@ -5,9 +5,8 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
-import { Database } from 'productboard-database'
+import { Database, convertMilestone } from 'productboard-database'
 
-import { convertMilestone } from '../../../functions/convert'
 import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 

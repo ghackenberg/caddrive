@@ -9,9 +9,8 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
-import { Database } from 'productboard-database'
+import { Database, convertVersion } from 'productboard-database'
 
-import { convertVersion } from '../../../functions/convert'
 import { emitProductMessage } from '../../../functions/emit'
 import { renderGlb, renderLDraw } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'

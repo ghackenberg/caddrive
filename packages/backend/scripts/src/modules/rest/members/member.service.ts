@@ -4,9 +4,8 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
-import { Database } from 'productboard-database'
+import { Database, convertMember } from 'productboard-database'
 
-import { convertMember } from '../../../functions/convert'
 import { emitProductMessage } from '../../../functions/emit'
 
 @Injectable()

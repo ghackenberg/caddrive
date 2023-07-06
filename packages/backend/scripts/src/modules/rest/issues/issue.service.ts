@@ -7,9 +7,8 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
-import { Database } from 'productboard-database'
+import { Database, convertIssue } from 'productboard-database'
 
-import { convertIssue } from '../../../functions/convert'
 import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 

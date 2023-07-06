@@ -5,9 +5,8 @@ import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
 
 import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
-import { Database, ProductEntity } from 'productboard-database'
+import { Database, ProductEntity, convertProduct } from 'productboard-database'
 
-import { convertProduct } from '../../../functions/convert'
 import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 

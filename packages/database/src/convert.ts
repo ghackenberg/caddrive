@@ -1,4 +1,10 @@
-import { CommentEntity, IssueEntity, MemberEntity, MilestoneEntity, ProductEntity, UserEntity, VersionEntity } from "productboard-database"
+import { CommentEntity } from "./entities/comment"
+import { IssueEntity } from "./entities/issue"
+import { MemberEntity } from "./entities/member"
+import { MilestoneEntity } from "./entities/milestone"
+import { ProductEntity } from "./entities/product"
+import { UserEntity } from "./entities/user"
+import { VersionEntity } from "./entities/version"
 
 export function convertUser(user: UserEntity, full: boolean) {
     return {

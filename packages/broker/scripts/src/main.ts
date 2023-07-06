@@ -8,8 +8,10 @@ import { exec } from 'mqtt-pattern'
 import { IsNull } from 'typeorm'
 import { createWebSocketStream, WebSocketServer } from 'ws'
 
-import { Member, Product } from 'productboard-common'
-import { Database } from 'productboard-database'
+import { ProductMessage } from 'productboard-common'
+import { Database, compileProductMessage, compileUserMessage } from 'productboard-database'
+
+type Index<T> = { [key: string]: T }
 
 // Variables
 
@@ -20,9 +22,9 @@ let JWT_PUBLIC_KEY: KeyLike | Uint8Array // Load JWT public key from Nest.js bac
 const NET_PORT = 3003
 const HTTP_PORT = 3004
 
-const CLIENT_USER_IDS: { [clientId: string]: string } = {} // Remember user ID of each MQTT client
-const PRODUCT_PUBLIC: { [productId: string]: boolean } = {} // Remember product public flag
-const PRODUCT_MEMBERS: { [productId: string]: string[] } = {} // Remember product members list
+const CLIENT_USER_IDS: Index<string> = {} // Remember user ID of each MQTT client
+const PRODUCT_PUBLIC: Index<boolean> = {} // Remember product public flag
+const PRODUCT_MEMBERS: Index<Index<boolean>> = {} // Remember product members list
 
 // Functions
 
@@ -77,14 +79,29 @@ async function boot() {
             // User topics do not require any further action
             const userMatch = exec('/users/+userId', subscription.topic)
             if (userMatch) {
+                // Parse topic
+                const userId = userMatch.userId
+                // Schedule initialization
+                setTimeout(async () => {
+                    const users = await Database.get().userRepository.findBy({ userId, deleted: IsNull() })
+                    const message = compileUserMessage({ users })
+                    client.publish({
+                        cmd: 'publish',
+                        dup: false,
+                        payload: JSON.stringify(message),
+                        qos: 0,
+                        retain: false,
+                        topic: subscription.topic
+                    })
+                }, 0)
                 // Allow subscribe
                 return callback(null, subscription)
             }
             // For product topics, the product data has to be loaded
-            const productMatch = exec('/products/#path', subscription.topic)
+            const productMatch = exec('/products/+productId', subscription.topic)
             if (productMatch) {
-                // Load data
-                const productId = productMatch.path[0]
+                // Parse topic
+                const productId = productMatch.productId
                 // Load product public
                 if (!(productId in PRODUCT_PUBLIC)) {
                     const product = await Database.get().productRepository.findOneByOrFail({ productId, deleted: IsNull() })
@@ -93,7 +110,31 @@ async function boot() {
                 // Load product members
                 if (!(productId in PRODUCT_MEMBERS)) {
                     const members = await Database.get().memberRepository.findBy({ productId, deleted: IsNull() })
-                    PRODUCT_MEMBERS[productId] = members.map(member => member.userId)
+                    PRODUCT_MEMBERS[productId] = {}
+                    for (const member of members) {
+                        PRODUCT_MEMBERS[productId][member.userId] = true
+                    }
+                }
+                // Schedule initialization
+                const userId = CLIENT_USER_IDS[client.id]
+                if (PRODUCT_PUBLIC[productId] || PRODUCT_MEMBERS[productId][userId]) {
+                    setTimeout(async () => {
+                        const products = await Database.get().productRepository.findBy({ productId, deleted: IsNull() })
+                        const members = await Database.get().memberRepository.findBy({ productId, deleted: IsNull() })
+                        const issues = await Database.get().issueRepository.findBy({ productId, deleted: IsNull() })
+                        const comments = await Database.get().commentRepository.findBy({ productId, deleted: IsNull() })
+                        const milestones = await Database.get().milestoneRepository.findBy({ productId, deleted: IsNull() })
+                        const versions = await Database.get().versionRepository.findBy({ productId, deleted: IsNull() })
+                        const message = compileProductMessage({ products, members, issues, comments, milestones, versions })
+                        client.publish({
+                            cmd: 'publish',
+                            dup: false,
+                            payload: JSON.stringify(message),
+                            qos: 0,
+                            retain: false,
+                            topic: subscription.topic
+                        })
+                    }, 0)
                 }
                 // Allow subscribe
                 return callback(null, subscription)
@@ -116,22 +157,19 @@ async function boot() {
             // Update product public
             const productMatch = exec('/products/+productId', packet.topic)
             if (productMatch) {
+                // Parse topic and payload
                 const productId = productMatch.productId
-                const product = JSON.parse(packet.payload.toString()) as Product
-                PRODUCT_PUBLIC[productId] = product.public
-            }
-            // Update product members
-            const memberMatch = exec('/products/+productId/members/+memberId', packet.topic)
-            if (memberMatch) {
-                const productId = memberMatch.productId
-                if (productId in PRODUCT_MEMBERS) {
-                    const member = JSON.parse(packet.payload.toString()) as Member
-                    const userId = member.userId
-                    // Remove user ID
-                    PRODUCT_MEMBERS[productId].splice(PRODUCT_MEMBERS[productId].indexOf(userId), 1)
-                    // Add user ID (if member not deleted)
-                    if (!member.deleted) {
-                        PRODUCT_MEMBERS[productId].push(userId)
+                const productMessage = JSON.parse(packet.payload.toString()) as ProductMessage
+                // Update product public
+                if (productMessage.products && productId in productMessage.products) {
+                    const product = productMessage.products[productId]
+                    PRODUCT_PUBLIC[productId] = product.public
+                }
+                // Update product members
+                if (productId in PRODUCT_MEMBERS && productMessage.members) {
+                    for (const memberId in productMessage.members) {
+                        const member = productMessage.members[memberId]
+                        PRODUCT_MEMBERS[productId][member.userId] = !member.deleted
                     }
                 }
             }
@@ -150,17 +188,17 @@ async function boot() {
             return packet
         }
         // Product topics have to be checked more carefully
-        const productMatch = exec('/products/#path', packet.topic)
+        const productMatch = exec('/products/+productId', packet.topic)
         if (productMatch) {
             // Check product public
-            const productId = productMatch.path[0]
+            const productId = productMatch.productId
             if (PRODUCT_PUBLIC[productId]) {
                 // Allow forward
                 return packet
             }
             // Check product members
             const userId = CLIENT_USER_IDS[client.id]
-            if (PRODUCT_MEMBERS[productId].indexOf(userId) != -1) {
+            if (PRODUCT_MEMBERS[productId][userId]) {
                 // Allow forward
                 return packet
             }

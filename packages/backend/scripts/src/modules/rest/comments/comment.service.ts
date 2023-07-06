@@ -7,9 +7,8 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
-import { Database } from 'productboard-database'
+import { Database, convertComment } from 'productboard-database'
 
-import { convertComment } from '../../../functions/convert'
 import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 

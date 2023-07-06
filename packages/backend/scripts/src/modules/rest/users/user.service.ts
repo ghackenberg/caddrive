@@ -8,9 +8,8 @@ import shortid from 'shortid'
 import { FindOptionsWhere, IsNull, Raw } from 'typeorm'
 
 import { User, UserUpdateData, UserREST } from 'productboard-common'
-import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
+import { convertUser, Database, getMemberOrFail, UserEntity } from 'productboard-database'
 
-import { convertUser } from '../../../functions/convert'
 import { emitProductMessage, emitUserMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
