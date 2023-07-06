@@ -116,7 +116,7 @@ function subscribeUserMessage<T>(userId: string, index: Index<Callback<T>[]>, id
     const unsubscribe = subscribe(index, id, callback)
     if (!(userId in USER_MESSAGE_SUBSCRIPTIONS)) {
         USER_MESSAGE_SUBSCRIPTIONS[userId] = MqttAPI.subscribeUserMessages(userId, message => {
-            putAll(message.data.users, CacheAPI.putUser)
+            putAll(message.users, CacheAPI.putUser)
         })
     }
     if (value) {
@@ -128,12 +128,12 @@ function subscribeProductMessage<T>(productId: string, index: Index<Callback<T>[
     const unsubscribe = subscribe(index, id, callback)
     if (!(productId in PRODUCT_MESSAGE_SUBSCRIPTIONS)) {
         PRODUCT_MESSAGE_SUBSCRIPTIONS[productId] = MqttAPI.subscribeProductMessages(productId, message => {
-            putAll(message.data.products, CacheAPI.putProduct)
-            putAll(message.data.members, CacheAPI.putMember)
-            putAll(message.data.issues, CacheAPI.putIssue)
-            putAll(message.data.comments, CacheAPI.putComment)
-            putAll(message.data.milestones, CacheAPI.putMilestone)
-            putAll(message.data.versions, CacheAPI.putVersion)
+            putAll(message.products, CacheAPI.putProduct)
+            putAll(message.members, CacheAPI.putMember)
+            putAll(message.issues, CacheAPI.putIssue)
+            putAll(message.comments, CacheAPI.putComment)
+            putAll(message.milestones, CacheAPI.putMilestone)
+            putAll(message.versions, CacheAPI.putVersion)
         })
     }
     if (value) {
