@@ -13,18 +13,18 @@ function valid(ids: string[]) {
     return ids.map(id => id && id != 'new').reduce((a, b) => a && b, true)
 }
 
-function update<T extends Entity>(oldValue: T, newValue: T, setValue: React.Dispatch<React.SetStateAction<T>>) {
-    if (!oldValue || oldValue.updated < newValue.updated) {
-        setValue(newValue)
-    }
-}
-
 // Entity
 
 export function useEntity<T extends Entity>(ids: string[], initialValue: T, subscribe: Subscribe<T>) {
     const [value, setValue] = React.useState(initialValue)
 
-    React.useEffect(() => valid(ids) && subscribe(entity => update(value, entity, setValue)), ids)
+    React.useEffect(() => {
+        if (valid(ids)) {
+            return subscribe(setValue)
+        } else {
+            return setValue(undefined)
+        }
+    }, ids)
 
     return value
 }

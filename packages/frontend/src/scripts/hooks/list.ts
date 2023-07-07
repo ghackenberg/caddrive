@@ -23,10 +23,14 @@ function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]
     const [value, setValue] = React.useState<T[]>()
 
     React.useEffect(() => {
-        let execute = true
-        load().then(entities => execute && setValue(entities.filter(predicate).sort(compare)))
-        return () => {
-            execute = false
+        if (valid(ids)) {
+            let execute = true
+            load().then(entities => execute && setValue(entities.filter(predicate).sort(compare)))
+            return () => {
+                execute = false
+            }
+        } else {
+            return setValue(undefined)
         }
     }, ids)
 
@@ -39,7 +43,11 @@ function useMqttEntities<T extends Entity>(ids: string[], initialValue: T[], sub
     const [value, setValue] = React.useState(initialValue && initialValue.filter(predicate).sort(compare))
 
     React.useEffect(() => {
-        return valid(ids) && subscribe(entities => setValue(entities.filter(predicate).sort(compare)))
+        if (valid(ids)) {
+            return subscribe(entities => setValue(entities.filter(predicate).sort(compare)))
+        } else {
+            return setValue(undefined)
+        }
     }, ids)
 
     return value
