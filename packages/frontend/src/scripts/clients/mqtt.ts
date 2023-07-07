@@ -32,7 +32,6 @@ function init() {
     // Forward message to handlers
     client.on('message', (topic, payload) => {
         const object = JSON.parse(payload.toString())
-        console.log(topic, object)
         for (const pattern in handlers) {
             if (matches(pattern, topic)) {
                 for (const handler of handlers[pattern]) {
@@ -43,12 +42,7 @@ function init() {
     })
 
     // Initialize client after disconnection
-    client.on('end', () => {
-        for (const pattern in handlers) {
-            delete handlers[pattern]
-        }
-        init()
-    })
+    client.on('end', init)
 }
     
 function subscribe<T>(topic: string, handler: (topic: string, object: T) => void) {
@@ -65,13 +59,15 @@ function subscribe<T>(topic: string, handler: (topic: string, object: T) => void
 
     // Cleanup function
     return () => {
-        // Unregister handler
-        handlers[topic].splice(handlers[topic].indexOf(handler), 1)
-        // Unsubscribe topic if no more handlers and connected
-        if (handlers[topic].length == 0) {
-            delete handlers[topic]
-            if (client.connected) {
-                client.unsubscribe(topic)
+        if (topic in handlers) {
+            // Unregister handler
+            handlers[topic].splice(handlers[topic].indexOf(handler), 1)
+            // Unsubscribe topic if no more handlers and connected
+            if (handlers[topic].length == 0) {
+                delete handlers[topic]
+                if (client.connected) {
+                    client.unsubscribe(topic)
+                }
             }
         }
     }
@@ -94,7 +90,10 @@ export const MqttAPI = {
 
     // Other
 
-    reconnect() {
+    clear() {
+        for (const pattern in handlers) {
+            delete handlers[pattern]
+        }
         client.end()
     }
 

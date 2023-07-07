@@ -3,6 +3,7 @@ import * as React from 'react'
 import { CacheAPI } from '../clients/cache'
 import { ProductClient } from '../clients/rest/product'
 import { UserClient } from '../clients/rest/user'
+import { UserContext } from '../contexts/User'
 
 type Entity = { created: number }
 type Predicate<T> = (value: T) => boolean
@@ -20,6 +21,8 @@ function valid(ids: string[]) {
 // REST entities
 
 function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
+    const { contextUser } = React.useContext(UserContext)
+
     const [value, setValue] = React.useState<T[]>()
 
     React.useEffect(() => {
@@ -32,7 +35,7 @@ function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]
         } else {
             return setValue(undefined)
         }
-    }, ids)
+    }, [contextUser, ...ids])
 
     return value
 }
@@ -40,6 +43,8 @@ function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]
 // MQTT entities
 
 function useMqttEntities<T extends Entity>(ids: string[], initialValue: T[], subscribe: Subscribe<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
+    const { contextUser } = React.useContext(UserContext)
+    
     const [value, setValue] = React.useState(initialValue && initialValue.filter(predicate).sort(compare))
 
     React.useEffect(() => {
@@ -48,7 +53,7 @@ function useMqttEntities<T extends Entity>(ids: string[], initialValue: T[], sub
         } else {
             return setValue(undefined)
         }
-    }, ids)
+    }, [contextUser, ...ids])
 
     return value
 }

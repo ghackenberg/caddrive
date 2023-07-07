@@ -180,7 +180,7 @@ const Root = () => {
     function clear() {
         // TODO check order!
         CacheAPI.clear()
-        MqttAPI.reconnect()
+        MqttAPI.clear()
     }
 
     // RETURN

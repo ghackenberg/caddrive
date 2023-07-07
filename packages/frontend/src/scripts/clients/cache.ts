@@ -100,7 +100,9 @@ function subscribe<T>(index: Index<Callback<T>[]>, id: string, callback: Callbac
     }
     index[id].push(callback)
     return () => {
-        index[id].splice(index[id].indexOf(callback), 1)
+        if (id in index) {
+            index[id].splice(index[id].indexOf(callback), 1)
+        }
     }
 }
 function resolve<T extends Entity>(entityCache: Index<T>, childCache: Index<Index<boolean>>, parentId: string) {

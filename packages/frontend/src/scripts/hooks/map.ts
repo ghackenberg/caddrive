@@ -16,7 +16,6 @@ function recompute(issues: Issue[]) {
 }
 
 export function useIssuesComments(productId: string, milestoneId?: string) {
-
     const issues = useIssues(productId, milestoneId)
 
     const initialIssuesComments: {[issueId: string]: Comment[]} = recompute(issues)
