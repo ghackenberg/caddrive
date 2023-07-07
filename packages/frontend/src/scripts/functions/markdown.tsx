@@ -1,8 +1,6 @@
 import * as React from 'react'
 import { createElement, MouseEvent } from "react"
 
-// eslint-disable-next-line import/no-unresolved
-import { Parent } from 'mdast'
 import rehypeReact from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
@@ -44,11 +42,14 @@ export function collectCommentParts(comments: {[id: string]: Comment[]}) {
 }
 
 export function collectParts(text: string, parts: Part[] = []) {
-    collectPartsInternal(unified().use(remarkParse).parse(text), parts)
+    const parser = unified().use(remarkParse)
+    collectPartsInternal(parser.parse(text), parts)
     return parts
 }
 
-function collectPartsInternal(parent: Parent, parts: Part[]) {
+type Node = { type: string, value?: string, url?: string, children?: Node[] }
+
+function collectPartsInternal(parent: Node, parts: Part[]) {
     for (const child of parent.children) {
         if (child.type == 'link') {
             const match = regex.exec(child.url)

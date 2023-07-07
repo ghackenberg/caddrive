@@ -1,12 +1,12 @@
-import { createServer as createHttpServer } from 'http'
-import { createServer as createNetServer } from 'net'
+import http from 'http'
+import net from 'net'
 
 import Aedes from 'aedes'
 import axios from "axios"
 import { importJWK, jwtVerify, JWK, KeyLike } from 'jose'
 import { exec } from 'mqtt-pattern'
 import { IsNull } from 'typeorm'
-import { createWebSocketStream, WebSocketServer } from 'ws'
+import ws from 'ws'
 
 import { ProductMessage } from 'productboard-common'
 import { Database, compileProductMessage, compileUserMessage } from 'productboard-database'
@@ -260,23 +260,23 @@ async function boot() {
 
     // Net server
 
-    const netServer = createNetServer(socket => aedes.handle(socket, undefined))
+    const netServer = net.createServer(socket => aedes.handle(socket, undefined))
     netServer.listen(NET_PORT, () => {
         console.log('NET server listening')
     })
 
     // HTTP server
 
-    const httpServer = createHttpServer()
+    const httpServer = http.createServer()
     httpServer.listen(HTTP_PORT, () => {
         console.log('HTTP server listening')
     })
 
     // WebSocket server
 
-    const wsServer = new WebSocketServer({ server: httpServer })
+    const wsServer = new ws.Server({ server: httpServer })
     wsServer.on('connection', (socket, request) => {
-        const stream = createWebSocketStream(socket)
+        const stream = ws.createWebSocketStream(socket)
         aedes.handle(stream, request)
     })
 }
