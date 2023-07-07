@@ -260,7 +260,7 @@ async function boot() {
 
     // Net server
 
-    const netServer = createNetServer(aedes.handle)
+    const netServer = createNetServer(socket => aedes.handle(socket, undefined))
     netServer.listen(NET_PORT, () => {
         console.log('NET server listening')
     })
@@ -275,9 +275,9 @@ async function boot() {
     // WebSocket server
 
     const wsServer = new WebSocketServer({ server: httpServer })
-    wsServer.on('connection', socket => {
+    wsServer.on('connection', (socket, request) => {
         const stream = createWebSocketStream(socket)
-        aedes.handle(stream)
+        aedes.handle(stream, request)
     })
 }
 
