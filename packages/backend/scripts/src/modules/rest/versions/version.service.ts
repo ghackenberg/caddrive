@@ -44,8 +44,12 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const imageType = await processImage(versionId, null, files)
         const version = await Database.get().versionRepository.save({ productId, versionId, created, updated, userId, modelType, imageType, ...data })
         renderImage(productId, versionId, files)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = version.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', versions: [version] })
+        emitProductMessage(productId, { type: 'patch', products: [product], versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -67,8 +71,12 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.imageType = await processImage(versionId, version.imageType, files)
         await Database.get().versionRepository.save(version)
         renderImage(productId, versionId, files)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = version.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', versions: [version] })
+        emitProductMessage(productId, { type: 'patch', products: [product], versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -79,8 +87,12 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.deleted = Date.now()
         version.updated = version.deleted
         await Database.get().versionRepository.save(version)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = version.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', versions: [version] })
+        emitProductMessage(productId, { type: 'patch', products: [product], versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -180,6 +192,10 @@ async function updateImage(productId: string, versionId: string, image: Jimp) {
     version.updated = Date.now()
     version.imageType = 'png'
     await Database.get().versionRepository.save(version)
+    // Update product
+    const product = await Database.get().productRepository.findOneBy({ productId })
+    product.updated = version.updated
+    await Database.get().productRepository.save(product)
     // Emit changes
-    emitProductMessage(productId, { type: 'patch', versions: [version] })
+    emitProductMessage(productId, { type: 'patch', products: [product], versions: [version] })
 }

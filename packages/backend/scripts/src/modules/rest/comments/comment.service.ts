@@ -52,8 +52,12 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
             issue.state = 'open'
         }
         await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = comment.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }
@@ -76,8 +80,12 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         const issue = await Database.get().issueRepository.findOneBy({ productId, issueId })
         issue.updated = comment.updated
         await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = comment.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }
@@ -93,8 +101,12 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         issue.updated = comment.updated
         // TODO update state?
         await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = comment.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }

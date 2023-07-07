@@ -44,8 +44,12 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             writeFileSync(`./uploads/${audioId}.webm`, files.audio[0].buffer)
         }
         const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, audioId, state, ...data })
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = issue.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', issues: [issue] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue] })
         // Return issue
         return convertIssue(issue)
     }
@@ -67,8 +71,12 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
         }
         await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = issue.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', issues: [issue] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue] })
         // Return issue
         return convertIssue(issue)
     }
@@ -79,6 +87,10 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         issue.deleted = Date.now()
         issue.updated = issue.deleted
         await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = issue.updated
+        await Database.get().productRepository.save(product)
         // Delete comments
         const comments = await Database.get().commentRepository.findBy({ productId, issueId, deleted: IsNull() })
         for (const comment of comments) {
@@ -87,7 +99,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             await Database.get().commentRepository.save(comment)
         }
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', issues: [issue], comments })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments })
         // Return issue
         return convertIssue(issue)
     }

@@ -24,8 +24,12 @@ export class MemberService implements MemberREST {
         const created = Date.now()
         const updated = created
         const member = await Database.get().memberRepository.save({ productId, memberId, created, updated, ...data })
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = member.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', members: [member] })
+        emitProductMessage(productId, { type: 'patch', products: [product], members: [member] })
         // Return member
         return convertMember(member)
     }
@@ -41,8 +45,12 @@ export class MemberService implements MemberREST {
         member.updated = Date.now()
         member.role = data.role
         await Database.get().memberRepository.save(member)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = member.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', members: [member] })
+        emitProductMessage(productId, { type: 'patch', products: [product], members: [member] })
         // Return member
         return convertMember(member)
     }
@@ -53,8 +61,12 @@ export class MemberService implements MemberREST {
         member.deleted = Date.now()
         member.updated = member.deleted
         await Database.get().memberRepository.save(member)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = member.updated
+        await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', members: [member] })
+        emitProductMessage(productId, { type: 'patch', products: [product], members: [member] })
         // Return member
         return convertMember(member)
     }
