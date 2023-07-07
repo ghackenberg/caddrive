@@ -33,7 +33,7 @@ export class MilestoneService implements MilestoneREST {
         const userId = this.request.user.userId
         const milestone = await Database.get().milestoneRepository.save({ productId, milestoneId, created, updated, userId, ...data })
         // Emit changes
-        emitProductMessage(productId, { milestones: [milestone] })
+        emitProductMessage(productId, { type: 'patch', milestones: [milestone] })
         // Return milestone
         return convertMilestone(milestone)
     }
@@ -52,7 +52,7 @@ export class MilestoneService implements MilestoneREST {
         milestone.end = data.end
         await Database.get().milestoneRepository.save(milestone)
         // Emit changes
-        emitProductMessage(productId, { milestones: [milestone] })
+        emitProductMessage(productId, { type: 'patch', milestones: [milestone] })
         // Return milestone
         return convertMilestone(milestone)
     }
@@ -71,7 +71,7 @@ export class MilestoneService implements MilestoneREST {
             await Database.get().issueRepository.save(issue)
         }
         // Emit changes
-        emitProductMessage(productId, { milestones: [milestone], issues })
+        emitProductMessage(productId, { type: 'patch', milestones: [milestone], issues })
         // Return milestone
         return convertMilestone(milestone)
     }

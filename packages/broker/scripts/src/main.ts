@@ -110,7 +110,7 @@ async function boot() {
                 // Schedule initialization
                 setTimeout(async () => {
                     const users = await Database.get().userRepository.findBy({ userId, deleted: IsNull() })
-                    const message = compileUserMessage({ users })
+                    const message = compileUserMessage({ type: 'state', users })
                     client.publish({
                         cmd: 'publish',
                         dup: false,
@@ -155,7 +155,7 @@ async function boot() {
                         const comments = await Database.get().commentRepository.findBy({ productId, deleted: IsNull() })
                         const milestones = await Database.get().milestoneRepository.findBy({ productId, deleted: IsNull() })
                         const versions = await Database.get().versionRepository.findBy({ productId, deleted: IsNull() })
-                        const message = compileProductMessage({ products, members, issues, comments, milestones, versions })
+                        const message = compileProductMessage({ type: 'state', products, members, issues, comments, milestones, versions })
                         client.publish({
                             cmd: 'publish',
                             dup: false,
@@ -195,14 +195,13 @@ async function boot() {
                 const productId = productMatch.productId
                 const productMessage = JSON.parse(packet.payload.toString()) as ProductMessage
                 // Update product public
-                if (productMessage.products && productId in productMessage.products) {
-                    const product = productMessage.products[productId]
+                if (productMessage.products) {
+                    const product = productMessage.products[0]
                     PRODUCT_PUBLIC[productId] = product.public
                 }
                 // Update product members
                 if (productId in PRODUCT_MEMBERS && productMessage.members) {
-                    for (const memberId in productMessage.members) {
-                        const member = productMessage.members[memberId]
+                    for (const member of productMessage.members) {
                         PRODUCT_MEMBERS[productId][member.userId] = !member.deleted
                     }
                 }

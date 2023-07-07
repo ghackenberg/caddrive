@@ -53,7 +53,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         }
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitProductMessage(productId, { issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }
@@ -77,7 +77,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         issue.updated = comment.updated
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitProductMessage(productId, { issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }
@@ -94,7 +94,7 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         // TODO update state?
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitProductMessage(productId, { issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
     }

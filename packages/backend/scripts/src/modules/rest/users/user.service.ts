@@ -61,7 +61,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         }
         await Database.get().userRepository.save(user)
         // Emit changes
-        emitUserMessage(userId, { users: [user] })
+        emitUserMessage(userId, { type: 'state', users: [user] })
         // Return user
         return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
@@ -80,9 +80,9 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
             await Database.get().memberRepository.save(member)
         }
         // Emit changes
-        emitUserMessage(userId, { users: [user] })
+        emitUserMessage(userId, { type: 'state', users: [user] })
         for (const member of members) {
-            emitProductMessage(member.productId, { members: [member] })
+            emitProductMessage(member.productId, { type: 'patch', members: [member] })
         }
         // Return user
         return convertUser(user, this.request.user && this.request.user.userId == userId)

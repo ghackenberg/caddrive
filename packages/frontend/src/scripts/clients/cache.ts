@@ -89,9 +89,9 @@ function clear<T>(cache: Index<T>) {
         delete cache[key]
     }
 }
-function putAll<T>(index: Index<T>, putOne: Put<T>) {
-    for (const entityId in index || {}) {
-        putOne(index[entityId])
+function putAll<T>(entities: T[], putOne: Put<T>) {
+    for (const entity of entities || []) {
+        putOne(entity)
     }
 }
 function subscribe<T>(index: Index<Callback<T>[]>, id: string, callback: Callback<T>) {
@@ -109,7 +109,7 @@ function resolve<T extends Entity>(entityCache: Index<T>, childCache: Index<Inde
         const entities = entityIds.map(entityId => entityCache[entityId])
         return entities.filter(entity => !entity.deleted)
     }
-    return null
+    return []
 }
 
 // Subscribe
@@ -131,40 +131,11 @@ function subscribeProductMessage<T>(productId: string, index: Index<Callback<T>[
     if (!(productId in PRODUCT_MESSAGE_SUBSCRIPTIONS)) {
         PRODUCT_MESSAGE_SUBSCRIPTIONS[productId] = MqttAPI.subscribeProductMessages(productId, message => {
             putAll(message.products, CacheAPI.putProduct)
-
             putAll(message.members, CacheAPI.putMember)
-            if (message.members && !(productId in MEMBERS_CACHE)) {
-                MEMBERS_CACHE[productId] = {}
-                notify(MEMBERS_CALLBACKS, productId, [])
-            }
-
             putAll(message.issues, CacheAPI.putIssue)
-            if (message.issues && !(productId in ISSUES_CACHE)) {
-                ISSUES_CACHE[productId] = {}
-                notify(ISSUES_CALLBACKS, productId, [])
-            }
-
             putAll(message.comments, CacheAPI.putComment)
-            if (message.comments) {
-                for (const issueId in ISSUES_CACHE[productId]) {
-                    if (!(`${productId}-${issueId}` in COMMENTS_CACHE)) {
-                        COMMENTS_CACHE[`${productId}-${issueId}`] = {}
-                        notify(COMMENTS_CALLBACKS, `${productId}-${issueId}`, [])
-                    }
-                }
-            }
-
             putAll(message.milestones, CacheAPI.putMilestone)
-            if (message.milestones && !(productId in MILESTONES_CACHE)) {
-                MILESTONES_CACHE[productId] = {}
-                notify(MILESTONES_CALLBACKS, productId, [])
-            }
-
             putAll(message.versions, CacheAPI.putVersion)
-            if (message.versions && !(productId in VERSIONS_CACHE)) {
-                VERSIONS_CACHE[productId] = {}
-                notify(VERSIONS_CALLBACKS, productId, [])
-            }
         })
     }
     if (value) {

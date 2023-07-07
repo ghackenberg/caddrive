@@ -45,7 +45,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
         const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, audioId, state, ...data })
         // Emit changes
-        emitProductMessage(productId, { issues: [issue] })
+        emitProductMessage(productId, { type: 'patch', issues: [issue] })
         // Return issue
         return convertIssue(issue)
     }
@@ -68,7 +68,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         }
         await Database.get().issueRepository.save(issue)
         // Emit changes
-        emitProductMessage(productId, { issues: [issue] })
+        emitProductMessage(productId, { type: 'patch', issues: [issue] })
         // Return issue
         return convertIssue(issue)
     }
@@ -87,7 +87,7 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
             await Database.get().commentRepository.save(comment)
         }
         // Emit changes
-        emitProductMessage(productId, { issues: [issue], comments })
+        emitProductMessage(productId, { type: 'patch', issues: [issue], comments })
         // Return issue
         return convertIssue(issue)
     }

@@ -45,7 +45,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const version = await Database.get().versionRepository.save({ productId, versionId, created, updated, userId, modelType, imageType, ...data })
         renderImage(productId, versionId, files)
         // Emit changes
-        emitProductMessage(productId, { versions: [version] })
+        emitProductMessage(productId, { type: 'patch', versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -68,7 +68,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         await Database.get().versionRepository.save(version)
         renderImage(productId, versionId, files)
         // Emit changes
-        emitProductMessage(productId, { versions: [version] })
+        emitProductMessage(productId, { type: 'patch', versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -80,7 +80,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         version.updated = version.deleted
         await Database.get().versionRepository.save(version)
         // Emit changes
-        emitProductMessage(productId, { versions: [version] })
+        emitProductMessage(productId, { type: 'patch', versions: [version] })
         // Return version
         return convertVersion(version)
     }
@@ -181,5 +181,5 @@ async function updateImage(productId: string, versionId: string, image: Jimp) {
     version.imageType = 'png'
     await Database.get().versionRepository.save(version)
     // Emit changes
-    emitProductMessage(productId, { versions: [version] })
+    emitProductMessage(productId, { type: 'patch', versions: [version] })
 }

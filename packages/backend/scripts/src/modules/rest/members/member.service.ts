@@ -25,7 +25,7 @@ export class MemberService implements MemberREST {
         const updated = created
         const member = await Database.get().memberRepository.save({ productId, memberId, created, updated, ...data })
         // Emit changes
-        emitProductMessage(productId, { members: [member] })
+        emitProductMessage(productId, { type: 'patch', members: [member] })
         // Return member
         return convertMember(member)
     }
@@ -42,7 +42,7 @@ export class MemberService implements MemberREST {
         member.role = data.role
         await Database.get().memberRepository.save(member)
         // Emit changes
-        emitProductMessage(productId, { members: [member] })
+        emitProductMessage(productId, { type: 'patch', members: [member] })
         // Return member
         return convertMember(member)
     }
@@ -54,7 +54,7 @@ export class MemberService implements MemberREST {
         member.updated = member.deleted
         await Database.get().memberRepository.save(member)
         // Emit changes
-        emitProductMessage(productId, { members: [member] })
+        emitProductMessage(productId, { type: 'patch', members: [member] })
         // Return member
         return convertMember(member)
     }

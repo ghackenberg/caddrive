@@ -56,7 +56,7 @@ export class ProductService implements ProductREST {
         const role = 'manager'
         const member = await Database.get().memberRepository.save({ productId, memberId, created, updated, userId, role })
         // Emit changes
-        emitProductMessage(productId, { products: [product], members: [member] })
+        emitProductMessage(productId, { type: 'state', products: [product], members: [member] })
         // Return product
         return convertProduct(product)
     }
@@ -75,7 +75,7 @@ export class ProductService implements ProductREST {
         product.public = data.public
         await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { products: [product] })
+        emitProductMessage(productId, { type: 'patch', products: [product] })
         // Return product
         return convertProduct(product)
     }
@@ -122,7 +122,7 @@ export class ProductService implements ProductREST {
             await Database.get().versionRepository.save(version)
         }
         // Emit changes
-        emitProductMessage(productId, { products: [product], members, issues, comments, milestones, versions })
+        emitProductMessage(productId, { type: 'state', products: [product], members, issues, comments, milestones, versions })
         // Return product
         return convertProduct(product)
     }
