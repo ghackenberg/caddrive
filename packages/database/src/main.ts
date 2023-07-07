@@ -19,6 +19,9 @@ export { TokenEntity } from './entities/token'
 export { UserEntity } from './entities/user'
 export { VersionEntity } from './entities/version'
 
+export * from './convert'
+export * from './compile'
+
 export class Database {
     private static instance: Database
 

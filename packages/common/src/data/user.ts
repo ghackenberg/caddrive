@@ -9,7 +9,7 @@ export class UserUpdateData {
 
 export class User extends UserUpdateData {
     @ApiProperty()
-    id: string
+    userId: string
     
     @ApiProperty()
     created: number

@@ -5,11 +5,11 @@ import { NavLink } from 'react-router-dom'
 
 import { Member } from 'productboard-common'
 
+import { MemberClient } from '../../clients/rest/member'
 import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers } from '../../hooks/list'
-import { MemberManager } from '../../managers/member'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
@@ -46,11 +46,11 @@ export const ProductMemberView = () => {
 
     // FUNCTIONS
 
-    async function deleteMember(event: React.UIEvent, member:Member) {
+    async function deleteMember(event: React.UIEvent, member: Member) {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this member?')) {
-            await MemberManager.deleteMember(member.id)
+            await MemberClient.deleteMember(productId, member.memberId)
         }
     }
 
@@ -90,7 +90,7 @@ export const ProductMemberView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                    members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
                                             <strong>New</strong> member
                                         </NavLink>
@@ -114,7 +114,7 @@ export const ProductMemberView = () => {
                                 </div>
                             ) : (
                                 <div className='main'>
-                                    <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.id}/settings`)}/>
+                                    <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.memberId}/settings`)}/>
                                 </div>
                             ) }
                             <LegalFooter/>

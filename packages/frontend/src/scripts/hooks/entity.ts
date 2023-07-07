@@ -1,82 +1,100 @@
 import * as React from 'react'
 
-import { CommentManager } from '../managers/comment'
-import { IssueManager } from '../managers/issue'
-import { MemberManager } from '../managers/member'
-import { MilestoneManager } from '../managers/milestone'
-import { ProductManager } from '../managers/product'
-import { UserManager } from '../managers/user'
-import { VersionManager } from '../managers/version'
+import { CacheAPI } from '../clients/cache'
 
-function useEntity<T extends { id: string }>(id: string, cache: () => T, get: (callback: (value: T) => void) => (() => void)) {
-    const initialValue = id && id != 'new' && cache()
+type Entity = { updated: number }
+type Update<T> = (value: T) => void
+type Unsubscribe = () => void
+type Subscribe<T> = (update: Update<T>) => Unsubscribe
 
+// Helper
+
+function valid(ids: string[]) {
+    return ids.map(id => id && id != 'new').reduce((a, b) => a && b, true)
+}
+
+function update<T extends Entity>(oldValue: T, newValue: T, setValue: React.Dispatch<React.SetStateAction<T>>) {
+    if (!oldValue || oldValue.updated < newValue.updated) {
+        setValue(newValue)
+    }
+}
+
+// Entity
+
+export function useEntity<T extends Entity>(ids: string[], initialValue: T, subscribe: Subscribe<T>) {
     const [value, setValue] = React.useState(initialValue)
 
-    React.useEffect(() => {
-        if (id && id != 'new') {
-            return get(value => setValue(value))
-        } else {
-            setValue(undefined)
-            return undefined
-        }
-    }, [id])
+    React.useEffect(() => valid(ids) && subscribe(entity => update(value, entity, setValue)), ids)
 
     return value
 }
 
+// User
+
 export function useUser(userId: string) {
     return useEntity(
-        userId,
-        () => UserManager.getUserFromCache(userId),
-        callback => UserManager.getUser(userId, callback)
+        [userId],
+        CacheAPI.getUser(userId),
+        callback => CacheAPI.subscribeUser(userId, callback)
     )
 }
+
+// Product
 
 export function useProduct(productId: string) {
     return useEntity(
-        productId,
-        () => ProductManager.getProductFromCache(productId),
-        callback => ProductManager.getProduct(productId, callback)
+        [productId],
+        CacheAPI.getProduct(productId),
+        callback => CacheAPI.subscribeProduct(productId, callback)
     )
 }
 
-export function useVersion(versionId: string) {
+// Version
+
+export function useVersion(productId: string, versionId: string) {
     return useEntity(
-        versionId,
-        () => VersionManager.getVersionFromCache(versionId),
-        callback => VersionManager.getVersion(versionId, callback)
+        [productId, versionId],
+        CacheAPI.getVersion(productId, versionId),
+        callback => CacheAPI.subscribeVersion(productId, versionId, callback)
     )
 }
 
-export function useIssue(issueId: string) {
+// Issue
+
+export function useIssue(productId: string, issueId: string) {
     return useEntity(
-        issueId,
-        () => IssueManager.getIssueFromCache(issueId),
-        callback => IssueManager.getIssue(issueId, callback)
+        [productId, issueId],
+        CacheAPI.getIssue(productId, issueId),
+        callback => CacheAPI.subscribeIssue(productId, issueId, callback)
     )
 }
 
-export function useComment(commentId: string) {
+// Comment
+
+export function useComment(productId: string, issueId: string, commentId: string) {
     return useEntity(
-        commentId,
-        () => CommentManager.getCommentFromCache(commentId),
-        callback => CommentManager.getComment(commentId, callback)
+        [productId, issueId, commentId],
+        CacheAPI.getComment(productId, issueId, commentId),
+        callback => CacheAPI.subscribeComment(productId, issueId, commentId, callback)
     )
 }
 
-export function useMilestone(milestoneId: string) {
+// Milestone
+
+export function useMilestone(productId: string, milestoneId: string) {
     return useEntity(
-        milestoneId,
-        () => MilestoneManager.getMilestoneFromCache(milestoneId),
-        callback => MilestoneManager.getMilestone(milestoneId, callback)
+        [productId, milestoneId],
+        CacheAPI.getMilestone(productId, milestoneId),
+        callback => CacheAPI.subscribeMilestone(productId, milestoneId, callback)
     )
 }
 
-export function useMember(memberId: string) {
+// Member
+
+export function useMember(productId: string, memberId: string) {
     return useEntity(
-        memberId,
-        () => MemberManager.getMemberFromCache(memberId),
-        callback => MemberManager.getMember(memberId, callback)
+        [productId, memberId],
+        CacheAPI.getMember(productId, memberId),
+        callback => CacheAPI.subscribeMember(productId, memberId, callback)
     )
 }

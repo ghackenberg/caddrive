@@ -1,89 +1,110 @@
 import * as React from 'react'
 
-import { CommentManager } from '../managers/comment'
-import { IssueManager } from '../managers/issue'
-import { MemberManager } from '../managers/member'
-import { MilestoneManager } from '../managers/milestone'
-import { ProductManager } from '../managers/product'
-import { UserManager } from '../managers/user'
-import { VersionManager } from '../managers/version'
+import { CacheAPI } from '../clients/cache'
+import { ProductClient } from '../clients/rest/product'
+import { UserClient } from '../clients/rest/user'
 
-function useEntities<T extends { id: string, created: number }>(id: string, cache: () => T[], get: (callback: (values: T[]) => void) => (() => void)) {
+type Entity = { created: number }
+type Predicate<T> = (value: T) => boolean
+type Compare<T> = (a: T, b: T) => number
+type Unsubscribe = () => void
+type Callback<T> = (value: T) => void
+type Subscribe<T> = (callback: Callback<T>) => Unsubscribe
 
-    function compare(a: T, b: T) {
-        return a.created - b.created
-    }
+// Helper
 
-    const initialValue = id !== undefined && id !== null && !id.includes('new') && cache()
+function valid(ids: string[]) {
+    return ids.map(id => id && id != 'new').reduce((a, b) => a && b, true)
+}
 
-    const [values, setValues] = React.useState(initialValue && initialValue.sort(compare))
+// REST entities
+
+function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
+    const [value, setValue] = React.useState<T[]>()
 
     React.useEffect(() => {
-        if (id !== undefined && id !== null && !id.includes('new')) {
-            return get(values => setValues(values.sort(compare)))
-        } else {
-            setValues(undefined)
-            return () => {/**/}
+        let execute = true
+        load().then(entities => execute && setValue(entities.filter(predicate).sort(compare)))
+        return () => {
+            execute = false
         }
-    }, [id])
+    }, ids)
 
-    return values
+    return value
 }
 
-// USERS
+// MQTT entities
 
-export function useUsers(query?: string, productId?: string) {
-    return useEntities(
-        '',
-        () => UserManager.findUsersFromCache(),
-        callback => UserManager.findUsers(query, productId, callback)
-    )
+function useMqttEntities<T extends Entity>(ids: string[], initialValue: T[], subscribe: Subscribe<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
+    const [value, setValue] = React.useState(initialValue && initialValue.filter(predicate).sort(compare))
+
+    React.useEffect(() => {
+        return valid(ids) && subscribe(entities => setValue(entities.filter(predicate).sort(compare)))
+    }, ids)
+
+    return value
 }
 
-export function useProducts(_public?: 'true' | 'false') {
-    return useEntities(
-        `${_public}`,
-        () => ProductManager.findProductsFromCache(_public),
-        callback => ProductManager.findProducts(_public, callback)
-    )
+// Users
+
+export function useUsers() {
+    return useRestEntites([""], () => UserClient.findUsers())
 }
+
+// Products
+
+export function useProducts(_public: "true" | "false") {
+    return useRestEntites([_public], () => ProductClient.findProducts(_public))
+}
+
+// Verions
 
 export function useVersions(productId: string) {
-    return useEntities(
-        productId,
-        () => VersionManager.findVersionsFromCache(productId),
-        callback => VersionManager.findVersions(productId, callback)
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getVersions(productId),
+        callback => CacheAPI.subscribeVersions(productId, callback)
     )
 }
+
+// Issues
 
 export function useIssues(productId: string, milestoneId?: string, state?: 'open' | 'closed') {
-    return useEntities(
-        `${productId}-${milestoneId}-${state}`,
-        () => IssueManager.findIssuesFromCache(productId, milestoneId, state),
-        callback => IssueManager.findIssues(productId, milestoneId, state, callback)
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getIssues(productId),
+        callback => CacheAPI.subscribeIssues(productId, callback),
+        issue => (!milestoneId || issue.milestoneId == milestoneId) && (!state || issue.state == state)
     )
 }
 
-export function useComments(issueId: string) {
-    return useEntities(
-        issueId,
-        () => CommentManager.findCommentsFromCache(issueId),
-        callback => CommentManager.findComments(issueId, callback)
+// Comments
+
+export function useComments(productId: string, issueId: string) {
+    return useMqttEntities(
+        [productId, issueId],
+        CacheAPI.getComments(productId, issueId),
+        callback => CacheAPI.subscribeComments(productId, issueId, callback)
     )
 }
+
+// Milestones
 
 export function useMilestones(productId: string) {
-    return useEntities(
-        productId,
-        () => MilestoneManager.findMilestonesFromCache(productId),
-        callback => MilestoneManager.findMilestones(productId, callback)
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getMilestones(productId),
+        callback => CacheAPI.subscribeMilestones(productId, callback)
     )
 }
 
+// Members
+
 export function useMembers(productId: string, userId?: string) {
-    return useEntities(
-        productId,
-        () => MemberManager.findMembersFromCache(productId),
-        callback => MemberManager.findMembers(productId, userId, callback)
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getMembers(productId),
+        callback => CacheAPI.subscribeMembers(productId, callback),
+        member => !userId || member.userId == userId
     )
 }

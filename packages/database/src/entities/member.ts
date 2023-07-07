@@ -7,8 +7,19 @@ import { UserEntity } from './user'
 
 @Entity()
 export class MemberEntity extends Member {
+    @Column({ nullable: false })
+    override productId: string
     @PrimaryColumn({ nullable: false })
-    override id: string
+    override memberId: string
+    @Column({ nullable: false })
+    override userId: string
+
+    @ManyToOne(() => ProductEntity)
+    @JoinColumn({ name: 'productId' })
+    product: ProductEntity
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity
 
     @Column({ nullable: false })
     override created: number
@@ -16,20 +27,6 @@ export class MemberEntity extends Member {
     override updated: number
     @Column({ nullable: true })
     override deleted: number
-
-    @ManyToOne(() => ProductEntity)
-    @JoinColumn({ name: 'productId' })
-    product: ProductEntity
-
-    @Column({ nullable: false })
-    override productId: string
-
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'userId' })
-    user: UserEntity
-
-    @Column({ nullable: false })
-    override userId: string
 
     @Column({ nullable: false, type: 'simple-enum', enum: ["manager", "engineer", "customer"] })
     override role: MemberRole

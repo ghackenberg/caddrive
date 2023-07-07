@@ -25,7 +25,13 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
 
     // CONSTANTS
 
-    const entity = props.commentId ? useComment(props.commentId) : useIssue(props.issueId)
+    const productId = props.productId
+    const issueId = props.issueId
+    const commentId = props.commentId
+
+    // HOOKS
+
+    const entity = commentId ? useComment(productId, issueId, commentId) : useIssue(productId, issueId)
 
     // INITIAL STATES
 
@@ -53,7 +59,7 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
 
     return (
         entity && (
-            <div key={entity.id} className={`widget comment_view ${props.class} ${contextUser && entity.userId == contextUser.id ? 'self' : ''}`}>
+            <div key={'commentId' in entity ? entity.commentId : entity.issueId} className={`widget comment_view ${props.class} ${contextUser && entity.userId == contextUser.userId ? 'self' : ''}`}>
                 <div className="head">
                     <div className="icon">
                         <a href={`/users/${entity.userId}`}>

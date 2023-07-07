@@ -2,12 +2,12 @@ import  * as React from 'react'
 import { useState, useEffect, FormEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 
+import { MilestoneClient } from '../../clients/rest/milestone'
 import { calculateActual } from '../../functions/burndown'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useIssues } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
-import { MilestoneManager } from '../../managers/milestone'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { DateInput } from '../inputs/DateInput'
 import { TextInput } from '../inputs/TextInput'
@@ -30,7 +30,7 @@ export const ProductMilestoneSettingView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const milestone = useMilestone(milestoneId)
+    const milestone = useMilestone(productId, milestoneId)
     const issues = useIssues(productId, milestoneId)
     const comments = useIssuesComments(productId, milestoneId)
 
@@ -92,10 +92,10 @@ export const ProductMilestoneSettingView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if(milestoneId == 'new') {
-            const milestone = await MilestoneManager.addMilestone({ productId: productId, label: label, start: start.getTime(), end: end.getTime() })
-            await replace(`/products/${productId}/milestones/${milestone.id}/issues`)
+            const milestone = await MilestoneClient.addMilestone(productId, { label, start: start.getTime(), end: end.getTime() })
+            await replace(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)
         } else {
-            await MilestoneManager.updateMilestone(milestone.id, { ...milestone, label: label, start: start.getTime(), end: end.getTime() })
+            await MilestoneClient.updateMilestone(productId, milestoneId, { label, start: start.getTime(), end: end.getTime() })
             await goBack()
         }
     }

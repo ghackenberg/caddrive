@@ -6,10 +6,10 @@ import { FileREST } from 'productboard-common'
 
 @Injectable()
 export class FileService implements FileREST<ReadStream> {
-    async getFile(id: string): Promise<ReadStream> {
-        if (!existsSync(`./uploads/${id}`)) {
+    async getFile(fileId: string): Promise<ReadStream> {
+        if (!existsSync(`./uploads/${fileId}`)) {
             throw new NotFoundException()
         }
-        return createReadStream(`./uploads/${id}`)
+        return createReadStream(`./uploads/${fileId}`)
     }
 }

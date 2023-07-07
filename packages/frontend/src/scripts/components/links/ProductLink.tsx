@@ -25,13 +25,13 @@ export const ProductLink = (props: {product?: Product}) => {
                 await goBack()
             }
         }
-        await replace(`/products/${props.product.id}/versions`)
+        await replace(`/products/${props.product.productId}/versions`)
     }
 
     return (
         props.product ? (
             <span>
-                <NavLink to={`/products/${props.product.id}/versions`} onClick={handleClick}>
+                <NavLink to={`/products/${props.product.productId}/versions`} onClick={handleClick}>
                     <img src={ProductIcon} className='icon small'/>
                     <span>{props.product.name}</span>
                 </NavLink>

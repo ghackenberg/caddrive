@@ -1,11 +1,11 @@
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 
-import { FileManager } from "../managers/file"
+import { CacheAPI } from "../clients/cache"
 
 const GLTF_LOADER = new GLTFLoader()
 
 export async function loadGLTFModel(path: string) {
-    const file = await FileManager.getFile(path)
+    const file = await CacheAPI.loadFile(path)
     return parseGLTFModel(file)
 }
 

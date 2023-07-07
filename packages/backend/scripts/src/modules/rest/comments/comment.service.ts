@@ -4,12 +4,12 @@ import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
 import shortid from 'shortid'
-import { FindOptionsWhere, IsNull } from 'typeorm'
+import { IsNull } from 'typeorm'
 
 import { CommentREST, Comment, CommentAddData, CommentUpdateData } from 'productboard-common'
-import { CommentEntity, Database } from 'productboard-database'
+import { Database, convertComment } from 'productboard-database'
 
-import { convertComment } from '../../../functions/convert'
+import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -23,65 +23,91 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         }
     }
 
-    async findComments(issueId: string): Promise<Comment[]> {
-        let where: FindOptionsWhere<CommentEntity>
-        if (issueId)
-            where = { issueId, deleted: IsNull() }
+    async findComments(productId: string, issueId: string): Promise<Comment[]> {
+        const where = { productId, issueId, deleted: IsNull() }
         const result: Comment[] = []
         for (const comment of await Database.get().commentRepository.findBy(where))
             result.push(convertComment(comment))
         return result
     }
 
-    async addComment(data: CommentAddData, files: { audio?: Express.Multer.File[] }): Promise<Comment> {
-        const id = shortid()
+    async addComment(productId: string, issueId: string, data: CommentAddData, files: { audio?: Express.Multer.File[] }): Promise<Comment> {
+        // Create comment
+        const commentId = shortid()
         const created = Date.now()
         const updated = created
-        const userId = this.request.user.id
-        let comment: CommentEntity
+        const userId = this.request.user.userId
+        let audioId: string
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            const audioId = shortid()
-            comment = await Database.get().commentRepository.save({ id, created, updated, userId, audioId, ...data })
-            writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
-        } else {
-            comment = await Database.get().commentRepository.save({ id, created, updated, userId, ...data })
+            audioId = shortid()
+            writeFileSync(`./uploads/${audioId}.webm`, files.audio[0].buffer)
         }
-        if (comment.action != 'none') {
-            const issue = await Database.get().issueRepository.findOneBy({ id: comment.issueId })
-            issue.updated = created
-            if (comment.action == 'close') {
-                issue.state = 'closed'
-                await Database.get().issueRepository.save(issue)
-            } else if (comment.action == 'reopen') {
-                issue.state = 'open'
-                await Database.get().issueRepository.save(issue)
-            }
+        const comment = await Database.get().commentRepository.save({ productId, issueId, commentId, created, updated, userId, audioId, ...data })
+        // Update issue
+        const issue = await Database.get().issueRepository.findOneBy({ productId, issueId })
+        issue.updated = comment.updated
+        if (comment.action == 'close') {
+            issue.state = 'closed'
+        } else if (comment.action == 'reopen') {
+            issue.state = 'open'
         }
+        await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = comment.updated
+        await Database.get().productRepository.save(product)
+        // Emit changes
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
+        // Return comment
         return convertComment(comment)
     }
 
-    async getComment(id: string): Promise<Comment> {
-        const comment = await Database.get().commentRepository.findOneByOrFail({ id })
+    async getComment(productId: string, issueId: string, commentId: string): Promise<Comment> {
+        const comment = await Database.get().commentRepository.findOneByOrFail({ productId, issueId, commentId })
         return convertComment(comment)
     }
     
-    async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Comment> {
-        const comment = await Database.get().commentRepository.findOneByOrFail({ id })
+    async updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Comment> {
+        // Update comment
+        const comment = await Database.get().commentRepository.findOneByOrFail({ productId, issueId, commentId })
         comment.updated = Date.now()
-        comment.action = data.action
         comment.text = data.text
-        await Database.get().commentRepository.save(comment)
         if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
             writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
         }
+        await Database.get().commentRepository.save(comment)
+        // Update issue
+        const issue = await Database.get().issueRepository.findOneBy({ productId, issueId })
+        issue.updated = comment.updated
+        await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = comment.updated
+        await Database.get().productRepository.save(product)
+        // Emit changes
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
+        // Return comment
         return convertComment(comment)
     }
 
-    async deleteComment(id: string): Promise<Comment> {
-        const comment = await Database.get().commentRepository.findOneByOrFail({ id })
+    async deleteComment(productId: string, issueId: string, commentId: string): Promise<Comment> {
+        // Update comment
+        const comment = await Database.get().commentRepository.findOneByOrFail({ productId, issueId, commentId })
         comment.deleted = Date.now()
         comment.updated = comment.deleted
         await Database.get().commentRepository.save(comment)
+        // Update issue
+        const issue = await Database.get().issueRepository.findOneBy({ productId, issueId })
+        issue.updated = comment.updated
+        // TODO update state?
+        await Database.get().issueRepository.save(issue)
+        // Update product
+        const product = await Database.get().productRepository.findOneBy({ productId })
+        product.updated = comment.updated
+        await Database.get().productRepository.save(product)
+        // Emit changes
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
+        // Return comment
         return convertComment(comment)
     }
 }

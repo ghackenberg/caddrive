@@ -3,18 +3,20 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CommentUpdateData {
     @ApiProperty()
     text: string
-    @ApiProperty()
-    action: 'none' | 'close' | 'reopen'
 }
 
 export class CommentAddData extends CommentUpdateData {
     @ApiProperty()
-    issueId: string
+    action: 'none' | 'close' | 'reopen'
 }
 
 export class Comment extends CommentAddData {
     @ApiProperty()
-    id: string
+    productId: string
+    @ApiProperty()
+    issueId: string
+    @ApiProperty()
+    commentId: string
 
     @ApiProperty()
     created: number

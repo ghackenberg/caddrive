@@ -3,12 +3,13 @@ import axios from 'axios'
 import { Version, VersionAddData, VersionUpdateData, VersionREST } from 'productboard-common'
 
 import { auth } from '../auth'
+import { CacheAPI } from '../cache'
 
 class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData, File, Blob> {
-    async findVersions(product: string): Promise<Version[]> {
-        return (await axios.get<Version[]>('/rest/versions', { params: { product }, ...auth } )).data
+    async findVersions(productId: string): Promise<Version[]> {
+        return (await axios.get<Version[]>(`/rest/products/${productId}/versions`, auth)).data
     }
-    async addVersion(data: VersionAddData, files: {model: File, image: Blob}): Promise<Version> {
+    async addVersion(productId: string, data: VersionAddData, files: {model: File, image: Blob}): Promise<Version> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files.model) {
@@ -17,12 +18,14 @@ class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData
         if (files.image) {
             body.append('image', files.image)
         }
-        return (await axios.post<Version>('/rest/versions', body, { ...auth })).data
+        const version = (await axios.post<Version>(`/rest/products/${productId}/versions`, body, auth)).data
+        CacheAPI.putVersion(version)
+        return version
     }
-    async getVersion(id: string): Promise<Version> {
-        return (await axios.get<Version>(`/rest/versions/${id}`, { ...auth })).data
+    async getVersion(productId: string, versionId: string): Promise<Version> {
+        return (await axios.get<Version>(`/rest/products/${productId}/versions/${versionId}`, auth)).data
     }
-    async updateVersion(id: string, data: VersionUpdateData, files?: {model: File, image: Blob}): Promise<Version> {
+    async updateVersion(productId: string, versionId: string, data: VersionUpdateData, files?: {model: File, image: Blob}): Promise<Version> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files) {
@@ -33,10 +36,14 @@ class VersionClientImpl implements VersionREST<VersionAddData, VersionUpdateData
                 body.append('image', files.image)
             }
         }
-        return (await axios.put<Version>(`/rest/versions/${id}`, body, { ...auth })).data
+        const version = (await axios.put<Version>(`/rest/products/${productId}/versions/${versionId}`, body, auth)).data
+        CacheAPI.putVersion(version)
+        return version
     }
-    async deleteVersion(id: string): Promise<Version> {
-        return (await axios.delete<Version>(`/rest/versions/${id}`, { ...auth })).data
+    async deleteVersion(productId: string, versionId: string): Promise<Version> {
+        const version = (await axios.delete<Version>(`/rest/products/${productId}/versions/${versionId}`, auth)).data
+        CacheAPI.putVersion(version)
+        return version
     }
 }
 

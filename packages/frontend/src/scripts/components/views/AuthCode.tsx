@@ -3,12 +3,12 @@ import * as React from 'react'
 import { JWK, JWTVerifyResult, KeyLike, importJWK, jwtVerify } from 'jose'
 
 import { auth } from '../../clients/auth'
+import { CacheAPI } from '../../clients/cache'
 import { TokenClient } from '../../clients/rest/token'
+import { UserClient } from '../../clients/rest/user'
 import { AuthContext } from '../../contexts/Auth'
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
-import { KeyManager } from '../../managers/key'
-import { UserManager } from '../../managers/user'
 import { LegalFooter } from '../snippets/LegalFooter'
 
 import AuthIcon from '/src/images/auth.png'
@@ -40,7 +40,7 @@ export const AuthCodeView = () => {
 
     React.useEffect(() => {
         let exec = true
-        KeyManager.getPublicJWK().then(publicJWK => exec && setPublicJWK(publicJWK))
+        CacheAPI.loadPublicJWK().then(publicJWK => exec && setPublicJWK(publicJWK))
         return () => { exec = false }
     })
 
@@ -69,23 +69,21 @@ export const AuthCodeView = () => {
         if (userId) {
             setLoad(true)
             setError(undefined)
-            UserManager.getUser(userId, async (user, error) => {
+            UserClient.getUser(userId).then(async user => {
                 if (exec) {
-                    if (error) {
-                        setError('Action failed.')
+                    if (!user.consent || !user.name) {
+                        setAuthContextUser(user)
                         setLoad(false)
+                        await replace('/auth/consent')
                     } else {
-                        if (!user.consent || !user.name) {
-                            setAuthContextUser(user)
-                            setLoad(false)
-                            await replace('/auth/consent')
-                        } else {
-                            setContextUser(user)
-                            setLoad(false)
-                            await go(-2)
-                        }
+                        setContextUser(user)
+                        setLoad(false)
+                        await go(-2)
                     }
                 }
+            }).catch(() => {
+                setError('Action failed.')
+                setLoad(false)
             })
         }
         return () => { exec = false }

@@ -8,9 +8,9 @@ import shortid from 'shortid'
 import { FindOptionsWhere, IsNull, Raw } from 'typeorm'
 
 import { User, UserUpdateData, UserREST } from 'productboard-common'
-import { Database, getMemberOrFail, UserEntity } from 'productboard-database'
+import { convertUser, Database, getMemberOrFail, UserEntity } from 'productboard-database'
 
-import { convertUser } from '../../../functions/convert'
+import { emitProductMessage, emitUserMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -24,7 +24,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         }
     }
 
-    async findUsers(query?: string, productId?: string) : Promise<User[]> {
+    async findUsers(productId?: string, query?: string) : Promise<User[]> {
         let where: FindOptionsWhere<UserEntity>
         if (query)
             where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`), deleted: IsNull() }
@@ -34,23 +34,24 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         for (const user of await Database.get().userRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
             try {
                 if (productId) {
-                    await getMemberOrFail({ userId: user.id, productId }, Error)
+                    await getMemberOrFail({ productId, userId: user.userId, deleted: IsNull() }, Error)
                 } else {
                     throw new Error()
                 }
             } catch (error) {
-                result.push(convertUser(user, this.request.user && this.request.user.id == user.id))
+                result.push(convertUser(user, this.request.user && this.request.user.userId == user.userId))
             }
         return result
     }
 
-    async getUser(id: string): Promise<User> {
-        const user = await Database.get().userRepository.findOneByOrFail({ id })
-        return convertUser(user, this.request.user && this.request.user.id == id)
+    async getUser(userId: string): Promise<User> {
+        const user = await Database.get().userRepository.findOneByOrFail({ userId })
+        return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
 
-    async updateUser(id: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
-        const user = await Database.get().userRepository.findOneByOrFail({ id })
+    async updateUser(userId: string, data: UserUpdateData, file?: Express.Multer.File): Promise<User> {
+        // Update user
+        const user = await Database.get().userRepository.findOneByOrFail({ userId })
         user.updated = Date.now()
         user.consent = data.consent
         user.name = data.name
@@ -59,15 +60,31 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
             writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
         }
         await Database.get().userRepository.save(user)
-        return convertUser(user, this.request.user && this.request.user.id == id)
+        // Emit changes
+        emitUserMessage(userId, { type: 'state', users: [user] })
+        // Return user
+        return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
 
-    async deleteUser(id: string): Promise<User> {
-        const user = await Database.get().userRepository.findOneByOrFail({ id })
+    async deleteUser(userId: string): Promise<User> {
+        // Delete user
+        const user = await Database.get().userRepository.findOneByOrFail({ userId })
         user.deleted = Date.now()
         user.updated = user.deleted
-        await Database.get().memberRepository.update({ userId: user.id }, { deleted: user.deleted, updated: user.updated })
         await Database.get().userRepository.save(user)
-        return convertUser(user, this.request.user && this.request.user.id == id)
+        // Delete members
+        const members = await Database.get().memberRepository.findBy({ userId, deleted: IsNull() })
+        for (const member of members) {
+            member.deleted = user.deleted
+            member.updated = user.deleted
+            await Database.get().memberRepository.save(member)
+        }
+        // Emit changes
+        emitUserMessage(userId, { type: 'state', users: [user] })
+        for (const member of members) {
+            emitProductMessage(member.productId, { type: 'patch', members: [member] })
+        }
+        // Return user
+        return convertUser(user, this.request.user && this.request.user.userId == userId)
     }
 }

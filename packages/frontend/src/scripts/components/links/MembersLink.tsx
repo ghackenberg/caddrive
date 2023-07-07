@@ -16,7 +16,7 @@ export const MembersLink = (props: {product: Product}) => {
 
     // HOOKS
 
-    const members = useMembers(props.product.id)
+    const members = useMembers(props.product.productId)
 
     // FUNCTIONS
 
@@ -32,14 +32,14 @@ export const MembersLink = (props: {product: Product}) => {
                 await goBack()
             }
         }
-        await replace(`/products/${props.product.id}/members`)
+        await replace(`/products/${props.product.productId}/members`)
     }
 
     // RETURN
 
     return (
         <span>
-            <NavLink to={`/products/${props.product.id}/members`} onClick={handleClick}>
+            <NavLink to={`/products/${props.product.productId}/members`} onClick={handleClick}>
                 <img src={MemberIcon} className='icon small'/>
                 <span className='label'>Members</span>
                 <span className='badge'>{members ? members.length : '?'}</span>

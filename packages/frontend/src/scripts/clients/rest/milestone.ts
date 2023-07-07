@@ -3,22 +3,29 @@ import axios from 'axios'
 import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
 
 import { auth } from '../auth'
+import { CacheAPI } from '../cache'
 
 class MilestoneClientImpl implements MilestoneREST {
-    async findMilestones(product: string): Promise<Milestone[]> {
-        return (await axios.get<Milestone[]>('/rest/milestones', { params: { product }, ...auth } )).data
+    async findMilestones(productId: string): Promise<Milestone[]> {
+        return (await axios.get<Milestone[]>(`/rest/products/${productId}/milestones`, auth)).data
     }
-    async addMilestone(data: MilestoneAddData): Promise<Milestone> {
-        return (await axios.post<Milestone>('/rest/milestones', data, { ...auth })).data
+    async addMilestone(productId: string, data: MilestoneAddData): Promise<Milestone> {
+        const milestone = (await axios.post<Milestone>(`/rest/products/${productId}/milestones`, data, auth)).data
+        CacheAPI.putMilestone(milestone)
+        return milestone
     }
-    async getMilestone(id: string): Promise<Milestone> {
-        return (await axios.get<Milestone>(`/rest/milestones/${id}`, { ...auth })).data
+    async getMilestone(productId: string, milestoneId: string): Promise<Milestone> {
+        return (await axios.get<Milestone>(`/rest/products/${productId}/milestones/${milestoneId}`, auth)).data
     }
-    async updateMilestone(id: string, data: MilestoneUpdateData): Promise<Milestone> {
-        return (await axios.put<Milestone>(`/rest/milestones/${id}`, data, { ...auth })).data
+    async updateMilestone(productId: string, milestoneId: string, data: MilestoneUpdateData): Promise<Milestone> {
+        const milestone = (await axios.put<Milestone>(`/rest/products/${productId}/milestones/${milestoneId}`, data, auth)).data
+        CacheAPI.putMilestone(milestone)
+        return milestone
     }
-    async deleteMilestone(id: string): Promise<Milestone> {
-        return (await axios.delete<Milestone>(`/rest/milestones/${id}`, { ...auth })).data
+    async deleteMilestone(productId: string, milestoneId: string): Promise<Milestone> {
+        const milestone = (await axios.delete<Milestone>(`/rest/products/${productId}/milestones/${milestoneId}`, auth)).data
+        CacheAPI.putMilestone(milestone)
+        return milestone
     }
 }
 

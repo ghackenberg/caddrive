@@ -1,8 +1,14 @@
-import { CommentEntity, IssueEntity, MemberEntity, MilestoneEntity, ProductEntity, UserEntity, VersionEntity } from "productboard-database"
+import { CommentEntity } from "./entities/comment"
+import { IssueEntity } from "./entities/issue"
+import { MemberEntity } from "./entities/member"
+import { MilestoneEntity } from "./entities/milestone"
+import { ProductEntity } from "./entities/product"
+import { UserEntity } from "./entities/user"
+import { VersionEntity } from "./entities/version"
 
 export function convertUser(user: UserEntity, full: boolean) {
     return {
-        id: user.id,
+        userId: user.userId,
         created: user.created,
         updated: user.updated,
         deleted: user.deleted,
@@ -15,7 +21,7 @@ export function convertUser(user: UserEntity, full: boolean) {
 
 export function convertProduct(product: ProductEntity) {
     return {
-        id: product.id,
+        productId: product.productId,
         created: product.created,
         updated: product.updated,
         deleted: product.deleted,
@@ -28,12 +34,12 @@ export function convertProduct(product: ProductEntity) {
 
 export function convertVersion(version: VersionEntity) {
     return {
-        id: version.id,
+        productId: version.productId,
+        versionId: version.versionId,
         created: version.created,
         updated: version.updated,
         deleted: version.deleted,
         userId: version.userId,
-        productId: version.productId,
         baseVersionIds: version.baseVersionIds,
         major:version.major,
         minor: version.minor,
@@ -46,14 +52,14 @@ export function convertVersion(version: VersionEntity) {
 
 export function convertIssue(issue: IssueEntity) {
     return {
-        id: issue.id,
+        productId: issue.productId,
+        issueId: issue.issueId,
         created: issue.created,
         updated: issue.updated,
         deleted: issue.deleted,
         userId: issue.userId,
-        productId: issue.productId,
         milestoneId: issue.milestoneId,
-        assigneeIds: issue.assigneeIds,
+        assignedUserIds: issue.assignedUserIds,
         audioId: issue.audioId,
         label: issue.label,
         text: issue.text,
@@ -63,12 +69,13 @@ export function convertIssue(issue: IssueEntity) {
 
 export function convertComment(comment: CommentEntity) {
     return {
-        id: comment.id,
+        productId: comment.productId,
+        issueId: comment.issueId,
+        commentId: comment.commentId,
         created: comment.created,
         updated: comment.updated,
         deleted: comment.deleted,
         userId: comment.userId,
-        issueId: comment.issueId,
         audioId: comment.audioId,
         text: comment.text,
         action: comment.action
@@ -77,12 +84,12 @@ export function convertComment(comment: CommentEntity) {
 
 export function convertMilestone(milestone: MilestoneEntity) {
     return {
-        id: milestone.id,
+        productId: milestone.productId,
+        milestoneId: milestone.milestoneId,
         created: milestone.created,
         updated: milestone.updated,
         deleted: milestone.deleted,
         userId: milestone.userId,
-        productId: milestone.productId,
         label: milestone.label,
         start: milestone.start,
         end: milestone.end
@@ -91,12 +98,12 @@ export function convertMilestone(milestone: MilestoneEntity) {
 
 export function convertMember(member: MemberEntity) {
     return {
-        id: member.id,
+        productId: member.productId,
+        memberId: member.memberId,
         created: member.created,
         updated: member.updated,
         deleted: member.deleted,
         userId: member.userId,
-        productId: member.productId,
         role: member.role
     }
 }

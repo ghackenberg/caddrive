@@ -6,6 +6,7 @@ import { Object3D } from 'three'
 
 import { Member, Version } from 'productboard-common'
 
+import { IssueClient } from '../../clients/rest/issue'
 import { UserContext } from '../../contexts/User'
 import { collectParts, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
@@ -14,7 +15,6 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useMilestones } from '../../hooks/list'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { TextInput } from '../inputs/TextInput'
-import { IssueManager } from '../../managers/issue'
 import { AudioRecorder } from '../../services/recorder'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -48,7 +48,7 @@ export const ProductIssueSettingView = () => {
     const product = useProduct(productId)
     const members = useMembers(productId)
     const milestones = useMilestones(productId)
-    const issue = useIssue(issueId)
+    const issue = useIssue(productId, issueId)
 
     // INITIAL STATES
 
@@ -56,7 +56,7 @@ export const ProductIssueSettingView = () => {
     const initialText = issue ? issue.text : ''
     const initialMarked = collectParts(initialText)
     const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
-    const initialAssigneeIds = issue ? issue.assigneeIds : []
+    const initialAssigneeIds = issue ? issue.assignedUserIds : []
     
     // STATES
 
@@ -65,7 +65,7 @@ export const ProductIssueSettingView = () => {
     const [text, setText] = useState<string>(initialText)
     const [audio, setAudio] = useState<Blob>()
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
-    const [assigneeIds, setAssigneeIds] = useState<string[]>(initialAssigneeIds)
+    const [assignedUserIds, setAssignedUserIds] = useState<string[]>(initialAssigneeIds)
 
     // - Interactions
     const [recorder, setRecorder] = useState<AudioRecorder>()
@@ -80,7 +80,7 @@ export const ProductIssueSettingView = () => {
     useEffect(() => { issue && setLabel(issue.label) }, [issue])
     useEffect(() => { issue && setText(issue.text) }, [issue])
     useEffect(() => { issue && setMilestoneId(issue.milestoneId)}, [issue])
-    useEffect(() => { issue && setAssigneeIds(issue.assigneeIds) }, [issue])
+    useEffect(() => { issue && setAssignedUserIds(issue.assignedUserIds) }, [issue])
 
     // - Computations
     useEffect(() => {
@@ -89,7 +89,7 @@ export const ProductIssueSettingView = () => {
     
     // FUNCTIONS
 
-    async function startRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    async function startRecordAudio(event: React.MouseEvent<HTMLInputElement>) {
         // TODO handle unmount!
         event.preventDefault()
         const recorder = new AudioRecorder()
@@ -97,7 +97,7 @@ export const ProductIssueSettingView = () => {
         setRecorder(recorder)
     }
 
-    async function stopRecordAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    async function stopRecordAudio(event: React.MouseEvent<HTMLInputElement>) {
         // TODO handle unmount!
         event.preventDefault()
         const data = await recorder.stop()
@@ -106,7 +106,7 @@ export const ProductIssueSettingView = () => {
         setRecorder(null)
     }
 
-    async function removeAudio(event: React.MouseEvent<HTMLButtonElement>) {
+    async function removeAudio(event: React.MouseEvent<HTMLInputElement>) {
         event.preventDefault()
         setAudio(null)
         setAudioUrl('')
@@ -114,7 +114,7 @@ export const ProductIssueSettingView = () => {
 
     function overObject(version: Version, object: Object3D) {
         const path = computePath(object)
-        setSelected([{ productId: version.productId, versionId: version.id, objectPath: path, objectName: object.name }])
+        setSelected([{ productId: version.productId, versionId: version.versionId, objectPath: path, objectName: object.name }])
     }
     
     function outObject() {
@@ -123,7 +123,7 @@ export const ProductIssueSettingView = () => {
 
     function selectObject(version: Version, object: Object3D) {
         const path = computePath(object)
-        const markdown = `[${object.name || object.type}](/products/${product.id}/versions/${version.id}/objects/${path})`
+        const markdown = `[${object.name || object.type}](/products/${productId}/versions/${version.versionId}/objects/${path})`
         if (document.activeElement == textReference.current) {
             const before = text.substring(0, textReference.current.selectionStart)
             const after = text.substring(textReference.current.selectionEnd)
@@ -144,26 +144,26 @@ export const ProductIssueSettingView = () => {
         event.preventDefault()
         if (issueId == 'new') {
             if (label && text) {
-                const issue = await IssueManager.addIssue({ productId, label: label, text: text, assigneeIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
-                await replace(`/products/${productId}/issues/${issue.id}/comments`)
+                const issue = await IssueClient.addIssue(productId, { label, text, assignedUserIds, milestoneId: milestoneId ? milestoneId : null }, { audio })
+                await replace(`/products/${productId}/issues/${issue.issueId}/comments`)
             }
         } else {
             if (label && text) {
-                await IssueManager.updateIssue(issue.id, { ...issue, label: label, text: text, assigneeIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
+                await IssueClient.updateIssue(productId, issueId, { label, text, assignedUserIds,  milestoneId: milestoneId ? milestoneId : null }, { audio })
                 await goBack()    
             }
         }
     }
 
     async function selectAssignee(userId: string) {
-        const newAssignees = [...assigneeIds]
+        const newAssignees = [...assignedUserIds]
         const index = newAssignees.indexOf(userId)
         if (index == -1) {
             newAssignees.push(userId)
         } else {
             newAssignees.splice(index, 1)
         }
-        setAssigneeIds(newAssignees)
+        setAssignedUserIds(newAssignees)
     }
 
     // CONSTANTS
@@ -176,7 +176,7 @@ export const ProductIssueSettingView = () => {
             <ProductUserNameWidget userId={member.userId} productId={productId}/>
         ) },
         { label: '🛠️', class: 'fill center nowrap', content: member => (
-            <input type="checkbox" checked={assigneeIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>
+            <input type="checkbox" checked={assignedUserIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>
         ) },
     ]
 
@@ -240,7 +240,7 @@ export const ProductIssueSettingView = () => {
                                             <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
                                                 <option >none</option>
                                                 {milestones && milestones.map((milestone) => (
-                                                    <option key={milestone.id} value={milestone.id}>
+                                                    <option key={milestone.milestoneId} value={milestone.milestoneId}>
                                                         {milestone.label}
                                                     </option>
                                                 ))}
@@ -258,7 +258,7 @@ export const ProductIssueSettingView = () => {
                                         </div>
                                     </div>
                                     {contextUser ? (
-                                        members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                        members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                             <ButtonInput value='Save'/>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>

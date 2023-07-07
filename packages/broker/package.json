@@ -1,0 +1,50 @@
+{
+    "name": "productboard-broker",
+    "version": "0.0.1",
+    "description": "Broker broadcasting change events",
+    "license": "MIT",
+    "private": "true",
+    "type": "module",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@fh-wels.at"
+    },
+    "contributors": [
+        {
+            "name": "Georg Hackenberg",
+            "email": "georg.hackenberg@fh-wels.at"
+        },
+        {
+            "name": "Christian Zehetner",
+            "email": "christian.zehetner@fh-wels.at"
+        },
+        {
+            "name": "Jürgen Humenberger",
+            "email": "juergen.humenberger@fh-wels.at"
+        },
+        {
+            "name": "Dominik Frühwirth",
+            "email": "dominik.fruewirth@fh-wels.at"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ghackenberg/productboard.git",
+        "directory": "packages/broker"
+    },
+    "scripts": {
+        "clean": "rm -rf scripts/bin",
+        "build": "tsc",
+        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
+        "devel": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
+        "lint": "eslint scripts/src",
+        "loc": "sloc scripts/src"
+    },
+    "dependencies": {
+        "@types/ws": "^8.5.5",
+        "aedes": "^0.49.0",
+        "productboard-common": "0.0.1",
+        "productboard-database": "0.0.1",
+        "ws": "^8.13.0"
+    }
+}

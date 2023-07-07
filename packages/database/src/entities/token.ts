@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn } from "typeorm"
 @Entity()
 export class TokenEntity {
     @PrimaryColumn({ nullable: false })
-    id: string
+    tokenId: string
     
     @Column({ nullable: false })
     created: number

@@ -5,6 +5,7 @@ import * as ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter } from 'react-router-dom'
 
+import './clients/mqtt'
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
 import { LoadingView } from './components/views/Loading'
 import './plausible'

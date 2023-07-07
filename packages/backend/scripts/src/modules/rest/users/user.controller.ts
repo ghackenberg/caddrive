@@ -7,10 +7,10 @@ import 'multer'
 
 import { User, UserREST, UserUpdateData } from 'productboard-common'
 
+import { UserService } from './user.service'
 import { canFindUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { UserService } from './user.service'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(TokenOptionalGuard)
@@ -24,30 +24,30 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     ) {}
 
     @Get()
+    @ApiQuery({ name: 'productId', type: 'string', required: false })
     @ApiQuery({ name: 'query', type: 'string', required: false })
-    @ApiQuery({ name: 'product', type: 'string', required: false })
     @ApiResponse({ type: [User] })
     async findUsers(
-        @Query('query') query?: string,
-        @Query('product') product?: string
+        @Query('productId') productId?: string,
+        @Query('query') query?: string
     ): Promise<User[]> {
-        await canFindUserOrFail(this.request.user, query, product)
-        return this.userService.findUsers(query, product)
+        await canFindUserOrFail(this.request.user && this.request.user.userId, productId, query)
+        return this.userService.findUsers(productId, query)
     }
 
-    @Get(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Get(':userId')
+    @ApiParam({ name: 'userId', type: 'string', required: true })
     @ApiResponse({ type: User })
     async getUser(
-        @Param('id') id: string
+        @Param('userId') userId: string
     ): Promise<User> {
-        await canReadUserOrFail(this.request.user, id)
-        return this.userService.getUser(id)
+        await canReadUserOrFail(this.request.user && this.request.user.userId, userId)
+        return this.userService.getUser(userId)
     }
 
-    @Put(':id')
+    @Put(':userId')
     @UseInterceptors(FileInterceptor('file'))
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @ApiParam({ name: 'userId', type: 'string', required: true })
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -61,21 +61,21 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     })
     @ApiResponse({ type: User })
     async updateUser(
-        @Param('id') id: string,
+        @Param('userId') userId: string,
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<User> {
-        await canUpdateUserOrFail(this.request.user, id)
-        return this.userService.updateUser(id, JSON.parse(data), file)
+        await canUpdateUserOrFail(this.request.user && this.request.user.userId, userId)
+        return this.userService.updateUser(userId, JSON.parse(data), file)
     }
 
-    @Delete(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Delete(':userId')
+    @ApiParam({ name: 'userId', type: 'string', required: true })
     @ApiResponse({ type: User })
     async deleteUser(
-        @Param('id') id: string
+        @Param('userId') userId: string
     ): Promise<User> {
-        await canDeleteUserOrFail(this.request.user, id)
-        return this.userService.deleteUser(id)
+        await canDeleteUserOrFail(this.request.user && this.request.user.userId, userId)
+        return this.userService.deleteUser(userId)
     }
 }

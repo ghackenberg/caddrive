@@ -1,18 +1,18 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
 import "multer"
 
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 
+import { IssueService } from './issue.service'
 import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { IssueService } from './issue.service'
 
-@Controller('rest/issues')
+@Controller('rest/products/:productId/issues')
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(IssueAddData, IssueUpdateData)
@@ -24,17 +24,13 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     ) {}
 
     @Get()
-    @ApiQuery({ name: 'product', type: 'string', required: true })
-    @ApiQuery({ name: 'milestone', type: 'string', required: false })
-    @ApiQuery({ name: 'state', type: 'string', required: false })
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiResponse({ type: [Issue] })
     async findIssues(
-        @Query('product') productId: string,
-        @Query('milestone') milestoneId?: string,
-        @Query('state') state?: 'open' | 'closed'
+        @Param('productId') productId: string
     ): Promise<Issue[]> {
-        await canReadProductOrFail(this.request.user, productId)
-        return this.issueService.findIssues(productId, milestoneId, state)
+        await canReadProductOrFail(this.request.user && this.request.user.userId, productId)
+        return this.issueService.findIssues(productId)
     }
 
     @Post()
@@ -43,6 +39,7 @@ export class IssueController implements IssueREST<string, string, Express.Multer
             [{ name: 'audio', maxCount: 1 }]
         )
     )
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -57,31 +54,34 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     })
     @ApiResponse({ type: Issue })
     async addIssue(
+        @Param('productId') productId: string,
         @Body('data') data: string,
         @UploadedFiles() files: { audio?: Express.Multer.File[] }
     ): Promise<Issue> {
-        const parsedData = JSON.parse(data) as IssueAddData
-        await canCreateIssueOrFail(this.request.user, parsedData.productId)
-        return this.issueService.addIssue(parsedData, files)
+        await canCreateIssueOrFail(this.request.user && this.request.user.userId, productId)
+        return this.issueService.addIssue(productId, JSON.parse(data), files)
     }  
 
-    @Get(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Get(':issueId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiResponse({ type: Issue })
     async getIssue(
-        @Param('id') id: string
+        @Param('productId') productId: string,
+        @Param('issueId') issueId: string
     ): Promise<Issue> {
-        await canReadIssueOrFail(this.request.user, id)
-        return this.issueService.getIssue(id)
+        await canReadIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        return this.issueService.getIssue(productId, issueId)
     } 
 
-    @Put(':id')
+    @Put(':issueId')
     @UseInterceptors(
         FileFieldsInterceptor(
             [{ name: 'audio', maxCount: 1 }]
         )
     )
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         schema: {
@@ -96,22 +96,23 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     })
     @ApiResponse({ type: Issue })
     async updateIssue(
-        @Param('id') id: string,
+        @Param('productId') productId: string,
+        @Param('issueId') issueId: string,
         @Body('data') data: string,
         @UploadedFiles() files?: { audio?: Express.Multer.File[] }
     ): Promise<Issue> {
-        const parsedData = JSON.parse(data) as IssueUpdateData
-        await canUpdateIssueOrFail(this.request.user, id)
-        return this.issueService.updateIssue(id, parsedData, files)
+        await canUpdateIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        return this.issueService.updateIssue(productId, issueId, JSON.parse(data), files)
     }
 
-    @Delete(':id')
+    @Delete(':issueId')
     @ApiParam({ name: 'id', type: 'string', required: true })
     @ApiResponse({ type: [Issue] })
     async deleteIssue(
-        @Param('id') id: string
+        @Param('productId') productId: string,
+        @Param('issueId') issueId: string
     ): Promise<Issue> {
-        await canDeleteIssueOrFail(this.request.user, id)
-        return this.issueService.deleteIssue(id)
+        await canDeleteIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        return this.issueService.deleteIssue(productId, issueId)
     } 
 }

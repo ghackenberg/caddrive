@@ -5,11 +5,11 @@ import { NavLink } from 'react-router-dom'
 
 import { Milestone } from 'productboard-common'
 
+import { MilestoneClient } from '../../clients/rest/milestone'
 import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMilestones, useMembers } from '../../hooks/list'
-import { MilestoneManager } from '../../managers/milestone'
 import { IssueCount } from '../counts/Issues'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -52,7 +52,7 @@ export const ProductMilestoneView = () => {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this milestone?')) {
-            await MilestoneManager.deleteMilestone(milestone.id) 
+            await MilestoneClient.deleteMilestone(productId, milestone.milestoneId) 
         }
     }
 
@@ -73,16 +73,16 @@ export const ProductMilestoneView = () => {
         ) },
         { label: 'Open', class: 'center', content: milestone => (
             <span className='badge'>
-                <IssueCount productId={productId} milestoneId={milestone.id} state='open'/>
+                <IssueCount productId={productId} milestoneId={milestone.milestoneId} state='open'/>
             </span>
         ) },
         { label: 'Closed', class: 'center', content: milestone => (
             <span className='badge'>
-                <IssueCount productId={productId} milestoneId={milestone.id} state='closed'/>
+                <IssueCount productId={productId} milestoneId={milestone.milestoneId} state='closed'/>
             </span>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
-            <MilestoneProgressWidget productId={productId} milestoneId={milestone.id}/>
+            <MilestoneProgressWidget productId={productId} milestoneId={milestone.milestoneId}/>
         ) },
         { label: '🛠️', class: 'center', content: milestone => (
             <a onClick={event => deleteMilestone(event, milestone)}>
@@ -108,7 +108,7 @@ export const ProductMilestoneView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                    members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
                                             <strong>New</strong> milestone
                                         </NavLink>
@@ -132,7 +132,7 @@ export const ProductMilestoneView = () => {
                                 </div>
                             ) : (
                                 <div className='main'>
-                                    <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.id}/issues`)}/>
+                                    <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)}/>
                                 </div>
                             ) }
                             <LegalFooter/>

@@ -16,7 +16,7 @@ export const MilestonesLink = (props: {product: Product}) => {
 
     // HOOKS
 
-    const milestones = useMilestones(props.product.id)
+    const milestones = useMilestones(props.product.productId)
 
     // FUNCTIONS
 
@@ -32,14 +32,14 @@ export const MilestonesLink = (props: {product: Product}) => {
                 await goBack()
             }
         }
-        await replace(`/products/${props.product.id}/milestones`)
+        await replace(`/products/${props.product.productId}/milestones`)
     }
 
     // RETURN
 
     return (
         <span>
-            <NavLink to={`/products/${props.product.id}/milestones`} onClick={handleClick}>
+            <NavLink to={`/products/${props.product.productId}/milestones`} onClick={handleClick}>
                 <img src={MilestoneIcon} className='icon small'/>
                 <span className='label'>Milestones</span>
                 <span className='badge'>{milestones ? milestones.length : '?'}</span>

@@ -4,9 +4,12 @@ import { collectParts } from '../../functions/markdown'
 import { useIssue } from '../../hooks/entity'
 import { useComments } from '../../hooks/list'
 
-export const PartCount = (props: { issueId: string }) => {
-    const issue = useIssue(props.issueId)
-    const comments = useComments(props.issueId)
+export const PartCount = (props: { productId: string, issueId: string }) => {
+    const productId = props.productId
+    const issueId = props.issueId
+
+    const issue = useIssue(productId, issueId)
+    const comments = useComments(productId, issueId)
 
     const initialIssuePartCount = issue && collectParts(issue.text).length
     const initialCommentsPartCount = comments && comments.map(comment => collectParts(comment.text).length)

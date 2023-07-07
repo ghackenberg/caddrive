@@ -11,7 +11,13 @@ import { VersionEntity } from './version'
 @Entity()
 export class ProductEntity extends Product {
     @PrimaryColumn({ nullable: false })
-    override id: string
+    override productId: string
+    @Column({ nullable: false })
+    override userId: string
+
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity
 
     @Column({ nullable: false })
     override created: number
@@ -20,31 +26,19 @@ export class ProductEntity extends Product {
     @Column({ nullable: true })
     override deleted: number
 
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'userId' })
-    user: UserEntity
-
-    @Column({ nullable: false })
-    override userId: string
-    
     @Column({ nullable: false })
     override name: string
-    
     @Column({ nullable: false })
     override description: string
-
     @Column({ nullable: false })
     override public: boolean
     
     @OneToMany(() => VersionEntity, version => version.product)
     versions: VersionEntity[]
-
     @OneToMany(() => MemberEntity, member => member.product)
     members: MemberEntity[]
-
     @OneToMany(() => MilestoneEntity, milestone => milestone.product)
     milestones: MilestoneEntity[]
-
     @OneToMany(() => IssueEntity, issue => issue.product)
     issues: IssueEntity[]
 }

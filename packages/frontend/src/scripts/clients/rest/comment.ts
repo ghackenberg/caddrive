@@ -3,23 +3,26 @@ import axios from 'axios'
 import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
 
 import { auth } from '../auth'
+import { CacheAPI } from '../cache'
 
 class CommentClientImpl implements CommentREST<CommentAddData, CommentUpdateData, Blob> {
-    async findComments(issue: string): Promise<Comment[]> {
-        return (await axios.get<Comment[]>('/rest/comments', { params: { issue }, ...auth })).data
+    async findComments(productId: string, issueId: string): Promise<Comment[]> {
+        return (await axios.get<Comment[]>(`/rest/products/${productId}/issues/${issueId}/comments`, auth)).data
     }
-    async addComment(data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
+    async addComment(productId: string, issueId: string, data: CommentAddData, files: { audio?: Blob }): Promise<Comment> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files.audio) {
             body.append('audio', files.audio)
         }
-        return (await axios.post<Comment>('/rest/comments', body, { ...auth })).data
+        const comment = (await axios.post<Comment>(`/rest/products/${productId}/issues/${issueId}/comments`, body, auth)).data
+        CacheAPI.putComment(comment)
+        return comment
     }
-    async getComment(id: string): Promise<Comment> {
-        return (await axios.get<Comment>(`/rest/comments/${id}`, { ...auth })).data
+    async getComment(productId: string, issueId: string, commentId: string): Promise<Comment> {
+        return (await axios.get<Comment>(`/rest/products/${productId}/issues/${issueId}/comments/${commentId}`, auth)).data
     }
-    async updateComment(id: string, data: CommentUpdateData, files?: { audio?: Blob }): Promise<Comment> {
+    async updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData, files?: { audio?: Blob }): Promise<Comment> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files) {
@@ -27,10 +30,14 @@ class CommentClientImpl implements CommentREST<CommentAddData, CommentUpdateData
                 body.append('audio', files.audio)
             }
         }
-        return (await axios.put<Comment>(`/rest/comments/${id}`, body, { ...auth })).data
+        const comment = (await axios.put<Comment>(`/rest/products/${productId}/issues/${issueId}/comments/${commentId}`, body, auth)).data
+        CacheAPI.putComment(comment)
+        return comment
     }
-    async deleteComment(id: string): Promise<Comment> {
-        return (await axios.delete<Comment>(`/rest/comments/${id}`, { ...auth })).data
+    async deleteComment(productId: string, issueId: string, commentId: string, ): Promise<Comment> {
+        const comment = (await axios.delete<Comment>(`/rest/products/${productId}/issues/${issueId}/comments/${commentId}`, auth)).data
+        CacheAPI.putComment(comment)
+        return comment
     }
 }
 

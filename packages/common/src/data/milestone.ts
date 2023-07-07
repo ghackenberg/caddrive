@@ -11,13 +11,13 @@ export class MilestoneUpdateData {
 }
 
 export class MilestoneAddData extends MilestoneUpdateData {
-    @ApiProperty()
-    productId: string
 }
 
 export class Milestone extends MilestoneAddData {
     @ApiProperty()
-    id: string
+    productId: string
+    @ApiProperty()
+    milestoneId: string
 
     @ApiProperty()
     created: number

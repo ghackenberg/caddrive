@@ -1,15 +1,15 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
 
 import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
 
+import { MemberService } from './member.service'
 import { canReadMemberOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail, canFindMemberOrFail, canCreateMemberOrFail } from '../../../functions/permission'
 import { AuthorizedRequest } from '../../../request'
 import { TokenOptionalGuard } from '../tokens/token.guard'
-import { MemberService } from './member.service'
 
-@Controller('rest/members')
+@Controller('rest/products/:productId/members')
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 export class MemberController implements MemberREST {
@@ -20,56 +20,62 @@ export class MemberController implements MemberREST {
     ) {}
 
     @Get()
-    @ApiQuery({ name: 'product', type: 'string', required: true })
-    @ApiQuery({ name: 'user', type: 'string', required: false })
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiResponse({ type: [Member] })
     async findMembers(
-        @Query('product') productId: string,
-        @Query('user') userId?: string
+        @Param('productId') productId: string
     ): Promise<Member[]> {
-        await canFindMemberOrFail(this.request.user, productId)
-        return this.memberService.findMembers(productId, userId)
+        await canFindMemberOrFail(this.request.user && this.request.user.userId, productId)
+        return this.memberService.findMembers(productId)
     }
 
     @Post()
+    @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiBody({ type: MemberAddData, required: true })
     @ApiResponse({ type: Member })
     async addMember(
+        @Param('productId') productId: string,
         @Body() data: MemberAddData
     ): Promise<Member> {
-        await canCreateMemberOrFail(this.request.user, data.productId)
-        return this.memberService.addMember(data)
+        await canCreateMemberOrFail(this.request.user && this.request.user.userId, productId)
+        return this.memberService.addMember(productId, data)
     }
 
-    @Get(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Get(':memberId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'memberId', type: 'string', required: true })
     @ApiResponse({ type: Member })
     async getMember(
-        @Param('id') id: string
+        @Param('productId') productId: string,
+        @Param('memberId') memberId: string
     ): Promise<Member> {
-        await canReadMemberOrFail(this.request.user, id)
-        return this.memberService.getMember(id)
+        await canReadMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
+        return this.memberService.getMember(productId, memberId)
     }
 
-    @Put(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Put(':memberId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'memberId', type: 'string', required: true })
     @ApiBody({ type: Member, required: true })
     @ApiResponse({ type: Member })
     async updateMember(
-        @Param('id') id: string,
+        @Param('productId') productId: string,
+        @Param('memberId') memberId: string,
         @Body() data: MemberUpdateData
     ): Promise<Member> {
-        await canUpdateMemberOrFail(this.request.user, id)
-        return this.memberService.updateMember(id,data)
+        await canUpdateMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
+        return this.memberService.updateMember(productId, memberId, data)
     }
 
-    @Delete(':id')
-    @ApiParam({ name: 'id', type: 'string', required: true })
+    @Delete(':memberId')
+    @ApiParam({ name: 'productId', type: 'string', required: true })
+    @ApiParam({ name: 'memberId', type: 'string', required: true })
     @ApiResponse({ type: [Member] })
     async deleteMember(
-        @Param('id') id: string
+        @Param('productId') productId: string,
+        @Param('memberId') memberId: string
     ): Promise<Member> {
-        await canDeleteMemberOrFail(this.request.user, id)
-        return this.memberService.deleteMember(id)
+        await canDeleteMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
+        return this.memberService.deleteMember(productId, memberId)
     }
 }

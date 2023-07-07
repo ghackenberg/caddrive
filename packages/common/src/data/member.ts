@@ -9,14 +9,14 @@ export class MemberUpdateData {
 
 export class MemberAddData extends MemberUpdateData {
     @ApiProperty()
-    productId: string
-    @ApiProperty()
     userId: string
 }
 
 export class Member extends MemberAddData {
     @ApiProperty()
-    id: string
+    productId: string
+    @ApiProperty()
+    memberId: string
     
     @ApiProperty()
     created: number

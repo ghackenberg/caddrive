@@ -3,23 +3,26 @@ import axios from 'axios'
 import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
 
 import { auth } from '../auth'
+import { CacheAPI } from '../cache'
 
 class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
-    async findIssues(product: string, milestone?: string, state?: string): Promise<Issue[]> {
-        return (await axios.get<Issue[]>(`/rest/issues`, { params: { product, milestone, state }, ...auth })).data
+    async findIssues(productId: string): Promise<Issue[]> {
+        return (await axios.get<Issue[]>(`/rest/products/${productId}/issues`, auth)).data
     }
-    async addIssue(data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
+    async addIssue(productId: string, data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files.audio) {
             body.append('audio', files.audio)
         }
-        return (await axios.post<Issue>('/rest/issues', body, { ...auth })).data
+        const issue = (await axios.post<Issue>(`/rest/products/${productId}/issues`, body, auth)).data
+        CacheAPI.putIssue(issue)
+        return issue
     }
-    async getIssue(id: string): Promise<Issue> {
-        return (await axios.get<Issue>(`/rest/issues/${id}`, { ...auth })).data
+    async getIssue(productId: string, issueId: string): Promise<Issue> {
+        return (await axios.get<Issue>(`/rest/products/${productId}/issues/${issueId}`, { ...auth })).data
     }
-    async updateIssue(id: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
+    async updateIssue(productId: string, issueId: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files) {
@@ -27,10 +30,14 @@ class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> 
                 body.append('audio', files.audio)
             }
         }
-        return (await axios.put<Issue>(`/rest/issues/${id}`, body, { ...auth })).data
+        const issue = (await axios.put<Issue>(`/rest/products/${productId}/issues/${issueId}`, body, auth)).data
+        CacheAPI.putIssue(issue)
+        return issue
     }
-    async deleteIssue(id: string): Promise<Issue> {
-        return (await axios.delete<Issue>(`/rest/issues/${id}`, { ...auth })).data
+    async deleteIssue(productId: string, issueId: string): Promise<Issue> {
+        const issue = (await axios.delete<Issue>(`/rest/products/${productId}/issues/${issueId}`, auth)).data
+        CacheAPI.putIssue(issue)
+        return issue
     }
 }
 

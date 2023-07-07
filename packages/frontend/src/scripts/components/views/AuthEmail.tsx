@@ -30,7 +30,7 @@ export const AuthEmailView = () => {
             setLoad(true)
             setError(undefined)
             const token = await TokenClient.createToken({ email })
-            setAuthContextToken(token.id)
+            setAuthContextToken(token.tokenId)
             setLoad(false)
             await push(`/auth/code`)
         } catch (e) {

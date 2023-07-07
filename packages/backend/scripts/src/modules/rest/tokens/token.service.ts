@@ -8,6 +8,7 @@ import shortid from "shortid"
 import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse, TokenREST, User } from "productboard-common"
 import { Database, getTokenOrFail, getUserOrFail } from "productboard-database"
 
+import { emitUserMessage } from "../../../functions/emit"
 import { TRANSPORTER } from "../../../functions/mail"
 import { KEY_PAIR } from "../../../key"
 import { AuthorizedRequest } from "../../../request"
@@ -20,13 +21,13 @@ export class TokenService implements TokenREST {
     ) {}
 
     async createToken(request: CreateTokenRequest): Promise<CreateTokenResponse> {
-        const id = shortid()
+        const tokenId = shortid()
         const created = Date.now()
         const updated = created
         const email = request.email
         const code = shortid().substring(0, 6)
         const count = 0
-        const token = await Database.get().tokenRepository.save({ id, created, updated, email, code, count })
+        await Database.get().tokenRepository.save({ tokenId, created, updated, email, code, count })
         const transporter = await TRANSPORTER
         const info = await transporter.sendMail({
             from: 'CADdrive <mail@caddrive.com>',
@@ -39,12 +40,12 @@ export class TokenService implements TokenREST {
         })
         console.log(code)
         console.log(getTestMessageUrl(info))
-        return { id: token.id }
+        return { tokenId }
     }
     
-    async activateToken(id: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse> {
+    async activateToken(tokenId: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse> {
         // Find token
-        const token = await getTokenOrFail({ id }, NotFoundException)
+        const token = await getTokenOrFail({ tokenId }, NotFoundException)
         // Update count
         token.updated = Date.now()
         token.count++
@@ -67,11 +68,13 @@ export class TokenService implements TokenREST {
             return createJWT(user)
         } catch (e) {
             // ... for new user
-            const id = shortid()
+            const userId = shortid()
             const created = token.updated
             const updated = token.updated
             const email = token.email
-            const user = await Database.get().userRepository.save({ id, created, updated, email })
+            const user = await Database.get().userRepository.save({ userId, created, updated, email })
+            // Emit changes
+            emitUserMessage(userId, { type: 'state', users: [user] })
             // Return JWT
             return createJWT(user)
         }
@@ -91,7 +94,7 @@ async function createJWT(user: User) {
     // Get private key
     const privateKey = keyPair.privateKey
     // Create JWT
-    const jwt = await new SignJWT({ userId: user.id }).setProtectedHeader({ alg: 'PS256' }).setExpirationTime('7d').sign(privateKey)
+    const jwt = await new SignJWT({ userId: user.userId }).setProtectedHeader({ alg: 'PS256' }).setExpirationTime('7d').sign(privateKey)
     // Return JWT
     return { jwt }
 }

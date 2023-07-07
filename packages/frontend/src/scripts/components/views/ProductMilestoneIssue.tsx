@@ -5,13 +5,13 @@ import { NavLink } from 'react-router-dom'
 
 import { Issue } from 'productboard-common'
 
+import { IssueClient } from '../../clients/rest/issue'
 import { UserContext } from '../../contexts/User'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useIssues } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { calculateActual } from '../../functions/burndown'
-import { IssueManager } from '../../managers/issue'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
@@ -47,7 +47,7 @@ export const ProductMilestoneIssueView = () => {
 
     const product = useProduct(productId)
     const members = useMembers(productId)
-    const milestone = useMilestone(milestoneId)
+    const milestone = useMilestone(productId, milestoneId)
     const issues = useIssues(productId, milestoneId)
     const comments = useIssuesComments(productId, milestoneId)
 
@@ -89,7 +89,7 @@ export const ProductMilestoneIssueView = () => {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this issue from this milestone?')) {
-            await IssueManager.updateIssue(issue.id, { ...issue, milestoneId: null })
+            await IssueClient.updateIssue(productId, issue.issueId, { ...issue, milestoneId: null })
         }
     }
 
@@ -105,7 +105,7 @@ export const ProductMilestoneIssueView = () => {
     async function handleClickIssue(issue: Issue) {
         await goBack()
         await replace(`/products/${productId}/issues`)
-        await push(`/products/${productId}/issues/${issue.id}/comments`)
+        await push(`/products/${productId}/issues/${issue.issueId}/comments`)
     }
     
     // CONSTANTS
@@ -118,18 +118,18 @@ export const ProductMilestoneIssueView = () => {
             issue.label
         ) },
         { label: 'Assignees', class: 'nowrap', content: issue => (
-            issue.assigneeIds.map((assignedId) => (
-                <ProductUserPictureWidget key={assignedId} userId={assignedId} productId={productId} class='icon medium round'/>
+            issue.assignedUserIds.map((assignedUserId) => (
+                <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon medium round'/>
             ))
         ) },
         { label: 'Comments', class: 'center', content: issue => (
             <span className='badge'>
-                <CommentCount issueId={issue.id}/>
+                <CommentCount productId={productId} issueId={issue.issueId}/>
             </span>
         ) },
         { label: 'Parts', class: 'center', content: issue => (
             <span className='badge'>
-                <PartCount issueId={issue.id}/>
+                <PartCount productId={productId} issueId={issue.issueId}/>
             </span>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
@@ -156,7 +156,7 @@ export const ProductMilestoneIssueView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id && member.role == 'manager').length == 1 ? (
+                                    members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
                                             <strong>Edit</strong> milestone
                                         </NavLink>
@@ -184,7 +184,7 @@ export const ProductMilestoneIssueView = () => {
                                     </em>
                                 </p>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.id).length == 1 ? (
+                                    members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
                                             <strong>New</strong> issue
                                         </NavLink>
