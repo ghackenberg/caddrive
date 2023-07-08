@@ -16,7 +16,7 @@ export const LegalImprintView = () => {
                         School of Engineering<br/>
                         University of Applied Sciences Upper Austria<br/>
                         Stelzhammerstr. 23, 4600 Wels, Austria<br/>
-                        <a href="mailto:georg@caddrive.com">georg@caddrive.com</a>
+                        <a href="mailto:georg@caddrive.org">georg@caddrive.org</a>
                     </p>
                     <h3>Project sponsor</h3>
                     <p>
@@ -25,7 +25,7 @@ export const LegalImprintView = () => {
                         School of Engineering<br/>
                         University of Applied Sciences Upper Austria<br/>
                         Stelzhammerstr. 23, 4600 Wels, Austria<br/>
-                        <a href="mailto:christian@caddrive.com">christian@caddrive.com</a>
+                        <a href="mailto:christian@caddrive.org">christian@caddrive.org</a>
                     </p>
                     <h3>Software engineer</h3>
                     <p>
@@ -34,7 +34,7 @@ export const LegalImprintView = () => {
                         School of Engineering<br/>
                         University of Applied Sciences Upper Austria<br/>
                         Stelzhammerstr. 23, 4600 Wels, Austria<br/>
-                        <a href="mailto:dominik@caddrive.com">dominik@caddrive.com</a>
+                        <a href="mailto:dominik@caddrive.org">dominik@caddrive.org</a>
                     </p>
                     <h2>Libraries</h2>
                     <h3>Parts</h3>
