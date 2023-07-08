@@ -11,7 +11,7 @@ export const LegalImprintView = () => {
                     <h2>Persons</h2>
                     <h3>Project coordinator</h3>
                     <p>
-                        <strong>Dr. Georg Hackenberg, M.Sc.</strong><br/>
+                        <strong>Dr. rer. nat. Georg Hackenberg</strong><br/>
                         <strong>Professor for Industrial Informatics</strong><br/>
                         School of Engineering<br/>
                         University of Applied Sciences Upper Austria<br/>
@@ -20,7 +20,7 @@ export const LegalImprintView = () => {
                     </p>
                     <h3>Project sponsor</h3>
                     <p>
-                        <strong>FH-Prof. Dr. DI Christian Zehetner</strong><br/>
+                        <strong>Dr. tech. Christian Zehetner</strong><br/>
                         <strong>Professor for Product Development</strong><br/>
                         School of Engineering<br/>
                         University of Applied Sciences Upper Austria<br/>
@@ -29,7 +29,7 @@ export const LegalImprintView = () => {
                     </p>
                     <h3>Software engineer</h3>
                     <p>
-                        <strong>Dominik Frühwirth, M.Sc.</strong><br/>
+                        <strong>Dominik Frühwirth, BSc</strong><br/>
                         <strong>Researcher</strong><br/>
                         School of Engineering<br/>
                         University of Applied Sciences Upper Austria<br/>
