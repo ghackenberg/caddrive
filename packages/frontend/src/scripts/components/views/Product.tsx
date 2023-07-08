@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useContext } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import { Product } from 'productboard-common'
 
@@ -104,13 +104,13 @@ export const ProductView = () => {
             <div>
                 <div className='header'>
                     {contextUser ? (
-                        <Link to={`/products/new/settings?public=${_public}`} className='button fill green block-when-responsive'>
+                        <NavLink to={`/products/new/settings?public=${_public}`} className='button fill green block-when-responsive'>
                             <strong>New</strong> product
-                        </Link>
+                        </NavLink>
                     ) : (
-                        <a className='button fill green block-when-responsive'>
+                        <NavLink to='/auth/email' className='button fill green block-when-responsive'>
                             <strong>New</strong> product <span className='badge'>requires login</span>
-                        </a>
+                        </NavLink>
                     )}
                     <NavLink to='/products?public=true' replace={true} className={`button ${_public == 'true' ? 'fill' : 'stroke'} blue`}>
                         <strong>Public</strong> products{/* <span className='badge'><ProductCount public='true'/></span>*/}

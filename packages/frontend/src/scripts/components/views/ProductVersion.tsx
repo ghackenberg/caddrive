@@ -104,9 +104,9 @@ export const ProductVersionView = () => {
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button green fill'>
+                                    <NavLink to='/auth/email' className='button green fill'>
                                         <strong>New</strong> version <span className='badge'>requires login</span>
-                                    </a>
+                                    </NavLink>
                                 )}
                             </div>
                             { versions.length == 0 ? (

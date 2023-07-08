@@ -166,9 +166,9 @@ export const ProductMilestoneIssueView = () => {
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill gray right'>
+                                    <NavLink to='/auth/email' className='button fill gray right'>
                                         <strong>Edit</strong> milestone <span className='badge'>requires login</span>
-                                    </a>
+                                    </NavLink>
                                 )}
                                 <h1>
                                     {milestone.label}
@@ -194,9 +194,9 @@ export const ProductMilestoneIssueView = () => {
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green block-when-responsive'>
+                                    <NavLink to='/auth/email' className='button fill green block-when-responsive'>
                                         <strong>New</strong> issue <span className='badge'>requires login</span>
-                                    </a>
+                                    </NavLink>
                                 )}
                                 <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='open'/></span>

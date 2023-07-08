@@ -100,9 +100,9 @@ export const ProductMemberView = () => {
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green'>
+                                    <NavLink to='/auth/email' className='button fill green'>
                                         <strong>New</strong> member <span className='badge'>requires login</span>
-                                    </a>
+                                    </NavLink>
                                 )}
                             </div>
                             { members.length == 0 ? (

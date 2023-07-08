@@ -1,12 +1,13 @@
 import  * as React from 'react'
-import { useState, useEffect, FormEvent } from 'react'
+import { useContext, useState, useEffect, FormEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 
+import { UserContext } from '../../contexts/User'
 import { MilestoneClient } from '../../clients/rest/milestone'
 import { calculateActual } from '../../functions/burndown'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
-import { useIssues } from '../../hooks/list'
+import { useIssues, useMembers } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { DateInput } from '../inputs/DateInput'
@@ -23,6 +24,10 @@ export const ProductMilestoneSettingView = () => {
     
     const { goBack, replace } = useAsyncHistory()
 
+    // CONTEXTS
+
+    const { contextUser } = useContext(UserContext)
+
     // PARAMS
 
     const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
@@ -30,6 +35,7 @@ export const ProductMilestoneSettingView = () => {
     // HOOKS
 
     const product = useProduct(productId)
+    const members = useMembers(productId)
     const milestone = useMilestone(productId, milestoneId)
     const issues = useIssues(productId, milestoneId)
     const comments = useIssuesComments(productId, milestoneId)
@@ -129,7 +135,15 @@ export const ProductMilestoneSettingView = () => {
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
                                     <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
-                                    <ButtonInput value='Save'/>
+                                    {contextUser ? (
+                                        (productId == 'new' || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1) ? (
+                                            <ButtonInput value='Save'/>
+                                        ) : (
+                                            <ButtonInput value='Save' badge='requires role' disabled={true}/>
+                                        )
+                                    ) : (
+                                        <ButtonInput value='Save' badge='requires login' disabled={true}/>
+                                    )}
                                 </form>
                             </div>
                             <LegalFooter/>

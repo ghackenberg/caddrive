@@ -139,9 +139,9 @@ export const ProductIssueView = () => {
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green block-when-responsive'>
+                                    <NavLink to='/auth/email' className='button fill green block-when-responsive'>
                                         <strong>New</strong> issue <span className='badge'>requires login</span>
-                                    </a>
+                                    </NavLink>
                                 )}
                                 <NavLink to={`/products/${productId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
                                     <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} state={'open'}/></span>

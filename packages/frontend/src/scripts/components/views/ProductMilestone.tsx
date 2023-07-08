@@ -118,9 +118,9 @@ export const ProductMilestoneView = () => {
                                         </a>
                                     )
                                 ) : (
-                                    <a className='button fill green'>
+                                    <NavLink to='/auth/email' className='button fill green'>
                                         <strong>New</strong> milestone <span className='badge'>requires login</span>
-                                    </a>
+                                    </NavLink>
                                 )}
                             </div>
                             { milestones.length == 0 ? (
