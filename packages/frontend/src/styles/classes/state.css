@@ -10,8 +10,8 @@ span.state {
 }
 
 span.state.open {
-    background-color: red;
+    background-color: var(--red);
 }
 span.state.closed {
-    background-color: green;
+    background-color: var(--green);
 }

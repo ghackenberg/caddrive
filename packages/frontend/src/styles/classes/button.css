@@ -76,7 +76,7 @@ form *.button {
 }
 
 *.button.fill.red {
-    background-color: red;
+    background-color: var(--red);
     color: white;
 }
 *.button.fill.red:disabled {
@@ -84,7 +84,7 @@ form *.button {
 }
 
 *.button.fill.green {
-    background-color: green;
+    background-color: var(--green);
     color: white;
 }
 *.button.fill.green:disabled {
@@ -92,7 +92,7 @@ form *.button {
 }
 
 *.button.fill.blue {
-    background-color: blue;
+    background-color: var(--blue);
     color: white;
 }
 *.button.fill.blue:disabled {
@@ -118,16 +118,16 @@ form *.button {
     color: black;
 }
 *.button.stroke.red {
-    border-color: red;
-    color: red;
+    border-color: var(--red);
+    color: var(--red);
 }
 *.button.stroke.green {
-    border-color: green;
-    color: green;
+    border-color: var(--green);
+    color: var(--green);
 }
 *.button.stroke.blue {
-    border-color: blue;
-    color: blue;
+    border-color: var(--blue);
+    color: var(--blue);
 }
 
 @media screen and (max-width: 45em) {

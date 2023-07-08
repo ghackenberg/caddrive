@@ -41,7 +41,7 @@ export const AuthWelcomeView = () => {
                                 We wish you a <strong>great experience</strong> here.
                             </p>
                             <div>
-                                <button className='button fill blue' onClick={handleSubmit}>
+                                <button className='button fill red' onClick={handleSubmit}>
                                     Start
                                 </button>
                             </div>

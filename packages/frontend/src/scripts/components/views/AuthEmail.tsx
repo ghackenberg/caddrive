@@ -53,11 +53,11 @@ export const AuthEmailView = () => {
                         </p>
                         <div>
                             <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
-                            <button className='button fill blue' onClick={handleSubmit} >
+                            <button className='button fill red' onClick={handleSubmit} >
                                 {load ? 'Loading ...' : 'Next'}
                             </button>
                         </div>
-                        {error && <p style={{color: 'red'}}>{error}</p>}
+                        {error && <p style={{color: 'var(--red)'}}>{error}</p>}
                     </div>
                 </div>
                 <LegalFooter/>

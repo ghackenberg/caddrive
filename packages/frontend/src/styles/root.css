@@ -1,3 +1,26 @@
+:root {
+    --red-r: 192;
+    --red-g: 0;
+    --red-b: 0;
+
+    --red: rgb(var(--red-r), var(--red-g), var(--red-b));
+    --red-alpha-50: rgba(var(--red-r), var(--red-g), var(--red-b), 0.5); 
+
+    --green-r: 0;
+    --green-g: 128;
+    --green-b: 0;
+
+    --green: rgb(var(--green-r), var(--green-g), var(--green-b));
+    --green-alpha-50: rgba(var(--green-r), var(--green-g), var(--green-b), 0.5);
+
+    --blue-r: 0;
+    --blue-g: 0;
+    --blue-b: 255;
+
+    --blue: rgb(var(--blue-r), var(--blue-g), var(--blue-b));
+    --blue-alpha-50: rgba(var(--blue-r), var(--blue-g), var(--blue-b), 0.5);
+}
+
 /* Element specific styles */
 
 @import url(./elements/anchor.css);

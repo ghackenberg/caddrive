@@ -72,11 +72,11 @@ export const AuthPictureView = () => {
                             <div>
                                 <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
                                 <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
-                                <button className='button fill blue' onClick={handleUpload}>
+                                <button className='button fill red' onClick={handleUpload}>
                                     {load ? 'Loading ...' : 'Upload'}
                                 </button>
                             </div>
-                            {error && <p style={{color: 'red'}}>{error}</p>}
+                            {error && <p style={{color: 'var(--red)'}}>{error}</p>}
                         </div>
                     </div>
                     <LegalFooter/>

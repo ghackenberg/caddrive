@@ -52,7 +52,7 @@ export const AuthDownloadView = () => {
                             </p>
                             <div>
                                 <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
-                                <button className='button fill blue' onClick={handleDownload}>Download</button>
+                                <button className='button fill red' onClick={handleDownload}>Download</button>
                             </div>
                         </div>
                     </div>

@@ -62,11 +62,11 @@ export const AuthConsentView = () => {
                                 <button className='button fill lightgray' onClick={handleCancel}>
                                     Cancel
                                 </button>
-                                <button className='button fill blue' onClick={handleAgree}>
+                                <button className='button fill red' onClick={handleAgree}>
                                     {load ? 'Loading ...' : 'Agree'}
                                 </button>
                             </div>
-                            {error && <p style={{color: 'red'}}>{error}</p>}
+                            {error && <p style={{color: 'var(--red)'}}>{error}</p>}
                         </div>
                     </div>
                     <LegalFooter/>

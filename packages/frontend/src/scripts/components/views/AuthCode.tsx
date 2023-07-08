@@ -123,11 +123,11 @@ export const AuthCodeView = () => {
                         </p>
                         <div>
                             <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
-                            <button className='button fill blue' onClick={handleSubmit}>
+                            <button className='button fill red' onClick={handleSubmit}>
                                 {load ? 'Loading ...' : 'Next'}
                             </button>
                         </div>
-                        {error && <p style={{color: 'red'}}>{error}</p>}
+                        {error && <p style={{color: 'var(--red)'}}>{error}</p>}
                     </div>
                 </div>
                 <LegalFooter/>

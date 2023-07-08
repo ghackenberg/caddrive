@@ -49,8 +49,8 @@ span.badge.role {
     color: white;
 }
 .button.stroke.blue span.badge {
-    background-color: rgba(0,0,255,0.5);
+    background-color: var(--blue-alpha-50);
 }
 .button.stroke.green span.badge {
-    background-color: rgba(0,255,0,0.5);
+    background-color: var(--green-alpha-50);
 }

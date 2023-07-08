@@ -46,24 +46,24 @@ div.widget.model_graph a.selected {
     font-weight: bold;
 }
 div.widget.model_graph a.marked {
-    color: green;
+    color: var(--green);
     
     font-weight: bold;
 }
 div.widget.model_graph a.marked.selected {
-    color: lightgreen;
+    color: var(--green-alpha-50);
 }
 div.widget.model_graph a.highlighted {
-    color: red;
+    color: var(--red);
     
     font-weight: bold;
 }
 div.widget.model_graph a.highlighted.selected {
-    color: lightcoral;
+    color: var(--red-alpha-50);
 }
 div.widget.model_graph a.marked.highlighted {
-    color: blue;
+    color: var(--blue);
 }
 div.widget.model_graph a.marked.highlighted.selected {
-    color: lightblue;
+    color: var(--blue-alpha-50);
 }
