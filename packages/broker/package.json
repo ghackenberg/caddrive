@@ -33,12 +33,12 @@
         "directory": "packages/broker"
     },
     "scripts": {
-        "clean": "rm -rf scripts/bin",
+        "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
-        "devel": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
-        "lint": "eslint scripts/src",
-        "loc": "sloc scripts/src"
+        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "devel": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "lint": "eslint src",
+        "loc": "sloc src"
     },
     "dependencies": {
         "@types/ws": "^7.4.7",
