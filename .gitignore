@@ -8,13 +8,14 @@ package-lock.json
 
 public
 
-ldraw
-
 bin
 
 database.sqlite
 
 *.jwk
+
+# Assets
+packages/backend/assets/ldraw
 
 # Models
 packages/backend/uploads/*.glb

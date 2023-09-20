@@ -1,0 +1,95 @@
+classDiagram
+    direction TB
+
+    class Color {
+
+    }
+
+    class Vector {
+        x: number
+        y: number
+        z: number
+    }
+
+    class Matrix {
+        a: number
+        b: number
+        c: number
+        d: number
+        e: number
+        f: number
+        g: number
+        h: number
+        i: number
+    }
+
+    class Transform {
+
+    }
+
+    class File {
+        url: string
+    }
+    
+    class Entry {
+        <<abstract>>
+    }
+    
+    class Command {
+        name: string
+        parameters: string
+    }
+    
+    class Comment {
+        text: string
+    }
+
+    class Reference {
+
+    }
+
+    class Shape {
+        <<abstract>>
+    }
+    
+    class Line {
+
+    }
+    
+    class Triangle {
+
+    }
+    
+    class Quadrilateral {
+
+    }
+
+    class OptionalLine {
+
+    }
+
+    File *-- "*" Entry
+    File "1" <-- Reference
+
+    Transform *-- "1" Vector : Position
+    Transform *-- "1" Matrix : Orientation
+
+    Entry <|-- Shape
+    Entry <|-- Command
+    Entry <|-- Comment
+    Entry <|-- Reference
+
+    Shape <|-- Line
+    Shape <|-- Triangle
+    Shape <|-- Quadrilateral
+    Shape <|-- OptionalLine
+
+    Color "1" --* Shape
+
+    Line *-- "2" Vector : End points
+    Triangle *-- "3" Vector : End points
+    Quadrilateral *-- "4" Vector : End points
+    OptionalLine *-- "2" Vector : End points
+    OptionalLine *-- "2" Vector : Control points
+
+    Reference *-- "1" Transform
