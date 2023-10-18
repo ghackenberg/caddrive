@@ -67,7 +67,7 @@ export const ProductMemberSettingView = () => {
     // - Entities
     useEffect(() => {
         let exec = true
-        UserClient.findUsers(query, productId).then(users => exec && setUsers(users))
+        UserClient.findUsers(productId, query).then(users => exec && setUsers(users))
         return () => { exec = false }
     }, [productId, query])
     useEffect(() => {
