@@ -1,6 +1,6 @@
 # CADdrive
 
-**CADdrive** provides a free and open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help to make the discussion more self-explanatory and easy to understand.
+**CADdrive** (see https://caddrive.org and https://caddrive.com) provides an open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help to make the discussion more self-explanatory and easy to understand.
 
 ## Screenshots
 
