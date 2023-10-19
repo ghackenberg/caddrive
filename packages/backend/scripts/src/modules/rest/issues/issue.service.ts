@@ -3,13 +3,15 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
+import { getTestMessageUrl } from 'nodemailer'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
-import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
+import { Issue, IssueAddData, IssueUpdateData, IssueREST, Product } from 'productboard-common'
 import { Database, convertIssue } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
+import { TRANSPORTER } from '../../../functions/mail'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -50,8 +52,36 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         await Database.get().productRepository.save(product)
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue] })
+        // Notify changes
+        this.notifyAddIssue(product, issue)
         // Return issue
         return convertIssue(issue)
+    }
+
+    async notifyAddIssue(product: Product, issue: Issue) {
+        // Send emails
+        const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
+        for (const member of members) {
+            if (member.userId != this.request.user.userId) {
+                const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
+                const transporter = await TRANSPORTER
+                const info = await transporter.sendMail({
+                    from: 'CADdrive <mail@caddrive.com>',
+                    to: user.email,
+                    subject: 'Issue notification',
+                    templateName: 'issue',
+                    templateData: {
+                        user: this.request.user.name,
+                        date: new Date(issue.updated).toDateString(),
+                        product: product.name,
+                        issue: issue.label,
+                        comment: issue.text,
+                        link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
+                    }
+                })
+                console.log(getTestMessageUrl(info))
+            }
+        }
     }
 
     async getIssue(productId: string, issueId: string): Promise<Issue> {
