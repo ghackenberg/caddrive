@@ -1,6 +1,6 @@
-# CADDrive
+# CADdrive
 
-**CADDrive** provides a free and open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help to make the discussion more self-explanatory and easy to understand.
+**CADdrive** provides a free and open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help to make the discussion more self-explanatory and easy to understand.
 
 ## Screenshots
 
@@ -24,7 +24,7 @@ The comments view enables discussion between stakeholders and engineers around i
 
 ## Tools
 
-**CADDrive** requires the following tools:
+**CADdrive** requires the following tools:
 
 - node@^16
 - npm@^9
