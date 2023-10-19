@@ -1,15 +1,24 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { REQUEST } from '@nestjs/core'
 
+import { getTestMessageUrl } from 'nodemailer'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
-import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+import { Member, MemberAddData, MemberUpdateData, MemberREST, Product } from 'productboard-common'
 import { Database, convertMember } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
+import { TRANSPORTER } from '../../../functions/mail'
+import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
 export class MemberService implements MemberREST {
+    constructor(
+        @Inject(REQUEST)
+        private readonly request: AuthorizedRequest
+    ) {}
+
     async findMembers(productId: string): Promise<Member[]> {
         const where = { productId, deleted: IsNull() }
         const result: Member[] = []
@@ -30,8 +39,29 @@ export class MemberService implements MemberREST {
         await Database.get().productRepository.save(product)
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], members: [member] })
+        // Notify changes
+        this.notifyAddMember(product, member)
         // Return member
         return convertMember(member)
+    }
+
+    async notifyAddMember(product: Product, member: Member) {
+        const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
+        const transporter = await TRANSPORTER
+        const info = await transporter.sendMail({
+            from: 'CADdrive <mail@caddrive.com>',
+            to: user.email,
+            subject: 'Member notification',
+            templateName: 'member',
+            templateData: {
+                user: this.request.user.name,
+                date: new Date(member.created).toDateString(),
+                role: member.role,
+                product: product.name,
+                link: `https://caddrive.com/products/${product.productId}`
+            }
+        })
+        console.log(getTestMessageUrl(info))
     }
 
     async getMember(productId: string, memberId: string): Promise<Member> {
