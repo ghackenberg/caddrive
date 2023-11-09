@@ -1,5 +1,6 @@
 import * as React from 'react'
 
+import { CommentClient } from '../../clients/rest/comment'
 import { UserContext } from '../../contexts/User'
 import { useComment, useIssue } from '../../hooks/entity'
 import { collectParts, createProcessor } from '../../functions/markdown'
@@ -19,6 +20,10 @@ interface Part {
 
 export const CommentView = (props: { class: string, productId: string, issueId: string, commentId?: string, mouseover: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
 
+    // REFERENCES
+
+    const textReference = React.useRef<HTMLTextAreaElement>()
+
     // CONTEXTS
 
     const { contextUser } = React.useContext(UserContext)
@@ -35,25 +40,61 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
 
     // INITIAL STATES
 
-    const initialHtml = entity && createProcessor(props.mouseover, props.mouseout, props.click).processSync(entity.text).result
-    const initialParts = entity && collectParts(entity.text)
+    const initialText = entity && entity.text
+    const initialHtml = initialText && createProcessor(props.mouseover, props.mouseout, props.click).processSync(initialText).result
+    const initialParts = initialText && collectParts(initialText)
+    const initialMode = 'view'
 
     // STATES
 
+    const [textView, setTextView] = React.useState(initialText)
+    const [textEdit, setTextEdit] = React.useState(initialText)
+    const [text, setText] = React.useState(initialText)
     const [html, setHtml] = React.useState(initialHtml)
     const [parts, setParts] = React.useState(initialParts)
+    const [mode, setMode] = React.useState(initialMode)
 
     // EFFECTS
 
     React.useEffect(() => {
-        if (entity) {
-            setHtml(createProcessor(props.mouseover, props.mouseout, props.click).processSync(entity.text).result)
-            setParts(collectParts(entity.text))
+        if (text) {
+            setHtml(createProcessor(props.mouseover, props.mouseout, props.click).processSync(text).result)
+            setParts(collectParts(text))
         } else {
             setParts(undefined)
             setHtml(undefined)
         }
-    }, [entity])
+    }, [text])
+
+    // FUNCTIONS
+
+    function handleEdit() {
+        setMode('edit')
+    }
+    async function handleCancel() {
+        setTextEdit(textView)
+        setText(textView)
+        setMode('view')
+    }
+    async function handlePreview() {
+        setText(textEdit)
+        setMode('preview')
+    }
+    async function handleSave() {
+        await CommentClient.updateComment(productId, issueId, commentId, { text: textEdit })
+        setTextView(textEdit)
+        setText(textEdit)
+        setMode('view')
+    }
+
+    // SNIPPETS
+
+    const edit = <a onClick={handleEdit}>edit</a>
+    const save = <a onClick={handleSave}>save</a>
+    const cancel = <a onClick={handleCancel}>cancel</a>
+    const preview = <a onClick={handlePreview}>preview</a>
+    const toggle = mode == 'view' ? edit : (mode == 'preview' ? <>{edit} | preview | {cancel} | {save}</> : <>edit | {preview} | {cancel} | {save}</>) 
+    const action = commentId && contextUser.userId == entity.userId ? <>({toggle})</> : <></>
 
     // RETURN
 
@@ -68,18 +109,18 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                     </div>
                     <div className="text">
                         <p>
-                            <strong><ProductUserNameWidget userId={entity.userId} productId={props.productId}/></strong> commented on {new Date(entity.created).toISOString().substring(0, 10)}
+                            <strong><ProductUserNameWidget userId={entity.userId} productId={props.productId}/></strong> commented on {new Date(entity.created).toISOString().substring(0, 10)} {action}
                         </p>
                     </div>
                 </div>
                 <div className="body">
                     <div className="free"/>
                     <div className="text">
-                        {html}
-                        {entity.audioId && <audio src={`/rest/files/${entity.audioId}.webm`} controls/>}
+                        {(mode == 'view' || mode == 'preview') ? html : <textarea ref={textReference} value={textEdit} onChange={event => setTextEdit(event.currentTarget.value)}/>}
+                        {(mode == 'view' || mode == 'preview') && entity.audioId && <audio src={`/rest/files/${entity.audioId}.webm`} controls/>}
                     </div>
                 </div>
-                {parts && parts.map((part, index) => (
+                {(mode == 'view' || mode == 'preview') && parts && parts.map((part, index) => (
                     <div key={index} className="note part">
                         <div className="free"/>
                         <div className="text">
