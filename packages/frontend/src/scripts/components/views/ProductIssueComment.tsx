@@ -9,7 +9,7 @@ import { Version } from 'productboard-common'
 
 import { CommentClient } from '../../clients/rest/comment'
 import { UserContext } from '../../contexts/User'
-import { collectParts, Part } from '../../functions/markdown'
+import { collectParts, createProcessor, Part } from '../../functions/markdown'
 import { computePath } from '../../functions/path'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers } from '../../hooks/list'
@@ -59,6 +59,9 @@ export const ProductIssueCommentView = () => {
     const [marked, setMarked] = useState<Part[]>()
     const [selected, setSelected] = useState<Part[]>()
     const [active, setActive] = useState<string>('left')
+    const [mode, setMode] = useState<string>('edit')
+    const [html, setHtml] = useState<unknown>()
+    const [parts, setParts] = useState<Part[]>()
 
     // EFFECTS
 
@@ -138,6 +141,8 @@ export const ProductIssueCommentView = () => {
         if (text) {
             await CommentClient.addComment(productId, issueId, { text, action: 'none' }, { audio })
             setText('')
+            setHtml(undefined)
+            setMode('edit')
         }
         if (audio) {
             setAudio(undefined)
@@ -150,6 +155,8 @@ export const ProductIssueCommentView = () => {
         if (text) {
             await CommentClient.addComment(productId, issueId, { text, action: 'close' }, { audio })
             setText('')
+            setHtml(undefined)
+            setMode('edit')
         }
         if (audio) {
             setAudio(undefined)
@@ -162,10 +169,22 @@ export const ProductIssueCommentView = () => {
         if (text) {
             await CommentClient.addComment(productId, issueId, { text, action: 'reopen' }, { audio })
             setText('')
+            setHtml(undefined)
+            setMode('edit')
         }
         if (audio) {
             setAudio(undefined)
         }
+    }
+
+    function handleEdit() {
+        setMode('edit')
+    }
+
+    function handlePreview() {
+        setHtml(createProcessor(handleMouseOver, handleMouseOut, handleClick).processSync(text).result)
+        setParts(collectParts(text))
+        setMode('preview')
     }
 
     // CONSTANTS
@@ -174,6 +193,10 @@ export const ProductIssueCommentView = () => {
         { name: 'left', text: 'Thread view', image: LeftIcon },
         { name: 'right', text: 'Model view', image: RightIcon }
     ]
+
+    const edit = <a onClick={handleEdit}>edit</a>
+    const preview = <a onClick={handlePreview}>preview</a>
+    const action = mode == 'edit' ? <>(edit | {preview})</> : <>({edit} | preview)</>
 
     // RETURN
 
@@ -239,14 +262,15 @@ export const ProductIssueCommentView = () => {
                                             </div>
                                             <div className="text">
                                                 <p>
-                                                    <strong>New comment</strong>
+                                                    <strong>New comment</strong> {action}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="body">
                                             <div className="free" />
                                             <div className="text">
-                                                <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)} />
+                                                {mode == 'edit' && <textarea ref={textReference} placeholder={'Type text'} value={text} onChange={event => setText(event.currentTarget.value)}/>}
+                                                {mode == 'preview' && html}
                                                 {contextUser ? (
                                                     members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                                         <>
@@ -281,7 +305,6 @@ export const ProductIssueCommentView = () => {
                                                                 </button>
                                                             )}
                                                         </>
-
                                                     ) : (
                                                         <>
                                                             <button className='button fill gray block-when-responsive'>
@@ -330,6 +353,20 @@ export const ProductIssueCommentView = () => {
                                                 )}
                                             </div>
                                         </div>
+                                        {mode == 'preview' && parts && parts.map((part, index) => (
+                                            <div key={index} className="note part">
+                                                <div className="free"/>
+                                                <div className="text">
+                                                    <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event)} onClick={event => handleClick(event)}>
+                                                        <span>
+                                                            <img src={RightIcon}/>
+                                                        </span>
+                                                        {part.objectName}
+                                                    </a>
+                                                    was mentioned
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

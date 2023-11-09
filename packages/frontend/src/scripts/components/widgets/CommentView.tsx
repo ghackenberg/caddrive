@@ -87,7 +87,7 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
         setMode('view')
     }
 
-    // SNIPPETS
+    // CONSTANTS
 
     const edit = <a onClick={handleEdit}>edit</a>
     const save = <a onClick={handleSave}>save</a>
@@ -117,7 +117,7 @@ export const CommentView = (props: { class: string, productId: string, issueId: 
                     <div className="free"/>
                     <div className="text">
                         {(mode == 'view' || mode == 'preview') ? html : <textarea ref={textReference} value={textEdit} onChange={event => setTextEdit(event.currentTarget.value)}/>}
-                        {(mode == 'view' || mode == 'preview') && entity.audioId && <audio src={`/rest/files/${entity.audioId}.webm`} controls/>}
+                        {entity.audioId && <audio src={`/rest/files/${entity.audioId}.webm`} controls/>}
                     </div>
                 </div>
                 {(mode == 'view' || mode == 'preview') && parts && parts.map((part, index) => (
