@@ -53,35 +53,9 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue] })
         // Notify changes
-        this.notifyAddIssue(product, issue)
+        this.notifyIssue(product, issue, 'Issue notification (add)')
         // Return issue
         return convertIssue(issue)
-    }
-
-    async notifyAddIssue(product: Product, issue: Issue) {
-        // Send emails
-        const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
-        for (const member of members) {
-            if (member.userId != this.request.user.userId) {
-                const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
-                const transporter = await TRANSPORTER
-                const info = await transporter.sendMail({
-                    from: 'CADdrive <mail@caddrive.com>',
-                    to: user.email,
-                    subject: 'Issue notification',
-                    templateName: 'issue',
-                    templateData: {
-                        user: this.request.user.name,
-                        date: new Date(issue.updated).toDateString(),
-                        product: product.name,
-                        issue: issue.label,
-                        comment: issue.text,
-                        link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
-                    }
-                })
-                console.log(getTestMessageUrl(info))
-            }
-        }
     }
 
     async getIssue(productId: string, issueId: string): Promise<Issue> {
@@ -107,6 +81,8 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         await Database.get().productRepository.save(product)
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue] })
+        // Notify changes
+        this.notifyIssue(product, issue, 'Issue notification (update)')
         // Return issue
         return convertIssue(issue)
     }
@@ -132,5 +108,31 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments })
         // Return issue
         return convertIssue(issue)
+    }
+
+    async notifyIssue(product: Product, issue: Issue, subject: string) {
+        // Send emails
+        const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
+        for (const member of members) {
+            if (member.userId != this.request.user.userId) {
+                const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
+                const transporter = await TRANSPORTER
+                const info = await transporter.sendMail({
+                    from: 'CADdrive <mail@caddrive.com>',
+                    to: user.email,
+                    subject,
+                    templateName: 'issue',
+                    templateData: {
+                        user: this.request.user.name,
+                        date: new Date(issue.updated).toDateString(),
+                        product: product.name,
+                        issue: issue.label,
+                        comment: issue.text,
+                        link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
+                    }
+                })
+                console.log(getTestMessageUrl(info))
+            }
+        }
     }
 }

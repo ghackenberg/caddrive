@@ -61,36 +61,9 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
         // Notify changes
-        this.notifyAddComment(product, issue, comment)
+        this.notifyComment(product, issue, comment, 'Comment notification (add)')
         // Return comment
         return convertComment(comment)
-    }
-
-    async notifyAddComment(product: Product, issue: Issue, comment: Comment) {
-        // Send emails
-        const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
-        for (const member of members) {
-            if (member.userId != this.request.user.userId) {
-                const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
-                const transporter = await TRANSPORTER
-                const info = await transporter.sendMail({
-                    from: 'CADdrive <mail@caddrive.com>',
-                    to: user.email,
-                    subject: 'Comment notification',
-                    templateName: 'comment',
-                    templateData: {
-                        user: this.request.user.name,
-                        date: new Date(comment.created).toDateString(),
-                        product: product.name,
-                        issue: issue.label,
-                        comment: comment.text,
-                        action: comment.action,
-                        link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
-                    }
-                })
-                console.log(getTestMessageUrl(info))
-            }
-        }
     }
 
     async getComment(productId: string, issueId: string, commentId: string): Promise<Comment> {
@@ -117,6 +90,8 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         await Database.get().productRepository.save(product)
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
+        // Notify changes
+        this.notifyComment(product, issue, comment, 'Comment notification (update)')
         // Return comment
         return convertComment(comment)
     }
@@ -140,5 +115,32 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
         // Return comment
         return convertComment(comment)
+    }
+
+    async notifyComment(product: Product, issue: Issue, comment: Comment, subject: string) {
+        // Send emails
+        const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
+        for (const member of members) {
+            if (member.userId != this.request.user.userId) {
+                const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
+                const transporter = await TRANSPORTER
+                const info = await transporter.sendMail({
+                    from: 'CADdrive <mail@caddrive.com>',
+                    to: user.email,
+                    subject,
+                    templateName: 'comment',
+                    templateData: {
+                        user: this.request.user.name,
+                        date: new Date(comment.created).toDateString(),
+                        product: product.name,
+                        issue: issue.label,
+                        comment: comment.text,
+                        action: comment.action,
+                        link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
+                    }
+                })
+                console.log(getTestMessageUrl(info))
+            }
+        }
     }
 }
