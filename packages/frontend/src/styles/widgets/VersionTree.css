@@ -101,7 +101,7 @@ div.widget.version_tree > div > div.text > div:first-child::after {
     content: '';
     position: absolute;
     top: 0;
-    right: 0;
+    right: 3em;
     bottom: 0;
     width: 1em;
     background-image: linear-gradient(to right, rgba(245,245,245,0),rgba(245,245,245,1));
@@ -115,6 +115,39 @@ div.widget.version_tree > div > div.text > div:last-child {
     margin-bottom: 0.75em;
 
     text-align: justify;
+}
+div.widget.version_tree > div > div.text > div > a.download {
+    display: block;
+
+    position: relative;
+
+    z-index: 1;
+
+    float: right;
+
+    width: 3em;
+    height: 3em;
+
+    background-color: rgb(245,245,245);
+}
+div.widget.version_tree > div.selected > div.text > div > a.download,
+div.widget.version_tree > div:hover > div.text > div > a.download {
+    background-color: rgb(230,230,230);
+}
+div.widget.version_tree > div > div.text > div > a.download > img {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+
+    padding: 1em;
+
+    background-color: rgb(215,215,215);
+
+    border-radius: 50%;
+}
+div.widget.version_tree > div > div.text > div > a.download:hover > img {
+    background-color: rgb(205,205,205);
 }
 div.widget.version_tree > div > div.text > div > span.label {
     display: inline-block;

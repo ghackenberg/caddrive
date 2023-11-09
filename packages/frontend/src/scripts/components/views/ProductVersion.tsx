@@ -19,6 +19,7 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
 import LoadIcon from '/src/images/load.png'
+import DownloadIcon from '/src/images/download.png'
 import VersionIcon from '/src/images/version.png'
 import PartIcon from '/src/images/part.png'
 
@@ -154,7 +155,12 @@ export const ProductVersionView = () => {
                                                     </div>
                                                     <div className="text">
                                                         <div>
-                                                            <span className="label">{vers.major}.{vers.minor}.{vers.patch}</span>
+                                                            <a className="download" href={`/rest/files/${vers.versionId}.${vers.modelType}`}>
+                                                                <img src={DownloadIcon}/>
+                                                            </a>
+                                                            <span className="label">
+                                                                {vers.major}.{vers.minor}.{vers.patch}
+                                                            </span>
                                                             <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle'/>
                                                             <span className="user">
                                                                 <span className="name">
@@ -166,7 +172,9 @@ export const ProductVersionView = () => {
                                                             </span>
                                                         </div>
                                                         <div>
-                                                            <span className="description">{vers.description}</span>
+                                                            <span className="description">
+                                                                {vers.description}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div className="model">
