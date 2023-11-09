@@ -244,7 +244,7 @@ export async function canReadCommentOrFail(userId: string, productId: string, is
     }
 }
 export async function canUpdateCommentOrFail(userId: string, productId: string, issueId: string, commentId: string) {
-    await getCommentOrFail({ productId, issueId, commentId, deleted: IsNull() }, NotFoundException)
+    await getCommentOrFail({ userId, productId, issueId, commentId, deleted: IsNull() }, NotFoundException)
     if (userId) {
         await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull()}, ForbiddenException)
     } else {
