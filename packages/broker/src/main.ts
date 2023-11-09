@@ -92,8 +92,10 @@ async function boot() {
             }
         } catch (e) {
             console.error('Authenticate exception', e)
-            // Deny authenticate
-            callback(e, false)
+            // Remember user ID of MQTT client
+            CLIENT_USER_IDS[client.id] = null
+            // Allow authenticate
+            callback(null, true)
         }
     }
 
