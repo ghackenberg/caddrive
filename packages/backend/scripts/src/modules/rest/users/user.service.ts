@@ -1,9 +1,10 @@
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
 import 'multer'
+import Jimp from 'jimp'
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull, Raw } from 'typeorm'
 
@@ -55,9 +56,20 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         user.updated = Date.now()
         user.consent = data.consent
         user.name = data.name
-        if (file && file.originalname.endsWith('.jpg')) {
-            user.pictureId = shortid()
-            writeFileSync(`./uploads/${user.pictureId}.jpg`, file.buffer)
+        if (file && (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png' || file.mimetype == 'image/bmp' || file.mimetype == 'image/tiff' || file.mimetype == 'image/gif')) {
+            // Parse
+            const parsed = await Jimp.read(file.buffer)
+            // Crop
+            const width = parsed.getWidth()
+            const height = parsed.getHeight()
+            const size = Math.min(width, height)
+            const cropped = parsed.crop((width - size) / 2, (height - size) / 2, size, size)
+            // Resize
+            const resized = cropped.resize(128, 128)
+            // Write
+            const pictureId = shortid()
+            await resized.writeAsync(`./uploads/${pictureId}.jpg`)
+            user.pictureId = pictureId
         }
         await Database.get().userRepository.save(user)
         // Emit changes

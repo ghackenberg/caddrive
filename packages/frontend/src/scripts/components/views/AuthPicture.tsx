@@ -70,7 +70,7 @@ export const AuthPictureView = () => {
                                 Profile pictures make collaboration more personal and more fun!
                             </p>
                             <div>
-                                <input ref={fileInput} type="file" accept='.jpg' style={{display: 'none'}} onChange={handleChange}/>
+                                <input ref={fileInput} type="file" accept='image/jpeg, image/png, image/bmp, image/tiff, image/gif' style={{display: 'none'}} onChange={handleChange}/>
                                 <button className='button fill lightgray' onClick={handleSkip}>Skip</button>
                                 <button className='button fill red' onClick={handleUpload}>
                                     {load ? 'Loading ...' : 'Upload'}

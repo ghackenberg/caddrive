@@ -13,13 +13,16 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },{
+        },
+        {
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },{
+        },
+        {
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
-        },{
+        },
+        {
             "name": "Dominik Frühwirth",
             "email": "dominik.fruewirth@fh-wels.at"
         }
@@ -46,7 +49,7 @@
         "@types/nodemailer": "^6.4.7",
         "@types/yauzl": "^2.10.0",
         "gl": "^6.0.2",
-        "jimp": "^0.22.7",
+        "jimp": "^0.22.10",
         "nodemailer": "^6.9.1",
         "nodemailer-mjml": "^1.2.17",
         "productboard-common": "^0.0.1",

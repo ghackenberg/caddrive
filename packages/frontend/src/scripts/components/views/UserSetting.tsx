@@ -47,9 +47,9 @@ export const UserSettingView = () => {
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         // TODO handle unmount!
         event.preventDefault()
-        if (name && email) {
+        if (name) {
             const newUser = await UserClient.updateUser(userId, { consent: user.consent, name }, picture)
-            if (contextUser.email == newUser.email) {
+            if (contextUser.userId == userId) {
                 setContextUser({ ...contextUser, ...newUser })
             }
         }
@@ -92,7 +92,7 @@ export const UserSettingView = () => {
                                     <TextInput label='Name' placeholder='Please enter your profile name here' value={name} change={setName}/>
                                 )}
                                 {true && (
-                                    <FileInput label='Picture' placeholder='Select' accept='.jpg' change={setPicture} required={userId === 'new'}/>
+                                    <FileInput label='Picture' placeholder='Select' accept='image/jpeg, image/png, image/bmp, image/tiff, image/gif' change={setPicture} required={userId === 'new'}/>
                                 )}
                                 {contextUser ? (
                                     userId == contextUser.userId ? (
