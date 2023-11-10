@@ -155,7 +155,7 @@ export const ProductVersionView = () => {
                                                     </div>
                                                     <div className="text">
                                                         <div>
-                                                            <a className="download" href={`/rest/files/${vers.versionId}.${vers.modelType}`}>
+                                                            <a className="download" title="Download CAD model revision" href={`/rest/files/${vers.versionId}.${vers.modelType}`}>
                                                                 <img src={DownloadIcon}/>
                                                             </a>
                                                             <span className="label">
