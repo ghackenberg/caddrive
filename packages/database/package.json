@@ -35,7 +35,13 @@
         "clean": "rm -rf bin",
         "build": "tsc",
         "lint": "eslint src",
-        "loc": "sloc src"
+        "loc": "sloc src",
+        "typeorm": "node --loader ts-node/esm --experimental-specifier-resolution=node ../../node_modules/typeorm/cli.js",
+        "migration:generate": "npm run typeorm -- migration:generate -d src/config.ts",
+        "migration:create": "npm run typeorm -- migration:create",
+        "migration:run": "npm run typeorm -- migration:run -d src/config.ts",
+        "migration:revert": "npm run typeorm -- migration:revert -d src/config.ts",
+        "migration:show": "npm run typeorm -- migration:show -d src/config.ts"
     },
     "dependencies": {
         "pg": "^8.9.0",

@@ -1,6 +1,7 @@
 import 'reflect-metadata'
-import { DataSource, DataSourceOptions, FindOptionsWhere, Repository } from 'typeorm'
+import { DataSource, FindOptionsWhere, Repository } from 'typeorm'
 
+import options from './config'
 import { CommentEntity } from './entities/comment'
 import { IssueEntity } from './entities/issue'
 import { MemberEntity } from './entities/member'
@@ -27,40 +28,8 @@ export class Database {
 
     static async init() {
         if (!this.instance) {
-            const type = process.env['TYPEORM_TYPE'] || 'sqlite'
-
-            if (type == 'postgres') {
-                const host = process.env['TYPEORM_HOST'] || 'localhost'
-                const port = parseInt(process.env['TYPEORM_PORT'] || '5432')
-                const database = process.env['TYPEORM_DATABASE'] || 'postgres'
-                const username = process.env['TYPEORM_USERNAME'] || 'postgres'
-                const password = process.env['TYPEORM_PASSWORD'] || 'test'
-
-                this.instance  = new Database({
-                    type,
-                    host,
-                    port,
-                    database,
-                    username,
-                    password,
-                    synchronize: true,
-                    logging: false,
-                    entities: [TokenEntity, UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
-                    subscribers: [],
-                    migrations: []
-                })
-            } else if (type == 'sqlite') {
-                const database = process.env['TYPEORM_DATABASE'] || '../../database.sqlite'
-
-                this.instance  = new Database({
-                    type,
-                    database,
-                    synchronize: true,
-                    logging: false,
-                    entities: [TokenEntity, UserEntity, ProductEntity, MemberEntity, VersionEntity, IssueEntity, CommentEntity, MilestoneEntity],
-                    subscribers: [],
-                    migrations: []
-                })
+            if (options) {
+                this.instance = new Database(options)
             } else {
                 throw 'Database type not supported'
             }
@@ -85,8 +54,8 @@ export class Database {
     public readonly commentRepository: Repository<CommentEntity>
     public readonly milestoneRepository: Repository<MilestoneEntity>
 
-    private constructor(options: DataSourceOptions) {
-        this.dataSource = new DataSource(options)
+    private constructor(config: DataSource) {
+        this.dataSource = config
 
         this.tokenRepository = this.dataSource.getRepository(TokenEntity)
         this.userRepository = this.dataSource.getRepository(UserEntity)
