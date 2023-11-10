@@ -2,7 +2,7 @@
     "name": "productboard-backend",
     "version": "0.0.1",
     "description": "Backend managing and providing product design data",
-    "license": "MIT",
+    "license": "UNLICENSED",
     "private": "true",
     "type": "module",
     "author": {
@@ -13,16 +13,13 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },
-        {
+        },{
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },
-        {
+        },{
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
-        },
-        {
+        },{
             "name": "Dominik Frühwirth",
             "email": "dominik.fruewirth@fh-wels.at"
         }
@@ -35,10 +32,10 @@
     "scripts": {
         "clean": "rm -rf scripts/bin",
         "build": "tsc",
-        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
-        "devel": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
         "lint": "eslint scripts/src",
-        "loc": "sloc scripts/src"
+        "loc": "sloc scripts/src",
+        "dev": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
+        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts"
     },
     "dependencies": {
         "@nestjs/platform-express": "^8.1.2",

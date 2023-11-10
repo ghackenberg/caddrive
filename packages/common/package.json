@@ -2,7 +2,7 @@
     "name": "productboard-common",
     "version": "0.0.1",
     "description": "Common data structures shared between different services",
-    "license": "MIT",
+    "license": "UNLICENSED",
     "private": "true",
     "main": "src/main",
     "types": "src/main",
@@ -15,16 +15,13 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },
-        {
+        },{
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },
-        {
+        },{
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
-        },
-        {
+        },{
             "name": "Dominik Frühwirth",
             "email": "dominik.fruewirth@fh-wels.at"
         }

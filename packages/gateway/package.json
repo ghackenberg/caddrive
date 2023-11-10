@@ -2,7 +2,7 @@
     "name": "productboard-gateway",
     "version": "0.0.1",
     "description": "Gateway intercepting and dispatching network messages",
-    "license": "MIT",
+    "license": "UNLICENSED",
     "private": "true",
     "type": "module",
     "author": {
@@ -13,16 +13,13 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },
-        {
+        },{
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },
-        {
+        },{
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
-        },
-        {
+        },{
             "name": "Dominik Frühwirth",
             "email": "dominik.fruewirth@fh-wels.at"
         }
@@ -35,10 +32,10 @@
     "scripts": {
         "clean": "rm -rf bin",
         "build": "tsc",
-        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
-        "devel": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
         "lint": "eslint src",
-        "loc": "sloc src"
+        "loc": "sloc src",
+        "dev": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts",
+        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node src/main.ts"
     },
     "dependencies": {
         "@types/http-proxy-middleware": "^0.19.1",

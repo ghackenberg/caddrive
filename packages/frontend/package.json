@@ -2,7 +2,7 @@
     "name": "productboard-frontend",
     "version": "0.0.1",
     "description": "Web browser frontend for the collaborative design platform",
-    "license": "MIT",
+    "license": "UNLICENSED",
     "private": "true",
     "type": "module",
     "author": {
@@ -13,16 +13,13 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },
-        {
+        },{
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },
-        {
+        },{
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
-        },
-        {
+        },{
             "name": "Dominik Frühwirth",
             "email": "dominik.fruewirth@fh-wels.at"
         }
@@ -35,10 +32,10 @@
     "scripts": {
         "clean": "rm -rf public",
         "build": "webpack --config webpack.prod.js",
-        "start": "http-server -p 3002 -s",
-        "devel": "webpack serve --config webpack.dev.js",
         "lint": "eslint src/scripts",
-        "loc": "sloc src/scripts"
+        "loc": "sloc src/scripts",
+        "dev": "webpack serve --config webpack.dev.js",
+        "start": "http-server -p 3002 -s"
     },
     "dependencies": {
         "buffer": "^5.7.1",

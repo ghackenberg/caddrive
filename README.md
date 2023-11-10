@@ -46,7 +46,7 @@ npm install
 Start the software in development mode as follows:
 
 ```
-npm run devel
+npm run dev
 ```
 
 ### 📄 Start production

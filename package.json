@@ -2,7 +2,7 @@
     "name": "productboard",
     "version": "0.0.1",
     "description": "Web platform for collaborative product design",
-    "license": "MIT",
+    "license": "UNLICENSED",
     "private": "true",
     "author": {
         "name": "Georg Hackenberg",
@@ -12,16 +12,13 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },
-        {
+        },{
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },
-        {
+        },{
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
-        },
-        {
+        },{
             "name": "Dominik Frühwirth",
             "email": "dominik.fruehwirth@fh-wels.at"
         }
@@ -31,23 +28,21 @@
         "url": "https://github.com/ghackenberg/productboard.git"
     },
     "workspaces": [
+        "packages/ldraw",
         "packages/common",
         "packages/database",
         "packages/broker",
         "packages/backend",
         "packages/frontend",
-        "packages/gateway",
-        "packages/toolkit"
+        "packages/gateway"
     ],
     "scripts": {
         "clean": "workspaces-run -- npm run clean",
-        "build": "workspaces-run --ignore=\"productboard-{gateway}\" -- npm run build",
-        "start": "workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run start",
-        "devel": "workspaces-run --parallel --ignore=\"productboard-{common,database,toolkit}\" -- npm run devel",
-        "toolkit-start": "workspaces-run --only=\"productboard-toolkit\" -- npm run start",
-        "toolkit-devel": "workspaces-run --only=\"productboard-toolkit\" -- npm run devel",
+        "build": "workspaces-run -- npm run build",
         "lint": "workspaces-run -- npm run lint",
-        "loc": "workspaces-run -- npm run loc"
+        "loc": "workspaces-run -- npm run loc",
+        "dev": "workspaces-run --parallel --ignore=\"productboard-{ldraw,common,database}\" -- npm run dev",
+        "start": "workspaces-run --parallel --ignore=\"productboard-{ldraw,common,database}\" -- npm run start"
     },
     "dependencies": {
         "@nestjs/common": "^8.1.2",
