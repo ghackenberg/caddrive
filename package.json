@@ -28,7 +28,6 @@
         "url": "https://github.com/ghackenberg/productboard.git"
     },
     "workspaces": [
-        "packages/ldraw",
         "packages/common",
         "packages/database",
         "packages/broker",
@@ -41,8 +40,8 @@
         "build": "workspaces-run -- npm run build",
         "lint": "workspaces-run -- npm run lint",
         "loc": "workspaces-run -- npm run loc",
-        "dev": "workspaces-run --parallel --ignore=\"productboard-{ldraw,common,database}\" -- npm run dev",
-        "start": "workspaces-run --parallel --ignore=\"productboard-{ldraw,common,database}\" -- npm run start"
+        "dev": "workspaces-run --parallel --ignore=\"productboard-{common,database}\" -- npm run dev",
+        "start": "workspaces-run --parallel --ignore=\"productboard-{common,database}\" -- npm run start"
     },
     "dependencies": {
         "@nestjs/common": "^8.1.2",
