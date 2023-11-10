@@ -28,8 +28,11 @@ div.widget.issue_thread > div {
 
     width: 100%;
 }
-div.widget.issue_thread > div.comment {
+div.widget.issue_thread > div {
     margin-top: 1em;
+}
+div.widget.issue_thread > div:first-child {
+    margin-top: 0;
 }
 div.widget.issue_thread > div > div {
     display: table-row;

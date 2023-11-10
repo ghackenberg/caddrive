@@ -4,8 +4,6 @@ export class IssueUpdateData {
     @ApiProperty()
     label: string
     @ApiProperty()
-    text: string
-    @ApiProperty()
     assignedUserIds: string[]
     @ApiProperty()
     milestoneId: string
@@ -15,6 +13,8 @@ export class IssueAddData extends IssueUpdateData {
 }
 
 export class Issue extends IssueAddData {
+    @ApiProperty()
+    userId: string
     @ApiProperty()
     productId: string
     @ApiProperty()
@@ -29,9 +29,4 @@ export class Issue extends IssueAddData {
     
     @ApiProperty()
     state: 'open' | 'closed'
-
-    @ApiProperty()
-    userId: string
-    @ApiProperty()
-    audioId: string
 }

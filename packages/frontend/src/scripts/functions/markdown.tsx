@@ -6,7 +6,7 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { unified } from "unified"
 
-import { Issue, Comment } from 'productboard-common'
+import { Comment } from 'productboard-common'
 
 const regex = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
@@ -18,16 +18,6 @@ export interface Part {
 }
 
 type Handler = (event: MouseEvent<HTMLAnchorElement>, part: Part) => void
-
-export function collectIssueParts(issues: Issue[]) {
-    const issuePartsNew: { [id: string]: Part[] } = {}
-    for (const issue of issues || []) {
-        const parts: Part[] = []
-        collectParts(issue.text, parts)
-        issuePartsNew[issue.issueId] = parts
-    }
-    return issuePartsNew
-}
 
 export function collectCommentParts(comments: {[id: string]: Comment[]}) {
     const commentPartsNew: {[id: string]: Part[]} = {}

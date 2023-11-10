@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiResponse } from '@nestjs/swagger'
 
 import "multer"
 
@@ -16,7 +15,7 @@ import { TokenOptionalGuard } from '../tokens/token.guard'
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(IssueAddData, IssueUpdateData)
-export class IssueController implements IssueREST<string, string, Express.Multer.File[]> {
+export class IssueController implements IssueREST {
     constructor(
         private readonly issueService: IssueService,
         @Inject(REQUEST)
@@ -34,32 +33,15 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     }
 
     @Post()
-    @UseInterceptors(
-        FileFieldsInterceptor(
-            [{ name: 'audio', maxCount: 1 }]
-        )
-    )
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                data: { $ref: getSchemaPath(IssueAddData) },
-                audio: { type: 'string', format: 'binary' }
-            },
-            required: ['data']
-        },
-        required: true
-    })
+    @ApiBody({ type: IssueAddData,  required: true })
     @ApiResponse({ type: Issue })
     async addIssue(
         @Param('productId') productId: string,
-        @Body('data') data: string,
-        @UploadedFiles() files: { audio?: Express.Multer.File[] }
+        @Body() data: IssueAddData
     ): Promise<Issue> {
         await canCreateIssueOrFail(this.request.user && this.request.user.userId, productId)
-        return this.issueService.addIssue(productId, JSON.parse(data), files)
+        return this.issueService.addIssue(productId, data)
     }  
 
     @Get(':issueId')
@@ -75,34 +57,17 @@ export class IssueController implements IssueREST<string, string, Express.Multer
     } 
 
     @Put(':issueId')
-    @UseInterceptors(
-        FileFieldsInterceptor(
-            [{ name: 'audio', maxCount: 1 }]
-        )
-    )
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                data: { $ref: getSchemaPath(IssueUpdateData) },
-                audio: { type: 'string', format: 'binary' }
-            },
-            required: ['data']
-        },
-        required: true
-    })
+    @ApiBody({ type: IssueUpdateData, required: true })
     @ApiResponse({ type: Issue })
     async updateIssue(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
-        @Body('data') data: string,
-        @UploadedFiles() files?: { audio?: Express.Multer.File[] }
+        @Body() data: IssueUpdateData
     ): Promise<Issue> {
         await canUpdateIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
-        return this.issueService.updateIssue(productId, issueId, JSON.parse(data), files)
+        return this.issueService.updateIssue(productId, issueId, data)
     }
 
     @Delete(':issueId')

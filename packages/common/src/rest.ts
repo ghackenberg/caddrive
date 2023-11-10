@@ -1,7 +1,7 @@
 import { JWK } from 'jose'
 
 import { Comment } from './data/comment'
-import { Issue } from './data/issue'
+import { Issue, IssueAddData, IssueUpdateData } from './data/issue'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
 import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
 import { Product, ProductAddData, ProductUpdateData } from './data/product'
@@ -42,11 +42,11 @@ export interface VersionREST<DA, DU, M, I> {
     deleteVersion(productId: string, issueId: string): Promise<Version>
 }
 
-export interface IssueREST<DA, DU, A> {
+export interface IssueREST {
     findIssues(productId: string): Promise<Issue[]>
-    addIssue(productId: string, data: DA, files: { audio?: A }): Promise<Issue>
+    addIssue(productId: string, data: IssueAddData): Promise<Issue>
     getIssue(pruductId: string, issueId: string): Promise<Issue>
-    updateIssue(productId: string, issueId: string, data: DU, files?: { audio?: A }): Promise<Issue>
+    updateIssue(productId: string, issueId: string, data: IssueUpdateData): Promise<Issue>
     deleteIssue(productId: string, issueId: string): Promise<Issue>
 }
 

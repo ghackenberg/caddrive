@@ -60,9 +60,7 @@ export function convertIssue(issue: IssueEntity) {
         userId: issue.userId,
         milestoneId: issue.milestoneId,
         assignedUserIds: issue.assignedUserIds,
-        audioId: issue.audioId,
         label: issue.label,
-        text: issue.text,
         state: issue.state
     }
 }

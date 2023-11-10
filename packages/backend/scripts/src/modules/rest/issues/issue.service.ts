@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
@@ -15,7 +15,7 @@ import { TRANSPORTER } from '../../../functions/mail'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
-export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Express.Multer.File[]> {
+export class IssueService implements IssueREST {
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
@@ -30,22 +30,17 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         const result: Issue[] = []
         for (const issue of await Database.get().issueRepository.findBy(where))
             result.push(convertIssue(issue))
-        return result
+        return result.sort((a, b) => a.created - b.created)
     }
   
-    async addIssue(productId: string, data: IssueAddData, files: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async addIssue(productId: string, data: IssueAddData): Promise<Issue> {
         // Add issue
         const issueId = shortid()
         const created = Date.now()
         const updated = created
         const userId = this.request.user.userId
         const state = 'open'
-        let audioId: string
-        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            audioId = shortid()
-            writeFileSync(`./uploads/${audioId}.webm`, files.audio[0].buffer)
-        }
-        const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, audioId, state, ...data })
+        const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, state, ...data })
         // Update product
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = issue.updated
@@ -63,17 +58,13 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
         return convertIssue(issue)
     }
 
-    async updateIssue(productId: string, issueId: string, data: IssueUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Issue> {
+    async updateIssue(productId: string, issueId: string, data: IssueUpdateData): Promise<Issue> {
         // Update issue
         const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
         issue.updated = Date.now()
         issue.assignedUserIds = data.assignedUserIds
         issue.label = data.label
         issue.milestoneId =  data.milestoneId
-        issue.text = data.text
-        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            writeFileSync(`./uploads/${issue.audioId}.webm`, files.audio[0].buffer)
-        }
         await Database.get().issueRepository.save(issue)
         // Update product
         const product = await Database.get().productRepository.findOneBy({ productId })
@@ -127,7 +118,6 @@ export class IssueService implements IssueREST<IssueAddData, IssueUpdateData, Ex
                         date: new Date(issue.updated).toDateString(),
                         product: product.name,
                         issue: issue.label,
-                        comment: issue.text,
                         link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
                     }
                 })

@@ -7,7 +7,6 @@ import { Version } from 'productboard-common'
 
 import { VersionContext } from '../../contexts/Version'
 import { collectParts } from '../../functions/markdown'
-import { useIssue } from '../../hooks/entity'
 import { useComments, useVersions } from '../../hooks/list'
 import { VersionView3D } from './VersionView3D'
 
@@ -34,17 +33,15 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     // HOOKS
 
     const versions = useVersions(productId)
-    const issue = useIssue(productId, issueId)
     const comments = useComments(productId, issueId)
 
     // INITIAL STATES
 
-    const initialIssueParts = issueId ? (issue && collectParts(issue.text)) : []
     const initialCommentsParts = issueId ? (comments && comments.map(comment => collectParts(comment.text))) : []
     
     let initialParts: Part[] = undefined
-    if (initialIssueParts && initialCommentsParts) {
-        initialParts = [...initialIssueParts]
+    if (initialCommentsParts) {
+        initialParts = []
         for (const initialCommentParts of initialCommentsParts) {
             initialParts = initialParts.concat(initialCommentParts)
         }
@@ -56,7 +53,6 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
 
     // STATES
 
-    const [issueParts, setIssueParts] = useState(initialIssueParts)
     const [commentsParts, setCommentsParts] = useState(initialCommentsParts)
     const [parts, setParts] = useState(initialParts)
 
@@ -71,13 +67,6 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     }, [versions])
 
     useEffect(() => {
-        if (issue) {
-            setIssueParts(collectParts(issue.text))
-        } else {
-            setIssueParts(undefined)
-        }
-    }, [issue])
-    useEffect(() => {
         if (comments) {
             setCommentsParts(comments.map(comment => collectParts(comment.text)))
         } else {
@@ -85,8 +74,8 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
         }
     }, [comments])
     useEffect(() => {
-        if (issueParts && commentsParts) {
-            let parts = [...issueParts]
+        if (commentsParts) {
+            let parts: Part[] = []
             for (const commentParts of commentsParts) {
                 parts = parts.concat(commentParts)
             }
@@ -94,7 +83,7 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
         } else {
             setParts(undefined)
         }
-    }, [issueParts, commentsParts])
+    }, [commentsParts])
 
     useEffect(() => {
         setHighlighted((parts || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath))

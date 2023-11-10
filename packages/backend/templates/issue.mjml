@@ -15,11 +15,8 @@
                 <mj-text font-size="20px" color="gray">
                     Product <b>{{product}}</b>
                 </mj-text>
-                <mj-text font-size="16px" color="gray">
-                    Issue <b>{{issue}}</b>
-                </mj-text>
                 <mj-text>
-                    <b>{{user}}</b> on <b>{{date}}</b>: <i>{{comment}}</i>
+                    <b>{{user}}</b> on <b>{{date}}</b>: {issue}
                 </mj-text>
                 <mj-button background-color="blue" href="{{link}}">
                     View on CADdrive

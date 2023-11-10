@@ -5,32 +5,20 @@ import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-co
 import { auth } from '../auth'
 import { CacheAPI } from '../cache'
 
-class IssueClientImpl implements IssueREST<IssueAddData, IssueUpdateData, Blob> {
+class IssueClientImpl implements IssueREST {
     async findIssues(productId: string): Promise<Issue[]> {
         return (await axios.get<Issue[]>(`/rest/products/${productId}/issues`, auth)).data
     }
-    async addIssue(productId: string, data: IssueAddData, files: { audio?: Blob }): Promise<Issue> {
-        const body = new FormData()
-        body.append('data', JSON.stringify(data))
-        if (files.audio) {
-            body.append('audio', files.audio)
-        }
-        const issue = (await axios.post<Issue>(`/rest/products/${productId}/issues`, body, auth)).data
+    async addIssue(productId: string, data: IssueAddData): Promise<Issue> {
+        const issue = (await axios.post<Issue>(`/rest/products/${productId}/issues`, data, auth)).data
         CacheAPI.putIssue(issue)
         return issue
     }
     async getIssue(productId: string, issueId: string): Promise<Issue> {
         return (await axios.get<Issue>(`/rest/products/${productId}/issues/${issueId}`, { ...auth })).data
     }
-    async updateIssue(productId: string, issueId: string, data: IssueUpdateData, files?: { audio?: Blob }): Promise<Issue> {
-        const body = new FormData()
-        body.append('data', JSON.stringify(data))
-        if (files) {
-            if (files.audio) {
-                body.append('audio', files.audio)
-            }
-        }
-        const issue = (await axios.put<Issue>(`/rest/products/${productId}/issues/${issueId}`, body, auth)).data
+    async updateIssue(productId: string, issueId: string, data: IssueUpdateData): Promise<Issue> {
+        const issue = (await axios.put<Issue>(`/rest/products/${productId}/issues/${issueId}`, data, auth)).data
         CacheAPI.putIssue(issue)
         return issue
     }

@@ -23,8 +23,8 @@ export type ProductMessageData = {
     versions?: VersionEntity[]
 }
 
-function process<T, S>(array: T[], value: (data: T) => S) {
-    return array && array.map(item => value(item))
+function process<T extends { created: number }, S extends { created: number }>(array: T[], value: (data: T) => S) {
+    return array && array.map(item => value(item)).sort((a, b) => a.created - b.created)
 }
 
 export function compileUserMessage(data: UserMessageData): UserMessage {
