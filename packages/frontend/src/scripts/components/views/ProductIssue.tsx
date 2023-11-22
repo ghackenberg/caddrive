@@ -93,7 +93,7 @@ export const ProductIssueView = () => {
         { label: 'Label', class: 'left fill', content: issue => (
             issue.label
         ) },
-        { label: 'Assignees', class: 'nowrap', content: issue => (
+        { label: 'Assignees', class: 'center nowrap assignees', content: issue => (
             issue.assignedUserIds.map((assignedUserId) => (
                 <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon medium round'/>
             ))
