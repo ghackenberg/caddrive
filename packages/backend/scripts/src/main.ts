@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
+import compression from 'compression'
+
 import { Database } from 'productboard-database'
 
 import './mqtt'
@@ -10,6 +12,10 @@ async function bootstrap() {
     await Database.init()
 
     const rest = await NestFactory.create(RESTModule)
+
+    rest.use(compression({
+        filter: request => request.url.endsWith('.ldr') || request.url.endsWith('.mpd')
+    }))
 
     const config = new DocumentBuilder()
         .setTitle('ProductBoard')
