@@ -14,6 +14,7 @@ import { Database, convertVersion } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
 import { TRANSPORTER } from '../../../functions/mail'
+import { packLDrawText } from '../../../functions/pack'
 import { renderGlb, renderLDraw } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
@@ -110,6 +111,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
                         return 'glb'
                     } else if (files.model[0].originalname.endsWith('.ldr')) {
                         writeFileSync(`./uploads/${versionId}.ldr`, files.model[0].buffer)
+                        writeFileSync(`./uploads/${versionId}-packed.ldr`, packLDrawText(files.model[0].buffer.toString('utf-8')))
                         return 'ldr'
                     } else if (files.model[0].originalname.endsWith('.mpd')) {
                         writeFileSync(`./uploads/${versionId}.mpd`, files.model[0].buffer)
