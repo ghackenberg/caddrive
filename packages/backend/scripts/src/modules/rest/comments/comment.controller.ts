@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiResponse } from '@nestjs/swagger'
 
 import 'multer'
 
@@ -16,7 +15,7 @@ import { TokenOptionalGuard } from '../tokens/token.guard'
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(CommentAddData, CommentUpdateData)
-export class CommentController implements CommentREST<string, string, Express.Multer.File[]> {
+export class CommentController implements CommentREST {
     constructor(
         private readonly commentService: CommentService,
         @Inject(REQUEST)
@@ -36,34 +35,17 @@ export class CommentController implements CommentREST<string, string, Express.Mu
     }
 
     @Post()
-    @UseInterceptors(
-        FileFieldsInterceptor([
-            { name: 'audio', maxCount: 1 }
-        ])
-    )
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                data: { $ref: getSchemaPath(CommentAddData) },
-                audio: { type: 'string', format: 'binary' }
-            },
-            required: ['data']
-        },
-        required: true
-    })
+    @ApiBody({ type: CommentAddData, required: true })
     @ApiResponse({ type: Comment })
     async addComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
-        @Body('data') data: string,
-        @UploadedFiles() files: { audio?: Express.Multer.File[] }
+        @Body() data: CommentAddData
     ): Promise<Comment> {
         await canCreateCommentOrFail(this.request.user && this.request.user.userId, productId, issueId)
-        return this.commentService.addComment(productId, issueId, JSON.parse(data), files)
+        return this.commentService.addComment(productId, issueId, data)
     }
 
     @Get(':commentId')
@@ -81,36 +63,19 @@ export class CommentController implements CommentREST<string, string, Express.Mu
     }
 
     @Put(':commentId')
-    @UseInterceptors(
-        FileFieldsInterceptor([
-            { name: 'audio', maxCount: 1 }
-        ])
-    )
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiParam({ name: 'commentId', type: 'string', required: true })
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                data: { $ref: getSchemaPath(CommentUpdateData) },
-                audio: { type: 'string', format: 'binary' }
-            },
-            required: ['data']
-        },
-        required: true
-    })
+    @ApiBody({ type: CommentUpdateData, required: true })
     @ApiResponse({ type: Comment })
     async updateComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
         @Param('commentId') commentId: string,
-        @Body('data') data: string,
-        @UploadedFiles() files?: { audio?: Express.Multer.File[] }
+        @Body() data: CommentUpdateData
     ): Promise<Comment> {
         await canUpdateCommentOrFail(this.request.user && this.request.user.userId, productId, issueId, commentId)
-        return this.commentService.updateComment(productId, issueId, commentId, JSON.parse(data), files)
+        return this.commentService.updateComment(productId, issueId, commentId, data)
     }
 
     @Delete(':commentId')

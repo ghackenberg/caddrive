@@ -17,6 +17,8 @@ export class Comment extends CommentAddData {
     issueId: string
     @ApiProperty()
     commentId: string
+    @ApiProperty()
+    userId: string
 
     @ApiProperty()
     created: number
@@ -24,9 +26,4 @@ export class Comment extends CommentAddData {
     updated: number
     @ApiProperty()
     deleted: number
-
-    @ApiProperty()
-    userId: string
-    @ApiProperty()
-    audioId: string
 }

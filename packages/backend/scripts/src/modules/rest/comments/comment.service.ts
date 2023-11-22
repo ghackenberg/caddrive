@@ -1,5 +1,3 @@
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
-
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
@@ -15,15 +13,11 @@ import { TRANSPORTER } from '../../../functions/mail'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
-export class CommentService implements CommentREST<CommentAddData, CommentUpdateData, Express.Multer.File[]> {
+export class CommentService implements CommentREST {
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
-    ) {
-        if (!existsSync('./uploads')) {
-            mkdirSync('./uploads')
-        }
-    }
+    ) {}
 
     async findComments(productId: string, issueId: string): Promise<Comment[]> {
         const where = { productId, issueId, deleted: IsNull() }
@@ -33,18 +27,13 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         return result
     }
 
-    async addComment(productId: string, issueId: string, data: CommentAddData, files: { audio?: Express.Multer.File[] }): Promise<Comment> {
+    async addComment(productId: string, issueId: string, data: CommentAddData): Promise<Comment> {
         // Create comment
         const commentId = shortid()
         const created = Date.now()
         const updated = created
         const userId = this.request.user.userId
-        let audioId: string
-        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            audioId = shortid()
-            writeFileSync(`./uploads/${audioId}.webm`, files.audio[0].buffer)
-        }
-        const comment = await Database.get().commentRepository.save({ productId, issueId, commentId, created, updated, userId, audioId, ...data })
+        const comment = await Database.get().commentRepository.save({ productId, issueId, commentId, created, updated, userId, ...data })
         // Update issue
         const issue = await Database.get().issueRepository.findOneBy({ productId, issueId })
         issue.updated = comment.updated
@@ -71,14 +60,11 @@ export class CommentService implements CommentREST<CommentAddData, CommentUpdate
         return convertComment(comment)
     }
     
-    async updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData, files?: { audio?: Express.Multer.File[] }): Promise<Comment> {
+    async updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData): Promise<Comment> {
         // Update comment
         const comment = await Database.get().commentRepository.findOneByOrFail({ productId, issueId, commentId })
         comment.updated = Date.now()
         comment.text = data.text
-        if (files && files.audio && files.audio.length == 1 && files.audio[0].mimetype.endsWith('/webm')) {
-            writeFileSync(`./uploads/${comment.audioId}.webm`, files.audio[0].buffer)
-        }
         await Database.get().commentRepository.save(comment)
         // Update issue
         const issue = await Database.get().issueRepository.findOneBy({ productId, issueId })

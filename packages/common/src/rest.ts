@@ -1,6 +1,6 @@
 import { JWK } from 'jose'
 
-import { Comment } from './data/comment'
+import { Comment, CommentAddData, CommentUpdateData } from './data/comment'
 import { Issue, IssueAddData, IssueUpdateData } from './data/issue'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
 import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
@@ -50,11 +50,11 @@ export interface IssueREST {
     deleteIssue(productId: string, issueId: string): Promise<Issue>
 }
 
-export interface CommentREST<DA, DU, A> {
+export interface CommentREST {
     findComments(productId: string, issueId: string): Promise<Comment[]>
-    addComment(productId: string, issueId: string, data: DA, files: { audio?: A }): Promise<Comment>
+    addComment(productId: string, issueId: string, data: CommentAddData): Promise<Comment>
     getComment(productId: string, issueId: string, commentId: string): Promise<Comment>
-    updateComment(productId: string, issueId: string, commentId: string, data: DU, files?: { audio?: A }): Promise<Comment>
+    updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData): Promise<Comment>
     deleteComment(productId: string, issueId: string, commentId: string): Promise<Comment>
 }
 

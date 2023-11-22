@@ -70,11 +70,10 @@ export function convertComment(comment: CommentEntity) {
         productId: comment.productId,
         issueId: comment.issueId,
         commentId: comment.commentId,
+        userId: comment.userId,
         created: comment.created,
         updated: comment.updated,
         deleted: comment.deleted,
-        userId: comment.userId,
-        audioId: comment.audioId,
         text: comment.text,
         action: comment.action
     }

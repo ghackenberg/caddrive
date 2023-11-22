@@ -193,7 +193,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     }
     async function handleAdd() {
         if (textEdit) {
-            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'none' }, {})
+            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'none' })
             setTextEdit('')
             setMode(Mode.EDIT)
             if (contextComment == comment) {
@@ -205,7 +205,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     }
     async function handleClose() {
         if (textEdit) {
-            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'close' }, {})
+            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'close' })
             setTextEdit('')
             setMode(Mode.EDIT)
             if (contextComment == comment) {
@@ -217,7 +217,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     }
     async function handleOpen() {
         if (textEdit) {
-            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'reopen' }, {})
+            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'reopen' })
             setTextEdit('')
             setMode(Mode.EDIT)
             if (contextComment == comment) {

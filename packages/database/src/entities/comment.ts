@@ -16,8 +16,6 @@ export class CommentEntity extends Comment {
     override commentId: string
     @Column({ nullable: false })
     override userId: string
-    @Column({ nullable: true })
-    override audioId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
