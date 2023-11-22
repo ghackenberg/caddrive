@@ -174,8 +174,12 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     }
 
     async function handlePreview() {
-        setHtmlEdit(createProcessor(over, out, handleClick).processSync(textEdit).result)
-        setMode(Mode.PREVIEW)
+        if (textEdit) {
+            setHtmlEdit(createProcessor(over, out, handleClick).processSync(textEdit).result)
+            setMode(Mode.PREVIEW)
+        } else {
+            alert('Please enter some text!')
+        }
     }
 
     async function handleSave() {
@@ -188,7 +192,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 setContextComment(undefined)
             }
         } else {
-            alert('Please enter some text')
+            alert('Please enter some text!')
         }
     }
     async function handleAdd() {
@@ -200,7 +204,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 setContextComment(undefined)
             }
         } else {
-            alert('Please enter some text')
+            alert('Please enter some text!')
         }
     }
     async function handleClose() {
@@ -212,7 +216,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 setContextComment(undefined)
             }
         } else {
-            alert('Please enter some text')
+            alert('Please enter some text!')
         }
     }
     async function handleOpen() {
@@ -224,7 +228,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 setContextComment(undefined)
             }
         } else {
-            alert('Please enter some text')
+            alert('Please enter some text!')
         }
     }
 
@@ -235,8 +239,8 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const cancel = <a onClick={handleCancel}>cancel</a>
     const update = <a onClick={handleSave}>update</a>
     const add = <a onClick={handleAdd}>add</a>
-    const close = <a onClick={handleClose}>add <em>and close issue</em></a>
-    const open = <a onClick={handleOpen}>add <em>and re-open issue</em></a>
+    const close = <a onClick={handleClose}>add <span style={{fontWeight: 'bold'}}>+ close issue</span></a>
+    const open = <a onClick={handleOpen}>add <span style={{fontWeight: 'bold'}}>+ re-open issue</span></a>
 
     const save = commentId ? update : <>{add} | {issue.state == 'open' ? close : open}</>
     const toggle = mode == Mode.VIEW ? edit : (mode == Mode.PREVIEW ? <>{edit} | preview | {cancel} | {save}</> : <>edit | {preview} | {cancel} | {save}</>) 
