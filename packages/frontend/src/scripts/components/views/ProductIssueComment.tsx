@@ -9,9 +9,8 @@ import { Comment, Version } from 'productboard-common'
 
 import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
-import { VersionContext } from '../../contexts/Version'
 import { useIssue, useProduct } from '../../hooks/entity'
-import { useComments, useMembers, useVersions } from '../../hooks/list'
+import { useComments, useMembers } from '../../hooks/list'
 import { Part, collectParts } from '../../functions/markdown'
 import { formatDateTime } from '../../functions/time'
 import { computePath } from '../../functions/path'
@@ -34,7 +33,6 @@ export const ProductIssueCommentView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
-    const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // PARAMS
 
@@ -43,7 +41,6 @@ export const ProductIssueCommentView = () => {
     // HOOKS
 
     const product = useProduct(productId)
-    const versions = useVersions(productId)
     const members = useMembers(productId)
     const issue = useIssue(productId, issueId)
     const comments = useComments(productId, issueId)
@@ -119,17 +116,6 @@ export const ProductIssueCommentView = () => {
     function outPart() {
         setSelected([])
     }
-    function clickPart(event: React.MouseEvent<HTMLAnchorElement>, part: Part) {
-        event.preventDefault()
-        if (!contextVersion || contextVersion.versionId != part.versionId) {
-            for (const version of versions) {
-                if (version.versionId == part.versionId) {
-                    setContextVersion(version)
-                    return
-                }
-            }
-        }
-    }
 
     function overObject3D(version: Version, object: Object3D) {
         setSelected([{ productId, versionId: version.versionId, objectName: object.name, objectPath: computePath(object) }])
@@ -202,9 +188,9 @@ export const ProductIssueCommentView = () => {
                             <div className='main'>
                                 <div className="widget issue_thread">
                                     {comments && comments.map(comment => (
-                                        <CommentView key={comment.commentId} productId={productId} issueId={issueId} commentId={comment.commentId} sub={sub} up={up} over={overPart} out={outPart} click={clickPart}/>
+                                        <CommentView key={comment.commentId} productId={productId} issueId={issueId} commentId={comment.commentId} sub={sub} up={up} over={overPart} out={outPart}/>
                                     ))}
-                                    <CommentView productId={productId} issueId={issueId} sub={sub} up={up} over={overPart} out={outPart} click={clickPart}/>
+                                    <CommentView productId={productId} issueId={issueId} sub={sub} up={up} over={overPart} out={outPart}/>
                                 </div>
                             </div>
                             <LegalFooter/>

@@ -7,8 +7,9 @@ import { Version } from 'productboard-common'
 import { CommentClient } from '../../clients/rest/comment'
 import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
+import { VersionContext } from '../../contexts/Version'
 import { useComment, useIssue } from '../../hooks/entity'
-import { useMembers } from '../../hooks/list'
+import { useMembers, useVersions } from '../../hooks/list'
 import { collectParts, createProcessor } from '../../functions/markdown'
 import { formatDateTime } from '../../functions/time'
 import { computePath } from '../../functions/path'
@@ -35,7 +36,7 @@ type PartHandler = (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => v
 type SubHandler = (commentId: string, handler: ObjectHandler) => () => void
 type UpdateHandler = (commentId: string, markedView: Part[], markedEdit: Part[]) => void
 
-export const CommentView = (props: { productId: string, issueId: string, commentId?: string, sub: SubHandler, up: UpdateHandler, over: PartHandler, out: PartHandler, click: PartHandler }) => {
+export const CommentView = (props: { productId: string, issueId: string, commentId?: string, sub: SubHandler, up: UpdateHandler, over: PartHandler, out: PartHandler }) => {
 
     // REFERENCES
 
@@ -44,6 +45,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     // CONTEXTS
 
     const { contextUser } = React.useContext(UserContext)
+    const { contextVersion, setContextVersion } = React.useContext(VersionContext)
     const { contextComment, setContextComment } = React.useContext(CommentContext)
 
     // CONSTANTS
@@ -56,11 +58,11 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const up = props.up
     const over = props.over
     const out = props.out
-    const click = props.click
 
     // HOOKS
 
     const members = useMembers(productId)
+    const versions = useVersions(productId)
     const issue = useIssue(productId, issueId)
     const comment = commentId && useComment(productId, issueId, commentId)
 
@@ -71,8 +73,8 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const initialTextView = comment && comment.text
     const initialTextEdit = ''
 
-    const initialHtmlView = initialTextView && createProcessor(over, out, click).processSync(initialTextView).result
-    const initialHtmlEdit = createProcessor(over, out, click).processSync(initialTextEdit).result
+    const initialHtmlView = initialTextView && createProcessor(over, out, handleClick).processSync(initialTextView).result
+    const initialHtmlEdit = createProcessor(over, out, handleClick).processSync(initialTextEdit).result
 
     const initialPartsView = initialTextView && collectParts(initialTextView)
     const initialPartsEdit = collectParts(initialTextEdit)
@@ -122,13 +124,13 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     React.useEffect(() => {
         if (textView) {
-            setHtmlView(createProcessor(over, out, click).processSync(textView).result)
+            setHtmlView(createProcessor(over, out, handleClick).processSync(textView).result)
             setPartsView(collectParts(textView))
         } else {
             setPartsView(undefined)
             setHtmlView(undefined)
         }
-    }, [textView])
+    }, [textView, contextVersion, versions])
 
     React.useEffect(() => {
         const view = (mode == Mode.VIEW ? partsView : (mode == Mode.PREVIEW ? partsEdit : undefined))
@@ -137,6 +139,17 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     }, [partsView, partsEdit, mode])
 
     // FUNCTIONS
+
+    function handleClick(event: React.MouseEvent<HTMLAnchorElement>, part: Part) {
+        event.preventDefault()
+        if (!contextVersion || contextVersion.versionId != part.versionId) {
+            for (const version of versions) {
+                if (version.versionId == part.versionId) {
+                    setContextVersion(version)
+                }
+            }
+        }
+    }
 
     function handleFocus() {
         setContextComment(comment)
@@ -161,7 +174,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     }
 
     async function handlePreview() {
-        setHtmlEdit(createProcessor(over, out, click).processSync(textEdit).result)
+        setHtmlEdit(createProcessor(over, out, handleClick).processSync(textEdit).result)
         setMode(Mode.PREVIEW)
     }
 
@@ -270,7 +283,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 <div key={index} className="note part">
                     <div className="free"/>
                     <div className="text">
-                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.over(event, part)} onMouseOut={event => props.out(event, part)} onClick={event => props.click(event, part)}>
+                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.over(event, part)} onMouseOut={event => props.out(event, part)} onClick={event => handleClick(event, part)}>
                             <span>
                                 <img src={PartIcon}/>
                             </span>
