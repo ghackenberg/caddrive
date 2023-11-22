@@ -63,7 +63,7 @@ export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handle
         createElement, components: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             a: (props: any) => {
-                console.log('anchor', props)
+                //console.log('anchor', props)
                 const match = regex.exec(props.href || '')
                 if (match) {
                     const productId = match[1]

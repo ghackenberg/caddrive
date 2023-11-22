@@ -1,9 +1,15 @@
 import * as React from 'react'
 
+import { Object3D } from 'three'
+
+import { Version } from 'productboard-common'
+
 import { CommentClient } from '../../clients/rest/comment'
+import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
-import { useComment } from '../../hooks/entity'
+import { useComment, useIssue } from '../../hooks/entity'
 import { collectParts, createProcessor } from '../../functions/markdown'
+import { computePath } from '../../functions/path'
 import { ProductUserPictureWidget } from './ProductUserPicture'
 import { ProductUserNameWidget } from './ProductUserName'
 
@@ -18,15 +24,25 @@ interface Part {
     objectName: string
 }
 
-export const CommentView = (props: { productId: string, issueId: string, commentId: string, mouseover: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, mouseout: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void, click: (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void }) => {
+enum Mode {
+    VIEW, EDIT, PREVIEW
+}
+
+type ObjectHandler = (version: Version, object: Object3D) => void
+type PartHandler = (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void
+type SubHandler = (commentId: string, handler: ObjectHandler) => () => void
+type UpdateHandler = (commentId: string, markedView: Part[], markedEdit: Part[]) => void
+
+export const CommentView = (props: { productId: string, issueId: string, commentId?: string, sub: SubHandler, up: UpdateHandler, over: PartHandler, out: PartHandler, click: PartHandler }) => {
 
     // REFERENCES
 
-    const textReference = React.useRef<HTMLTextAreaElement>()
+    const textRef = React.useRef<HTMLTextAreaElement>()
 
     // CONTEXTS
 
     const { contextUser } = React.useContext(UserContext)
+    const { contextComment, setContextComment } = React.useContext(CommentContext)
 
     // CONSTANTS
 
@@ -34,121 +50,243 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const issueId = props.issueId
     const commentId = props.commentId
 
+    const sub = props.sub
+    const up = props.up
+    const over = props.over
+    const out = props.out
+    const click = props.click
+
     // HOOKS
 
-    const comment = useComment(productId, issueId, commentId)
+    const issue = issueId && useIssue(productId, issueId)
+    const comment = commentId && useComment(productId, issueId, commentId)
+
+    const userId = comment ? comment.userId : contextUser.userId
 
     // INITIAL STATES
 
-    const initialText = comment && comment.text
-    const initialHtml = initialText && createProcessor(props.mouseover, props.mouseout, props.click).processSync(initialText).result
-    const initialParts = initialText && collectParts(initialText)
-    const initialMode = 'view'
+    const initialTextView = comment && comment.text
+    const initialTextEdit = ''
+
+    const initialHtmlView = initialTextView && createProcessor(over, out, click).processSync(initialTextView).result
+    const initialHtmlEdit = createProcessor(over, out, click).processSync(initialTextEdit).result
+
+    const initialPartsView = initialTextView && collectParts(initialTextView)
+    const initialPartsEdit = collectParts(initialTextEdit)
+
+    const initialMode = commentId ? Mode.VIEW : Mode.EDIT
 
     // STATES
 
-    const [textView, setTextView] = React.useState(initialText)
-    const [textEdit, setTextEdit] = React.useState(initialText)
-    const [text, setText] = React.useState(initialText)
-    const [html, setHtml] = React.useState(initialHtml)
-    const [parts, setParts] = React.useState(initialParts)
+    const [textView, setTextView] = React.useState(initialTextView)
+    const [textEdit, setTextEdit] = React.useState(initialTextEdit)
+
+    const [htmlView, setHtmlView] = React.useState(initialHtmlView)
+    const [htmlEdit, setHtmlEdit] = React.useState(initialHtmlEdit)
+
+    const [partsView, setPartsView] = React.useState(initialPartsView)
+    const [partsEdit, setPartsEdit] = React.useState(initialPartsEdit)
+
     const [mode, setMode] = React.useState(initialMode)
 
     // EFFECTS
 
     React.useEffect(() => {
-        if (text) {
-            setHtml(createProcessor(props.mouseover, props.mouseout, props.click).processSync(text).result)
-            setParts(collectParts(text))
+        return sub(commentId || '', (version, object) => {
+            if (contextComment == comment && mode == Mode.EDIT) {
+                const text = textEdit || ''
+                const before = text.substring(0, textRef.current.selectionStart)
+                const after = text.substring(textRef.current.selectionEnd)
+                const markdown = `${before && before.charAt(before.length - 1) != '\n' ? '\n' : ''} - [${object.name} @ Version ${version.major}.${version.minor}.${version.patch}](/products/${productId}/versions/${version.versionId}/objects/${computePath(object)})${after && after.charAt(0) != '\n' ? '\n' : ''}`
+                setTextEdit(`${before}${markdown}${after}`)
+                setTimeout(() => {
+                    textRef.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+                    textRef.current.focus()
+                }, 0)
+            } else {
+                console.log('not context comment')
+            }
+        })
+    })
+
+    React.useEffect(() => {
+        if (textEdit) {
+            setPartsEdit(collectParts(textEdit))
         } else {
-            setParts(undefined)
-            setHtml(undefined)
+            setPartsEdit(undefined)
         }
-    }, [text])
+    }, [textEdit])
+
+    React.useEffect(() => {
+        if (textView) {
+            setHtmlView(createProcessor(over, out, click).processSync(textView).result)
+            setPartsView(collectParts(textView))
+        } else {
+            setPartsView(undefined)
+            setHtmlView(undefined)
+        }
+    }, [textView])
+
+    React.useEffect(() => {
+        const view = (mode == Mode.VIEW ? partsView : (mode == Mode.PREVIEW ? partsEdit : undefined))
+        const edit = (mode == Mode.EDIT && partsEdit)
+        up(commentId || '', view, edit)
+    }, [partsView, partsEdit, mode])
 
     // FUNCTIONS
 
+    function handleFocus() {
+        setContextComment(comment)
+    }
+
     function handleEdit() {
-        setMode('edit')
+        if (mode == Mode.VIEW) {
+            setTextEdit(textView)
+        }
+        setMode(Mode.EDIT)
+        setTimeout(() => {
+            textRef.current.focus()
+        }, 0)
     }
+
     async function handleCancel() {
-        setTextEdit(textView)
-        setText(textView)
-        setMode('view')
+        setTextEdit(initialTextEdit)
+        setMode(initialMode)
+        if (contextComment == comment) {
+            setContextComment(undefined)
+        }
     }
+
     async function handlePreview() {
-        setText(textEdit)
-        setMode('preview')
+        setHtmlEdit(createProcessor(over, out, click).processSync(textEdit).result)
+        setMode(Mode.PREVIEW)
     }
+
     async function handleSave() {
-        await CommentClient.updateComment(productId, issueId, commentId, { text: textEdit })
-        setTextView(textEdit)
-        setText(textEdit)
-        setMode('view')
+        if (textEdit) {
+            await CommentClient.updateComment(productId, issueId, commentId, { text: textEdit })
+            setTextEdit('')
+            setTextView(textEdit)
+            setMode(Mode.VIEW)
+            if (contextComment == comment) {
+                setContextComment(undefined)
+            }
+        } else {
+            alert('Please enter some text')
+        }
+    }
+    async function handleAdd() {
+        if (textEdit) {
+            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'none' }, {})
+            setTextEdit('')
+            setMode(Mode.EDIT)
+            if (contextComment == comment) {
+                setContextComment(undefined)
+            }
+        } else {
+            alert('Please enter some text')
+        }
+    }
+    async function handleClose() {
+        if (textEdit) {
+            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'close' }, {})
+            setTextEdit('')
+            setMode(Mode.EDIT)
+            if (contextComment == comment) {
+                setContextComment(undefined)
+            }
+        } else {
+            alert('Please enter some text')
+        }
+    }
+    async function handleOpen() {
+        if (textEdit) {
+            await CommentClient.addComment(productId, issueId, { text: textEdit, action: 'reopen' }, {})
+            setTextEdit('')
+            setMode(Mode.EDIT)
+            if (contextComment == comment) {
+                setContextComment(undefined)
+            }
+        } else {
+            alert('Please enter some text')
+        }
     }
 
     // CONSTANTS
 
     const edit = <a onClick={handleEdit}>edit</a>
-    const save = <a onClick={handleSave}>save</a>
-    const cancel = <a onClick={handleCancel}>cancel</a>
     const preview = <a onClick={handlePreview}>preview</a>
-    const toggle = mode == 'view' ? edit : (mode == 'preview' ? <>{edit} | preview | {cancel} | {save}</> : <>edit | {preview} | {cancel} | {save}</>) 
-    const action = contextUser && contextUser.userId == comment.userId ? <>({toggle})</> : <></>
+    const cancel = <a onClick={handleCancel}>cancel</a>
+    const update = <a onClick={handleSave}>update</a>
+    const add = <a onClick={handleAdd}>add</a>
+    const close = <a onClick={handleClose}>add <em>and close issue</em></a>
+    const open = <a onClick={handleOpen}>add <em>and re-open issue</em></a>
+    const save = commentId ? update : <>{add} | {issue.state == 'open' ? close : open}</>
+    const toggle = mode == Mode.VIEW ? edit : (mode == Mode.PREVIEW ? <>{edit} | preview | {cancel} | {save}</> : <>edit | {preview} | {cancel} | {save}</>) 
+    const action = contextUser && comment && contextUser.userId == comment.userId ? <>({toggle})</> : <></>
+
+    const parts = (mode == Mode.VIEW && partsView) || (mode == Mode.PREVIEW && partsEdit) || []
 
     // RETURN
 
     return (
-        comment && (
-            <div key={comment.commentId} className={`widget comment_view ${contextUser && comment.userId == contextUser.userId ? 'self' : ''}`}>
-                <div className="head">
-                    <div className="icon">
-                        <a href={`/users/${comment.userId}`}>
-                            <ProductUserPictureWidget userId={comment.userId} productId={props.productId} class='big'/>
-                        </a>
-                    </div>
-                    <div className="text">
-                        <p>
-                            <strong><ProductUserNameWidget userId={comment.userId} productId={props.productId}/></strong> commented on {new Date(comment.created).toISOString().substring(0, 10)} {action}
-                        </p>
-                    </div>
+        <div className={`widget comment_view ${contextUser && contextUser.userId == userId ? 'self' : ''}`}>
+            <div className="head">
+                <div className="icon">
+                    <a href={`/users/${userId}`}>
+                        <ProductUserPictureWidget userId={userId} productId={productId} class='big'/>
+                    </a>
                 </div>
-                <div className="body">
+                <div className="text">
+                    <p>
+                        {comment ? (
+                            <>
+                                <strong><ProductUserNameWidget userId={userId} productId={productId}/></strong> commented on {new Date(comment.created).toISOString().substring(0, 10)} {action}
+                            </>
+                        ) : (
+                            <>
+                                <strong>New comment</strong> ({toggle})
+                            </>
+                        )}
+                    </p>
+                </div>
+            </div>
+            <div className="body">
+                <div className="free"/>
+                <div className="text">
+                    {mode == Mode.VIEW && htmlView}
+                    {mode == Mode.PREVIEW && htmlEdit}
+                    {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onChange={event => setTextEdit(event.currentTarget.value)}/>}
+                </div>
+            </div>
+            {parts.map((part, index) => (
+                <div key={index} className="note part">
                     <div className="free"/>
                     <div className="text">
-                        {(mode == 'view' || mode == 'preview') ? html : <textarea ref={textReference} value={textEdit} onChange={event => setTextEdit(event.currentTarget.value)}/>}
-                        {comment.audioId && <audio src={`/rest/files/${comment.audioId}.webm`} controls/>}
+                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.over(event, part)} onMouseOut={event => props.out(event, part)} onClick={event => props.click(event, part)}>
+                            <span>
+                                <img src={PartIcon}/>
+                            </span>
+                            {part.objectName}
+                        </a>
+                        was mentioned
                     </div>
                 </div>
-                {(mode == 'view' || mode == 'preview') && parts && parts.map((part, index) => (
-                    <div key={index} className="note part">
-                        <div className="free"/>
-                        <div className="text">
-                            <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.mouseover(event, part)} onMouseOut={event => props.mouseout(event, part)} onClick={event => props.click(event, part)}>
-                                <span>
-                                    <img src={PartIcon}/>
-                                </span>
-                                {part.objectName}
-                            </a>
-                            was mentioned
-                        </div>
+            ))}
+            {comment && comment.action != 'none' && (
+                <div className={`note action ${comment.action}`}>
+                    <div className="free"/>
+                    <div className="text">
+                        <a>
+                            <span>
+                                <img src={comment.action == 'close' ? CloseIcon : ReopenIcon}/>
+                            </span>
+                        </a>
+                        {comment.action == 'close' ? 'closed' : 'reopened'}
                     </div>
-                ))}
-                {'action' in comment && comment.action != 'none' && (
-                    <div className={`note action ${comment.action}`}>
-                        <div className="free"/>
-                        <div className="text">
-                            <a>
-                                <span>
-                                    <img src={comment.action == 'close' ? CloseIcon : ReopenIcon}/>
-                                </span>
-                            </a>
-                            {comment.action == 'close' ? 'closed' : 'reopened'}
-                        </div>
-                    </div>
-                )}
-            </div>
-        )
+                </div>
+            )}
+        </div>
     )
     
 }

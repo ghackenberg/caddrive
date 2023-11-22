@@ -6,8 +6,8 @@ import { Object3D } from 'three'
 import { Version } from 'productboard-common'
 
 import { VersionContext } from '../../contexts/Version'
-import { collectParts } from '../../functions/markdown'
 import { useComments, useVersions } from '../../hooks/list'
+import { collectParts } from '../../functions/markdown'
 import { VersionView3D } from './VersionView3D'
 
 import LoadIcon from '/src/images/load.png'
@@ -20,7 +20,7 @@ interface Part {
     objectName: string
 }
 
-export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
+export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
     // CONSTANTS
     
     const productId = props.productId
@@ -37,24 +37,15 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
 
     // INITIAL STATES
 
-    const initialCommentsParts = issueId ? (comments && comments.map(comment => collectParts(comment.text))) : []
-    
-    let initialParts: Part[] = undefined
-    if (initialCommentsParts) {
-        initialParts = []
-        for (const initialCommentParts of initialCommentsParts) {
-            initialParts = initialParts.concat(initialCommentParts)
-        }
-    }
+    const commentsParts = comments ? comments.map(comment => collectParts(comment.text)) : []
+    const parts = commentsParts ? commentsParts.reduce((a, b) => a.concat(b), []) : []
+    const partsId = parts.map(part => `${part.productId}/${part.versionId}/${part.objectPath}`).reduce((a, b) => `${a}#${b}`, '')
 
-    const initialHighlighted = initialParts && initialParts.filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath)
+    const initialHighlighted = parts.concat(props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath)
     const initialMarked = (props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath)
     const initialSelected = (props.selected || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath)
 
     // STATES
-
-    const [commentsParts, setCommentsParts] = useState(initialCommentsParts)
-    const [parts, setParts] = useState(initialParts)
 
     const [highlighted, setHighlighted] = useState(initialHighlighted)
     const [marked, setMarked] = useState(initialMarked)
@@ -67,27 +58,8 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
     }, [versions])
 
     useEffect(() => {
-        if (comments) {
-            setCommentsParts(comments.map(comment => collectParts(comment.text)))
-        } else {
-            setCommentsParts(undefined)
-        }
-    }, [comments])
-    useEffect(() => {
-        if (commentsParts) {
-            let parts: Part[] = []
-            for (const commentParts of commentsParts) {
-                parts = parts.concat(commentParts)
-            }
-            setParts(parts)
-        } else {
-            setParts(undefined)
-        }
-    }, [commentsParts])
-
-    useEffect(() => {
-        setHighlighted((parts || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath))
-    }, [contextVersion, parts])
+        setHighlighted(parts.concat(props.highlighted || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath))
+    }, [contextVersion, partsId, props.highlighted])
     useEffect(() => {
         setMarked((props.marked || []).filter(part => contextVersion && part.versionId == contextVersion.versionId).map(part => part.objectPath))
     }, [contextVersion, props.marked])
