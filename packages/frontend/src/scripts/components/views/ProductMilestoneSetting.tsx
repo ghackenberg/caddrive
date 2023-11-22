@@ -43,8 +43,8 @@ export const ProductMilestoneSettingView = () => {
     // INITIAL STATES
 
     const initialLabel = milestone ? milestone.label : ''
-    const initialStart = milestone ? new Date(milestone.start) : new Date(new Date().setHours(0,0,0,0))
-    const initialEnd = milestone ? new Date(milestone.end) : new Date(new Date().setHours(0,0,0,0) + 1000 * 60 * 60 * 24 * 14)
+    const initialStart = milestone ? new Date(milestone.start) : new Date()
+    const initialEnd = milestone ? new Date(milestone.end) : new Date(Date.now() + 1000 * 60 * 60 * 24 * 14)
 
     const initialTotal = issues && issues.length
     const initialActual = milestone && issues && comments && calculateActual(milestone.start, milestone.end, issues, comments)
@@ -94,6 +94,22 @@ export const ProductMilestoneSettingView = () => {
 
     // FUNCTIONS
 
+    function updateStart(date: Date) {
+        if (date.getTime() < end.getTime()) {
+            setStart(date)
+        } else {
+            alert('Start must be before end!')
+        }
+    }
+    
+    function updateEnd(date: Date) {
+        if (date.getTime() > start.getTime()) {
+            setEnd(date)
+        } else {
+            alert('End must be after start!')
+        }
+    }
+
     async function submitMilestone(event: FormEvent){
         // TODO handle unmount!
         event.preventDefault()
@@ -133,8 +149,8 @@ export const ProductMilestoneSettingView = () => {
                                 </h1>
                                 <form onSubmit={submitMilestone} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
-                                    <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
-                                    <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
+                                    <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={updateStart} required/>
+                                    <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={updateEnd} required/>
                                     {contextUser ? (
                                         (productId == 'new' || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1) ? (
                                             <ButtonInput value='Save'/>
@@ -149,7 +165,7 @@ export const ProductMilestoneSettingView = () => {
                             <LegalFooter/>
                         </div>
                         <div>
-                            <BurndownChartWidget start={start} end={end} total={total} actual={actual}/>
+                            <BurndownChartWidget start={start.getTime()} end={end.getTime()} total={total} actual={actual}/>
                         </div>
                     </main>
                     <ProductFooter items={items} active={active} setActive={setActive}/>

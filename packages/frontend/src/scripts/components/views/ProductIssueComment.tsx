@@ -13,6 +13,7 @@ import { VersionContext } from '../../contexts/Version'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers, useVersions } from '../../hooks/list'
 import { Part, collectParts } from '../../functions/markdown'
+import { formatDateTime } from '../../functions/time'
 import { computePath } from '../../functions/path'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -194,7 +195,7 @@ export const ProductIssueCommentView = () => {
                                     </strong>
                                     &nbsp;
                                     <>
-                                        opened issue on {new Date(issue.created).toISOString().substring(0, 10)}
+                                        opened issue on {formatDateTime(new Date(issue.created))}
                                     </>
                                 </p>
                             </div>

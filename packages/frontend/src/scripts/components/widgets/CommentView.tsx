@@ -9,6 +9,7 @@ import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
 import { useComment, useIssue } from '../../hooks/entity'
 import { collectParts, createProcessor } from '../../functions/markdown'
+import { formatDateTime } from '../../functions/time'
 import { computePath } from '../../functions/path'
 import { ProductUserPictureWidget } from './ProductUserPicture'
 import { ProductUserNameWidget } from './ProductUserName'
@@ -241,7 +242,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                     <p>
                         {comment ? (
                             <>
-                                <strong><ProductUserNameWidget userId={userId} productId={productId}/></strong> commented on {new Date(comment.created).toISOString().substring(0, 10)} {action}
+                                <strong><ProductUserNameWidget userId={userId} productId={productId}/></strong> commented on {formatDateTime(new Date(comment.created))} {action}
                             </>
                         ) : (
                             <>

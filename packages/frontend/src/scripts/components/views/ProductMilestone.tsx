@@ -11,6 +11,7 @@ import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMilestones, useMembers } from '../../hooks/list'
 import { IssueCount } from '../counts/Issues'
+import { formatDateTime } from '../../functions/time'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { MilestoneProgressWidget } from '../widgets/MilestoneProgress'
@@ -66,10 +67,10 @@ export const ProductMilestoneView = () => {
             milestone.label
         ) },
         { label: 'Start', class: 'nowrap center', content: milestone => (
-            new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })
+            formatDateTime(new Date(milestone.start))
         ) },
         { label: 'End', class: 'nowrap center', content: milestone => (
-            new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })
+            formatDateTime(new Date(milestone.end))
         ) },
         { label: 'Open', class: 'center', content: milestone => (
             <span className='badge'>

@@ -12,6 +12,7 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useIssues } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { calculateActual } from '../../functions/burndown'
+import { formatDateTime } from '../../functions/time'
 import { CommentCount } from '../counts/Comments'
 import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
@@ -66,6 +67,21 @@ export const ProductMilestoneIssueView = () => {
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
+
+    useEffect(() => {
+        function updateActualBurndown() {
+            setActualBurndown(milestone && issues && comments && calculateActual(milestone.start, milestone.end, issues, comments))
+        }
+        let interval: NodeJS.Timer
+        const timeout = setTimeout(() => {
+            interval = setInterval(updateActualBurndown, 1000)
+            updateActualBurndown()
+        }, 1000 - Date.now() % 1000)
+        return () => {
+            clearTimeout(timeout)
+            interval && clearInterval(interval)
+        }
+    })
 
     useEffect(() => {
         if (issues) {
@@ -176,11 +192,11 @@ export const ProductMilestoneIssueView = () => {
                                 <p>
                                     <span>Start: </span>    
                                     <em>
-                                        {new Date(milestone.start).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        {formatDateTime(new Date(milestone.start))}
                                     </em>
                                     <span> / End: </span>  
                                     <em>
-                                        {new Date(milestone.end).toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit'} )}
+                                        {formatDateTime(new Date(milestone.end))}
                                     </em>
                                 </p>
                                 {contextUser ? (
@@ -220,7 +236,7 @@ export const ProductMilestoneIssueView = () => {
                             <LegalFooter/>
                         </div>
                         <div>
-                            <BurndownChartWidget start={new Date(milestone.start)} end={new Date(milestone.end)} total={total} actual={actual}/>
+                            <BurndownChartWidget start={milestone.start} end={milestone.end} total={total} actual={actual}/>
                         </div>
                     </main>                            
                     <ProductFooter items={items} active={active} setActive={setActive}/>

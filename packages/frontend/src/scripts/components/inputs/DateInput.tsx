@@ -4,15 +4,17 @@ import { GenericInput } from './GenericInput'
 
 export const DateInput = (props: {class?: string, label: string, change?: (value: Date) => void, value: Date, placeholder?: string, disabled?: boolean, required?: boolean}) => {
     const label = props.label
-    const type = 'date'
+    const type = 'datetime-local'
     const className = `button fill ${props.class || 'lightgray'}`
     const placeholder = props.placeholder
-    const value = (props.value ? props.value : new Date()).toISOString().slice(0, 10)
+    const valueAsDate = (props.value ? props.value : new Date())
+    const value = `${valueAsDate.toISOString().substring(0,11)}${valueAsDate.toLocaleTimeString()}`
     const disabled = props.disabled
     const required = props.required
 
     function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-        props.change && props.change(event.currentTarget.valueAsDate)
+        console.log(event.currentTarget.value)
+        props.change && props.change(new Date(event.currentTarget.value))
     }
     
     return (
