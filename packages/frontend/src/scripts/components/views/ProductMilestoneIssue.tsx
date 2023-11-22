@@ -136,7 +136,7 @@ export const ProductMilestoneIssueView = () => {
         { label: 'Label', class: 'left fill', content: issue => (
             issue.label
         ) },
-        { label: 'Assignees', class: 'center nowrap assignees', content: issue => (
+        { label: 'Assignees', class: 'left nowrap assignees', content: issue => (
             issue.assignedUserIds.map((assignedUserId) => (
                 <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon medium round'/>
             ))
