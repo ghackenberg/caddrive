@@ -26,7 +26,9 @@ export class Issue extends IssueAddData {
     updated: number
     @ApiProperty()
     deleted: number
-    
+
+    @ApiProperty()
+    number: number
     @ApiProperty()
     state: 'open' | 'closed'
 }

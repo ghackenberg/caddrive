@@ -39,8 +39,9 @@ export class IssueService implements IssueREST {
         const created = Date.now()
         const updated = created
         const userId = this.request.user.userId
+        const number = await Database.get().issueRepository.countBy({ productId }) + 1
         const state = 'open'
-        const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, state, ...data })
+        const issue = await Database.get().issueRepository.save({ productId, issueId, created, updated, userId, number, state, ...data })
         // Update product
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = issue.updated

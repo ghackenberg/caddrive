@@ -1,12 +1,9 @@
-main.view.product-issue-comment audio  {
-    display: block;
-    margin-top: 0.75em;
-    margin-bottom: 0.75em;
+main.view.product-issue-comment span.number {
+    opacity: 0.5;
 }
-
-
-@media screen and (max-width: 45em){
-    main.view.product-issue-comment audio  {
-        max-width: 15em;
-    }
+main.view.product-issue-comment span.number::before {
+    content: '#';
+}
+main.view.product-issue-comment span.number::after {
+    content: ' - ';
 }

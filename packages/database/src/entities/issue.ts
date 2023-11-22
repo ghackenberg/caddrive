@@ -41,7 +41,9 @@ export class IssueEntity extends Issue {
     override deleted: number
 
     @Column({nullable: false})
-    override label: string
+    override number: number
     @Column({nullable: false, default: 'open'})
     override state: 'open' | 'closed'
+    @Column({nullable: false})
+    override label: string
 }

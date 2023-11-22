@@ -127,10 +127,11 @@ export const ProductIssueSettingView = () => {
                                     {issueId == 'new' ? (
                                         'New issue'
                                     ) : (
-                                        'Issue settings'
+                                        `Issue settings`
                                     )}
                                 </h1>
                                 <form onSubmit={submitIssue} onReset={goBack}>
+                                    {issue && <TextInput label='Number' value={`${issue.number}`} disabled={true}/>}
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <div>
                                         <div>
