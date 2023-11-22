@@ -12,7 +12,18 @@ export const ProductUserPictureWidget = (props: { userId: string, productId: str
     const members = useMembers(props.productId)
     const user = useUser(props.userId)
 
-    if (user && members) {       
+    if (!props.userId) {
+        const className = props.class
+
+        const backgroundImage = `url(${UserIcon})`
+        const backgroundSize = 'cover'
+        const backgroundPosition = 'center'
+        const backgroundColor = props.background || 'lightgray'
+
+        const style = { backgroundImage, backgroundSize, backgroundPosition, backgroundColor }
+
+        return <img src={PixelIcon} style={style} className={className}/>
+    } else if (user && members) {       
         const isDeleted = user.deleted
         const isMember = members.map(member => member.userId).includes(user.userId)
 

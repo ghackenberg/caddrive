@@ -8,6 +8,7 @@ import { CommentClient } from '../../clients/rest/comment'
 import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
 import { useComment, useIssue } from '../../hooks/entity'
+import { useMembers } from '../../hooks/list'
 import { collectParts, createProcessor } from '../../functions/markdown'
 import { formatDateTime } from '../../functions/time'
 import { computePath } from '../../functions/path'
@@ -59,10 +60,11 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     // HOOKS
 
-    const issue = issueId && useIssue(productId, issueId)
+    const members = useMembers(productId)
+    const issue = useIssue(productId, issueId)
     const comment = commentId && useComment(productId, issueId, commentId)
 
-    const userId = comment ? comment.userId : contextUser.userId
+    const userId = comment ? comment.userId : (contextUser ? contextUser.userId : undefined)
 
     // INITIAL STATES
 
@@ -222,11 +224,15 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const add = <a onClick={handleAdd}>add</a>
     const close = <a onClick={handleClose}>add <em>and close issue</em></a>
     const open = <a onClick={handleOpen}>add <em>and re-open issue</em></a>
+
     const save = commentId ? update : <>{add} | {issue.state == 'open' ? close : open}</>
     const toggle = mode == Mode.VIEW ? edit : (mode == Mode.PREVIEW ? <>{edit} | preview | {cancel} | {save}</> : <>edit | {preview} | {cancel} | {save}</>) 
     const action = contextUser && comment && contextUser.userId == comment.userId ? <>({toggle})</> : <></>
 
     const parts = (mode == Mode.VIEW && partsView) || (mode == Mode.PREVIEW && partsEdit) || []
+
+    const disabled = !members || !userId || members.filter(member => member.userId == userId).length == 0
+    const placeholder = 'Enter your comment here.'
 
     // RETURN
 
@@ -246,7 +252,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                             </>
                         ) : (
                             <>
-                                <strong>New comment</strong> ({toggle})
+                                <strong>New comment</strong> ({disabled ? 'requires login' : toggle})
                             </>
                         )}
                     </p>
@@ -257,7 +263,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 <div className="text">
                     {mode == Mode.VIEW && htmlView}
                     {mode == Mode.PREVIEW && htmlEdit}
-                    {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onChange={event => setTextEdit(event.currentTarget.value)}/>}
+                    {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onChange={event => setTextEdit(event.currentTarget.value)} disabled={disabled} placeholder={placeholder}/>}
                 </div>
             </div>
             {parts.map((part, index) => (
