@@ -17,7 +17,9 @@ import { computePath } from '../../functions/path'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { CommentView } from '../widgets/CommentView'
-import { ProductUserNameWidget } from '../widgets/ProductUserName'
+import { MilestoneNameWidget } from '../values/MilestoneName'
+import { ProductUserNameWidget } from '../values/ProductUserName'
+import { ProductUserPictureWidget } from '../values/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
@@ -172,17 +174,39 @@ export const ProductIssueCommentView = () => {
                                     <span className='number'>{issue.number}</span> {issue.label}
                                 </h1>
                                 <p>
+                                    <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon middle small round'/>
+                                    <span> </span>
+                                    <ProductUserNameWidget userId={issue.userId} productId={productId}/>
+                                    <span> created this issue on <span className='date'>{formatDateTime(new Date(issue.created))}</span></span>
+                                </p>
+                                <p>
                                     <span className={`state ${issue.state}`}>
                                         {issue.state}
                                     </span>
-                                    &nbsp;
-                                    <strong>
-                                        <ProductUserNameWidget userId={issue.userId} productId={productId}/>
-                                    </strong>
-                                    &nbsp;
-                                    <>
-                                        opened issue on {formatDateTime(new Date(issue.created))}
-                                    </>
+                                    {issue.milestoneId ? (
+                                        <span className='milestone'>
+                                            <span>scheduled for </span>
+                                            <MilestoneNameWidget productId={productId} milestoneId={issue.milestoneId}/>
+                                        </span>
+                                    ) : (
+                                        <span className='milestone' style={{fontWeight: 'bold'}}>not scheduled</span>
+                                    )}
+                                    {issue.assignedUserIds && issue.assignedUserIds.length > 0 ? (
+                                        <span className='assignees'>
+                                            <span>assigned to</span>
+                                            <span>
+                                                {issue.assignedUserIds.map(assignedUserId => (
+                                                    <span key={assignedUserId} className='assignee'>
+                                                        <ProductUserPictureWidget productId={productId} userId={assignedUserId} class='icon middle small round'/>
+                                                        <span> </span>
+                                                        <ProductUserNameWidget productId={productId} userId={assignedUserId}/>
+                                                    </span>
+                                                ))}
+                                            </span>
+                                        </span>
+                                    ) : (
+                                        <span className='assignees' style={{fontWeight: 'bold'}}>not assigned</span>
+                                    )}
                                 </p>
                             </div>
                             <div className='main'>

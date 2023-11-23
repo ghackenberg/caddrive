@@ -75,6 +75,12 @@ div.widget.issue_thread > div > div > div.icon > a > img {
 
     border-radius: 50%;
 }
+div.widget.issue_thread > div > div > div.icon > a > img.pad {
+    width: 1em;
+    height: 1em;
+
+    padding: calc(0.75em - 1px);
+}
 div.widget.issue_thread > div > div.head > div.text,
 div.widget.issue_thread > div > div.body > div.text {
     width: 100%;

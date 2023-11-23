@@ -1,9 +1,46 @@
-main.view.product-issue-comment span.number {
+main.view.product-issue-comment div.header span.number {
     opacity: 0.5;
 }
-main.view.product-issue-comment span.number::before {
+main.view.product-issue-comment div.header span.number::before {
     content: '#';
 }
-main.view.product-issue-comment span.number::after {
+main.view.product-issue-comment div.header span.number::after {
     content: ' - ';
+}
+
+main.view.product-issue-comment div.header span.value.product_user_name {
+    font-weight: bold;
+}
+
+main.view.product-issue-comment div.header span.date {
+    font-weight: bold;
+}
+
+main.view.product-issue-comment div.header span.value.milestone_name {
+    font-weight: bold;
+}
+
+main.view.product-issue-comment div.header span.assignee::before {
+    content: ", ";
+}
+main.view.product-issue-comment div.header span.assignee:first-child:before {
+    content: " ";
+}
+main.view.product-issue-comment div.header span.assignee:last-child:before {
+    content: " and ";
+}
+
+main.view.product-issue-comment div.header p:last-child > span::before {
+    content: "/";
+
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+
+    color: lightgray;
+}
+main.view.product-issue-comment div.header p:last-child > span:first-child::before {
+    content: "";
+
+    margin-left: 0;
+    margin-right: 0;
 }

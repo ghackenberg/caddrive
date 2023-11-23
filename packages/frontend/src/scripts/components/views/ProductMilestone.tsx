@@ -15,7 +15,7 @@ import { formatDateTime } from '../../functions/time'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { MilestoneProgressWidget } from '../widgets/MilestoneProgress'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { ProductUserPictureWidget } from '../values/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
@@ -60,8 +60,8 @@ export const ProductMilestoneView = () => {
     // CONSTANTS
 
     const columns: Column<Milestone>[] = [
-        { label: '👤', content: milestone => (
-            <ProductUserPictureWidget userId={milestone.userId} productId={productId} class='icon medium round'/>
+        { label: '🧑', content: milestone => (
+            <ProductUserPictureWidget userId={milestone.userId} productId={productId} class='icon small round'/>
         ) },
         { label: 'Label', class: 'left fill', content: milestone => (
             milestone.label

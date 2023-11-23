@@ -9,11 +9,15 @@ import PixelIcon from '/src/images/pixel.png'
 import UserIcon from '/src/images/user.png'
 
 export const ProductUserPictureWidget = (props: { userId: string, productId: string, background?: string, class?: string }) => {
+    // HOOKS
+
     const members = useMembers(props.productId)
     const user = useUser(props.userId)
 
+    // RETURN
+
     if (!props.userId) {
-        const className = props.class
+        const className = `value product_user_picture ${props.class || ''}`
 
         const backgroundImage = `url(${UserIcon})`
         const backgroundSize = 'cover'
@@ -30,7 +34,7 @@ export const ProductUserPictureWidget = (props: { userId: string, productId: str
         const src = isDeleted ? UserIcon : (isMember ? PixelIcon : DiagonalIcon)
         const title = user.name
 
-        const className = props.class
+        const className = `value product_user_picture ${props.class || ''}`
 
         const backgroundImage = `url(${user.pictureId ? `/rest/files/${user.pictureId}.jpg` : UserIcon})`
         const backgroundSize = 'cover'
@@ -41,7 +45,7 @@ export const ProductUserPictureWidget = (props: { userId: string, productId: str
 
         return <img src={src} title={title} style={style} className={className}/>
     } else {
-        const className = `${props.class} pad animation spin`
+        const className = `value product_user_picture pad animation spin ${props.class || ''}`
 
         const backgroundColor = props.background || 'lightgray'
 

@@ -13,7 +13,7 @@ import { useProducts } from '../../hooks/list'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductImageWidget } from '../widgets/ProductImage'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { ProductUserPictureWidget } from '../values/ProductUserPicture'
 import { MemberCount } from '../counts/Members'
 import { IssueCount } from '../counts/Issues'
 import { VersionCount } from '../counts/Versions'
@@ -59,7 +59,7 @@ export const ProductView = () => {
         { label: '📷', class: 'center', content: product => (
             <ProductImageWidget productId={product.productId}/>
         ) },
-        { label: 'Name / Description', class: 'left fill', content: product => (
+        { label: 'Name / description', class: 'left fill', content: product => (
             <>
                 <div>
                     <strong>{product.name}</strong>
@@ -87,7 +87,7 @@ export const ProductView = () => {
                 <MemberCount productId={product.productId}/>
             </span>
         ) },
-        { label: '👤', class: 'center', content: product => (
+        { label: '🧑', class: 'center', content: product => (
             <ProductUserPictureWidget userId={product.userId} productId={product.productId} class='icon medium round'/>
         ) },
         { label: '🛠️', content: product => (

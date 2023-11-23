@@ -16,7 +16,7 @@ import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
-import { ProductUserPictureWidget } from '../widgets/ProductUserPicture'
+import { ProductUserPictureWidget } from '../values/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
@@ -84,8 +84,8 @@ export const ProductIssueView = () => {
     // CONSTANTS
 
     const columns: Column<Issue>[] = [
-        { label: '👤', content: issue => (
-            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon medium round'/>
+        { label: '🧑', class: 'center', content: issue => (
+            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon small round'/>
         ) },
         { label: '#', class: 'center', content: issue => (
             issue.number
@@ -93,17 +93,17 @@ export const ProductIssueView = () => {
         { label: 'Label', class: 'left fill', content: issue => (
             issue.label
         ) },
-        { label: 'Assignees', class: 'left nowrap assignees', content: issue => (
+        { label: '👨‍💻', class: 'left nowrap assignees', content: issue => (
             issue.assignedUserIds.map((assignedUserId) => (
-                <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon medium round'/>
+                <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon small round'/>
             ))
         ) },
-        { label: 'Comments', class: 'center', content: issue => (
+        { label: '💬', class: 'center nowrap', content: issue => (
             <span className='badge'>
                 <CommentCount productId={productId} issueId={issue.issueId}/>
             </span>
         ) },
-        { label: 'Parts', class: 'center', content: issue => (
+        { label: 'Parts', class: 'center nowrap', content: issue => (
             <span className='badge'>
                 <PartCount productId={productId} issueId={issue.issueId}/>
             </span>

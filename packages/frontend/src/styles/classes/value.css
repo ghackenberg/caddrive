@@ -1,0 +1,24 @@
+span.value {
+    display: inline-block;
+}
+span.value.milestone_name {
+    background-image: url(../../images/milestone.png);
+    background-size: 1em 1em;
+    background-repeat: no-repeat;
+    background-position: left center;
+
+    padding-left: 1.25em;
+}
+
+span.value > span.loading {
+    display: inline-block;
+
+    width: 7em;
+    height: 1em;
+
+    border-radius: 0.5em;
+
+    vertical-align: middle;
+
+    background-image: linear-gradient(rgba(0,0,0,0.05),rgba(0,0,0,0.10));
+}

@@ -41,6 +41,7 @@
 @import url(./classes/icon.css);
 @import url(./classes/position.css);
 @import url(./classes/state.css);
+@import url(./classes/value.css);
 
 /* Widget specific styles */
 
@@ -49,6 +50,7 @@
 @import url(./widgets/IssueThread.css);
 @import url(./widgets/ModelGraph.css);
 @import url(./widgets/ModelView3D.css);
+@import url(./widgets/ProductUserName.css);
 @import url(./widgets/ProductView3D.css);
 @import url(./widgets/VersionTree.css);
 @import url(./widgets/VersionView3D.css);

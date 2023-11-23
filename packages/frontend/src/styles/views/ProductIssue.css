@@ -1,5 +1,5 @@
 main.view.product-issue td.assignees img {
-    margin-left: 0.5em;
+    margin-left: 0.25em;
 }
 main.view.product-issue td.assignees img:first-child {
     margin-left: 0;
