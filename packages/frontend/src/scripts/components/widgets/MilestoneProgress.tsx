@@ -11,7 +11,7 @@ export const MilestoneProgressWidget = (props: { productId: string, milestoneId:
         if (total > 0) {
             return Math.floor(closed.length / total * 100)
         } else {
-            return 100
+            return 0
         }
     }
 
