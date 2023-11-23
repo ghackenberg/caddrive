@@ -12,6 +12,10 @@ export const AuthNameView = () => {
 
     const { push } = useAsyncHistory()
 
+    // REFS
+
+    const inputRef = React.useRef<HTMLInputElement>()
+
     // CONTEXTS
 
     const { authContextUser, setAuthContextUser } = React.useContext(AuthContext)
@@ -21,6 +25,12 @@ export const AuthNameView = () => {
     const [name, setName] = React.useState<string>(authContextUser ? authContextUser.name || '' : '')
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
+
+    // EFFECTS
+
+    React.useEffect(() => {
+        authContextUser && inputRef.current.focus()
+    }, [authContextUser])
 
     // FUNCTIONS
 
@@ -54,7 +64,7 @@ export const AuthNameView = () => {
                                 Note that your profile name will be visible to other users.
                             </p>
                             <div>
-                                <input className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setName(event.currentTarget.value)}/>
+                                <input ref={inputRef} className='button fill lightgray' type='text' placeholder='Your profile name' value={name} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setName(event.currentTarget.value)}/>
                                 <button className='button fill red' onClick={handleSubmit}>
                                     {load ? 'Loading ...' : 'Next'}
                                 </button>

@@ -17,6 +17,10 @@ export const AuthCodeView = () => {
     
     const { go, replace } = useAsyncHistory()
 
+    // REFS
+
+    const inputRef = React.createRef<HTMLInputElement>()
+
     // CONTEXTS
 
     const { authContextToken, setAuthContextUser } = React.useContext(AuthContext)
@@ -37,6 +41,10 @@ export const AuthCodeView = () => {
     const [error, setError] = React.useState<string>()
 
     // EFFECTS
+
+    React.useEffect(() => {
+        inputRef.current.focus()
+    })
 
     React.useEffect(() => {
         let exec = true
@@ -122,7 +130,7 @@ export const AuthCodeView = () => {
                             Then enter your code below and press <strong>next</strong>.
                         </p>
                         <div>
-                            <input className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
+                            <input ref={inputRef} className='button fill lightgray' type="text" placeholder='Your verification code' minLength={6} maxLength={6} value={code} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setCode(event.currentTarget.value)}/>
                             <button className='button fill red' onClick={handleSubmit}>
                                 {load ? 'Loading ...' : 'Next'}
                             </button>

@@ -11,6 +11,10 @@ export const AuthEmailView = () => {
 
     const { push } = useAsyncHistory()
 
+    // REFS
+
+    const inputRef = React.useRef<HTMLInputElement>()
+
     // CONTEXTS
 
     const { setAuthContextToken } = React.useContext(AuthContext)
@@ -20,6 +24,12 @@ export const AuthEmailView = () => {
     const [email, setEmail] = React.useState<string>('')
     const [load, setLoad] = React.useState<boolean>(false)
     const [error, setError] = React.useState<string>()
+
+    // EFFECTS
+
+    React.useEffect(() => {
+        inputRef.current.focus()
+    })
 
     // EVENTS
 
@@ -52,7 +62,7 @@ export const AuthEmailView = () => {
                             Then we will send you a <strong>verification code</strong> to sign up/in.
                         </p>
                         <div>
-                            <input className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
+                            <input ref={inputRef} className='button fill lightgray' type="email" placeholder='Your email address' value={email} onKeyUp={event => event.key == 'Enter' && handleSubmit(event)} onChange={event => setEmail(event.currentTarget.value)}/>
                             <button className='button fill red' onClick={handleSubmit} >
                                 {load ? 'Loading ...' : 'Next'}
                             </button>
