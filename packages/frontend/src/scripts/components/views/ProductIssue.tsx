@@ -87,7 +87,7 @@ export const ProductIssueView = () => {
         { label: '🧑', class: 'center', content: issue => (
             <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon small round'/>
         ) },
-        { label: '#', class: 'center', content: issue => (
+        { label: '#', class: 'center nowrap', content: issue => (
             issue.number
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
