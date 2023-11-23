@@ -64,7 +64,7 @@ export const ProductMemberView = () => {
             <ProductUserName userId={member.userId} productId={productId}/>
         ) },
         { label: 'Role', class: 'fill left nowrap', content: member => (
-            <span className='badge role'>{member.role}</span>
+            <span className={`badge role ${member.role}`}>{member.role}</span>
         ) },
         { label: '🛠️', class: 'center', content: member => (
             <a onClick={event => deleteMember(event, member)}>

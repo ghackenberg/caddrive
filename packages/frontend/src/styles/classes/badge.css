@@ -50,6 +50,15 @@ span.badge.role {
 
     color: white;
 }
+span.badge.role.manager {
+    background-color: var(--red);
+}
+span.badge.role.engineer {
+    background-color: var(--green);
+}
+span.badge.role.customer {
+    background-color: var(--blue);
+}
 span.badge.red {
     background-color: var(--red);
 
