@@ -1,3 +1,11 @@
+main.view.product-milestone-issue div.header span.value.product_user_name {
+    font-weight: bold;
+}
+
+main.view.product-milestone-issue div.header span.date {
+    font-weight: bold;
+}
+
 main.view.product-milestone-issue td.assignees img {
     margin-left: 0.25em;
 }

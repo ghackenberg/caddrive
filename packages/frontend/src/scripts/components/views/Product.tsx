@@ -13,7 +13,7 @@ import { useProducts } from '../../hooks/list'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductImageWidget } from '../widgets/ProductImage'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { MemberCount } from '../counts/Members'
 import { IssueCount } from '../counts/Issues'
 import { VersionCount } from '../counts/Versions'
@@ -88,7 +88,7 @@ export const ProductView = () => {
             </span>
         ) },
         { label: '🧑', class: 'center', content: product => (
-            <ProductUserPictureWidget userId={product.userId} productId={product.productId} class='icon medium round'/>
+            <ProductUserPicture userId={product.userId} productId={product.productId} class='icon medium round'/>
         ) },
         { label: '🛠️', content: product => (
             <a onClick={event => deleteProduct(event, product)}>

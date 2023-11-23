@@ -13,8 +13,8 @@ import { useMembers, useVersions } from '../../hooks/list'
 import { collectParts, createProcessor } from '../../functions/markdown'
 import { formatDateTime } from '../../functions/time'
 import { computePath } from '../../functions/path'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
-import { ProductUserNameWidget } from '../values/ProductUserName'
+import { ProductUserPicture } from '../values/ProductUserPicture'
+import { ProductUserName } from '../values/ProductUserName'
 
 import PartIcon from '/src/images/part.png'
 import CloseIcon from '/src/images/close.png'
@@ -258,14 +258,14 @@ export const CommentView = (props: { productId: string, issueId: string, comment
             <div className="head">
                 <div className="icon">
                     <a href={`/users/${userId}`}>
-                        <ProductUserPictureWidget userId={userId} productId={productId}/>
+                        <ProductUserPicture userId={userId} productId={productId}/>
                     </a>
                 </div>
                 <div className="text">
                     <p>
                         {comment ? (
                             <>
-                                <strong><ProductUserNameWidget userId={userId} productId={productId}/></strong> commented on {formatDateTime(new Date(comment.created))} {action}
+                                <strong><ProductUserName userId={userId} productId={productId}/></strong> commented on {formatDateTime(new Date(comment.created))} {action}
                             </>
                         ) : (
                             <>

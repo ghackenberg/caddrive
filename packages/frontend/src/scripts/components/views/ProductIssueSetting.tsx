@@ -15,8 +15,8 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductView3D } from '../widgets/ProductView3D'
-import { ProductUserNameWidget } from '../values/ProductUserName'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { ProductUserName } from '../values/ProductUserName'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { LoadingView } from './Loading'
 
 import LeftIcon from '/src/images/setting.png'
@@ -97,10 +97,10 @@ export const ProductIssueSettingView = () => {
 
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
-            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round'/>
+            <ProductUserPicture userId={member.userId} productId={productId} class='icon medium round'/>
         ) },
         { label: 'Name', class: 'fill left nowrap', content: member => (
-            <ProductUserNameWidget userId={member.userId} productId={productId}/>
+            <ProductUserName userId={member.userId} productId={productId}/>
         ) },
         { label: '🛠️', class: 'fill center nowrap', content: member => (
             <input type="checkbox" checked={assignedUserIds.indexOf(member.userId) != -1} onChange={() => selectAssignee(member.userId)}/>

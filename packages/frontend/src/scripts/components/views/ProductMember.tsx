@@ -14,8 +14,8 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
-import { ProductUserNameWidget } from '../values/ProductUserName'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { ProductUserName } from '../values/ProductUserName'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { LoadingView } from './Loading'
 
 import MemberIcon from '/src/images/user.png'
@@ -58,10 +58,10 @@ export const ProductMemberView = () => {
 
     const columns: Column<Member>[] = [
         { label: '👤', content: member => (
-            <ProductUserPictureWidget userId={member.userId} productId={productId} class='icon medium round middle'/>
+            <ProductUserPicture userId={member.userId} productId={productId} class='icon medium round middle'/>
         ) },
         { label: 'Name', class: 'left nowrap', content: member => (
-            <ProductUserNameWidget userId={member.userId} productId={productId}/>
+            <ProductUserName userId={member.userId} productId={productId}/>
         ) },
         { label: 'Role', class: 'fill left nowrap', content: member => (
             <span className='badge role'>{member.role}</span>

@@ -16,38 +16,6 @@ main.view.product-issue-comment div.header span.date {
     font-weight: bold;
 }
 
-main.view.product-issue-comment div.header span.value.milestone_name {
-    font-weight: bold;
-
-    background-image: url(../../images/milestone.png);
-    background-size: 1em 1em;
-    background-repeat: no-repeat;
-    background-position: left center;
-
-    padding-left: 1.25em;
-}
-
-main.view.product-issue-comment div.header span.assignee::before {
-    content: ", ";
-}
-main.view.product-issue-comment div.header span.assignee:first-child:before {
-    content: " ";
-}
-main.view.product-issue-comment div.header span.assignee:last-child:before {
-    content: " and ";
-}
-
-main.view.product-issue-comment div.header p:last-child > span::before {
-    content: "/";
-
+main.view.product-issue-comment div.header span.assignees > * {
     margin-left: 0.5em;
-    margin-right: 0.5em;
-
-    color: lightgray;
-}
-main.view.product-issue-comment div.header p:last-child > span:first-child::before {
-    content: "";
-
-    margin-left: 0;
-    margin-right: 0;
 }

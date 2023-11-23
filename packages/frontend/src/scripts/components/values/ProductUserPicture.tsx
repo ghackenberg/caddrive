@@ -8,7 +8,7 @@ import LoadIcon from '/src/images/load.png'
 import PixelIcon from '/src/images/pixel.png'
 import UserIcon from '/src/images/user.png'
 
-export const ProductUserPictureWidget = (props: { userId: string, productId: string, background?: string, class?: string }) => {
+export const ProductUserPicture = (props: { userId: string, productId: string, background?: string, class?: string }) => {
     // HOOKS
 
     const members = useMembers(props.productId)

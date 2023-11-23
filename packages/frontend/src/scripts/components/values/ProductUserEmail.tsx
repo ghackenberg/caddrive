@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useUser } from '../../hooks/entity'
 import { useMembers } from '../../hooks/list'
 
-export const ProductUserEmailWidget = (props: { productId: string, userId: string, class?: string }) => {
+export const ProductUserEmail = (props: { productId: string, userId: string, class?: string }) => {
     // HOOKS
 
     const members = useMembers(props.productId)

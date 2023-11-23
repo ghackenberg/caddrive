@@ -16,8 +16,8 @@ import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { Column, Table } from '../widgets/Table'
-import { MilestoneNameWidget } from '../values/MilestoneName'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { MilestoneName } from '../values/MilestoneName'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
@@ -86,24 +86,30 @@ export const ProductIssueView = () => {
 
     const columns: Column<Issue>[] = [
         { label: '🧑', class: 'center', content: issue => (
-            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon small round'/>
+            <ProductUserPicture userId={issue.userId} productId={productId} class='icon small round'/>
         ) },
         { label: '#', class: 'center nowrap', content: issue => (
-            issue.number
+            <span className='badge'>
+                {issue.number}
+            </span>
         ) },
         { label: 'Label', class: 'left fill', content: issue => (
             issue.label
         ) },
-        { label: 'Milestone', class: 'left nowrap', content: issue => (
-            issue.milestoneId && (
-                <MilestoneNameWidget productId={productId} milestoneId={issue.milestoneId}/>
+        { label: 'Milestone', class: 'center nowrap', content: issue => (
+            issue.milestoneId ? (
+                <MilestoneName productId={productId} milestoneId={issue.milestoneId} class='badge'/>
+            ) : (
+                <span className='badge stroke italic'>not scheduled</span>
             )
         ) },
         { label: 'Assignees', class: 'left nowrap assignees', content: issue => (
-            issue.assignedUserIds.length > 0 && (
+            issue.assignedUserIds.length > 0 ? (
                 issue.assignedUserIds.map((assignedUserId) => (
-                    <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon small round'/>
+                    <ProductUserPicture key={assignedUserId} userId={assignedUserId} productId={productId} class='icon small round'/>
                 ))
+            ) : (
+                <span className='badge stroke italic'>not assigned</span>
             )
         ) },
         { label: 'Comments', class: 'center nowrap', content: issue => (

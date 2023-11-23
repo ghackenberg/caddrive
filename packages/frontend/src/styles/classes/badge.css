@@ -20,6 +20,18 @@ span.badge {
 
     color: gray;
 }
+span.badge.stroke {
+    line-height: calc(1.25rem - 2px);
+
+    padding-left: calc(0.5rem - 1px);
+    padding-right: calc(0.5rem - 1px);
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: lightgray;
+
+    background-color: transparent;
+}
 span.badge:first-child {
     margin-left: 0;
 }
@@ -37,6 +49,24 @@ span.badge.role {
     background-color: black;
 
     color: white;
+}
+span.badge.red {
+    background-color: var(--red);
+
+    color: white;
+}
+span.badge.green {
+    background-color: var(--green);
+
+    color: white;
+}
+span.badge.blue {
+    background-color: var(--blue);
+
+    color: white;
+}
+span.badge.italic {
+    font-style: italic;
 }
 
 .button.fill span.badge {

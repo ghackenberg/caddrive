@@ -19,7 +19,8 @@ import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { BurndownChartWidget } from '../widgets/BurndownChart'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { ProductUserName } from '../values/ProductUserName'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
@@ -128,7 +129,7 @@ export const ProductMilestoneIssueView = () => {
 
     const columns: Column<Issue>[] = [
         { label: '🧑', content: issue => (
-            <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon small round'/>
+            <ProductUserPicture userId={issue.userId} productId={productId} class='icon small round'/>
         ) },
         { label: '#', class: 'center nowrap', content: issue => (
             issue.number
@@ -137,9 +138,13 @@ export const ProductMilestoneIssueView = () => {
             issue.label
         ) },
         { label: 'Assignees', class: 'left nowrap assignees', content: issue => (
-            issue.assignedUserIds.map((assignedUserId) => (
-                <ProductUserPictureWidget key={assignedUserId} userId={assignedUserId} productId={productId} class='icon small round'/>
-            ))
+            issue.assignedUserIds.length > 0 ? (
+                issue.assignedUserIds.map((assignedUserId) => (
+                    <ProductUserPicture key={assignedUserId} userId={assignedUserId} productId={productId} class='icon small round'/>
+                ))
+            ) : (
+                <span className='badge stroke italic'>not assigned</span>
+            )
         ) },
         { label: 'Comments', class: 'center nowrap', content: issue => (
             <span className='badge'>
@@ -193,14 +198,21 @@ export const ProductMilestoneIssueView = () => {
                                     {milestone.label}
                                 </h1>
                                 <p>
-                                    <span>Start: </span>    
-                                    <em>
+                                    <ProductUserPicture productId={productId} userId={milestone.userId} class='icon small round'/>
+                                    <span> </span>
+                                    <ProductUserName productId={productId} userId={milestone.userId}/>
+                                    <span> created this milestone on </span>
+                                    <span className='date'>{formatDateTime(new Date(milestone.created))}</span>
+                                </p>
+                                <p style={{color: 'gray'}}>
+                                    <span>This milestone starts on</span>    
+                                    <span className='badge stroke'>
                                         {formatDateTime(new Date(milestone.start))}
-                                    </em>
-                                    <span> / End: </span>  
-                                    <em>
+                                    </span>
+                                    <span style={{marginLeft: '0.5em'}}>and ends on</span>  
+                                    <span className='badge stroke'>
                                         {formatDateTime(new Date(milestone.end))}
-                                    </em>
+                                    </span>
                                 </p>
                                 {contextUser ? (
                                     members.filter(member => member.userId == contextUser.userId).length == 1 ? (

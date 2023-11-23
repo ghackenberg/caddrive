@@ -15,7 +15,7 @@ import { formatDateTime } from '../../functions/time'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { MilestoneProgressWidget } from '../widgets/MilestoneProgress'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
@@ -61,16 +61,20 @@ export const ProductMilestoneView = () => {
 
     const columns: Column<Milestone>[] = [
         { label: '🧑', content: milestone => (
-            <ProductUserPictureWidget userId={milestone.userId} productId={productId} class='icon small round'/>
+            <ProductUserPicture userId={milestone.userId} productId={productId} class='icon small round'/>
         ) },
         { label: 'Label', class: 'left fill', content: milestone => (
             milestone.label
         ) },
         { label: 'Start', class: 'nowrap center', content: milestone => (
-            formatDateTime(new Date(milestone.start))
+            <span className='badge stroke'>
+                {formatDateTime(new Date(milestone.start))}
+            </span>
         ) },
         { label: 'End', class: 'nowrap center', content: milestone => (
-            formatDateTime(new Date(milestone.end))
+            <span className='badge stroke'>
+                {formatDateTime(new Date(milestone.end))}
+            </span>
         ) },
         { label: 'Open', class: 'center', content: milestone => (
             <span className='badge'>

@@ -17,9 +17,9 @@ import { computePath } from '../../functions/path'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { CommentView } from '../widgets/CommentView'
-import { MilestoneNameWidget } from '../values/MilestoneName'
-import { ProductUserNameWidget } from '../values/ProductUserName'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { MilestoneName } from '../values/MilestoneName'
+import { ProductUserName } from '../values/ProductUserName'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
@@ -174,38 +174,28 @@ export const ProductIssueCommentView = () => {
                                     <span className='number'>{issue.number}</span> {issue.label}
                                 </h1>
                                 <p>
-                                    <ProductUserPictureWidget userId={issue.userId} productId={productId} class='icon middle small round'/>
+                                    <ProductUserPicture productId={productId} userId={issue.userId} class='icon small round'/>
                                     <span> </span>
-                                    <ProductUserNameWidget userId={issue.userId} productId={productId}/>
+                                    <ProductUserName productId={productId} userId={issue.userId}/>
                                     <span> created this issue on <span className='date'>{formatDateTime(new Date(issue.created))}</span></span>
                                 </p>
                                 <p>
-                                    <span className={`state ${issue.state}`}>
+                                    <span className={`state badge ${issue.state == 'open' ? 'red' : 'green'}`}>
                                         {issue.state}
                                     </span>
                                     {issue.milestoneId ? (
-                                        <span className='milestone'>
-                                            <span>scheduled for </span>
-                                            <MilestoneNameWidget productId={productId} milestoneId={issue.milestoneId}/>
-                                        </span>
+                                        <MilestoneName productId={productId} milestoneId={issue.milestoneId} class='milestone badge'/>
                                     ) : (
-                                        <span className='milestone' style={{fontWeight: 'bold'}}>not scheduled</span>
+                                        <span className='milestone badge stroke'>not scheduled</span>
                                     )}
                                     {issue.assignedUserIds && issue.assignedUserIds.length > 0 ? (
                                         <span className='assignees'>
-                                            <span>assigned to</span>
-                                            <span>
-                                                {issue.assignedUserIds.map(assignedUserId => (
-                                                    <span key={assignedUserId} className='assignee'>
-                                                        <ProductUserPictureWidget productId={productId} userId={assignedUserId} class='icon middle small round'/>
-                                                        <span> </span>
-                                                        <ProductUserNameWidget productId={productId} userId={assignedUserId}/>
-                                                    </span>
-                                                ))}
-                                            </span>
+                                            {issue.assignedUserIds.map(assignedUserId => (
+                                                <ProductUserPicture productId={productId} userId={assignedUserId} class='icon small round'/>
+                                            ))}
                                         </span>
                                     ) : (
-                                        <span className='assignees' style={{fontWeight: 'bold'}}>not assigned</span>
+                                        <span className='assignees badge stroke'>not assigned</span>
                                     )}
                                 </p>
                             </div>

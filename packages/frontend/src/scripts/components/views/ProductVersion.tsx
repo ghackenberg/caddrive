@@ -12,9 +12,9 @@ import { useMembers, useVersions } from '../../hooks/list'
 import { computeTree } from '../../functions/tree'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductUserNameWidget } from '../values/ProductUserName'
-import { ProductUserEmailWidget } from '../values/ProductUserEmail'
-import { ProductUserPictureWidget } from '../values/ProductUserPicture'
+import { ProductUserName } from '../values/ProductUserName'
+import { ProductUserEmail } from '../values/ProductUserEmail'
+import { ProductUserPicture } from '../values/ProductUserPicture'
 import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
@@ -161,13 +161,13 @@ export const ProductVersionView = () => {
                                                             <span className="label">
                                                                 {vers.major}.{vers.minor}.{vers.patch}
                                                             </span>
-                                                            <ProductUserPictureWidget userId={vers.userId} productId={productId} class='icon medium round middle'/>
+                                                            <ProductUserPicture userId={vers.userId} productId={productId} class='icon medium round middle'/>
                                                             <span className="user">
                                                                 <span className="name">
-                                                                    <ProductUserNameWidget userId={vers.userId} productId={productId}/>
+                                                                    <ProductUserName userId={vers.userId} productId={productId}/>
                                                                 </span>
                                                                 <span className="email">
-                                                                    <ProductUserEmailWidget userId={vers.userId} productId={productId}/>
+                                                                    <ProductUserEmail userId={vers.userId} productId={productId}/>
                                                                 </span>
                                                             </span>
                                                         </div>
