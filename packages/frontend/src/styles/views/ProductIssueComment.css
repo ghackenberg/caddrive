@@ -18,6 +18,13 @@ main.view.product-issue-comment div.header span.date {
 
 main.view.product-issue-comment div.header span.value.milestone_name {
     font-weight: bold;
+
+    background-image: url(../../images/milestone.png);
+    background-size: 1em 1em;
+    background-repeat: no-repeat;
+    background-position: left center;
+
+    padding-left: 1.25em;
 }
 
 main.view.product-issue-comment div.header span.assignee::before {

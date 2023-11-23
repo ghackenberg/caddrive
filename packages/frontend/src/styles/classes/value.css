@@ -1,14 +1,6 @@
 span.value {
     display: inline-block;
 }
-span.value.milestone_name {
-    background-image: url(../../images/milestone.png);
-    background-size: 1em 1em;
-    background-repeat: no-repeat;
-    background-position: left center;
-
-    padding-left: 1.25em;
-}
 
 span.value > span.loading {
     display: inline-block;

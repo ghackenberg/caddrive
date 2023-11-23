@@ -8,12 +8,14 @@ main.view.product-issue td.assignees img:first-child {
 @media screen and (max-width: 45em){
     main.view.product-issue table > thead > tr > th:nth-child(4),
     main.view.product-issue table > thead > tr > th:nth-child(5),
-    main.view.product-issue table > thead > tr > th:nth-child(6) {
+    main.view.product-issue table > thead > tr > th:nth-child(6),
+    main.view.product-issue table > thead > tr > th:nth-child(7) {
         display: none;
     }
     main.view.product-issue table > tbody > tr > td:nth-child(4),
     main.view.product-issue table > tbody > tr > td:nth-child(5),
-    main.view.product-issue table > tbody > tr > td:nth-child(6) {
+    main.view.product-issue table > tbody > tr > td:nth-child(6),
+    main.view.product-issue table > tbody > tr > td:nth-child(7) {
         display: none;
     }
 }
