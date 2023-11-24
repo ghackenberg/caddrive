@@ -1,3 +1,10 @@
+// TODO define remaining color params
+export class Color {
+    constructor(public name: string, public code: number, public value: string, public edge: string) {
+
+    }
+}
+
 export class Vector {
     constructor(public x: number, public y: number, public z: number) {
 
@@ -64,12 +71,17 @@ export class OptionalLine extends Shape {
 
 export class Model {
 
-    public entries: Entry[]
-    public shapes: Shape[]
+    public entries: Entry[] = []
+    public shapes: Shape[] = []
     
-    public comments: Comment[]
-    public commands: Command[]
-    public references: Reference[]
+    public comments: Comment[] = []
+    public commands: Command[] = []
+    public references: Reference[] = []
+
+    public colors: Color[] = []
+    public files: Model[] = []
+
+    constructor(public url: string= undefined, public parent: Model = null) {}
 
     private addEntry(entry: Entry) {
         this.entries.push(entry)
@@ -103,6 +115,13 @@ export class Model {
     }
     addOptionalLine(optionalLine: OptionalLine) {
         this.addShape(optionalLine)
+    }
+
+    addColor(color: Color) {
+        this.colors.push(color)
+    }
+    addFile(file: Model) {
+        this.files.push(file)
     }
 
 }

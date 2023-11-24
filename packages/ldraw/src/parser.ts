@@ -1,61 +1,85 @@
-import { Command, Comment, Line, Matrix, Model, OptionalLine, Quadrilateral, Reference, Triangle, Vector } from "./model"
+import { Color, Command, Comment, Line, Matrix, Model, OptionalLine, Quadrilateral, Reference, Triangle, Vector } from "./model"
+
+interface Context {
+    root: Model
+    current: Model
+}
 
 export class Parser {
 
-    parseText(text: string) {
-        const model = new Model()
+    parse(text: string, url: string = undefined) {
+        const model = new Model(url)
 
-        const lines = text.split('\n')
-        for (const data of lines) {
-            this.parseEntry(model, data)
-        }
+        this.extend(model, text)
 
         return model
     }
 
-    private parseEntry(model: Model, data: string) {
-        if (data.length == 0) {
-            return
+    extend(model: Model, text: string) {
+        const context = { root: model, current: model }
+
+        const lines = text.split('\n')
+        for (const line of lines) {
+            this.parseEntry(context, line)
         }
-        if (data[0] == '0 ') {
+    }
+
+    private parseEntry(context: Context, data: string) {
+        if (data.startsWith('0 ')) {
             if (data.startsWith('0 !')) {
-                this.parseCommand(model, data)
+                this.parseCommand(context, data)
             } else {
-                this.parseComment(model, data)
+                this.parseComment(context, data)
             }
-        }
-        if (data[0] == '1 ') {
-            this.parseReference(model, data)
-        }
-        if (data[0] == '2 ') {
-            this.parseLine(model, data)
-        }
-        if (data[0] == '3 ') {
-            this.parseTriangle(model, data)
-        }
-        if (data[0] == '4 ') {
-            this.parseQuadrilateral(model, data)
-        }
-        if (data[0] == '5 ') {
-            this.parseOptionalLine(model, data)
+        } else if (data.startsWith('1 ')) {
+            this.parseReference(context, data)
+        } else if (data.startsWith('2 ')) {
+            this.parseLine(context, data)
+        } else if (data.startsWith('3 ')) {
+            this.parseTriangle(context, data)
+        } else if (data.startsWith('4 ')) {
+            this.parseQuadrilateral(context, data)
+        } else if (data.startsWith('5 ')) {
+            this.parseOptionalLine(context, data)
         }
     }
 
-    private parseCommand(model: Model, data: string) {
-        model.addCommand(new Command(data.substring('0 !'.length)))
+    private parseCommand(context: Context, data: string) {
+        context.current.addCommand(new Command(data.substring('0 !'.length)))
+        if (data.startsWith('0 FILE ')) {
+            const name = data.substring('0 FILE '.length)
+            const model = new Model(name, context.current)
+            context.current.addFile(model)
+            context.current = model
+        } else if (data.startsWith('0 !DATA ')) {
+            const name = data.substring('0 !DATA '.length)
+            const model = new Model(name, context.current)
+            context.current.addFile(model)
+            context.current = model
+        } else if (data.startsWith('0 NOFILE')) {
+            context.current = context.current.parent
+        } else if (data.startsWith('0 !COLOUR ')) {
+            const item = data.substring('0 !COLOUR '.length).split(' ')
+            const name = item[0]
+            const code = parseInt(item[2])
+            const value = item[4]
+            const edge = item[6]
+            // TODO Parse remaining color parameters!
+            context.root.addColor(new Color(name, code, value, edge))
+        }
     }
 
-    private parseComment(model: Model, data: string) {
+    private parseComment(context: Context, data: string) {
         if (data.startsWith('0 // ')) {
-             model.addComment(new Comment(data.substring('0 // '.length)))
+            context.current.addComment(new Comment(data.substring('0 // '.length)))
         } else if (data.startsWith('0 //')) {
-            model.addComment(new Comment(data.substring('0 //'.length)))
+            context.current.addComment(new Comment(data.substring('0 //'.length)))
         } else {
-            model.addComment(new Comment(data.substring('0 '.length)))
+            context.current.addComment(new Comment(data.substring('0 '.length)))
         }
     }
 
-    private parseReference(model: Model, data: string) {
+    private parseReference(context: Context, data: string) {
         const item = data.substring('1 '.length).split(' ')
         
         const color = parseInt(item[0])
@@ -80,10 +104,10 @@ export class Parser {
 
         const file = item[13]
         
-        model.addReference(new Reference(color, position, orientation, file))
+        context.current.addReference(new Reference(color, position, orientation, file))
     }
 
-    private parseLine(model: Model, data: string) {
+    private parseLine(context: Context, data: string) {
         const item = data.substring('2 '.length).split(' ')
 
         const color = parseInt(item[0])
@@ -100,10 +124,10 @@ export class Parser {
 
         const secondPoint = new Vector(x2, y2, z2)
 
-        model.addLine(new Line(color, firstPoint, secondPoint))
+        context.current.addLine(new Line(color, firstPoint, secondPoint))
     }
 
-    private parseTriangle(model: Model, data: string) {
+    private parseTriangle(context: Context, data: string) {
         const item = data.substring('3 '.length).split(' ')
 
         const color = parseInt(item[0])
@@ -126,10 +150,10 @@ export class Parser {
 
         const thirdPoint = new Vector(x3, y3, z3)
 
-        model.addTriangle(new Triangle(color, firstPoint, secondPoint, thirdPoint))
+        context.current.addTriangle(new Triangle(color, firstPoint, secondPoint, thirdPoint))
     }
 
-    private parseQuadrilateral(model: Model, data: string) {
+    private parseQuadrilateral(context: Context, data: string) {
         const item = data.substring('4 '.length).split(' ')
 
         const color = parseInt(item[0])
@@ -158,10 +182,10 @@ export class Parser {
 
         const fourthPoint = new Vector(x4, y4, z4)
 
-        model.addQuadliteral(new Quadrilateral(color, firstPoint, secondPoint, thirdPoint, fourthPoint))
+        context.current.addQuadliteral(new Quadrilateral(color, firstPoint, secondPoint, thirdPoint, fourthPoint))
     }
 
-    private parseOptionalLine(model: Model, data: string) {
+    private parseOptionalLine(context: Context, data: string) {
         const item = data.substring('4 '.length).split(' ')
 
         const color = parseInt(item[0])
@@ -190,7 +214,7 @@ export class Parser {
 
         const secondControlPoint = new Vector(x4, y4, z4)
 
-        model.addOptionalLine(new OptionalLine(color, firstPoint, secondPoint, firstControlPoint, secondControlPoint))
+        context.current.addOptionalLine(new OptionalLine(color, firstPoint, secondPoint, firstControlPoint, secondControlPoint))
     }
 
 }

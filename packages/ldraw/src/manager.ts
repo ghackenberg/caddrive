@@ -16,7 +16,9 @@ export class Manager {
     async get(url: string) {
         if (!(url in this.models)) {
             const text = await this.loader.load(url)
-            this.models[url] = this.parser.parseText(text)
+            const model = this.parser.parse(text, url)
+            // TODO this.parser.extend(model, 'color defs')
+            this.models[url] = model
         }
         return this.models[url]
     }
