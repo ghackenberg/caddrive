@@ -139,7 +139,7 @@ export const ProductIssueSettingView = () => {
                                         </div>
                                         <div>
                                             <select value={milestoneId || ''} onChange={event => setMilestoneId(event.currentTarget.value)} className='button fill lightgray'>
-                                                <option >none</option>
+                                                <option value=''>none</option>
                                                 {milestones && milestones.map((milestone) => (
                                                     <option key={milestone.milestoneId} value={milestone.milestoneId}>
                                                         {milestone.label}

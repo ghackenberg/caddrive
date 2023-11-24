@@ -65,7 +65,7 @@ export class IssueService implements IssueREST {
         issue.updated = Date.now()
         issue.assignedUserIds = data.assignedUserIds
         issue.label = data.label
-        issue.milestoneId =  data.milestoneId
+        issue.milestoneId = data.milestoneId
         await Database.get().issueRepository.save(issue)
         // Update product
         const product = await Database.get().productRepository.findOneBy({ productId })
