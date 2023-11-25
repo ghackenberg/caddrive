@@ -84,13 +84,11 @@ export function convertComment(comment: CommentEntity) {
 export function convertAttachment(attachment: AttachmentEntity) {
     return  {
         productId: attachment.productId,
-        issueId: attachment.issueId,
-        commentId: attachment.commentId,
         attachmentId: attachment.attachmentId,
+        userId: attachment.userId,
         created: attachment.created,
         updated: attachment.updated,
         deleted: attachment.deleted,
-        name: attachment.name,
         type: attachment.type
     }
 }

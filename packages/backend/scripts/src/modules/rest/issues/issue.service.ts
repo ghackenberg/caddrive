@@ -1,5 +1,3 @@
-import { existsSync, mkdirSync } from 'fs'
-
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
@@ -19,11 +17,7 @@ export class IssueService implements IssueREST {
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
-    ) {
-        if (!existsSync('./uploads')) {
-            mkdirSync('./uploads')
-        }
-    }
+    ) {}
 
     async findIssues(productId: string) : Promise<Issue[]> {
         const where = { productId, deleted: IsNull() }
