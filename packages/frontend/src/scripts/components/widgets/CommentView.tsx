@@ -155,6 +155,35 @@ export const CommentView = (props: { productId: string, issueId: string, comment
         setContextComment(comment)
     }
 
+    function handlePaste(event: React.ClipboardEvent<HTMLTextAreaElement>) {
+        if (mode == Mode.EDIT) {
+            for (const index in event.clipboardData.items) {
+                const item = event.clipboardData.items[index]
+                if (item.kind == 'file') {
+                    if (item.type == 'image/png') {
+                        const file = item.getAsFile()
+                        const reader = new FileReader()
+                        reader.onload = event => {
+                            console.log('load', event.target.result)
+                            /*
+                            const text = textEdit || ''
+                            const before = text.substring(0, textRef.current.selectionStart)
+                            const after = text.substring(textRef.current.selectionEnd)
+                            const markdown = `${before && before.charAt(before.length - 1) != '\n' ? '\n' : ''}![Pasted image](${event.target.result})${after && after.charAt(0) != '\n' ? '\n' : ''}`
+                            setTextEdit(`${before}${markdown}${after}`)
+                            setTimeout(() => {
+                                textRef.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+                                textRef.current.focus()
+                            }, 0)
+                            */
+                        }
+                        reader.readAsDataURL(file)
+                    }
+                }
+            }       
+        }
+    }
+
     function handleEdit() {
         if (mode == Mode.VIEW) {
             setTextEdit(textView)
@@ -280,7 +309,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 <div className="text">
                     {mode == Mode.VIEW && htmlView}
                     {mode == Mode.PREVIEW && htmlEdit}
-                    {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onChange={event => setTextEdit(event.currentTarget.value)} disabled={disabled} placeholder={placeholder}/>}
+                    {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onPaste={handlePaste} onChange={event => setTextEdit(event.currentTarget.value)} disabled={disabled} placeholder={placeholder}/>}
                 </div>
             </div>
             {parts.map((part, index) => (

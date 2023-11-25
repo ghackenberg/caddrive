@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 import compression from 'compression'
+import { json, urlencoded } from 'express'
 
 import { Database } from 'productboard-database'
 
@@ -13,6 +14,12 @@ async function bootstrap() {
 
     const rest = await NestFactory.create(RESTModule)
 
+    rest.use(json({
+        limit: '1mb'
+    }))
+    rest.use(urlencoded({
+        limit: '5mb'
+    }))
     rest.use(compression({
         filter: request => request.url.endsWith('.ldr') || request.url.endsWith('.mpd')
     }))

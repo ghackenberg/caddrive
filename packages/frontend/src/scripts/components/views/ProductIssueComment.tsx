@@ -191,7 +191,7 @@ export const ProductIssueCommentView = () => {
                                     {issue.assignedUserIds && issue.assignedUserIds.length > 0 ? (
                                         <span className='assignees'>
                                             {issue.assignedUserIds.map(assignedUserId => (
-                                                <ProductUserPicture productId={productId} userId={assignedUserId} class='icon small round'/>
+                                                <ProductUserPicture key={assignedUserId} productId={productId} userId={assignedUserId} class='icon small round'/>
                                             ))}
                                         </span>
                                     ) : (
