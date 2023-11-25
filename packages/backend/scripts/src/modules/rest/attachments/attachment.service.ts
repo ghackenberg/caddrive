@@ -39,7 +39,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         const created = Date.now()
         const updated = created
         const userId = this.request.user.userId
-        const attachment = await Database.get().attachmentRepository.save({ productId, attachmentId, created, updated, userId, ...data })
+        const attachment = await Database.get().attachmentRepository.save({ productId, attachmentId, userId, created, updated, ...data })
         // Update product
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = attachment.updated

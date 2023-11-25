@@ -52,7 +52,7 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         @UploadedFile() file: Express.Multer.File
     ): Promise<Attachment> {
         await canCreateAttachmentOrFail(this.request.user.userId, productId)
-        return this.addAttachment(productId, JSON.parse(data), file)
+        return this.service.addAttachment(productId, JSON.parse(data), file)
     }
 
     @Get(':attachmentId')
@@ -75,7 +75,6 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         @Param('productId') productId: string,
         @Param('attachmentId') attachmentId: string
     ): Promise<StreamableFile> {
-        await canReadAttachmentOrFail(this.request.user.userId, productId, attachmentId)
         const attachment = await this.service.getAttachment(productId, attachmentId)
         return new StreamableFile(await this.service.getAttachmentFile(productId, attachmentId), {
             type: attachment.type

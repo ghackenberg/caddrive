@@ -4,6 +4,7 @@ import { Object3D } from 'three'
 
 import { Version } from 'productboard-common'
 
+import { AttachmentClient } from '../../clients/rest/attachment'
 import { CommentClient } from '../../clients/rest/comment'
 import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
@@ -93,6 +94,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const [partsEdit, setPartsEdit] = React.useState(initialPartsEdit)
 
     const [mode, setMode] = React.useState(initialMode)
+    const [upload, setUpload] = React.useState(false)
 
     // EFFECTS
 
@@ -102,7 +104,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 const text = textEdit || ''
                 const before = text.substring(0, textRef.current.selectionStart)
                 const after = text.substring(textRef.current.selectionEnd)
-                const markdown = `${before && before.charAt(before.length - 1) != '\n' ? '\n' : ''} - [${object.name} @ Version ${version.major}.${version.minor}.${version.patch}](/products/${productId}/versions/${version.versionId}/objects/${computePath(object)})${after && after.charAt(0) != '\n' ? '\n' : ''}`
+                const markdown = `${before && before.charAt(before.length - 1) != '\n' ? '\n' : ''}- [${object.name} @ Version ${version.major}.${version.minor}.${version.patch}](/products/${productId}/versions/${version.versionId}/objects/${computePath(object)})${after && after.charAt(0) != '\n' ? '\n' : ''}`
                 setTextEdit(`${before}${markdown}${after}`)
                 setTimeout(() => {
                     textRef.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
@@ -155,30 +157,35 @@ export const CommentView = (props: { productId: string, issueId: string, comment
         setContextComment(comment)
     }
 
-    function handlePaste(event: React.ClipboardEvent<HTMLTextAreaElement>) {
-        if (mode == Mode.EDIT) {
+    async function handlePaste(event: React.ClipboardEvent<HTMLTextAreaElement>) {
+        if (mode == Mode.EDIT && !upload) {
             for (const index in event.clipboardData.items) {
                 const item = event.clipboardData.items[index]
                 if (item.kind == 'file') {
-                    if (item.type == 'image/png') {
-                        const file = item.getAsFile()
-                        const reader = new FileReader()
-                        reader.onload = event => {
-                            console.log('load', event.target.result)
-                            /*
-                            const text = textEdit || ''
-                            const before = text.substring(0, textRef.current.selectionStart)
-                            const after = text.substring(textRef.current.selectionEnd)
-                            const markdown = `${before && before.charAt(before.length - 1) != '\n' ? '\n' : ''}![Pasted image](${event.target.result})${after && after.charAt(0) != '\n' ? '\n' : ''}`
-                            setTextEdit(`${before}${markdown}${after}`)
-                            setTimeout(() => {
-                                textRef.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
-                                textRef.current.focus()
-                            }, 0)
-                            */
-                        }
-                        reader.readAsDataURL(file)
+                    setUpload(true)
+                    
+                    const file = item.getAsFile()
+                    const attachment = await AttachmentClient.addAttachment(productId, { type: file.type }, file)
+                    
+                    const text = textEdit || ''
+                    const before = text.substring(0, textRef.current.selectionStart)
+                    const after = text.substring(textRef.current.selectionEnd)
+
+                    let markdown: string
+
+                    if (file.type.startsWith('image/')) {
+                        markdown = `![${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/file)`
+                    } else {
+                        markdown = `- [${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/file)`
                     }
+
+                    setTextEdit(`${before}${markdown}${after}`)
+                    setTimeout(() => {
+                        textRef.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+                        textRef.current.focus()
+                    }, 0)
+
+                    setUpload(false)
                 }
             }       
         }
@@ -294,11 +301,11 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                     <p>
                         {comment ? (
                             <>
-                                <strong><ProductUserName userId={userId} productId={productId}/></strong> commented on {formatDateTime(new Date(comment.created))} {action}
+                                <strong><ProductUserName userId={userId} productId={productId}/></strong> commented on {formatDateTime(new Date(comment.created))} {upload ? 'uploading ...' : action}
                             </>
                         ) : (
                             <>
-                                <strong>New comment</strong> ({disabled ? 'requires login' : toggle})
+                                <strong>New comment</strong> ({disabled ? 'requires login' : (upload ? 'uploading ...' : toggle)})
                             </>
                         )}
                     </p>
