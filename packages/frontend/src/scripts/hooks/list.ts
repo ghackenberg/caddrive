@@ -101,6 +101,16 @@ export function useComments(productId: string, issueId: string) {
     )
 }
 
+// Attachments
+
+export function useAttachments(productId: string) {
+    return useMqttEntities(
+        [productId],
+        CacheAPI.getAttachments(productId),
+        callback => CacheAPI.subscribeAttachments(productId, callback)
+    )
+}
+
 // Milestones
 
 export function useMilestones(productId: string) {

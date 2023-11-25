@@ -82,6 +82,16 @@ export function useComment(productId: string, issueId: string, commentId: string
     )
 }
 
+// Attachment
+
+export function useAttachment(productId: string, attachmentId: string) {
+    return useEntity(
+        [productId, attachmentId],
+        CacheAPI.getAttachment(productId, attachmentId),
+        callback => CacheAPI.subscribeAttachment(productId, attachmentId, callback)
+    )
+}
+
 // Milestone
 
 export function useMilestone(productId: string, milestoneId: string) {
