@@ -316,7 +316,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 <div className="text">
                     {mode == Mode.VIEW && htmlView}
                     {mode == Mode.PREVIEW && htmlEdit}
-                    {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onPaste={handlePaste} onChange={event => setTextEdit(event.currentTarget.value)} disabled={disabled} placeholder={placeholder}/>}
+                    {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onPaste={handlePaste} onChange={event => setTextEdit(event.currentTarget.value)} disabled={disabled || upload} placeholder={placeholder}/>}
                 </div>
             </div>
             {parts.map((part, index) => (
