@@ -1,5 +1,6 @@
 import { JWK } from 'jose'
 
+import { Attachment } from './data/attachment'
 import { Comment, CommentAddData, CommentUpdateData } from './data/comment'
 import { Issue, IssueAddData, IssueUpdateData } from './data/issue'
 import { Member, MemberAddData, MemberUpdateData } from './data/member'
@@ -56,6 +57,14 @@ export interface CommentREST {
     getComment(productId: string, issueId: string, commentId: string): Promise<Comment>
     updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData): Promise<Comment>
     deleteComment(productId: string, issueId: string, commentId: string): Promise<Comment>
+}
+
+export interface AttachmentREST<AA, AU, F> {
+    findAttachments(productId: string, issueId: string, commentId: string): Promise<Attachment[]>
+    addAttachment(productId: string, issueId: string, commentId: string, data: AA, file: F): Promise<Attachment>
+    getAttachment(productId: string, issueId: string, commentId: string, attachmentId: string): Promise<Attachment>
+    updateAttachment(productId: string, issueId: string, commentId: string, attachmentId: string, data: AU, file?: F): Promise<Attachment>
+    deleteAttachment(productId: string, issueId: string, commentId: string, attachmentId: string): Promise<Attachment>
 }
 
 export interface MilestoneREST {
