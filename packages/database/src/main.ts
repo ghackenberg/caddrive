@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import { DataSource, FindOptionsWhere, Repository } from 'typeorm'
 
 import options from './config'
+import { AttachmentEntity } from './entities/attachment'
 import { CommentEntity } from './entities/comment'
 import { IssueEntity } from './entities/issue'
 import { MemberEntity } from './entities/member'
@@ -11,6 +12,7 @@ import { TokenEntity } from './entities/token'
 import { UserEntity } from './entities/user'
 import { VersionEntity } from './entities/version'
 
+export { AttachmentEntity } from './entities/attachment'
 export { CommentEntity } from './entities/comment'
 export { IssueEntity } from './entities/issue'
 export { MemberEntity } from './entities/member'
@@ -52,6 +54,7 @@ export class Database {
     public readonly versionRepository: Repository<VersionEntity>
     public readonly issueRepository: Repository<IssueEntity>
     public readonly commentRepository: Repository<CommentEntity>
+    public readonly attachmentRepository: Repository<AttachmentEntity>
     public readonly milestoneRepository: Repository<MilestoneEntity>
 
     private constructor(config: DataSource) {
@@ -64,6 +67,7 @@ export class Database {
         this.versionRepository = this.dataSource.getRepository(VersionEntity)
         this.issueRepository = this.dataSource.getRepository(IssueEntity)
         this.commentRepository = this.dataSource.getRepository(CommentEntity)
+        this.attachmentRepository = this.dataSource.getRepository(AttachmentEntity)
         this.milestoneRepository = this.dataSource.getRepository(MilestoneEntity)
     }
 }
@@ -99,4 +103,7 @@ export async function getIssueOrFail<E>(where: FindOptionsWhere<IssueEntity>, Er
 }
 export async function getCommentOrFail<E>(where: FindOptionsWhere<CommentEntity>, ErrorType: { new(): E }) {
     return getEntityOrFail(Database.get().commentRepository, where, ErrorType)
+}
+export async function getAttachmentOrFail<E>(where: FindOptionsWhere<AttachmentEntity>, ErrorType: { new(): E }) {
+    return getEntityOrFail(Database.get().attachmentRepository, where, ErrorType)
 }

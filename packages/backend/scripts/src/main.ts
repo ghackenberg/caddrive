@@ -18,7 +18,7 @@ async function bootstrap() {
         limit: '1mb'
     }))
     rest.use(urlencoded({
-        limit: '5mb'
+        limit: '5mb', extended: true
     }))
     rest.use(compression({
         filter: request => request.url.endsWith('.ldr') || request.url.endsWith('.mpd')

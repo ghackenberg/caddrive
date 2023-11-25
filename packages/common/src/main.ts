@@ -1,3 +1,4 @@
+export * from './data/attachment'
 export * from './data/comment'
 export * from './data/issue'
 export * from './data/member'

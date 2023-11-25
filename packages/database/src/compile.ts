@@ -1,6 +1,7 @@
 import { ProductMessage, UserMessage } from "productboard-common"
 
-import { convertComment, convertIssue, convertMember, convertMilestone, convertProduct, convertUser, convertVersion } from "./convert"
+import { convertAttachment, convertComment, convertIssue, convertMember, convertMilestone, convertProduct, convertUser, convertVersion } from "./convert"
+import { AttachmentEntity } from "./entities/attachment"
 import { CommentEntity } from "./entities/comment"
 import { IssueEntity } from "./entities/issue"
 import { MemberEntity } from "./entities/member"
@@ -19,6 +20,7 @@ export type ProductMessageData = {
     members?: MemberEntity[],
     issues?: IssueEntity[],
     comments?: CommentEntity[],
+    attachments?: AttachmentEntity[],
     milestones?: MilestoneEntity[],
     versions?: VersionEntity[]
 }
@@ -40,6 +42,7 @@ export function compileProductMessage(data: ProductMessageData): ProductMessage 
         members: process(data.members, convertMember),
         issues: process(data.issues, convertIssue),
         comments: process(data.comments, convertComment),
+        attachments: process(data.attachments, convertAttachment),
         milestones: process(data.milestones, convertMilestone),
         versions: process(data.versions, convertVersion)
     }

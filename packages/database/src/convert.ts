@@ -1,3 +1,4 @@
+import { AttachmentEntity } from "./entities/attachment"
 import { CommentEntity } from "./entities/comment"
 import { IssueEntity } from "./entities/issue"
 import { MemberEntity } from "./entities/member"
@@ -77,6 +78,20 @@ export function convertComment(comment: CommentEntity) {
         deleted: comment.deleted,
         text: comment.text,
         action: comment.action
+    }
+}
+
+export function convertAttachment(attachment: AttachmentEntity) {
+    return  {
+        productId: attachment.productId,
+        issueId: attachment.issueId,
+        commentId: attachment.commentId,
+        attachmentId: attachment.attachmentId,
+        created: attachment.created,
+        updated: attachment.updated,
+        deleted: attachment.deleted,
+        name: attachment.name,
+        type: attachment.type
     }
 }
 

@@ -1,3 +1,4 @@
+import { Attachment } from "./data/attachment"
 import { Comment } from "./data/comment"
 import { Issue } from "./data/issue"
 import { Member } from "./data/member"
@@ -17,6 +18,7 @@ export interface ProductMessage  {
     members?: Member[]
     issues?: Issue[]
     comments?: Comment[]
+    attachments?: Attachment[]
     milestones?: Milestone[]
     versions?: Version[]
 }
