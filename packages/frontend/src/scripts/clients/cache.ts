@@ -1,6 +1,6 @@
 import { JWK } from "jose"
 
-import { Comment, Issue, Member, Milestone, Product, User, Version } from "productboard-common"
+import { Attachment, Comment, Issue, Member, Milestone, Product, User, Version } from "productboard-common"
 
 import { MqttAPI } from "./mqtt"
 import { FileClient } from "./rest/file"
@@ -32,6 +32,7 @@ const PRODUCT_CALLBACKS: Index<Callback<Product>[]> = {}
 const MEMBER_CALLBACKS: Index<Callback<Member>[]> = {}
 const ISSUE_CALLBACKS: Index<Callback<Issue>[]> = {}
 const COMMENT_CALLBACKS: Index<Callback<Comment>[]> = {}
+const ATTACHMENT_CALLBACKS: Index<Callback<Attachment>[]> = {}
 const MILESTONE_CALLBACKS: Index<Callback<Milestone>[]> = {}
 const VERSION_CALLBACKS: Index<Callback<Version>[]> = {}
 
@@ -40,6 +41,7 @@ const VERSION_CALLBACKS: Index<Callback<Version>[]> = {}
 const MEMBERS_CALLBACKS: Index<Callback<Member[]>[]> = {}
 const ISSUES_CALLBACKS: Index<Callback<Issue[]>[]> = {}
 const COMMENTS_CALLBACKS: Index<Callback<Comment[]>[]> = {}
+const ATTACHMENTS_CALLBACKS: Index<Callback<Attachment[]>[]> = {}
 const MILESTONES_CALLBACKS: Index<Callback<Milestone[]>[]> = {}
 const VERSIONS_CALLBACKS: Index<Callback<Version[]>[]> = {}
 
@@ -50,12 +52,14 @@ const PRODUCT_CACHE: Index<Product> = {}
 const MEMBER_CACHE: Index<Member> = {}
 const ISSUE_CACHE: Index<Issue> = {}
 const COMMENT_CACHE: Index<Comment> = {}
+const ATTACHMENT_CACHE: Index<Attachment> = {}
 const MILESTONE_CACHE: Index<Milestone> = {}
 const VERSION_CACHE: Index<Version> = {}
 
 const MEMBERS_CACHE: Index<Index<boolean>> = {}
 const ISSUES_CACHE: Index<Index<boolean>> = {}
 const COMMENTS_CACHE: Index<Index<boolean>> = {}
+const ATTACHMENTS_CACHE: Index<Index<boolean>> = {}
 const MILESTONES_CACHE: Index<Index<boolean>> = {}
 const VERSIONS_CACHE: Index<Index<boolean>> = {}
 
@@ -136,6 +140,7 @@ function subscribeProductMessage<T>(productId: string, index: Index<Callback<T>[
             putAll(message.members, CacheAPI.putMember)
             putAll(message.issues, CacheAPI.putIssue)
             putAll(message.comments, CacheAPI.putComment)
+            putAll(message.attachments, CacheAPI.putAttachment)
             putAll(message.milestones, CacheAPI.putMilestone)
             putAll(message.versions, CacheAPI.putVersion)
         })
@@ -176,6 +181,9 @@ export const CacheAPI = {
     getComment(productId: string, issueId: string, commentId: string) {
         return COMMENT_CACHE[`${productId}-${issueId}-${commentId}`]
     },
+    getAttachment(productId: string, attachmentId: string) {
+        return ATTACHMENT_CACHE[`${productId}-${attachmentId}`]
+    },
     getMilestone(productId: string, milestoneId: string) {
         return MILESTONE_CACHE[`${productId}-${milestoneId}`]
     },
@@ -193,6 +201,9 @@ export const CacheAPI = {
     },
     getComments(productId: string, issueId: string) {
         return resolve(COMMENT_CACHE, COMMENTS_CACHE, `${productId}-${issueId}`)
+    },
+    getAttachments(productId: string) {
+        return resolve(ATTACHMENT_CACHE, ATTACHMENTS_CACHE, productId)
     },
     getMilestones(productId: string) {
         return resolve(MILESTONE_CACHE, MILESTONES_CACHE, productId)
@@ -218,6 +229,9 @@ export const CacheAPI = {
     subscribeComment(productId: string, issueId: string, commentId: string, callback: Callback<Comment>): Unsubscribe {
         return subscribeProductMessage(productId, COMMENT_CALLBACKS, `${productId}-${issueId}-${commentId}`, callback, CacheAPI.getComment(productId, issueId, commentId))
     },
+    subscribeAttachment(productId: string, attachmentId: string, callback: Callback<Attachment>): Unsubscribe {
+        return subscribeProductMessage(productId, ATTACHMENT_CALLBACKS, `${productId}-${attachmentId}`, callback, CacheAPI.getAttachment(productId, attachmentId))
+    },
     subscribeMilestone(productId: string, milestoneId: string, callback: Callback<Milestone>): Unsubscribe {
         return subscribeProductMessage(productId, MILESTONE_CALLBACKS, `${productId}-${milestoneId}`, callback, CacheAPI.getMilestone(productId, milestoneId))
     },
@@ -235,6 +249,9 @@ export const CacheAPI = {
     },
     subscribeComments(productId: string, issueId: string, callback: Callback<Comment[]>): Unsubscribe {
         return subscribeProductMessage(productId, COMMENTS_CALLBACKS, `${productId}-${issueId}`, callback, CacheAPI.getComments(productId, issueId))
+    },
+    subscribeAttachments(productId: string, callback: Callback<Attachment[]>): Unsubscribe {
+        return subscribeProductMessage(productId, ATTACHMENTS_CALLBACKS, productId, callback, CacheAPI.getAttachments(productId))
     },
     subscribeMilestones(productId: string, callback: Callback<Milestone[]>): Unsubscribe {
         return subscribeProductMessage(productId, MILESTONES_CALLBACKS, productId, callback, CacheAPI.getMilestones(productId))
@@ -269,6 +286,11 @@ export const CacheAPI = {
         const entityId = `${comment.productId}-${comment.issueId}-${comment.commentId}`
         const parentId = `${comment.productId}-${comment.issueId}`
         return update(COMMENT_CACHE, COMMENTS_CACHE, COMMENT_CALLBACKS, COMMENTS_CALLBACKS, entityId, parentId, comment)
+    },
+    putAttachment(attachment: Attachment) {
+        const entityId = `${attachment.productId}-${attachment.attachmentId}`
+        const parentId = `${attachment.productId}`
+        return update(ATTACHMENT_CACHE, ATTACHMENTS_CACHE, ATTACHMENT_CALLBACKS, ATTACHMENTS_CALLBACKS, entityId, parentId, attachment)
     },
     putMilestone(milestone: Milestone) {
         const entityId = `${milestone.productId}-${milestone.milestoneId}`
@@ -307,6 +329,7 @@ export const CacheAPI = {
         clear(MEMBER_CALLBACKS)
         clear(ISSUE_CALLBACKS)
         clear(COMMENT_CALLBACKS)
+        clear(ATTACHMENT_CALLBACKS)
         clear(MILESTONE_CALLBACKS)
         clear(VERSION_CALLBACKS)
 
@@ -315,6 +338,7 @@ export const CacheAPI = {
         clear(MEMBERS_CALLBACKS)
         clear(ISSUES_CALLBACKS)
         clear(COMMENTS_CALLBACKS)
+        clear(ATTACHMENTS_CALLBACKS)
         clear(MILESTONES_CALLBACKS)
         clear(VERSIONS_CALLBACKS)
 
@@ -325,6 +349,7 @@ export const CacheAPI = {
         clear(MEMBER_CACHE)
         clear(ISSUE_CACHE)
         clear(COMMENT_CACHE)
+        clear(ATTACHMENT_CACHE)
         clear(MILESTONE_CACHE)
         clear(VERSION_CACHE)
 
@@ -333,6 +358,7 @@ export const CacheAPI = {
         clear(MEMBERS_CACHE)
         clear(ISSUES_CACHE)
         clear(COMMENTS_CACHE)
+        clear(ATTACHMENTS_CACHE)
         clear(MILESTONES_CACHE)
         clear(VERSIONS_CACHE)
     }
