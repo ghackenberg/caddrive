@@ -10,7 +10,7 @@ import { Comment } from 'productboard-common'
 
 const PART_REGEX = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
-const ATTACHMENT_REGEX = /\/products\/(.*)\/attachments\/(.*)\/file/
+const ATTACHMENT_REGEX = /\/products\/(.*)\/attachments\/(.*)\/(.*)/
 
 export interface Part {
     productId: string
@@ -65,24 +65,41 @@ export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handle
         createElement, components: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             a: (props: any) => {
-                //console.log('anchor', props)
+                let match: RegExpMatchArray
                 
-                const part_match = PART_REGEX.exec(props.href || '')
-                if (part_match) {
-                    const productId = part_match[1]
-                    const versionId = part_match[2]
-                    const objectPath = part_match[3]
+                match = PART_REGEX.exec(props.href || '')
+                if (match) {
+                    const productId = match[1]
+                    const versionId = match[2]
+                    const objectPath = match[3]
                     const objectName = props.children[0]
                     const part = { productId, versionId, objectPath, objectName }
                     return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
                 }
 
-                const attachment_match = ATTACHMENT_REGEX.exec(props.href || '')
-                if (attachment_match) {
+                match = ATTACHMENT_REGEX.exec(props.href || '')
+                if (match) {
+                    const productId = match[1]
+                    const attachmentId = match[2]
+                    const name = match[3]
+                    console.log('file attachment found', productId, attachmentId, name)
                     return <a {...props} target='_blank'/>
                 }
 
                 return <a {...props} target='_blank'/>
+            },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            img: (props: any) => {
+                const match = ATTACHMENT_REGEX.exec(props.src || '')
+                if (match) {
+                    const productId = match[1]
+                    const attachmentId = match[2]
+                    const name = match[3]
+                    console.log('image attachment found', productId, attachmentId, name)
+                    return <a href={props.src} target='_blank'><img {...props}/></a>
+                }
+
+                return <img {...props}/>
             }
         }
     })
