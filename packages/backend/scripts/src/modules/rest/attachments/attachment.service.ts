@@ -1,6 +1,6 @@
-import { ReadStream, createReadStream, existsSync, mkdirSync, writeFileSync } from 'fs'
+import { createReadStream, existsSync, mkdirSync, writeFileSync } from 'fs'
 
-import { Inject } from '@nestjs/common'
+import { Inject, StreamableFile } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
 import shortid from 'shortid'
@@ -55,8 +55,18 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         return convertAttachment(attachment)
     }
 
-    async getAttachmentFile(_productId: string, attachmentId: string): Promise<ReadStream> {
-        return createReadStream(`./uploads/${attachmentId}`)
+    async getAttachmentFile(productId: string, attachmentId: string, name: string): Promise<StreamableFile> {
+        const attachment = await this.getAttachment(productId, attachmentId)
+
+        const stream = createReadStream(`./uploads/${attachmentId}`)
+
+        const type = attachment.type
+
+        if (name != attachment.name) {
+            return new StreamableFile(stream, { disposition: attachment.name, type })
+        } else {
+            return new StreamableFile(stream, { type })
+        }
     }
 
     async updateAttachment(productId: string, attachmentId: string, data: AttachmentUpdateData, file?: Express.Multer.File): Promise<Attachment> {
@@ -65,6 +75,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         // Update attachment
         const attachment = await Database.get().attachmentRepository.findOneByOrFail({ productId, attachmentId })
         attachment.updated = Date.now()
+        attachment.name = data.name
         attachment.type = data.type
         await Database.get().attachmentRepository.save(attachment)
         // Update product

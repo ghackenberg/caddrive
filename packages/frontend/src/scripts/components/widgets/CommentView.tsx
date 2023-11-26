@@ -165,7 +165,10 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                     setUpload(true)
                     
                     const file = item.getAsFile()
-                    const attachment = await AttachmentClient.addAttachment(productId, { type: file.type }, file)
+                    const name = file.name
+                    const type = file.type
+                    const data = { name, type }
+                    const attachment = await AttachmentClient.addAttachment(productId, data, file)
                     
                     const text = textEdit || ''
                     const before = text.substring(0, textRef.current.selectionStart)
@@ -174,9 +177,9 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                     let markdown: string
 
                     if (file.type.startsWith('image/')) {
-                        markdown = `![${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/file)`
+                        markdown = `![${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/${name})`
                     } else {
-                        markdown = `- [${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/file)`
+                        markdown = `- [${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/${name})`
                     }
 
                     setTextEdit(`${before}${markdown}${after}`)

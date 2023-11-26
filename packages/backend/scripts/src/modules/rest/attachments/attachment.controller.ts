@@ -67,18 +67,16 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         return this.service.getAttachment(productId, attachmentId)
     }
 
-    @Get(':attachmentId/file')
+    @Get(':attachmentId/:name')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'attachmentId', type: 'string', required: true })
     @ApiResponse({ type: StreamableFile })
     async getAttachmentFile(
         @Param('productId') productId: string,
-        @Param('attachmentId') attachmentId: string
+        @Param('attachmentId') attachmentId: string,
+        @Param('name') name: string
     ): Promise<StreamableFile> {
-        const attachment = await this.service.getAttachment(productId, attachmentId)
-        return new StreamableFile(await this.service.getAttachmentFile(productId, attachmentId), {
-            type: attachment.type
-        })
+        return this.service.getAttachmentFile(productId, attachmentId, name)
     }
 
     @Put(':attachmentId')

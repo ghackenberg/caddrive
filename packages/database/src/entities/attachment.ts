@@ -29,5 +29,7 @@ export class AttachmentEntity extends Attachment {
     override deleted: number
     
     @Column({ nullable: false })
+    override name: string
+    @Column({ nullable: false })
     override type: string
 }

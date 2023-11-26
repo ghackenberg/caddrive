@@ -89,6 +89,7 @@ export function convertAttachment(attachment: AttachmentEntity) {
         created: attachment.created,
         updated: attachment.updated,
         deleted: attachment.deleted,
+        name: attachment.name,
         type: attachment.type
     }
 }

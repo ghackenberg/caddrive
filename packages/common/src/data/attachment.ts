@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class AttachmentUpdateData {
     @ApiProperty()
+    name: string
+    @ApiProperty()
     type: string
 }
 
