@@ -163,30 +163,34 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 const item = event.clipboardData.items[index]
                 if (item.kind == 'file') {
                     setUpload(true)
-                    
-                    const file = item.getAsFile()
-                    const name = file.name
-                    const type = file.type
-                    const data = { name, type }
-                    const attachment = await AttachmentClient.addAttachment(productId, data, file)
-                    
-                    const text = textEdit || ''
-                    const before = text.substring(0, textRef.current.selectionStart)
-                    const after = text.substring(textRef.current.selectionEnd)
 
-                    let markdown: string
+                    try {
+                        const file = item.getAsFile()
+                        const name = file.name
+                        const type = file.type
+                        const data = { name, type }
+                        const attachment = await AttachmentClient.addAttachment(productId, data, file)
+                        
+                        const text = textEdit || ''
+                        const before = text.substring(0, textRef.current.selectionStart)
+                        const after = text.substring(textRef.current.selectionEnd)
 
-                    if (file.type.startsWith('image/')) {
-                        markdown = `![${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/${name})`
-                    } else {
-                        markdown = `- [${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/${name})`
+                        let markdown: string
+                        if (file.type.startsWith('image/')) {
+                            markdown = `![${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/${encodeURIComponent(name)})`
+                        } else {
+                            markdown = `- [${file.name}](/rest/products/${productId}/attachments/${attachment.attachmentId}/${encodeURIComponent(name)})`
+                        }
+
+                        setTextEdit(`${before}${markdown}${after}`)
+                        setTimeout(() => {
+                            textRef.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
+                            textRef.current.focus()
+                        }, 0)
+                    } catch (e) {
+                        console.error(e)
+                        alert('Could not upload attachment!')
                     }
-
-                    setTextEdit(`${before}${markdown}${after}`)
-                    setTimeout(() => {
-                        textRef.current.setSelectionRange(before.length + markdown.length, before.length + markdown.length)
-                        textRef.current.focus()
-                    }, 0)
 
                     setUpload(false)
                 }

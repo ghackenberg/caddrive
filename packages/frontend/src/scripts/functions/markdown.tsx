@@ -81,7 +81,7 @@ export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handle
                 if (match) {
                     const productId = match[1]
                     const attachmentId = match[2]
-                    const name = match[3]
+                    const name = decodeURIComponent(match[3])
                     console.log('file attachment found', productId, attachmentId, name)
                     return <a {...props} target='_blank'/>
                 }
@@ -94,7 +94,7 @@ export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handle
                 if (match) {
                     const productId = match[1]
                     const attachmentId = match[2]
-                    const name = match[3]
+                    const name = decodeURIComponent(match[3])
                     console.log('image attachment found', productId, attachmentId, name)
                     return <a href={props.src} target='_blank'><img {...props}/></a>
                 }

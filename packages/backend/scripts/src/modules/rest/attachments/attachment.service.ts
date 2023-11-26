@@ -62,9 +62,25 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
 
         const type = attachment.type
 
-        if (name != attachment.name) {
-            return new StreamableFile(stream, { disposition: attachment.name, type })
+        if (name == 'file') {
+            // old style: file name not in url => use content disposition header
+            if (type.startsWith('image/')) {
+                return new StreamableFile(stream, { disposition: `inline; filename: ${attachment.name}`, type })
+            } else if (type.startsWith('audio/')) {
+                return new StreamableFile(stream, { disposition: `inline; filename: ${attachment.name}`, type })
+            } else if (type.startsWith('video/')) {
+                return new StreamableFile(stream, { disposition: `inline; filename: ${attachment.name}`, type })
+            } else if (type.startsWith('text/')) {
+                return new StreamableFile(stream, { disposition: `inline; filename: ${attachment.name}`, type })
+            } else if (type == 'application/ogg') {
+                return new StreamableFile(stream, { disposition: `inline; filename: ${attachment.name}`, type })
+            } else if (type == 'application/pdf') {
+                return new StreamableFile(stream, { disposition: `inline; filename: ${attachment.name}`, type })
+            } else {
+                return new StreamableFile(stream, { disposition: `attachment; filename: ${attachment.name}`, type })
+            }
         } else {
+            // new style: file name in url => do not use content disposition header
             return new StreamableFile(stream, { type })
         }
     }
