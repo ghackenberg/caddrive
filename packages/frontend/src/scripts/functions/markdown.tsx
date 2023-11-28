@@ -1,12 +1,16 @@
 import * as React from 'react'
-import { createElement, MouseEvent } from "react"
+import { MouseEvent } from "react"
 
-import rehypeReact from "rehype-react"
+import * as jsxRuntime from 'react/jsx-runtime'
+import rehypeReact, { Options } from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { unified } from "unified"
 
 import { Comment } from 'productboard-common'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const JSX_RUNTIME: any = jsxRuntime
 
 const PART_REGEX = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
@@ -61,22 +65,22 @@ function collectPartsInternal(parent: Node, parts: Part[]) {
 }
 
 export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handler, handleClick: Handler) {
-    return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, {
-        createElement, components: {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            a: (props: any) => {
+    const options: Options = {
+        ...JSX_RUNTIME,
+        components: {
+            a: props => {
                 let match: RegExpMatchArray
-                
+                // Part
                 match = PART_REGEX.exec(props.href || '')
                 if (match) {
                     const productId = match[1]
                     const versionId = match[2]
                     const objectPath = match[3]
-                    const objectName = props.children[0]
+                    const objectName = props.children.toString()
                     const part = { productId, versionId, objectPath, objectName }
                     return <a {...props} onMouseOver={event => handleMouseOver(event, part)} onMouseOut={event => handleMouseOut(event, part)} onClick={event => handleClick(event, part)}/>
                 }
-
+                // Attachment
                 match = ATTACHMENT_REGEX.exec(props.href || '')
                 if (match) {
                     const productId = match[1]
@@ -88,8 +92,7 @@ export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handle
 
                 return <a {...props} target='_blank'/>
             },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            img: (props: any) => {
+            img: props => {
                 const match = ATTACHMENT_REGEX.exec(props.src || '')
                 if (match) {
                     const productId = match[1]
@@ -102,5 +105,6 @@ export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handle
                 return <img {...props}/>
             }
         }
-    })
+    }
+    return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, options)
 }

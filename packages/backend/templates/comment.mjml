@@ -3,7 +3,7 @@
         <mj-section background-color="lightgray">
             <mj-column>
                 <mj-text align="center" font-size="20px" color="gray">
-                    CADdrive
+                    <b>CADdrive</b>
                 </mj-text>
                 <mj-text align="center" color="gray">
                     Your collaborative workspace for LDraw&trade; models
@@ -12,23 +12,38 @@
         </mj-section>
         <mj-section background-color="white">
             <mj-column width="400px">
-                <mj-text font-size="20px" color="gray">
-                    Product <b>{{product}}</b>
-                </mj-text>
-                <mj-text font-size="16px" color="gray">
-                    Issue <b>{{issue}}</b>
+                <mj-text font-size="16px" color="orange">
+                    <b>Product</b>
                 </mj-text>
                 <mj-text>
-                    <b>{{user}}</b> on <b>{{date}}</b>: <i>{{comment}}</i> (+ action: <b>{{action}}</b>)
+                    {{product.name}}
+                </mj-text>
+                <mj-text font-size="16px" color="orange">
+                    <b>Issue</b>
+                </mj-text>
+                <mj-text>
+                    #{{issue.number}} - {{issue.label}}
+                </mj-text>
+                <mj-text font-size="16px" color="orange">
+                    <b>Comment</b>
+                </mj-text>
+                <mj-text>
+                    <b>{{user.name}}</b> on <b>{{date}}</b>
+                </mj-text>
+                <mj-text container-background-color="#f0f0f0">
+                    {{{text}}}
+                </mj-text>
+                <mj-text container-background-color="lightgray">
+                    (+ action: <b>{{comment.action}}</b>)
                 </mj-text>
                 <mj-button background-color="blue" href="{{link}}">
                     View on CADdrive
                 </mj-button>
             </mj-column>
         </mj-section>
-        <mj-section background-color="lightgray">
+        <mj-section background-color="black">
             <mj-column>
-                <mj-text align="center" color="gray">
+                <mj-text align="center" color="white">
                     &copy; 2023 FHOOE | <a href="https://caddrive.com/legal/terms" style="text-decoration: none;">Terms</a> | <a href="https://caddrive.com/legal/privacy" style="text-decoration: none;">Privacy</a> | <a href="https://caddrive.com/legal/imprint" style="text-decoration: none;">Imprint</a>
                 </mj-text>
             </mj-column>

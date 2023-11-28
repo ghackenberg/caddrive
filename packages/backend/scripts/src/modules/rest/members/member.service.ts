@@ -54,10 +54,10 @@ export class MemberService implements MemberREST {
             subject: 'Member notification',
             templateName: 'member',
             templateData: {
-                user: this.request.user.name,
+                user: this.request.user,
                 date: new Date(member.created).toDateString(),
-                role: member.role,
-                product: product.name,
+                product: product,
+                role: member,
                 link: `https://caddrive.com/products/${product.productId}`
             }
         })

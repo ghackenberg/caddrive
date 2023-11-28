@@ -3,7 +3,7 @@
         <mj-section background-color="lightgray">
             <mj-column>
                 <mj-text align="center" font-size="20px" color="gray">
-                    CADdrive
+                    <b>CADdrive</b>
                 </mj-text>
                 <mj-text align="center" color="gray">
                     Your collaborative workspace for LDraw&trade; models
@@ -12,13 +12,13 @@
         </mj-section>
         <mj-section background-color="white">
             <mj-column width="400px">
-                <mj-text font-size="20px" color="gray">
-                    Verification code
+                <mj-text font-size="16px" color="orange">
+                    <b>Verification code</b>
                 </mj-text>
                 <mj-text>
                     Here is your personal email <b>verification code</b>.
                 </mj-text>
-                <mj-button background-color="blue">
+                <mj-button background-color="red">
                     {{code}}
                 </mj-button>
                 <mj-text>
@@ -26,9 +26,9 @@
                 </mj-text>
             </mj-column>
         </mj-section>
-        <mj-section background-color="lightgray">
+        <mj-section background-color="black">
             <mj-column>
-                <mj-text align="center" color="gray">
+                <mj-text align="center" color="white">
                     &copy; 2023 FHOOE | <a href="https://caddrive.com/legal/terms" style="text-decoration: none;">Terms</a> | <a href="https://caddrive.com/legal/privacy" style="text-decoration: none;">Privacy</a> | <a href="https://caddrive.com/legal/imprint" style="text-decoration: none;">Imprint</a>
                 </mj-text>
             </mj-column>

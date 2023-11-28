@@ -109,10 +109,10 @@ export class IssueService implements IssueREST {
                     subject,
                     templateName: 'issue',
                     templateData: {
-                        user: this.request.user.name,
+                        user: this.request.user,
                         date: new Date(issue.updated).toDateString(),
-                        product: product.name,
-                        issue: issue.label,
+                        product,
+                        issue,
                         link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
                     }
                 })

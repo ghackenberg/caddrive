@@ -6,8 +6,12 @@ import { REQUEST } from '@nestjs/core'
 import Jimp from 'jimp'
 import 'multer'
 import { getTestMessageUrl } from 'nodemailer'
+import rehypeStringify from "rehype-stringify"
+import remarkParse from "remark-parse"
+import remarkRehype from "remark-rehype"
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
+import { unified } from "unified"
 
 import { Version, VersionAddData, VersionUpdateData, VersionREST, Product } from 'productboard-common'
 import { Database, convertVersion } from 'productboard-database'
@@ -209,6 +213,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
 
     async notifyAddOrUpdateVersion(product: Product, version: Version) {
         // Send emails
+        const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(version.description)).replace('src="/', 'src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
             if (member.userId != this.request.user.userId) {
@@ -220,13 +225,11 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
                     subject: 'Version notification',
                     templateName: 'version',
                     templateData: {
-                        user: this.request.user.name,
+                        user: this.request.user,
                         date: new Date(version.updated).toDateString(),
-                        product: product.name,
-                        major: version.major,
-                        minor: version.minor,
-                        patch: version.patch,
-                        comment: version.description,
+                        product: product,
+                        version,
+                        text,
                         image: `https://caddrive.com/rest/files/${version.versionId}.${version.imageType}`,
                         link: `https://caddrive.com/products/${product.productId}`
                     }
