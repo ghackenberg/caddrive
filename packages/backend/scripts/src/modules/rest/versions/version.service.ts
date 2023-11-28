@@ -213,7 +213,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
 
     async notifyAddOrUpdateVersion(product: Product, version: Version) {
         // Send emails
-        const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(version.description)).replace('src="/', 'src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
+        const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(version.description)).replace('style="max-width: 100%" src="/', 'src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
             if (member.userId != this.request.user.userId) {

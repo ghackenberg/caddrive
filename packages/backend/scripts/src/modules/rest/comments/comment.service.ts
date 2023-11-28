@@ -109,7 +109,7 @@ export class CommentService implements CommentREST {
 
     async notifyComment(product: Product, issue: Issue, comment: Comment, subject: string) {
         // Send emails
-        const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(comment.text)).replace('src="/', 'src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
+        const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(comment.text)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
             if (member.userId != this.request.user.userId) {
