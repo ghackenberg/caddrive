@@ -56,8 +56,8 @@ export class MemberService implements MemberREST {
             templateData: {
                 user: this.request.user,
                 date: new Date(member.created).toDateString(),
-                product: product,
-                role: member,
+                product,
+                member,
                 link: `https://caddrive.com/products/${product.productId}`
             }
         })
