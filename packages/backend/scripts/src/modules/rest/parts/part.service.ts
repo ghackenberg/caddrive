@@ -1,10 +1,12 @@
-import { ReadStream, createReadStream, createWriteStream, existsSync, mkdirSync, readdirSync, statSync } from "fs"
+import { ReadStream, createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "fs"
 import { dirname, join } from "path"
 
 import { Injectable, NotFoundException } from "@nestjs/common"
 
 import axios from 'axios'
 import { Entry, fromBuffer } from 'yauzl'
+
+import { renderLDraw } from "../../../functions/render"
 
 @Injectable()
 export class PartService {
@@ -17,7 +19,7 @@ export class PartService {
     private readonly paths: {[name: string]: string} = {}
 
     constructor() {
-        this.prepare().then(() => this.index(this.LDRAW))
+        this.prepare().then(() => this.index(this.LDRAW)).then(() => this.render())
     }
 
     private async prepare(): Promise<void> {
@@ -79,6 +81,26 @@ export class PartService {
             } else {
                 if (!(name in this.paths) || child.length < this.paths[name].length) {
                     this.paths[name] = child
+                }
+            }
+        }
+    }
+
+    private async render() {
+        console.log(`Rendering`)
+        if (!existsSync('./previews')) {
+            mkdirSync('./previews')
+        }
+        for (const partName in this.paths) {
+            if (partName.endsWith('.dat')) {
+                const imageName = partName.replace('.dat', '.png')
+                if (!(imageName in this.paths)) {
+                    console.log(`Rendering ${partName}`)
+                    const partPath = this.paths[partName]
+                    const partData = readFileSync(partPath, 'utf-8')
+                    const imagePath = partPath.replace('.dat', '.png')
+                    const imageData = await renderLDraw(partData, 512, 512)
+                    imageData.write(imagePath)
                 }
             }
         }
