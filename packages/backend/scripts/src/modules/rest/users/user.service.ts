@@ -56,6 +56,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
         user.updated = Date.now()
         user.consent = data.consent
         user.name = data.name
+        user.emailNotification = data.emailNotification
         if (file && (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png' || file.mimetype == 'image/bmp' || file.mimetype == 'image/tiff' || file.mimetype == 'image/gif')) {
             // Parse
             const parsed = await Jimp.read(file.buffer)

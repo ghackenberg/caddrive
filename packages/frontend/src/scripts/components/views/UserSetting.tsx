@@ -8,6 +8,7 @@ import { UserClient } from '../../clients/rest/user'
 import { UserContext } from '../../contexts/User'
 import { useUser } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
+import { BooleanInput } from '../inputs/BooleanInput'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { EmailInput } from '../inputs/EmailInput'
 import { FileInput } from '../inputs/FileInput'
@@ -35,7 +36,10 @@ export const UserSettingView = () => {
     // - Values
     const [email, setEmail] = useState<string>(user ? user.email || '' : '')
     const [name, setName] = useState<string>(user ? user.name || '' : '')
+    const [emailNotification, setEmailNotification] = useState<boolean>(user ? user.emailNotification : true)
     const [picture, setPicture] = useState<File>()
+
+    console.log(user)
 
     // EFFECTS
     
@@ -48,7 +52,7 @@ export const UserSettingView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (name) {
-            const newUser = await UserClient.updateUser(userId, { consent: user.consent, name }, picture)
+            const newUser = await UserClient.updateUser(userId, { consent: user.consent, name, emailNotification }, picture)
             if (contextUser.userId == userId) {
                 setContextUser({ ...contextUser, ...newUser })
             }
@@ -93,6 +97,9 @@ export const UserSettingView = () => {
                                 )}
                                 {true && (
                                     <FileInput label='Picture' placeholder='Select' accept='image/jpeg, image/png, image/bmp, image/tiff, image/gif' change={setPicture} required={userId === 'new'}/>
+                                )}
+                                {true && (
+                                    <BooleanInput label='Email notification' value={emailNotification} change={setEmailNotification}/>
                                 )}
                                 {contextUser ? (
                                     userId == contextUser.userId ? (

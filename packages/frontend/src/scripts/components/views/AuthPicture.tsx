@@ -36,7 +36,7 @@ export const AuthPictureView = () => {
                 setLoad(true)
                 setError(undefined)
                 const picture = fileInput.current.files[0]
-                const user = await UserClient.updateUser(authContextUser.userId, { consent: authContextUser.consent, name: authContextUser.name }, picture)
+                const user = await UserClient.updateUser(authContextUser.userId, { consent: authContextUser.consent, name: authContextUser.name, emailNotification: true }, picture)
                 setAuthContextUser(user)
                 await push(DESKTOP ? '/auth/download' : '/auth/welcome')
             } catch (e) {

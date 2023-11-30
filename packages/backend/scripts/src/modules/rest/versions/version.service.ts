@@ -217,24 +217,26 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
             if (member.userId != this.request.user.userId) {
-                const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
-                const transporter = await TRANSPORTER
-                const info = await transporter.sendMail({
-                    from: 'CADdrive <mail@caddrive.com>',
-                    to: user.email,
-                    subject: 'Version notification',
-                    templateName: 'version',
-                    templateData: {
-                        user: this.request.user,
-                        date: new Date(version.updated).toDateString(),
-                        product: product,
-                        version,
-                        text,
-                        image: `https://caddrive.com/rest/files/${version.versionId}.${version.imageType}`,
-                        link: `https://caddrive.com/products/${product.productId}`
-                    }
-                })
-                console.log(getTestMessageUrl(info))
+                const user = await Database.get().userRepository.findOneBy({ userId: member.userId })
+                if (!user.deleted && user.emailNotification) {
+                    const transporter = await TRANSPORTER
+                    const info = await transporter.sendMail({
+                        from: 'CADdrive <mail@caddrive.com>',
+                        to: user.email,
+                        subject: 'Version notification',
+                        templateName: 'version',
+                        templateData: {
+                            user: this.request.user,
+                            date: new Date(version.updated).toDateString(),
+                            product: product,
+                            version,
+                            text,
+                            image: `https://caddrive.com/rest/files/${version.versionId}.${version.imageType}`,
+                            link: `https://caddrive.com/products/${product.productId}`
+                        }
+                    })
+                    console.log(getTestMessageUrl(info))
+                }
             }
         }
     }

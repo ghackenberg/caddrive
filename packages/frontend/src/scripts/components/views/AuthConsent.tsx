@@ -30,7 +30,7 @@ export const AuthConsentView = () => {
             event.preventDefault()
             setLoad(true)
             setError(undefined)
-            const user = await UserClient.updateUser(authContextUser.userId, { consent: true, name: authContextUser.name })
+            const user = await UserClient.updateUser(authContextUser.userId, { consent: true, name: authContextUser.name, emailNotification: true })
             setAuthContextUser(user)
             setLoad(false)
             await push('/auth/name')

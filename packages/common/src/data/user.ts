@@ -5,6 +5,8 @@ export class UserUpdateData {
     consent: boolean
     @ApiProperty()
     name: string
+    @ApiProperty()
+    emailNotification: boolean
 }
 
 export class User extends UserUpdateData {

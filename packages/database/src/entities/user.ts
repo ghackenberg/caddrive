@@ -29,6 +29,8 @@ export class UserEntity extends User {
     override consent: boolean
     @Column({ nullable: true })
     override name: string
+    @Column({ nullable: false })
+    override emailNotification: boolean
 
     @OneToMany(() => ProductEntity, product => product.user)
     products: ProductEntity[]

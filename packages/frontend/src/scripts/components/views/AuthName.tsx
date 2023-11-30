@@ -40,7 +40,7 @@ export const AuthNameView = () => {
             event.preventDefault()
             setLoad(true)
             setError(undefined)
-            const user = await UserClient.updateUser(authContextUser.userId, { consent: authContextUser.consent, name })
+            const user = await UserClient.updateUser(authContextUser.userId, { consent: authContextUser.consent, name, emailNotification: true })
             setAuthContextUser(user)
             setLoad(false)
             await push('/auth/picture')

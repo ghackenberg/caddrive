@@ -16,7 +16,8 @@ export function convertUser(user: UserEntity, full: boolean) {
         pictureId: user.pictureId,
         email: full ? user.email : null,
         consent: user.consent,
-        name: user.name
+        name: user.name,
+        emailNotification: user.emailNotification
     }
 }
 
