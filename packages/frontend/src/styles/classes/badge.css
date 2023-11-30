@@ -93,3 +93,9 @@ span.badge.italic {
 .button.stroke.green span.badge {
     background-color: var(--green-alpha-50);
 }
+
+table span.badge {
+    max-width: 7em;
+
+    overflow: hidden;
+}
