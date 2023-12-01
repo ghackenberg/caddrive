@@ -74,8 +74,8 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const initialTextView = comment && comment.text
     const initialTextEdit = ''
 
-    const initialHtmlView = initialTextView && createProcessor(over, out, handleClick).processSync(initialTextView).result
-    const initialHtmlEdit = createProcessor(over, out, handleClick).processSync(initialTextEdit).result
+    const initialHtmlView = initialTextView && createProcessor(over, out, handleClick, false).processSync(initialTextView).result
+    const initialHtmlEdit = createProcessor(over, out, handleClick, false).processSync(initialTextEdit).result
 
     const initialPartsView = initialTextView && collectParts(initialTextView)
     const initialPartsEdit = collectParts(initialTextEdit)
@@ -126,7 +126,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     React.useEffect(() => {
         if (textView) {
-            setHtmlView(createProcessor(over, out, handleClick).processSync(textView).result)
+            createProcessor(over, out, handleClick, true).process(textView).then(vfile => setTimeout(() => setHtmlView(vfile.result), 0))
             setPartsView(collectParts(textView))
         } else {
             setPartsView(undefined)
@@ -218,7 +218,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     async function handlePreview() {
         if (textEdit) {
-            setHtmlEdit(createProcessor(over, out, handleClick).processSync(textEdit).result)
+            createProcessor(over, out, handleClick, true).process(textEdit).then(vfile => setHtmlEdit(vfile.result))
             setMode(Mode.PREVIEW)
         } else {
             alert('Please enter some text!')

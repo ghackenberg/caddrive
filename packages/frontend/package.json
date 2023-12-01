@@ -53,6 +53,7 @@
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
         "recharts": "^2.1.9",
+        "rehype-mermaid": "^2.0.1",
         "rehype-react": "^8.0.0",
         "remark-parse": "^11.0.0",
         "remark-rehype": "^11.0.0",

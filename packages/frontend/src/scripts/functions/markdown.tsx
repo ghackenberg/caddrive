@@ -2,6 +2,7 @@ import * as React from 'react'
 import { MouseEvent } from "react"
 
 import * as jsxRuntime from 'react/jsx-runtime'
+import rehypeMermaid from 'rehype-mermaid'
 import rehypeReact, { Options } from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
@@ -64,7 +65,7 @@ function collectPartsInternal(parent: Node, parts: Part[]) {
     }
 }
 
-export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handler, handleClick: Handler) {
+export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handler, handleClick: Handler, mermaid: boolean) {
     const options: Options = {
         ...JSX_RUNTIME,
         components: {
@@ -106,5 +107,10 @@ export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handle
             }
         }
     }
-    return unified().use(remarkParse).use(remarkRehype).use(rehypeReact, options)
+    const rehype = unified().use(remarkParse).use(remarkRehype)
+    if (mermaid) {
+        return rehype.use(rehypeMermaid).use(rehypeReact, options)
+    } else {
+        return rehype.use(rehypeReact, options)
+    }
 }
