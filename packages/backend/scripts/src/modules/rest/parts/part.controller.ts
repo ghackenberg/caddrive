@@ -11,6 +11,6 @@ export class PartController {
     async getPart(
         @Param('name') name: string
     ): Promise<StreamableFile> {
-        return new StreamableFile(await this.service.getPart(name))
+        return this.service.getPart(name)
     }
 }

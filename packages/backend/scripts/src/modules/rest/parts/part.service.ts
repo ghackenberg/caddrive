@@ -1,7 +1,7 @@
-import { ReadStream, createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "fs"
+import { createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "fs"
 import { dirname, join } from "path"
 
-import { Injectable, NotFoundException } from "@nestjs/common"
+import { Injectable, NotFoundException, StreamableFile } from "@nestjs/common"
 
 import axios from 'axios'
 import { Entry, fromBuffer } from 'yauzl'
@@ -19,7 +19,7 @@ export class PartService {
     private readonly paths: {[name: string]: string} = {}
 
     constructor() {
-        this.prepare().then(() => this.index(this.LDRAW)).then(() => this.render())
+        this.prepare().then(() => this.index(this.LDRAW))
     }
 
     private async prepare(): Promise<void> {
@@ -86,32 +86,30 @@ export class PartService {
         }
     }
 
-    private async render() {
-        console.log(`Rendering`)
-        if (!existsSync('./previews')) {
-            mkdirSync('./previews')
-        }
-        for (const partName in this.paths) {
-            if (partName.endsWith('.dat')) {
-                const imageName = partName.replace('.dat', '.png')
-                if (!(imageName in this.paths)) {
+    public async getPart(name: string): Promise<StreamableFile> {
+        if (!(name in this.paths)) {
+            if (name.endsWith('.png')) {
+                const partName = name.replace('.png', '.dat')
+                if (partName in this.paths) {
                     console.log(`Rendering ${partName}`)
                     const partPath = this.paths[partName]
                     const partData = readFileSync(partPath, 'utf-8')
                     const imagePath = partPath.replace('.dat', '.png')
                     const imageData = await renderLDraw(partData, 512, 512)
-                    imageData.write(imagePath)
+                    await imageData.writeAsync(imagePath)
+                    this.paths[name] = imagePath
                 }
             }
         }
-    }
-
-    public async getPart(name: string): Promise<ReadStream> {
         if (name in this.paths) {
-            return createReadStream(this.paths[name])
-        } else {
-            throw new NotFoundException()
+            const stream = createReadStream(this.paths[name])
+            if (name.endsWith('.png')) {
+                return new StreamableFile(stream, { type: 'image/png', disposition: 'inline' })
+            } else {
+                return new StreamableFile(stream)
+            }
         }
+        throw new NotFoundException()
     }
 
 }
