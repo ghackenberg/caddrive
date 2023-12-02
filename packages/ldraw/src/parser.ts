@@ -20,7 +20,7 @@ export class Parser {
 
         const lines = text.split('\n')
         for (const line of lines) {
-            this.parseEntry(context, line)
+            this.parseEntry(context, line.trim())
         }
     }
 

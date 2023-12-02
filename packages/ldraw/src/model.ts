@@ -81,6 +81,9 @@ export class Model {
     public colors: Color[] = []
     public files: Model[] = []
 
+    public colorIndex: {[code: number]: Color} = {}
+    public fileIndex: {[name: string]: Model} = {}
+
     constructor(public url: string= undefined, public parent: Model = null) {}
 
     private addEntry(entry: Entry) {
@@ -119,9 +122,11 @@ export class Model {
 
     addColor(color: Color) {
         this.colors.push(color)
+        this.colorIndex[color.code] = color
     }
     addFile(file: Model) {
         this.files.push(file)
+        this.fileIndex[file.url] = file
     }
 
 }
