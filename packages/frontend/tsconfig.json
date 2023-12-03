@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "rootDirs": ["src/scripts", "../common/src"],
+        "rootDirs": ["src/scripts", "../common/src", "../ldraw/src"],
         "outDir": "bin/scripts",
         "lib": ["ES2015", "DOM"],
         "jsx": "react"

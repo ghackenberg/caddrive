@@ -34,6 +34,7 @@
         "packages/broker",
         "packages/backend",
         "packages/frontend",
+        "packages/worker",
         "packages/gateway"
     ],
     "scripts": {
