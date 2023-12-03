@@ -1,17 +1,19 @@
 classDiagram
     direction LR
 
-    class Bash
-    class Browser
-
     class Common
     class Database
-    class Toolkit
     class Backend {
         port = 3001
     }
     class Frontend {
         port = 3002
+    }
+    class Worker {
+        port = 3005   
+    }
+    class Broker {
+        port = 3004
     }
     class Gateway {
         port = 3000
@@ -19,19 +21,19 @@ classDiagram
     
     <<Service>> Backend
     <<Service>> Frontend
+    <<Service>> Worker
+    <<Service>> Broker
     <<Service>> Gateway
-    <<Service>> Toolkit
     <<Library>> Common
     <<Library>> Database
-    <<Environment>> Bash
-    <<Environment>> Browser
-
-    Bash --> Toolkit: run
-    Browser --> Gateway: http(s)
-    Gateway --> Backend: http(s) /api
+    
+    Gateway --> Backend: http(s) /rest
+    Gateway --> Backend: http(s) /rest-doc
     Gateway --> Frontend: http(s) /
-    Toolkit --> Database: import
+    Gateway --> Worker: http(s) /scripts/worker
+    Gateway --> Broker: ws(s) /mqtt
     Backend --> Database: import
-    Backend --> Common: import
     Frontend --> Common: import
+    Worker --> Common: import
     Database --> Common: import
+    Broker --> Common: import

@@ -1,0 +1,125 @@
+classDiagram
+    direction LR
+
+    class User {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        name: string
+        email: string
+    }
+    class Product {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        name: string
+        description: string
+    }
+    class Member {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        role: string
+    }
+    class Version {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        major: number
+        minor: number
+        patch: number
+        description: string
+    }
+    class Model {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        type: 'ldr' | 'mpd' | 'glb'
+    }
+    class Node {
+        name: string
+        matrix: Matrix
+        type: 'assembly' | 'part'
+    }
+    class Assembly {
+
+    }
+    class Part {
+        geometry: Geometry
+    }
+    class Reference {
+        type: string
+    }
+    class Issue {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        label: string
+        state: 'open' | 'closed'
+    }
+    class Comment {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        text: string
+        action: 'none' | 'close' | 'reopen'
+    }
+    class Milestone {
+        id: string
+        created: date
+        updated: date
+        deleted: date
+        start: date
+        end: date
+        label: string
+    }
+
+    <<Entity>> User
+    <<Entity>> Product
+    <<Entity>> Member
+    <<Entity>> Version
+    <<Entity>> Issue
+    <<Entity>> Comment
+    <<Entity>> Milestone
+
+    <<File>> Model
+
+    <<Data>> Reference
+
+    Product "1" *-- "*" Issue : contains
+
+    User "1" <.. "*" Version : created by
+    User <.. Member : references
+    User "1" <.. "*" Product : created by
+    User "1" <.. "*" Issue : created by
+    User "1" <.. "*" Comment : created by
+    
+    Member --* Product : contains
+    
+    Node <|-- Assembly
+    Node "*" ..* "1" Assembly: contains
+    Node <|-- Part
+    Node "1" <.. "*" Reference : references
+    
+    Version "1" *-- "1" Model : contains
+    Version "1" ..> "*" Version : references
+
+    Model "1" *-- "*" Node : contains
+
+    Issue "1" *-- "*" Comment : contains
+    Issue "*" ..> "0..1" Milestone : assigned to
+    Issue "*" ..> "0..1" User : assigned to
+
+    Product "1" *-- "*" Version : contains
+    Product "1" *-- "*" Milestone : contains
+
+    Comment "*" *-- "*" Reference : contains
+
+    User "1" <.. "*" Milestone : created by
