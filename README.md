@@ -2,10 +2,10 @@
 
 **CADdrive** (see https://caddrive.org and https://caddrive.com) provides an **open source** solution for **collaborative product design**. In the most recent version our platform supports
 
-- **member management** for assigning access permissions on product data to our users(using a role-based access control paradigm)
-- **version management** for tracking the evolution of CAD models (currently in LDraw or GLTF format, but extensible to other formats as well)
-- **issue management** for task specification task discussion among stakeholders, as well as assignment to project members
-- **milestone management** for scheduling task execution and tracking task completion across the design project (using time boxing)
+- **member management** for assigning access permissions on product data to our users (using a role-based access control paradigm)
+- **version management** for tracking the evolution of CAD models (currently in [LDraw format](https://ldraw.org/) or [GLTF format](https://www.khronos.org/gltf/), but extensible to other formats as well)
+- **issue management** for task specification and discussion among stakeholders, as well as assignment to project members
+- **milestone management** for scheduling task execution and tracking completion across the design project (using time boxing)
 
 In issue discussions, you can refer to parts and assemblies of CAD models through **Markdown references**. The references help making the discussion more self-explanatory and easy to understand.
 
