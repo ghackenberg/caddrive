@@ -2,6 +2,27 @@
 
 **CADdrive** (see https://caddrive.org and https://caddrive.com) provides an open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help to make the discussion more self-explanatory and easy to understand.
 
+## Publications
+
+You can read more about **CADdrive** in the following publications:
+
+### 👨‍🎓 GitHub for product development - How could that look like? (ICED 2023)
+
+Read at [Cambridge University Press](https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/github-for-product-development-how-could-that-look-like/58A5D7A0055D00FA7C265D48C7A2A24F) or cite with our BibTex entry:
+
+```bibtex
+@article{hackenberg_zehetner_frühwirth_2023,
+  title     = {GITHUB FOR PRODUCT DEVELOPMENT - HOW COULD THAT LOOK LIKE?},
+  volume    = {3},
+  DOI       = {10.1017/pds.2023.206},
+  journal   = {Proceedings of the Design Society},
+  publisher = {Cambridge University Press},
+  author    = {Hackenberg, Georg and Zehetner, Christian and Frühwirth, Dominik},
+  year      = {2023},
+  pages     = {2055–2064}
+}
+```
+
 ## Screenshots
 
 ### 📷 Versions view
@@ -22,7 +43,37 @@ The comments view enables discussion between stakeholders and engineers around i
 
 ![Issue](screenshots/comments.png)
 
-## Tools
+## Diagrams
+
+### 📊 Package structure
+
+The software exhibits the following package structure:
+
+#### Reduced
+
+This is a reduced version of the diagram:
+
+![Modules](diagrams/packages-reduced.svg)
+
+#### Extended
+
+This is an extended version of the diagram:
+
+![Modules](diagrams/packages-extended.svg)
+
+### 📊 Entity structure
+
+The software implements the following entity structure:
+
+![Entities](diagrams/entities.svg)
+
+### 📊 Model structure
+
+The software implements the following model structure:
+
+![Models](diagrams/ldraw-model.svg)
+
+## Requirements
 
 **CADdrive** requires the following tools:
 
@@ -80,37 +131,16 @@ export TYPEORM_PASSWORD=<passwpord>
 npm start
 ```
 
-## Diagrams
+## Folders
 
-### 📊 Package structure
+This repository contains the following folders:
 
-The software exhibits the following package structure:
+* [Diagrams](diagrams) contains the diagrams shown before
+* [Manuscripts](manuscripts) contains manuscripts submitted for publication
+* [Packages](packages) contains the actual software code behind CADdrive
+* [Screenshots](screenshots) contains the screenshots shown before
 
-#### Reduced
-
-This is a reduced version of the diagram:
-
-![Modules](diagrams/packages-reduced.svg)
-
-#### Extended
-
-This is an extended version of the diagram:
-
-![Modules](diagrams/packages-extended.svg)
-
-### 📊 Entity structure
-
-The software implements the following entity structure:
-
-![Entities](diagrams/entities.svg)
-
-### 📊 Model structure
-
-The software implements the following model structure:
-
-![Models](diagrams/ldraw-model.svg)
-
-## Documenations
+## Documents
 
 Here are some more resources to read through:
 
