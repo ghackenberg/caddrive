@@ -1,12 +1,19 @@
 # CADdrive
 
-**CADdrive** (see https://caddrive.org and https://caddrive.com) provides an open source solution for collaborative product design. We support version management for CAD models, as well as issue management and milestone management. In issues, you can refer to parts and assemblies of CAD models through markdown references. The references help to make the discussion more self-explanatory and easy to understand.
+**CADdrive** (see https://caddrive.org and https://caddrive.com) provides an **open source** solution for **collaborative product design**. In the most recent version our platform supports
 
-## Publications
+- **member management** for assigning access permissions on product data to our users(using a role-based access control paradigm)
+- **version management** for tracking the evolution of CAD models (currently in LDraw or GLTF format, but extensible to other formats as well)
+- **issue management** for task specification task discussion among stakeholders, as well as assignment to project members
+- **milestone management** for scheduling task execution and tracking task completion across the design project (using time boxing)
+
+In issue discussions, you can refer to parts and assemblies of CAD models through **Markdown references**. The references help making the discussion more self-explanatory and easy to understand.
+
+## 👨‍🎓 Publications
 
 You can read more about **CADdrive** in the following publications:
 
-### 👨‍🎓 GitHub for product development - How could that look like? (ICED 2023)
+### GitHub for product development - How could that look like? @ ICED 2023
 
 Read at [Cambridge University Press](https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/github-for-product-development-how-could-that-look-like/58A5D7A0055D00FA7C265D48C7A2A24F) or cite with our **BibTex entry**:
 
@@ -23,29 +30,29 @@ Read at [Cambridge University Press](https://www.cambridge.org/core/journals/pro
 }
 ```
 
-## Screenshots
+## 📷 Screenshots
 
-### 📷 Versions view
+### Versions view
 
 The versions view shows the history of the CAD models that have been developed for the product.
 
 ![Versions](screenshots/versions.png)
 
-### 📷 Issues view
+### Issues view
 
 The issues view provides an overview of open and closed issues for the product design team.
 
 ![Issue](screenshots/issues.png)
 
-### 📷 Comments view
+### Comments view
 
 The comments view enables discussion between stakeholders and engineers around issues.
 
 ![Issue](screenshots/comments.png)
 
-## Diagrams
+## 📊 Diagrams
 
-### 📊 Package structure
+### Package structure
 
 The software exhibits the following package structure:
 
@@ -61,30 +68,30 @@ This is an extended version of the diagram:
 
 ![Modules](diagrams/packages-extended.svg)
 
-### 📊 Entity structure
+### Entity structure
 
 The software implements the following entity structure:
 
 ![Entities](diagrams/entities.svg)
 
-### 📊 Model structure
+### Model structure
 
 The software implements the following model structure:
 
 ![Models](diagrams/ldraw-model.svg)
 
-## Requirements
+## 📃 Requirements
 
 **CADdrive** requires the following tools:
 
 - node@^16
 - npm@^9
 
-## Scripts
+## 👩‍💻 Scripts
 
 The software provides the following scripts:
 
-### 📄 Install dependencies
+### Install dependencies
 
 Install third party dependencies as follows:
 
@@ -92,7 +99,7 @@ Install third party dependencies as follows:
 npm install
 ```
 
-### 📄 Start development
+### Start development
 
 Start the software in development mode as follows:
 
@@ -100,7 +107,7 @@ Start the software in development mode as follows:
 npm run dev
 ```
 
-### 📄 Start production
+### Start production
 
 Start the software in production mode as follows:
 
@@ -131,7 +138,7 @@ export TYPEORM_PASSWORD=<passwpord>
 npm start
 ```
 
-## Folders
+## 📁 Folders
 
 This repository contains the following folders:
 
@@ -140,7 +147,7 @@ This repository contains the following folders:
 * [Packages](packages) contains the actual software code behind CADdrive
 * [Screenshots](screenshots) contains the screenshots shown before
 
-## Documents
+## 📑 Documents
 
 Here are some more resources to read through:
 
