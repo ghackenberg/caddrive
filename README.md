@@ -7,7 +7,7 @@
 - **issue management** for task specification and discussion among stakeholders, as well as assignment to project members, and
 - **milestone management** for scheduling task execution and tracking completion across the design project (using time boxing).
 
-In issue discussions, you can refer to parts and assemblies of CAD models through **Markdown references**. The references help making the discussion more self-explanatory and easy to understand.
+In **issue discussions**, you can refer to parts and assemblies of CAD models through **Markdown references**. The references help making the discussion more self-explanatory and easy to understand.
 
 ## 👨‍🎓 Publications
 
