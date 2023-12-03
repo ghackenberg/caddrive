@@ -13,7 +13,7 @@ In issue discussions, you can refer to parts and assemblies of CAD models throug
 
 You can read more about **CADdrive** in the following publications:
 
-### `GitHub for product development - How could that look like?` @ ICED 2023
+### GitHub for product development - How could that look like? `@ ICED 2023`
 
 Read at [Cambridge University Press](https://www.cambridge.org/core/journals/proceedings-of-the-design-society/article/github-for-product-development-how-could-that-look-like/58A5D7A0055D00FA7C265D48C7A2A24F) or cite with our **BibTex entry**:
 
