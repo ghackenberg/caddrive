@@ -126,11 +126,12 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     React.useEffect(() => {
         if (textView) {
-            createProcessor(over, out, handleClick, true).process(textView).then(vfile => setTimeout(() => setHtmlView(vfile.result), 0))
+            const vfile = createProcessor(over, out, handleClick, false).processSync(textView)
+            setHtmlView(vfile.result)
             setPartsView(collectParts(textView))
         } else {
-            setPartsView(undefined)
             setHtmlView(undefined)
+            setPartsView(undefined)
         }
     }, [textView, contextVersion, versions])
 
@@ -218,7 +219,8 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     async function handlePreview() {
         if (textEdit) {
-            createProcessor(over, out, handleClick, true).process(textEdit).then(vfile => setHtmlEdit(vfile.result))
+            const vfile = createProcessor(over, out, handleClick, false).processSync(textEdit)
+            setHtmlEdit(vfile.result)
             setMode(Mode.PREVIEW)
         } else {
             alert('Please enter some text!')

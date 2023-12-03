@@ -6,12 +6,13 @@ import { REQUEST } from '@nestjs/core'
 import Jimp from 'jimp'
 import 'multer'
 import { getTestMessageUrl } from 'nodemailer'
-import rehypeStringify from "rehype-stringify"
-import remarkParse from "remark-parse"
-import remarkRehype from "remark-rehype"
+//import rehypeMermaid from 'rehype-mermaid'
+import rehypeStringify from 'rehype-stringify'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
-import { unified } from "unified"
+import { unified } from 'unified'
 
 import { Version, VersionAddData, VersionUpdateData, VersionREST, Product } from 'productboard-common'
 import { Database, convertVersion } from 'productboard-database'
@@ -213,7 +214,8 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
 
     async notifyAddOrUpdateVersion(product: Product, version: Version) {
         // Send emails
-        const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(version.description)).replace('style="max-width: 100%" src="/', 'src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
+        //const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeMermaid).use(rehypeStringify).process(version.description)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
+        const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(version.description)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
             if (member.userId != this.request.user.userId) {

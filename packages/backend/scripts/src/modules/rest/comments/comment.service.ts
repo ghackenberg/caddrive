@@ -2,12 +2,13 @@ import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
 import { getTestMessageUrl } from 'nodemailer'
-import rehypeStringify from "rehype-stringify"
-import remarkParse from "remark-parse"
-import remarkRehype from "remark-rehype"
+//import rehypeMermaid from 'rehype-mermaid'
+import rehypeStringify from 'rehype-stringify'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
-import { unified } from "unified"
+import { unified } from 'unified'
 
 import { CommentREST, Comment, CommentAddData, CommentUpdateData, Product, Issue } from 'productboard-common'
 import { Database, convertComment } from 'productboard-database'
@@ -109,6 +110,7 @@ export class CommentService implements CommentREST {
 
     async notifyComment(product: Product, issue: Issue, comment: Comment, subject: string) {
         // Send emails
+        //const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeMermaid).use(rehypeStringify).process(comment.text)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(comment.text)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
