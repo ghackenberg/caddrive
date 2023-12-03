@@ -88,7 +88,7 @@ The software provides the following scripts:
 
 Install third party dependencies as follows:
 
-```
+```bash
 npm install
 ```
 
@@ -96,7 +96,7 @@ npm install
 
 Start the software in development mode as follows:
 
-```
+```bash
 npm run dev
 ```
 
@@ -104,7 +104,7 @@ npm run dev
 
 Start the software in production mode as follows:
 
-```
+```bash
 npm run clean
 npm run build
 
