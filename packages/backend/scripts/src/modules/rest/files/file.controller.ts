@@ -27,6 +27,6 @@ export class FileController implements FileREST<StreamableFile> {
         @Param('fileId') fileId: string
     ): Promise<StreamableFile> {
         await canReadFileOrFail(this.request.user && this.request.user.userId, fileId)
-        return new StreamableFile(await this.fileService.getFile(fileId))
+        return await this.fileService.getFile(fileId)
     }
 }
