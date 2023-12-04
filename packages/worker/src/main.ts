@@ -1,6 +1,7 @@
-console.log('Worker is running!')
+import { Parser } from 'productboard-ldraw'
+
+const parser = new Parser()
 
 onmessage = event => {
-    console.log('worker', event)
-    postMessage({ payload: 'test' })
+    postMessage(parser.parse(event.data.text, event.data.url))
 }

@@ -1,7 +1,13 @@
 export const worker = new Worker('/scripts/worker/main.js')
 
-worker.onmessage = event => {
-    console.log('frontend', event)
-}
+worker.addEventListener('message', event => {
+    console.log(event.data)
+})
 
-worker.postMessage('test')
+worker.addEventListener('messageerror', event => {
+    console.error(event.data)
+})
+
+worker.addEventListener('error', event => {
+    console.error(event.error)
+})

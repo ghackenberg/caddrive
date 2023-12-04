@@ -5,6 +5,7 @@ import { LDrawLoader } from "three/examples/jsm/loaders/LDrawLoader"
 import { Model, Parser, Reference } from "productboard-ldraw"
 
 import { CacheAPI } from "../clients/cache"
+import { worker } from "../worker"
 
 const TEXT_DECODER = new TextDecoder()
 
@@ -26,7 +27,9 @@ LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
 
 export async function loadLDrawModel(path: string) {
     const file = await CacheAPI.loadFile(path)
-    return parseLDrawModel(TEXT_DECODER.decode(file))
+    const text = TEXT_DECODER.decode(file)
+    worker.postMessage({ text, url: path })
+    return parseLDrawModel(text)
 }
 
 export async function loadLDrawPath(path: string) {

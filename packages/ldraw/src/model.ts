@@ -1,6 +1,19 @@
-// TODO define remaining color params
+export enum FinishType {
+    CHROME, PEARLESCENT, RUBBER, MATTE_METALLIC, METAL, MATERIAL
+}
+
+export enum FinishName {
+    GLITTER, SPECKLE
+}
+
+export class Finish {
+    constructor(public type: FinishType, public name: FinishName = undefined, public value: string = undefined, public alpha: number = undefined, public luminance: number = undefined, public fraction: number = undefined, public vfraction: number = undefined, public size: number = undefined, public minsize: number = undefined, public maxsize: number = undefined) {
+
+    }
+}
+
 export class Color {
-    constructor(public name: string, public code: number, public value: string, public edge: string) {
+    constructor(public name: string, public code: number, public value: string, public edge: string, public alpha: number, public luminance: number, public finish: Finish) {
 
     }
 }

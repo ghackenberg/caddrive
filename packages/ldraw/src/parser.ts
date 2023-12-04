@@ -1,4 +1,4 @@
-import { Color, Command, Comment, Line, Matrix, Model, OptionalLine, Quadrilateral, Reference, Triangle, Vector } from "./model"
+import { Color, Command, Comment, Finish, FinishName, FinishType, Line, Matrix, Model, OptionalLine, Quadrilateral, Reference, Triangle, Vector } from "./model"
 
 interface Context {
     root: Model
@@ -59,13 +59,71 @@ export class Parser {
         } else if (data.startsWith('0 NOFILE')) {
             context.current = context.current.parent
         } else if (data.startsWith('0 !COLOUR ')) {
-            const item = data.substring('0 !COLOUR '.length).split(' ')
+            const item = data.substring('0 !COLOUR '.length).replace(/  +/g, ' ').split(' ')
             const name = item[0]
-            const code = parseInt(item[2])
-            const value = item[4]
-            const edge = item[6]
-            // TODO Parse remaining color parameters!
-            context.root.addColor(new Color(name, code, value, edge))
+            let code: number
+            let value: string
+            let edge: string
+            let alpha: number
+            let luminance: number
+            let finishType: FinishType
+            let finishName: FinishName
+            let finishValue: string
+            let finishAlpha: number
+            let finishLuminance: number
+            let finishFraction: number
+            let finishVFraction: number
+            let finishSize: number
+            let finishMinSize: number
+            let finishMaxSize: number
+            for (let index = 1; index < item.length; index++) {
+                if (item[index] == 'CODE') {
+                    code = parseInt(item[index + 1])
+                } else if (finishType === undefined && item[index] == 'VALUE') {
+                    value = item[++index]
+                } else if (item[index] == 'EDGE') {
+                    edge = item[++index]
+                } else if (finishType === undefined && item[index] == 'ALPHA') {
+                    alpha = parseInt(item[++index])
+                } else if (finishType === undefined && item[index] == 'LUMINANCE') {
+                    luminance = parseInt(item[++index])
+                } else if (item[index] == 'CHROME') {
+                    finishType = FinishType.CHROME
+                } else if (item[index] == 'PEARLESCENT') {
+                    finishType = FinishType.PEARLESCENT
+                } else if (item[index] == 'RUBBER') {
+                    finishType = FinishType.RUBBER
+                } else if (item[index] == 'MATTE_METALLIC') {
+                    finishType = FinishType.MATTE_METALLIC
+                } else if (item[index] == 'METAL') {
+                    finishType = FinishType.METAL
+                } else if (item[index] == 'MATERIAL') {
+                    finishType = FinishType.MATERIAL
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'GLITTER') {
+                    finishName = FinishName.GLITTER
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'SPECKLE') {
+                    finishName = FinishName.SPECKLE
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'VALUE') {
+                    finishValue = item[++index]
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'ALPHA') {
+                    finishAlpha = parseInt(item[++index])
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'LUMINANCE') {
+                    finishLuminance = parseInt(item[++index])
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'FRACTION') {
+                    finishFraction = parseInt(item[++index])
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'VFRACTION') {
+                    finishVFraction = parseInt(item[++index])
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'SIZE') {
+                    finishSize = parseInt(item[++index])
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'MINSIZE') {
+                    finishMinSize = parseInt(item[++index])
+                } else if (finishType == FinishType.MATERIAL && item[index] == 'MAXSIZE') {
+                    finishMaxSize = parseInt(item[++index])
+                }
+            }
+            const finish = new Finish(finishType, finishName, finishValue, finishAlpha, finishLuminance, finishFraction, finishVFraction, finishSize, finishMinSize, finishMaxSize)
+            const color = new Color(name, code, value, edge, alpha, luminance, finish)
+            context.root.addColor(color)
         }
     }
 
