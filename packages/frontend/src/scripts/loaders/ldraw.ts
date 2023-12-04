@@ -86,10 +86,10 @@ export class LDrawModelHandle {
         const child = new THREE.Group()
         child.name = reference.file
         child.matrix.set(
-            orientation.a, orientation.b, orientation.c, 0,
-            orientation.d, orientation.e, orientation.f, 0,
-            orientation.g, orientation.h, orientation.i, 0,
-            position.x, position.y, position.z, 1
+            orientation.a, orientation.b, orientation.c, position.x,
+            orientation.d, orientation.e, orientation.f, position.y,
+            orientation.g, orientation.h, orientation.i, position.z,
+            0, 0, 0, 1
         )
         parent.add(child)
         if (model.fileIndex[reference.file]) {
