@@ -46,18 +46,11 @@ export class Parser {
 
     private parseCommand(context: Context, data: string) {
         context.current.addCommand(new Command(data.substring('0 !'.length)))
-        if (data.startsWith('0 FILE ')) {
-            const name = data.substring('0 FILE '.length)
-            const model = new Model(name, context.current)
-            context.current.addFile(model)
-            context.current = model
-        } else if (data.startsWith('0 !DATA ')) {
+        if (data.startsWith('0 !DATA ')) {
             const name = data.substring('0 !DATA '.length)
-            const model = new Model(name, context.current)
-            context.current.addFile(model)
+            const model = new Model(name, context.root)
+            context.root.addFile(model)
             context.current = model
-        } else if (data.startsWith('0 NOFILE')) {
-            context.current = context.current.parent
         } else if (data.startsWith('0 !COLOUR ')) {
             const item = data.substring('0 !COLOUR '.length).replace(/  +/g, ' ').split(' ')
             const name = item[0]
@@ -128,7 +121,14 @@ export class Parser {
     }
 
     private parseComment(context: Context, data: string) {
-        if (data.startsWith('0 // ')) {
+        if (data.startsWith('0 FILE ')) {
+            const name = data.substring('0 FILE '.length)
+            const model = new Model(name, context.root)
+            context.root.addFile(model)
+            context.current = model
+        } else if (data.startsWith('0 NOFILE')) {
+            context.current = context.root
+        } else if (data.startsWith('0 // ')) {
             context.current.addComment(new Comment(data.substring('0 // '.length)))
         } else if (data.startsWith('0 //')) {
             context.current.addComment(new Comment(data.substring('0 //'.length)))
