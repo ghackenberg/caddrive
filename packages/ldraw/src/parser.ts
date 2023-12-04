@@ -138,7 +138,7 @@ export class Parser {
     }
 
     private parseReference(context: Context, data: string) {
-        const item = data.substring('1 '.length).replace(/  +/g, ' ').split(' ')
+        const item = data.replace(/  +/g, ' ').substring('1 '.length).split(' ')
         
         const color = parseInt(item[0])
         
@@ -166,7 +166,7 @@ export class Parser {
     }
 
     private parseLine(context: Context, data: string) {
-        const item = data.substring('2 '.length).replace(/  +/g, ' ').split(' ')
+        const item = data.replace(/  +/g, ' ').substring('2 '.length).split(' ')
 
         const color = parseInt(item[0])
 
@@ -186,7 +186,7 @@ export class Parser {
     }
 
     private parseTriangle(context: Context, data: string) {
-        const item = data.substring('3 '.length).replace(/  +/g, ' ').split(' ')
+        const item = data.replace(/  +/g, ' ').substring('3 '.length).split(' ')
 
         const color = parseInt(item[0])
 
@@ -212,7 +212,7 @@ export class Parser {
     }
 
     private parseQuadrilateral(context: Context, data: string) {
-        const item = data.substring('4 '.length).replace(/  +/g, ' ').split(' ')
+        const item = data.replace(/  +/g, ' ').substring('4 '.length).split(' ')
 
         const color = parseInt(item[0])
 
@@ -244,7 +244,7 @@ export class Parser {
     }
 
     private parseOptionalLine(context: Context, data: string) {
-        const item = data.substring('5 '.length).replace(/  +/g, ' ').split(' ')
+        const item = data.replace(/  +/g, ' ').substring('5 '.length).split(' ')
 
         const color = parseInt(item[0])
 
