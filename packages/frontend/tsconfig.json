@@ -1,9 +1,10 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
+        "target": "ES2017",
         "rootDirs": ["src/scripts", "../common/src", "../ldraw/src"],
         "outDir": "bin/scripts",
-        "lib": ["ES2015", "DOM"],
+        "lib": ["ES2017", "DOM"],
         "jsx": "react"
     }
 }
