@@ -9,6 +9,7 @@ WORKDIR /opt
 RUN wget https://code-aster.org/FICHIERS/aster-full-src-14.6.0-1.noarch.tar.gz
 # Unpack aster
 RUN tar -xvf aster-full-src-14.6.0-1.noarch.tar.gz
+
 # Install prerequisites
 RUN apt-get install gcc g++ gfortran -y
 RUN apt-get install cmake -y
