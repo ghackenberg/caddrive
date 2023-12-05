@@ -27,6 +27,8 @@ RUN apt-get install zlib1g-dev -y
 
 # Change directory
 WORKDIR /opt/aster-full-src-14.6.0
+# Trigger recompile
+RUN echo "test"
 # Setup aster
 RUN python3 setup.py install --prefix=/opt/aster --noprompt
 # Test aster
