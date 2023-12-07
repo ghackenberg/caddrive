@@ -95,33 +95,51 @@ const TASKS: { model: Group, width: number, height: number, resolve: (value: Jim
 let THREAD: NodeJS.Timeout
 
 function renderNext() {
+    console.log('Render next')
+
     const { model, width, height, resolve, reject } = TASKS.pop()
 
     // Scene
+    console.log('Initializing scene')
+
     const scene = initializeScene()
     scene.remove(scene.children[scene.children.length - 1])
     scene.add(model)
 
     // Camera
+    console.log('Initializing camera')
+
     const camera = initializeCamera()
     camera.aspect = width / height
 
     // Context
+    console.log('Initializing context')
+
     const context = initializeContext(width, height)
 
     // Canvas
+    console.log('Initializing canvass')
+
     const canvas = initializeCanvas(context, width, height)
 
     // Renderer
+    console.log('Initializing renderer') 
+
     const renderer = initializeRenderer(canvas, context)
 
     // Orbit
+    console.log('Initializing orbit')
+
     const orbit = initializeOrbit(camera, renderer)
 
     // Prepare
+    console.log('Reset')
+
     reset(model, camera, orbit)
 
     // Renderer
+    console.log('Render')
+
     renderer.render(scene, camera)
 
     // Write buffer
@@ -182,6 +200,7 @@ export async function renderLDraw(model: string, width: number, height: number) 
         await LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
         LDRAW_MATERIALS = true
     }
+    console.log('Parse')
     return new Promise<Jimp>((resolve, reject) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (LDRAW_LOADER as any).parse(model, (group: Group) => {
@@ -201,6 +220,7 @@ export async function renderGlb(buffer: Buffer, width: number, height: number) {
     for (let i = 0; i < buffer.length; i++) {
         view[i] = buffer[i]
     }
+    console.log('Parse')
     return new Promise<Jimp>((resolve, reject) => {
         GLTF_LOADER.parse(array, undefined, model => {
             render(model.scene, width, height).then(resolve).catch(reject)
