@@ -45,21 +45,37 @@ const Root = () => {
     // EFFECTS
 
     React.useEffect(() => {
-        CacheAPI.loadPublicJWK().then(setPublicJWK).catch(() => setContextUser(null))
+        CacheAPI.loadPublicJWK().then(
+            jwk => setPublicJWK(jwk)
+        ).catch(
+            () => setContextUser(null)
+        )
     })
 
     React.useEffect(() => {
-        publicJWK && importJWK(publicJWK, "PS256").then(setPublicKey).catch(() => setContextUser(null))
+        publicJWK && importJWK(publicJWK, "PS256").then(
+            key => setPublicKey(key)
+        ).catch(
+            () => setContextUser(null)
+        )
     }, [publicJWK])
 
     React.useEffect(() => {
-        jwt && publicKey && jwtVerify(jwt, publicKey).then(setJWTVerifyResult).catch(() => setContextUser(null))
+        jwt && publicKey && jwtVerify(jwt, publicKey).then(
+            result => setJWTVerifyResult(result)
+        ).catch(
+            () => setContextUser(null)
+        )
     }, [jwt, publicKey])
 
     React.useEffect(() => {
         if (jwtVerifyResult) {
             setPayload(jwtVerifyResult.payload as { userId: string })
-            TokenClient.refreshToken().then(token => localStorage.setItem('jwt', token.jwt)).catch(() => { localStorage.removeItem('jwt'), setContextUser(null) })
+            TokenClient.refreshToken().then(
+                token => localStorage.setItem('jwt', token.jwt)
+            ).catch(
+                () => setContextUser(null)
+            )
         }
     }, [jwtVerifyResult])
 
