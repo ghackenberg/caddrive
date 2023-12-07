@@ -29,35 +29,15 @@ async function updateImage(productId: string, versionId: string, image: Jimp) {
 }
 
 async function bootstrap() {
-    console.log('Initializing database')
-
-    await Database.init()
-
     console.log('Initializing upload folder (if necessary)')
 
     if (!existsSync('./uploads')) {
         mkdirSync('./uploads')
     }
 
-    console.log('Initializing version images (if necessary)')
-    
-    const versions = await Database.get().versionRepository.findBy({ deleted: IsNull(), imageType: IsNull() })
-    for (const version of versions) {
-        console.warn('Version image does not exist. Rendering it!', version.productId, version.versionId)
-        const file = `./uploads/${version.versionId}.${version.modelType}`
-        if (version.modelType == 'glb') {
-            const image = await renderGlb(readFileSync(file), 1000, 1000)
-            updateImage(version.productId, version.versionId, image)
-        } else if (version.modelType == 'ldr') {
-            const image = await renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000)
-            updateImage(version.productId, version.versionId, image)
-        } else if (version.modelType == 'mpd') {
-            const image = await renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000)
-            updateImage(version.productId, version.versionId, image)
-        } else {
-            console.error('Version model type not supported:', version.modelType)
-        }
-    }
+    console.log('Initializing database')
+
+    await Database.init()
 
     console.log('Initializing REST module')
 
@@ -90,7 +70,29 @@ async function bootstrap() {
 
     console.log('Initializing port listener')
 
-    rest.listen(3001, () => console.log('REST service listening'))
+    rest.listen(3001, () => { console.log('REST service listening'); fix() })
+}
+
+async function fix() {
+    console.log('Fixing version images (if necessary)')
+    
+    const versions = await Database.get().versionRepository.findBy({ deleted: IsNull(), imageType: IsNull() })
+    for (const version of versions) {
+        console.warn('Version image does not exist. Rendering it!', version.productId, version.versionId)
+        const file = `./uploads/${version.versionId}.${version.modelType}`
+        if (version.modelType == 'glb') {
+            const image = await renderGlb(readFileSync(file), 1000, 1000)
+            updateImage(version.productId, version.versionId, image)
+        } else if (version.modelType == 'ldr') {
+            const image = await renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000)
+            updateImage(version.productId, version.versionId, image)
+        } else if (version.modelType == 'mpd') {
+            const image = await renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000)
+            updateImage(version.productId, version.versionId, image)
+        } else {
+            console.error('Version model type not supported:', version.modelType)
+        }
+    }
 }
 
 bootstrap()
