@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 
 import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
@@ -32,6 +32,23 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         if (!existsSync('./uploads')) {
             mkdirSync('./uploads')
         }
+        Database.get().versionRepository.find().then(versions => {
+            for (const version of versions) {
+                if (!version.imageType) {
+                    console.log('Version image does not exist. Rendering it!', version.productId, version.versionId)
+                    const file = `./uploads/${version.versionId}.${version.modelType}`
+                    if (version.modelType == 'glb') {
+                        renderGlb(readFileSync(file), 1000, 1000).then(image => this.updateImage(version.productId, version.versionId, image))
+                    } else if (version.modelType == 'ldr') {
+                        renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000).then(image => this.updateImage(version.productId, version.versionId, image))
+                    } else if (version.modelType == 'mpd') {
+                        renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000).then(image => this.updateImage(version.productId, version.versionId, image))
+                    } else {
+                        console.error('Version model type not supported:', version.modelType)
+                    }
+                }
+            }
+        })
     }
 
     async findVersions(productId: string) : Promise<Version[]> {
