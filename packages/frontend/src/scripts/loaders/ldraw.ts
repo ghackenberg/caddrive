@@ -3,7 +3,7 @@ import * as THREE from "three"
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 
 import { CacheAPI } from "../clients/cache"
-import { worker } from "../worker"
+//import { worker } from "../worker"
 
 const TEXT_DECODER = new TextDecoder()
 
@@ -26,7 +26,7 @@ LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
 export async function loadLDrawModel(path: string) {
     const file = await CacheAPI.loadFile(path)
     const text = TEXT_DECODER.decode(file)
-    worker.postMessage({ text, url: path })
+    //worker.postMessage({ text, url: path })
     return parseLDrawModel(text)
 }
 
