@@ -48,7 +48,13 @@ const CONTEXTS: {[id: string]: WebGLRenderingContext} = {}
 function initializeContext(width = 1, height = 1) {
     const id = `${width}-${height}`
     if (!(id in CONTEXTS)) {
-        CONTEXTS[id] = gl(width, height, { preserveDrawingBuffer: true })
+        console.log('Creating new rendering context', id)
+        const context = gl(width, height, { preserveDrawingBuffer: true })
+        console.log(context)
+        CONTEXTS[id] = context
+        console.log(CONTEXTS[id])
+    } else {
+        console.log('Using existing rendering context', id)
     }
     return CONTEXTS[id]
 }
