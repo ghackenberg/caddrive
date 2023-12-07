@@ -18,9 +18,7 @@
                 <mj-text>
                     Here is your personal email <b>verification code</b>.
                 </mj-text>
-                <mj-button background-color="red">
-                    {{code}}
-                </mj-button>
+                <mj-button background-color="red">{{code}}</mj-button>
                 <mj-text>
                     <i>If you did not request this code, please ignore this email.</i>
                 </mj-text>
