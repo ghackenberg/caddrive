@@ -72,7 +72,8 @@ export class TokenService implements TokenREST {
             const created = token.updated
             const updated = token.updated
             const email = token.email
-            const user = await Database.get().userRepository.save({ userId, created, updated, email })
+            const emailNotification = true
+            const user = await Database.get().userRepository.save({ userId, created, updated, email, emailNotification })
             // Emit changes
             emitUserMessage(userId, { type: 'state', users: [user] })
             // Return JWT
