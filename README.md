@@ -180,7 +180,6 @@ The software implements the following model structure:
 
 This repository contains the following folders:
 
-* [Containers](containers) contains the Docker container definitions
 * [Diagrams](diagrams) contains the diagrams shown before
 * [Manuscripts](manuscripts) contains manuscripts submitted for publication
 * [Packages](packages) contains the actual software code behind CADdrive
