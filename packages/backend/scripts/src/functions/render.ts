@@ -43,8 +43,14 @@ function initializeCanvas(context: any, width = 1, height = 1) {
     }
 }
 
+const CONTEXTS: {[id: string]: WebGLRenderingContext} = {}
+
 function initializeContext(width = 1, height = 1) {
-    return gl(width, height, { preserveDrawingBuffer: true })
+    const id = `${width}-${height}`
+    if (!(id in CONTEXTS)) {
+        CONTEXTS[id] = gl(width, height, { preserveDrawingBuffer: true })
+    }
+    return CONTEXTS[id]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,58 +89,77 @@ function reset(model: Group, camera: PerspectiveCamera, orbit: OrbitControls) {
     orbit.reset()
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TASKS: { model: Group, width: number, height: number, resolve: (value: Jimp) => void, reject: (reason?: any) => void }[] = []
+
+let THREAD: NodeJS.Timeout
+
+function renderNext() {
+    const { model, width, height, resolve, reject } = TASKS.pop()
+
+    // Scene
+    const scene = initializeScene()
+    scene.remove(scene.children[scene.children.length - 1])
+    scene.add(model)
+
+    // Camera
+    const camera = initializeCamera()
+    camera.aspect = width / height
+
+    // Context
+    const context = initializeContext(width, height)
+
+    // Canvas
+    const canvas = initializeCanvas(context, width, height)
+
+    // Renderer
+    const renderer = initializeRenderer(canvas, context)
+
+    // Orbit
+    const orbit = initializeOrbit(camera, renderer)
+
+    // Prepare
+    reset(model, camera, orbit)
+
+    // Renderer
+    renderer.render(scene, camera)
+
+    // Write buffer
+    const buffer = new Uint8Array(width * height * 4)
+    context.readPixels(0, 0, width, height, context.RGBA, context.UNSIGNED_BYTE, buffer)
+
+    // Write image
+    new Jimp(width, height, (error, image) => {
+        if (TASKS.length > 0) {
+            THREAD = setTimeout(renderNext, 0)
+        } else {
+            THREAD = null
+        }
+        if (error) {
+            reject(error)
+        } else {
+            const data = image.bitmap.data
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
+                    const bufferOffset = y * width * 4 + x * 4
+                    const dataOffset = (height - y - 1) * width * 4 + x * 4
+                    data[dataOffset + 0] = buffer[bufferOffset + 0]
+                    data[dataOffset + 1] = buffer[bufferOffset + 1]
+                    data[dataOffset + 2] = buffer[bufferOffset + 2]
+                    data[dataOffset + 3] = buffer[bufferOffset + 3]
+                }
+            }
+            resolve(image)
+        }
+    })
+}
+
 function render(model: Group, width: number, height: number): Promise<Jimp> {
     return new Promise<Jimp>((resolve, reject) => {
-        // Scene
-        const scene = initializeScene()
-        scene.remove(scene.children[scene.children.length - 1])
-        scene.add(model)
-
-        // Camera
-        const camera = initializeCamera()
-        camera.aspect = width / height
-
-        // Context
-        const context = initializeContext(width, height)
-
-        // Canvas
-        const canvas = initializeCanvas(context, width, height)
-
-        // Renderer
-        const renderer = initializeRenderer(canvas, context)
-
-        // Orbit
-        const orbit = initializeOrbit(camera, renderer)
-
-        // Prepare
-        reset(model, camera, orbit)
-
-        // Renderer
-        renderer.render(scene, camera)
-
-        // Write buffer
-        const buffer = new Uint8Array(width * height * 4)
-        context.readPixels(0, 0, width, height, context.RGBA, context.UNSIGNED_BYTE, buffer)
-
-        // Write image
-        new Jimp(width, height, (error, image) => {
-            if (error) {
-                reject(error)
-            } else {
-                const data = image.bitmap.data
-                for (let x = 0; x < width; x++) {
-                    for (let y = 0; y < height; y++) {
-                        const bufferOffset = y * width * 4 + x * 4
-                        const dataOffset = (height - y - 1) * width * 4 + x * 4
-                        data[dataOffset + 0] = buffer[bufferOffset + 0]
-                        data[dataOffset + 1] = buffer[bufferOffset + 1]
-                        data[dataOffset + 2] = buffer[bufferOffset + 2]
-                        data[dataOffset + 3] = buffer[bufferOffset + 3]
-                    }
-                }
-                resolve(image)
-            }
-        })
+        TASKS.push({ model, width, height, resolve, reject })
+        if (!THREAD) {
+            THREAD = setTimeout(renderNext, 0)
+        }
     })
 }
 
