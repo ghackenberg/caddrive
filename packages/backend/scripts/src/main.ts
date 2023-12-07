@@ -14,20 +14,6 @@ import './mqtt'
 import { renderGlb, renderLDraw } from './functions/render'
 import { RESTModule } from './modules/rest.module'
 
-async function updateImage(productId: string, versionId: string, image: Jimp) {
-    // Save image
-    await image.writeAsync(`./uploads/${versionId}.png`)
-    // Update version
-    const version = await Database.get().versionRepository.findOneBy({ productId, versionId })
-    version.updated = Date.now()
-    version.imageType = 'png'
-    await Database.get().versionRepository.save(version)
-    // Update product
-    const product = await Database.get().productRepository.findOneBy({ productId })
-    product.updated = version.updated
-    await Database.get().productRepository.save(product)
-}
-
 async function bootstrap() {
     console.log('Initializing upload folder (if necessary)')
 
@@ -78,21 +64,42 @@ async function fix() {
     
     const versions = await Database.get().versionRepository.findBy({ deleted: IsNull(), imageType: IsNull() })
     for (const version of versions) {
-        console.warn('Version image does not exist. Rendering it!', version.productId, version.versionId)
-        const file = `./uploads/${version.versionId}.${version.modelType}`
-        if (version.modelType == 'glb') {
-            const image = await renderGlb(readFileSync(file), 1000, 1000)
-            updateImage(version.productId, version.versionId, image)
-        } else if (version.modelType == 'ldr') {
-            const image = await renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000)
-            updateImage(version.productId, version.versionId, image)
-        } else if (version.modelType == 'mpd') {
-            const image = await renderLDraw(readFileSync(file, 'utf-8'), 1000, 1000)
-            updateImage(version.productId, version.versionId, image)
-        } else {
-            console.error('Version model type not supported:', version.modelType)
+        try {
+            console.warn('Version image does not exist. Rendering it!', version.productId, version.versionId)
+            const file = `./uploads/${version.versionId}.${version.modelType}`
+            if (version.modelType == 'glb') {
+                const model = readFileSync(file)
+                const image = await renderGlb(model, 1000, 1000)
+                await updateImage(version.productId, version.versionId, image)
+            } else if (version.modelType == 'ldr') {
+                const model = readFileSync(file, 'utf-8')
+                const image = await renderLDraw(model, 1000, 1000)
+                await updateImage(version.productId, version.versionId, image)
+            } else if (version.modelType == 'mpd') {
+                const model = readFileSync(file, 'utf-8')
+                const image = await renderLDraw(model, 1000, 1000)
+                await updateImage(version.productId, version.versionId, image)
+            } else {
+                console.error('Version model type not supported:', version.modelType)
+            }
+        } catch (e) {
+            console.error('Could not render version image', e)
         }
     }
+}
+
+async function updateImage(productId: string, versionId: string, image: Jimp) {
+    // Save image
+    await image.writeAsync(`./uploads/${versionId}.png`)
+    // Update version
+    const version = await Database.get().versionRepository.findOneBy({ productId, versionId })
+    version.updated = Date.now()
+    version.imageType = 'png'
+    await Database.get().versionRepository.save(version)
+    // Update product
+    const product = await Database.get().productRepository.findOneBy({ productId })
+    product.updated = version.updated
+    await Database.get().productRepository.save(product)
 }
 
 bootstrap()
