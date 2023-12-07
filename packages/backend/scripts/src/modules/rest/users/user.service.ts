@@ -1,5 +1,3 @@
-import { existsSync, mkdirSync } from 'fs'
-
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 
@@ -19,11 +17,7 @@ export class UserService implements UserREST<UserUpdateData, Express.Multer.File
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
-    ) {
-        if (!existsSync('./uploads')) {
-            mkdirSync('./uploads')
-        }
-    }
+    ) {}
 
     async findUsers(productId?: string, query?: string) : Promise<User[]> {
         let where: FindOptionsWhere<UserEntity>

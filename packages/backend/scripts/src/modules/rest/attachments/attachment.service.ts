@@ -1,4 +1,4 @@
-import { createReadStream, existsSync, mkdirSync, writeFileSync } from 'fs'
+import { createReadStream, writeFileSync } from 'fs'
 
 import { Inject, StreamableFile } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
@@ -17,11 +17,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
-    ) {
-        if (!existsSync('./uploads')) {
-            mkdirSync('./uploads')
-        }
-    }
+    ) {}
 
     async findAttachments(productId: string): Promise<Attachment[]> {
         const where = { productId, deleted: IsNull() }
