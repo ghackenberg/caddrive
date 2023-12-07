@@ -174,14 +174,26 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
             } else if (files.model) {
                 if (files.model.length == 1) {
                     if (files.model[0].originalname.endsWith('.glb')) {
-                        const image = await renderGlb(files.model[0].buffer, 1000, 1000)
-                        await this.updateImage(productId, versionId, image)
+                        try {
+                            const image = await renderGlb(files.model[0].buffer, 1000, 1000)
+                            await this.updateImage(productId, versionId, image)
+                        } catch (e) {
+                            console.error('Could not render image', e)
+                        }
                     } else if (files.model[0].originalname.endsWith('.ldr')) {
-                        const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
-                        await this.updateImage(productId, versionId, image)
+                        try {
+                            const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
+                            await this.updateImage(productId, versionId, image)
+                        } catch (e) {
+                            console.error('Could not render image', e)
+                        }
                     } else if (files.model[0].originalname.endsWith('.mpd')) {
-                        const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
-                        await this.updateImage(productId, versionId, image)
+                        try {
+                            const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
+                            await this.updateImage(productId, versionId, image)
+                        } catch (e) {
+                            console.error('Could not render image', e)
+                        }
                     } else {
                         throw new HttpException('Model file type not supported.', 400)
                     }
