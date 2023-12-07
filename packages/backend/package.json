@@ -38,7 +38,7 @@
         "lint": "eslint scripts/src",
         "loc": "sloc scripts/src",
         "dev": "nodemon --exec node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts",
-        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts"
+        "start": "xvfb-run node --loader ts-node/esm --experimental-specifier-resolution=node scripts/src/main.ts"
     },
     "dependencies": {
         "@nestjs/platform-express": "^8.1.2",
