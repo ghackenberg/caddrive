@@ -117,6 +117,8 @@ function renderNext() {
 
     const context = initializeContext(width, height)
 
+    console.log(context)
+
     // Canvas
     console.log('Initializing canvass')
 
