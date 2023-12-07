@@ -43,20 +43,8 @@ function initializeCanvas(context: any, width = 1, height = 1) {
     }
 }
 
-const CONTEXTS: {[id: string]: WebGLRenderingContext} = {}
-
 function initializeContext(width = 1, height = 1) {
-    const id = `${width}-${height}`
-    if (!(id in CONTEXTS)) {
-        console.log('Creating new rendering context', id)
-        const context = gl(width, height, { preserveDrawingBuffer: true })
-        console.log(context)
-        CONTEXTS[id] = context
-        console.log(CONTEXTS[id])
-    } else {
-        console.log('Using existing rendering context', id)
-    }
-    return CONTEXTS[id]
+    return gl(width, height, { preserveDrawingBuffer: true })
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,58 +89,41 @@ const TASKS: { model: Group, width: number, height: number, resolve: (value: Jim
 let THREAD: NodeJS.Timeout
 
 function renderNext() {
-    console.log('Render next')
-
     const { model, width, height, resolve, reject } = TASKS.pop()
 
     // Scene
-    console.log('Initializing scene')
-
     const scene = initializeScene()
     scene.remove(scene.children[scene.children.length - 1])
     scene.add(model)
 
     // Camera
-    console.log('Initializing camera')
-
     const camera = initializeCamera()
     camera.aspect = width / height
 
     // Context
-    console.log('Initializing context')
-
     const context = initializeContext(width, height)
 
-    console.log(context)
-
     // Canvas
-    console.log('Initializing canvass')
-
     const canvas = initializeCanvas(context, width, height)
 
     // Renderer
-    console.log('Initializing renderer') 
-
     const renderer = initializeRenderer(canvas, context)
 
     // Orbit
-    console.log('Initializing orbit')
-
     const orbit = initializeOrbit(camera, renderer)
 
     // Prepare
-    console.log('Reset')
-
     reset(model, camera, orbit)
 
     // Renderer
-    console.log('Render')
-
     renderer.render(scene, camera)
 
     // Write buffer
     const buffer = new Uint8Array(width * height * 4)
     context.readPixels(0, 0, width, height, context.RGBA, context.UNSIGNED_BYTE, buffer)
+
+    // Destroy context
+    context.getExtension('STACKGL_destroy_context').destroy()
 
     // Write image
     new Jimp(width, height, (error, image) => {
@@ -208,7 +179,6 @@ export async function renderLDraw(model: string, width: number, height: number) 
         await LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
         LDRAW_MATERIALS = true
     }
-    console.log('Parse')
     return new Promise<Jimp>((resolve, reject) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (LDRAW_LOADER as any).parse(model, (group: Group) => {
@@ -228,7 +198,6 @@ export async function renderGlb(buffer: Buffer, width: number, height: number) {
     for (let i = 0; i < buffer.length; i++) {
         view[i] = buffer[i]
     }
-    console.log('Parse')
     return new Promise<Jimp>((resolve, reject) => {
         GLTF_LOADER.parse(array, undefined, model => {
             render(model.scene, width, height).then(resolve).catch(reject)
