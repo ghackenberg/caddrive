@@ -70,7 +70,9 @@ const Root = () => {
 
     React.useEffect(() => {
         if (jwtVerifyResult) {
+            // Extract payload
             setPayload(jwtVerifyResult.payload as { userId: string })
+            // Refresh local storage
             TokenClient.refreshToken().then(
                 token => localStorage.setItem('jwt', token.jwt)
             ).catch(
