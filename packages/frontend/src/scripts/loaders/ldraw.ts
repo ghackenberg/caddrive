@@ -1,9 +1,9 @@
 import axios from "axios"
 import * as THREE from "three"
+import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 
 import { Model, Parser, Reference } from "productboard-ldraw"
 
-import { LDrawLoader } from './LDrawLoader'
 import { CacheAPI } from "../clients/cache"
 import { worker } from "../worker"
 
