@@ -1,0 +1,22 @@
+{
+    "extends": "../../asconfig.json",
+    "entries": [
+        "src/main.ts"
+    ],
+    "options": {
+        "importTable": true
+    },
+    "targets": {
+        "release": {
+            "optimize": true,
+            "outFile": "bin/engine.release.wasm" ,
+            "bindings": "esm"
+        },
+        "debug": {
+            "debug": true,
+            "sourceMap": true,
+            "outFile": "bin/engine.debug.wasm",
+            "bindings": "esm"
+        }
+    }
+}
