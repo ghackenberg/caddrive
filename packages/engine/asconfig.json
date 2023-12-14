@@ -9,13 +9,13 @@
     "targets": {
         "release": {
             "optimize": true,
-            "outFile": "bin/engine.release.wasm" ,
+            "outFile": "bin/engine.wasm" ,
             "bindings": "esm"
         },
         "debug": {
             "debug": true,
             "sourceMap": true,
-            "outFile": "bin/engine.debug.wasm",
+            "outFile": "bin/engine.wasm",
             "bindings": "esm"
         }
     }

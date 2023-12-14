@@ -1,8 +1,7 @@
 {
-    "extends": "../../tsconfig.json",
+    "extends": "assemblyscript/std/assembly.json",
     "compilerOptions": {
         "rootDirs": ["src", "../common/src", "../ldraw/src"],
-        "outDir": "bin",
-        "lib": ["ES2015", "DOM"]
+        "outDir": "bin"
     }
 }
