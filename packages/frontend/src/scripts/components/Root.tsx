@@ -3,7 +3,7 @@ import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 
 import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike } from 'jose'
 
-import { User, Version } from 'productboard-common'
+import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
 
 import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
@@ -13,6 +13,11 @@ import { MqttAPI } from '../clients/mqtt'
 import { TokenClient } from '../clients/rest/token'
 import { UserClient } from '../clients/rest/user'
 import { AuthContext } from '../contexts/Auth'
+import { CommentContext } from '../contexts/Comment'
+import { IssueContext } from '../contexts/Issue'
+import { MemberContext } from '../contexts/Member'
+import { MilestoneContext } from '../contexts/Milestone'
+import { ProductContext } from '../contexts/Product'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
 import { useAsyncHistory } from '../hooks/history'
@@ -39,7 +44,12 @@ const Root = () => {
     const [authContextToken, setAuthContextToken] = React.useState<string>()
     const [authContextUser, setAuthContextUser] = React.useState<User>()
     const [contextUser, setContextUser] = React.useState<User>(jwt ? undefined : null)
+    const [contextProduct, setContextProduct] = React.useState<Product>()
+    const [contextMember, setContextMember] = React.useState<Member>()
     const [contextVersion, setContextVersion] = React.useState<Version>()
+    const [contextIssue, setContextIssue] = React.useState<Issue>()
+    const [contextComment, setContextComment] = React.useState<Comment>()
+    const [contextMilestone, setContextMilestone] = React.useState<Milestone>()
     const [initialized, setInitialized] = React.useState(false)
 
     // EFFECTS
@@ -206,23 +216,33 @@ const Root = () => {
     return (
         <AuthContext.Provider value={{ authContextToken, setAuthContextToken, authContextUser, setAuthContextUser }}>
             <UserContext.Provider value={{ contextUser, setContextUser: intercept }}>
-                <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
-                    <PageHeaderRoot/>
-                    {initialized ? (
-                        <React.Suspense fallback={<LoadingView/>}>
-                            <Switch>
-                                <Route path="/legal" component={LegalRouter}/>
-                                <Route path="/auth" component={AuthRouter}/>
-                                <Route path="/users" component={UsersRouter}/>
-                                <Route path="/products" component={ProductsRouter}/>
-                                <Redirect path="/" exact to="/products" push={false}/>
-                                <Route component={MissingView}/>
-                            </Switch>
-                        </React.Suspense>
-                    ) : (
-                        <LoadingView/>
-                    )}
-                </VersionContext.Provider>
+                <ProductContext.Provider value={{ contextProduct, setContextProduct }}>
+                    <MemberContext.Provider value={{ contextMember, setContextMember }}>
+                        <VersionContext.Provider value={{ contextVersion, setContextVersion }}>
+                            <IssueContext.Provider value={{ contextIssue, setContextIssue }}>
+                                <CommentContext.Provider value={{ contextComment, setContextComment }}>
+                                    <MilestoneContext.Provider value={{ contextMilestone, setContextMilestone }}>
+                                        <PageHeaderRoot/>
+                                        {initialized ? (
+                                            <React.Suspense fallback={<LoadingView/>}>
+                                                <Switch>
+                                                    <Route path="/legal" component={LegalRouter}/>
+                                                    <Route path="/auth" component={AuthRouter}/>
+                                                    <Route path="/users" component={UsersRouter}/>
+                                                    <Route path="/products" component={ProductsRouter}/>
+                                                    <Redirect path="/" exact to="/products" push={false}/>
+                                                    <Route component={MissingView}/>
+                                                </Switch>
+                                            </React.Suspense>
+                                        ) : (
+                                            <LoadingView/>
+                                        )}
+                                    </MilestoneContext.Provider>
+                                </CommentContext.Provider>
+                            </IssueContext.Provider>
+                        </VersionContext.Provider>
+                    </MemberContext.Provider>
+                </ProductContext.Provider>
             </UserContext.Provider>
         </AuthContext.Provider>
     )

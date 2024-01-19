@@ -15,6 +15,7 @@ import { ProductVersionView } from '../views/ProductVersion'
 import { ProductVersionSettingView } from '../views/ProductVersionSetting'
 
 const ProductRouter = () => {
+    // TODO Include version 3D visualization and milestone chart visualization here. Switch based on context.
     return (
         <>
             <ProductHeader/>

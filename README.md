@@ -183,6 +183,7 @@ This repository contains the following folders:
 * [Diagrams](diagrams) contains the diagrams shown before
 * [Manuscripts](manuscripts) contains manuscripts submitted for publication
 * [Packages](packages) contains the actual software code behind CADdrive
+* [Services](services) contains additional services of the CADdrive platform
 * [Screenshots](screenshots) contains the screenshots shown before
 
 ## 📑 Documents
