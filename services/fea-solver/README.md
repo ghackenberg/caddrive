@@ -1,3 +1,5 @@
+# FEA Solver
+
 To build the docker image:
 
 ```sh
