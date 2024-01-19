@@ -1,7 +1,7 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://github.com/ghackenberg/caddrive"
 verify_ssl = true
-name = "pypi"
+name = "caddrive-fea-postprocessor"
 
 [packages]
 flask = "*"
