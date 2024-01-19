@@ -7,7 +7,7 @@ import shutil
 
 app = Flask(__name__)
 
-@app.post("/simulate")
+@app.post("/")
 def simulate():
 
     # Path for simulation model and results
@@ -18,6 +18,22 @@ def simulate():
   
     # Step 1: Delete temporary files
 
+    cleanModelpath(modelpath)
+
+    # Step 2: Save request files to disk
+    
+    if "mail" in request.files and "comm" in request.files:
+        request.files["mail"].save(f"{modelpath}/{jobname}.mail")
+        request.files["comm"].save(f"{modelpath}/{jobname}.comm")
+    else:
+        return "Request not correct!", 400
+
+    # Step 3: Run job an return multipart response
+    
+    return runJob(modelpath, jobname)
+
+def cleanModelpath(modelpath):
+
     delete_files = f"{modelpath}/*"
     for f in glob.glob(delete_files):
         print(f)
@@ -26,20 +42,17 @@ def simulate():
         else:
             os.remove(f)
 
-    # Step 2: Save request files to disk
-    
-    request.files["mail"].save(f"{modelpath}/{jobname}.mail")
-    request.files["comm"].save(f"{modelpath}/{jobname}.comm")
-    
-    # Step 3: Generate corresponding export file
+def runJob(modelpath: str, jobname: str):
+
+    # Step 1: Generate corresponding export file
 
     generateExportFile(modelpath, jobname)
       
-    # Step 4: Start code_aster simulation
+    # Step 2: Start code_aster simulation
     
     startSimulation(modelpath, jobname)
     
-    # Step 5: Return simulation results as string
+    # Step 3: Return simulation results as string
 
     fname_resu = f'{modelpath}/{jobname}.resu'
     fname_rmed = f'{modelpath}/{jobname}.rmed'
@@ -52,14 +65,8 @@ def simulate():
     )
 
     return Response(m.to_string(), mimetype = m.content_type)
-
-@app.post("/translate")
-def translate():
     
-    # translate LDR into MAIL and COMM
-    pass
-    
-def generateExportFile(modelpath, jobname):
+def generateExportFile(modelpath: str, jobname: str):
 
     fname_export = f"{modelpath}/{jobname}.export"
 
@@ -98,7 +105,7 @@ def generateExportFile(modelpath, jobname):
 
     fid.close()
 
-def startSimulation(modelpath, jobname):
+def startSimulation(modelpath: str, jobname: str):
 
     command = f"as_run {modelpath}/{jobname}.export"
 
