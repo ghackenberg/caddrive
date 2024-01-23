@@ -54,13 +54,15 @@ def runJob(modelpath: str, jobname: str):
     
     # Step 3: Return simulation results as string
 
-    fname_resu = f'{modelpath}/{jobname}.resu'
-    fname_rmed = f'{modelpath}/{jobname}.rmed'
+    fname_resu    = f'{modelpath}/{jobname}.resu'
+    fname_message = f'{modelpath}/{jobname}.message'
+    fname_rmed    = f'{modelpath}/{jobname}.rmed'
     
     m = MultipartEncoder(
         fields = {
-            'resu': (f'{jobname}.resu', open(fname_resu, 'rb'), 'text/plain'),
-            'rmed': (f'{jobname}.rmed', open(fname_rmed, 'rb'), 'application/octet-stream')
+            'resu':    (f'{jobname}.resu',    open(fname_resu, 'rb'),    'text/plain'),
+            'message': (f'{jobname}.message', open(fname_message, 'rb'), 'text/plain'),
+            'rmed':    (f'{jobname}.rmed',    open(fname_rmed, 'rb'),    'application/octet-stream')
         }
     )
 

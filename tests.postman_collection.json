@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "443200db-7d79-4cf5-aa0c-4aabcb980af1",
+		"name": "CADdrive",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32395311"
+	},
+	"item": [
+		{
+			"name": "services",
+			"item": [
+				{
+					"name": "fea-preprocessor",
+					"item": [
+						{
+							"name": "EMTPTY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FEA-PREPROCESSOR",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "ldr",
+											"type": "file",
+											"src": "tests/fea/CADdrive.ldr"
+										},
+										{
+											"key": "lib",
+											"type": "file",
+											"src": "tests/fea/libLegoParts.lib"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "fea-solver",
+					"item": [
+						{
+							"name": "EMTPTY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FEA-SOLVER",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "mail",
+											"type": "file",
+											"src": "tests/fea/caddrive.mail"
+										},
+										{
+											"key": "comm",
+											"type": "file",
+											"src": "tests/fea/caddrive.comm"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "fea-postprocessor",
+					"item": [
+						{
+							"name": "EMTPTY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FEA-POSTPROCESSOR",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "resu",
+											"type": "file",
+											"src": "tests/fea/caddrive.resu"
+										},
+										{
+											"key": "rmed",
+											"type": "file",
+											"src": "tests/fea/caddrive.rmed"
+										},
+										{
+											"key": "message",
+											"type": "file",
+											"src": "tests/fea/caddrive.message"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "fea-paraview",
+					"item": [
+						{
+							"name": "EMTPTY",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FEA-PARAVIEW",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "rmed",
+											"type": "file",
+											"src": "tests/fea/caddrive.rmed"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,1607 @@
+#Parameters:
+gravityScale = 100.0
+
+DEBUT(LANG='FR')
+
+m_Elem = LIRE_MAILLAGE(identifier='0:1',
+                      FORMAT='ASTER',
+                      UNITE=20)
+                     
+IMPR_RESU(FORMAT='MED', UNITE=21, RESU=_F(MAILLAGE=m_Elem))
+
+model = AFFE_MODELE(identifier='3:1',
+                    AFFE=_F(MODELISATION=('3D', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=m_Elem)
+
+
+mater = DEFI_MATERIAU(identifier='4:1',
+                      ELAS=_F(E=2300.0,
+                              NU=0.3,
+                              RHO = 1.04e-09 * 0.6))    # Factor 0.6 because of hollow body
+
+materfl = AFFE_MATERIAU(identifier='5:1',
+                        AFFE=_F(MATER=(mater, ),
+                                TOUT='OUI'),
+                        MODELE=model)
+
+
+
+t_step = DEFI_LIST_REEL(identifier='6:1',
+                        DEBUT=0.0,
+                        INTERVALLE=_F(JUSQU_A=1.0,
+                                      NOMBRE=1))
+
+
+
+t_stepa = DEFI_LIST_INST(identifier='7:1',
+                         DEFI_LIST=_F(LIST_INST=t_step,
+                                      PAS_MINI=0.001,),
+                         METHODE='AUTO')
+
+
+
+### Kinematic boundary conditions
+bc_kin = AFFE_CHAR_MECA(identifier='8:1', 
+       DDL_IMPO=_F(DX=0.0, 
+                   DY=0.0, 
+                   DZ=0.0, 
+                   GROUP_NO=( 
+                             'P0_NBOT', 
+                             'P1_NBOT', 
+                             'P2_NBOT', 
+                            )), 
+       MODELE=model) 
+
+
+### Nub connections
+lias = AFFE_CHAR_MECA(identifier='11:1',
+                      LIAISON_DDL=(
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P0_NT_001_004', 'P4_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P0_NT_001_004', 'P4_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P0_NT_001_004', 'P4_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P0_NT_001_005', 'P4_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P0_NT_001_005', 'P4_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P0_NT_001_005', 'P4_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P0_NT_002_004', 'P4_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P0_NT_002_004', 'P4_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P0_NT_002_004', 'P4_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P0_NT_002_005', 'P4_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P0_NT_002_005', 'P4_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P0_NT_002_005', 'P4_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P1_NT_007_004', 'P9_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P1_NT_007_004', 'P9_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P1_NT_007_004', 'P9_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P1_NT_007_005', 'P9_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P1_NT_007_005', 'P9_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P1_NT_007_005', 'P9_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P1_NT_008_004', 'P9_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P1_NT_008_004', 'P9_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P1_NT_008_004', 'P9_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P1_NT_008_005', 'P9_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P1_NT_008_005', 'P9_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P1_NT_008_005', 'P9_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_001_004', 'P17_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_001_004', 'P17_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_001_004', 'P17_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_001_005', 'P17_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_001_005', 'P17_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_001_005', 'P17_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_002_004', 'P17_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_002_004', 'P17_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_002_004', 'P17_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_002_005', 'P17_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_002_005', 'P17_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_002_005', 'P17_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_003_004', 'P17_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_003_004', 'P17_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_003_004', 'P17_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_003_005', 'P17_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_003_005', 'P17_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_003_005', 'P17_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_004_004', 'P17_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_004_004', 'P17_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_004_004', 'P17_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_004_005', 'P17_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_004_005', 'P17_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_004_005', 'P17_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_005_004', 'P17_NB_005_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_005_004', 'P17_NB_005_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_005_004', 'P17_NB_005_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_005_005', 'P17_NB_005_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_005_005', 'P17_NB_005_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_005_005', 'P17_NB_005_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_006_004', 'P17_NB_006_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_006_004', 'P17_NB_006_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_006_004', 'P17_NB_006_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_006_005', 'P17_NB_006_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_006_005', 'P17_NB_006_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_006_005', 'P17_NB_006_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_007_004', 'P17_NB_007_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_007_004', 'P17_NB_007_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_007_004', 'P17_NB_007_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_007_005', 'P17_NB_007_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_007_005', 'P17_NB_007_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_007_005', 'P17_NB_007_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_008_004', 'P17_NB_008_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_008_004', 'P17_NB_008_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_008_004', 'P17_NB_008_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P2_NT_008_005', 'P17_NB_008_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P2_NT_008_005', 'P17_NB_008_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P2_NT_008_005', 'P17_NB_008_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P3_NT_002_001', 'P15_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P3_NT_002_001', 'P15_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P3_NT_002_001', 'P15_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P3_NT_002_002', 'P15_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P3_NT_002_002', 'P15_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P3_NT_002_002', 'P15_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P3_NT_003_001', 'P15_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P3_NT_003_001', 'P15_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P3_NT_003_001', 'P15_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P3_NT_003_002', 'P15_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P3_NT_003_002', 'P15_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P3_NT_003_002', 'P15_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_002_001', 'P3_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_002_001', 'P3_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_002_001', 'P3_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_002_002', 'P3_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_002_002', 'P3_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_002_002', 'P3_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_003_001', 'P3_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_003_001', 'P3_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_003_001', 'P3_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_003_002', 'P3_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_003_002', 'P3_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_003_002', 'P3_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_004_001', 'P3_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_004_001', 'P3_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_004_001', 'P3_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_004_002', 'P3_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_004_002', 'P3_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_004_002', 'P3_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_005_001', 'P3_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_005_001', 'P3_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_005_001', 'P3_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P16_NT_005_002', 'P3_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P16_NT_005_002', 'P3_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P16_NT_005_002', 'P3_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P4_NT_001_001', 'P10_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P4_NT_001_001', 'P10_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P4_NT_001_001', 'P10_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P4_NT_001_002', 'P10_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P4_NT_001_002', 'P10_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P4_NT_001_002', 'P10_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P4_NT_002_001', 'P10_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P4_NT_002_001', 'P10_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P4_NT_002_001', 'P10_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P4_NT_002_002', 'P10_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P4_NT_002_002', 'P10_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P4_NT_002_002', 'P10_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_003_001', 'P10_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_003_001', 'P10_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_003_001', 'P10_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_003_002', 'P10_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_003_002', 'P10_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_003_002', 'P10_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_004_001', 'P10_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_004_001', 'P10_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_004_001', 'P10_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_004_002', 'P10_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_004_002', 'P10_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_004_002', 'P10_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_001_001', 'P11_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_001_001', 'P11_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_001_001', 'P11_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_001_002', 'P11_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_001_002', 'P11_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_001_002', 'P11_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_002_001', 'P11_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_002_001', 'P11_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_002_001', 'P11_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P5_NT_002_002', 'P11_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P5_NT_002_002', 'P11_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P5_NT_002_002', 'P11_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_003_001', 'P11_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_003_001', 'P11_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_003_001', 'P11_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_003_002', 'P11_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_003_002', 'P11_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_003_002', 'P11_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_004_001', 'P11_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_004_001', 'P11_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_004_001', 'P11_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_004_002', 'P11_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_004_002', 'P11_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_004_002', 'P11_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_001_001', 'P12_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_001_001', 'P12_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_001_001', 'P12_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_001_002', 'P12_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_001_002', 'P12_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_001_002', 'P12_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_002_001', 'P12_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_002_001', 'P12_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_002_001', 'P12_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P6_NT_002_002', 'P12_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P6_NT_002_002', 'P12_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P6_NT_002_002', 'P12_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_003_001', 'P12_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_003_001', 'P12_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_003_001', 'P12_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_003_002', 'P12_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_003_002', 'P12_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_003_002', 'P12_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_004_001', 'P12_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_004_001', 'P12_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_004_001', 'P12_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_004_002', 'P12_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_004_002', 'P12_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_004_002', 'P12_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_001_001', 'P13_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_001_001', 'P13_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_001_001', 'P13_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_001_002', 'P13_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_001_002', 'P13_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_001_002', 'P13_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_002_001', 'P13_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_002_001', 'P13_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_002_001', 'P13_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P7_NT_002_002', 'P13_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P7_NT_002_002', 'P13_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P7_NT_002_002', 'P13_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_003_001', 'P13_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_003_001', 'P13_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_003_001', 'P13_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_003_002', 'P13_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_003_002', 'P13_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_003_002', 'P13_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_004_001', 'P13_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_004_001', 'P13_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_004_001', 'P13_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_004_002', 'P13_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_004_002', 'P13_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_004_002', 'P13_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_001_001', 'P14_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_001_001', 'P14_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_001_001', 'P14_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_001_002', 'P14_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_001_002', 'P14_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_001_002', 'P14_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_002_001', 'P14_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_002_001', 'P14_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_002_001', 'P14_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P8_NT_002_002', 'P14_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P8_NT_002_002', 'P14_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P8_NT_002_002', 'P14_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P9_NT_003_001', 'P14_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P9_NT_003_001', 'P14_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P9_NT_003_001', 'P14_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P9_NT_003_002', 'P14_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P9_NT_003_002', 'P14_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P9_NT_003_002', 'P14_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P9_NT_004_001', 'P14_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P9_NT_004_001', 'P14_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P9_NT_004_001', 'P14_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P9_NT_004_002', 'P14_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P9_NT_004_002', 'P14_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P9_NT_004_002', 'P14_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_002_001', 'P16_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_002_001', 'P16_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_002_001', 'P16_NB_001_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_002_002', 'P16_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_002_002', 'P16_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_002_002', 'P16_NB_001_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_003_001', 'P16_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_003_001', 'P16_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_003_001', 'P16_NB_002_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_003_002', 'P16_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_003_002', 'P16_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_003_002', 'P16_NB_002_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_004_001', 'P16_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_004_001', 'P16_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_004_001', 'P16_NB_003_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_004_002', 'P16_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_004_002', 'P16_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_004_002', 'P16_NB_003_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_005_001', 'P16_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_005_001', 'P16_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_005_001', 'P16_NB_004_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_005_002', 'P16_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_005_002', 'P16_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_005_002', 'P16_NB_004_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_006_001', 'P16_NB_005_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_006_001', 'P16_NB_005_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_006_001', 'P16_NB_005_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_006_002', 'P16_NB_005_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_006_002', 'P16_NB_005_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_006_002', 'P16_NB_005_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_007_001', 'P16_NB_006_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_007_001', 'P16_NB_006_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_007_001', 'P16_NB_006_001')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DX', 'DX'),
+                                      GROUP_NO=('P17_NT_007_002', 'P16_NB_006_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DY', 'DY'),
+                                      GROUP_NO=('P17_NT_007_002', 'P16_NB_006_002')
+                                     ),
+                                   _F(COEF_IMPO=0.0,
+                                      COEF_MULT=(-1.0, 1.0),
+                                      DDL=('DZ', 'DZ'),
+                                      GROUP_NO=('P17_NT_007_002', 'P16_NB_006_002')
+                                     ),
+                                   ),
+                      MODELE=model
+                     )
+
+
+gravity = AFFE_CHAR_MECA(identifier='13:1',
+                         MODELE=model,
+                         PESANTEUR=_F(DIRECTION=(0.0, 0.0, -1.0),
+                                      GRAVITE=9810.0 * gravityScale))
+
+
+resnonl = STAT_NON_LINE(identifier='15:1',
+                        CHAM_MATER=materfl,
+#                        CONTACT=contact,
+                        EXCIT=(
+                              _F(CHARGE=bc_kin),
+                               # _F(CHARGE=bc_dyn_pressure),
+                               # _F(CHARGE=bc_dyn_body),
+                               _F(CHARGE=lias),
+                               _F(CHARGE=gravity)),
+                        INCREMENT=_F(INST_FIN=1.0,
+                                     INST_INIT=0.0,
+                                     LIST_INST=t_stepa),
+                        MODELE=model)
+
+resnonl = CALC_CHAMP(identifier='16:1',
+                     reuse=resnonl,
+                     CRITERES=('SIEQ_ELGA', 'SIEQ_NOEU'),
+                     FORCE=('FORC_NODA', 'REAC_NODA'),
+                     RESULTAT=resnonl)
+
+
+IMPR_RESU(identifier='17:1',
+          FORMAT='MED',
+          RESU=_F(RESULTAT=resnonl),
+          UNITE=3)
+
+IMPR_RESU(identifier='9:1',
+          FORMAT='RESULTAT',
+          RESU=( _F(INST=(1.0), NOM_CHAM=('DEPL'), IMPR_COOR='OUI', RESULTAT=resnonl) ),
+          UNITE=8
+         )
+
+IMPR_RESU(identifier='9:1',
+          FORMAT='RESULTAT',
+          RESU=( 
+                _F(GROUP_NO=('P4_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P4_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P4_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P4_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_005_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_005_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_006_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_006_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_007_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_007_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_008_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NB_008_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P15_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P15_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P15_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P15_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P10_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P11_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P12_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P13_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P14_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_005_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_005_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_006_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NB_006_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P0_NT_001_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P0_NT_001_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P0_NT_002_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P0_NT_002_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P1_NT_007_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P1_NT_007_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P1_NT_008_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P1_NT_008_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_001_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_001_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_002_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_002_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_003_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_003_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_004_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_004_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_005_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_005_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_006_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_006_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_007_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_007_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_008_004'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P2_NT_008_005'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P3_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_005_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P16_NT_005_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P4_NT_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P4_NT_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P4_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P4_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P5_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P6_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P7_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_001_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_001_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P8_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NT_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P9_NT_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_002_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_002_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_003_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_003_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_004_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_004_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_005_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_005_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_006_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_006_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_007_001'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+                _F(GROUP_NO=('P17_NT_007_002'), INST=(1.0), NOM_CHAM=('FORC_NODA', 'REAC_NODA'), IMPR_COOR='OUI', RESULTAT=resnonl),
+               ),
+          UNITE=8
+         )
+
+FIN()
