@@ -1,4 +1,4 @@
-To build the docker image:
+# FEA PreprocessorTo build the docker image:
 
 ```sh
 docker build --tag "fea-postprocessor" .

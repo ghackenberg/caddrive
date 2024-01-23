@@ -1,0 +1,13 @@
+[[source]]
+url = "https://github.com/ghackenberg/caddrive"
+verify_ssl = true
+name = "caddrive-fea-solver"
+
+[packages]
+flask = "*"
+requests-toolbelt = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
