@@ -9,7 +9,6 @@ RUN pip install numpy
 
 RUN mkdir /app
 RUN mkdir /app/resources
-RUN mkdir /app/output
 
 COPY main.py /app
 COPY leoFeaModelDescription.py /app

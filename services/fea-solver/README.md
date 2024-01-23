@@ -1,19 +1,27 @@
-# FEA Solver
+# CADdrive FEA Solver Service
+
+## With ``docker``
 
 To build the docker image:
 
 ```sh
+cd services/fea-solver
+
 docker build --tag "fea-solver" .
 ```
 
 To run the docker image:
 
 ```sh
-docker run -p 127.0.0.1:5000:5000 "fea-solver"
+docker run -p 127.0.0.1:5001:5000 "fea-solver"
 ```
 
-To run without docker (to obtain debut output)
+## Without ``docker``
+
+To run without docker (to obtain debug output):
 
 ```sh
+cd services/fea-solver
+
 flask --app main run
 ```

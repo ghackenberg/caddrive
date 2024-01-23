@@ -11,6 +11,10 @@ def leoFeaPostprocessingParaview():
     return_str = ""
 
     jobname = "job"
+
+    if not os.path.exists("./output"): 
+        os.makedirs("./output")
+        
     timeVisualization = 1     # Time for visualization in Paraview
     
     return_str += "Save file .rmed: "

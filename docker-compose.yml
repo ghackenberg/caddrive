@@ -1,0 +1,34 @@
+services:
+
+  fea-preprocessor:
+    build: ./services/fea-preprocessor
+    command: flask run --host=0.0.0.0 --debug
+    volumes:
+      - ./services/fea-preprocessor:/app
+    ports:
+      - 5000:5000
+
+  fea-solver:
+    build: ./services/fea-solver
+    command: flask run --host=0.0.0.0 --debugger
+    volumes:
+      - ./services/fea-solver:/app
+    ports:
+      - 5001:5000
+
+  fea-postprocessor:
+    build: ./services/fea-postprocessor
+    command: flask run --host=0.0.0.0 --debug
+    volumes:
+      - ./services/fea-postprocessor:/app
+    ports:
+      - 5002:5000
+
+  # fea-paraview:
+  #   build: services/fea-paraview
+  #   command: flask --app main --debug run
+  #   volumes:
+  #     - services/fea-paraview:/app
+  #   ports:
+  #     - 5003:5000
+      

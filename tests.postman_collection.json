@@ -13,7 +13,20 @@
 					"name": "fea-preprocessor",
 					"item": [
 						{
-							"name": "EMTPTY",
+							"name": "Failure",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -39,7 +52,20 @@
 							"response": []
 						},
 						{
-							"name": "FEA-PREPROCESSOR",
+							"name": "Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -81,7 +107,20 @@
 					"name": "fea-solver",
 					"item": [
 						{
-							"name": "EMTPTY",
+							"name": "Failure",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -107,7 +146,20 @@
 							"response": []
 						},
 						{
-							"name": "FEA-SOLVER",
+							"name": "Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -149,7 +201,20 @@
 					"name": "fea-postprocessor",
 					"item": [
 						{
-							"name": "EMTPTY",
+							"name": "Failure",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -175,7 +240,20 @@
 							"response": []
 						},
 						{
-							"name": "FEA-POSTPROCESSOR",
+							"name": "Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -222,7 +300,20 @@
 					"name": "fea-paraview",
 					"item": [
 						{
-							"name": "EMTPTY",
+							"name": "Failure",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -248,7 +339,20 @@
 							"response": []
 						},
 						{
-							"name": "FEA-PARAVIEW",
+							"name": "Success",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -263,7 +367,7 @@
 									]
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5000/",
+									"raw": "http://127.0.0.1:5003/",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -271,7 +375,7 @@
 										"0",
 										"1"
 									],
-									"port": "5000",
+									"port": "5003",
 									"path": [
 										""
 									]

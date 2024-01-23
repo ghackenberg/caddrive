@@ -10,7 +10,6 @@ RUN pip install feather-format
 RUN pip install pandas
 
 RUN mkdir /app
-RUN mkdir /app/output
 
 COPY main.py /app
 COPY leoFeaPostProcess.py /app

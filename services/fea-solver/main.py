@@ -10,23 +10,28 @@ app = Flask(__name__)
 @app.post("/")
 def simulate():
 
+    if not "mail" in request.files:
+        return "Mail file is missing!", 400
+    if not "comm" in request.files:
+        return "Comm file is missing!", 400
+
     # Path for simulation model and results
 
-    modelpath = "/work/aster"
+    modelpath = "/app/output"
 
     jobname = "job"
+
+    if not os.path.exists("./output"): 
+        os.makedirs("./output")
   
     # Step 1: Delete temporary files
 
-    cleanModelpath(modelpath)
+    #cleanModelpath(modelpath)
 
     # Step 2: Save request files to disk
     
-    if "mail" in request.files and "comm" in request.files:
-        request.files["mail"].save(f"{modelpath}/{jobname}.mail")
-        request.files["comm"].save(f"{modelpath}/{jobname}.comm")
-    else:
-        return "Request not correct!", 400
+    request.files["mail"].save(f"{modelpath}/{jobname}.mail")
+    request.files["comm"].save(f"{modelpath}/{jobname}.comm")
 
     # Step 3: Run job an return multipart response
     

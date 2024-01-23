@@ -1,17 +1,27 @@
-# FEA PreprocessorTo build the docker image:
+# CADdrive FEA Preprocessor Service
+
+## With ``docker``
+
+To build the docker image:
 
 ```sh
-docker build --tag "fea-postprocessor" .
+cd services/fea-preprocessor
+
+docker build --tag "fea-preprocessor" .
 ```
 
 To run the docker image:
 
 ```sh
-docker run -p 127.0.0.1:5000:5000 "fea-postprocessor"
+docker run -p 127.0.0.1:5000:5000 "fea-preprocessor"
 ```
 
-To run without docker (to obtain debut output)
+## Without ``docker``
+
+To run without docker (to obtain debug output):
 
 ```sh
+cd services/fea-preprocessor
+
 flask --app main run
 ```
