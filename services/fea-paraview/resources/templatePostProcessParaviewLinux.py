@@ -1,22 +1,22 @@
-
+# Script parameters
 #jobname = '....'
-#timeVisualization = 1.0   # Time to be displayed in paraview
-
-import os
-username = os.getlogin()
+#filename = '....'
+#timeVisualization = 1.0
 
 # trace generated using paraview version 5.11.1-1862-g99cf1048e5
 #import paraview
+
 #paraview.compatibility.major = 5
 #paraview.compatibility.minor = 11
 
 #### import the simple module from the paraview
 from paraview.simple import *
+
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 
 # load plugin
-LoadPlugin(f'/home/{username}/apps/paraview/bin/../lib/paraview-5.11/plugins/MEDReader/MEDReader.so', remote=False, ns=globals())
+LoadPlugin(f'/opt/paraview/lib/paraview-5.12/plugins/MEDReader/MEDReader.so', remote=False, ns=globals())
 
 # create a new 'MED Reader'
 result_rmed = MEDReader(registrationName=f'{jobname}.rmed', FileNames=[f'{filename}.rmed'])
@@ -28,7 +28,15 @@ animationScene1 = GetAnimationScene()
 animationScene1.UpdateAnimationUsingDataTimeSteps()
 
 # Properties modified on result_rmed
-result_rmed.FieldsStatus = ['TS0/00000001/ComSup0/resnonl_DEPL@@][@@P1', 'TS0/00000001/ComSup0/resnonl_FORC_NODA@@][@@P1', 'TS0/00000001/ComSup0/resnonl_REAC_NODA@@][@@P1', 'TS0/00000001/ComSup0/resnonl_SIEF_ELGA@@][@@GAUSS', 'TS0/00000001/ComSup0/resnonl_SIEQ_ELGA@@][@@GAUSS', 'TS0/00000001/ComSup0/resnonl_SIEQ_NOEU@@][@@P1', 'TS0/00000001/ComSup0/resnonl_VARI_ELGA@@][@@GAUSS']
+result_rmed.FieldsStatus = [
+    'TS0/00000001/ComSup0/resnonl_DEPL@@][@@P1',
+    'TS0/00000001/ComSup0/resnonl_FORC_NODA@@][@@P1',
+    'TS0/00000001/ComSup0/resnonl_REAC_NODA@@][@@P1',
+    'TS0/00000001/ComSup0/resnonl_SIEF_ELGA@@][@@GAUSS',
+    'TS0/00000001/ComSup0/resnonl_SIEQ_ELGA@@][@@GAUSS',
+    'TS0/00000001/ComSup0/resnonl_SIEQ_NOEU@@][@@P1',
+    'TS0/00000001/ComSup0/resnonl_VARI_ELGA@@][@@GAUSS'
+]
 
 # get active view
 renderView1 = GetActiveViewOrCreate('RenderView')
@@ -134,7 +142,7 @@ colorPalette.Text = [0.0, 0.0, 0.0]
 ###########################################################################
 
 # save screenshot
-SaveScreenshot(f'/home/{username}/work/13_leoFEM/simulation_files/s{jobname}_DEPL_F000.png', renderView1, 16, ImageResolution=[1612, 713])
+SaveScreenshot(f'{filename}_DEPL_F000.png', renderView1, 16, ImageResolution=[1612, 713])
 
 # layout/tab size in pixels
 layout1.SetSize(1612, 713)
@@ -147,8 +155,7 @@ layout1.SetSize(1612, 713)
 renderView1.CameraParallelProjection = 1
 
 # save screenshot
-#SaveScreenshot('/home/{username}/work/13_leoFEM/simulation_files/s4_barCantilever_DEPL1.png', renderView1, 16, ImageResolution=[1612, 713],#
-#    TransparentBackground=1)
+#SaveScreenshot('/home/{username}/work/13_leoFEM/simulation_files/s4_barCantilever_DEPL1.png', renderView1, 16, ImageResolution=[1612, 713], TransparentBackground=1)
 
 # create a new 'Warp By Vector'
 warpByVector1 = WarpByVector(registrationName='WarpByVector1', Input=result_rmed)
@@ -194,8 +201,7 @@ renderView1.CameraParallelScale = 113.57755059869886
 renderView1.CameraParallelProjection = 1
 
 # save screenshot
-SaveScreenshot(f'/home/{username}/work/13_leoFEM/simulation_files/{jobname}_DEPL_F010.png', renderView1, 16, ImageResolution=[1500, 713],
-    TransparentBackground=0)
+SaveScreenshot(f'{filename}_DEPL_F010.png', renderView1, 16, ImageResolution=[1500, 713], TransparentBackground=0)
 
 # Properties modified on warpByVector1
 warpByVector1.ScaleFactor = 1.0
@@ -212,8 +218,6 @@ renderView1.CameraFocalPoint = [112.0, 16.0, 11.2]
 renderView1.CameraViewUp = [0.0, 0.0, 1.0]
 renderView1.CameraParallelScale = 113.57755059869886
 renderView1.CameraParallelProjection = 1
-
-
 
 #================================================================
 # addendum: following script captures some of the application
@@ -237,8 +241,7 @@ renderView1.CameraParallelScale = 113.57755059869886
 renderView1.CameraParallelProjection = 1
 
 # save screenshot
-SaveScreenshot(f'./output/job.png', renderView1, 16, ImageResolution=[1500, 713],
-    TransparentBackground=0)
+SaveScreenshot(f'{filename}.png', renderView1, 16, ImageResolution=[1500, 713], TransparentBackground=0)
 
 ##--------------------------------------------
 ## You may need to add some code at the end of this python script depending on your usage, eg:

@@ -26,7 +26,7 @@ services:
 
   fea-paraview:
     build: ./services/fea-paraview
-    command: flask run --host=0.0.0.0 --debug
+    command: flask run --host=0.0.0.0
     volumes:
       - ./services/fea-paraview:/app
     ports:

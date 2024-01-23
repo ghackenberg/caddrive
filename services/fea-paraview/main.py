@@ -1,79 +1,70 @@
-from flask import Flask, request, Response
-from requests_toolbelt import MultipartEncoder
+from flask import Flask, request, send_file
 
-import platform
 import os
+
+# Define paraview path
+FNAME_PARAVIEW = "/opt/paraview/bin/pvpython"
+# Define template path
+FNAME_TEMPLATE = "./resources/templatePostProcessParaviewLinux.py"
 
 app = Flask(__name__)
 
 @app.post("/")
 def leoFeaPostprocessingParaview():
-    return_str = ""
-
-    jobname = "job"
-
+    
+    # Check request
+    if not "rmed" in request.files:
+        return "Rmed file is missing!", 400
+    
+    # Prepare output
     if not os.path.exists("./output"): 
         os.makedirs("./output")
-        
-    timeVisualization = 1     # Time for visualization in Paraview
+
+    # Define jobname
+    jobname = "job"
+
+    # Save rmed file
+    request.files["rmed"].save(f"./output/{jobname}.rmed")
     
-    return_str += "Save file .rmed: "
-    if "rmed" in request.files : 
-        request.files["rmed"].save(f"./output/{jobname}.rmed")
-        return_str += "OK \n"
-    else:
-        return_str += "failed\n"
+    # Define visualization timepoint
+    timeVisualization = 1
 
+    # Open template file
+    fTemplate = open(FNAME_TEMPLATE, 'r')
+
+    # Define job filename
+    fNameJob = f'./output/{jobname}.py'
     
-    systemName = platform.system()
-    if systemName == 'Windows':
-        fNameTemplateParaview = "./resources/templatePostProcessParaviewWin.py"
-        paraviewCommand = "C:/programs64/SalomeMeca2021/run_paraview.bat  --script="
-    else:
-        fNameTemplateParaview = "./resources/templatePostProcessParaviewLinux.py"
-        paraviewCommand = "~/apps/paraview/bin/paraview "
-
-    # Postprocessing with Paraview
-    ftemp = open(fNameTemplateParaview, 'r')          # Open template file
-
-    fnamePost = f'./output/pv_{jobname}.py'     # Postprocessing file
-    fpost = open(fnamePost, 'w')
+    # Open job file
+    fJob = open(fNameJob, 'w')
 
     #Write information to postprocessing file
-    fpost.write(f"jobname = '{jobname}'\n")
-    fpost.write(f"filename = r'./output/{jobname}'\n")
-    fpost.write(f"timeVisualization = {timeVisualization}\n")
-    fpost.write('\n')
+    fJob.write(f"jobname = '{jobname}'\n")
+    fJob.write(f"filename = r'./output/{jobname}'\n")
+    fJob.write(f"timeVisualization = {timeVisualization}\n")
+    fJob.write('\n')
 
     # Append template file
-    for line in ftemp:
-        fpost.write(line)
+    for line in fTemplate:
+        fJob.write(line)
 
-    ftemp.close()
-    fpost.close()
+    # Close template file
+    fTemplate.close()
 
-    # Start Paraview
-    command = f"{paraviewCommand}{fnamePost} &"
+    # Close job file
+    fJob.close()
 
+    # Construct paraview command
+    command = f"{FNAME_PARAVIEW} {fNameJob}"
+
+    # Debug paraview command
     print(command)
+
+    # Execute paraview command
     ret = os.system(command)
+
+    # Debug paraview result
     print(ret)
 
-
-
-    # Return results files
- #   m = MultipartEncoder(
- #       fields = {
- #           'resultsMinMax': (f'{jobname}.resultsMinMax', open(f'./output/{jobname}.resultsMinMax.feather', 'rb'), 'text/plain')
- #           #'comm': (f'{jobname}.comm', open(f'./output/{jobname}.comm', 'rb'), 'text/plain')
- #           # Todo: simulation time
- #           # Todo: pd_DeplNoda if requested
- #           # Todo: pd_ForcNoda if requested
- #           }
- #       )
-
- #   return Response(m.to_string(), mimetype = m.content_type)
-
-    return(return_str)
-
-
+    # Construct multipart response
+    return send_file(f'./output/{jobname}.png', 'image/png')
