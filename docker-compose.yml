@@ -24,11 +24,11 @@ services:
     ports:
       - 5002:5000
 
-  # fea-paraview:
-  #   build: services/fea-paraview
-  #   command: flask --app main --debug run
-  #   volumes:
-  #     - services/fea-paraview:/app
-  #   ports:
-  #     - 5003:5000
+  fea-paraview:
+    build: ./services/fea-paraview
+    command: flask run --host=0.0.0.0 --debug
+    volumes:
+      - ./services/fea-paraview:/app
+    ports:
+      - 5003:5000
       
