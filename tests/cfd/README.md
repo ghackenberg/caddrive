@@ -1,9 +1,17 @@
-# OpenFOAM testcase
+# OpenFOAM testcases
 
-- Lid driven cavity
-- openfoam.com, OpenFOAM2312
+Testcases are related to 
+- openfoam.com
+- tested with openFOAM2312
 
-
+## Lid driven cavity
 Commands:
 - blockMesh
 - icoFoam
+
+## Motorbike
+Commands:
+- Allrun
+
+
+
