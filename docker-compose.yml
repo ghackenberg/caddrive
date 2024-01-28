@@ -1,5 +1,5 @@
 services:
-
+     
   fea-preprocessor:
     build: ./services/fea-preprocessor
     command: flask run --host=0.0.0.0 --debug
@@ -31,4 +31,12 @@ services:
       - ./services/fea-paraview:/app
     ports:
       - 5003:5000
+
+  cfd-solver:
+    build: ./services/cfd-solver
+    command: flask run --host=0.0.0.0 --debugger
+    volumes:
+      - ./services/cfd-solver:/app
+    ports:
+      - 5004:5000
       
