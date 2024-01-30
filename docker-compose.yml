@@ -2,7 +2,7 @@ services:
      
   leofea:
     build: ./services/leofea
-    command: python main.py --debug
+    command: python main.py
     volumes:
       - ./services/leofea:/app
     ports:
@@ -10,7 +10,7 @@ services:
 
   codeaster:
     build: ./services/codeaster
-    command: python main.py --debug
+    command: python main.py
     volumes:
       - ./services/codeaster:/app
     ports:
@@ -18,7 +18,7 @@ services:
 
   # openfoam:
   #   build: ./services/openfoam
-  #   command: python3 main.py --debug
+  #   command: python3 main.py
   #   volumes:
   #     - ./services/openfoam:/root
   #   ports:
