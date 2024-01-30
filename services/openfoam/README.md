@@ -5,7 +5,7 @@
 To build the docker image:
 
 ```sh
-cd <CADdrive>/ervices/openfoam
+cd <CADdrive>/services/openfoam
 
 docker build --tag "caddrive-openfoam" .
 ```
