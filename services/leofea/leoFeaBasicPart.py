@@ -9,7 +9,6 @@
 # - translate a body
 # - rotate a body (TBD)
 
-
 import numpy as np
 import leoFeaModelDescription as LDR
 

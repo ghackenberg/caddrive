@@ -1,19 +1,19 @@
-# CADdrive OpenFOAM Service
+# CADdrive LeoFEA Service
 
 ## With ``docker``
 
 To build the docker image:
 
 ```sh
-cd <CADdrive>/ervices/openfoam
+cd <CADdrive>/services/leofea
 
-docker build --tag "caddrive-openfoam" .
+docker build --tag "caddrive-leofea" .
 ```
 
 To run the docker image:
 
 ```sh
-docker run -p 127.0.0.1:5002:5000 "caddrive-openfoam"
+docker run -p 127.0.0.1:5000:5000 "caddrive-leofea"
 ```
 
 ## Without ``docker``
@@ -21,7 +21,7 @@ docker run -p 127.0.0.1:5002:5000 "caddrive-openfoam"
 To run without docker (to obtain debug output):
 
 ```sh
-cd <CADdrive>/services/openfoam
+cd <CADdrive>/services/leafea
 
 python main.py --debug
 ```

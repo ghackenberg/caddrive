@@ -12,7 +12,7 @@ RUN cd /opt && ln -s ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64 para
 RUN pip install Flask
 RUN pip install requests_toolbelt
 
-# Install OpenGL
+# Install OpenGL (for rendering)
 RUN apt-get install libgl1 -y
 
 # Make directories
@@ -30,9 +30,5 @@ WORKDIR /app
 # Expose port
 EXPOSE 5000/tcp
 
-# Configure flask
-ENV FLASK_APP=main.py
-ENV FLASK_ENV=development
-
 # Start flask
-CMD flask run --host=0.0.0.0
+CMD python main.py

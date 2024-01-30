@@ -2,18 +2,19 @@
 	"info": {
 		"_postman_id": "538b3ed8-f38a-47f5-a3e9-69c141126c91",
 		"name": "CADdrive",
+		"description": "This collection is used for testing the **CADdrive API** including services such as LeoFEA, CodeAster, OpenFOAM, and ParaView.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "32516291"
 	},
 	"item": [
 		{
-			"name": "services",
+			"name": "Services",
 			"item": [
 				{
-					"name": "fea-preprocessor",
+					"name": "LeoFEA",
 					"item": [
 						{
-							"name": "Failure",
+							"name": "Failure Index",
 							"event": [
 								{
 									"listen": "test",
@@ -52,7 +53,85 @@
 							"response": []
 						},
 						{
-							"name": "Success",
+							"name": "Failure Preprocess",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/preprocess",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"preprocess"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Failure Postprocess",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/postprocess",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"postprocess"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Success Full",
 							"event": [
 								{
 									"listen": "test",
@@ -100,11 +179,111 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Success Preprocess",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "ldr",
+											"type": "file",
+											"src": "tests/fea/CADdrive.ldr"
+										},
+										{
+											"key": "lib",
+											"type": "file",
+											"src": "tests/fea/libLegoParts.lib"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/preprocess",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"preprocess"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Success Postprocess",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "resu",
+											"type": "file",
+											"src": "tests/fea/caddrive.resu"
+										},
+										{
+											"key": "message",
+											"type": "file",
+											"src": "tests/fea/caddrive.message"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://127.0.0.1:5000/postprocess",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "5000",
+									"path": [
+										"postprocess"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
 				{
-					"name": "fea-solver",
+					"name": "CodeAster",
 					"item": [
 						{
 							"name": "Failure",
@@ -198,106 +377,11 @@
 					]
 				},
 				{
-					"name": "fea-postprocessor",
-					"item": [
-						{
-							"name": "Failure",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 400\", function () {\r",
-											"    pm.response.to.have.status(400);\r",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": []
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5002/",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5002",
-									"path": [
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Success",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 200\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "resu",
-											"type": "file",
-											"src": "tests/fea/caddrive.resu"
-										},
-										{
-											"key": "rmed",
-											"type": "file",
-											"src": "tests/fea/caddrive.rmed"
-										},
-										{
-											"key": "message",
-											"type": "file",
-											"src": "tests/fea/caddrive.message"
-										}
-									]
-								},
-								"url": {
-									"raw": "http://127.0.0.1:5002/",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "5002",
-									"path": [
-										""
-									]
-								}
-							},
-							"response": []
-						}
-					]
+					"name": "OpenFOAM",
+					"item": []
 				},
 				{
-					"name": "fea-paraview",
+					"name": "ParaView",
 					"item": [
 						{
 							"name": "Failure",
@@ -322,7 +406,7 @@
 									"formdata": []
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5003/",
+									"raw": "http://127.0.0.1:5002/",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -330,7 +414,7 @@
 										"0",
 										"1"
 									],
-									"port": "5003",
+									"port": "5002",
 									"path": [
 										""
 									]
@@ -367,7 +451,7 @@
 									]
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5003/",
+									"raw": "http://127.0.0.1:5002/",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -375,7 +459,7 @@
 										"0",
 										"1"
 									],
-									"port": "5003",
+									"port": "5002",
 									"path": [
 										""
 									]

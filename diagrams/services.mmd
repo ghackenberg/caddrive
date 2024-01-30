@@ -1,0 +1,32 @@
+classDiagram
+    class LeoFEA {
+        +port: int = 5000
+        +index(ldr: text, lib: text): image
+        +pre(ldr: text, lib: text): comm, mail
+        +post(resu: text, message: text): resultsMinMax
+    }
+    class CodeAster {
+        port: int = 5001
+        +index(comm: text, mail: text): resu, rmed, message
+    }
+    class OpenFOAM {
+        port: int = 5002
+        +index(TODO): TODO
+    }
+    class ParaView {
+        port: int = 5003
+        +index(rmed: text): image
+    }
+
+    <<service>> LeoFEA
+    <<service>> CodeAster
+    <<service>> OpenFOAM
+    <<service>> ParaView
+
+    LeoFEA ..> CodeAster: comm, mail
+    LeoFEA ..> OpenFOAM: TODO
+    LeoFEA ..> ParaView: rmed
+
+    CodeAster ..> LeoFEA: resu, rmed
+    OpenFOAM ..> LeoFEA: TODO
+    ParaView ..> LeoFEA: image

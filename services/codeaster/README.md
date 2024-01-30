@@ -5,15 +5,15 @@
 To build the docker image:
 
 ```sh
-cd services/fea-solver
+cd <CADdrive>/services/codeaster
 
-docker build --tag "fea-solver" .
+docker build --tag "caddrive-codeaster" .
 ```
 
 To run the docker image:
 
 ```sh
-docker run -p 127.0.0.1:5001:5000 "fea-solver"
+docker run -p 127.0.0.1:5001:5000 "caddrive-codeaster"
 ```
 
 ## Without ``docker``
@@ -21,7 +21,7 @@ docker run -p 127.0.0.1:5001:5000 "fea-solver"
 To run without docker (to obtain debug output):
 
 ```sh
-cd services/fea-solver
+cd <CADdrive>/services/codeaster
 
-flask --app main run
+python main.py --debug
 ```

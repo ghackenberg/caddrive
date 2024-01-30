@@ -6,16 +6,10 @@ RUN apt-get update && apt-get install python3-pip -y
 RUN pip3 install Flask
 RUN pip3 install requests_toolbelt
 
-RUN mkdir /app
+COPY main.py /root
 
-COPY main.py /app
-
-WORKDIR /app
+WORKDIR /root
 
 EXPOSE 5000/tcp
 
-ENV FLASK_APP=main.py
-ENV FLASK_ENV=development
-
-CMD flask run --host=0.0.0.0
-
+CMD python3 main.py

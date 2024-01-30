@@ -1,81 +1,78 @@
+# External dependencies
+import os
+import sys
+
 from flask import Flask, request, Response
 from requests_toolbelt import MultipartEncoder
 
-import os, glob
-from pathlib import PureWindowsPath, PurePosixPath
-import shutil
+# Ensure folder
+if not os.path.exists("./output"): 
+    os.makedirs("./output")
 
-app = Flask(__name__)
+# Define constants
+FLASK_HOST = "0.0.0.0"
+FLASK_PORT = 5000
+FLASK_DBUG = sys.argv.count("--debug") > 0
 
-@app.post("/")
+CODEASTER_CMD = "as_run"
+
+WORKDIR = "/app/output"
+JOBNAME = "job"
+
+# Create app
+APP = Flask(__name__)
+
+# Register route
+@APP.post("/")
 def simulate():
 
+    # Step 1: Validate request
     if not "mail" in request.files:
         return "Mail file is missing!", 400
     if not "comm" in request.files:
         return "Comm file is missing!", 400
 
-    # Path for simulation model and results
-
-    modelpath = "/app/output"
-
-    jobname = "job"
-
-    if not os.path.exists("./output"): 
-        os.makedirs("./output")
-  
-    # Step 1: Delete temporary files
-
-    #cleanModelpath(modelpath)
-
     # Step 2: Save request files to disk
     
-    request.files["mail"].save(f"{modelpath}/{jobname}.mail")
-    request.files["comm"].save(f"{modelpath}/{jobname}.comm")
+    request.files["mail"].save(f"{WORKDIR}/{JOBNAME}.mail")
+    request.files["comm"].save(f"{WORKDIR}/{JOBNAME}.comm")
 
     # Step 3: Run job an return multipart response
     
-    return runJob(modelpath, jobname)
+    return runJob(WORKDIR, JOBNAME)
 
-def cleanModelpath(modelpath):
-
-    delete_files = f"{modelpath}/*"
-    for f in glob.glob(delete_files):
-        print(f)
-        if os.path.isdir(f):
-            shutil.rmtree(f)
-        else:
-            os.remove(f)
-
-def runJob(modelpath: str, jobname: str):
+def runJob(workdir: str, jobname: str):
 
     # Step 1: Generate corresponding export file
 
-    generateExportFile(modelpath, jobname)
+    generateExportFile(workdir, jobname)
       
     # Step 2: Start code_aster simulation
     
-    startSimulation(modelpath, jobname)
+    ret = startSimulation(workdir, jobname)
     
     # Step 3: Return simulation results as string
 
-    fname_resu    = f'{modelpath}/{jobname}.resu'
-    fname_message = f'{modelpath}/{jobname}.message'
-    fname_rmed    = f'{modelpath}/{jobname}.rmed'
-    
-    m = MultipartEncoder(
-        fields = {
-            'resu':    (f'{jobname}.resu',    open(fname_resu, 'rb'),    'text/plain'),
-            'message': (f'{jobname}.message', open(fname_message, 'rb'), 'text/plain'),
-            'rmed':    (f'{jobname}.rmed',    open(fname_rmed, 'rb'),    'application/octet-stream')
-        }
-    )
+    if ret:
+        return "CodeAster error", 400
+    else:
+        fname_resu    = f'{workdir}/{jobname}.resu'
+        fname_message = f'{workdir}/{jobname}.message'
+        fname_rmed    = f'{workdir}/{jobname}.rmed'
+        
+        m = MultipartEncoder(
+            fields = {
+                'resu':    (f'{jobname}.resu',    open(fname_resu, 'rb'),    'text/plain'),
+                'message': (f'{jobname}.message', open(fname_message, 'rb'), 'text/plain'),
+                'rmed':    (f'{jobname}.rmed',    open(fname_rmed, 'rb'),    'application/octet-stream')
+            }
+        )
 
-    return Response(m.to_string(), mimetype = m.content_type)
+        return Response(m.to_string(), mimetype = m.content_type)
     
-def generateExportFile(modelpath: str, jobname: str):
+def generateExportFile(workdir: str, jobname: str):
 
-    fname_export = f"{modelpath}/{jobname}.export"
+    fname_export = f"{workdir}/{jobname}.export"
 
     print(f"Writing export file: {fname_export}")
     
@@ -112,9 +109,9 @@ def generateExportFile(modelpath: str, jobname: str):
 
     fid.close()
 
-def startSimulation(modelpath: str, jobname: str):
+def startSimulation(workdir: str, jobname: str):
 
-    command = f"as_run {modelpath}/{jobname}.export"
+    command = f"{CODEASTER_CMD} {workdir}/{jobname}.export"
 
     print(command)
 
@@ -122,5 +119,7 @@ def startSimulation(modelpath: str, jobname: str):
 
     print(ret)
 
-    if ret:
-        raise NameError("Code_Aster exited with error")
+    return ret
+
+# Run app
+APP.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DBUG)

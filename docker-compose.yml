@@ -1,42 +1,34 @@
 services:
      
-  fea-preprocessor:
-    build: ./services/fea-preprocessor
-    command: flask run --host=0.0.0.0 --debug
+  leofea:
+    build: ./services/leofea
+    command: python main.py --debug
     volumes:
-      - ./services/fea-preprocessor:/app
+      - ./services/leofea:/app
     ports:
       - 5000:5000
 
-  fea-solver:
-    build: ./services/fea-solver
-    command: flask run --host=0.0.0.0 --debugger
+  codeaster:
+    build: ./services/codeaster
+    command: python main.py --debug
     volumes:
-      - ./services/fea-solver:/app
+      - ./services/codeaster:/app
     ports:
       - 5001:5000
 
-  fea-postprocessor:
-    build: ./services/fea-postprocessor
-    command: flask run --host=0.0.0.0 --debug
-    volumes:
-      - ./services/fea-postprocessor:/app
-    ports:
-      - 5002:5000
+  # openfoam:
+  #   build: ./services/openfoam
+  #   command: python3 main.py --debug
+  #   volumes:
+  #     - ./services/openfoam:/root
+  #   ports:
+  #     - 5002:5000
 
-  fea-paraview:
-    build: ./services/fea-paraview
-    command: flask run --host=0.0.0.0
+  paraview:
+    build: ./services/paraview
+    command: python main.py
     volumes:
-      - ./services/fea-paraview:/app
+      - ./services/paraview:/app
     ports:
       - 5003:5000
-
-  cfd-solver:
-    build: ./services/cfd-solver
-    command: flask run --host=0.0.0.0 --debugger
-    volumes:
-      - ./services/cfd-solver:/app
-    ports:
-      - 5004:5000
       

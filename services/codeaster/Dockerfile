@@ -14,7 +14,4 @@ WORKDIR /app
 
 EXPOSE 5000/tcp
 
-ENV FLASK_APP=main.py
-ENV FLASK_ENV=development
-
-CMD flask run --host=0.0.0.0
+CMD python main.py
