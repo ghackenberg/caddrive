@@ -1,4 +1,4 @@
-FROM python:3.9.18
+FROM openfoam/openfoam11-paraview510
 
 # Change user
 USER root
@@ -7,6 +7,8 @@ USER root
 RUN apt-get update
 # Upgrade packages
 RUN apt-get upgrade -y
+# Install packages
+RUN apt-get install python3-pip -y
 
 # Make directory
 RUN mkdir /app
@@ -29,4 +31,4 @@ WORKDIR /app/sources
 # Expose port
 EXPOSE 5000/tcp
 # Run application
-CMD python -u main.py
+CMD python3 -u main.py

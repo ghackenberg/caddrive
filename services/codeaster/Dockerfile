@@ -1,17 +1,34 @@
 FROM krande/codeaster:seq-15.8.0
 
+# Change user
 USER root
 
-RUN apt-get update && apt-get install python3-pip -y
-RUN pip3 install Flask
-RUN pip3 install requests_toolbelt
+# Update packages
+RUN apt-get update
+# Upgrade packages
+RUN apt-get upgrade -y
+# Install packages
+RUN apt-get install python3-pip -y
 
+# Make directory
 RUN mkdir /app
 
-COPY main.py /app
+# Copy requirements
+COPY requirements.txt /app
 
+# Change workdir
 WORKDIR /app
+# Install requirements
+RUN pip3 install -r requirements.txt
 
+# Copy sources
+COPY sources /app
+# Copy resources
+COPY resources /app
+
+# Change workdir
+WORKDIR /app/sources
+# Expose port
 EXPOSE 5000/tcp
-
-CMD python main.py
+# Run application
+CMD python -u main.py

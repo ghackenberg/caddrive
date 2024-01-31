@@ -31,9 +31,12 @@ In the following, we provide some more information about the services and their 
 * [CodeAster](./codeaster/) for producing CodeAster simulation results
   * HTTP server listening on ``port 5001``
   * ``HTTP POST /`` for simulating
-* [OpenFOAM](./openfoam/) for producing OpenFOAM simulation results
+* [OpenFOAM (.com edition)](./openfoam-com/) for producing OpenFOAM simulation results
   * HTTP server listening on ``port 5002``
   * ``HTTP POST /`` for simulating
-* [ParaView](./paraview/) for rendering the CodeAster simulation results
+* [OpenFOAM (.org edition)](./openfoam-org/) for producing OpenFOAM simulation results
   * HTTP server listening on ``port 5003``
+  * ``HTTP POST /`` for simulating
+* [ParaView](./paraview/) for rendering the CodeAster simulation results
+  * HTTP server listening on ``port 5004``
   * ``HTTP POST /`` for rendering

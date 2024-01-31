@@ -1,34 +1,43 @@
 FROM python:3.10.13
 
+# Change user
 USER root
 
-# Install ParaView
-RUN apt-get update && apt-get install wget -y
-RUN cd /opt && wget https://www.paraview.org/files/v5.12/ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz
-RUN cd /opt && tar xfz ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz
-RUN cd /opt && ln -s ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64 paraview
-
-# Install Flask
-RUN pip install Flask
-RUN pip install requests_toolbelt
-
-# Install OpenGL (for rendering)
+# Update packages
+RUN apt-get update
+# Upgrade packages
+RUN apt-get upgrade -y
+# Install packages
+RUN apt-get install wget -y
 RUN apt-get install libgl1 -y
 
-# Make directories
+# Change workdir
+WORKDIR /opt
+# Install ParaView
+RUN wget https://www.paraview.org/files/v5.12/ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz
+RUN tar xfz ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz
+RUN ln -s ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64 paraview
+RUN rm ParaView-5.12.0-RC2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz
+
+# Make directory
 RUN mkdir /app
-RUN mkdir /app/resources
+
+# Copy requirements
+COPY requirements.txt /app
+
+# Change workdir
+WORKDIR /app
+# Install requirements
+RUN pip install -r requirements.txt
 
 # Copy sources
-COPY main.py /app
-COPY resources/templatePostProcessParaviewLinux.py /app/resources
-COPY resources/templatePostProcessParaviewWin.py /app/resources
+COPY sources /app
+# Copy resources
+COPY resources /app
 
-# Set directory
-WORKDIR /app
-
+# Change workdir
+WORKDIR /app/sources
 # Expose port
 EXPOSE 5000/tcp
-
 # Start flask
-CMD python main.py
+CMD python -u main.py
