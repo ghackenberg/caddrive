@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "538b3ed8-f38a-47f5-a3e9-69c141126c91",
+		"_postman_id": "6f67d057-eab5-4f0c-9dd0-6b2cb7ecd936",
 		"name": "CADdrive",
 		"description": "This collection is used for testing the **CADdrive API** including services such as LeoFEA, CodeAster, OpenFOAM, and ParaView.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -377,7 +377,11 @@
 					]
 				},
 				{
-					"name": "OpenFOAM",
+					"name": "OpenFOAM-com",
+					"item": []
+				},
+				{
+					"name": "OpenFOAM-org",
 					"item": []
 				},
 				{
@@ -406,7 +410,7 @@
 									"formdata": []
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5002/",
+									"raw": "http://127.0.0.1:5004/",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -414,7 +418,7 @@
 										"0",
 										"1"
 									],
-									"port": "5002",
+									"port": "5004",
 									"path": [
 										""
 									]
@@ -451,7 +455,7 @@
 									]
 								},
 								"url": {
-									"raw": "http://127.0.0.1:5003/",
+									"raw": "http://127.0.0.1:5004/",
 									"protocol": "http",
 									"host": [
 										"127",
@@ -459,7 +463,7 @@
 										"0",
 										"1"
 									],
-									"port": "5003",
+									"port": "5004",
 									"path": [
 										""
 									]
