@@ -170,9 +170,9 @@ class leoFeaGenerateModel():
     #                  PRIVATE METHODS
     ########################################################################################
     ##########################################################################################
-    def _addPart(self, partname, nSegx, nSegy, nSegz, posx, posy, posz):
+    def _addPart(self, partName, nSegx, nSegy, nSegz, posx, posy, posz):
         pid = self.numParts
-        self.parts.append(lBP.legoBasicPart(partname, pid, nSegx, nSegy, nSegz, posx, posy, posz))
+        self.parts.append(lBP.legoBasicPart(partName, pid, nSegx, nSegy, nSegz, posx, posy, posz))
         self.numParts += 1
         return(pid)
     
@@ -620,8 +620,8 @@ class leoFeaGenerateModel():
         for p in self.parts:
             self.nodeNumberOffs.append(offs)
 
-            fid.write(f'   %% Part: {p.partname}\n')
-            #print(f'_writeNodeCoords, Part: {p.partname}\n')
+            fid.write(f'   %% Part: {p.partName}\n')
+            #print(f'_writeNodeCoords, Part: {p.partName}\n')
 
             for i in range(p.nodesx.shape[0]):
                 for j in range(p.nodesx.shape[1]):
@@ -651,18 +651,18 @@ class leoFeaGenerateModel():
         for p in self.parts:
             self.elementNumberOffs.append(offs)
 
-            fid.write(f'   %% Part{p.pid}: {p.partname}\n')
+            fid.write(f'   %% Part{p.partId}: {p.partName}\n')
 
             elid = 0
             for elem in p.elements:
-                n1 = self._getNameNode( p.elements[elid, 0] + self.nodeNumberOffs[p.pid])
-                n2 = self._getNameNode( p.elements[elid, 1] + self.nodeNumberOffs[p.pid])
-                n3 = self._getNameNode( p.elements[elid, 2] + self.nodeNumberOffs[p.pid])
-                n4 = self._getNameNode( p.elements[elid, 3] + self.nodeNumberOffs[p.pid])
-                n5 = self._getNameNode( p.elements[elid, 4] + self.nodeNumberOffs[p.pid])
-                n6 = self._getNameNode( p.elements[elid, 5] + self.nodeNumberOffs[p.pid])
-                n7 = self._getNameNode( p.elements[elid, 6] + self.nodeNumberOffs[p.pid])
-                n8 = self._getNameNode( p.elements[elid, 7] + self.nodeNumberOffs[p.pid])
+                n1 = self._getNameNode( p.elements[elid, 0] + self.nodeNumberOffs[p.partId])
+                n2 = self._getNameNode( p.elements[elid, 1] + self.nodeNumberOffs[p.partId])
+                n3 = self._getNameNode( p.elements[elid, 2] + self.nodeNumberOffs[p.partId])
+                n4 = self._getNameNode( p.elements[elid, 3] + self.nodeNumberOffs[p.partId])
+                n5 = self._getNameNode( p.elements[elid, 4] + self.nodeNumberOffs[p.partId])
+                n6 = self._getNameNode( p.elements[elid, 5] + self.nodeNumberOffs[p.partId])
+                n7 = self._getNameNode( p.elements[elid, 6] + self.nodeNumberOffs[p.partId])
+                n8 = self._getNameNode( p.elements[elid, 7] + self.nodeNumberOffs[p.partId])
 
                 nameElem = self._getNameElem(offs+elid)
 
@@ -682,15 +682,15 @@ class leoFeaGenerateModel():
     def _writeGroupMaillageVolume(self, fid):
 
         for p in self.parts:
-            fid.write(f'%% Group maillage (volume), Part{p.pid}: {p.partname}\n')
-            fid.write(f'GROUP_MA NOM = Vpart{p.pid}\n')
-            #print(f'_writeGroupMaillageVolume Vpart{p.pid}\n')
+            fid.write(f'%% Group maillage (volume), Part{p.partId}: {p.partName}\n')
+            fid.write(f'GROUP_MA NOM = Vpart{p.partId}\n')
+            #print(f'_writeGroupMaillageVolume Vpart{p.partId}\n')
 
             ct = 0
             for i in range(len(p.elements)):
                 ct = ct + 1
 
-                nameElem = self._getNameElem(i + self.elementNumberOffs[p.pid])
+                nameElem = self._getNameElem(i + self.elementNumberOffs[p.partId])
                 fid.write(f'{nameElem:s} ')
                 if ct == 7:
                     fid.write('\n');
@@ -744,23 +744,23 @@ class leoFeaGenerateModel():
     def _writeGroupNodes(self, fid):
 
         for p in self.parts:
-            fid.write(f'%% Group of nodes: Part{p.pid}, all nodes on bottom)\n')
-            self._writeGroupNodesDatasetArray(fid, self._getGroupNameNodesBot, p.nbot, p.pid)
+            fid.write(f'%% Group of nodes: Part{p.partId}, all nodes on bottom)\n')
+            self._writeGroupNodesDatasetArray(fid, self._getGroupNameNodesBot, p.nbot, p.partId)
 
-            fid.write(f'%% Group of nodes: Part{p.pid}, all nodes on top)\n')
-            self._writeGroupNodesDatasetArray(fid, self._getGroupNameNodesTop, p.ntop, p.pid)
+            fid.write(f'%% Group of nodes: Part{p.partId}, all nodes on top)\n')
+            self._writeGroupNodesDatasetArray(fid, self._getGroupNameNodesTop, p.ntop, p.partId)
 
-            fid.write(f'%% Group of nodes: Part{p.pid}, all nub-nodes on bottom)\n')
-            self._writeGroupNodesDatasetMatrix(fid, self._getGroupNameAllNubsBot, p.nubbot, p.pid)
+            fid.write(f'%% Group of nodes: Part{p.partId}, all nub-nodes on bottom)\n')
+            self._writeGroupNodesDatasetMatrix(fid, self._getGroupNameAllNubsBot, p.nubbot, p.partId)
 
-            fid.write(f'%% Group of nodes: Part{p.pid}, all nub-nodes on top)\n')
-            self._writeGroupNodesDatasetMatrix(fid, self._getGroupNameAllNubsTop, p.nubtop, p.pid)
+            fid.write(f'%% Group of nodes: Part{p.partId}, all nub-nodes on top)\n')
+            self._writeGroupNodesDatasetMatrix(fid, self._getGroupNameAllNubsTop, p.nubtop, p.partId)
 
-            fid.write(f'%% Group of nodes: Part{p.pid}, nub-nodes on bottom, separately\n')
-            self._writeGroupNodesNubSeparate(fid, self._getGroupNameSingleNubBot, p.nubbot, p.pid)
+            fid.write(f'%% Group of nodes: Part{p.partId}, nub-nodes on bottom, separately\n')
+            self._writeGroupNodesNubSeparate(fid, self._getGroupNameSingleNubBot, p.nubbot, p.partId)
 
-            fid.write(f'%% Group of nodes: Part{p.pid}, nub-nodes on top, separately\n')
-            self._writeGroupNodesNubSeparate(fid, self._getGroupNameSingleNubTop, p.nubtop, p.pid)
+            fid.write(f'%% Group of nodes: Part{p.partId}, nub-nodes on top, separately\n')
+            self._writeGroupNodesNubSeparate(fid, self._getGroupNameSingleNubTop, p.nubtop, p.partId)
 
 
     ###########################################################################################
@@ -801,33 +801,33 @@ class leoFeaGenerateModel():
         fid.write('%%%%%%%%%%%%%%% Faces\n')
         self.i_face = 0
         for p in self.parts:
-            fid.write(f'%% Face Bottom: Part{p.pid})\n')
-            self._writeGroupFaceDataset(fid, self._getElemNameFaceBot, self._getGroupNameFaceBot, 'bo', p.fbot, p.pid)
+            fid.write(f'%% Face Bottom: Part{p.partId})\n')
+            self._writeGroupFaceDataset(fid, self._getElemNameFaceBot, self._getGroupNameFaceBot, 'bo', p.fbot, p.partId)
 
         self.i_face = 0
         for p in self.parts:
-            fid.write(f'%% Face Top: Part{p.pid})\n')
-            self._writeGroupFaceDataset(fid, self._getElemNameFaceTop, self._getGroupNameFaceTop, 'to', p.ftop, p.pid)
+            fid.write(f'%% Face Top: Part{p.partId})\n')
+            self._writeGroupFaceDataset(fid, self._getElemNameFaceTop, self._getGroupNameFaceTop, 'to', p.ftop, p.partId)
 
         self.i_face = 0
         for p in self.parts:
-            fid.write(f'%% Face Left: Part{p.pid})\n')
-            self._writeGroupFaceDataset(fid, self._getElemNameFaceLeft, self._getGroupNameFaceLeft, 'le', p.fleft, p.pid)
+            fid.write(f'%% Face Left: Part{p.partId})\n')
+            self._writeGroupFaceDataset(fid, self._getElemNameFaceLeft, self._getGroupNameFaceLeft, 'le', p.fleft, p.partId)
 
         self.i_face = 0
         for p in self.parts:
-            fid.write(f'%% Face Right: Part{p.pid})\n')
-            self._writeGroupFaceDataset(fid, self._getElemNameFaceRight, self._getGroupNameFaceRight, 'ri', p.fright, p.pid)
+            fid.write(f'%% Face Right: Part{p.partId})\n')
+            self._writeGroupFaceDataset(fid, self._getElemNameFaceRight, self._getGroupNameFaceRight, 'ri', p.fright, p.partId)
 
         self.i_face = 0
         for p in self.parts:
-            fid.write(f'%% Face Front: Part{p.pid})\n')
-            self._writeGroupFaceDataset(fid, self._getElemNameFaceFront, self._getGroupNameFaceFront, 'fr', p.ffront, p.pid)
+            fid.write(f'%% Face Front: Part{p.partId})\n')
+            self._writeGroupFaceDataset(fid, self._getElemNameFaceFront, self._getGroupNameFaceFront, 'fr', p.ffront, p.partId)
 
         self.i_face = 0
         for p in self.parts:
-            fid.write(f'%% Face Back: Part{p.pid})\n')
-            self._writeGroupFaceDataset(fid, self._getElemNameFaceBack, self._getGroupNameFaceBack, 'ba', p.fback, p.pid)
+            fid.write(f'%% Face Back: Part{p.partId})\n')
+            self._writeGroupFaceDataset(fid, self._getElemNameFaceBack, self._getGroupNameFaceBack, 'ba', p.fback, p.partId)
 
 
     ###########################################################################################

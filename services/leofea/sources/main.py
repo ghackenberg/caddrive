@@ -146,7 +146,7 @@ def postprocess():
     # Return results files
     m = MultipartEncoder(
         fields = {
-            'resultsMinMax': (f'{JOB_NAME}.resultsMinMax', open(f'{OUTPUTS_DIR}/{JOB_NAME}.resMinMax.feather', 'rb'), 'text/plain')
+            'resMinMax': (f'{JOB_NAME}.resMinMax.feather', open(f'{OUTPUTS_DIR}/{JOB_NAME}.resMinMax.feather', 'rb'), 'application/octet-stream')
             #'comm': (f'{jobname}.comm', open(f'{OUTPUTS_DIR}/{JOB_NAME}.comm', 'rb'), 'text/plain')
             # TODO simulation time
             # TODO pd_DeplNoda if requested

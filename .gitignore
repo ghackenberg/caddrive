@@ -16,7 +16,7 @@ database.sqlite
 
 __pycache__
 
-output
+outputs
 
 packages/backend/assets/ldraw
 packages/backend/uploads/*
