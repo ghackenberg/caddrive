@@ -28,6 +28,7 @@
         "url": "https://github.com/ghackenberg/productboard.git"
     },
     "workspaces": [
+        "packages/codeaster",
         "packages/ldraw",
         "packages/common",
         "packages/database",

@@ -1,7 +1,7 @@
 {
-    "name": "productboard-ldraw",
+    "name": "productboard-codeaster",
     "version": "0.0.1",
-    "description": "LDraw library",
+    "description": "CodeAster library",
     "license": "UNLICENSED",
     "private": "true",
     "main": "src/main",
@@ -29,7 +29,7 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/ghackenberg/productboard.git",
-        "directory": "packages/ldraw"
+        "directory": "packages/codeaster"
     },
     "scripts": {
         "clean": "rm -rf bin",
