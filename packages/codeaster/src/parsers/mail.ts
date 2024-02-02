@@ -151,7 +151,7 @@ export function parseMail(data: string) {
 
         // Update iterator
 
-        iterator = next
+        iterator = next + 1
 
     }
 
