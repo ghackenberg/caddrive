@@ -34,7 +34,7 @@ def index():
 
     # Read LDR file and get table of lego parts as return
     lM = leoFeaModelDescription.leoFeaModelDescription()
-    tableLeoFeaModel = lM.readFileLDR(f"{OUTPUTS_DIR}/{JOB_NAME}.lib", f"{JOB_NAME}.ldr")
+    tableLeoFeaModel = lM.readFileLDR(f"{OUTPUTS_DIR}/{JOB_NAME}.lib", f"{OUTPUTS_DIR}/{JOB_NAME}.ldr")
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
     lGM = leoFeaGenerateModel.leoFeaGenerateModel(JOB_NAME)
@@ -94,7 +94,7 @@ def index():
 
 # Register app route
 @APP.post("/preprocess")
-def preprocess():
+def preprocess():                                                                                               #TBD: Ist Code-Vervielfachung gut?
 
     # Validate request
     if not "lib" in request.files:
@@ -108,7 +108,7 @@ def preprocess():
 
     # Read LDR file and get table of lego parts as return
     lM = leoFeaModelDescription.leoFeaModelDescription()
-    tableLeoFeaModel = lM.readFileLDR(f"{OUTPUTS_DIR}/{JOB_NAME}.lib", f"{JOB_NAME}.ldr")
+    tableLeoFeaModel = lM.readFileLDR(f"{OUTPUTS_DIR}/{JOB_NAME}.lib", f"{OUTPUTS_DIR}/{JOB_NAME}.ldr")
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
     lGM = leoFeaGenerateModel.leoFeaGenerateModel(JOB_NAME)

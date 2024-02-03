@@ -46,7 +46,7 @@ class leoFeaModelDescription():
 
         self.tableLeoFeaModel = []     # Initialize table for read LDR parts
 
-        fin = open(f"{OUTPUTS_DIR}/{self.fileNameLDR}", "r")
+        fin = open(self.fileNameLDR, "r")
         
         i = 0
 
