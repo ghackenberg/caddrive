@@ -12,8 +12,9 @@ from requests import post
 from requests_toolbelt import MultipartEncoder, MultipartDecoder
 
 from PyQt5 import QtWidgets, uic
+from PyQt5 import QtGui
 from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import *
 #from PyQt5.QtWidgets import QMessageBox, QTableWidget
 from PyQt5.QtWidgets import *
 
@@ -67,6 +68,8 @@ class myDialog(QtWidgets.QDialog):
         self.ui.button_SelectWorkdir.clicked.connect(self.onButton_SelectWorkdir)
         self.ui.button_LoadLDR.clicked.connect(self.onButton_LoadLDR)
         self.ui.button_startFEA.clicked.connect(self.onButton_startFEA)
+        self.ui.button_viewPNG.clicked.connect(self.onButton_viewPNG)
+        self.ui.button_openParaview.clicked.connect(self.onButton_openParaview)
         self.ui.button_checkLimitValues.clicked.connect(self.onButton_checkLimitValues)
 
         # Initialize Combobox
@@ -109,8 +112,53 @@ class myDialog(QtWidgets.QDialog):
         self.workdir = ret
         self.textbox_workdir.setText(ret)
 
+    def onButton_viewPNG(self):
+        # View Bitmap result
+        dialog = QtWidgets.QDialog()
+        lay = QtWidgets.QVBoxLayout(dialog)
+        label = QtWidgets.QLabel()
+        lay.addWidget(label)
+        pixmap = QtGui.QPixmap(f"{OUTPUTS_DIR}/{JOB_NAME}.png")
+        label.setPixmap(pixmap)
+        dialog.exec_()
+        
+
+    def onButton_openParaview(self):
+        
+        # Write postProcessParaviewFile
+        ftemp = open(PARAVIEW_RES_WIN, 'r') # Open template file
+
+        fnamePost = f'{OUTPUTS_DIR}/pv_{JOB_NAME}.py'     # Postprocessing file
+        fpost = open(fnamePost, 'w')
+
+        timeVisualization = 1           # TODO: adapt either end of simulation or user input
+
+        #Write information to postprocessing file
+        fpost.write(f"jobname = '{JOB_NAME}'\n")
+        fpost.write(f"filename = r'{OUTPUTS_DIR}/{JOB_NAME}'\n")
+        fpost.write(f"timeVisualization = {timeVisualization}\n")
+        fpost.write('\n')
+
+        # Append template file
+        for line in ftemp:
+            fpost.write(line)
+
+        ftemp.close()
+        fpost.close()
+
+        # Start Paraview
+
+        command = f"{PARAVIEW_CMD_WIN}{fnamePost} &"
+
+        print(command)
+        ret = os.system(command)
+        print(ret)
+        
+
 
     def onButton_checkLimitValues(self):
+        # TODO read results and check
+        QMessageBox.about(self, "ChecklimitValues", "Function not yet implemented")
         self.checkLimitValues()
 
     def loadLDR(self):
@@ -200,7 +248,7 @@ class myDialog(QtWidgets.QDialog):
                 "ldr": (f'{JOB_NAME}.ldr', open(self.textbox_FilenameLDR.text(), 'rb'), 'text/plain')
             }
         )
-        resA = post("http://leofea:5000/", data = reqDataA, 
+        resA = post("http://localhost:5000/", data = reqDataA, 
             headers = {
                 "Content-Type": reqDataA.content_type
             }   
@@ -208,14 +256,31 @@ class myDialog(QtWidgets.QDialog):
 
         # Check for errors
         if resA.status_code != 200:
+            QMessageBox.about(self, f"LeoFEA Error", "LeoFEA Error: {resA.status_code}")
             return "CodeAster error", 400
-
+        
         # Part multipart response
         resDataA = MultipartDecoder.from_response(resA)
 
         # Check for errors
         if len(resDataA.parts) != 3:
+            QMessageBox.about(self, f"LeoFEA Error", "LeoFEA Error: Less than 3 results returned")
             return "CodeAster error", 400
+        
+        # TODO Make robust against changes in order!
+        with open(f"{OUTPUTS_DIR}/{JOB_NAME}.resMinMax", "wb") as file:
+            file.write(resDataA.parts[0].content)
+        with open(f"{OUTPUTS_DIR}/{JOB_NAME}.png", "wb") as file:
+            file.write(resDataA.parts[1].content)
+        with open(f"{OUTPUTS_DIR}/{JOB_NAME}.rmed", "wb") as file:
+            file.write(resDataA.parts[2].content)
+        
+
+
+
+
+        
+        
 
         if 0: # TODO: Model adpations, postprocessing ....
             # Scale Gravity
@@ -275,11 +340,7 @@ class myDialog(QtWidgets.QDialog):
 
 
 
-
-            # Postprocess Paraview
-            if self.ui.checkBox_OpenParaview.isChecked():
-                lego.visualizeParaviewStatic()
-
+            # Postprocess 
             tEnd = timer()
 
             print(f"Total time of analysis: {tEnd-tStart:.2f}s\n")

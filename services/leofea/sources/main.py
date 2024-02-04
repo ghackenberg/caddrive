@@ -32,6 +32,7 @@ def index():
     request.files["ldr"].save(f"{OUTPUTS_DIR}/{JOB_NAME}.ldr")
     request.files["lib"].save(f"{OUTPUTS_DIR}/{JOB_NAME}.lib")
 
+    ######## PREPROCESSING
     # Read LDR file and get table of lego parts as return
     lM = leoFeaModelDescription.leoFeaModelDescription()
     tableLeoFeaModel = lM.readFileLDR(f"{OUTPUTS_DIR}/{JOB_NAME}.lib", f"{OUTPUTS_DIR}/{JOB_NAME}.ldr")
@@ -41,6 +42,7 @@ def index():
     lGM.buildLeoFeaModel(tableLeoFeaModel)
     lGM.writeInputFiles()
 
+    ######## SOLVER
     # Send mail and comm files to CodeAster and receive simulation results
     reqDataA = MultipartEncoder(
         fields = {
@@ -71,6 +73,8 @@ def index():
     with open(f"{OUTPUTS_DIR}/{JOB_NAME}.rmed", "wb") as file:
         file.write(resDataA.parts[2].content)
 
+
+    ######### POSTPROCESSING PARAVIEW
     # Send rmed file to ParaView and receive rendered image
     reqDataB = MultipartEncoder(
         fields = {
@@ -89,8 +93,29 @@ def index():
     with open(f"{OUTPUTS_DIR}/{JOB_NAME}.png", "wb") as file:
         file.write(resB.content)
 
+
+    ######### POSTPROCESSING text files
+    lP =  leoFeaPostProcess.leoFeaPostProcess(JOB_NAME)
+    lP.postProcessStatic()
+
+
+    # Return results files
+    m = MultipartEncoder(
+        fields = {
+            'resMinMax': (f'{JOB_NAME}.resMinMax.feather', open(f'{OUTPUTS_DIR}/{JOB_NAME}.resMinMax.feather', 'rb'), 'application/octet-stream'),
+            'png': (f'{JOB_NAME}.png', open(f'{OUTPUTS_DIR}/{JOB_NAME}.png', 'rb'), 'text/plain'),
+            'rmed': (f'{JOB_NAME}.rmed', open(f'{OUTPUTS_DIR}/{JOB_NAME}.rmed', 'rb'), 'text/plain')
+            #'comm': (f'{jobname}.comm', open(f'{OUTPUTS_DIR}/{JOB_NAME}.comm', 'rb'), 'text/plain')
+            # TODO simulation time
+            # TODO pd_DeplNoda if requested
+            # TODO pd_ForcNoda if requested
+        }
+    )
+
+    return Response(m.to_string(), mimetype = m.content_type)
+    
     # Return rendered image
-    return send_file(f"{OUTPUTS_DIR}/{JOB_NAME}.png")
+    #return send_file(f"{OUTPUTS_DIR}/{JOB_NAME}.png")
 
 # Register app route
 @APP.post("/preprocess")

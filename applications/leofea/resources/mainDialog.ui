@@ -164,21 +164,63 @@
      </property>
     </widget>
 
-
-	
-	<widget class="QPushButton" name="button_checkLimitValues">
+    <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
        <x>40</x>
        <y>670</y>
-       <width>271</width>
-       <height>71</height>
+       <width>90</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Postprocess</string>
+     </property>
+    </widget>
+	
+	<widget class="QPushButton" name="button_viewPNG">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>710</y>
+       <width>241</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>View PNG</string>
+     </property>
+    </widget>
+
+    <widget class="QPushButton" name="button_openParaview">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>750</y>
+       <width>241</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Open Paraview</string>
+     </property>
+    </widget>
+
+    <widget class="QPushButton" name="button_checkLimitValues">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>790</y>
+       <width>241</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
       <string>Check Limits</string>
      </property>
     </widget>
+
+
     <widget class="QPushButton" name="button_openLeoCAD">
      <property name="geometry">
       <rect>
@@ -192,6 +234,7 @@
       <string>Open LeoCAD</string>
      </property>
     </widget>
+    
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
@@ -205,6 +248,7 @@
       <string>Jobname</string>
      </property>
     </widget>
+    
     <widget class="QLineEdit" name="textbox_jobname">
      <property name="geometry">
       <rect>
@@ -377,22 +421,8 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QCheckBox" name="checkBox_OpenParaview">
-     <property name="geometry">
-      <rect>
-       <x>80</x>
-       <y>510</y>
-       <width>211</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Open Paraview</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
+
+
     <widget class="QTextEdit" name="textEdit_resultsMinForce">
      <property name="geometry">
       <rect>
