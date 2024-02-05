@@ -182,4 +182,4 @@ def postprocess():
     return Response(m.to_string(), mimetype = m.content_type)
 
 # Run app
-APP.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DBUG)
+APP.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)

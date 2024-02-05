@@ -1,26 +1,21 @@
 #! /usr/bin/python3
 
-
 # External dependencies
 import os
 import sys
 from timeit import default_timer as timer
 import platform
 
-from flask import Flask, request, Response, send_file
 from requests import post
 from requests_toolbelt import MultipartEncoder, MultipartDecoder
 
 from PyQt5 import QtWidgets, uic
 from PyQt5 import QtGui
-from PyQt5.QtCore import QAbstractTableModel, Qt, QModelIndex
 from PyQt5.QtGui import *
-#from PyQt5.QtWidgets import QMessageBox, QTableWidget
 from PyQt5.QtWidgets import *
 
 # Internal dependencies
 from config import *
-sys.path.append(f'{SOURCES_LEOFEA_DIR}')
 import leoFeaModelDescription
 
 # Ensure folder
@@ -36,7 +31,7 @@ class myDialog(QtWidgets.QDialog):
         self.tableLDR = []
 
         self.fileNameMainDialog = f"{RESOURCES_DIR}/mainDialog.ui"
-        self.fileNameIcon = "{RESOURCES_DIR}/iconLeoCAD1.png"
+        self.fileNameIcon = f"{RESOURCES_DIR}/iconLeoCAD1.png"
 
         self.resultsMinForce = [ 0, [0,0,0]]
         self.resultsMaxForce = [ 0, [0,0,0]]
@@ -47,11 +42,11 @@ class myDialog(QtWidgets.QDialog):
         if systemName == 'Linux':
             self.commandLeoCAD = f"{COMMAND_START_LEOCAD_LINUX}"
             self.workdir = f"{OUTPUTS_DIR}"                                                       
-            self.defaultLDRname = f"{LEOCADMODELS_DIR}/CADdrive.ldr"                          
+            self.defaultLDRname = f"{MODELS_DIR}/CADdrive.ldr"                          
         elif systemName == 'Windows':
             self.workdir = f"{OUTPUTS_DIR}"                                                                        
             self.commandLeoCAD = f"{COMMAND_START_LEOCAD_WIN}"                                                     
-            self.defaultLDRname = f"{LEOCADMODELS_DIR}/CADdrive.ldr"
+            self.defaultLDRname = f"{MODELS_DIR}/CADdrive.ldr"
         else:
             raise NameError('Only implemented for Linux and Windows')
 
@@ -97,7 +92,7 @@ class myDialog(QtWidgets.QDialog):
         self.loadLDR()
 
     def onButton_SelectLDR(self):
-        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', f"{LEOCADMODELS_DIR}")
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', f"{MODELS_DIR}")
         ldrFname = filename[0]
 
         if len(ldrFname)==0:
