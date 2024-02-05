@@ -18,8 +18,8 @@ __pycache__
 
 outputs
 
-packages/backend/assets/ldraw
-packages/backend/uploads/*
+packages/node/backend/assets/ldraw
+packages/node/backend/uploads/*
 
 manuscripts/*/*.aux
 manuscripts/*/*.bbl

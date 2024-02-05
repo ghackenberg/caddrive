@@ -98,6 +98,8 @@ The software provides the following scripts:
 Install third party dependencies as follows:
 
 ```bash
+cd <CADdrive>/packages/node
+
 npm install
 ```
 
@@ -106,6 +108,8 @@ npm install
 Start the software in development mode as follows:
 
 ```bash
+cd <CADdrive>/packages/node
+
 npm run dev
 ```
 
@@ -114,6 +118,8 @@ npm run dev
 Start the software in production mode as follows:
 
 ```bash
+cd <CADdrive>/packages/node
+
 npm run clean
 npm run build
 
