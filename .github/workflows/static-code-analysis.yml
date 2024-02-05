@@ -3,8 +3,12 @@ name: Static Code Analysis
 on:
   push:
     branches: [ master ]
+    paths:
+      - packages/node/**
   pull_request:
     branches: [ master ]
+    paths:
+      - packages/node/**
 
 jobs:
   build:
@@ -28,5 +32,5 @@ jobs:
         run: cd packages/node && npm install
       - name: Build sources
         run: cd packages/node && npm run build
-      # - name: Lint sources
-      #   run: cd packages/node && npm run lint
+      - name: Lint sources
+        run: cd packages/node && npm run lint
