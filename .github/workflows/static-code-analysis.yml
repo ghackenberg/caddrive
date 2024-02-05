@@ -25,8 +25,8 @@ jobs:
       - name: Update NPM
         run: npm install -g npm@latest
       - name: Install dependencies
-        run: npm install
+        run: cd packages/node && npm install
       - name: Build sources
-        run: npm run build
+        run: cd packages/node && npm run build
       # - name: Lint sources
-      #   run: npm run lint
+      #   run: cd packages/node && npm run lint
