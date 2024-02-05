@@ -154,12 +154,12 @@
 										{
 											"key": "ldr",
 											"type": "file",
-											"src": "fea/CADdrive.ldr"
+											"src": "leofea/CADdrive.ldr"
 										},
 										{
 											"key": "lib",
 											"type": "file",
-											"src": "fea/libLegoParts.lib"
+											"src": "leofea/libLegoParts.lib"
 										}
 									]
 								},
@@ -204,12 +204,12 @@
 										{
 											"key": "ldr",
 											"type": "file",
-											"src": "fea/CADdrive.ldr"
+											"src": "leofea/CADdrive.ldr"
 										},
 										{
 											"key": "lib",
 											"type": "file",
-											"src": "fea/libLegoParts.lib"
+											"src": "leofea/libLegoParts.lib"
 										}
 									]
 								},
@@ -254,12 +254,12 @@
 										{
 											"key": "resu",
 											"type": "file",
-											"src": "fea/caddrive.resu"
+											"src": "leofea/caddrive.resu"
 										},
 										{
 											"key": "message",
 											"type": "file",
-											"src": "fea/caddrive.message"
+											"src": "leofea/caddrive.message"
 										}
 									]
 								},
@@ -348,12 +348,12 @@
 										{
 											"key": "mail",
 											"type": "file",
-											"src": "fea/caddrive.mail"
+											"src": "leofea/caddrive.mail"
 										},
 										{
 											"key": "comm",
 											"type": "file",
-											"src": "fea/caddrive.comm"
+											"src": "leofea/caddrive.comm"
 										}
 									]
 								},
@@ -450,7 +450,7 @@
 										{
 											"key": "rmed",
 											"type": "file",
-											"src": "fea/caddrive.rmed"
+											"src": "leofea/caddrive.rmed"
 										}
 									]
 								},
