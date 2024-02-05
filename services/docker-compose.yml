@@ -19,20 +19,20 @@ services:
       - 5001:5000
 
   # openfoam-com:
-  #   build: ./openfoam-com
+  #   build: ./openfoam/com
   #   image: caddrive/openfoam-com:latest
   #   command: python -u main.py --debug
   #   volumes:
-  #     - ./openfoam-com:/root
+  #     - ./openfoam/com:/root
   #   ports:
   #     - 5002:5000
 
   # openfoam-org:
-  #   build: ./openfoam-org
+  #   build: ./openfoam/org
   #   image: caddrive/openfoam-org:latest
   #   command: python -u main.py --debug
   #   volumes:
-  #     - ./openfoam-org:/root
+  #     - ./openfoam/org:/root
   #   ports:
   #     - 5003:5000
 
