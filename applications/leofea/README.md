@@ -18,10 +18,8 @@ pip install -r requirements.txt
 
 Internal dependencies must be installed from the source directories.
 
-#### LeoFEA
-
 ```sh
-cd <CADdrive>/packages/leofea
+cd <CADdrive>/packages/python
 
 pip install -e .
 ```

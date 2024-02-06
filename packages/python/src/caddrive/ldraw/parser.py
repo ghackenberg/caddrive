@@ -7,31 +7,28 @@
 # 1. readFileLDR('libLegoParts.txt', 'mymodel.ldr')
 # 2. getStrTableLeoFeaModel() .... Human readable description of lego file
 
+# External dependencies
 import re
 
-class LDrawModel():
+# Internal dependencies
+from .const import LEN_LDU, NUM_LDU_X, NUM_LDU_Y, NUM_LDU_Z
+from .config import PART_LIB
 
-    # Length of an LDU
-    lenLDU = 0.4  #mm
-
-    # Length of basic segment
-    numLDUx = 20     # Number of LDUs in x-direction
-    numLDUy = 20     # in y-direction
-    numLDUz = 8      # in z-direction  (3 segments for "normal brick")
+class Parser():
     
     volume = 0
     numberSegments = 0
     price = 0
 
-    fileNameLib = ""
     fileNameLDR = ""
+
     tablePartLib = {}
-    tableLeoFeaModel = [] 
+    tableLeoFeaModel = []
+
     strTableLeoFeaModel = ""
     
-    def readFileLDR(self, fileNameLib, fileNameLDR):
+    def readFileLDR(self, fileNameLDR):
 
-        self.fileNameLib = fileNameLib
         self.fileNameLDR = fileNameLDR
 
         # Read Lib of parts
@@ -47,7 +44,7 @@ class LDrawModel():
         i = 0
 
         for line in fin:
-            x = re.split("\s", line)
+            x = re.split("\\s", line)
             #print(len(x))
 
             if len(x) == 16:
@@ -60,14 +57,11 @@ class LDrawModel():
 
                 dim = self.tablePartLib[datname]     # number of segments + part description + price
                 #print(dim)
-
-                # convert to physical coordinates (Code-Aster)
-                lenLDU = self.lenLDU    #0.4
                 
                 # Size of part
-                Lx = self.lenLDU *  self.numLDUx * dim[0]
-                Ly = self.lenLDU *  self.numLDUy * dim[1]
-                Lz = self.lenLDU *  self.numLDUz * dim[2]
+                Lx = LEN_LDU * NUM_LDU_X * dim[0]
+                Ly = LEN_LDU * NUM_LDU_Y * dim[1]
+                Lz = LEN_LDU * NUM_LDU_Z * dim[2]
                 partPrice = dim[4]
                 
                 # Volume and price
@@ -75,9 +69,9 @@ class LDrawModel():
                 self.numberSegments += dim[0] * dim[1] * dim[2]
                 self.price += partPrice
 
-                posx =  posxL * self.lenLDU - Lx / 2   # Code-Aster coordinates
-                posy =  poszL * self.lenLDU - Ly / 2
-                posz = -posyL * self.lenLDU - Lz
+                posx =  posxL * LEN_LDU - Lx / 2   # Code-Aster coordinates
+                posy =  poszL * LEN_LDU - Ly / 2
+                posz = -posyL * LEN_LDU - Lz
 
                 #print([i, datname, dim[0], dim[1], dim[2], dim[3], posx, posy, posz])
                 self.tableLeoFeaModel.append([i, datname, dim[0], dim[1], dim[2], dim[3], posx, posy, posz])
@@ -120,14 +114,14 @@ class LDrawModel():
 
         self.partLibTable = {}            # reset before reading
         
-        fin = open(self.fileNameLib, "r")
+        content = PART_LIB.read_text()
         
-        
-        for line in fin:
+        for line in content.splitlines():
             
-            x = re.split("\s+", line)
+            x = re.split("\\s+", line)
                         
             partnameDat = x[0]
+            
             if partnameDat:   # If string not empty
                 
                 dimx = int(x[1])    # number of segments in x direction
@@ -137,10 +131,5 @@ class LDrawModel():
                 price = float(x[5])
                 
                 self.tablePartLib[partnameDat] = [dimx, dimy, dimz, partnameLego, price]
-        fin.close()
 
         #print(self.tablePartLib)
-
-    
-
-
