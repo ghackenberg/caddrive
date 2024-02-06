@@ -25,7 +25,7 @@ def render():
     timeVisualization = 1
 
     # Open template file
-    fTemplate = open(PARAVIEW_RES, 'r')
+    fTemplate = PARAVIEW_RES.read_text()
 
     # Define job filename
     fNameJob = f'{OUTPUTS_DIR}/{JOB_NAME}.py'
@@ -40,7 +40,7 @@ def render():
     fJob.write('\n')
 
     # Append template file
-    for line in fTemplate:
+    for line in fTemplate.splitlines():
         fJob.write(line)
 
     # Close template file

@@ -3,30 +3,27 @@ FROM python:3.9.18
 # Change user
 USER root
 
-# Update packages
-RUN apt-get update
 # Upgrade packages
+RUN apt-get update
 RUN apt-get upgrade -y
 
-# Make directory
+# Install CADdrive Python SDK
+RUN mkdir /sdk
+
+COPY --from=sdk * /sdk
+WORKDIR /sdk
+RUN pip install -e .
+
+# Install CADdrive LeoFEA Service
 RUN mkdir /app
 
-# Copy requirements
 COPY requirements.txt /app
-
-# Change workdir
 WORKDIR /app
-# Install requirements
 RUN pip install -r requirements.txt
 
-# Copy sources
-COPY sources /app
-# Copy resources
-COPY resources /app
+COPY src /app
 
-# Change workdir
-WORKDIR /app/sources
-# Expose port
+# Run CADdrive LeoFEA Service
+WORKDIR /app/src
 EXPOSE 5000/tcp
-# Run application
 CMD python -u main.py

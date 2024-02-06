@@ -1,47 +1,59 @@
 services:
      
   leofea:
-    build: ./leofea
+    build:
+      context: ./services/leofea
+      additional_contexts:
+        - sdk=./packages/python
     image: caddrive/leofea:latest
     command: python -u main.py --debug
     volumes:
-      - ./leofea:/app
+      - ./services/leofea:/app
+      - ./packages/python:/sdk
     ports:
       - 5000:5000
 
   codeaster:
-    build: ./codeaster
+    build:
+      context: ./services/codeaster
+      additional_contexts:
+        - sdk=./packages/python
     image: caddrive/codeaster:latest
     command: python -u main.py --debug
     volumes:
-      - ./codeaster:/app
+      - ./services/codeaster:/app
+      - ./packages/python:/sdk
     ports:
       - 5001:5000
 
   # openfoam-com:
-  #   build: ./openfoam/com
+  #   build: ./services/openfoam/com
   #   image: caddrive/openfoam-com:latest
   #   command: python -u main.py --debug
   #   volumes:
-  #     - ./openfoam/com:/root
+  #     - ./services/openfoam/com:/root
   #   ports:
   #     - 5002:5000
 
   # openfoam-org:
-  #   build: ./openfoam/org
+  #   build: ./services/openfoam/org
   #   image: caddrive/openfoam-org:latest
   #   command: python -u main.py --debug
   #   volumes:
-  #     - ./openfoam/org:/root
+  #     - ./services/openfoam/org:/root
   #   ports:
   #     - 5003:5000
 
   paraview:
-    build: ./paraview
+    build:
+      context: ./services/paraview
+      additional_contexts:
+        - sdk=./packages/python
     image: caddrive/paraview:latest
     command: python -u main.py --debug
     volumes:
-      - ./paraview:/app
+      - ./services/paraview:/app
+      - ./packages/python:/sdk
     ports:
       - 5004:5000
       

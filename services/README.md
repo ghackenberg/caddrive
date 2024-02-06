@@ -2,16 +2,6 @@
 
 This folder contains additional services required by the CADdrive platform such as **CodeAster** for finite element analysis (FEA), **OpenFOAM** for computational fluid dynamics (CFD), and **ParaView** for visualization of simulation results.
 
-## Scripts
-
-To run the services in development mode:
-
-```sh
-cd <CADdrive>/services
-
-docker-compose up
-```
-
 ## Services
 
 The following diagram provides an overview of the services included in CADdrive.
