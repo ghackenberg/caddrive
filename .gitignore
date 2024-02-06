@@ -16,6 +16,8 @@ database.sqlite
 
 __pycache__
 
+*.egg-info
+
 outputs
 
 packages/node/backend/assets/ldraw

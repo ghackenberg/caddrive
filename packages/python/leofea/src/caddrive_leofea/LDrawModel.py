@@ -9,9 +9,7 @@
 
 import re
 
-from config import *
-
-class leoFeaModelDescription():
+class LDrawModel():
 
     # Length of an LDU
     lenLDU = 0.4  #mm
@@ -31,8 +29,6 @@ class leoFeaModelDescription():
     tableLeoFeaModel = [] 
     strTableLeoFeaModel = ""
     
-
-    ##################################### Read LDR File and return a table
     def readFileLDR(self, fileNameLib, fileNameLDR):
 
         self.fileNameLib = fileNameLib
@@ -90,23 +86,26 @@ class leoFeaModelDescription():
 
         fin.close()
         
-        return(self.tableLeoFeaModel)
+        # Return model
+        return self.tableLeoFeaModel
     
-    ########################################################################################
-    def getStrTableLeoFeaModel(self):
+    def getStrTableLeoFeaModel(self, fileNameTbl):
 
+        self.fileNameTbl = fileNameTbl
+
+        # Build string
         self.strTableLeoFeaModel = "PartID, DatFile, lenx, leny, lenz, name, posx, posy, posz         #lenx, leny,lenz ... number of basic LDU\n"
         for line in self.tableLeoFeaModel:
             self.strTableLeoFeaModel += f"{line}\n"
 
-        fid = open(f'{OUTPUTS_DIR}/tableLeoFeaModel.txt', 'w')
+        # Write string
+        fid = open(self.fileNameTbl, 'w')
         fid.write(self.strTableLeoFeaModel)
         fid.close()
 
-        return(self.strTableLeoFeaModel)
-
-
-    ########################################################################################
+        # Return string
+        return self.strTableLeoFeaModel
+    
     def _readPartLib(self):
 
         # Reads the library for Lego parts from file, e.g. f'{RESOURCESDIR}/libLegoParts.txt'

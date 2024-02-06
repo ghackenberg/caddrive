@@ -15,8 +15,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 # Internal dependencies
+from caddrive_leofea import LDrawModel
+
 from config import *
-import leoFeaModelDescription
 
 # Ensure folder
 if not os.path.exists(OUTPUTS_DIR): os.makedirs(OUTPUTS_DIR)
@@ -30,23 +31,23 @@ class myDialog(QtWidgets.QDialog):
 
         self.tableLDR = []
 
-        self.fileNameMainDialog = f"{RESOURCES_DIR}/mainDialog.ui"
-        self.fileNameIcon = f"{RESOURCES_DIR}/iconLeoCAD1.png"
+        self.fileNameMainDialog = os.path.join(RESOURCES_DIR, "mainDialog.ui")
+        self.fileNameIcon = os.path.join(RESOURCES_DIR, "iconLeoCAD1.png")
 
-        self.resultsMinForce = [ 0, [0,0,0]]
-        self.resultsMaxForce = [ 0, [0,0,0]]
-        self.resultsMinDispl = [ 0, [0,0,0]]
-        self.resultsMaxDispl = [ 0, [0,0,0]]
+        self.resultsMinForce = [0, [0,0,0]]
+        self.resultsMaxForce = [0, [0,0,0]]
+        self.resultsMinDispl = [0, [0,0,0]]
+        self.resultsMaxDispl = [0, [0,0,0]]
 
         systemName = platform.system()
         if systemName == 'Linux':
-            self.commandLeoCAD = f"{COMMAND_START_LEOCAD_LINUX}"
-            self.workdir = f"{OUTPUTS_DIR}"                                                       
-            self.defaultLDRname = f"{MODELS_DIR}/CADdrive.ldr"                          
+            self.workdir = OUTPUTS_DIR
+            self.commandLeoCAD = COMMAND_START_LEOCAD_LINUX                                  
+            self.defaultLDRname = os.path.abspath(os.path.join(MODELS_DIR, "CADdrive.ldr"))
         elif systemName == 'Windows':
-            self.workdir = f"{OUTPUTS_DIR}"                                                                        
-            self.commandLeoCAD = f"{COMMAND_START_LEOCAD_WIN}"                                                     
-            self.defaultLDRname = f"{MODELS_DIR}/CADdrive.ldr"
+            self.workdir = OUTPUTS_DIR                    
+            self.commandLeoCAD = COMMAND_START_LEOCAD_WIN                        
+            self.defaultLDRname = os.path.abspath(os.path.join(MODELS_DIR, "CADdrive.ldr"))
         else:
             raise NameError('Only implemented for Linux and Windows')
 
@@ -83,8 +84,6 @@ class myDialog(QtWidgets.QDialog):
         self.ui.textbox_maxForce.setText(str(0.1 * loadScale))
         self.ui.textbox_maxDisplacement.setText(str(0.001 * loadScale))
 
-
-
     def onButton_openLeoCAD(self):
         os.system(self.commandLeoCAD)           # TODO a ldr file in Leocad (send request to LeoCAD)
 
@@ -92,7 +91,7 @@ class myDialog(QtWidgets.QDialog):
         self.loadLDR()
 
     def onButton_SelectLDR(self):
-        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', f"{MODELS_DIR}")
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', MODELS_DIR)
         ldrFname = filename[0]
 
         if len(ldrFname)==0:
@@ -113,17 +112,16 @@ class myDialog(QtWidgets.QDialog):
         lay = QtWidgets.QVBoxLayout(dialog)
         label = QtWidgets.QLabel()
         lay.addWidget(label)
-        pixmap = QtGui.QPixmap(f"{OUTPUTS_DIR}/{JOB_NAME}.png")
+        pixmap = QtGui.QPixmap(os.path.join(OUTPUTS_DIR, f"{JOB_NAME}.png"))
         label.setPixmap(pixmap)
         dialog.exec_()
-        
 
     def onButton_openParaview(self):
         
         # Write postProcessParaviewFile
         ftemp = open(PARAVIEW_RES_WIN, 'r') # Open template file
 
-        fnamePost = f'{OUTPUTS_DIR}/pv_{JOB_NAME}.py'     # Postprocessing file
+        fnamePost = os.path.join(OUTPUTS_DIR, f'pv_{JOB_NAME}.py')     # Postprocessing file
         fpost = open(fnamePost, 'w')
 
         timeVisualization = 1           # TODO: adapt either end of simulation or user input
@@ -143,13 +141,11 @@ class myDialog(QtWidgets.QDialog):
 
         # Start Paraview
 
-        command = f"{PARAVIEW_CMD_WIN}{fnamePost} &"
+        command = f"{PARAVIEW_CMD_WIN} {fnamePost} &"
 
         print(command)
         ret = os.system(command)
         print(ret)
-        
-
 
     def onButton_checkLimitValues(self):
         # TODO read results and check
@@ -158,8 +154,8 @@ class myDialog(QtWidgets.QDialog):
 
     def loadLDR(self):
         # Print information as table
-        lD = leoFeaModelDescription.leoFeaModelDescription()
-        self.tableLDR = lD.readFileLDR(FILENAME_LIB_LDR, self.textbox_FilenameLDR.text() )
+        lD = LDrawModel()
+        self.tableLDR = lD.readFileLDR(FILENAME_LIB_LDR, self.textbox_FilenameLDR.text())
 
         #print(self.tableLDR)
 
@@ -197,7 +193,6 @@ class myDialog(QtWidgets.QDialog):
             row+=1
 
         self.ui.tableWidgetLDR.resizeColumnsToContents()
-
 
         # Display mass
         #rho = 1.04e-09 * 0.6
@@ -263,20 +258,13 @@ class myDialog(QtWidgets.QDialog):
             return "CodeAster error", 400
         
         # TODO Make robust against changes in order!
-        with open(f"{OUTPUTS_DIR}/{JOB_NAME}.resMinMax", "wb") as file:
+        with open(os.path.join(OUTPUTS_DIR, f"{JOB_NAME}.resMinMax"), "wb") as file:
             file.write(resDataA.parts[0].content)
-        with open(f"{OUTPUTS_DIR}/{JOB_NAME}.png", "wb") as file:
+        with open(os.path.join(OUTPUTS_DIR, f"{JOB_NAME}.png"), "wb") as file:
             file.write(resDataA.parts[1].content)
-        with open(f"{OUTPUTS_DIR}/{JOB_NAME}.rmed", "wb") as file:
+        with open(os.path.join(OUTPUTS_DIR, f"{JOB_NAME}.rmed"), "wb") as file:
             file.write(resDataA.parts[2].content)
         
-
-
-
-
-        
-        
-
         if 0: # TODO: Model adpations, postprocessing ....
             # Scale Gravity
             lego.gravityScale = float(self.ui.textbox_gravityScale.text())                        # TODO
@@ -332,9 +320,7 @@ class myDialog(QtWidgets.QDialog):
             except:
                 QMessageBox.about(self, "Simulation Error", "Seemingly, some bricks are not fixed")
                 return
-
-
-
+            
             # Postprocess 
             tEnd = timer()
 
@@ -389,6 +375,8 @@ class myDialog(QtWidgets.QDialog):
 
 # Start app
 app = QtWidgets.QApplication(sys.argv)
+
 dialog = myDialog()
 dialog.show()
+
 sys.exit(app.exec_())
