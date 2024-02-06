@@ -6,7 +6,7 @@ from requests_toolbelt import MultipartEncoder
 from config import *
 
 # Ensure folder
-if not os.path.exists(OUTPUTS_DIR): os.makedirs(OUTPUTS_DIR)
+if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
 
 # Create app
 APP = Flask(__name__)
@@ -23,12 +23,12 @@ def simulate():
 
     # Step 2: Save request files to disk
     
-    request.files["mail"].save(f"{OUTPUTS_DIR}/{JOB_NAME}.mail")
-    request.files["comm"].save(f"{OUTPUTS_DIR}/{JOB_NAME}.comm")
+    request.files["mail"].save(f"{OUT_DIR}/{JOB_NAME}.mail")
+    request.files["comm"].save(f"{OUT_DIR}/{JOB_NAME}.comm")
 
     # Step 3: Run job an return multipart response
     
-    return runJob(OUTPUTS_DIR, JOB_NAME)
+    return runJob(OUT_DIR, JOB_NAME)
 
 def runJob(outputsDir: str, jobName: str):
 

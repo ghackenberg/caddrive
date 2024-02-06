@@ -7,23 +7,26 @@ USER root
 RUN apt-get update
 RUN apt-get upgrade -y
 
-# Install CADdrive Python SDK
-RUN mkdir /sdk
-
-COPY --from=sdk * /sdk
-WORKDIR /sdk
-RUN pip install -e .
-
-# Install CADdrive LeoFEA Service
+# Make directories
 RUN mkdir /app
+RUN mkdir /app/sdk
+RUN mkdir /out
 
+# Install APP requirements
 COPY requirements.txt /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 
-COPY src /app
+# Install SDK dependencies
+COPY --from=sdk pyproject.toml /app/sdk
+WORKDIR /app/sdk
+RUN pip install -e .
 
-# Run CADdrive LeoFEA Service
-WORKDIR /app/src
+# Install APP + SDK sources
+COPY src /app
+COPY --from=sdk src /app/sdk
+
+# Run APP
 EXPOSE 5000/tcp
-CMD python -u main.py
+WORKDIR /app
+CMD python -u src/main.py

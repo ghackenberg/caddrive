@@ -16,11 +16,11 @@ from PyQt5.QtWidgets import *
 
 import caddrive
 
-from config import RESOURCES, MODELS_DIR, OUTPUTS_DIR, JOB_NAME
+from config import RESOURCES, EXAMPLES_DIR, OUT_DIR, JOB_NAME
 
 # Ensure folder
 
-if not os.path.exists(OUTPUTS_DIR): os.makedirs(OUTPUTS_DIR)
+if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
 
 # Class declaration
 
@@ -39,9 +39,9 @@ class LeoFEAGUI(QtWidgets.QDialog):
         self.resultsMinDispl = [0, [0,0,0]]
         self.resultsMaxDispl = [0, [0,0,0]]
 
-        self.workdir = os.path.abspath(OUTPUTS_DIR)
+        self.workdir = os.path.abspath(OUT_DIR)
 
-        self.defaultLDrawModelName = os.path.abspath(os.path.join(MODELS_DIR, "CADdrive.ldr"))
+        self.defaultLDrawModelName = os.path.abspath(os.path.join(EXAMPLES_DIR, "CADdrive.ldr"))
 
         self.initUI()
 
@@ -92,7 +92,7 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
     def onButton_selectLDrawModel(self):
 
-        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', MODELS_DIR)
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', EXAMPLES_DIR)
         ldrFname = filename[0]
 
         if len(ldrFname)==0:
@@ -127,7 +127,7 @@ class LeoFEAGUI(QtWidgets.QDialog):
             self.ui.textEdit_resultsMinDisplacement_p.setText('')
             self.ui.textEdit_resultsMaxDisplacement_p.setText('')
 
-            caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), OUTPUTS_DIR, JOB_NAME)
+            caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), OUT_DIR, JOB_NAME)
             
         except Exception as e:
 
@@ -138,7 +138,7 @@ class LeoFEAGUI(QtWidgets.QDialog):
         # View Bitmap result
         dialog = QtWidgets.QDialog()
 
-        pixmap = QtGui.QPixmap(os.path.join(OUTPUTS_DIR, f"{JOB_NAME}.png"))
+        pixmap = QtGui.QPixmap(os.path.join(OUT_DIR, f"{JOB_NAME}.png"))
 
         label = QtWidgets.QLabel()
         label.setPixmap(pixmap)
@@ -163,8 +163,8 @@ class LeoFEAGUI(QtWidgets.QDialog):
     def _loadLDR(self):
 
         # Print information as table
-        lD = caddrive.ldraw.Parser()
-        self.tableLDR = lD.readFileLDR(self.textbox_FilenameLDR.text())
+        parser = caddrive.ldraw.Parser()
+        self.tableLDR = parser.readFileLDR(self.textbox_FilenameLDR.text())
 
         #print(self.tableLDR)
 
@@ -206,14 +206,14 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
         # Display mass
         rho = 4.8e-10
-        mass = rho * lD.volume * 1e6    #g
+        mass = rho * parser.volume * 1e6    #g
 
         self.ui.textbox_mass.setText(f"{mass:0.1f}")
 
         #self.ui.textbox_numberBricks.setText(f"{len(self.tableLDR)}")   # Number of bricks
-        self.ui.textbox_numberBricks.setText(f"{lD.numberSegments}")     # Number of segments
+        self.ui.textbox_numberBricks.setText(f"{parser.numberSegments}")     # Number of segments
 
-        self.ui.textbox_costs.setText(f"{lD.price}")
+        self.ui.textbox_costs.setText(f"{parser.price}")
 
 # Start app
 

@@ -145,14 +145,14 @@ class PreProcessor():
         for i in self.listLias:
             print(i)
 
-    def _addPart(self, partName, nSegx, nSegy, nSegz, posx, posy, posz):
+    def _addPart(self, partName: str, nSegx: int, nSegy: int, nSegz: int, posx: float, posy: float, posz: float):
 
         pid = self.numParts
         self.parts.append(Part(partName, pid, nSegx, nSegy, nSegz, posx, posy, posz))
         self.numParts += 1
         return(pid)
     
-    def _addBC(self, partId):
+    def _addBC(self, partId: int):
         # a boundary condition can only be applied on the bottom of a lego part
         # all DOFs are fixed (ux, uy, uz)
 

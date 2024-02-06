@@ -6,10 +6,11 @@ services:
       additional_contexts:
         - sdk=./packages/python
     image: caddrive/leofea:latest
-    command: python -u main.py --debug
+    command: python -u src/main.py --debug
     volumes:
-      - ./services/leofea:/app
-      - ./packages/python:/sdk
+      - ./services/leofea/src:/app/src
+      - ./packages/python/src:/app/sdk/src
+      - ./services/leofea/out:/out
     ports:
       - 5000:5000
 
@@ -19,28 +20,39 @@ services:
       additional_contexts:
         - sdk=./packages/python
     image: caddrive/codeaster:latest
-    command: python -u main.py --debug
+    command: python -u src/main.py --debug
     volumes:
-      - ./services/codeaster:/app
-      - ./packages/python:/sdk
+      - ./services/codeaster/src:/app/src
+      - ./packages/python/src:/app/sdk/src
+      - ./services/codeaster/out:/out
     ports:
       - 5001:5000
 
   # openfoam-com:
-  #   build: ./services/openfoam/com
+  #   build:
+  #     context: ./services/openfoam/com
+  #     additional_contexts:
+  #       - sdk=./packages/python
   #   image: caddrive/openfoam-com:latest
-  #   command: python -u main.py --debug
+  #   command: python -u src/main.py --debug
   #   volumes:
-  #     - ./services/openfoam/com:/root
+  #     - ./services/openfoam/com/src:/app/src
+  #     - ./packages/python/src:/app/sdk/src
+  #     - ./services/openfoam/com/out:/out
   #   ports:
   #     - 5002:5000
 
   # openfoam-org:
-  #   build: ./services/openfoam/org
+  #   build:
+  #     context: ./services/openfoam/org
+  #     additional_contexts:
+  #       - sdk=./packages/python
   #   image: caddrive/openfoam-org:latest
-  #   command: python -u main.py --debug
+  #   command: python -u src/main.py --debug
   #   volumes:
-  #     - ./services/openfoam/org:/root
+  #     - ./services/openfoam/org/src:/app/src
+  #     - ./packages/python/src:/app/sdk/src
+  #     - ./services/openfoam/org/out:/out
   #   ports:
   #     - 5003:5000
 
@@ -50,10 +62,11 @@ services:
       additional_contexts:
         - sdk=./packages/python
     image: caddrive/paraview:latest
-    command: python -u main.py --debug
+    command: python -u src/main.py --debug
     volumes:
-      - ./services/paraview:/app
-      - ./packages/python:/sdk
+      - ./services/paraview/src:/app/src
+      - ./packages/python/src:/app/sdk/src
+      - ./services/paraview/out:/out
     ports:
       - 5004:5000
       

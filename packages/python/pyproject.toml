@@ -8,10 +8,10 @@ build-backend = "setuptools.build_meta"
 name = "caddrive"
 version = "0.0.1"
 dependencies = [
+  "feather-format",
   "numpy",
   "pandas",
-  "requests-toolbelt",
-  "scipy"
+  "requests-toolbelt"
 ]
 requires-python = ">= 3.9"
 authors = [

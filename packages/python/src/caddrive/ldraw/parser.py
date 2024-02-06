@@ -27,7 +27,7 @@ class Parser():
 
     strTableLeoFeaModel = ""
     
-    def readFileLDR(self, fileNameLDR):
+    def readFileLDR(self, fileNameLDR: str):
 
         self.fileNameLDR = fileNameLDR
 

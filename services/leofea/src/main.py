@@ -11,7 +11,7 @@ import caddrive
 from config import *
     
 # Ensure folder
-if not os.path.exists(OUTPUTS_DIR): os.makedirs(OUTPUTS_DIR)
+if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
 
 # Create app
 APP = Flask(__name__)
@@ -33,7 +33,7 @@ def index():
     tableLeoFeaModel = parser.readFileLDR(FILE_LDR)
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
-    preProcessor = caddrive.simulation.leofea.PreProcessor(OUTPUTS_DIR, JOB_NAME)
+    preProcessor = caddrive.simulation.leofea.PreProcessor(OUT_DIR, JOB_NAME)
     preProcessor.buildLeoFeaModel(tableLeoFeaModel)
     preProcessor.writeInputFiles()
 
@@ -83,11 +83,11 @@ def index():
         return "ParaView error", 400
 
     # Save parts to output folder
-    with open(f"{OUTPUTS_DIR}/{JOB_NAME}.png", "wb") as file:
+    with open(f"{OUT_DIR}/{JOB_NAME}.png", "wb") as file:
         file.write(resB.content)
 
     # Postprocess the output files
-    postProcessor =  caddrive.simulation.leofea.PostProcessor(OUTPUTS_DIR, JOB_NAME)
+    postProcessor =  caddrive.simulation.leofea.PostProcessor(OUT_DIR, JOB_NAME)
     postProcessor.postProcessStatic()
 
     # Return results files
@@ -124,9 +124,9 @@ def preprocess():
     tableLeoFeaModel = parser.readFileLDR(FILE_LDR)
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
-    lGM = caddrive.simulation.leofea.PreProcessor(OUTPUTS_DIR, JOB_NAME)
-    lGM.buildLeoFeaModel(tableLeoFeaModel)
-    lGM.writeInputFiles()
+    preProcessor = caddrive.simulation.leofea.PreProcessor(OUT_DIR, JOB_NAME)
+    preProcessor.buildLeoFeaModel(tableLeoFeaModel)
+    preProcessor.writeInputFiles()
 
     # Return comm and mail file
     m = MultipartEncoder(
@@ -153,8 +153,8 @@ def postprocess():
     request.files["message"].save(FILE_MESSAGE)
 
     # Postprocessing
-    lP =  caddrive.simulation.leofea.PostProcessor(OUTPUTS_DIR, JOB_NAME)
-    lP.postProcessStatic()
+    postProcessor =  caddrive.simulation.leofea.PostProcessor(OUT_DIR, JOB_NAME)
+    postProcessor.postProcessStatic()
 
     # Return results files
     m = MultipartEncoder(

@@ -151,7 +151,7 @@ class PostProcessor():
 
         print(self.pd_ForcNoda)
 
-    def _separateStringDataPandas(self, dataLineNew):
+    def _separateStringDataPandas(self, dataLineNew: str):
 
         lineSep = re.split("\\s+", dataLineNew)    # Separate date in substrings
                     
@@ -217,7 +217,7 @@ class PostProcessor():
 
         print("File read")
     
-    def _extractSimulationTime(self, line):
+    def _extractSimulationTime(self, line: str):
          
         x = re.split("\\s+",line)              #* TOTAL_JOB                :       0.82 :       0.34 :       1.16 :       1.21 *
 

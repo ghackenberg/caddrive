@@ -3,32 +3,31 @@ FROM opencfd/openfoam-run
 # Change user
 USER root
 
-# Update packages
+# Upgrade and install packages
 RUN apt-get update
-# Upgrade packages
 RUN apt-get upgrade -y
-# Install packages
 RUN apt-get install python3-pip -y
 
-# Make directory
+# Make directories
 RUN mkdir /app
+RUN mkdir /app/sdk
+RUN mkdir /out
 
-# Copy requirements
+# Install APP requirements
 COPY requirements.txt /app
-
-# Change workdir
 WORKDIR /app
-# Install requirements
 RUN pip install -r requirements.txt
 
-# Copy sources
-COPY sources /app
-# Copy resources
-COPY resources /app
+# Install SDK dependencies
+COPY --from=sdk pyproject.toml /app/sdk
+WORKDIR /app/sdk
+RUN pip install -e .
 
-# Change workdir
-WORKDIR /app/sources
-# Expose port
+# Install APP + SDK sources
+COPY src /app
+COPY --from=sdk src /app/sdk
+
+# Run APP
 EXPOSE 5000/tcp
-# Run application
-CMD python3 -u main.py
+WORKDIR /app
+CMD python -u src/main.py

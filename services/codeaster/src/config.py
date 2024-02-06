@@ -1,12 +1,12 @@
+import os
 import sys
-import os.path
 
 FLASK_HOST = "0.0.0.0"
 FLASK_PORT = 5000
 FLASK_DEBUG = sys.argv.count("--debug") > 0
 
-SOURCES_DIR = os.path.dirname(__file__)
-OUTPUTS_DIR = os.path.join(SOURCES_DIR, "..", "outputs")
+SRC_DIR = os.path.dirname(__file__)
+OUT_DIR = os.path.join(os.sep, "out")
 
 CODEASTER_CMD = "as_run"
 

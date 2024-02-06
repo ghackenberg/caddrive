@@ -5,7 +5,7 @@ from flask import Flask, request, send_file
 from config import *
     
 # Ensure folder
-if not os.path.exists(OUTPUTS_DIR): os.makedirs(OUTPUTS_DIR)
+if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
 
 # Create app
 APP = Flask(__name__)
@@ -19,7 +19,7 @@ def render():
         return "Rmed file is missing!", 400
 
     # Save rmed file
-    request.files["rmed"].save(f"{OUTPUTS_DIR}/{JOB_NAME}.rmed")
+    request.files["rmed"].save(f"{OUT_DIR}/{JOB_NAME}.rmed")
     
     # Define visualization timepoint
     timeVisualization = 1
@@ -28,14 +28,14 @@ def render():
     fTemplate = PARAVIEW_RES.read_text()
 
     # Define job filename
-    fNameJob = f'{OUTPUTS_DIR}/{JOB_NAME}.py'
+    fNameJob = f'{OUT_DIR}/{JOB_NAME}.py'
     
     # Open job file
     fJob = open(fNameJob, 'w')
 
     #Write information to postprocessing file
     fJob.write(f"jobname = '{JOB_NAME}'\n")
-    fJob.write(f"filename = r'{OUTPUTS_DIR}/{JOB_NAME}'\n")
+    fJob.write(f"filename = r'{OUT_DIR}/{JOB_NAME}'\n")
     fJob.write(f"timeVisualization = {timeVisualization}\n")
     fJob.write('\n')
 
@@ -65,7 +65,7 @@ def render():
     if ret:
         return "ParaView error", 400
     else:
-        return send_file(f'{OUTPUTS_DIR}/{JOB_NAME}.png', 'image/png')
+        return send_file(f'{OUT_DIR}/{JOB_NAME}.png', 'image/png')
 
 # Run app
 APP.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DBUG)

@@ -33,7 +33,7 @@ class Part():
 
     partId = 0   # Part ID
 
-    def __init__(self, partName, partId, nSegx, nSegy, nSegz, posx, posy, posz):
+    def __init__(self, partName: str, partId: int, nSegx: int, nSegy: int, nSegz: int, posx: float, posy: float, posz: float):
         self.partId = partId
         self.partName = partName
         self.nSegx = nSegx
@@ -282,9 +282,7 @@ class Part():
 
                     elid = elid + 1
 
-
-
-    def translate(self,ux,uy,uz):
+    def translate(self, ux: float, uy: float, uz: float):
 
         # Translation part position
         self.posx += ux
@@ -311,6 +309,7 @@ class Part():
         self.nubbotz += uz
 
 
-    def rotate(self, phi1, phi2, phi3):
-        # TBD
-        x = 0
+    def rotate(self, phi1: float, phi2: float, phi3: float):
+
+        # TODO implement rotation!
+        pass

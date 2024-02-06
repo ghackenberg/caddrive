@@ -34,4 +34,4 @@ def simulate():
     return "OK"
 
 # Run app
-APP.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DBUG)
+APP.run(host=FLASK_HOST, port=FLASK_PORT, debug=FLASK_DEBUG)

@@ -4,9 +4,10 @@ from importlib.resources import files
 
 RESOURCES = files("resources")
 
-SOURCES_DIR = os.path.dirname(__file__)
+SRC_DIR = os.path.dirname(__file__)
 
-OUTPUTS_DIR = os.path.join(SOURCES_DIR, "..", "outputs")
-MODELS_DIR = os.path.join(SOURCES_DIR, "..", "models")
+OUT_DIR = os.path.join(SRC_DIR, "..", "out")
+
+EXAMPLES_DIR = os.path.join(SRC_DIR, "..", "..", "..", "examples")
 
 JOB_NAME = "job"
