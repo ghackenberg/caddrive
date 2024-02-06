@@ -9,7 +9,7 @@ services:
     command: python -u src/main.py --debug
     volumes:
       - ./services/leofea/src:/app/src
-      - ./packages/python/src:/app/sdk/src
+      - ./packages/python/src/caddrive:/app/sdk/src/caddrive
       - ./services/leofea/out:/out
     ports:
       - 5000:5000
@@ -23,7 +23,7 @@ services:
     command: python -u src/main.py --debug
     volumes:
       - ./services/codeaster/src:/app/src
-      - ./packages/python/src:/app/sdk/src
+      - ./packages/python/src/caddrive:/app/sdk/src/caddrive
       - ./services/codeaster/out:/out
     ports:
       - 5001:5000
@@ -37,7 +37,7 @@ services:
   #   command: python -u src/main.py --debug
   #   volumes:
   #     - ./services/openfoam/com/src:/app/src
-  #     - ./packages/python/src:/app/sdk/src
+  #     - ./packages/python/src/caddrive:/app/sdk/src/caddrive
   #     - ./services/openfoam/com/out:/out
   #   ports:
   #     - 5002:5000
@@ -51,7 +51,7 @@ services:
   #   command: python -u src/main.py --debug
   #   volumes:
   #     - ./services/openfoam/org/src:/app/src
-  #     - ./packages/python/src:/app/sdk/src
+  #     - ./packages/python/src/caddrive:/app/sdk/src/caddrive
   #     - ./services/openfoam/org/out:/out
   #   ports:
   #     - 5003:5000
@@ -65,7 +65,7 @@ services:
     command: python -u src/main.py --debug
     volumes:
       - ./services/paraview/src:/app/src
-      - ./packages/python/src:/app/sdk/src
+      - ./packages/python/src/caddrive:/app/sdk/src/caddrive
       - ./services/paraview/out:/out
     ports:
       - 5004:5000

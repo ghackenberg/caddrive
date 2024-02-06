@@ -10,6 +10,7 @@ RUN apt-get upgrade -y
 # Make directories
 RUN mkdir /app
 RUN mkdir /app/sdk
+RUN mkdir /app/sdk/src
 RUN mkdir /out
 
 # Install APP requirements
@@ -24,7 +25,7 @@ RUN pip install -e .
 
 # Install APP + SDK sources
 COPY src /app
-COPY --from=sdk src /app/sdk
+COPY --from=sdk src/caddrive /app/sdk/src
 
 # Run APP
 EXPOSE 5000/tcp

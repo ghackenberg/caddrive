@@ -21,14 +21,14 @@ def leoFEA(file: str, outputsDir: str, jobName: str):
 
     # Check for errors
     if resA.status_code != 200:
-        raise Exception("Could not reach CodeAster service")
+        raise Exception("LeoFEA Service Error")
     
     # Part multipart response
     resDataA = MultipartDecoder.from_response(resA)
 
     # Check for errors
     if len(resDataA.parts) != 3:
-        raise Exception("CodeAster service response unexpected")
+        raise Exception("LeoFEA Service Error")
     
     # TODO Make robust against changes in order!
     with open(os.path.join(outputsDir, f"{jobName}.resMinMax"), "wb") as file:

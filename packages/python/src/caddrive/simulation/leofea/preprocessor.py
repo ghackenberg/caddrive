@@ -318,7 +318,7 @@ class PreProcessor():
         # else: Do nothing for modal analyis
 
         # Adapt the template
-        for line in self.templateCommFile.splitlines():
+        for line in self.templateCommFile.splitlines(keepends=True):
 
             #### Add kinematic BC
             if line.find('ADD kineamtic')>0:
@@ -463,8 +463,7 @@ class PreProcessor():
                 fJob.write("         )\n")
 
             else:
-                if (line.find('#') != 0):
-                    fJob.write(line)
+                fJob.write(line)
 
         fJob.close()
 

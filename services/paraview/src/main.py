@@ -40,7 +40,7 @@ def render():
     fJob.write('\n')
 
     # Append template file
-    for line in fTemplate.splitlines():
+    for line in fTemplate.splitlines(keepends=True):
         fJob.write(line)
 
     # Close template file
