@@ -1,7 +1,5 @@
 from direct.showbase.ShowBase import ShowBase
 
-from panda3d.core import GeomNode
-
 from caddrive.visualization.panda3d.util import makeCube
 
 class LeoVR(ShowBase):
