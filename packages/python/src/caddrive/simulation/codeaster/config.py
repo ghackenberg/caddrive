@@ -1,7 +1,7 @@
 from importlib.resources import files
 
 # Resources
-RESOURCES = files('caddrive.simulation.leofea.resources')
+RESOURCES = files('caddrive.simulation.codeaster.resources')
 
 # Templates
 TEMPLATE_COMM_STATIC = RESOURCES.joinpath("templateCommStatic.comm")
