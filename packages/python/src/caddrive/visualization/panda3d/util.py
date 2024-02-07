@@ -1,11 +1,6 @@
-from panda3d.core import GeomVertexFormat
-from panda3d.core import GeomVertexData
-from panda3d.core import GeomVertexWriter
-from panda3d.core import GeomTriangles
-from panda3d.core import Geom
-from panda3d.core import LVector3
-
 def normalized(x: float, y: float, z: float):
+    
+    from panda3d.core import LVector3
 
     myVec = LVector3(x, y, z)
     myVec.normalize()
@@ -13,6 +8,13 @@ def normalized(x: float, y: float, z: float):
     return myVec
 
 def makeSquare(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float):
+    
+    from panda3d.core import GeomVertexFormat
+    from panda3d.core import GeomVertexData
+    from panda3d.core import GeomVertexWriter
+    from panda3d.core import GeomTriangles
+    from panda3d.core import Geom
+
     format = GeomVertexFormat.getV3n3cpt2()
     data = GeomVertexData('square', format, Geom.UHDynamic)
 

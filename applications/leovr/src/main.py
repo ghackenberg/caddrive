@@ -2,7 +2,7 @@ from direct.showbase.ShowBase import ShowBase
 
 from panda3d.core import GeomNode
 
-from util import makeSquare
+from caddrive.visualization.panda3d.util import makeSquare
 
 class LeoVR(ShowBase):
 
