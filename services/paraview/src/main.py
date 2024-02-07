@@ -43,9 +43,6 @@ def render():
     for line in fTemplate.splitlines(keepends=True):
         fJob.write(line)
 
-    # Close template file
-    fTemplate.close()
-
     # Close job file
     fJob.close()
 

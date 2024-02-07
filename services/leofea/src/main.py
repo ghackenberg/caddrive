@@ -9,7 +9,7 @@ from requests_toolbelt import MultipartEncoder, MultipartDecoder
 import caddrive
 
 from config import *
-    
+
 # Ensure folder
 if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
 
@@ -169,7 +169,12 @@ def postprocess():
     # Return results files
     m = MultipartEncoder(
         fields = {
+            'depl.csv': (f'{JOB_NAME}.depl.csv', open(FILE_DEPL_CSV, 'rb'), 'text/plain'),
+            'forc.csv': (f'{JOB_NAME}.forc.csv', open(FILE_FORC_CSV, 'rb'), 'text/plain'),
             'resMinMax.csv': (f'{JOB_NAME}.resMinMax.csv', open(FILE_RES_MIN_MAX_CSV, 'rb'), 'text/plain'),
+
+            'depl.feather': (f'{JOB_NAME}.depl.feather', open(FILE_DEPL_FEATHER, 'rb'), 'application/octet-stream'),
+            'forc.feather': (f'{JOB_NAME}.forc.feather', open(FILE_FORC_FEATHER, 'rb'), 'application/octet-stream'),
             'resMinMax.feather': (f'{JOB_NAME}.resMinMax.feather', open(FILE_RES_MIN_MAX_FEATHER, 'rb'), 'application/octet-stream')
             # TODO simulation time
             # TODO pd_DeplNoda if requested

@@ -1,4 +1,4 @@
-FROM python:3.9.18
+FROM python:3.12.1
 
 # Change user
 USER root
