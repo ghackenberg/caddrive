@@ -14,16 +14,16 @@ The official **CADdrive Python SDK**.
 
 The CADdrive simulation package contains different simulation methods and tools for LDraw models.
 
-### Package ``caddrive.simulation.leofea``
+### Package ``caddrive.simulation.codeaster``
 
 * ``class PreProcessor``
 * ``class PostProcessor``
 * ``class Part``
 
-### Package ``caddrive.simulation.leocfd``
+### Package ``caddrive.simulation.openfoam``
 
 Coming soon ...
 
-### Package ``caddrive.simulation.leombd``
+### Package ``caddrive.simulation.openmodelica``
 
 Coming soon ...
