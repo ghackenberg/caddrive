@@ -33,7 +33,7 @@ def index():
     tableLeoFeaModel = parser.readFileLDR(FILE_LDR)
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
-    preProcessor = caddrive.simulation.leofea.PreProcessor(OUT_DIR, JOB_NAME)
+    preProcessor = caddrive.simulation.codeaster.PreProcessor(OUT_DIR, JOB_NAME)
     preProcessor.buildLeoFeaModel(tableLeoFeaModel)
     preProcessor.writeInputFiles()
 
@@ -87,7 +87,7 @@ def index():
         file.write(resB.content)
 
     # Postprocess the output files
-    postProcessor =  caddrive.simulation.leofea.PostProcessor(OUT_DIR, JOB_NAME)
+    postProcessor =  caddrive.simulation.codeaster.PostProcessor(OUT_DIR, JOB_NAME)
     postProcessor.postProcessStatic()
 
     # Return results files
@@ -124,7 +124,7 @@ def preprocess():
     tableLeoFeaModel = parser.readFileLDR(FILE_LDR)
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
-    preProcessor = caddrive.simulation.leofea.PreProcessor(OUT_DIR, JOB_NAME)
+    preProcessor = caddrive.simulation.codeaster.PreProcessor(OUT_DIR, JOB_NAME)
     preProcessor.buildLeoFeaModel(tableLeoFeaModel)
     preProcessor.writeInputFiles()
 
@@ -153,7 +153,7 @@ def postprocess():
     request.files["message"].save(FILE_MESSAGE)
 
     # Postprocessing
-    postProcessor =  caddrive.simulation.leofea.PostProcessor(OUT_DIR, JOB_NAME)
+    postProcessor =  caddrive.simulation.codeaster.PostProcessor(OUT_DIR, JOB_NAME)
     postProcessor.postProcessStatic()
 
     # Return results files
