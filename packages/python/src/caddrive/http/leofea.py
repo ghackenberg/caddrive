@@ -27,13 +27,35 @@ def leoFEA(file: str, outputsDir: str, jobName: str):
     resDataA = MultipartDecoder.from_response(resA)
 
     # Check for errors
-    if len(resDataA.parts) != 3:
+    if len(resDataA.parts) != 12:
         raise Exception("LeoFEA Service Error")
     
     # TODO Make robust against changes in order!
-    with open(os.path.join(outputsDir, f"{jobName}.resMinMax"), "wb") as file:
+    with open(os.path.join(outputsDir, f"{jobName}.mail"), "wb") as file:
         file.write(resDataA.parts[0].content)
-    with open(os.path.join(outputsDir, f"{jobName}.png"), "wb") as file:
+    with open(os.path.join(outputsDir, f"{jobName}.comm"), "wb") as file:
         file.write(resDataA.parts[1].content)
-    with open(os.path.join(outputsDir, f"{jobName}.rmed"), "wb") as file:
+
+    with open(os.path.join(outputsDir, f"{jobName}.resu"), "wb") as file:
         file.write(resDataA.parts[2].content)
+    with open(os.path.join(outputsDir, f"{jobName}.message"), "wb") as file:
+        file.write(resDataA.parts[3].content)
+    with open(os.path.join(outputsDir, f"{jobName}.rmed"), "wb") as file:
+        file.write(resDataA.parts[4].content)
+
+    with open(os.path.join(outputsDir, f"{jobName}.png"), "wb") as file:
+        file.write(resDataA.parts[5].content)
+
+    with open(os.path.join(outputsDir, f"{jobName}.depl.csv"), "wb") as file:
+        file.write(resDataA.parts[6].content)
+    with open(os.path.join(outputsDir, f"{jobName}.forc.csv"), "wb") as file:
+        file.write(resDataA.parts[7].content)
+    with open(os.path.join(outputsDir, f"{jobName}.resMinMax.csv"), "wb") as file:
+        file.write(resDataA.parts[8].content)
+
+    with open(os.path.join(outputsDir, f"{jobName}.depl.feather"), "wb") as file:
+        file.write(resDataA.parts[9].content)
+    with open(os.path.join(outputsDir, f"{jobName}.forc.feather"), "wb") as file:
+        file.write(resDataA.parts[10].content)
+    with open(os.path.join(outputsDir, f"{jobName}.resMinMax.feather"), "wb") as file:
+        file.write(resDataA.parts[11].content)
