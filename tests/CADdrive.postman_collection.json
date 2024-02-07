@@ -155,11 +155,6 @@
 											"key": "ldr",
 											"type": "file",
 											"src": "leofea/CADdrive.ldr"
-										},
-										{
-											"key": "lib",
-											"type": "file",
-											"src": "leofea/libLegoParts.lib"
 										}
 									]
 								},
@@ -205,11 +200,6 @@
 											"key": "ldr",
 											"type": "file",
 											"src": "leofea/CADdrive.ldr"
-										},
-										{
-											"key": "lib",
-											"type": "file",
-											"src": "leofea/libLegoParts.lib"
 										}
 									]
 								},
