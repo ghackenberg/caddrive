@@ -9,10 +9,13 @@ class PostProcessor():
         self.fNameResu = os.path.join(outputsDir, f"{jobName}.resu")
         self.fNameMessage = os.path.join(outputsDir, f"{jobName}.message")
 
+        self.fNameDeplCsv = os.path.join(outputsDir, f"{jobName}.depl.csv")
+        self.fNameForcCsv = os.path.join(outputsDir, f"{jobName}.forc.csv")
+        self.fNameResMinMaxCsv = os.path.join(outputsDir, f"{jobName}.resMinMax.csv")
+
         self.fNameDeplFeather = os.path.join(outputsDir, f"{jobName}.depl.feather")
         self.fNameForcFeather = os.path.join(outputsDir, f"{jobName}.forc.feather")
         self.fNameResMinMaxFeather = os.path.join(outputsDir, f"{jobName}.resMinMax.feather")
-        self.fNameResMinMaxCsv = os.path.join(outputsDir, f"{jobName}.resMinMax.csv")
 
         self.numNodes = 0
 
@@ -33,10 +36,13 @@ class PostProcessor():
         self._readMessageSimulationTime()    # Read simulaiton time from CodeAster message file
 
         # Store results
+        self.pd_DeplNoda.to_csv(self.fNameDeplCsv)
+        self.pd_ForcNoda.to_csv(self.fNameForcCsv)
+        self.pd_resultsMinMax.to_csv(self.fNameResMinMaxCsv)
+
         self.pd_DeplNoda.to_feather(self.fNameDeplFeather)
         self.pd_ForcNoda.to_feather(self.fNameForcFeather)
         self.pd_resultsMinMax.to_feather(self.fNameResMinMaxFeather)
-        self.pd_resultsMinMax.to_csv(self.fNameResMinMaxCsv)
 
     def postProcessModal(self):
 
