@@ -129,7 +129,116 @@ class ModelParser:
         pass
 
     def _parseLineType0_COLOUR(self, line: str):
-        pass
+        parts = line[:10].split()
+
+        colorName = parts[0]
+        colorCode: int = None
+        colorValue: str = None
+        colorEdge: str = None
+        colorAlpha: int = 255
+        colorLuminance: int = None
+
+        finishType: FinishType = None
+        finishName: FinishName = None
+        finishValue: str = None
+        finishAlpha: int = None
+        finishLuminance: int = None
+        finishFraction: float = None
+        finishVFraction: float = None
+        finishSize: int = None
+        finishMinSize: int = None
+        finishMaxSize: int = None
+
+        i = 1
+        while i < len(parts):
+            if finishType == None:
+                if parts[i] == "CODE":
+                    colorCode = int(parts[i + 1])
+                    i = i + 1
+
+                elif parts[i] == "VALUE":
+                    colorValue = parts[i + 1]
+                    i = i + 1
+
+                elif parts[i] == "EDGE":
+                    colorEdge = parts[i + 1]
+                    i = i + 1
+
+                elif parts[i] == "ALPHA":
+                    colorAlpha = int(parts[i + 1])
+                    i = i + 1
+
+                elif parts[i] == "LUMINANCE":
+                    colorLuminance = int(parts[i + 1])
+                    i = i + 1
+
+                elif parts[i] == "CHROME":
+                    finishType = FinishType.CHROME
+
+                elif parts[i] == "PEARLESCENT":
+                    finishType = FinishType.PEARLESCENT
+
+                elif parts[i] == "RUBBER":
+                    finishType = FinishType.RUBBER
+
+                elif parts[i] == "MATTE_METALLIC":
+                    finishType = FinishType.MATTE_METALLIC
+
+                elif parts[i] == "METAL":
+                    finishType = FinishType.METAL
+
+                elif parts[i] == "MATERIAL":
+                    finishType = FinishType.MATERIAL
+                
+                else:
+                    raise Exception(f"Unexpected part {parts[i]}")
+
+            elif finishType == FinishType.MATERIAL:
+                if parts[i] == "GLITTER":
+                    finishName = FinishName.GLITTER
+                
+                elif parts[i] == "SPECKLE":
+                    finishName = FinishName.SPECKLE
+
+                elif parts[i] == "VALUE":
+                    finishValue = parts[i + 1]
+                    i = i + 1
+
+                elif parts[i] == "ALPHA":
+                    finishAlpha = int(parts[i + 1])
+                    i = i + 1
+                
+                elif parts[i] == "LUMINANCE":
+                    finishLuminance = int(parts[i + 1])
+                    i = i + 1
+                
+                elif parts[i] == "FRACTION":
+                    finishFraction = float(parts[i + 1])
+                    i = i + 1
+                
+                elif parts[i] == "VFRACTION":
+                    finishVFraction = float(parts[i + 1])
+                    i = i + 1
+                
+                elif parts[i] == "SIZE":
+                    finishSize = int(parts[i + 1])
+                    i = i + 1
+                
+                elif parts[i] == "MINSIZE":
+                    finishMinSize = int(parts[i + 1])
+                    i = i + 1
+                
+                elif parts[i] == "MAXSIZE":
+                    finishMaxSize = int(parts[i + 1])
+                    i = i + 1
+
+            i = i + 1
+        
+        finish = Finish(finishType, finishName, finishValue, finishAlpha, finishLuminance, finishFraction, finishVFraction, finishSize, finishMinSize, finishMaxSize)
+
+        color = Color(colorName, colorCode, colorValue, colorEdge, colorAlpha, colorLuminance, finish)
+
+        self._context.colors.append(color)
 
     def _parseLineType0_TEXMAP(self, line: str):
         pass

@@ -13,7 +13,7 @@ class FinishName(Enum):
     SPECKLE = 2
 
 class Finish:
-    def __init__(self, type: FinishType, name: FinishName, value: str, alpha: int, luminance: float, fraction: float, vFraction: float, size: int, minSize: int, maxSize: int):
+    def __init__(self, type: FinishType, name: FinishName, value: str, alpha: int, luminance: int, fraction: float, vFraction: float, size: int, minSize: int, maxSize: int):
         self.type = type
         self.name = name
         self.value = value
@@ -26,7 +26,7 @@ class Finish:
         self.maxSize = maxSize
 
 class Color:
-    def __init__(self, name: str, code: int, value: str, edge: str, alpha: int, luminance: float, finish: Finish):
+    def __init__(self, name: str, code: int, value: str, edge: str, alpha: int, luminance: int, finish: Finish):
         self.name = name
         self.code = code
         self.value = value
@@ -114,6 +114,7 @@ class Model:
         self.author: str = None
         self.category: str = None
         self.keywords: list[str] = []
+        self.colors: list[Color] = []
 
         self.parent: Model = None
         self.children: list[Model] = []
