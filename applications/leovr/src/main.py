@@ -8,12 +8,7 @@ class LeoVR(ShowBase):
 
         super().__init__(self)
 
-        node = makeCube()
-
-        nodePath = self.render.attachNewNode(node)
-        nodePath.setRenderModeThickness(2)
-        nodePath.setTwoSided(True)
-        nodePath.setHpr(0, -45, 45)
+        makeCube(self.render)
 
         self.disableMouse()
         self.camera.setPos(0, -20, 0)
