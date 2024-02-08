@@ -163,7 +163,7 @@ class LeoFEAGUI(QtWidgets.QDialog):
     def _loadLDR(self):
 
         # Print information as table
-        parser = caddrive.ldraw.Parser()
+        parser = caddrive.ldraw.parsers.TableParser()
         self.tableLDR = parser.readFileLDR(self.textbox_FilenameLDR.text())
 
         #print(self.tableLDR)

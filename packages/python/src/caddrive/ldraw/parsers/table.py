@@ -11,10 +11,10 @@
 import re
 
 # Internal dependencies
-from .const import LEN_LDU, NUM_LDU_X, NUM_LDU_Y, NUM_LDU_Z
-from .config import PART_LIB
+from ..const import LEN_LDU, NUM_LDU_X, NUM_LDU_Y, NUM_LDU_Z
+from ..config import PART_LIB
 
-class Parser():
+class TableParser():
     
     volume = 0
     numberSegments = 0

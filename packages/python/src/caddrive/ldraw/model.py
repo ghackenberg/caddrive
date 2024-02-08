@@ -1,8 +1,9 @@
 class Color:
-    def __init__(self, name: str, code: int, value: str, alpha: float):
+    def __init__(self, name: str, code: int, value: str, edge: str, alpha: float):
         self.name = name
         self.code = code
         self.value = value
+        self.edge = edge
         self.alpha = alpha
 
 class Vector:
@@ -73,3 +74,8 @@ class OptionalLine(Shape):
         self.secondPoint = secondPoint
         self.firstControlPoint = firstControlPoint
         self.secondControlPoint = secondControlPoint
+
+class Model:
+    entries: list[Entry] = []
+    def __init__(self, name: str):
+        self.name = name

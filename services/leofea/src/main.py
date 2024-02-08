@@ -29,7 +29,7 @@ def index():
 
     ######## PREPROCESSING
     # Read LDR file and get table of lego parts as return
-    parser = caddrive.ldraw.Parser()
+    parser = caddrive.ldraw.parsers.TableParser()
     tableLeoFeaModel = parser.readFileLDR(FILE_LDR)
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage

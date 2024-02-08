@@ -1,3 +1,3 @@
 from .const import *
 from .model import *
-from .parser import *
+from .parsers import *
