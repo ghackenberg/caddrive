@@ -1,10 +1,39 @@
+from enum import Enum
+
+class FinishType(Enum):
+    CHROME = 1
+    PEARLESCENT = 2
+    RUBBER = 3
+    MATTE_METALLIC = 4
+    METAL = 5
+    MATERIAL = 6
+
+class FinishName(Enum):
+    GLITTER = 1
+    SPECKLE = 2
+
+class Finish:
+    def __init__(self, type: FinishType, name: FinishName, value: str, alpha: int, luminance: float, fraction: float, vFraction: float, size: int, minSize: int, maxSize: int):
+        self.type = type
+        self.name = name
+        self.value = value
+        self.alpha = alpha
+        self.luminance = luminance
+        self.fraction = fraction
+        self.vFraction = vFraction
+        self.size = size
+        self.minSize = minSize
+        self.maxSize = maxSize
+
 class Color:
-    def __init__(self, name: str, code: int, value: str, edge: str, alpha: float):
+    def __init__(self, name: str, code: int, value: str, edge: str, alpha: int, luminance: float, finish: Finish):
         self.name = name
         self.code = code
         self.value = value
         self.edge = edge
         self.alpha = alpha
+        self.luminance = luminance
+        self.finish = finish
 
 class Vector:
     def __init__(self, x: float, y: float, z: float):
@@ -77,5 +106,14 @@ class OptionalLine(Shape):
 
 class Model:
     entries: list[Entry] = []
+    
     def __init__(self, name: str):
         self.name = name
+        self.parent: Model = None
+        self.children: list[Model] = []
+
+    def root(self):
+        if self.parent:
+            return self.parent.root()
+        else:
+            return self
