@@ -141,10 +141,12 @@ class ModelParser:
         pass
 
     def _parseLineType0_CATEGORY(self, line: str):
-        pass
+        self._context.category = line[12:]
 
     def _parseLineType0_KEYWORDS(self, line: str):
-        pass
+        keywords = line[12:].split(", ")
+        for keyword in keywords:
+            self._context.keywords.append(keyword)
 
     def _parseLineType0_LDRAW_ORG(self, line: str):
         pass

@@ -112,6 +112,8 @@ class Model:
 
         self.name: str = None
         self.author: str = None
+        self.category: str = None
+        self.keywords: list[str] = []
 
         self.parent: Model = None
         self.children: list[Model] = []
