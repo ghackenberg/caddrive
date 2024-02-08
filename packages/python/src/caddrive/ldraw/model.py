@@ -107,8 +107,12 @@ class OptionalLine(Shape):
 class Model:
     entries: list[Entry] = []
     
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self, uri: str):
+        self.uri = uri
+
+        self.name: str = None
+        self.author: str = None
+
         self.parent: Model = None
         self.children: list[Model] = []
 
