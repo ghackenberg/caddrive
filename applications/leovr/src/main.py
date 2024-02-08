@@ -1,5 +1,7 @@
 from direct.showbase.ShowBase import ShowBase
 
+from panda3d.core import WindowProperties
+
 from caddrive.visualization.panda3d.util import makeCube
 
 class LeoVR(ShowBase):
@@ -28,6 +30,12 @@ class LeoVR(ShowBase):
 
         # Camera configuration
         self.camera.setPos(0, -20, 0)
+        
+        # Set window properties
+        props = WindowProperties()
+        props.setTitle('LeoVR')
+
+        self.win.requestProperties(props)
 
 app = LeoVR()
 app.run()
