@@ -1,3 +1,6 @@
+import math
+import sys
+
 def normalized(x: float, y: float, z: float):
     
     from panda3d.core import LVector3
@@ -6,6 +9,56 @@ def normalized(x: float, y: float, z: float):
     myVec.normalize()
 
     return myVec
+
+def makePointCloud(items: list[list[float]], scale = 1.0):
+    
+    from panda3d.core import GeomVertexFormat
+    from panda3d.core import GeomVertexData
+    from panda3d.core import GeomVertexWriter
+    from panda3d.core import GeomPoints
+    from panda3d.core import Geom
+
+    minDepl = sys.float_info.max
+    maxDepl = sys.float_info.min
+
+    for item in items:
+        x, y, z, dx, dy, dz = item
+
+        depl = math.sqrt(dx * dx + dy * dy + dz * dz)
+
+        minDepl = min(minDepl, depl)
+        maxDepl = max(maxDepl, depl)
+
+    format = GeomVertexFormat.getV3n3cpt2()
+    data = GeomVertexData('cloud', format, Geom.UHDynamic)
+
+    vertex = GeomVertexWriter(data, 'vertex')
+    color = GeomVertexWriter(data, 'color')
+
+    points = GeomPoints(Geom.UHDynamic)
+
+    i = 0
+    for item in items:
+        x, y, z, dx, dy, dz = item
+
+        depl = math.sqrt(dx * dx + dy * dy + dz * dz)
+        perc = (depl - minDepl) / (maxDepl - minDepl)
+
+        vertex.addData3(x, y, z)
+        vertex.addData3(x + dx * scale, y + dy * scale, z + dz * scale)
+
+        color.addData4f(1.0, 1.0, 1.0, 1.0)
+        color.addData4f(perc, 1.0 - perc, 0.0, 1.0)
+
+        points.addVertex(i + 0)
+        points.addVertex(i + 1)
+
+        i = i + 2
+
+    geom = Geom(data)
+    geom.addPrimitive(points)
+
+    return geom
 
 def makeQuadPoints(x1: float, y1: float, z1: float, x2: float, y2: float, z2: float):
     
@@ -38,14 +91,14 @@ def makeQuadPoints(x1: float, y1: float, z1: float, x2: float, y2: float, z2: fl
     color.addData4f(0.0, 0.0, 1.0, 1.0)
     color.addData4f(1.0, 0.0, 1.0, 1.0)
 
-    lines = GeomPoints(Geom.UHDynamic)
-    lines.addVertex(0)
-    lines.addVertex(1)
-    lines.addVertex(2)
-    lines.addVertex(3)
+    points = GeomPoints(Geom.UHDynamic)
+    points.addVertex(0)
+    points.addVertex(1)
+    points.addVertex(2)
+    points.addVertex(3)
 
     geom = Geom(data)
-    geom.addPrimitive(lines)
+    geom.addPrimitive(points)
 
     return geom
 
