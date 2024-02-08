@@ -31,4 +31,4 @@ COPY --from=sdk src/caddrive /app/sdk/src
 # Run APP
 EXPOSE 5000/tcp
 WORKDIR /app
-CMD python -u src/main.py
+CMD python3 -u /app/src/main.py

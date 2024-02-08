@@ -6,7 +6,8 @@ services:
       additional_contexts:
         - sdk=./packages/python
     image: caddrive/leofea:latest
-    command: python -u src/main.py --debug
+    entrypoint: python
+    command: -u src/main.py --debug
     volumes:
       - ./services/leofea/src:/app/src
       - ./packages/python/src/caddrive:/app/sdk/src/caddrive
@@ -20,7 +21,8 @@ services:
       additional_contexts:
         - sdk=./packages/python
     image: caddrive/codeaster:latest
-    command: python -u src/main.py --debug
+    entrypoint: python
+    command: -u src/main.py --debug
     volumes:
       - ./services/codeaster/src:/app/src
       - ./packages/python/src/caddrive:/app/sdk/src/caddrive
@@ -28,33 +30,35 @@ services:
     ports:
       - 5001:5000
 
-  # openfoam-com:
-  #   build:
-  #     context: ./services/openfoam/com
-  #     additional_contexts:
-  #       - sdk=./packages/python
-  #   image: caddrive/openfoam-com:latest
-  #   command: python -u src/main.py --debug
-  #   volumes:
-  #     - ./services/openfoam/com/src:/app/src
-  #     - ./packages/python/src/caddrive:/app/sdk/src/caddrive
-  #     - ./services/openfoam/com/out:/out
-  #   ports:
-  #     - 5002:5000
+  openfoam-com:
+    build:
+      context: ./services/openfoam/com
+      additional_contexts:
+        - sdk=./packages/python
+    image: caddrive/openfoam-com:latest
+    entrypoint: python3
+    command: -u /app/src/main.py --debug
+    volumes:
+      - ./services/openfoam/com/src:/app/src
+      - ./packages/python/src/caddrive:/app/sdk/src/caddrive
+      - ./services/openfoam/com/out:/out
+    ports:
+      - 5002:5000
 
-  # openfoam-org:
-  #   build:
-  #     context: ./services/openfoam/org
-  #     additional_contexts:
-  #       - sdk=./packages/python
-  #   image: caddrive/openfoam-org:latest
-  #   command: python -u src/main.py --debug
-  #   volumes:
-  #     - ./services/openfoam/org/src:/app/src
-  #     - ./packages/python/src/caddrive:/app/sdk/src/caddrive
-  #     - ./services/openfoam/org/out:/out
-  #   ports:
-  #     - 5003:5000
+  openfoam-org:
+    build:
+      context: ./services/openfoam/org
+      additional_contexts:
+        - sdk=./packages/python
+    image: caddrive/openfoam-org:latest
+    entrypoint: python3
+    command: -u src/main.py --debug
+    volumes:
+      - ./services/openfoam/org/src:/app/src
+      - ./packages/python/src/caddrive:/app/sdk/src/caddrive
+      - ./services/openfoam/org/out:/out
+    ports:
+      - 5003:5000
 
   paraview:
     build:
@@ -62,7 +66,8 @@ services:
       additional_contexts:
         - sdk=./packages/python
     image: caddrive/paraview:latest
-    command: python -u src/main.py --debug
+    entrypoint: python
+    command: -u src/main.py --debug
     volumes:
       - ./services/paraview/src:/app/src
       - ./packages/python/src/caddrive:/app/sdk/src/caddrive
