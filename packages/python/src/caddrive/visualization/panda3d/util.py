@@ -214,19 +214,23 @@ def makeCubeTriangles():
 
     return node
 
-def makeCube(parent):
+def makeCube(pointWidth: int, lineWidth: int):
+
+    from panda3d.core import PandaNode
+    from panda3d.core import NodePath
     
+    # Make cube geometry nodes
     cubePoints = makeCubePoints()
     cubeLines = makeCubeLines()
     cubeTriangles = makeCubeTriangles()
 
-    nodePoints = parent.attachNewNode(cubePoints)
-    nodePoints.setRenderModeThickness(10)
-    nodePoints.setHpr(0, -45, 45)
+    # Make parent panda node
+    cube = PandaNode("cube")
+    
+    # Make parent nodepath handle and attach cube geometry nodes
+    parent = NodePath(cube)
+    parent.attachNewNode(cubePoints).setRenderModeThickness(pointWidth)
+    parent.attachNewNode(cubeLines).setRenderModeThickness(lineWidth)
+    parent.attachNewNode(cubeTriangles).setTwoSided(True)
 
-    nodeLines = parent.attachNewNode(cubeLines)
-    nodeLines.setRenderModeThickness(2)
-    nodeLines.setHpr(0, -45, 45)
-
-    nodeTriangles = parent.attachNewNode(cubeTriangles)
-    nodeTriangles.setHpr(0, -45, 45)
+    return parent
