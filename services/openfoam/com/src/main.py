@@ -5,7 +5,7 @@ from flask import Flask
 from config import *
 
 # Ensure folder
-if not os.path.exists(OUTPUTS_DIR): os.makedirs(OUTPUTS_DIR)
+if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
 
 # Define constants
 
