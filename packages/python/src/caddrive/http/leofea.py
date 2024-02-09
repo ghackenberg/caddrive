@@ -3,6 +3,10 @@ import os.path
 from requests import post
 from requests_toolbelt import MultipartEncoder, MultipartDecoder
 
+class LeoFEARequestFailed(Exception): pass
+
+class LeoFEAResponseUnexpected(Exception): pass
+
 def leoFEA(file: str, outputsDir: str, jobName: str):
 
     # TODO Add protocol, host, port, and path as parameter!
@@ -21,14 +25,14 @@ def leoFEA(file: str, outputsDir: str, jobName: str):
 
     # Check for errors
     if resA.status_code != 200:
-        raise Exception("LeoFEA Service Error")
+        raise LeoFEARequestFailed()
     
     # Part multipart response
     resDataA = MultipartDecoder.from_response(resA)
 
     # Check for errors
     if len(resDataA.parts) != 12:
-        raise Exception("LeoFEA Service Error")
+        raise LeoFEAResponseUnexpected()
     
     # TODO Make robust against changes in order!
     with open(os.path.join(outputsDir, f"{jobName}.mail"), "wb") as file:

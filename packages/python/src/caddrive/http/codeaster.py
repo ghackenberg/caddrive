@@ -1,6 +1,10 @@
 from requests import post
 from requests_toolbelt import MultipartEncoder, MultipartDecoder
 
+class CodeasterRequestFailed(Exception): pass
+
+class CodeasterResponseUnexpected(Exception): pass
+
 def codeaster(outDir: str, jobName: str, fileMail: str, fileComm: str):
     
     reqDataA = MultipartEncoder(
@@ -15,14 +19,14 @@ def codeaster(outDir: str, jobName: str, fileMail: str, fileComm: str):
 
     # Check for errors
     if resA.status_code != 200:
-        return "CodeAster error", 400
+        raise CodeasterRequestFailed()
 
     # Part multipart response
     resDataA = MultipartDecoder.from_response(resA)
 
     # Check for errors
     if len(resDataA.parts) != 3:
-        return "CodeAster error", 400
+        raise CodeasterResponseUnexpected()
     
     # TODO Make robust against changes in order!
     with open(f"{outDir}/{jobName}.resu", "wb") as file:

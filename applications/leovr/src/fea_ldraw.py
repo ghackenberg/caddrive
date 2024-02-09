@@ -1,37 +1,67 @@
 import os
-import random
+
+from requests.exceptions import ConnectionError
 
 from direct.showbase.ShowBase import ShowBase
+from direct.gui.OnscreenText import OnscreenText
+from direct.stdpy import threading
 
-from panda3d.core import WindowProperties
+from panda3d.core import WindowProperties, NodePath, PandaNode
 
-from caddrive.http import codeaster
+from caddrive.http import codeaster, CodeasterRequestFailed, CodeasterResponseUnexpected
 from caddrive.ldraw.parsers import TableParser
 from caddrive.simulation.codeaster import PreProcessor
 from caddrive.visualization.panda3d import FEAModel, makeFEAPoints, makeFEALines, makeFEATriangles
 
-from config import LDR_FILE, OUT_DIR, JOB_NAME, MAIL_FILE, COMM_FILE, RESU_FILE, SCALE
-
-def randomScalar(min: float, max: float):
-
-    return min + random.random() * (max - min)
-
-def randomVector(min = -0.2, max = 0.2):
-
-    x = randomScalar(min, max)
-    y = randomScalar(min, max)
-    z = randomScalar(min, max)
-
-    return x, y, z
-
-# Ensure output folder
-if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
+from config import LDR_FILE, OUT_DIR, JOB_NAME, SCALE
 
 class LeoVR(ShowBase):
 
     def __init__(self):
 
         super().__init__(self)
+        
+        # Set window properties
+        props = WindowProperties()
+        props.setTitle('LeoVR')
+
+        self.win.requestProperties(props)
+
+        # Onscreen message
+        self.message = OnscreenText("Loading ...")
+
+        # Load FEA model
+        self.thread = threading.Thread(target=lambda: self._load(LDR_FILE, OUT_DIR, JOB_NAME))
+        self.thread.start()
+        
+        # Mouse configuration
+        self.disableMouse()
+
+        # Camera configuration
+        self.camera.setPos(0, -600, 0)
+
+    def _load(self, ldrFile: str, outDir: str, jobName: str):
+        
+        try:
+            self._loadFEAModel(ldrFile, outDir, jobName)
+        except FileNotFoundError:
+            self.message.setText("LDraw model is not available!")
+        except ConnectionError:
+            self.message.setText("CodeAster service is not reachable!")
+        except CodeasterRequestFailed:
+            self.message.setText("CodeAster service request failed!")
+        except CodeasterResponseUnexpected:
+            self.message.setText("CodeAster service response unexpected!")
+        except Exception as e:
+            self.message.setText("An unexpected error occurred!")
+    
+    def _loadFEAModel(self, ldrFile: str, outDir: str, jobName: str):
+
+        if not os.path.exists(outDir): os.makedirs(outDir)
+
+        mailFile = f"{outDir}/{jobName}.mail"
+        commFile = f"{outDir}/{jobName}.comm"
+        resuFile = f"{outDir}/{jobName}.resu"
 
         # Outer rotation about Y axis
         outer = self.render.attachNewNode("outer")
@@ -42,24 +72,32 @@ class LeoVR(ShowBase):
         inner.hprInterval(5.0, (360, 0, 0)).loop()
 
         # Parse CAD model
+        self.message.setText("Parsing LDraw file ...")
+
         parser = TableParser()
-        parser.readFileLDR(LDR_FILE)
+        parser.readFileLDR(ldrFile)
 
         # Generate FEA model
-        preprocessor = PreProcessor(OUT_DIR, JOB_NAME)
+        self.message.setText("Generating FEA model ...")
+
+        preprocessor = PreProcessor(outDir, jobName)
         preprocessor.buildLeoFeaModel(parser.tableLeoFeaModel)
         preprocessor.writeInputFiles()
 
         # Generate FEA result
-        codeaster(OUT_DIR, JOB_NAME, MAIL_FILE, COMM_FILE)
+        self.message.setText("Simulating FEA model ...")
+
+        codeaster(outDir, jobName, mailFile, commFile)
 
         # Parse FEA result
+        self.message.setText("Parsing FEA result ...")
+
         depl: dict[str, list[float]] = {}
         forc: dict[str, list[float]] = {}
         reac: dict[str, list[float]] = {}
 
         mode = 0
-        with open(RESU_FILE, "r") as file:
+        with open(resuFile, "r") as file:
             for line in file:
                 parts = line.split()
                 if len(parts) == 0:
@@ -89,7 +127,9 @@ class LeoVR(ShowBase):
                     elif mode == 3:
                         reac[name] = [x, y, z]
 
-        # Make FEA model
+        # Translating FEA result
+        self.message.setText("Translating FEA result ...")
+
         model = FEAModel()
 
         offset = 0
@@ -162,7 +202,9 @@ class LeoVR(ShowBase):
         model.lock()
 
         # Make FEA geometry
-        group = inner.attachNewNode("group")
+        self.message.setText("Visualizing FEA result ...")
+
+        group = NodePath(PandaNode("group"))
         group.setPos(-model.xCenter, -model.yCenter, -model.zCenter)
 
         points = makeFEAPoints(model, 3, SCALE, 3/3)
@@ -173,18 +215,11 @@ class LeoVR(ShowBase):
 
         triangles = makeFEATriangles(model, SCALE, 1/3)
         triangles.reparentTo(group)
-        
-        # Mouse configuration
-        self.disableMouse()
 
-        # Camera configuration
-        self.camera.setPos(0, -600, 0)
+        # Clean up
+        self.message.destroy()
         
-        # Set window properties
-        props = WindowProperties()
-        props.setTitle('LeoVR')
-
-        self.win.requestProperties(props)
+        group.reparentTo(inner)
 
 app = LeoVR()
 app.run()

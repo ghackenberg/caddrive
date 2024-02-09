@@ -149,11 +149,11 @@ class FEAModel:
 
         if self.displacementSpread > 0:
 
-            forceAbsolute = numpy.linalg.norm(node.displacement)
-            forceRelative = (forceAbsolute - self.displacementMin) / self.displacementSpread
+            displacementAbsolute = numpy.linalg.norm(node.displacement)
+            displacementRelative = (displacementAbsolute - self.displacementMin) / self.displacementSpread
 
-            r = forceRelative
-            g = 1.0 - forceRelative
+            r = displacementRelative
+            g = 1.0 - displacementRelative
             b = 0.0
 
             return r, g, b
