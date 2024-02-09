@@ -56,6 +56,8 @@ class FEAModel:
     displacementMin = sys.float_info.max
     displacementMax = sys.float_info.min
 
+    displacementSpread: float = None
+
     forceMin = sys.float_info.max
     forceMax = sys.float_info.min
 
@@ -136,6 +138,8 @@ class FEAModel:
         self.yCenter = self.yMin + self.ySpread / 2
         self.zCenter = self.zMin + self.zSpread / 2
 
+        self.displacementSpread = self.displacementMax - self.displacementMin
+
         self.forceSpread = self.forceMax - self.forceMin
     
     def color(self, node: FEANode):
@@ -143,10 +147,10 @@ class FEAModel:
         if self.forceSpread is None:
             raise Exception("Model is not locked yet!")
 
-        if self.forceSpread > 0:
+        if self.displacementSpread > 0:
 
-            forceAbsolute = numpy.linalg.norm(node.force)
-            forceRelative = (forceAbsolute - self.forceMin) / self.forceSpread
+            forceAbsolute = numpy.linalg.norm(node.displacement)
+            forceRelative = (forceAbsolute - self.displacementMin) / self.displacementSpread
 
             r = forceRelative
             g = 1.0 - forceRelative
@@ -161,7 +165,6 @@ class FEAModel:
             b = 1.0
 
             return r, g, b
-
 
 def makeFEAPoints(model: FEAModel, thickness = 1, displacementScale = 1.0, colorScale = 1.0):
 
