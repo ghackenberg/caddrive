@@ -46,10 +46,8 @@ class LeoVR(ShowBase):
 
         model.quad("Q1", "N1", "N2", "N3", "N4")
         model.quad("Q2", "N5", "N6", "N7", "N8")
-
         model.quad("Q3", "N1", "N2", "N6", "N5")
         model.quad("Q4", "N3", "N4", "N8", "N7")
-
         model.quad("Q5", "N1", "N4", "N8", "N5")
         model.quad("Q6", "N2", "N3", "N7", "N6")
 
