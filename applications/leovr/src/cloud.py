@@ -6,7 +6,7 @@ from panda3d.core import GeomNode
 from panda3d.core import NodePath
 from panda3d.core import WindowProperties
 
-from caddrive.visualization.panda3d.util import makePointCloud
+from caddrive.visualization.panda3d import makePointCloud
 
 class LeoVR(ShowBase):
 

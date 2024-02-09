@@ -2,7 +2,7 @@ from direct.showbase.ShowBase import ShowBase
 
 from panda3d.core import WindowProperties
 
-from caddrive.visualization.panda3d.util import makeCube
+from caddrive.visualization.panda3d import makeCube
 
 class LeoVR(ShowBase):
 
