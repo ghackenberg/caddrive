@@ -36,11 +36,28 @@ class FEAModel:
     nodeIndex: dict[str, FEANode] = {}
     quadIndex: dict[str, FEAQuad] = {}
 
-    displacementMax = sys.float_info.min
-    displacementMin = sys.float_info.max
+    xMin = sys.float_info.max
+    xMax = sys.float_info.min
 
-    forceMax = sys.float_info.min
+    yMin = sys.float_info.max
+    yMax = sys.float_info.min
+
+    zMin = sys.float_info.max
+    zMax = sys.float_info.min
+
+    xCenter: float = None
+    yCenter: float = None
+    zCenter: float = None
+
+    xSpread: float = None
+    ySpread: float = None
+    zSpread: float = None
+
+    displacementMin = sys.float_info.max
+    displacementMax = sys.float_info.min
+
     forceMin = sys.float_info.max
+    forceMax = sys.float_info.min
 
     forceSpread: float = None
 
@@ -56,10 +73,25 @@ class FEAModel:
         self.nodeList.append(node)
         self.nodeIndex[name] = node
 
+        # Coordinate min/max
+
+        self.xMin = min(self.xMin, position[0])
+        self.xMax = max(self.xMax, position[0])
+
+        self.yMin = min(self.yMin, position[1])
+        self.yMax = max(self.yMax, position[1])
+
+        self.zMin = min(self.zMin, position[2])
+        self.zMax = max(self.zMax, position[2])
+
+        # Displacement min/max
+
         displacementCurrent = numpy.linalg.norm(displacement)
 
         self.displacementMin = min(self.displacementMin, displacementCurrent)
         self.displacementMax = max(self.displacementMax, displacementCurrent)
+
+        # Force min/max
 
         forceCurrent = numpy.linalg.norm(force)
 
@@ -96,6 +128,14 @@ class FEAModel:
         if self.forceSpread is not None:
             raise Exception("Model is already locked!")
         
+        self.xSpread = self.xMax - self.xMin
+        self.ySpread = self.yMax - self.yMin
+        self.zSpread = self.zMax - self.zMin
+
+        self.xCenter = self.xMin + self.xSpread / 2
+        self.yCenter = self.yMin + self.ySpread / 2
+        self.zCenter = self.zMin + self.zSpread / 2
+
         self.forceSpread = self.forceMax - self.forceMin
     
     def color(self, node: FEANode):

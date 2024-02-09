@@ -281,6 +281,13 @@ class Part():
                         #                         i_fback, n3, n4, n8, n7))
 
                     elid = elid + 1
+        
+        self.i_fbot = i_fbot
+        self.i_ftop = i_ftop
+        self.i_fleft = i_fleft
+        self.i_fright = i_fright
+        self.i_ffront = i_ffront
+        self.i_fback = i_fback
 
     def translate(self, ux: float, uy: float, uz: float):
 

@@ -34,7 +34,7 @@ class PreProcessor():
         self.fNameMail = os.path.join(outputsDir, f'{jobName}.mail')
         self.fNameComm = os.path.join(outputsDir, f"{jobName}.comm")
 
-        self.parts = []
+        self.parts: list[Part] = []
         self.numParts = 0
         self.numNodes = 0
 
