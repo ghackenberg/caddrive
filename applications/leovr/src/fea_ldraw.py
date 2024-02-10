@@ -89,7 +89,7 @@ class LeoVR(ShowBase):
         # Generate FEA result
         self.message.setText("Simulating FEA model ...")
 
-        # codeaster(outDir, jobName, mailFile, commFile)
+        codeaster(outDir, jobName, mailFile, commFile)
 
         # Parse FEA result
         self.message.setText("Parsing FEA result ...")
