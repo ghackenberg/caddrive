@@ -53,43 +53,45 @@ class FEAQuad:
 
 class FEAModel:
 
-    nodeList: list[FEANode] = []
-    quadList: list[FEAQuad] = []
+    def __init__(self):
 
-    nodeIndex: dict[str, FEANode] = {}
-    quadIndex: dict[str, FEAQuad] = {}
+        self.nodeList: list[FEANode] = []
+        self.quadList: list[FEAQuad] = []
 
-    xMin = sys.float_info.max
-    xMax = sys.float_info.min
+        self.nodeIndex: dict[str, FEANode] = {}
+        self.quadIndex: dict[str, FEAQuad] = {}
 
-    yMin = sys.float_info.max
-    yMax = sys.float_info.min
+        self.xMin = sys.float_info.max
+        self.xMax = sys.float_info.min
 
-    zMin = sys.float_info.max
-    zMax = sys.float_info.min
+        self.yMin = sys.float_info.max
+        self.yMax = sys.float_info.min
 
-    xCenter: float = None
-    yCenter: float = None
-    zCenter: float = None
+        self.zMin = sys.float_info.max
+        self.zMax = sys.float_info.min
 
-    xSpread: float = None
-    ySpread: float = None
-    zSpread: float = None
+        self.xCenter: float = None
+        self.yCenter: float = None
+        self.zCenter: float = None
 
-    displacementMin = sys.float_info.max
-    displacementMax = sys.float_info.min
+        self.xSpread: float = None
+        self.ySpread: float = None
+        self.zSpread: float = None
 
-    displacementSpread: float = None
+        self.displacementMin = sys.float_info.max
+        self.displacementMax = sys.float_info.min
 
-    forceMin = sys.float_info.max
-    forceMax = sys.float_info.min
+        self.displacementSpread: float = None
 
-    forceSpread: float = None
+        self.forceMin = sys.float_info.max
+        self.forceMax = sys.float_info.min
 
-    angleMin = sys.float_info.max
-    angleMax = sys.float_info.min
+        self.forceSpread: float = None
 
-    angleSpread: float = None
+        self.angleMin = sys.float_info.max
+        self.angleMax = sys.float_info.min
+
+        self.angleSpread: float = None
 
     def node(self, name: str, position: FEAVector, displacement: FEAVector = (0.0, 0.0, 0.0), force: FEAVector = (0.0, 0.0, 0.0)):
         

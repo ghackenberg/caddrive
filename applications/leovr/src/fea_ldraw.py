@@ -1,4 +1,5 @@
 import os
+import sys
 
 from requests.exceptions import ConnectionError
 
@@ -11,9 +12,9 @@ from panda3d.core import WindowProperties, NodePath, PandaNode
 from caddrive.http import codeaster, CodeasterRequestFailed, CodeasterResponseUnexpected
 from caddrive.ldraw.parsers import TableParser
 from caddrive.simulation.codeaster import PreProcessor
-from caddrive.visualization.panda3d import FEAVector, FEAModel, makeFEAPoints, makeFEALines, makeFEATriangles
+from caddrive.visualization.panda3d import FEAVector, FEAModel, makeFEALines, makeFEATriangles
 
-from config import LDR_FILE, OUT_DIR, JOB_NAME, SCALE
+from config import LDR_FILE_A, LDR_FILE_C, LDR_FILE_D, OUT_DIR, SCALE
 
 class LeoVR(ShowBase):
 
@@ -27,23 +28,90 @@ class LeoVR(ShowBase):
 
         self.win.requestProperties(props)
 
-        # Onscreen message
-        self.message = OnscreenText("Loading ...")
-
         # Load FEA model
-        self.thread = threading.Thread(target=lambda: self._load(LDR_FILE, OUT_DIR, JOB_NAME))
+        self.thread = threading.Thread(target=lambda: self._load())
         self.thread.start()
         
         # Mouse configuration
         self.disableMouse()
 
         # Camera configuration
-        self.camera.setPos(0, -400, 0)
+        self.camera.setPos(0, -500, 0)
 
-    def _load(self, ldrFile: str, outDir: str, jobName: str):
-        
+    def _load(self):
+
         try:
-            self._loadFEAModel(ldrFile, outDir, jobName)
+
+            # Setup
+            self.message = OnscreenText("Loading ...")
+
+            # Outer rotation about Y axis
+            pitch = self.render.attachNewNode("pitch")
+            pitch.setHpr(0, 20, 0)
+
+            # Inner rotation about X axis
+            yaw = pitch.attachNewNode("yaw")
+            yaw.hprInterval(5.0, (360, 0, 0)).loop()
+
+            # Loading models
+            modelA = self._loadFEAModel(LDR_FILE_A, OUT_DIR, "job_a")
+            modelB = self._loadFEAModel(LDR_FILE_C, OUT_DIR, "job_c")
+            modelC = self._loadFEAModel(LDR_FILE_D, OUT_DIR, "job_d")
+
+            # Update models
+            models = [modelA, modelB, modelC]
+
+            displacementMin = sys.float_info.max
+            displacementMax = sys.float_info.min
+
+            forceMin = sys.float_info.max
+            forceMax = sys.float_info.min
+
+            angleMin = sys.float_info.max
+            angleMax = sys.float_info.min
+
+            for model in models:
+
+                # Update local displacement
+                displacementMin = min(displacementMin, model.displacementMin)
+                displacementMax = max(displacementMax, model.displacementMax)
+
+                # Update local force
+                forceMin = min(forceMin, model.forceMin)
+                forceMax = max(forceMax, model.forceMax)
+
+                # Update local angle
+                angleMin = min(angleMin, model.angleMin)
+                angleMax = max(angleMax, model.angleMax)
+            
+            for model in models:
+
+                # Update model displacement
+                model.displacementMin = displacementMin
+                model.displacementMax = displacementMax
+
+                model.displacementSpread = displacementMax - displacementMin
+
+                # Update model force
+                model.forceMin = forceMin
+                model.forceMax = forceMax
+
+                model.forceSpread = forceMax - forceMin
+
+                # Update model angle
+                model.angleMin = angleMin
+                model.angleMax = angleMax
+
+                model.angleSpread = angleMax - angleMin
+
+            # Rendering models
+            self._renderFEAModel("job_a", modelA, (0, -100, 0)).reparentTo(yaw)
+            self._renderFEAModel("job_b", modelB, (0,    0, 0)).reparentTo(yaw)
+            self._renderFEAModel("job_c", modelC, (0,   80, 0)).reparentTo(yaw)
+            
+            # Cleanup
+            self.message.destroy()
+        
         except FileNotFoundError:
             self.message.setText("LDraw model is not available!")
         except ConnectionError:
@@ -64,35 +132,27 @@ class LeoVR(ShowBase):
         commFile = f"{outDir}/{jobName}.comm"
         resuFile = f"{outDir}/{jobName}.resu"
 
-        # Outer rotation about Y axis
-        outer = self.render.attachNewNode("outer")
-        outer.setHpr(0, 20, 0)
-        #outer.hprInterval(10.0, (0, 360, 0)).loop()
-
-        # Inner rotation about X axis
-        inner = outer.attachNewNode("inner")
-        inner.hprInterval(5.0, (360, 0, 0)).loop()
-
         # Parse CAD model
-        self.message.setText("Parsing LDraw file ...")
+        self.message.setText(f"Parsing {jobName} LDR ...")
 
         parser = TableParser()
         parser.readFileLDR(ldrFile)
 
         # Generate FEA model
-        self.message.setText("Generating FEA model ...")
+        self.message.setText(f"Generating {jobName} MAIL/COMM ...")
 
         preprocessor = PreProcessor(outDir, jobName)
         preprocessor.buildLeoFeaModel(parser.tableLeoFeaModel)
         preprocessor.writeInputFiles()
 
         # Generate FEA result
-        self.message.setText("Simulating FEA model ...")
+        self.message.setText(f"Simulating {jobName} ...")
 
-        codeaster(outDir, jobName, mailFile, commFile)
+        if not os.path.exists(resuFile):
+            codeaster(outDir, jobName, mailFile, commFile)
 
         # Parse FEA result
-        self.message.setText("Parsing FEA result ...")
+        self.message.setText(f"Parsing {jobName} RESU ...")
 
         depl: dict[str, FEAVector] = {}
         forc: dict[str, FEAVector] = {}
@@ -130,7 +190,7 @@ class LeoVR(ShowBase):
                         reac[name] = [x, y, z]
 
         # Translating FEA result
-        self.message.setText("Translating FEA result ...")
+        self.message.setText(f"Translating {jobName} ...")
 
         model = FEAModel()
 
@@ -203,11 +263,15 @@ class LeoVR(ShowBase):
         
         model.lock()
 
-        # Make FEA geometry
-        self.message.setText("Visualizing FEA result ...")
+        return model
+    
+    def _renderFEAModel(self, jobName: str, model: FEAModel, pos: FEAVector):
 
-        group = NodePath(PandaNode("group"))
-        group.setPos(-model.xCenter, -model.yCenter, -model.zCenter)
+        # Make FEA geometry
+        self.message.setText(f"Visualizing {jobName} ...")
+
+        group = NodePath(PandaNode(jobName))
+        group.setPos(pos[0] - model.xCenter, pos[1] - model.yCenter, pos[2] - model.zCenter)
 
         # points = makeFEAPoints(model, 3, SCALE, 3/3)
         # points.reparentTo(group)
@@ -218,10 +282,7 @@ class LeoVR(ShowBase):
         triangles = makeFEATriangles(model, SCALE, 0.5)
         triangles.reparentTo(group)
 
-        # Clean up
-        self.message.destroy()
-        
-        group.reparentTo(inner)
+        return group
 
 app = LeoVR()
 app.run()
