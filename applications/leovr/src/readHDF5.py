@@ -72,21 +72,27 @@ def getNodeIDs(dsetName):
     n1 = np.array(f[dsetName][:])
     
     v_id = np.empty(len(n1), dtype=np.int32)
+    v_name = [''] * len(n1)
+    
     ii=0
     for node in n1:
-        #print(n1[0])
-        str = ''
-        for ch in node[1:]:
-            str += chr(ch)
+        #print(node)
+        #print(type(node))
+    
+        # node is a numpy array of ascii values 
+        nodeName = np.array(node, dtype='b').tobytes().decode("ascii")    # convert array of ascii values to string
+        nodeId = int(nodeName[1:])
+        #print(f'{nodeName} {nodeId}')
         
-        nid = int(str)
-        
-        #print(nid)
-        v_id[ii] = nid
+        v_id[ii] = nodeId
+        v_name[ii] = nodeName
         ii += 1
-        #print(len(n1))
 
-    print(v_id)
+
+    #print(v_name)
+    #print(v_id)
+    
+    return(v_name, v_id)
         
         
     
@@ -132,4 +138,4 @@ fx, fy, fz = getFieldData('/CHA/resnonl_FORC_NODA/000000000000000000010000000000
 
 print('\nNode numbers:')
 ## Extract node numbers
-vn = getNodeIDs('/ENS_MAA/00000001/-0000000000000000001-0000000000000000001/NOE/NOM')
+nodeName, nodeId = getNodeIDs('/ENS_MAA/00000001/-0000000000000000001-0000000000000000001/NOE/NOM')
