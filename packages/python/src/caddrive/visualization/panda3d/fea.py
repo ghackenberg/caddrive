@@ -214,31 +214,35 @@ class FEAModel:
         
         self.angleSpread = self.angleMax - self.angleMin
     
-    def color(self, node: FEANode):
+    def color(self, node: FEANode, angle = False):
 
         if self.forceSpread is None:
             raise Exception("Model is not locked yet!")
 
-        angleRelative = (node.angleAvg - self.angleMin) / self.angleSpread
-
         if self.displacementSpread > 0:
-
+            
             displacementAbsolute = numpy.linalg.norm(node.displacement)
             displacementRelative = (displacementAbsolute - self.displacementMin) / self.displacementSpread
 
             r = displacementRelative
-            g = 1.0 - displacementRelative
-            b = angleRelative
-
-            return r, g, b
+            b = 1.0 - displacementRelative
 
         else:
 
             r = 1.0
-            g = 1.0
-            b = angleRelative
+            b = 1.0
 
-            return r, g, b
+        if self.angleSpread > 0:
+
+            angleRelative = (node.angleAvg - self.angleMin) / self.angleSpread if angle else 0.0
+
+            g = angleRelative
+
+        else:
+
+            g = 0.0
+
+        return r, g, b
 
 def makeFEAPoints(model: FEAModel, thickness = 1, displacementScale = 1.0, colorScale = 1.0):
 
@@ -277,7 +281,7 @@ def makeFEAPoints(model: FEAModel, thickness = 1, displacementScale = 1.0, color
 
     for node in model.nodeList:
 
-        r, g, b = model.color(node)
+        r, g, b = model.color(node, True)
 
         color.addData4f(r * colorScale, g * colorScale, b * colorScale, 1.0)
 
@@ -338,7 +342,7 @@ def makeFEALines(model: FEAModel, thickness = 1, displacementScale = 1.0, colorS
 
     for node in model.nodeList:
 
-        r, g, b = model.color(node)
+        r, g, b = model.color(node, True)
 
         color.addData4f(r * colorScale, g * colorScale, b * colorScale, 1.0)
 

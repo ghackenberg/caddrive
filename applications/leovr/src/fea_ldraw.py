@@ -38,7 +38,7 @@ class LeoVR(ShowBase):
         self.disableMouse()
 
         # Camera configuration
-        self.camera.setPos(0, -600, 0)
+        self.camera.setPos(0, -400, 0)
 
     def _load(self, ldrFile: str, outDir: str, jobName: str):
         
@@ -66,7 +66,8 @@ class LeoVR(ShowBase):
 
         # Outer rotation about Y axis
         outer = self.render.attachNewNode("outer")
-        outer.hprInterval(10.0, (0, 360, 0)).loop()
+        outer.setHpr(0, 20, 0)
+        #outer.hprInterval(10.0, (0, 360, 0)).loop()
 
         # Inner rotation about X axis
         inner = outer.attachNewNode("inner")
@@ -208,13 +209,13 @@ class LeoVR(ShowBase):
         group = NodePath(PandaNode("group"))
         group.setPos(-model.xCenter, -model.yCenter, -model.zCenter)
 
-        points = makeFEAPoints(model, 3, SCALE, 3/3)
-        points.reparentTo(group)
+        # points = makeFEAPoints(model, 3, SCALE, 3/3)
+        # points.reparentTo(group)
 
-        lines = makeFEALines(model, 2, SCALE, 2/3)
+        lines = makeFEALines(model, 3, SCALE, 1.0)
         lines.reparentTo(group)
 
-        triangles = makeFEATriangles(model, SCALE, 1/3)
+        triangles = makeFEATriangles(model, SCALE, 0.5)
         triangles.reparentTo(group)
 
         # Clean up
