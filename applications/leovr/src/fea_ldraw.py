@@ -53,6 +53,7 @@ class LeoVR(ShowBase):
         except CodeasterResponseUnexpected:
             self.message.setText("CodeAster service response unexpected!")
         except Exception as e:
+            print(e)
             self.message.setText("An unexpected error occurred!")
     
     def _loadFEAModel(self, ldrFile: str, outDir: str, jobName: str):
@@ -87,7 +88,7 @@ class LeoVR(ShowBase):
         # Generate FEA result
         self.message.setText("Simulating FEA model ...")
 
-        codeaster(outDir, jobName, mailFile, commFile)
+        # codeaster(outDir, jobName, mailFile, commFile)
 
         # Parse FEA result
         self.message.setText("Parsing FEA result ...")

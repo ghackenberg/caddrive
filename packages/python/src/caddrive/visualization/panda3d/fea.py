@@ -1,7 +1,18 @@
 import sys
+import math
 import numpy
 
 FEAVector = tuple[float, float, float]
+
+def normal(a: FEAVector, b: FEAVector, c: FEAVector) -> FEAVector:
+
+    ab = numpy.subtract(b, a)
+    ac = numpy.subtract(c, a)
+
+    d = numpy.cross(ab, ac)
+    l = numpy.linalg.norm(d)
+
+    return (d[0] / l, d[1] / l, d[2] / l)
 
 class FEANode:
 
@@ -15,7 +26,15 @@ class FEANode:
         self.displacement = displacement
         self.force = force
 
-        self.normals: dict[str, FEAVector] = {}
+        self.normalList: list[FEAVector] = []
+        self.normalIndex: dict[str, FEAVector] = {}
+
+        self.angles: list[float] = []
+
+        self.angleMin = sys.float_info.max
+        self.angleMax = sys.float_info.min
+
+        self.angleAvg = 0.0
 
 class FEAQuad:
 
@@ -67,6 +86,11 @@ class FEAModel:
 
     forceSpread: float = None
 
+    angleMin = sys.float_info.max
+    angleMax = sys.float_info.min
+
+    angleSpread: float = None
+
     def node(self, name: str, position: FEAVector, displacement: FEAVector = (0.0, 0.0, 0.0), force: FEAVector = (0.0, 0.0, 0.0)):
         
         if self.forceSpread is not None:
@@ -106,30 +130,47 @@ class FEAModel:
         self.forceMin = min(self.forceMin, forceCurrent)
         self.forceMax = max(self.forceMax, forceCurrent)
     
-    def quad(self, name: str, node1: str, node2: str, node3: str, node4: str):
+    def quad(self, name: str, nodeName1: str, nodeName2: str, nodeName3: str, nodeName4: str):
         
         if self.forceSpread is not None:
             raise Exception("Model is already locked!")
         if name in self.quadIndex:
             raise Exception("Quad name already in use!")
-        if node1 not in self.nodeIndex:
+        if nodeName1 not in self.nodeIndex:
             raise Exception("Node 1 not defined!")
-        if node2 not in self.nodeIndex:
+        if nodeName2 not in self.nodeIndex:
             raise Exception("Node 2 not defined!")
-        if node3 not in self.nodeIndex:
+        if nodeName3 not in self.nodeIndex:
             raise Exception("Node 3 not defined!")
-        if node4 not in self.nodeIndex:
+        if nodeName4 not in self.nodeIndex:
             raise Exception("Node 4 not defined!")
         
-        temp1 = self.nodeIndex[node1]
-        temp2 = self.nodeIndex[node2]
-        temp3 = self.nodeIndex[node3]
-        temp4 = self.nodeIndex[node4]
+        node1 = self.nodeIndex[nodeName1]
+        node2 = self.nodeIndex[nodeName2]
+        node3 = self.nodeIndex[nodeName3]
+        node4 = self.nodeIndex[nodeName4]
 
-        quad = FEAQuad(len(self.quadList), name, temp1, temp2, temp3, temp4)
+        quad = FEAQuad(len(self.quadList), name, node1, node2, node3, node4)
 
         self.quadList.append(quad)
         self.quadIndex[name] = quad
+
+        # Calculate normals
+
+        normal1 = normal(node1.position, node2.position, node4.position)
+        normal2 = normal(node2.position, node3.position, node1.position)
+        normal3 = normal(node3.position, node4.position, node2.position)
+        normal4 = normal(node4.position, node1.position, node3.position)
+
+        node1.normalList.append(normal1)
+        node2.normalList.append(normal2)
+        node3.normalList.append(normal3)
+        node4.normalList.append(normal4)
+
+        node1.normalIndex[name] = normal1
+        node2.normalIndex[name] = normal2
+        node3.normalIndex[name] = normal3
+        node4.normalIndex[name] = normal4
     
     def lock(self):
 
@@ -147,11 +188,38 @@ class FEAModel:
         self.displacementSpread = self.displacementMax - self.displacementMin
 
         self.forceSpread = self.forceMax - self.forceMin
+
+        # Calculate angles between node normals
+
+        for node in self.nodeList:
+            stop = len(node.normalList)
+            count = stop * (stop - 1) / 2
+            for i in range(stop):
+                normal1 = node.normalList[i]
+                for j in range(i + 1, stop):
+                    normal2 = node.normalList[j]
+
+                    angle = math.acos(numpy.dot(normal1, normal2))
+                    
+                    node.angles.append(angle)
+                    node.angleMin = min(node.angleMin, angle)
+                    node.angleMax = max(node.angleMax, angle)
+                    node.angleAvg = node.angleAvg + angle / count
+        
+        # Caculate range of angles between node normals
+        
+        for node in self.nodeList:
+            self.angleMin = min(self.angleMin, node.angleAvg)
+            self.angleMax = max(self.angleMax, node.angleAvg)
+        
+        self.angleSpread = self.angleMax - self.angleMin
     
     def color(self, node: FEANode):
 
         if self.forceSpread is None:
             raise Exception("Model is not locked yet!")
+
+        angleRelative = (node.angleAvg - self.angleMin) / self.angleSpread
 
         if self.displacementSpread > 0:
 
@@ -160,7 +228,7 @@ class FEAModel:
 
             r = displacementRelative
             g = 1.0 - displacementRelative
-            b = 0.0
+            b = angleRelative
 
             return r, g, b
 
@@ -168,7 +236,7 @@ class FEAModel:
 
             r = 1.0
             g = 1.0
-            b = 1.0
+            b = angleRelative
 
             return r, g, b
 
