@@ -1,9 +1,11 @@
 import sys
 import numpy
 
+FEAVector = tuple[float, float, float]
+
 class FEANode:
 
-    def __init__(self, number: int, name: str, position: list[float], displacement = [0.0, 0.0, 0.0], force = [0.0, 0.0, 0.0]):
+    def __init__(self, number: int, name: str, position: FEAVector, displacement: FEAVector = (0.0, 0.0, 0.0), force: FEAVector = (0.0, 0.0, 0.0)):
 
         self.number = number
 
@@ -12,6 +14,8 @@ class FEANode:
         self.position = position
         self.displacement = displacement
         self.force = force
+
+        self.normals: dict[str, FEAVector] = {}
 
 class FEAQuad:
 
@@ -63,7 +67,7 @@ class FEAModel:
 
     forceSpread: float = None
 
-    def node(self, name: str, position: list[float], displacement = [0.0, 0.0, 0.0], force = [0.0, 0.0, 0.0]):
+    def node(self, name: str, position: FEAVector, displacement: FEAVector = (0.0, 0.0, 0.0), force: FEAVector = (0.0, 0.0, 0.0)):
         
         if self.forceSpread is not None:
             raise Exception("Model is already locked!")
@@ -77,14 +81,16 @@ class FEAModel:
 
         # Coordinate min/max
 
-        self.xMin = min(self.xMin, position[0])
-        self.xMax = max(self.xMax, position[0])
+        x, y, z = position
 
-        self.yMin = min(self.yMin, position[1])
-        self.yMax = max(self.yMax, position[1])
+        self.xMin = min(self.xMin, x)
+        self.xMax = max(self.xMax, x)
 
-        self.zMin = min(self.zMin, position[2])
-        self.zMax = max(self.zMax, position[2])
+        self.yMin = min(self.yMin, y)
+        self.yMax = max(self.yMax, y)
+
+        self.zMin = min(self.zMin, z)
+        self.zMax = max(self.zMax, z)
 
         # Displacement min/max
 

@@ -11,7 +11,7 @@ from panda3d.core import WindowProperties, NodePath, PandaNode
 from caddrive.http import codeaster, CodeasterRequestFailed, CodeasterResponseUnexpected
 from caddrive.ldraw.parsers import TableParser
 from caddrive.simulation.codeaster import PreProcessor
-from caddrive.visualization.panda3d import FEAModel, makeFEAPoints, makeFEALines, makeFEATriangles
+from caddrive.visualization.panda3d import FEAVector, FEAModel, makeFEAPoints, makeFEALines, makeFEATriangles
 
 from config import LDR_FILE, OUT_DIR, JOB_NAME, SCALE
 
@@ -92,9 +92,9 @@ class LeoVR(ShowBase):
         # Parse FEA result
         self.message.setText("Parsing FEA result ...")
 
-        depl: dict[str, list[float]] = {}
-        forc: dict[str, list[float]] = {}
-        reac: dict[str, list[float]] = {}
+        depl: dict[str, FEAVector] = {}
+        forc: dict[str, FEAVector] = {}
+        reac: dict[str, FEAVector] = {}
 
         mode = 0
         with open(resuFile, "r") as file:
@@ -148,14 +148,14 @@ class LeoVR(ShowBase):
                         if nodeName in depl:
                             d = depl[nodeName]
                         else:
-                            d = [0, 0, 0]
+                            d = (0.0, 0.0, 0.0)
                         
                         if nodeName in forc:
                             f = forc[nodeName]
                         else:
-                            f = [0, 0, 0]
+                            f = (0.0, 0.0, 0.0)
 
-                        model.node(nodeName, [x, y, z], d, f)
+                        model.node(nodeName, (x, y, z), d, f)
             offset = offset + part.nodesx.size
 
         offset = 0

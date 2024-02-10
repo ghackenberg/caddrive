@@ -35,14 +35,14 @@ class LeoVR(ShowBase):
         # Make FEA model
         model = FEAModel()
 
-        model.node("N1", [-1, -1, -1], randomVector(), randomVector())
-        model.node("N2", [+1, -1, -1], randomVector(), randomVector())
-        model.node("N3", [+1, +1, -1], randomVector(), randomVector())
-        model.node("N4", [-1, +1, -1], randomVector(), randomVector())
-        model.node("N5", [-1, -1, +1], randomVector(), randomVector())
-        model.node("N6", [+1, -1, +1], randomVector(), randomVector())
-        model.node("N7", [+1, +1, +1], randomVector(), randomVector())
-        model.node("N8", [-1, +1, +1], randomVector(), randomVector())
+        model.node("N1", (-1, -1, -1), randomVector(), randomVector())
+        model.node("N2", (+1, -1, -1), randomVector(), randomVector())
+        model.node("N3", (+1, +1, -1), randomVector(), randomVector())
+        model.node("N4", (-1, +1, -1), randomVector(), randomVector())
+        model.node("N5", (-1, -1, +1), randomVector(), randomVector())
+        model.node("N6", (+1, -1, +1), randomVector(), randomVector())
+        model.node("N7", (+1, +1, +1), randomVector(), randomVector())
+        model.node("N8", (-1, +1, +1), randomVector(), randomVector())
 
         model.quad("Q1", "N1", "N2", "N3", "N4")
         model.quad("Q2", "N5", "N6", "N7", "N8")
