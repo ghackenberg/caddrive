@@ -542,9 +542,9 @@ class PreProcessor():
             fid.write(f'   %% Part: {p.partName}\n')
             #print(f'_writeNodeCoords, Part: {p.partName}\n')
 
-            for i in range(p.nodesx.shape[0]):
+            for k in range(p.nodesx.shape[2]):
                 for j in range(p.nodesx.shape[1]):
-                    for k in range(p.nodesx.shape[2]):
+                    for i in range(p.nodesx.shape[0]):
                         nameNode = self._getNameNode(offs + p.nodesId[i,j,k])
                         string = '    {:s} {:5.2f} {:5.2f} {:5.2f}'.format(nameNode, p.nodesx[i,j,k], p.nodesy[i,j,k], p.nodesz[i,j,k])
                         self.numNodes += 1
