@@ -12,19 +12,38 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+import xml.etree.cElementTree as ET
+import xml.dom.minidom
+
 # Internal dependencies
 
 import caddrive
 
-from config import RESOURCES, EXAMPLES_DIR, OUT_DIR, JOB_NAME
+from config import RESOURCES, EXAMPLES_DIR, OUT_DIR, JOB_NAME, PARAVIEW_TEMPLATE, XML_DIALOG_DATA
 
 # Ensure folder
 
 if not os.path.exists(OUT_DIR): os.makedirs(OUT_DIR)
 
-# Class declaration
+# Class declaration Dialog to open LDR overview
+class ViewLDR_UI(QtWidgets.QDialog):
 
-class LeoFEAGUI(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+
+        super().__init__(parent)
+
+        self._initUI()
+
+    def _initUI(self):
+        
+        resDialog = RESOURCES.joinpath('viewLDR.ui')
+
+        with as_file(resDialog) as file:
+
+            self.ui = uic.loadUi(file.absolute(), self)   # Created with QT5 Designer
+
+
+class LeoFEA_UI(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
 
@@ -43,9 +62,11 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
         self.defaultLDrawModelName = os.path.abspath(os.path.join(EXAMPLES_DIR, "CADdrive.ldr"))
 
-        self.initUI()
+        self.viewLDRdlg = ViewLDR_UI()
 
-    def initUI(self):
+        self._initUI()
+
+    def _initUI(self):
 
         resDialog = RESOURCES.joinpath('dialog.ui')
 
@@ -54,20 +75,25 @@ class LeoFEAGUI(QtWidgets.QDialog):
             self.ui = uic.loadUi(file.absolute(), self)   # Created with QT5 Designer
 
             # Slots (connect Buttons with methods)
-            self.ui.button_SelectWorkdir.clicked.connect(self.onButton_selectWorkdir)
-            self.ui.button_SelectLDR.clicked.connect(self.onButton_selectLDrawModel)
-            self.ui.button_LoadLDR.clicked.connect(self.onButton_loadLDrawModel)
-            self.ui.button_startFEA.clicked.connect(self.onButton_startFEA)
-            self.ui.button_viewPNG.clicked.connect(self.onButton_viewPNG)
-            self.ui.button_checkLimitValues.clicked.connect(self.onButton_checkLimitValues)
-            self.ui.button_openLeoCAD.clicked.connect(self.onButton_openLeoCAD)
-            self.ui.button_openParaview.clicked.connect(self.onButton_openParaView)
+            self.ui.button_SelectPath_LeoCAD.clicked.connect(self._onButton_SelectPath_LeoCAD)
+            self.ui.button_SelectPath_Paraview.clicked.connect(self._onButton_SelectPath_Paraview)
+            self.ui.button_SelectPath_OutputFEA.clicked.connect(self._onButton_SelectPath_OutputFEA)
+            self.ui.button_LoadLDR.clicked.connect(self._onButton_LoadLDR)
+            self.ui.button_ViewLDR.clicked.connect(self._onButton_ViewLDR)
+            self.ui.button_startFEA.clicked.connect(self._onButton_startFEA)
+            self.ui.button_viewPNG.clicked.connect(self._onButton_viewPNG)
+            self.ui.button_checkLimitValues.clicked.connect(self._onButton_checkLimitValues)
+            self.ui.button_openLeoCAD.clicked.connect(self._onButton_openLeoCAD)
+            self.ui.button_openParaview.clicked.connect(self._onButton_openParaView)
 
             # Initialize Combobox
-            self.ui.combo_Analysis.addItem('Static');     self.comboIndexStatic = 0
-            self.ui.combo_Analysis.addItem('Modal');      self.comboIndexModal = 1
-            self.ui.combo_Analysis.addItem('Dynamic');    self.comboIndexDynamic = 2
-            self.ui.combo_Analysis.addItem('Damage');     self.comboIndexDamage = 3
+            self.ui.combo_Analysis.addItem('Static');     self.comboAnalysisIndex_Static  = 0
+            self.ui.combo_Analysis.addItem('Modal');      self.comboAnalysisIndex_Modal   = 1
+            self.ui.combo_Analysis.addItem('Dynamic');    self.comboAnalysisIndex_Dynamic = 2
+            self.ui.combo_Analysis.addItem('Damage');     self.comboAnalysisIndex_Damage  = 3
+
+            self.ui.combo_Contact.addItem('Off');         self.comboContactIndex_Off = 0
+            self.ui.combo_Contact.addItem('On');          self.comboContactIndex_On  = 1
 
             # Initialize textboxes
             self.ui.textbox_jobname.setText("caddrive")
@@ -80,17 +106,83 @@ class LeoFEAGUI(QtWidgets.QDialog):
             self.ui.textbox_maxForce.setText(str(0.1 * loadScale))
             self.ui.textbox_maxDisplacement.setText(str(0.001 * loadScale))
 
+            self._LoadDialogData()
+
         self.setWindowTitle(f"LeoFEA {self.version}")
 
-    def onButton_selectWorkdir(self):
+    def _SaveDialogData(self):
 
-        ret = QtWidgets.QFileDialog.getExistingDirectory(self, 'selectWorkdir', self.workdir)
+        m_encoding = 'UTF-8'
 
-        self.workdir = ret
+        root = ET.Element("root")
+        ET.SubElement(root, "path_leoCAD").text = self.ui.textbox_path_leoCAD.text()
+        ET.SubElement(root, "path_paraview").text = self.ui.textbox_path_paraview.text()
 
-        self.textbox_workdir.setText(ret)
+        dom = xml.dom.minidom.parseString(ET.tostring(root))
+        xml_string = dom.toprettyxml()
+        part1, part2 = xml_string.split('?>')
 
-    def onButton_selectLDrawModel(self):
+        userpath = os.path.expanduser('~')
+        with open(f"{userpath}/{XML_DIALOG_DATA}", 'w') as xfile:
+            xfile.write(part1 + 'encoding=\"{}\"?>\n'.format(m_encoding) + part2)
+            xfile.close()
+        # TODO save state in User directory
+        
+    def _LoadDialogData(self):
+        
+        userpath = os.path.expanduser('~')
+
+        
+
+        try:
+            tree = ET.parse(f"{userpath}/{XML_DIALOG_DATA}")
+            root = tree.getroot()
+
+            pathLeoCAD = root.find("path_leoCAD").text
+            pathparaview = root.find("path_paraview").text
+
+            print(f"Path found: {pathLeoCAD}")
+            print(f"Path found: {pathparaview}")
+            
+            self.ui.textbox_path_leoCAD.setText( root.find("path_leoCAD").text )
+            self.ui.textbox_path_paraview.setText( root.find("path_paraview").text )
+
+        except FileNotFoundError:
+
+            QMessageBox.warning(self, "Dialog Data missing", "Dialog data not found, using default settings")
+
+
+    def _onButton_SelectPath_LeoCAD(self):
+
+        ret = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Path for LeoCAD exe', self.ui.textbox_path_leoCAD.text())
+
+        if ret != '':
+
+            self.ui.textbox_path_leoCAD.setText(ret)
+
+            self._SaveDialogData()
+
+    def _onButton_SelectPath_Paraview(self):
+
+        ret = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Path for Paraview exe', self.ui.textbox_path_paraview.text())
+
+        if ret != '':
+            self.ui.textbox_path_paraview.setText(ret)
+
+            self._SaveDialogData()
+
+    def _onButton_SelectPath_OutputFEA(self):
+
+        ret = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select FEA output directory', self.workdir)
+
+        if ret != '':
+            self.workdir = ret
+
+            self.ui.textbox_workdir.setText(ret)
+
+            self._SaveDialogData()
+
+    def _onButton_LoadLDR(self):
 
         filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', EXAMPLES_DIR)
         ldrFname = filename[0]
@@ -99,22 +191,26 @@ class LeoFEAGUI(QtWidgets.QDialog):
             QMessageBox.warning(self, "selectLDrawModel", "No filename selected, set to default")
             ldrFname = self.defaultLDrawModelName
 
-        self.textbox_FilenameLDR.setText(ldrFname)
+        self.ui.textbox_FilenameLDR.setText(ldrFname)
         self._loadLDR()
 
-    def onButton_loadLDrawModel(self):
+    def _onButton_ViewLDR(self):
 
         self._loadLDR()
 
-    def onButton_startFEA(self):
+        self.viewLDRdlg.ui.textbox_FilenameLDR.setText(self.ui.textbox_FilenameLDR.text() )
+ 
+        self.viewLDRdlg.show()
+
+    def _onButton_startFEA(self):
 
         try:
 
             self._loadLDR()    # Load LDR file
 
             # Adjust table widget for part info and force definition
-            self.ui.tableWidgetLDR.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
-            self.ui.tableWidgetLDR.resizeColumnsToContents()
+            self.viewLDRdlg.ui.tableWidgetLDR.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+            self.viewLDRdlg.ui.tableWidgetLDR.resizeColumnsToContents()
 
             # Init output
             self.ui.textEdit_resultsMinForce.setText('')
@@ -133,7 +229,7 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
             QMessageBox.warning(self, "startFEA", f"{e}")
 
-    def onButton_viewPNG(self):
+    def _onButton_viewPNG(self):
 
         # View Bitmap result
         dialog = QtWidgets.QDialog()
@@ -148,17 +244,43 @@ class LeoFEAGUI(QtWidgets.QDialog):
         
         dialog.exec_()
 
-    def onButton_checkLimitValues(self):
+    def _onButton_checkLimitValues(self):
 
         QMessageBox.about(self, "ChecklimitValues", "Function not yet implemented")
 
-    def onButton_openLeoCAD(self):
+    def _onButton_openLeoCAD(self):
 
-        QMessageBox.about(self, "openLeoCAD", "Function not yet implemented")
+        commandLeoCAD = f"START {self.ui.textbox_path_leoCAD.text()}\leoCAD.exe"
 
-    def onButton_openParaView(self):
+        os.system(commandLeoCAD)
 
-        QMessageBox.about(self, "openParaview", "Function not yet implemented")
+    def _onButton_openParaView(self):
+        
+        # Write postProcessParaviewFile
+        templateParaview = f'{RESOURCES}/{PARAVIEW_TEMPLATE}'
+     
+        ftemp = open(templateParaview, 'r') # Open template file
+
+        fnamePost = f'{OUT_DIR}/pv_job.py'     # Postprocessing file
+        fpost = open(fnamePost, 'w')
+     
+        #Write information to postprocessing file
+        fpost.write(f"jobname = '{JOB_NAME}'\n")
+        fpost.write(f"filename = r'{OUT_DIR}/{JOB_NAME}'\n")
+        timeVisualization = 1
+        fpost.write(f"timeVisualization = {timeVisualization}\n")
+        fpost.write('\n')
+
+        # Append template file
+        for line in ftemp:
+            fpost.write(line)
+
+        ftemp.close()
+        fpost.close()
+
+        # Start Paraview
+        paraviewCommand = f'{self.ui.textbox_path_paraview.text()}/paraview.exe --script="{fnamePost}"'
+        os.system(paraviewCommand)
 
     def _loadLDR(self):
 
@@ -170,17 +292,17 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
         numRows = len(self.tableLDR)
         if numRows > 0:
-            numCols = len(self.tableLDR[0]) + 3     # three additional columns for force definition
+            numCols = len(self.tableLDR[0]) #+ 3     # three additional columns for force definition
 
         if numRows*numCols:   # If not zero
-            self.ui.tableWidgetLDR.setRowCount(numRows)
-            self.ui.tableWidgetLDR.setColumnCount(numCols)
+            self.viewLDRdlg.ui.tableWidgetLDR.setRowCount(numRows)
+            self.viewLDRdlg.ui.tableWidgetLDR.setColumnCount(numCols)
         else:
             QMessageBox.about(self, "Error reading LDR", f"Dimension of table is zero: numRows={numRows}, numCols={numCols}")
             return
 
-        self.ui.tableWidgetLDR.setHorizontalHeaderLabels(["ID", "dat", "nx", "ny", "nz", "Description", "posx", "posy", "posz", "Fx", "Fy", "Fz"])
-        self.ui.tableWidgetLDR.verticalHeader().hide()
+        self.viewLDRdlg.ui.tableWidgetLDR.setHorizontalHeaderLabels(["ID", "dat", "nx", "ny", "nz", "Description", "posx", "posy", "posz"]) #, "Fx", "Fy", "Fz"])
+        self.viewLDRdlg.ui.tableWidgetLDR.verticalHeader().hide()
 
         row = 0
         for line in self.tableLDR:
@@ -197,12 +319,12 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
             col = 0
             for item in line:
-                self.ui.tableWidgetLDR.setItem(row,col, QTableWidgetItem(str(item)))
+                self.viewLDRdlg.ui.tableWidgetLDR.setItem(row,col, QTableWidgetItem(str(item)))
                 col +=1
 
             row+=1
 
-        self.ui.tableWidgetLDR.resizeColumnsToContents()
+        self.viewLDRdlg.ui.tableWidgetLDR.resizeColumnsToContents()
 
         # Display mass
         rho = 4.8e-10
@@ -210,8 +332,8 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
         self.ui.textbox_mass.setText(f"{mass:0.1f}")
 
-        #self.ui.textbox_numberBricks.setText(f"{len(self.tableLDR)}")   # Number of bricks
-        self.ui.textbox_numberBricks.setText(f"{parser.numberSegments}")     # Number of segments
+        self.ui.textbox_numberParts.setText(f"{len(self.tableLDR)}")           # Number of bricks
+        self.ui.textbox_numberSegments.setText(f"{parser.numberSegments}")     # Number of segments
 
         self.ui.textbox_costs.setText(f"{parser.price}")
 
@@ -219,7 +341,7 @@ class LeoFEAGUI(QtWidgets.QDialog):
 
 app = QtWidgets.QApplication(sys.argv)
 
-dialog = LeoFEAGUI()
+dialog = LeoFEA_UI()
 dialog.show()
 
 sys.exit(app.exec_())
