@@ -15,6 +15,8 @@ from PyQt5.QtWidgets import *
 import xml.etree.cElementTree as ET
 import xml.dom.minidom
 
+import pandas as pd
+
 # Internal dependencies
 
 import caddrive
@@ -204,7 +206,7 @@ class LeoFEA_UI(QtWidgets.QDialog):
 
     def _onButton_startFEA(self):
 
-        try:
+        #try:
 
             self._loadLDR()    # Load LDR file
 
@@ -223,11 +225,44 @@ class LeoFEA_UI(QtWidgets.QDialog):
             self.ui.textEdit_resultsMinDisplacement_p.setText('')
             self.ui.textEdit_resultsMaxDisplacement_p.setText('')
 
-            caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), OUT_DIR, JOB_NAME)
-            
-        except Exception as e:
+            #caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), OUT_DIR, JOB_NAME)
 
-            QMessageBox.warning(self, "startFEA", f"{e}")
+            # Read results for max values
+            df = pd.read_feather(f"{OUT_DIR}/{JOB_NAME}.resMinMax.feather")  
+            print(df)
+            depl3_min = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['VALUE'] )
+            depl3_max = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['VALUE'] )
+            forc3_min = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['VALUE'] )
+            forc3_max = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['VALUE'] )
+
+            depl3_min_x = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR1'] )
+            depl3_max_x = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR1'] )
+            forc3_min_x = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR1'] )
+            forc3_max_x = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR1'] )
+
+            depl3_min_y = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR2'] )
+            depl3_max_y = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR2'] )
+            forc3_min_y = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR2'] )
+            forc3_max_y = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR2'] )
+
+            depl3_min_z = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR3'] )
+            depl3_max_z = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR3'] )
+            forc3_min_z = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR3'] )
+            forc3_max_z = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR3'] )
+
+            self.ui.textEdit_resultsMinForce.setText(f'{forc3_min:.1f}')
+            self.ui.textEdit_resultsMaxForce.setText(f'{forc3_max:.1f}')
+            self.ui.textEdit_resultsMinDisplacement.setText(f'{depl3_min:.1f}')
+            self.ui.textEdit_resultsMaxDisplacement.setText(f'{depl3_max:.1f}')
+
+            self.ui.textEdit_resultsMinForce_p.setText(f'[{forc3_min_x}, {forc3_min_y}, {forc3_min_z}]')
+            self.ui.textEdit_resultsMaxForce_p.setText(f'[{forc3_max_x}, {forc3_max_y}, {forc3_max_z}]')
+            self.ui.textEdit_resultsMinDisplacement_p.setText(f'[{depl3_min_x}, {depl3_min_y}, {depl3_min_z}]')
+            self.ui.textEdit_resultsMaxDisplacement_p.setText(f'[{depl3_max_x}, {depl3_max_y}, {depl3_max_z}]')
+            
+        #except Exception as e:
+
+        #    QMessageBox.warning(self, "startFEA", f"{e}")
 
     def _onButton_viewPNG(self):
 

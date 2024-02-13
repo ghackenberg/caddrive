@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>919</width>
-    <height>788</height>
+    <width>900</width>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -699,9 +699,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMinForce_p">
       <property name="geometry">
        <rect>
-        <x>400</x>
+        <x>360</x>
         <y>40</y>
-        <width>101</width>
+        <width>141</width>
         <height>31</height>
        </rect>
       </property>
@@ -709,9 +709,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMinForce">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>150</x>
         <y>40</y>
-        <width>101</width>
+        <width>71</width>
         <height>31</height>
        </rect>
       </property>
@@ -719,7 +719,7 @@
      <widget class="QTextEdit" name="textEdit_resultsMinForce_m">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>240</x>
         <y>40</y>
         <width>101</width>
         <height>31</height>
@@ -729,9 +729,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMaxForce_p">
       <property name="geometry">
        <rect>
-        <x>400</x>
+        <x>360</x>
         <y>80</y>
-        <width>101</width>
+        <width>141</width>
         <height>31</height>
        </rect>
       </property>
@@ -739,7 +739,7 @@
      <widget class="QTextEdit" name="textEdit_resultsMaxForce_m">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>240</x>
         <y>80</y>
         <width>101</width>
         <height>31</height>
@@ -749,9 +749,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMaxForce">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>150</x>
         <y>80</y>
-        <width>101</width>
+        <width>71</width>
         <height>31</height>
        </rect>
       </property>
@@ -772,9 +772,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMaxDisplacement">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>150</x>
         <y>160</y>
-        <width>101</width>
+        <width>71</width>
         <height>31</height>
        </rect>
       </property>
@@ -782,9 +782,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMinDisplacement">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>150</x>
         <y>120</y>
-        <width>101</width>
+        <width>71</width>
         <height>31</height>
        </rect>
       </property>
@@ -792,9 +792,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMaxDisplacement_p">
       <property name="geometry">
        <rect>
-        <x>400</x>
+        <x>360</x>
         <y>160</y>
-        <width>101</width>
+        <width>141</width>
         <height>31</height>
        </rect>
       </property>
@@ -802,9 +802,9 @@
      <widget class="QTextEdit" name="textEdit_resultsMinDisplacement_p">
       <property name="geometry">
        <rect>
-        <x>400</x>
+        <x>360</x>
         <y>120</y>
-        <width>101</width>
+        <width>141</width>
         <height>31</height>
        </rect>
       </property>
@@ -812,7 +812,7 @@
      <widget class="QTextEdit" name="textEdit_resultsMaxDisplacement_m">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>240</x>
         <y>160</y>
         <width>101</width>
         <height>31</height>
@@ -822,7 +822,7 @@
      <widget class="QTextEdit" name="textEdit_resultsMinDisplacement_m">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>240</x>
         <y>120</y>
         <width>101</width>
         <height>31</height>
