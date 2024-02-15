@@ -2,8 +2,10 @@
 import os.path
 
 # Internal dependencies
-from .config import TEMPLATE_COMM_STATIC
+from .config import *
 from .part import Part
+
+import xml.etree.cElementTree as ET
 
 class PreProcessor():
 
@@ -11,7 +13,6 @@ class PreProcessor():
 
     # Maximum admissibble nub force
     maxNubForce = 5   # Newton
-    maxDisplacement = 1  # mm
 
     # Parameters for Dynamic simulation
     factor = 10
@@ -19,20 +20,37 @@ class PreProcessor():
     dynSim_t_end = 0.1 / factor
     dynSim_n_incs = 5
 
-    # For controlling the workflow and debugging purposes:
-    analysisTypeStatic = 1
-    analysisTypeModal = 2
-    analysisTypeDynamic = 3
-
-    analysisType = analysisTypeStatic # Default: Static simulation
+    # Settings
+    analysisType = ANALYSIS_STATIC # Default: Static simulation
     disable_contact = 0    # 1 ... do not consider any contact
-    startSim = 1           # 0 ... do not run code_aster
 
-    def __init__(self, outputsDir: str, jobName: str):
+
+    def __init__(self, outputsDir: str, jobName: str, xml_settings: str):
 
         self.fNameDebug = os.path.join(outputsDir, f"{jobName}.debug")
         self.fNameMail = os.path.join(outputsDir, f'{jobName}.mail')
         self.fNameComm = os.path.join(outputsDir, f"{jobName}.comm")
+
+        # Read simulation settings from xml
+        try:
+            tree = ET.parse(xml_settings)
+            root = tree.getroot()
+
+            self.analysisType = root.find("type_analyis").text   # TODO: Differ static / dynamic ...
+
+            contact = root.find("contact").text
+            
+            if contact == "Off":
+                self.disable_contact = 1
+            else:
+                self.disable_contact = 0
+
+            self.maxNubForce = root.find("max_force").text
+            self.gravityScale = root.find("load_scale").text
+
+
+        except:
+            return "Error reading xml file (simulation settings)", 400
 
         self.parts: list[Part] = []
         self.numParts = 0
@@ -85,22 +103,21 @@ class PreProcessor():
         self._connectNubs()
 
         #self.convertMailMED()
-
-        # TBD allow definitions of different kind of analyses!
         
         # Type of analysis STATIC
-        self.analyisType = self.analysisTypeStatic
-        self.templateCommFile = TEMPLATE_COMM_STATIC.read_text()
+        if self.analysisType == ANALYSIS_STATIC:
 
-        # Type of analysis MODAL
-        #self.analyisType = self.analysisTypeModal
-        #self.templateCommFile = TEMPLATE_COMM_MODAL.read_text()
+            self.templateCommFile = TEMPLATE_COMM_STATIC.read_text()
 
-        # Type of analysis DYNAMIC
-        #self.analyisType = self.analysisTypeDynamic
-        #self.templateCommFile = TEMPLATE_COMM_DYN.read_text()
+        elif self.analysisType == ANALYSIS_MODAL: 
+            
+            self.templateCommFile = TEMPLATE_COMM_MODAL.read_text()
 
-        # TBD: ModelDescription file
+        elif self.analysisType == ANALYSIS_DYNAMIC:
+            
+            self.templateCommFile = TEMPLATE_COMM_DYN.read_text()
+
+        # TODO: ModelDescription file
         #      - Parts ... ok
         #      - Type of analysis ... (Static, Dynamic, Modal)
         #      - Loads and boundary conditions     
@@ -307,11 +324,11 @@ class PreProcessor():
 
         # Write the parameters
         fJob.write("#Parameters:\n")
-        if self.analyisType == self.analysisTypeStatic:  # For static analysis
+        if self.analysisType == ANALYSIS_STATIC:  # For static analysis
             fJob.write(f"gravityScale = {self.gravityScale}\n")
-        elif self.analyisType == self.analysisTypeModal:   # For modal analysis
+        elif self.analysisType == ANALYSIS_MODAL:   # For modal analysis
             fJob.write(f"gravityScale = {self.gravityScale}\n")    # Not necessary, because loads are not considered in a modal analyis. Only set to avoid undefined value
-        elif self.analyisType == self.analysisTypeDynamic: # For dynamic analyis
+        elif self.analysisType == ANALYSIS_DYNAMIC: # For dynamic analyis
             fJob.write(f"gravityScale = {self.dynSim_gravityScale}\n")
             fJob.write(f"t_end = {self.dynSim_t_end}\n")
             fJob.write(f"n_incs = {self.dynSim_n_incs}\n")

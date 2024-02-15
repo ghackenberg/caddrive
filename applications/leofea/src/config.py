@@ -15,3 +15,5 @@ JOB_NAME = "job"
 PARAVIEW_TEMPLATE = "templateParaviewWin.py"
 
 XML_DIALOG_DATA = "caddriveDialogData.xml"
+
+XML_SIMULATION_SETTINGS = "simulation_settings.xml"

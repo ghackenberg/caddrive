@@ -7,14 +7,15 @@ class LeoFEARequestFailed(Exception): pass
 
 class LeoFEAResponseUnexpected(Exception): pass
 
-def leoFEA(file: str, outputsDir: str, jobName: str):
+def leoFEA(file_ldr: str, file_simulation_settings: str, outputsDir: str, jobName: str):
 
     # TODO Add protocol, host, port, and path as parameter!
 
     # Send ldr file to sevice leoFEA
     reqDataA = MultipartEncoder(
         fields = {
-            "ldr": (f'{jobName}.ldr', open(file, 'rb'), 'text/plain')
+            "ldr": (f'{jobName}.ldr', open(file_ldr, 'rb'), 'text/plain'),
+            "xml": (f'settings.xml', open(file_simulation_settings, 'rb'), 'text/plain')
         }
     )
     resA = post("http://localhost:5000/", data = reqDataA, 

@@ -242,7 +242,7 @@
      </widget>
      <widget class="QLineEdit" name="textbox_gravityScale">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>

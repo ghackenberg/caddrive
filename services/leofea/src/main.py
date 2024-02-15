@@ -24,16 +24,22 @@ def index():
     if not "ldr" in request.files:
         return "Ldr file is missing!", 400
 
-    # Save LDR and LIB file
+    # Save LDR file
     request.files["ldr"].save(FILE_LDR)
+    
+    if not "xml" in request.files:
+        return "xml file (simulation settings) is missing", 400
 
+    # Save XML file
+    request.files["xml"].save(FILE_XML)
+    
     ######## PREPROCESSING
     # Read LDR file and get table of lego parts as return
     parser = caddrive.ldraw.parsers.TableParser()
     tableLeoFeaModel = parser.readFileLDR(FILE_LDR)
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
-    preProcessor = caddrive.simulation.codeaster.PreProcessor(OUT_DIR, JOB_NAME)
+    preProcessor = caddrive.simulation.codeaster.PreProcessor(OUT_DIR, JOB_NAME, FILE_XML)
     preProcessor.buildLeoFeaModel(tableLeoFeaModel)
     preProcessor.writeInputFiles()
 

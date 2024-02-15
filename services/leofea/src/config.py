@@ -13,6 +13,7 @@ JOB_NAME = "job"
 # Define file names
 
 FILE_LDR = os.path.join(OUT_DIR, f"{JOB_NAME}.ldr")
+FILE_XML = os.path.join(OUT_DIR, f"settings.xml")
 
 FILE_MAIL = os.path.join(OUT_DIR, f"{JOB_NAME}.mail")
 FILE_COMM = os.path.join(OUT_DIR, f"{JOB_NAME}.comm")

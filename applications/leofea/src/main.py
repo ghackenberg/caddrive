@@ -21,7 +21,7 @@ import pandas as pd
 
 import caddrive
 
-from config import RESOURCES, EXAMPLES_DIR, OUT_DIR, JOB_NAME, PARAVIEW_TEMPLATE, XML_DIALOG_DATA
+from config import RESOURCES, EXAMPLES_DIR, OUT_DIR, JOB_NAME, PARAVIEW_TEMPLATE, XML_DIALOG_DATA, XML_SIMULATION_SETTINGS
 
 # Ensure folder
 
@@ -114,6 +114,7 @@ class LeoFEA_UI(QtWidgets.QDialog):
 
     def _SaveDialogData(self):
 
+        # Save Dialog Data as xml
         m_encoding = 'UTF-8'
 
         root = ET.Element("root")
@@ -128,7 +129,7 @@ class LeoFEA_UI(QtWidgets.QDialog):
         with open(f"{userpath}/{XML_DIALOG_DATA}", 'w') as xfile:
             xfile.write(part1 + 'encoding=\"{}\"?>\n'.format(m_encoding) + part2)
             xfile.close()
-        # TODO save state in User directory
+        
         
     def _LoadDialogData(self):
         
@@ -143,8 +144,8 @@ class LeoFEA_UI(QtWidgets.QDialog):
             pathLeoCAD = root.find("path_leoCAD").text
             pathparaview = root.find("path_paraview").text
 
-            print(f"Path found: {pathLeoCAD}")
-            print(f"Path found: {pathparaview}")
+            #print(f"Path found: {pathLeoCAD}")
+            #print(f"Path found: {pathparaview}")
             
             self.ui.textbox_path_leoCAD.setText( root.find("path_leoCAD").text )
             self.ui.textbox_path_paraview.setText( root.find("path_paraview").text )
@@ -225,30 +226,49 @@ class LeoFEA_UI(QtWidgets.QDialog):
             self.ui.textEdit_resultsMinDisplacement_p.setText('')
             self.ui.textEdit_resultsMaxDisplacement_p.setText('')
 
-            #caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), OUT_DIR, JOB_NAME)
+            # Save simulation settings as xml
+            m_encoding = 'UTF-8'
+
+            root = ET.Element("root")
+            ET.SubElement(root, "type_analyis").text = self.ui.combo_Analysis.currentText()
+            ET.SubElement(root, "contact").text = self.ui.combo_Contact.currentText()
+            ET.SubElement(root, "max_force").text = self.ui.textbox_maxForce.text()
+            ET.SubElement(root, "load_scale").text = self.ui.textbox_gravityScale.text()
+            
+
+            dom = xml.dom.minidom.parseString(ET.tostring(root))
+            xml_string = dom.toprettyxml()
+            part1, part2 = xml_string.split('?>')
+
+            userpath = os.path.expanduser('~')
+            with open(f"{OUT_DIR}/{XML_SIMULATION_SETTINGS}", 'w') as xfile:
+                xfile.write(part1 + 'encoding=\"{}\"?>\n'.format(m_encoding) + part2)
+                xfile.close()
+
+            caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), f"{OUT_DIR}/{XML_SIMULATION_SETTINGS}", OUT_DIR, JOB_NAME)
 
             # Read results for max values
             df = pd.read_feather(f"{OUT_DIR}/{JOB_NAME}.resMinMax.feather")  
             print(df)
-            depl3_min = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['VALUE'] )
-            depl3_max = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['VALUE'] )
-            forc3_min = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['VALUE'] )
-            forc3_max = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['VALUE'] )
+            depl3_min = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['VALUE'].iloc[0] )
+            depl3_max = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['VALUE'].iloc[0] )
+            forc3_min = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['VALUE'].iloc[0] )
+            forc3_max = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['VALUE'].iloc[0] )
 
-            depl3_min_x = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR1'] )
-            depl3_max_x = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR1'] )
-            forc3_min_x = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR1'] )
-            forc3_max_x = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR1'] )
+            depl3_min_x = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR1'].iloc[0] )
+            depl3_max_x = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR1'].iloc[0] )
+            forc3_min_x = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR1'].iloc[0] )
+            forc3_max_x = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR1'].iloc[0] )
 
-            depl3_min_y = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR2'] )
-            depl3_max_y = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR2'] )
-            forc3_min_y = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR2'] )
-            forc3_max_y = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR2'] )
+            depl3_min_y = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR2'].iloc[0] )
+            depl3_max_y = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR2'].iloc[0] )
+            forc3_min_y = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR2'].iloc[0] )
+            forc3_max_y = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR2'].iloc[0] )
 
-            depl3_min_z = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR3'] )
-            depl3_max_z = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR3'] )
-            forc3_min_z = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR3'] )
-            forc3_max_z = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR3'] )
+            depl3_min_z = float( df[ df['DESCRIPTION']== 'DEPL3_MIN']['COOR3'].iloc[0] )
+            depl3_max_z = float( df[ df['DESCRIPTION']== 'DEPL3_MAX']['COOR3'].iloc[0] )
+            forc3_min_z = float( df[ df['DESCRIPTION']== 'FORC3_MIN']['COOR3'].iloc[0] )
+            forc3_max_z = float( df[ df['DESCRIPTION']== 'FORC3_MAX']['COOR3'].iloc[0] )
 
             self.ui.textEdit_resultsMinForce.setText(f'{forc3_min:.1f}')
             self.ui.textEdit_resultsMaxForce.setText(f'{forc3_max:.1f}')
