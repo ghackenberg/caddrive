@@ -303,7 +303,7 @@
      </widget>
      <widget class="QComboBox" name="combo_Contact">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
