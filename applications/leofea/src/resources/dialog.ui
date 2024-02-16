@@ -107,7 +107,7 @@
     </widget>
     <widget class="QPushButton" name="button_checkLimitValues">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -258,7 +258,7 @@
      </widget>
      <widget class="QLineEdit" name="textbox_maxForce">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -274,7 +274,7 @@
      </widget>
      <widget class="QLineEdit" name="textbox_maxDisplacement">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
@@ -319,7 +319,7 @@
      </widget>
      <widget class="QLineEdit" name="textbox_jobname">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>

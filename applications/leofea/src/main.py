@@ -207,7 +207,7 @@ class LeoFEA_UI(QtWidgets.QDialog):
 
     def _onButton_startFEA(self):
 
-        #try:
+        try:
 
             self._loadLDR()    # Load LDR file
 
@@ -245,8 +245,19 @@ class LeoFEA_UI(QtWidgets.QDialog):
                 xfile.write(part1 + 'encoding=\"{}\"?>\n'.format(m_encoding) + part2)
                 xfile.close()
 
-            caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), f"{OUT_DIR}/{XML_SIMULATION_SETTINGS}", OUT_DIR, JOB_NAME)
+            #caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), f"{OUT_DIR}/{XML_SIMULATION_SETTINGS}", OUT_DIR, JOB_NAME)              # Use standard jobname
+                
+            # TODO Check if filename is valid (no space, begin with letter, ...) 
+            caddrive.http.leoFEA(self.textbox_FilenameLDR.text(), f"{OUT_DIR}/{XML_SIMULATION_SETTINGS}", OUT_DIR, self.ui.textbox_jobname.text() )   # Use jobname from dialog
 
+            self._checkLimitValues()
+
+        except Exception as e:
+
+            QMessageBox.warning(self, "startFEA", f"{e}")
+    
+    def _checkLimitValues(self):
+        try:
             # Read results for max values
             df = pd.read_feather(f"{OUT_DIR}/{JOB_NAME}.resMinMax.feather")  
             print(df)
@@ -279,10 +290,27 @@ class LeoFEA_UI(QtWidgets.QDialog):
             self.ui.textEdit_resultsMaxForce_p.setText(f'[{forc3_max_x}, {forc3_max_y}, {forc3_max_z}]')
             self.ui.textEdit_resultsMinDisplacement_p.setText(f'[{depl3_min_x}, {depl3_min_y}, {depl3_min_z}]')
             self.ui.textEdit_resultsMaxDisplacement_p.setText(f'[{depl3_max_x}, {depl3_max_y}, {depl3_max_z}]')
-            
-        #except Exception as e:
 
-        #    QMessageBox.warning(self, "startFEA", f"{e}")
+            # Check if limit values are satisfied
+            if forc3_min < - float(self.ui.textbox_maxForce.text()):
+
+                self.ui.textEdit_resultsMinForce_m.setText('Overloaded !!!')
+
+            if forc3_max > float( self.ui.textbox_maxForce.text() ):
+
+                self.ui.textEdit_resultsMaxForce_m.setText('Overloaded !!!')
+
+            if depl3_min < - float(self.ui.textbox_maxDisplacement.text()):
+
+                self.ui.textEdit_resultsMinDisplacement_m.setText('Overloaded !!!')
+
+            if depl3_max > float( self.ui.textbox_maxDisplacement.text() ):
+                
+                self.ui.textEdit_resultsaxDisplacement_m.setText('Overloaded !!!')
+
+        except Exception as e:
+
+            QMessageBox.warning(self, "startFEA", f"{e}")
 
     def _onButton_viewPNG(self):
 
@@ -301,7 +329,9 @@ class LeoFEA_UI(QtWidgets.QDialog):
 
     def _onButton_checkLimitValues(self):
 
-        QMessageBox.about(self, "ChecklimitValues", "Function not yet implemented")
+        self._checkLimitValues()
+
+        #QMessageBox.about(self, "ChecklimitValues", "Function not yet implemented")
 
     def _onButton_openLeoCAD(self):
 
