@@ -20,6 +20,11 @@ __pycache__
 
 out
 
+*.mov
+*.mkv
+*.mp4
+*.avi
+
 packages/node/backend/assets/ldraw
 packages/node/backend/uploads/*
 

@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 
 from requests.exceptions import ConnectionError
 
@@ -7,14 +8,27 @@ from direct.showbase.ShowBase import ShowBase
 from direct.gui.OnscreenText import OnscreenText
 from direct.stdpy import threading
 
-from panda3d.core import WindowProperties, NodePath, PandaNode
+from panda3d.core import loadPrcFileData, WindowProperties, AntialiasAttrib, ClockObject, NodePath, PandaNode
 
 from caddrive.http import codeaster, CodeasterRequestFailed, CodeasterResponseUnexpected
 from caddrive.ldraw.parsers import TableParser
 from caddrive.simulation.codeaster import PreProcessor
-from caddrive.visualization.panda3d import FEAVector, FEAModel, makeFEALines, makeFEATriangles
+from caddrive.visualization.panda3d import FEAVector, FEAModel, makeFEAPoints, makeFEALines, makeFEATriangles
 
 from config import LDR_FILE_A, LDR_FILE_C, LDR_FILE_D, OUT_DIR, SCALE
+
+FPS = 30.0
+
+WIDTH = 800
+HEIGHT = 600
+
+FILE = 'test.mkv'
+
+COMMAND = ('ffmpeg', '-y', '-r', f'{FPS}', '-an', '-analyzeduration', '0', '-s', f'{WIDTH}x{HEIGHT}', '-f', 'rawvideo', '-pix_fmt', 'bgra', '-i', '-', '-vf', 'vflip', '-vcodec', 'libx264rgb', '-qp', '0', '-crf', '0', FILE)
+                 
+PROCESS = subprocess.Popen(COMMAND, stdin=subprocess.PIPE, bufsize=-1, shell=False)
+
+loadPrcFileData('', 'framebuffer-multisample 1\nmultisamples 8')
 
 class LeoVR(ShowBase):
 
@@ -25,8 +39,24 @@ class LeoVR(ShowBase):
         # Set window properties
         props = WindowProperties()
         props.setTitle('LeoVR')
+        props.setSize(WIDTH, HEIGHT)
 
         self.win.requestProperties(props)
+
+        # Escape
+        self.accept("escape", self._quit)
+
+        # Antialias
+        self.render.setAntialias(AntialiasAttrib.MMultisample)
+
+        # Clock
+        self.time = ClockObject.getGlobalClock()
+        self.time.setMode(ClockObject.MNonRealTime)
+        self.time.setDt(1.0 / float(FPS))
+
+        # Task
+        self.task = self.taskMgr.add(self._task, "task")
+        self.task.setUponDeath(lambda: self.time.setMode(ClockObject.MNormal))
 
         # Load FEA model
         self.thread = threading.Thread(target=lambda: self._load())
@@ -36,7 +66,7 @@ class LeoVR(ShowBase):
         self.disableMouse()
 
         # Camera configuration
-        self.camera.setPos(0, -500, 0)
+        self.camera.setPos(0, -500, -20)
 
     def _load(self):
 
@@ -51,7 +81,7 @@ class LeoVR(ShowBase):
 
             # Inner rotation about X axis
             yaw = pitch.attachNewNode("yaw")
-            yaw.hprInterval(5.0, (360, 0, 0)).loop()
+            yaw.hprInterval(15, (360, 0, 0)).loop()
 
             # Loading models
             modelA = self._loadFEAModel(LDR_FILE_A, OUT_DIR, "job_a")
@@ -273,16 +303,26 @@ class LeoVR(ShowBase):
         group = NodePath(PandaNode(jobName))
         group.setPos(pos[0] - model.xCenter, pos[1] - model.yCenter, pos[2] - model.zCenter)
 
-        # points = makeFEAPoints(model, 3, SCALE, 3/3)
-        # points.reparentTo(group)
+        #points = makeFEAPoints(model, 2, SCALE, 1.0)
+        #points.reparentTo(group)
 
-        lines = makeFEALines(model, 3, SCALE, 1.0)
+        lines = makeFEALines(model, 2, SCALE, 1.0)
         lines.reparentTo(group)
 
         triangles = makeFEATriangles(model, SCALE, 0.5)
         triangles.reparentTo(group)
 
         return group
+    
+    def _task(self, task):
+        screenshot = base.win.getScreenshot()
+        data = screenshot.getRamImage().getData()
+        PROCESS.stdin.write(data)
+        return task.cont
+
+    def _quit(self):
+        PROCESS.stdin.close()
+        sys.exit()
 
 app = LeoVR()
 app.run()
