@@ -24,7 +24,7 @@ from caddrive.visualization.panda3d import FEAVector, FEAModel, makeFEAPoints, m
 
 from config import LDR_FILE_A, LDR_FILE_C, LDR_FILE_D, OUT_DIR, SCALE
 
-FPS = 30.0
+FPS = 60.0
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -49,7 +49,7 @@ class LeoVR(ShowBase):
         # Antialias
         self.render.setAntialias(AntialiasAttrib.MMultisample)
         
-        loadPrcFileData('', 'framebuffer-multisample 1\nmultisamples 8')
+        loadPrcFileData('', 'framebuffer-multisample 1\nmultisamples 64')
 
         # Load FEA model
         self.thread = threading.Thread(target=lambda: self._load())
@@ -59,7 +59,7 @@ class LeoVR(ShowBase):
         self.disableMouse()
 
         # Camera configuration
-        self.camera.setPos(0, -500, -20)
+        self.camera.setPos(0, -390, -20)
 
     def _load(self):
 
@@ -319,8 +319,8 @@ class LeoVR(ShowBase):
         group = NodePath(PandaNode(jobName))
         group.setPos(pos[0] - model.xCenter, pos[1] - model.yCenter, pos[2] - model.zCenter)
 
-        points = makeFEAPoints(model, 5, SCALE, 1.0)
-        points.reparentTo(group)
+        #points = makeFEAPoints(model, 4, SCALE, 1.0)
+        #points.reparentTo(group)
 
         lines = makeFEALines(model, 3, SCALE, 1.0)
         lines.reparentTo(group)
