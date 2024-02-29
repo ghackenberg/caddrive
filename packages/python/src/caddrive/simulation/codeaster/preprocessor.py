@@ -5,52 +5,25 @@ import os.path
 from .config import *
 from .part import Part
 
-import xml.etree.cElementTree as ET
-
 class PreProcessor():
 
-    gravityScale = 1
-
-    # Maximum admissibble nub force
-    maxNubForce = 5   # Newton
-
-    # Parameters for Dynamic simulation
-    factor = 10
-    dynSim_gravityScale = gravityScale * factor   # mm/s²
-    dynSim_t_end = 0.1 / factor
-    dynSim_n_incs = 5
-
-    # Settings
-    analysisType = ANALYSIS_STATIC # Default: Static simulation
-    disable_contact = 0    # 1 ... do not consider any contact
-
-
-    def __init__(self, outputsDir: str, jobName: str, xml_settings: str):
+    def __init__(self, outputsDir: str, jobName: str, analysisType = ANALYSIS_STATIC, disableContact = 0, maxNubForce = 5.0, gravityScale = 1.0):
 
         self.fNameDebug = os.path.join(outputsDir, f"{jobName}.debug")
         self.fNameMail = os.path.join(outputsDir, f'{jobName}.mail')
         self.fNameComm = os.path.join(outputsDir, f"{jobName}.comm")
 
-        # Read simulation settings from xml
-        try:
-            tree = ET.parse(xml_settings)
-            root = tree.getroot()
+        self.analysisType = analysisType
+        self.disable_contact = disableContact
+        self.maxNubForce = maxNubForce
+        self.gravityScale = gravityScale
 
-            self.analysisType = root.find("type_analyis").text   # TODO: Differ static / dynamic ...
-
-            contact = root.find("contact").text
-            
-            if contact == "Off":
-                self.disable_contact = 1
-            else:
-                self.disable_contact = 0
-
-            self.maxNubForce = root.find("max_force").text
-            self.gravityScale = root.find("load_scale").text
-
-
-        except:
-            return "Error reading xml file (simulation settings)", 400
+        # Parameters for Dynamic simulation
+        self.factor = 10
+        
+        self.dynSim_gravityScale = self.gravityScale * self.factor # mm/s²
+        self.dynSim_t_end = 0.1 / self.factor
+        self.dynSim_n_incs = 5
 
         self.parts: list[Part] = []
         self.numParts = 0
@@ -75,7 +48,7 @@ class PreProcessor():
  
         # Add parts
         for part in tableLeoFeaDescription:
-            print(part)
+            #print(part)
             #i, datname, dim[0], dim[1], dim[2], description, posx, posy, posz
 
             datname = part[1]
@@ -97,7 +70,7 @@ class PreProcessor():
 
             if p.posz == 0:
                 self._addBC(pid)
-                print(f"Boundary condition added to part {pid}")
+                #print(f"Boundary condition added to part {pid}")
 
         # Connect Nubs
         self._connectNubs()
@@ -129,7 +102,7 @@ class PreProcessor():
     
     def deactivateNubConnection(self):          # For damage analysis: Disconnect overloaded nodes
 
-        print("\n\nDeactivation of nub connections:")
+        #print("\n\nDeactivation of nub connections:")
 
         ## Print all Lias pairs
         #print("\n")
@@ -157,10 +130,10 @@ class PreProcessor():
 
         #print("\n")
 
-        print("\n\nDeactivated Nub connections:")
-        print("Lias pairs")
-        for i in self.listLias:
-            print(i)
+        #print("\n\nDeactivated Nub connections:")
+        #print("Lias pairs")
+        #for i in self.listLias:
+            #print(i)
 
     def _addPart(self, partName: str, nSegx: int, nSegy: int, nSegz: int, posx: float, posy: float, posz: float):
 
@@ -229,14 +202,14 @@ class PreProcessor():
 
                 if abs(nbot_i_z - ntop_j_z) < nubConnectTolerance:
                     str = f'Nubs in one plane: bot{i} and top{j}'
-                    print(f'{i} <-> {j}:   {str}')
+                    #print(f'{i} <-> {j}:   {str}')
                     dbgfile.write(f'{i} <-> {j}:   {str}\n')
 
                     self._findConnections(i, j, debug, dbgfile)
 
                 if abs(nbot_j_z - ntop_i_z) < nubConnectTolerance:
                     str = f'Nubs in one plane: bot{j} and top{i}'
-                    print(f'{i} <-> {j}:   {str}')
+                    #print(f'{i} <-> {j}:   {str}')
                     dbgfile.write(f'{i} <-> {j}:   {str}\n')
 
                     self._findConnections(j, i, debug, dbgfile)
@@ -264,7 +237,7 @@ class PreProcessor():
                             s1 = self._getGroupNameSingleNubTop(pid2, i2, j2)
                             s2 = self._getGroupNameSingleNubBot(pid1, i1, j1)
                             str = f"GROUP_NO=('{s1:s}', '{s2:s}')"
-                            print(f'                       {str}')
+                            #print(f'                       {str}')
                             dbgfile.write(f'                       {str}    x: ({nub1.nubbotx[i1, j1]},{nub2.nubtopx[i2, j2]})    y: ({nub1.nubboty[i1, j1]},{nub2.nubtopy[i2, j2]})\n')
 
                             self.listLias.append([str, 1, [pid2, i2, j2], [pid1, i1, j1] ])
@@ -283,7 +256,7 @@ class PreProcessor():
             surf1 = self._getGroupNameFaceTop(pid2)
             surf2 = self._getGroupNameFaceBot(pid1)
             str = f"_F( GROUP_MA_ESCL=('{surf1}', ), GROUP_MA_MAIT=('{surf2}', ) ),"
-            print(f"                                {str}")
+            #print(f"                                {str}")
             self.listContact.append([str, 1])    # Contact string, 1=active
             #_F( GROUP_MA_ESCL=('P1_SU', ), GROUP_MA_MAIT=('B1_SD', ) ),
 
@@ -318,7 +291,7 @@ class PreProcessor():
         numCont = 0    # Number of contract conditions
         
         fNameJob = self.fNameComm
-        print(f"Write Command file: {fNameJob}")
+        #print(f"Write Command file: {fNameJob}")
 
         fJob = open(fNameJob, 'w')
 
@@ -572,7 +545,7 @@ class PreProcessor():
 
         fid.write('FINSF\n\n')
 
-        print(f'Number of nodes: {self.numNodes}')
+        #print(f'Number of nodes: {self.numNodes}')
 
     def _writeElements(self, fid):
 
@@ -757,7 +730,7 @@ class PreProcessor():
 
         # Write MAIL file
         mailFileName = self.fNameMail
-        print(f'WriteMailFile: {mailFileName}')
+        #print(f'WriteMailFile: {mailFileName}')
         
         fJob = open(mailFileName, 'w')
         self._writeNodeCoords(fJob)

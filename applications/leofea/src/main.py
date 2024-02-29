@@ -135,8 +135,6 @@ class LeoFEA_UI(QtWidgets.QDialog):
         
         userpath = os.path.expanduser('~')
 
-        
-
         try:
             tree = ET.parse(f"{userpath}/{XML_DIALOG_DATA}")
             root = tree.getroot()
@@ -235,7 +233,6 @@ class LeoFEA_UI(QtWidgets.QDialog):
             ET.SubElement(root, "max_force").text = self.ui.textbox_maxForce.text()
             ET.SubElement(root, "load_scale").text = self.ui.textbox_gravityScale.text()
             
-
             dom = xml.dom.minidom.parseString(ET.tostring(root))
             xml_string = dom.toprettyxml()
             part1, part2 = xml_string.split('?>')

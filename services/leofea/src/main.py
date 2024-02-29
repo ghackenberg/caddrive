@@ -1,6 +1,8 @@
 # External dependencies
 import os
 
+import xml.etree.cElementTree as ET
+
 from flask import Flask, request, Response
 from requests import post
 from requests_toolbelt import MultipartEncoder, MultipartDecoder
@@ -24,14 +26,29 @@ def index():
     if not "ldr" in request.files:
         return "Ldr file is missing!", 400
 
-    # Save LDR file
+    # Save files
     request.files["ldr"].save(FILE_LDR)
-    
-    if not "xml" in request.files:
-        return "xml file (simulation settings) is missing", 400
 
-    # Save XML file
-    request.files["xml"].save(FILE_XML)
+    # Read simulation settings from xml
+    if 'xml' in request.files:
+        try:
+            request.files["xml"].save(FILE_XML)
+
+            tree = ET.parse(FILE_XML)
+
+            root = tree.getroot()
+
+            analysisType = root.find("type_analyis").text
+            disableContact = 1 if root.find("contact").text == "Off" else 0
+            maxNubForce = float(root.find("max_force").text)
+            gravityScale = float(root.find("load_scale").text)
+        except:
+            return "Error reading xml file (simulation settings)!", 400
+    else:
+        analysisType = caddrive.ANALYSIS_STATIC
+        disableContact = 0
+        maxNubForce = 5.0
+        gravityScale = 1.0
     
     ######## PREPROCESSING
     # Read LDR file and get table of lego parts as return
@@ -39,7 +56,7 @@ def index():
     tableLeoFeaModel = parser.readFileLDR(FILE_LDR)
 
     # Here modifications could be done, e.g. disconnect nodes in case of damage
-    preProcessor = caddrive.simulation.codeaster.PreProcessor(OUT_DIR, JOB_NAME, FILE_XML)
+    preProcessor = caddrive.simulation.codeaster.PreProcessor(OUT_DIR, JOB_NAME, analysisType, disableContact, maxNubForce, gravityScale)
     preProcessor.buildLeoFeaModel(tableLeoFeaModel)
     preProcessor.writeInputFiles()
 

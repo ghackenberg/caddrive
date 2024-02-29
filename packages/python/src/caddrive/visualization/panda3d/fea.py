@@ -1,4 +1,3 @@
-import sys
 import math
 import numpy
 
@@ -31,8 +30,8 @@ class FEANode:
 
         self.angles: list[float] = []
 
-        self.angleMin = sys.float_info.max
-        self.angleMax = sys.float_info.min
+        self.angleMin = float('inf')
+        self.angleMax = float('-inf')
 
         self.angleAvg = 0.0
 
@@ -61,14 +60,14 @@ class FEAModel:
         self.nodeIndex: dict[str, FEANode] = {}
         self.quadIndex: dict[str, FEAQuad] = {}
 
-        self.xMin = sys.float_info.max
-        self.xMax = sys.float_info.min
+        self.xMin = float('inf')
+        self.xMax = float('-inf')
 
-        self.yMin = sys.float_info.max
-        self.yMax = sys.float_info.min
+        self.yMin = float('inf')
+        self.yMax = float('-inf')
 
-        self.zMin = sys.float_info.max
-        self.zMax = sys.float_info.min
+        self.zMin = float('inf')
+        self.zMax = float('-inf')
 
         self.xCenter: float = None
         self.yCenter: float = None
@@ -78,18 +77,18 @@ class FEAModel:
         self.ySpread: float = None
         self.zSpread: float = None
 
-        self.displacementMin = sys.float_info.max
-        self.displacementMax = sys.float_info.min
+        self.displacementMin = float('inf')
+        self.displacementMax = float('-inf')
 
         self.displacementSpread: float = None
 
-        self.forceMin = sys.float_info.max
-        self.forceMax = sys.float_info.min
+        self.forceMin = float('inf')
+        self.forceMax = float('-inf')
 
         self.forceSpread: float = None
 
-        self.angleMin = sys.float_info.max
-        self.angleMax = sys.float_info.min
+        self.angleMin = float('inf')
+        self.angleMax = float('-inf')
 
         self.angleSpread: float = None
 

@@ -93,11 +93,11 @@ class Part():
 
     def generateMesh(self):
 
-        print('Generating Part ' + self.partName)
+        #print('Generating Part ' + self.partName)
 
-        print(f'Number nodes x: {self.num_elx+1}')
-        print(f'Number nodes y: {self.num_ely+1}')
-        print(f'Number nodes z: {self.num_elz+1}')
+        #print(f'Number nodes x: {self.num_elx+1}')
+        #print(f'Number nodes y: {self.num_ely+1}')
+        #print(f'Number nodes z: {self.num_elz+1}')
 
         nid = 0  # Node id as rising integer number
         nid_top = 0
