@@ -1,5 +1,7 @@
 # CADdrive
 
+![](./images/social_preview.png)
+
 **CADdrive** (see https://caddrive.org and https://caddrive.com) provides an **open source** solution for **collaborative product design**. In the most recent version our platform supports ...
 
 - **member management** for assigning access permissions on product data to our users (using a role-based access control paradigm),
