@@ -20,8 +20,9 @@ export class MilestoneService implements MilestoneREST {
     async findMilestones(productId: string): Promise<MilestoneRead[]> {
         const where = { productId, deleted: IsNull() }
         const result: MilestoneRead[] = []
-        for (const milestone of await Database.get().milestoneRepository.findBy(where))
-            result.push(convertMilestone(milestone))
+        for (const milestone of await Database.get().milestoneRepository.findBy(where)) {
+            result.push(await convertMilestone(milestone))
+        }
         return result
     }
 

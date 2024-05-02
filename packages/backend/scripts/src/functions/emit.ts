@@ -3,10 +3,10 @@ import { ProductMessageData, UserMessageData, compileProductMessage, compileUser
 import { MqttAPI } from "../mqtt"
 
 export async function emitUserMessage(userId: string, data: UserMessageData) {
-    const message = compileUserMessage(data);
+    const message = await compileUserMessage(data);
     (await MqttAPI).publish(`/users/${userId}`, JSON.stringify(message))
 }
 export async function emitProductMessage(productId: string, data: ProductMessageData) {
-    const message = compileProductMessage(data);
+    const message = await compileProductMessage(data);
     (await MqttAPI).publish(`/products/${productId}`, JSON.stringify(message))
 }

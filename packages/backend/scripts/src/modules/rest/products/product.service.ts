@@ -21,26 +21,29 @@ export class ProductService implements ProductREST {
         let where: FindOptionsWhere<ProductEntity> | FindOptionsWhere<ProductEntity>[]
         if (this.request.user) {
             const userId = this.request.user.userId
-            if (_public == 'true')
+            if (_public == 'true') {
                 where = { public: true, deleted: IsNull() }
-            else if (_public == 'false')
+            } else if (_public == 'false') {
                 where = { public: false, members: [ { userId, deleted: IsNull() } ], deleted: IsNull() }
-            else
+            } else {
                 where = [
                     { public: true, deleted: IsNull() },
                     { public: false, members: [ { userId, deleted: IsNull() } ], deleted: IsNull() }
-                ]
+                ]   
+            }
         } else {
-            if (_public == 'true')
+            if (_public == 'true') {
                 where = { public: true, deleted: IsNull() }
-            else if (_public == 'false')
+            } else if (_public == 'false') {
                 return []
-            else
+            } else {
                 where = { public: true, deleted: IsNull() }
+            }
         }
         const result: ProductRead[] = []
-        for (const product of await Database.get().productRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
-            result.push(convertProduct(product))
+        for (const product of await Database.get().productRepository.find({ where, order: { updated: 'DESC' }, take: 50 })) {
+            result.push(await convertProduct(product))
+        }
         return result
     }
     

@@ -21,12 +21,13 @@ export class UserService implements UserREST<UserUpdate, Express.Multer.File> {
 
     async findUsers(productId?: string, query?: string) : Promise<UserRead[]> {
         let where: FindOptionsWhere<UserEntity>
-        if (query)
+        if (query) {
             where = { name: Raw(alias => `LOWER(${alias}) LIKE LOWER('%${query}%')`), deleted: IsNull() }
-        else
-            where = { deleted: IsNull() }
+        } else {
+            where = { deleted: IsNull() }   
+        }
         const result: UserRead[] = []
-        for (const user of await Database.get().userRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
+        for (const user of await Database.get().userRepository.find({ where, order: { updated: 'DESC' }, take: 50 })) {
             try {
                 if (productId) {
                     await getMemberOrFail({ productId, userId: user.userId, deleted: IsNull() }, Error)
@@ -34,8 +35,9 @@ export class UserService implements UserREST<UserUpdate, Express.Multer.File> {
                     throw new Error()
                 }
             } catch (error) {
-                result.push(convertUser(user, this.request.user && this.request.user.userId == user.userId))
+                result.push(await convertUser(user, this.request.user && this.request.user.userId == user.userId))
             }
+        }
         return result
     }
 

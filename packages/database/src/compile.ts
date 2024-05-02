@@ -25,25 +25,29 @@ export type ProductMessageData = {
     versions?: VersionEntity[]
 }
 
-function process<T extends { created: number }, S extends { created: number }>(array: T[], value: (data: T) => S) {
-    return array && array.map(item => value(item)).sort((a, b) => a.created - b.created)
+async function process<T extends { created: number }, S extends { created: number }>(array: T[], value: (data: T) => Promise<S>) {
+    const result: S[] = []
+    for (const item of array || []) {
+        result.push(await value(item))
+    }
+    return result.sort((a, b) => a.created - b.created)
 }
 
-export function compileUserMessage(data: UserMessageData): UserMessage {
+export async function compileUserMessage(data: UserMessageData): Promise<UserMessage> {
     return {
         type: data.type,
-        users: process(data.users, user => convertUser(user, false))
+        users: await process(data.users, user => convertUser(user, false))
     }
 }
-export function compileProductMessage(data: ProductMessageData): ProductMessage {
+export async function compileProductMessage(data: ProductMessageData): Promise<ProductMessage> {
     return {
         type: data.type,
-        products: process(data.products, convertProduct),
-        members: process(data.members, convertMember),
-        issues: process(data.issues, convertIssue),
-        comments: process(data.comments, convertComment),
-        attachments: process(data.attachments, convertAttachment),
-        milestones: process(data.milestones, convertMilestone),
-        versions: process(data.versions, convertVersion)
+        products: await process(data.products, convertProduct),
+        members: await process(data.members, convertMember),
+        issues: await process(data.issues, convertIssue),
+        comments: await process(data.comments, convertComment),
+        attachments: await process(data.attachments, convertAttachment),
+        milestones: await process(data.milestones, convertMilestone),
+        versions: await process(data.versions, convertVersion)
     }
 }

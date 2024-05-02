@@ -27,8 +27,9 @@ export class CommentService implements CommentREST {
     async findComments(productId: string, issueId: string): Promise<CommentRead[]> {
         const where = { productId, issueId, deleted: IsNull() }
         const result: CommentRead[] = []
-        for (const comment of await Database.get().commentRepository.findBy(where))
-            result.push(convertComment(comment))
+        for (const comment of await Database.get().commentRepository.findBy(where)) {
+            result.push(await convertComment(comment))
+        }
         return result
     }
 

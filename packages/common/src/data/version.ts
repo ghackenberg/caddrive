@@ -22,6 +22,8 @@ export class VersionCreate extends VersionUpdate {
 
 export class VersionRead extends VersionCreate {
     @ApiProperty()
+    userId: string
+    @ApiProperty()
     productId: string
     @ApiProperty()
     versionId: string
@@ -32,9 +34,6 @@ export class VersionRead extends VersionCreate {
     updated: number
     @ApiProperty()
     deleted: number
-
-    @ApiProperty()
-    userId: string
     
     @ApiProperty()
     modelType: ModelType

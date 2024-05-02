@@ -22,8 +22,9 @@ export class MemberService implements MemberREST {
     async findMembers(productId: string): Promise<MemberRead[]> {
         const where = { productId, deleted: IsNull() }
         const result: MemberRead[] = []
-        for (const member of await Database.get().memberRepository.findBy(where))
-            result.push(convertMember(member))
+        for (const member of await Database.get().memberRepository.findBy(where)) {
+            result.push(await convertMember(member))
+        }
         return result
     }
 
@@ -46,7 +47,7 @@ export class MemberService implements MemberREST {
     }
 
     async getMember(productId: string, memberId: string): Promise<MemberRead> {
-       const member = await Database.get().memberRepository.findOneByOrFail({ productId, memberId })
+        const member = await Database.get().memberRepository.findOneByOrFail({ productId, memberId })
         return convertMember(member)
     }
 

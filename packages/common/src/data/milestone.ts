@@ -15,6 +15,8 @@ export class MilestoneCreate extends MilestoneUpdate {
 
 export class MilestoneRead extends MilestoneCreate {
     @ApiProperty()
+    userId: string
+    @ApiProperty()
     productId: string
     @ApiProperty()
     milestoneId: string
@@ -26,6 +28,10 @@ export class MilestoneRead extends MilestoneCreate {
     @ApiProperty()
     deleted: number
 
+    // Computed properties
+
     @ApiProperty()
-    userId: string
+    openIssueCount?: number
+    @ApiProperty()
+    closedIssueCount?: number
 }

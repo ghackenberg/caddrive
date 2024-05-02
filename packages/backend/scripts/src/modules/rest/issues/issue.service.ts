@@ -22,8 +22,9 @@ export class IssueService implements IssueREST {
     async findIssues(productId: string) {
         const where = { productId, deleted: IsNull() }
         const result: IssueRead[] = []
-        for (const issue of await Database.get().issueRepository.findBy(where))
-            result.push(convertIssue(issue))
+        for (const issue of await Database.get().issueRepository.findBy(where)) {
+            result.push(await convertIssue(issue))   
+        }
         return result.sort((a, b) => a.created - b.created)
     }
   

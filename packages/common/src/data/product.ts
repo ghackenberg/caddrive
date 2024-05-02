@@ -14,6 +14,8 @@ export class ProductCreate extends ProductUpdate {
 
 export class ProductRead extends ProductCreate {
     @ApiProperty()
+    userId: string
+    @ApiProperty()
     productId: string
 
     @ApiProperty()
@@ -23,6 +25,16 @@ export class ProductRead extends ProductCreate {
     @ApiProperty()
     deleted: number
 
+    // Computed properties
+
     @ApiProperty()
-    userId: string
+    versionCount?: number
+    @ApiProperty()
+    openIssueCount?: number
+    @ApiProperty()
+    closedIssueCount?: number
+    @ApiProperty()
+    milestoneCount?: number
+    @ApiProperty()
+    memberCount?: number
 }

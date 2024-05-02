@@ -13,11 +13,11 @@ export class AttachmentCreate extends AttachmentUpdate {
 
 export class AttachmentRead extends AttachmentCreate {
     @ApiProperty()
+    userId: string
+    @ApiProperty()
     productId: string
     @ApiProperty()
     attachmentId: string
-    @ApiProperty()
-    userId: string
 
     @ApiProperty()
     created: number

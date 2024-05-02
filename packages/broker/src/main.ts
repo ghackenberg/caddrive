@@ -112,7 +112,7 @@ async function boot() {
                 // Schedule initialization
                 setTimeout(async () => {
                     const users = await Database.get().userRepository.findBy({ userId, deleted: IsNull() })
-                    const message = compileUserMessage({ type: 'state', users })
+                    const message = await compileUserMessage({ type: 'state', users })
                     client.publish({
                         cmd: 'publish',
                         dup: false,
@@ -157,7 +157,7 @@ async function boot() {
                         const comments = await Database.get().commentRepository.findBy({ productId, deleted: IsNull() })
                         const milestones = await Database.get().milestoneRepository.findBy({ productId, deleted: IsNull() })
                         const versions = await Database.get().versionRepository.findBy({ productId, deleted: IsNull() })
-                        const message = compileProductMessage({ type: 'state', products, members, issues, comments, milestones, versions })
+                        const message = await compileProductMessage({ type: 'state', products, members, issues, comments, milestones, versions })
                         client.publish({
                             cmd: 'publish',
                             dup: false,

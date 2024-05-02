@@ -12,13 +12,13 @@ export class CommentCreate extends CommentUpdate {
 
 export class CommentRead extends CommentCreate {
     @ApiProperty()
+    userId: string
+    @ApiProperty()
     productId: string
     @ApiProperty()
     issueId: string
     @ApiProperty()
     commentId: string
-    @ApiProperty()
-    userId: string
 
     @ApiProperty()
     created: number

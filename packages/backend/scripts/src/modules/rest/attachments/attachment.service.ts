@@ -22,8 +22,9 @@ export class AttachmentService implements AttachmentREST<AttachmentCreate, Attac
     async findAttachments(productId: string): Promise<AttachmentRead[]> {
         const where = { productId, deleted: IsNull() }
         const result: AttachmentRead[] = []
-        for (const attachment of await Database.get().attachmentRepository.findBy(where))
-            result.push(convertAttachment(attachment))
+        for (const attachment of await Database.get().attachmentRepository.findBy(where)) {
+            result.push(await convertAttachment(attachment))   
+        }
         return result
     }
 

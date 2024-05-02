@@ -8,7 +8,7 @@ const materialsFileName = 'LDConfig.ldr'
 
 const materialsFilePath = path.join(ldrawPath, materialsFileName)
 
-let materialsContent: string = null
+let materialsContent: string = null // Set upon first pack call
 
 export function packLDrawText(text: string) {
     const fileName = `${shortid()}.ldr`

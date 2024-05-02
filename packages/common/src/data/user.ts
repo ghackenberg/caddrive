@@ -16,6 +16,8 @@ export class UserCreate extends UserUpdate {
 export class UserRead extends UserCreate {
     @ApiProperty()
     userId: string
+    @ApiProperty()
+    pictureId: string
     
     @ApiProperty()
     created: number
@@ -26,7 +28,4 @@ export class UserRead extends UserCreate {
 
     @ApiProperty()
     email: string
-
-    @ApiProperty()
-    pictureId: string
 }

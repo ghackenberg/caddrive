@@ -33,8 +33,9 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
     async findVersions(productId: string) : Promise<VersionRead[]> {
         const where = { productId, deleted: IsNull() }
         const result: VersionRead[] = []
-        for (const version of await Database.get().versionRepository.findBy(where))
-            result.push(convertVersion(version))
+        for (const version of await Database.get().versionRepository.findBy(where)) {
+            result.push(await convertVersion(version))
+        }
         return result
     }
  

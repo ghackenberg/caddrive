@@ -31,4 +31,13 @@ export class IssueRead extends IssueCreate {
     number: number
     @ApiProperty()
     state: 'open' | 'closed'
+
+    // Computed properties
+
+    @ApiProperty()
+    commentCount?: number
+    @ApiProperty()
+    attachmentCount?: number
+    @ApiProperty()
+    partCount?: number
 }
