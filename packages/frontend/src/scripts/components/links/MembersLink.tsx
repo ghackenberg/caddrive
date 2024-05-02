@@ -4,7 +4,6 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { ProductRead } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useMembers } from '../../hooks/list'
 import { PRODUCTS_4 } from '../../pattern'
 
 import MemberIcon from '/src/images/user.png'
@@ -13,10 +12,6 @@ export const MembersLink = (props: {product: ProductRead}) => {
 
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
-
-    // HOOKS
-
-    const members = useMembers(props.product.productId)
 
     // FUNCTIONS
 
@@ -42,7 +37,7 @@ export const MembersLink = (props: {product: ProductRead}) => {
             <NavLink to={`/products/${props.product.productId}/members`} onClick={handleClick}>
                 <img src={MemberIcon} className='icon small'/>
                 <span className='label'>Members</span>
-                <span className='badge'>{members ? members.length : '?'}</span>
+                <span className='badge'>{props.product.memberCount}</span>
             </NavLink>
         </span>
     )

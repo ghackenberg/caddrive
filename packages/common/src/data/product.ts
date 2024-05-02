@@ -34,7 +34,9 @@ export class ProductRead extends ProductCreate {
     @ApiProperty()
     closedIssueCount?: number
     @ApiProperty()
-    milestoneCount?: number
+    openMilestoneCount?: number
+    @ApiProperty()
+    closedMilestoneCount?: number
     @ApiProperty()
     memberCount?: number
 }

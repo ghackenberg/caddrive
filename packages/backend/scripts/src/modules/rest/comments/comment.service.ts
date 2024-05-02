@@ -53,8 +53,10 @@ export class CommentService implements CommentREST {
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = comment.updated
         await Database.get().productRepository.save(product)
+        // Find milestone
+        const milestones = issue.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: issue.milestoneId }) : []
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment], milestones })
         // Notify changes
         this.notifyComment(product, issue, comment, 'Comment notification (add)')
         // Return comment
@@ -80,8 +82,10 @@ export class CommentService implements CommentREST {
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = comment.updated
         await Database.get().productRepository.save(product)
+        // Find milestone
+        const milestones = issue.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: issue.milestoneId }) : []
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment], milestones })
         // Notify changes
         this.notifyComment(product, issue, comment, 'Comment notification (update)')
         // Return comment
@@ -103,8 +107,10 @@ export class CommentService implements CommentREST {
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = comment.updated
         await Database.get().productRepository.save(product)
+        // Find milestone
+        const milestones = issue.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: issue.milestoneId }) : []
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment], milestones })
         // Return comment
         return convertComment(comment)
     }

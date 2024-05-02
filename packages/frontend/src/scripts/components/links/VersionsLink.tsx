@@ -4,7 +4,6 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { ProductRead } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
-import { useVersions } from '../../hooks/list'
 import { PRODUCTS_4 } from '../../pattern'
 
 import VersionIcon from '/src/images/version.png'
@@ -13,10 +12,6 @@ export const VersionsLink = (props: {product: ProductRead}) => {
 
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()
-
-    // HOOKS
-
-    const versions = useVersions(props.product.productId)
 
     // FUNCTIONS
 
@@ -42,7 +37,7 @@ export const VersionsLink = (props: {product: ProductRead}) => {
             <NavLink to={`/products/${props.product.productId}/versions`} onClick={handleClick}>
                 <img src={VersionIcon} className='icon small'/>
                 <span className='label'>Versions</span>
-                <span className='badge'>{versions ? versions.length : '?'}</span>
+                <span className='badge'>{props.product.versionCount}</span>
             </NavLink>
         </span>
     )

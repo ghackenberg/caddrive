@@ -13,8 +13,6 @@ import { useMembers, useIssues } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { calculateActual } from '../../functions/burndown'
 import { formatDateTime } from '../../functions/time'
-import { CommentCount } from '../counts/Comments'
-import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -148,7 +146,7 @@ export const ProductMilestoneIssueView = () => {
         ) },
         { label: 'Comments', class: 'center nowrap', content: issue => (
             <span className='badge'>
-                <CommentCount productId={productId} issueId={issue.issueId}/>
+                {issue.commentCount}
             </span>
         ) },
         { label: 'Parts', class: 'center nowrap', content: issue => (
@@ -230,10 +228,10 @@ export const ProductMilestoneIssueView = () => {
                                     </NavLink>
                                 )}
                                 <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='open'/></span>
+                                    <strong>Open</strong> issues <span className='badge'>{ milestone.openIssueCount }</span>
                                 </NavLink>
                                 <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Closed</strong> issues <span className='badge'><IssueCount productId={productId} milestoneId={milestoneId} state='closed'/></span>
+                                    <strong>Closed</strong> issues <span className='badge'>{ milestone.closedIssueCount }</span>
                                 </NavLink>
                             </div>
                             { issues.filter(issue => issue.state == state).length == 0 ? (

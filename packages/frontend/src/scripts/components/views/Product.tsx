@@ -14,9 +14,6 @@ import { LegalFooter } from '../snippets/LegalFooter'
 import { Column, Table } from '../widgets/Table'
 import { ProductImageWidget } from '../widgets/ProductImage'
 import { ProductUserPicture } from '../values/ProductUserPicture'
-import { MemberCount } from '../counts/Members'
-import { IssueCount } from '../counts/Issues'
-import { VersionCount } from '../counts/Versions'
 import { LoadingView } from './Loading'
 
 import ProductIcon from '/src/images/product.png'
@@ -74,17 +71,17 @@ export const ProductView = () => {
         ) },
         { label: 'Versions', class: 'center', content: product => (
             <span className='badge'>
-                <VersionCount productId={product.productId}/>
+                {product.versionCount}
             </span>
         ) },
         { label: 'Issues', class: 'center', content: product => (
             <span className='badge'>
-                <IssueCount productId={product.productId} state='open'/>
+                {product.openIssueCount}
             </span>
         ) },
         { label: 'Members', class: 'center', content: product => (
             <span className='badge'>
-                <MemberCount productId={product.productId}/>
+                {product.memberCount}
             </span>
         ) },
         { label: '🧑', class: 'center', content: product => (

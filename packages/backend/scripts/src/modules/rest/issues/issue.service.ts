@@ -6,7 +6,7 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
 import { IssueCreate, IssueREST, IssueRead, IssueUpdate, ProductRead } from 'productboard-common'
-import { Database, convertIssue } from 'productboard-database'
+import { Database, MilestoneEntity, convertIssue } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
 import { TRANSPORTER } from '../../../functions/mail'
@@ -41,8 +41,10 @@ export class IssueService implements IssueREST {
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = issue.updated
         await Database.get().productRepository.save(product)
+        // Find milestone
+        const milestones = data.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: data.milestoneId }) : []
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], milestones })
         // Notify changes
         this.notifyIssue(product, issue, 'Issue notification (add)')
         // Return issue
@@ -55,8 +57,19 @@ export class IssueService implements IssueREST {
     }
 
     async updateIssue(productId: string, issueId: string, data: IssueUpdate): Promise<IssueRead> {
-        // Update issue
+        // Find issue
         const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
+        // Find milestone
+        const milestones: MilestoneEntity[] = []
+        if (issue.milestoneId != data.milestoneId) {
+            if (issue.milestoneId) {
+                milestones.push(await Database.get().milestoneRepository.findOneBy({ milestoneId: issue.milestoneId }))
+            }
+            if (data.milestoneId) {
+                milestones.push(await Database.get().milestoneRepository.findOneBy({ milestoneId: data.milestoneId }))
+            }
+        }
+        // Update issue
         issue.updated = Date.now()
         issue.assignedUserIds = data.assignedUserIds
         issue.label = data.label
@@ -67,7 +80,7 @@ export class IssueService implements IssueREST {
         product.updated = issue.updated
         await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue] })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], milestones })
         // Notify changes
         this.notifyIssue(product, issue, 'Issue notification (update)')
         // Return issue
@@ -91,8 +104,10 @@ export class IssueService implements IssueREST {
             comment.updated = issue.updated
             await Database.get().commentRepository.save(comment)
         }
+        // Find milestone
+        const milestones = issue.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: issue.milestoneId }) : []
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments })
+        emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments, milestones })
         // Return issue
         return convertIssue(issue)
     }

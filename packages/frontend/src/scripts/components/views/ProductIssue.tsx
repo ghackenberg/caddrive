@@ -10,8 +10,6 @@ import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useIssues, useMembers } from '../../hooks/list'
-import { CommentCount } from '../counts/Comments'
-import { IssueCount } from '../counts/Issues'
 import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -114,7 +112,7 @@ export const ProductIssueView = () => {
         ) },
         { label: 'Comments', class: 'center nowrap', content: issue => (
             <span className='badge'>
-                <CommentCount productId={productId} issueId={issue.issueId}/>
+                {issue.commentCount}
             </span>
         ) },
         { label: 'Parts', class: 'center nowrap', content: issue => (
@@ -161,10 +159,10 @@ export const ProductIssueView = () => {
                                     </NavLink>
                                 )}
                                 <NavLink to={`/products/${productId}/issues?state=open`} replace={true} className={`button ${state == 'open' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Open</strong> issues <span className='badge'><IssueCount productId={productId} state={'open'}/></span>
+                                    <strong>Open</strong> issues <span className='badge'>{ product.openIssueCount }</span>
                                 </NavLink>
                                 <NavLink to={`/products/${productId}/issues?state=closed`} replace={true} className={`button ${state == 'closed' ? 'fill' : 'stroke'} blue`}>
-                                    <strong>Closed</strong> issues <span className='badge'><IssueCount productId={productId} state={'closed'}/></span>
+                                    <strong>Closed</strong> issues <span className='badge'>{ product.closedIssueCount }</span>
                                 </NavLink>
                             </div>
                             { issues.filter(issue => issue.state == state).length == 0 ? (

@@ -1,27 +1,24 @@
 import * as React from 'react'
 
-import { useIssues } from '../../hooks/list'
+import { MilestoneRead } from 'productboard-common'
 
-export const MilestoneProgressWidget = (props: { productId: string, milestoneId: string }) => {
-    const open = useIssues(props.productId, props.milestoneId, 'open')
-    const closed = useIssues(props.productId, props.milestoneId, 'closed')
+export const MilestoneProgressWidget = (props: { milestone: MilestoneRead }) => {
+
+    const open = props.milestone.openIssueCount
+    const closed = props.milestone.closedIssueCount
 
     function width() {
-        const total = open.length + closed.length
+        const total = open + closed
         if (total > 0) {
-            return Math.floor(closed.length / total * 100)
+            return Math.floor(closed / total * 100)
         } else {
             return 0
         }
     }
 
     return (
-        open && closed ? (
-            <div className='progress'>
-                <div style={{width: `${width()}%` }}/>
-            </div>
-        ) : (
-            <>?</>
-        )
+        <div className='progress'>
+            <div style={{width: `${width()}%` }}/>
+        </div>
     )
 }

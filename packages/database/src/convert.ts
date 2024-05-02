@@ -27,12 +27,15 @@ export async function convertUser(user: UserEntity, full: boolean): Promise<User
 }
 
 export async function convertProduct(product: ProductEntity): Promise<ProductRead> {
+
+    const productId = product.productId
     
-    const versionCount = await Database.get().versionRepository.countBy({ product, deleted: IsNull() })
-    const openIssueCount = await Database.get().issueRepository.countBy({ product, state: "open", deleted: IsNull() })
-    const closedIssueCount = await Database.get().issueRepository.countBy({ product, state: "closed", deleted: IsNull() })
-    const milestoneCount = await Database.get().milestoneRepository.countBy({ product, deleted: IsNull() })
-    const memberCount = await Database.get().memberRepository.countBy({ product, deleted: IsNull() })
+    const versionCount = await Database.get().versionRepository.countBy({ productId, deleted: IsNull() })
+    const openIssueCount = await Database.get().issueRepository.countBy({ productId, state: "open", deleted: IsNull() })
+    const closedIssueCount = await Database.get().issueRepository.countBy({ productId, state: "closed", deleted: IsNull() })
+    const openMilestoneCount = await Database.get().milestoneRepository.countBy({ productId, deleted: IsNull() })
+    const closedMilestoneCount = 0 // TODO compute closed milestone count
+    const memberCount = await Database.get().memberRepository.countBy({ productId, deleted: IsNull() })
 
     return {
         userId: product.userId,
@@ -46,7 +49,8 @@ export async function convertProduct(product: ProductEntity): Promise<ProductRea
         versionCount,
         openIssueCount,
         closedIssueCount,
-        milestoneCount,
+        openMilestoneCount,
+        closedMilestoneCount,
         memberCount
     }
 }
@@ -70,8 +74,10 @@ export async function convertVersion(version: VersionEntity): Promise<VersionRea
 }
 
 export async function convertIssue(issue: IssueEntity): Promise<IssueRead> {
+
+    const issueId = issue.issueId
     
-    const commentCount = await Database.get().commentRepository.countBy({ issue, deleted: IsNull() })
+    const commentCount = await Database.get().commentRepository.countBy({ issueId, deleted: IsNull() })
     const attachmentCount = 0 // TODO compute attachment count
     const partCount = 0 // TODO compute part count
 
@@ -122,8 +128,10 @@ export async function convertAttachment(attachment: AttachmentEntity): Promise<A
 
 export async function convertMilestone(milestone: MilestoneEntity): Promise<MilestoneRead> {
 
-    const openIssueCount = await Database.get().issueRepository.countBy({ milestone, state: "open", deleted: IsNull() })
-    const closedIssueCount = await Database.get().issueRepository.countBy({ milestone, state: "closed", deleted: IsNull() })
+    const milestoneId = milestone.milestoneId
+
+    const openIssueCount = await Database.get().issueRepository.countBy({ milestoneId, state: "open", deleted: IsNull() })
+    const closedIssueCount = await Database.get().issueRepository.countBy({ milestoneId, state: "closed", deleted: IsNull() })
 
     return {
         userId: milestone.userId,

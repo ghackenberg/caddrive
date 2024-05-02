@@ -10,7 +10,6 @@ import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMilestones, useMembers } from '../../hooks/list'
-import { IssueCount } from '../counts/Issues'
 import { formatDateTime } from '../../functions/time'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -78,16 +77,16 @@ export const ProductMilestoneView = () => {
         ) },
         { label: 'Open', class: 'center', content: milestone => (
             <span className='badge'>
-                <IssueCount productId={productId} milestoneId={milestone.milestoneId} state='open'/>
+                {milestone.openIssueCount}
             </span>
         ) },
         { label: 'Closed', class: 'center', content: milestone => (
             <span className='badge'>
-                <IssueCount productId={productId} milestoneId={milestone.milestoneId} state='closed'/>
+                {milestone.closedIssueCount}
             </span>
         ) },
         { label: 'Progress', class: 'center', content: milestone => (
-            <MilestoneProgressWidget productId={productId} milestoneId={milestone.milestoneId}/>
+            <MilestoneProgressWidget milestone={milestone}/>
         ) },
         { label: '🛠️', class: 'center', content: milestone => (
             <a onClick={event => deleteMilestone(event, milestone)}>
