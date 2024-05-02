@@ -10,8 +10,6 @@ You can run **CADdrive** in two modes:
 Start the software in development mode as follows:
 
 ```bash
-cd <CADdrive>/packages/node
-
 npm run dev
 ```
 
@@ -20,8 +18,6 @@ npm run dev
 Start the software in production mode as follows:
 
 ```bash
-cd <CADdrive>/packages/node
-
 npm run clean
 npm run build
 
