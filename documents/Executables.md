@@ -10,6 +10,7 @@ You can run **CADdrive** in two modes:
 Start the software in development mode as follows:
 
 ```bash
+npm run migrations:run
 npm run dev
 ```
 
@@ -41,5 +42,6 @@ export TYPEORM_DATABASE=<database name>
 export TYPEORM_USERNAME=<user name>
 export TYPEORM_PASSWORD=<passwpord>
 
+npm run migrations:run
 npm start
 ```
