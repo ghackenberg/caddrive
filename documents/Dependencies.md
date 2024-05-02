@@ -3,8 +3,6 @@
 Install third party dependencies as follows:
 
 ```bash
-cd <CADdrive>/packages/node
-
 npm install
 ```
 
