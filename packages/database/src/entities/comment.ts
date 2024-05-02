@@ -1,21 +1,19 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
-import { Comment } from 'productboard-common'
-
 import { IssueEntity } from './issue'
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class CommentEntity extends Comment {
+export class CommentEntity {
     @Column({ nullable: false })
-    override productId: string
+    productId: string
     @Column({ nullable: false })
-    override issueId: string
+    issueId: string
     @PrimaryColumn({ nullable: false })
-    override commentId: string
+    commentId: string
     @Column({ nullable: false })
-    override userId: string
+    userId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
@@ -28,14 +26,14 @@ export class CommentEntity extends Comment {
     user: UserEntity
 
     @Column({ nullable: false })
-    override created: number
+    created: number
     @Column({ nullable: false, default: 0 })
-    override updated: number
+    updated: number
     @Column({ nullable: true })
-    override deleted: number
+    deleted: number
 
     @Column({ nullable: false })
-    override text: string
+    text: string
     @Column({ nullable: false, default: 'none' })
-    override action: 'none' | 'close' | 'reopen'
+    action: 'none' | 'close' | 'reopen'
 }

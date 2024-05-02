@@ -4,7 +4,7 @@ import { REQUEST } from '@nestjs/core'
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull } from 'typeorm'
 
-import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
+import { ProductCreate, ProductREST, ProductRead, ProductUpdate } from 'productboard-common'
 import { Database, ProductEntity, convertProduct } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
@@ -17,7 +17,7 @@ export class ProductService implements ProductREST {
         private readonly request: AuthorizedRequest
     ) {}
     
-    async findProducts(_public: 'true' | 'false') : Promise<Product[]> {
+    async findProducts(_public: 'true' | 'false'): Promise<ProductRead[]> {
         let where: FindOptionsWhere<ProductEntity> | FindOptionsWhere<ProductEntity>[]
         if (this.request.user) {
             const userId = this.request.user.userId
@@ -38,13 +38,13 @@ export class ProductService implements ProductREST {
             else
                 where = { public: true, deleted: IsNull() }
         }
-        const result: Product[] = []
+        const result: ProductRead[] = []
         for (const product of await Database.get().productRepository.find({ where, order: { updated: 'DESC' }, take: 50 }))
             result.push(convertProduct(product))
         return result
     }
     
-    async addProduct(data: ProductAddData) {
+    async addProduct(data: ProductCreate): Promise<ProductRead> {
         // Create product
         const productId = shortid()
         const created = Date.now()
@@ -61,12 +61,12 @@ export class ProductService implements ProductREST {
         return convertProduct(product)
     }
 
-    async getProduct(productId: string): Promise<Product> {
+    async getProduct(productId: string): Promise<ProductRead> {
         const product = await Database.get().productRepository.findOneByOrFail({ productId })
         return convertProduct(product)
     }
 
-    async updateProduct(productId: string, data: ProductUpdateData): Promise<Product> {
+    async updateProduct(productId: string, data: ProductUpdate): Promise<ProductRead> {
         // Update product
         const product = await Database.get().productRepository.findOneByOrFail({ productId })
         product.updated = Date.now()
@@ -80,7 +80,7 @@ export class ProductService implements ProductREST {
         return convertProduct(product)
     }
 
-    async deleteProduct(productId: string): Promise<Product> {
+    async deleteProduct(productId: string): Promise<ProductRead> {
         // Delete product
         const product = await Database.get().productRepository.findOneByOrFail({ productId })
         product.deleted = Date.now()

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class UserUpdateData {
+export class UserUpdate {
     @ApiProperty()
     consent: boolean
     @ApiProperty()
@@ -9,7 +9,11 @@ export class UserUpdateData {
     emailNotification: boolean
 }
 
-export class User extends UserUpdateData {
+export class UserCreate extends UserUpdate {
+
+}
+
+export class UserRead extends UserCreate {
     @ApiProperty()
     userId: string
     

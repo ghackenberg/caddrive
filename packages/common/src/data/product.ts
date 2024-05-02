@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class ProductUpdateData {
+export class ProductUpdate {
     @ApiProperty()
     name: string
     @ApiProperty()
@@ -9,10 +9,10 @@ export class ProductUpdateData {
     public: boolean
 }
 
-export class ProductAddData extends ProductUpdateData {
+export class ProductCreate extends ProductUpdate {
 }
 
-export class Product extends ProductAddData {
+export class ProductRead extends ProductCreate {
     @ApiProperty()
     productId: string
 

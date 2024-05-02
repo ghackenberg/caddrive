@@ -1,29 +1,29 @@
 import axios from 'axios'
 
-import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
+import { ProductCreate, ProductREST, ProductRead, ProductUpdate } from 'productboard-common'
 
 import { auth } from '../auth'
 import { CacheAPI } from '../cache'
 
 class ProductClientImpl implements ProductREST {
-    async findProducts(_public?: 'true' | 'false'): Promise<Product[]> {
-        return (await axios.get<Product[]>(`/rest/products`, { params: { public: _public }, ...auth })).data
+    async findProducts(_public?: 'true' | 'false'): Promise<ProductRead[]> {
+        return (await axios.get<ProductRead[]>(`/rest/products`, { params: { public: _public }, ...auth })).data
     }
-    async addProduct(data: ProductAddData): Promise<Product> {
-        const product = (await axios.post<Product>('/rest/products', data, auth)).data
+    async addProduct(data: ProductCreate): Promise<ProductRead> {
+        const product = (await axios.post<ProductRead>('/rest/products', data, auth)).data
         CacheAPI.putProduct(product)
         return product
     }
-    async getProduct(productId: string): Promise<Product> {
-        return (await axios.get<Product>(`/rest/products/${productId}`, auth)).data
+    async getProduct(productId: string): Promise<ProductRead> {
+        return (await axios.get<ProductRead>(`/rest/products/${productId}`, auth)).data
     }
-    async updateProduct(productId: string, data: ProductUpdateData): Promise<Product> {
-        const product = (await axios.put<Product>(`/rest/products/${productId}`, data, auth)).data
+    async updateProduct(productId: string, data: ProductUpdate): Promise<ProductRead> {
+        const product = (await axios.put<ProductRead>(`/rest/products/${productId}`, data, auth)).data
         CacheAPI.putProduct(product)
         return product
     }
-    async deleteProduct(productId: string): Promise<Product> {
-        const product = (await axios.delete<Product>(`/rest/products/${productId}`, auth)).data
+    async deleteProduct(productId: string): Promise<ProductRead> {
+        const product = (await axios.delete<ProductRead>(`/rest/products/${productId}`, auth)).data
         CacheAPI.putProduct(product)
         return product
     }

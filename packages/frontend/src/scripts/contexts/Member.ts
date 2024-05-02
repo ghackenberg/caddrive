@@ -1,10 +1,10 @@
 import * as React from 'react'
 
-import { Member } from 'productboard-common'
+import { MemberRead } from 'productboard-common'
 
 type MemberContextProps = {
-    contextMember: Member
-    setContextMember: (member: Member) => void
+    contextMember: MemberRead
+    setContextMember: (member: MemberRead) => void
 }
 
 export const MemberContext = React.createContext<MemberContextProps>(undefined)

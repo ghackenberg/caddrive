@@ -5,7 +5,7 @@ import { Redirect, useParams } from 'react-router'
 import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { Version } from 'productboard-common'
+import { VersionRead } from 'productboard-common'
 
 import { VersionClient } from '../../clients/rest/version'
 import { UserContext } from '../../contexts/User'
@@ -147,7 +147,7 @@ export const ProductVersionSettingView = () => {
 
     // CONSTANTS
 
-    const columns: Column<Version>[] = [
+    const columns: Column<VersionRead>[] = [
         { label: '📷', class: 'center', content: version => (
             <div className='model' style={{backgroundImage: `url(/rest/files/${version.versionId}.png)`, width: '5em', height: '5em'}}/>
         ) },

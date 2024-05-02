@@ -2,7 +2,7 @@ import  * as React from 'react'
 import { useState, useEffect, useContext, FormEvent } from 'react'
 import { Redirect, useParams } from 'react-router'
 
-import { Member } from 'productboard-common'
+import { MemberRead } from 'productboard-common'
 
 import { IssueClient } from '../../clients/rest/issue'
 import { UserContext } from '../../contexts/User'
@@ -95,7 +95,7 @@ export const ProductIssueSettingView = () => {
 
     // CONSTANTS
 
-    const columns: Column<Member>[] = [
+    const columns: Column<MemberRead>[] = [
         { label: '👤', content: member => (
             <ProductUserPicture userId={member.userId} productId={productId} class='icon medium round'/>
         ) },

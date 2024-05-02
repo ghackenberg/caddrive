@@ -1,12 +1,12 @@
 import * as React from 'react'
 
-import { User } from 'productboard-common'
+import { UserRead } from 'productboard-common'
 
 type AuthContextProps = {
     authContextToken: string
-    authContextUser: User
+    authContextUser: UserRead
     setAuthContextToken: (token: string) => void
-    setAuthContextUser: (user: User) => void
+    setAuthContextUser: (user: UserRead) => void
 }
 
 export const AuthContext = React.createContext<AuthContextProps>(undefined)

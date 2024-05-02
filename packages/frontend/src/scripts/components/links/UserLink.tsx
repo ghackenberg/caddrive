@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { User } from 'productboard-common'
+import { UserRead } from 'productboard-common'
 
 import UserIcon from '/src/images/user.png'
 
-export const UserLink = (props: {user?: User}) => (
+export const UserLink = (props: {user?: UserRead}) => (
     props.user ? (
         <span>
             <NavLink to={`/users/${props.user.userId}`} replace={true}>

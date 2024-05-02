@@ -5,7 +5,7 @@ import { getTestMessageUrl } from 'nodemailer'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
-import { Issue, IssueAddData, IssueUpdateData, IssueREST, Product } from 'productboard-common'
+import { IssueCreate, IssueREST, IssueRead, IssueUpdate, ProductRead } from 'productboard-common'
 import { Database, convertIssue } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
@@ -19,15 +19,15 @@ export class IssueService implements IssueREST {
         private readonly request: AuthorizedRequest
     ) {}
 
-    async findIssues(productId: string) : Promise<Issue[]> {
+    async findIssues(productId: string) {
         const where = { productId, deleted: IsNull() }
-        const result: Issue[] = []
+        const result: IssueRead[] = []
         for (const issue of await Database.get().issueRepository.findBy(where))
             result.push(convertIssue(issue))
         return result.sort((a, b) => a.created - b.created)
     }
   
-    async addIssue(productId: string, data: IssueAddData): Promise<Issue> {
+    async addIssue(productId: string, data: IssueCreate): Promise<IssueRead> {
         // Add issue
         const issueId = shortid()
         const created = Date.now()
@@ -48,12 +48,12 @@ export class IssueService implements IssueREST {
         return convertIssue(issue)
     }
 
-    async getIssue(productId: string, issueId: string): Promise<Issue> {
+    async getIssue(productId: string, issueId: string): Promise<IssueRead> {
         const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
         return convertIssue(issue)
     }
 
-    async updateIssue(productId: string, issueId: string, data: IssueUpdateData): Promise<Issue> {
+    async updateIssue(productId: string, issueId: string, data: IssueUpdate): Promise<IssueRead> {
         // Update issue
         const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
         issue.updated = Date.now()
@@ -73,7 +73,7 @@ export class IssueService implements IssueREST {
         return convertIssue(issue)
     }
 
-    async deleteIssue(productId: string, issueId: string): Promise<Issue> {
+    async deleteIssue(productId: string, issueId: string): Promise<IssueRead> {
         // Delete issue
         const issue = await Database.get().issueRepository.findOneByOrFail({ productId, issueId })
         issue.deleted = Date.now()
@@ -96,7 +96,7 @@ export class IssueService implements IssueREST {
         return convertIssue(issue)
     }
 
-    async notifyIssue(product: Product, issue: Issue, subject: string) {
+    async notifyIssue(product: ProductRead, issue: IssueRead, subject: string) {
         // Send emails
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {

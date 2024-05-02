@@ -1,29 +1,29 @@
 import axios from 'axios'
 
-import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+import { MemberCreate, MemberREST, MemberRead, MemberUpdate } from 'productboard-common'
 
 import { auth } from '../auth'
 import { CacheAPI } from '../cache'
 
 class MemberClientImpl implements MemberREST {
-    async findMembers(productId: string): Promise<Member[]> {
-        return (await axios.get<Member[]>(`/rest/products/${productId}/members`, auth)).data
+    async findMembers(productId: string): Promise<MemberRead[]> {
+        return (await axios.get<MemberRead[]>(`/rest/products/${productId}/members`, auth)).data
     }
-    async addMember(productId: string, data: MemberAddData): Promise<Member> {
-        const member = (await axios.post<Member>(`/rest/products/${productId}/members`, data, auth)).data
+    async addMember(productId: string, data: MemberCreate): Promise<MemberRead> {
+        const member = (await axios.post<MemberRead>(`/rest/products/${productId}/members`, data, auth)).data
         CacheAPI.putMember(member)
         return member
     }
-    async getMember(productId: string, memberId: string): Promise<Member> {
-        return (await axios.get<Member>(`/rest/products/${productId}/members/${memberId}`, auth)).data
+    async getMember(productId: string, memberId: string): Promise<MemberRead> {
+        return (await axios.get<MemberRead>(`/rest/products/${productId}/members/${memberId}`, auth)).data
     }
-    async updateMember(productId: string, memberId: string, data: MemberUpdateData): Promise<Member> {
-        const member = (await axios.put<Member>(`/rest/products/${productId}/members/${memberId}`, data, auth)).data
+    async updateMember(productId: string, memberId: string, data: MemberUpdate): Promise<MemberRead> {
+        const member = (await axios.put<MemberRead>(`/rest/products/${productId}/members/${memberId}`, data, auth)).data
         CacheAPI.putMember(member)
         return member
     }
-    async deleteMember(productId: string, memberId: string): Promise<Member> {
-        const member = (await axios.delete<Member>(`/rest/products/${productId}/members/${memberId}`, auth)).data
+    async deleteMember(productId: string, memberId: string): Promise<MemberRead> {
+        const member = (await axios.delete<MemberRead>(`/rest/products/${productId}/members/${memberId}`, auth)).data
         CacheAPI.putMember(member)
         return member
     }

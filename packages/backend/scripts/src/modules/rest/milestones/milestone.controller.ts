@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } fr
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
 
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+import { MilestoneCreate, MilestoneREST, MilestoneRead, MilestoneUpdate } from 'productboard-common'
 
 import { MilestoneService } from './milestone.service'
 import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../../functions/permission'
@@ -21,57 +21,57 @@ export class MilestoneController implements MilestoneREST {
 
     @Get()
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiResponse({ type: [Milestone] })
+    @ApiResponse({ type: [MilestoneRead] })
     async findMilestones(
         @Param('productId') productId: string
-    ): Promise<Milestone[]> {
+    ): Promise<MilestoneRead[]> {
         await canFindMilestoneOrFail(this.request.user && this.request.user.userId, productId)
         return this.milestoneService.findMilestones(productId)
     }   
 
     @Post()
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiBody({ type: MilestoneAddData })
-    @ApiResponse({ type: Milestone })
+    @ApiBody({ type: MilestoneCreate })
+    @ApiResponse({ type: MilestoneRead })
     async addMilestone(
         @Param('productId') productId: string,
-        @Body() data: MilestoneAddData
-    ): Promise<Milestone> {
+        @Body() data: MilestoneCreate
+    ): Promise<MilestoneRead> {
         await canCreateMilestoneOrFail(this.request.user && this.request.user.userId, productId)
         return this.milestoneService.addMilestone(productId, data)
     }
     @Get(':milestoneId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'milestoneId', type: 'string', required: true })
-    @ApiResponse({ type: Milestone })
+    @ApiResponse({ type: MilestoneRead })
     async getMilestone(
         @Param('productId') productId: string,
         @Param('milestoneId') milestoneId: string
-    ): Promise<Milestone> {
+    ): Promise<MilestoneRead> {
         await canReadMilestoneOrFail(this.request.user && this.request.user.userId, productId, milestoneId)
         return this.milestoneService.getMilestone(productId, milestoneId)
     }
     @Put(':milestoneId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'milestoneId', type: 'string', required: true })
-    @ApiBody({ type: MilestoneUpdateData })
-    @ApiResponse({ type: Milestone })
+    @ApiBody({ type: MilestoneUpdate })
+    @ApiResponse({ type: MilestoneRead })
     async updateMilestone(
         @Param('productId') productId: string,
         @Param('milestoneId') milestoneId: string,
-        @Body() data: MilestoneUpdateData
-    ): Promise<Milestone> {
+        @Body() data: MilestoneUpdate
+    ): Promise<MilestoneRead> {
         await canUpdateMilestoneOrFail(this.request.user && this.request.user.userId, productId, milestoneId)
         return this.milestoneService.updateMilestone(productId, milestoneId, data)
     }
     @Delete(':milestoneId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'milestoneId', type: 'string', required: true })
-    @ApiResponse({ type: Milestone })
+    @ApiResponse({ type: MilestoneRead })
     async deleteMilestone(
         @Param('productId') productId: string,
         @Param('milestoneId') milestoneId: string
-    ): Promise<Milestone> {
+    ): Promise<MilestoneRead> {
         await canDeleteMilestoneOrFail(this.request.user && this.request.user.userId, productId, milestoneId)
         return this.milestoneService.deleteMilestone(productId, milestoneId)
     }

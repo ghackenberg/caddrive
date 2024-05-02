@@ -1,20 +1,20 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
-import { ImageType, ModelType, Version } from 'productboard-common'
+import { ImageType, ModelType } from 'productboard-common'
 
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class VersionEntity extends Version {
+export class VersionEntity {
     @Column({ nullable: false })
-    override productId: string
+    productId: string
     @PrimaryColumn({ nullable: false })
-    override versionId: string
+    versionId: string
     @Column({ nullable: false })
-    override userId: string
+    userId: string
     @Column('simple-array')
-    override baseVersionIds: string[]
+    baseVersionIds: string[]
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
@@ -24,24 +24,24 @@ export class VersionEntity extends Version {
     user: UserEntity
 
     @Column({ nullable: false })
-    override created: number
+    created: number
     @Column({ nullable: false, default: 0 })
-    override updated: number
+    updated: number
     @Column({ nullable: true })
-    override deleted: number
+    deleted: number
 
     @Column({ nullable: false })
-    override major: number
+    major: number
     @Column({ nullable: false })
-    override minor: number
+    minor: number
     @Column({ nullable: false })
-    override patch: number
+    patch: number
 
     @Column({ nullable: false })
-    override description: string
+    description: string
 
     @Column({ nullable: false })
-    override modelType: ModelType
+    modelType: ModelType
     @Column({ nullable: true })
-    override imageType: ImageType
+    imageType: ImageType
 }

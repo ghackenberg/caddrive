@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 
 import { Object3D } from 'three'
 
-import { Comment, Version } from 'productboard-common'
+import { CommentRead, VersionRead } from 'productboard-common'
 
 import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
@@ -26,7 +26,7 @@ import { LoadingView } from './Loading'
 import LeftIcon from '/src/images/comment.png'
 import RightIcon from '/src/images/part.png'
 
-type SubHandler = (version: Version, object: Object3D) => void
+type SubHandler = (version: VersionRead, object: Object3D) => void
 
 type Index = {[commentId: string]: Part[]}
 
@@ -76,7 +76,7 @@ export const ProductIssueCommentView = () => {
     const [selected, setSelected] = useState(initialSelected)
     const [marked, setMarked] = useState(initialMarked)
 
-    const [contextComment, setContextComment] = useState<Comment>()
+    const [contextComment, setContextComment] = useState<CommentRead>()
     const [active, setActive] = useState<string>('left')
 
     // EFFECTS
@@ -119,13 +119,13 @@ export const ProductIssueCommentView = () => {
         setSelected([])
     }
 
-    function overObject3D(version: Version, object: Object3D) {
+    function overObject3D(version: VersionRead, object: Object3D) {
         setSelected([{ productId, versionId: version.versionId, objectName: object.name, objectPath: computePath(object) }])
     }
     function outObject3D() {
         setSelected([])
     }
-    function clickObject3D(version: Version, object: Object3D) {
+    function clickObject3D(version: VersionRead, object: Object3D) {
         if (contextComment) {
             if (contextComment.commentId in handlers) {
                 handlers[contextComment.commentId](version, object)

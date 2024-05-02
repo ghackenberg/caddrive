@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiResponse } from '@
 
 import "multer"
 
-import { Issue, IssueAddData, IssueUpdateData, IssueREST } from 'productboard-common'
+import { IssueCreate, IssueREST, IssueRead, IssueUpdate } from 'productboard-common'
 
 import { IssueService } from './issue.service'
 import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
@@ -14,7 +14,7 @@ import { TokenOptionalGuard } from '../tokens/token.guard'
 @Controller('rest/products/:productId/issues')
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
-@ApiExtraModels(IssueAddData, IssueUpdateData)
+@ApiExtraModels(IssueCreate, IssueUpdate)
 export class IssueController implements IssueREST {
     constructor(
         private readonly issueService: IssueService,
@@ -24,22 +24,22 @@ export class IssueController implements IssueREST {
 
     @Get()
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiResponse({ type: [Issue] })
+    @ApiResponse({ type: [IssueRead] })
     async findIssues(
         @Param('productId') productId: string
-    ): Promise<Issue[]> {
+    ): Promise<IssueRead[]> {
         await canReadProductOrFail(this.request.user && this.request.user.userId, productId)
         return this.issueService.findIssues(productId)
     }
 
     @Post()
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiBody({ type: IssueAddData,  required: true })
-    @ApiResponse({ type: Issue })
+    @ApiBody({ type: IssueCreate,  required: true })
+    @ApiResponse({ type: IssueRead })
     async addIssue(
         @Param('productId') productId: string,
-        @Body() data: IssueAddData
-    ): Promise<Issue> {
+        @Body() data: IssueCreate
+    ): Promise<IssueRead> {
         await canCreateIssueOrFail(this.request.user && this.request.user.userId, productId)
         return this.issueService.addIssue(productId, data)
     }  
@@ -47,11 +47,11 @@ export class IssueController implements IssueREST {
     @Get(':issueId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
-    @ApiResponse({ type: Issue })
+    @ApiResponse({ type: IssueRead })
     async getIssue(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string
-    ): Promise<Issue> {
+    ): Promise<IssueRead> {
         await canReadIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
         return this.issueService.getIssue(productId, issueId)
     } 
@@ -59,24 +59,24 @@ export class IssueController implements IssueREST {
     @Put(':issueId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
-    @ApiBody({ type: IssueUpdateData, required: true })
-    @ApiResponse({ type: Issue })
+    @ApiBody({ type: IssueUpdate, required: true })
+    @ApiResponse({ type: IssueRead })
     async updateIssue(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
-        @Body() data: IssueUpdateData
-    ): Promise<Issue> {
+        @Body() data: IssueUpdate
+    ): Promise<IssueRead> {
         await canUpdateIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
         return this.issueService.updateIssue(productId, issueId, data)
     }
 
     @Delete(':issueId')
     @ApiParam({ name: 'id', type: 'string', required: true })
-    @ApiResponse({ type: [Issue] })
+    @ApiResponse({ type: IssueRead })
     async deleteIssue(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string
-    ): Promise<Issue> {
+    ): Promise<IssueRead> {
         await canDeleteIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
         return this.issueService.deleteIssue(productId, issueId)
     } 

@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue } from 'productboard-common'
+import { IssueRead } from 'productboard-common'
 
 import { IssueClient } from '../../clients/rest/issue'
 import { UserContext } from '../../contexts/User'
@@ -102,7 +102,7 @@ export const ProductMilestoneIssueView = () => {
 
     // FUNCTIONS
 
-    async function deleteIssue(event: React.UIEvent, issue: Issue) {
+    async function deleteIssue(event: React.UIEvent, issue: IssueRead) {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this issue from this milestone?')) {
@@ -119,7 +119,7 @@ export const ProductMilestoneIssueView = () => {
         await push(`${pathname}${search}`)
     }
 
-    async function handleClickIssue(issue: Issue) {
+    async function handleClickIssue(issue: IssueRead) {
         await goBack()
         await replace(`/products/${productId}/issues`)
         await push(`/products/${productId}/issues/${issue.issueId}/comments`)
@@ -127,7 +127,7 @@ export const ProductMilestoneIssueView = () => {
     
     // CONSTANTS
 
-    const columns: Column<Issue>[] = [
+    const columns: Column<IssueRead>[] = [
         { label: '🧑', content: issue => (
             <ProductUserPicture userId={issue.userId} productId={productId} class='icon small round'/>
         ) },

@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuar
 import { REQUEST } from '@nestjs/core'
 import { ApiBody, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger'
 
-import { Product, ProductAddData, ProductUpdateData, ProductREST } from 'productboard-common'
+import { ProductCreate, ProductREST, ProductRead, ProductUpdate } from 'productboard-common'
 
 import { ProductService } from './product.service'
 import { canReadProductOrFail, canUpdateProductOrFail, canDeleteProductOrFail, canCreateProductOrFail } from '../../../functions/permission'
@@ -21,51 +21,51 @@ export class ProductController implements ProductREST {
 
     @Get()
     @ApiQuery({ name: 'public', type: 'boolean', required: false })
-    @ApiResponse({ type: [Product] })
+    @ApiResponse({ type: [ProductRead] })
     async findProducts(
         @Query('public') _public: 'true' | 'false'
-    ): Promise<Product[]> {
+    ): Promise<ProductRead[]> {
         return this.productService.findProducts(_public)
     }
 
     @Post()
-    @ApiBody({ type: ProductAddData, required: true })
-    @ApiResponse({ type: Product })
+    @ApiBody({ type: ProductCreate, required: true })
+    @ApiResponse({ type: ProductRead })
     async addProduct(
-        @Body() data: ProductAddData
-    ): Promise<Product> {
+        @Body() data: ProductCreate
+    ): Promise<ProductRead> {
         await canCreateProductOrFail(this.request.user && this.request.user.userId)
         return this.productService.addProduct(data)
     }
 
     @Get(':productId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiResponse({ type: Product, })
+    @ApiResponse({ type: ProductRead, })
     async getProduct(
         @Param('productId') productId: string
-    ): Promise<Product> {
+    ): Promise<ProductRead> {
         await canReadProductOrFail(this.request.user && this.request.user.userId, productId)
         return this.productService.getProduct(productId)
     }
 
     @Put(':productId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiBody({ type: Product })
-    @ApiResponse({ type: Product })
+    @ApiBody({ type: ProductUpdate })
+    @ApiResponse({ type: ProductRead })
     async updateProduct(
         @Param('productId') productId: string,
-        @Body() data: ProductUpdateData
-    ): Promise<Product> {
+        @Body() data: ProductUpdate
+    ): Promise<ProductRead> {
         await canUpdateProductOrFail(this.request.user && this.request.user.userId, productId)
         return this.productService.updateProduct(productId, data)
     }
 
     @Delete(':productId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiResponse({ type: Product })
+    @ApiResponse({ type: ProductRead })
     async deleteProduct(
         @Param('productId') productId: string
-    ): Promise<Product> {
+    ): Promise<ProductRead> {
         await canDeleteProductOrFail(this.request.user && this.request.user.userId, productId)
         return this.productService.deleteProduct(productId)
     }

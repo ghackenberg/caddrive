@@ -1,24 +1,24 @@
-import { Attachment } from "./data/attachment"
-import { Comment } from "./data/comment"
-import { Issue } from "./data/issue"
-import { Member } from "./data/member"
-import { Milestone } from "./data/milestone"
-import { Product } from "./data/product"
-import { User } from "./data/user"
-import { Version } from "./data/version"
+import { AttachmentRead } from "./data/attachment"
+import { CommentRead } from "./data/comment"
+import { IssueRead } from "./data/issue"
+import { MemberRead } from "./data/member"
+import { MilestoneRead } from "./data/milestone"
+import { ProductRead } from "./data/product"
+import { UserRead } from "./data/user"
+import { VersionRead } from "./data/version"
 
 export interface UserMessage {
     type: 'state' | 'patch'
-    users?: User[]
+    users?: UserRead[]
 }
 
 export interface ProductMessage  {
     type: 'state' | 'patch'
-    products?: Product[]
-    members?: Member[]
-    issues?: Issue[]
-    comments?: Comment[]
-    attachments?: Attachment[]
-    milestones?: Milestone[]
-    versions?: Version[]
+    products?: ProductRead[]
+    members?: MemberRead[]
+    issues?: IssueRead[]
+    comments?: CommentRead[]
+    attachments?: AttachmentRead[]
+    milestones?: MilestoneRead[]
+    versions?: VersionRead[]
 }

@@ -2,29 +2,29 @@ import { ApiProperty } from "@nestjs/swagger"
 
 // Create token
 
-export class CreateTokenRequest {
+export class TokenCreateRequest {
     @ApiProperty()
     email: string
 }
-export class CreateTokenResponse {
+export class TokenCreateResponse {
     @ApiProperty()
     tokenId: string
 }
 
 // Activate token
 
-export class ActivateTokenRequest {
+export class TokenActivateRequest {
     @ApiProperty()
     code: string
 }
-export class ActivateTokenResponse {
+export class TokenActivateResponse {
     @ApiProperty()
     jwt: string
 }
 
 // Refresh token
 
-export class RefreshTokenResponse {
+export class TokenRefreshResponse {
     @ApiProperty()
     jwt: string
 }

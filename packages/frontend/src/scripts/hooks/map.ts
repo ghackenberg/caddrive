@@ -1,14 +1,14 @@
 import * as React from 'react'
 
-import { Comment, Issue } from 'productboard-common'
+import { CommentRead, IssueRead } from 'productboard-common'
 
 import { useIssues } from './list'
 import { CacheAPI } from '../clients/cache'
 
 type Unsubscribe = () => void
 
-function recompute(issues: Issue[]) {
-    const value: {[issueId: string]: Comment[]} = {}
+function recompute(issues: IssueRead[]) {
+    const value: {[issueId: string]: CommentRead[]} = {}
     for (const issue of issues || []) {
         value[issue.issueId] = CacheAPI.getComments(issue.productId, issue.issueId)
     }
@@ -18,7 +18,7 @@ function recompute(issues: Issue[]) {
 export function useIssuesComments(productId: string, milestoneId?: string) {
     const issues = useIssues(productId, milestoneId)
 
-    const initialIssuesComments: {[issueId: string]: Comment[]} = recompute(issues)
+    const initialIssuesComments: {[issueId: string]: CommentRead[]} = recompute(issues)
 
     const [issuesComments, setIssuesComments] = React.useState(initialIssuesComments)
 

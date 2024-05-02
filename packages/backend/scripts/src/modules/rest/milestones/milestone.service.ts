@@ -4,7 +4,7 @@ import { REQUEST } from '@nestjs/core'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
-import { Milestone, MilestoneAddData, MilestoneREST, MilestoneUpdateData } from 'productboard-common'
+import { MilestoneCreate, MilestoneREST, MilestoneRead, MilestoneUpdate } from 'productboard-common'
 import { Database, convertMilestone } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
@@ -17,15 +17,15 @@ export class MilestoneService implements MilestoneREST {
         private readonly request: AuthorizedRequest
     ) {}
 
-    async findMilestones(productId: string): Promise<Milestone[]> {
+    async findMilestones(productId: string): Promise<MilestoneRead[]> {
         const where = { productId, deleted: IsNull() }
-        const result: Milestone[] = []
+        const result: MilestoneRead[] = []
         for (const milestone of await Database.get().milestoneRepository.findBy(where))
             result.push(convertMilestone(milestone))
         return result
     }
 
-    async addMilestone(productId: string, data: MilestoneAddData): Promise<Milestone> {
+    async addMilestone(productId: string, data: MilestoneCreate): Promise<MilestoneRead> {
         // Create milestone
         const milestoneId = shortid()
         const created = Date.now()
@@ -42,12 +42,12 @@ export class MilestoneService implements MilestoneREST {
         return convertMilestone(milestone)
     }
 
-    async getMilestone(productId: string, milestoneId: string): Promise<Milestone> {
+    async getMilestone(productId: string, milestoneId: string): Promise<MilestoneRead> {
         const milestone = await Database.get().milestoneRepository.findOneByOrFail({ productId, milestoneId })
         return convertMilestone(milestone)
     }
 
-    async updateMilestone(productId: string, milestoneId: string, data: MilestoneUpdateData): Promise<Milestone> {
+    async updateMilestone(productId: string, milestoneId: string, data: MilestoneUpdate): Promise<MilestoneRead> {
         // Update milestone
         const milestone = await Database.get().milestoneRepository.findOneByOrFail({ productId, milestoneId })
         milestone.updated = Date.now()
@@ -65,7 +65,7 @@ export class MilestoneService implements MilestoneREST {
         return convertMilestone(milestone)
     }
 
-    async deleteMilestone(productId: string, milestoneId: string): Promise<Milestone> {
+    async deleteMilestone(productId: string, milestoneId: string): Promise<MilestoneRead> {
         // Delete milestone
         const milestone = await Database.get().milestoneRepository.findOneByOrFail({ productId, milestoneId })
         milestone.deleted = Date.now()

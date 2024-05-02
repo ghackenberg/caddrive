@@ -1,3 +1,5 @@
+import { AttachmentRead, CommentRead, IssueRead, MilestoneRead, ProductRead, UserRead, VersionRead } from "productboard-common"
+
 import { AttachmentEntity } from "./entities/attachment"
 import { CommentEntity } from "./entities/comment"
 import { IssueEntity } from "./entities/issue"
@@ -7,7 +9,7 @@ import { ProductEntity } from "./entities/product"
 import { UserEntity } from "./entities/user"
 import { VersionEntity } from "./entities/version"
 
-export function convertUser(user: UserEntity, full: boolean) {
+export function convertUser(user: UserEntity, full: boolean): UserRead {
     return {
         userId: user.userId,
         created: user.created,
@@ -21,7 +23,7 @@ export function convertUser(user: UserEntity, full: boolean) {
     }
 }
 
-export function convertProduct(product: ProductEntity) {
+export function convertProduct(product: ProductEntity): ProductRead {
     return {
         productId: product.productId,
         created: product.created,
@@ -34,7 +36,7 @@ export function convertProduct(product: ProductEntity) {
     }
 }
 
-export function convertVersion(version: VersionEntity) {
+export function convertVersion(version: VersionEntity): VersionRead {
     return {
         productId: version.productId,
         versionId: version.versionId,
@@ -52,7 +54,7 @@ export function convertVersion(version: VersionEntity) {
     }
 }
 
-export function convertIssue(issue: IssueEntity) {
+export function convertIssue(issue: IssueEntity): IssueRead {
     return {
         productId: issue.productId,
         issueId: issue.issueId,
@@ -68,7 +70,7 @@ export function convertIssue(issue: IssueEntity) {
     }
 }
 
-export function convertComment(comment: CommentEntity) {
+export function convertComment(comment: CommentEntity): CommentRead {
     return {
         productId: comment.productId,
         issueId: comment.issueId,
@@ -82,7 +84,7 @@ export function convertComment(comment: CommentEntity) {
     }
 }
 
-export function convertAttachment(attachment: AttachmentEntity) {
+export function convertAttachment(attachment: AttachmentEntity): AttachmentRead {
     return  {
         productId: attachment.productId,
         attachmentId: attachment.attachmentId,
@@ -95,7 +97,7 @@ export function convertAttachment(attachment: AttachmentEntity) {
     }
 }
 
-export function convertMilestone(milestone: MilestoneEntity) {
+export function convertMilestone(milestone: MilestoneEntity): MilestoneRead {
     return {
         productId: milestone.productId,
         milestoneId: milestone.milestoneId,

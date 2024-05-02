@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class IssueUpdateData {
+export class IssueUpdate {
     @ApiProperty()
     label: string
     @ApiProperty()
@@ -9,10 +9,10 @@ export class IssueUpdateData {
     milestoneId: string
 }
 
-export class IssueAddData extends IssueUpdateData {
+export class IssueCreate extends IssueUpdate {
 }
 
-export class Issue extends IssueAddData {
+export class IssueRead extends IssueCreate {
     @ApiProperty()
     userId: string
     @ApiProperty()

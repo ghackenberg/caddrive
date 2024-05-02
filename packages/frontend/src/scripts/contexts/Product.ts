@@ -1,10 +1,10 @@
 import * as React from 'react'
 
-import { Product } from 'productboard-common'
+import { ProductRead } from 'productboard-common'
 
 type ProductContextProps = {
-    contextProduct: Product
-    setContextProduct: (product: Product) => void
+    contextProduct: ProductRead
+    setContextProduct: (product: ProductRead) => void
 }
 
 export const ProductContext = React.createContext<ProductContextProps>(undefined)

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { Product } from 'productboard-common'
+import { ProductRead } from 'productboard-common'
 
 import { ProductClient } from '../../clients/rest/product'
 import { UserContext } from '../../contexts/User'
@@ -45,7 +45,7 @@ export const ProductView = () => {
 
     // FUNCTIONS
 
-    async function deleteProduct(event: React.UIEvent, product: Product) {
+    async function deleteProduct(event: React.UIEvent, product: ProductRead) {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this Product?')) {
@@ -55,7 +55,7 @@ export const ProductView = () => {
 
     // CONSTANTS
     
-    const columns: Column<Product>[] = [
+    const columns: Column<ProductRead>[] = [
         { label: '📷', class: 'center', content: product => (
             <ProductImageWidget productId={product.productId}/>
         ) },

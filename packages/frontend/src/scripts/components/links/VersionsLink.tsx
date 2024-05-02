@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
-import { Product } from 'productboard-common'
+import { ProductRead } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
 import { useVersions } from '../../hooks/list'
@@ -9,7 +9,7 @@ import { PRODUCTS_4 } from '../../pattern'
 
 import VersionIcon from '/src/images/version.png'
 
-export const VersionsLink = (props: {product: Product}) => {
+export const VersionsLink = (props: {product: ProductRead}) => {
 
     const { pathname } = useLocation()
     const { go, goBack, replace } = useAsyncHistory()

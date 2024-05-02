@@ -1,86 +1,86 @@
 import { JWK } from 'jose'
 
-import { Attachment } from './data/attachment'
-import { Comment, CommentAddData, CommentUpdateData } from './data/comment'
-import { Issue, IssueAddData, IssueUpdateData } from './data/issue'
-import { Member, MemberAddData, MemberUpdateData } from './data/member'
-import { Milestone, MilestoneAddData, MilestoneUpdateData } from './data/milestone'
-import { Product, ProductAddData, ProductUpdateData } from './data/product'
-import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse } from './data/token'
-import { User } from './data/user'
-import { Version } from './data/version'
+import { AttachmentRead } from './data/attachment'
+import { CommentRead, CommentCreate, CommentUpdate } from './data/comment'
+import { IssueRead, IssueCreate, IssueUpdate } from './data/issue'
+import { MemberRead, MemberCreate, MemberUpdate } from './data/member'
+import { MilestoneRead, MilestoneCreate, MilestoneUpdate } from './data/milestone'
+import { ProductRead, ProductCreate, ProductUpdate } from './data/product'
+import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenRefreshResponse } from './data/token'
+import { UserRead } from './data/user'
+import { VersionRead } from './data/version'
 
 export interface KeyREST {
     getPublicJWK(): Promise<JWK>
 }
 
 export interface TokenREST {
-    createToken(request: CreateTokenRequest): Promise<CreateTokenResponse>
-    activateToken(tokenId: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse>
-    refreshToken(): Promise<RefreshTokenResponse>
+    createToken(request: TokenCreateRequest): Promise<TokenCreateResponse>
+    activateToken(tokenId: string, request: TokenActivateRequest): Promise<TokenActivateResponse>
+    refreshToken(): Promise<TokenRefreshResponse>
 }
 
 export interface UserREST<D, F> {
-    findUsers(query?: string, productId?: string): Promise<User[]>
-    getUser(userId: string): Promise<User>
-    updateUser(userId: string, data: D, file?: F): Promise<User>
-    deleteUser(userId: string): Promise<User>
+    findUsers(query?: string, productId?: string): Promise<UserRead[]>
+    getUser(userId: string): Promise<UserRead>
+    updateUser(userId: string, data: D, file?: F): Promise<UserRead>
+    deleteUser(userId: string): Promise<UserRead>
 }
 
 export interface ProductREST {
-    findProducts(_public?: 'true' | 'false'): Promise<Product[]>
-    addProduct(data: ProductAddData): Promise<Product>
-    getProduct(productId: string): Promise<Product>
-    updateProduct(productId: string, data: ProductUpdateData): Promise<Product>
-    deleteProduct(productId: string): Promise<Product>
+    findProducts(_public?: 'true' | 'false'): Promise<ProductRead[]>
+    addProduct(data: ProductCreate): Promise<ProductRead>
+    getProduct(productId: string): Promise<ProductRead>
+    updateProduct(productId: string, data: ProductUpdate): Promise<ProductRead>
+    deleteProduct(productId: string): Promise<ProductRead>
 }
 
 export interface VersionREST<DA, DU, M, I> {
-    findVersions(productId: string): Promise<Version[]>
-    addVersion(productId: string, data: DA, files: { model: M, image: I }): Promise<Version>
-    getVersion(productId: string, issueId: string): Promise<Version>
-    updateVersion(productId: string, issueId: string, data: DU, files?: {model: M, image: I}): Promise<Version>
-    deleteVersion(productId: string, issueId: string): Promise<Version>
+    findVersions(productId: string): Promise<VersionRead[]>
+    addVersion(productId: string, data: DA, files: { model: M, image: I }): Promise<VersionRead>
+    getVersion(productId: string, issueId: string): Promise<VersionRead>
+    updateVersion(productId: string, issueId: string, data: DU, files?: {model: M, image: I}): Promise<VersionRead>
+    deleteVersion(productId: string, issueId: string): Promise<VersionRead>
 }
 
 export interface IssueREST {
-    findIssues(productId: string): Promise<Issue[]>
-    addIssue(productId: string, data: IssueAddData): Promise<Issue>
-    getIssue(pruductId: string, issueId: string): Promise<Issue>
-    updateIssue(productId: string, issueId: string, data: IssueUpdateData): Promise<Issue>
-    deleteIssue(productId: string, issueId: string): Promise<Issue>
+    findIssues(productId: string): Promise<IssueRead[]>
+    addIssue(productId: string, data: IssueCreate): Promise<IssueRead>
+    getIssue(pruductId: string, issueId: string): Promise<IssueRead>
+    updateIssue(productId: string, issueId: string, data: IssueUpdate): Promise<IssueRead>
+    deleteIssue(productId: string, issueId: string): Promise<IssueRead>
 }
 
 export interface CommentREST {
-    findComments(productId: string, issueId: string): Promise<Comment[]>
-    addComment(productId: string, issueId: string, data: CommentAddData): Promise<Comment>
-    getComment(productId: string, issueId: string, commentId: string): Promise<Comment>
-    updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData): Promise<Comment>
-    deleteComment(productId: string, issueId: string, commentId: string): Promise<Comment>
+    findComments(productId: string, issueId: string): Promise<CommentRead[]>
+    addComment(productId: string, issueId: string, data: CommentCreate): Promise<CommentRead>
+    getComment(productId: string, issueId: string, commentId: string): Promise<CommentRead>
+    updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdate): Promise<CommentRead>
+    deleteComment(productId: string, issueId: string, commentId: string): Promise<CommentRead>
 }
 
 export interface AttachmentREST<AA, AU, F> {
-    findAttachments(productId: string): Promise<Attachment[]>
-    addAttachment(productId: string, data: AA, file: F): Promise<Attachment>
-    getAttachment(productId: string, attachmentId: string): Promise<Attachment>
-    updateAttachment(productId: string, attachmentId: string, data: AU, file: F): Promise<Attachment>
-    deleteAttachment(productId: string, attachmentId: string): Promise<Attachment>
+    findAttachments(productId: string): Promise<AttachmentRead[]>
+    addAttachment(productId: string, data: AA, file: F): Promise<AttachmentRead>
+    getAttachment(productId: string, attachmentId: string): Promise<AttachmentRead>
+    updateAttachment(productId: string, attachmentId: string, data: AU, file: F): Promise<AttachmentRead>
+    deleteAttachment(productId: string, attachmentId: string): Promise<AttachmentRead>
 }
 
 export interface MilestoneREST {
-    findMilestones(productId: string): Promise<Milestone[]>
-    addMilestone(productId: string, data: MilestoneAddData): Promise<Milestone>
-    getMilestone(productId: string, milestoneId: string): Promise<Milestone>
-    updateMilestone(productId: string, milestoneId: string, data: MilestoneUpdateData): Promise<Milestone>
-    deleteMilestone(productId: string, milestoneId: string): Promise<Milestone>
+    findMilestones(productId: string): Promise<MilestoneRead[]>
+    addMilestone(productId: string, data: MilestoneCreate): Promise<MilestoneRead>
+    getMilestone(productId: string, milestoneId: string): Promise<MilestoneRead>
+    updateMilestone(productId: string, milestoneId: string, data: MilestoneUpdate): Promise<MilestoneRead>
+    deleteMilestone(productId: string, milestoneId: string): Promise<MilestoneRead>
 }
 
 export interface MemberREST {
-    findMembers(productId: string): Promise<Member[]>
-    addMember(productId: string, data: MemberAddData): Promise<Member>
-    getMember(productId: string, memberId: string): Promise<Member>
-    updateMember(productId: string, memberId: string, data: MemberUpdateData): Promise<Member>
-    deleteMember(productId: string, memberId: string): Promise<Member>
+    findMembers(productId: string): Promise<MemberRead[]>
+    addMember(productId: string, data: MemberCreate): Promise<MemberRead>
+    getMember(productId: string, memberId: string): Promise<MemberRead>
+    updateMember(productId: string, memberId: string, data: MemberUpdate): Promise<MemberRead>
+    deleteMember(productId: string, memberId: string): Promise<MemberRead>
 }
 
 export interface FileREST<D> {

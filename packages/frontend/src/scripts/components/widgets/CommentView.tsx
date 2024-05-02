@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { Object3D } from 'three'
 
-import { Version } from 'productboard-common'
+import { VersionRead } from 'productboard-common'
 
 import { AttachmentClient } from '../../clients/rest/attachment'
 import { CommentClient } from '../../clients/rest/comment'
@@ -32,7 +32,7 @@ enum Mode {
     VIEW, EDIT, PREVIEW
 }
 
-type ObjectHandler = (version: Version, object: Object3D) => void
+type ObjectHandler = (version: VersionRead, object: Object3D) => void
 type PartHandler = (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => void
 type SubHandler = (commentId: string, handler: ObjectHandler) => () => void
 type UpdateHandler = (commentId: string, markedView: Part[], markedEdit: Part[]) => void

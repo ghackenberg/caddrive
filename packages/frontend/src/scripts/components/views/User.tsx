@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 
-import { User } from 'productboard-common'
+import { UserRead } from 'productboard-common'
 
 import { useUsers } from '../../hooks/list'
 import { LegalFooter } from '../snippets/LegalFooter'
@@ -19,7 +19,7 @@ export const UserView = () => {
 
     // CONSTANTS
 
-    const columns: Column<User>[] = [
+    const columns: Column<UserRead>[] = [
         { label: '👤', content: user => (
             <Link to={`/users/${user.userId}/settings`}>
                 <UserPictureWidget user={user} class='icon medium round'/>

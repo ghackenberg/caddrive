@@ -1,7 +1,7 @@
 import { Body, Controller, Param, Patch, Post, Put, UseGuards } from "@nestjs/common"
 import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse } from "@nestjs/swagger"
 
-import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse, TokenREST } from "productboard-common"
+import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenREST, TokenRefreshResponse } from "productboard-common"
 
 import { TokenRequiredGuard } from "./token.guard"
 import { TokenService } from "./token.service"
@@ -13,30 +13,30 @@ export class TokenController implements TokenREST {
     ) {}
 
     @Post()
-    @ApiBody({ type: CreateTokenRequest })
-    @ApiResponse({ type: CreateTokenResponse })
+    @ApiBody({ type: TokenCreateRequest })
+    @ApiResponse({ type: TokenCreateResponse })
     async createToken(
-        @Body() request: CreateTokenRequest
-    ): Promise<CreateTokenResponse> {
+        @Body() request: TokenCreateRequest
+    ): Promise<TokenCreateResponse> {
         return this.tokenService.createToken(request)
     }
     
     @Put(':tokenId')
     @ApiParam({ name: 'tokenId', type: 'string' })
-    @ApiBody({ type: ActivateTokenRequest })
-    @ApiResponse({ type: ActivateTokenResponse })
+    @ApiBody({ type: TokenActivateRequest })
+    @ApiResponse({ type: TokenActivateResponse })
     async activateToken(
         @Param('tokenId') tokenId: string,
-        @Body() request: ActivateTokenRequest
-    ): Promise<ActivateTokenResponse> {
+        @Body() request: TokenActivateRequest
+    ): Promise<TokenActivateResponse> {
         return this.tokenService.activateToken(tokenId, request)
     }
 
     @UseGuards(TokenRequiredGuard)
     @Patch()
     @ApiBearerAuth()
-    @ApiResponse({ type: RefreshTokenResponse })
-    async refreshToken(): Promise<RefreshTokenResponse> {
+    @ApiResponse({ type: TokenRefreshResponse })
+    async refreshToken(): Promise<TokenRefreshResponse> {
         return this.tokenService.refreshToken()
     }
 }

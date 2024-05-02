@@ -1,6 +1,6 @@
 import { JWK } from "jose"
 
-import { Attachment, Comment, Issue, Member, Milestone, Product, User, Version } from "productboard-common"
+import { AttachmentRead, CommentRead, IssueRead, MemberRead, MilestoneRead, ProductRead, UserRead, VersionRead } from "productboard-common"
 
 import { MqttAPI } from "./mqtt"
 import { FileClient } from "./rest/file"
@@ -27,34 +27,34 @@ const PRODUCT_MESSAGE_SUBSCRIPTIONS: Index<Unsubscribe> = {}
 
 // Entity callbacks
 
-const USER_CALLBACKS: Index<Callback<User>[]> = {}
-const PRODUCT_CALLBACKS: Index<Callback<Product>[]> = {}
-const MEMBER_CALLBACKS: Index<Callback<Member>[]> = {}
-const ISSUE_CALLBACKS: Index<Callback<Issue>[]> = {}
-const COMMENT_CALLBACKS: Index<Callback<Comment>[]> = {}
-const ATTACHMENT_CALLBACKS: Index<Callback<Attachment>[]> = {}
-const MILESTONE_CALLBACKS: Index<Callback<Milestone>[]> = {}
-const VERSION_CALLBACKS: Index<Callback<Version>[]> = {}
+const USER_CALLBACKS: Index<Callback<UserRead>[]> = {}
+const PRODUCT_CALLBACKS: Index<Callback<ProductRead>[]> = {}
+const MEMBER_CALLBACKS: Index<Callback<MemberRead>[]> = {}
+const ISSUE_CALLBACKS: Index<Callback<IssueRead>[]> = {}
+const COMMENT_CALLBACKS: Index<Callback<CommentRead>[]> = {}
+const ATTACHMENT_CALLBACKS: Index<Callback<AttachmentRead>[]> = {}
+const MILESTONE_CALLBACKS: Index<Callback<MilestoneRead>[]> = {}
+const VERSION_CALLBACKS: Index<Callback<VersionRead>[]> = {}
 
 // Entities callbacks
 
-const MEMBERS_CALLBACKS: Index<Callback<Member[]>[]> = {}
-const ISSUES_CALLBACKS: Index<Callback<Issue[]>[]> = {}
-const COMMENTS_CALLBACKS: Index<Callback<Comment[]>[]> = {}
-const ATTACHMENTS_CALLBACKS: Index<Callback<Attachment[]>[]> = {}
-const MILESTONES_CALLBACKS: Index<Callback<Milestone[]>[]> = {}
-const VERSIONS_CALLBACKS: Index<Callback<Version[]>[]> = {}
+const MEMBERS_CALLBACKS: Index<Callback<MemberRead[]>[]> = {}
+const ISSUES_CALLBACKS: Index<Callback<IssueRead[]>[]> = {}
+const COMMENTS_CALLBACKS: Index<Callback<CommentRead[]>[]> = {}
+const ATTACHMENTS_CALLBACKS: Index<Callback<AttachmentRead[]>[]> = {}
+const MILESTONES_CALLBACKS: Index<Callback<MilestoneRead[]>[]> = {}
+const VERSIONS_CALLBACKS: Index<Callback<VersionRead[]>[]> = {}
 
 // Entity caches
 
-const USER_CACHE: Index<User> = {}
-const PRODUCT_CACHE: Index<Product> = {}
-const MEMBER_CACHE: Index<Member> = {}
-const ISSUE_CACHE: Index<Issue> = {}
-const COMMENT_CACHE: Index<Comment> = {}
-const ATTACHMENT_CACHE: Index<Attachment> = {}
-const MILESTONE_CACHE: Index<Milestone> = {}
-const VERSION_CACHE: Index<Version> = {}
+const USER_CACHE: Index<UserRead> = {}
+const PRODUCT_CACHE: Index<ProductRead> = {}
+const MEMBER_CACHE: Index<MemberRead> = {}
+const ISSUE_CACHE: Index<IssueRead> = {}
+const COMMENT_CACHE: Index<CommentRead> = {}
+const ATTACHMENT_CACHE: Index<AttachmentRead> = {}
+const MILESTONE_CACHE: Index<MilestoneRead> = {}
+const VERSION_CACHE: Index<VersionRead> = {}
 
 const MEMBERS_CACHE: Index<Index<boolean>> = {}
 const ISSUES_CACHE: Index<Index<boolean>> = {}
@@ -214,90 +214,90 @@ export const CacheAPI = {
 
     // Subscribe entity
 
-    subscribeUser(userId: string, callback: Callback<User>): Unsubscribe {
+    subscribeUser(userId: string, callback: Callback<UserRead>): Unsubscribe {
         return subscribeUserMessage(userId, USER_CALLBACKS, userId, callback, CacheAPI.getUser(userId))
     },
-    subscribeProduct(productId: string, callback: Callback<Product>): Unsubscribe {
+    subscribeProduct(productId: string, callback: Callback<ProductRead>): Unsubscribe {
         return subscribeProductMessage(productId, PRODUCT_CALLBACKS, productId, callback, CacheAPI.getProduct(productId))
     },
-    subscribeMember(productId: string, memberId: string, callback: Callback<Member>): Unsubscribe {
+    subscribeMember(productId: string, memberId: string, callback: Callback<MemberRead>): Unsubscribe {
         return subscribeProductMessage(productId, MEMBER_CALLBACKS, `${productId}-${memberId}`, callback, CacheAPI.getMember(productId, memberId))
     },
-    subscribeIssue(productId: string, issueId: string, callback: Callback<Issue>): Unsubscribe {
+    subscribeIssue(productId: string, issueId: string, callback: Callback<IssueRead>): Unsubscribe {
         return subscribeProductMessage(productId, ISSUE_CALLBACKS, `${productId}-${issueId}`, callback, CacheAPI.getIssue(productId, issueId))
     },
-    subscribeComment(productId: string, issueId: string, commentId: string, callback: Callback<Comment>): Unsubscribe {
+    subscribeComment(productId: string, issueId: string, commentId: string, callback: Callback<CommentRead>): Unsubscribe {
         return subscribeProductMessage(productId, COMMENT_CALLBACKS, `${productId}-${issueId}-${commentId}`, callback, CacheAPI.getComment(productId, issueId, commentId))
     },
-    subscribeAttachment(productId: string, attachmentId: string, callback: Callback<Attachment>): Unsubscribe {
+    subscribeAttachment(productId: string, attachmentId: string, callback: Callback<AttachmentRead>): Unsubscribe {
         return subscribeProductMessage(productId, ATTACHMENT_CALLBACKS, `${productId}-${attachmentId}`, callback, CacheAPI.getAttachment(productId, attachmentId))
     },
-    subscribeMilestone(productId: string, milestoneId: string, callback: Callback<Milestone>): Unsubscribe {
+    subscribeMilestone(productId: string, milestoneId: string, callback: Callback<MilestoneRead>): Unsubscribe {
         return subscribeProductMessage(productId, MILESTONE_CALLBACKS, `${productId}-${milestoneId}`, callback, CacheAPI.getMilestone(productId, milestoneId))
     },
-    subscribeVersion(productId: string, versionId: string, callback: Callback<Version>): Unsubscribe {
+    subscribeVersion(productId: string, versionId: string, callback: Callback<VersionRead>): Unsubscribe {
         return subscribeProductMessage(productId, VERSION_CALLBACKS, `${productId}-${versionId}`, callback, CacheAPI.getVersion(productId, versionId))
     },
 
     // Subscribe entities
 
-    subscribeMembers(productId: string, callback: Callback<Member[]>): Unsubscribe {
+    subscribeMembers(productId: string, callback: Callback<MemberRead[]>): Unsubscribe {
         return subscribeProductMessage(productId, MEMBERS_CALLBACKS, productId, callback, CacheAPI.getMembers(productId))
     },
-    subscribeIssues(productId: string, callback: Callback<Issue[]>): Unsubscribe {
+    subscribeIssues(productId: string, callback: Callback<IssueRead[]>): Unsubscribe {
         return subscribeProductMessage(productId, ISSUES_CALLBACKS, productId, callback, CacheAPI.getIssues(productId))
     },
-    subscribeComments(productId: string, issueId: string, callback: Callback<Comment[]>): Unsubscribe {
+    subscribeComments(productId: string, issueId: string, callback: Callback<CommentRead[]>): Unsubscribe {
         return subscribeProductMessage(productId, COMMENTS_CALLBACKS, `${productId}-${issueId}`, callback, CacheAPI.getComments(productId, issueId))
     },
-    subscribeAttachments(productId: string, callback: Callback<Attachment[]>): Unsubscribe {
+    subscribeAttachments(productId: string, callback: Callback<AttachmentRead[]>): Unsubscribe {
         return subscribeProductMessage(productId, ATTACHMENTS_CALLBACKS, productId, callback, CacheAPI.getAttachments(productId))
     },
-    subscribeMilestones(productId: string, callback: Callback<Milestone[]>): Unsubscribe {
+    subscribeMilestones(productId: string, callback: Callback<MilestoneRead[]>): Unsubscribe {
         return subscribeProductMessage(productId, MILESTONES_CALLBACKS, productId, callback, CacheAPI.getMilestones(productId))
     },
-    subscribeVersions(productId: string, callback: Callback<Version[]>): Unsubscribe {
+    subscribeVersions(productId: string, callback: Callback<VersionRead[]>): Unsubscribe {
         return subscribeProductMessage(productId, VERSIONS_CALLBACKS, productId, callback, CacheAPI.getVersions(productId))
     },
 
     // Publish
 
-    putUser(user: User) {
+    putUser(user: UserRead) {
         const entityId = user.userId
         const parentId: string = null
         return update(USER_CACHE, null, USER_CALLBACKS, null, entityId, parentId, user)
     },
-    putProduct(product: Product) {
+    putProduct(product: ProductRead) {
         const entityId = product.productId
         const parentId: string = null
         return update(PRODUCT_CACHE, null, PRODUCT_CALLBACKS, null, entityId, parentId, product)
     },
-    putMember(member: Member) {
+    putMember(member: MemberRead) {
         const entityId = `${member.productId}-${member.memberId}`
         const parentId = member.productId
         return update(MEMBER_CACHE, MEMBERS_CACHE, MEMBER_CALLBACKS, MEMBERS_CALLBACKS, entityId, parentId, member)
     },
-    putIssue(issue: Issue) {
+    putIssue(issue: IssueRead) {
         const entityId = `${issue.productId}-${issue.issueId}`
         const parentId = issue.productId
         return update(ISSUE_CACHE, ISSUES_CACHE, ISSUE_CALLBACKS, ISSUES_CALLBACKS, entityId, parentId, issue)
     },
-    putComment(comment: Comment) {
+    putComment(comment: CommentRead) {
         const entityId = `${comment.productId}-${comment.issueId}-${comment.commentId}`
         const parentId = `${comment.productId}-${comment.issueId}`
         return update(COMMENT_CACHE, COMMENTS_CACHE, COMMENT_CALLBACKS, COMMENTS_CALLBACKS, entityId, parentId, comment)
     },
-    putAttachment(attachment: Attachment) {
+    putAttachment(attachment: AttachmentRead) {
         const entityId = `${attachment.productId}-${attachment.attachmentId}`
         const parentId = `${attachment.productId}`
         return update(ATTACHMENT_CACHE, ATTACHMENTS_CACHE, ATTACHMENT_CALLBACKS, ATTACHMENTS_CALLBACKS, entityId, parentId, attachment)
     },
-    putMilestone(milestone: Milestone) {
+    putMilestone(milestone: MilestoneRead) {
         const entityId = `${milestone.productId}-${milestone.milestoneId}`
         const parentId = milestone.productId
         return update(MILESTONE_CACHE, MILESTONES_CACHE, MILESTONE_CALLBACKS, MILESTONES_CALLBACKS, entityId, parentId, milestone)
     },
-    putVersion(version: Version) {
+    putVersion(version: VersionRead) {
         const entityId = `${version.productId}-${version.versionId}`
         const parentId = version.productId
         return update(VERSION_CACHE, VERSIONS_CACHE, VERSION_CALLBACKS, VERSIONS_CALLBACKS, entityId, parentId, version)

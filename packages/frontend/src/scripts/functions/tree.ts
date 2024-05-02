@@ -1,9 +1,9 @@
-import { Version } from "productboard-common"
+import { VersionRead } from "productboard-common"
 
-export function computeTree(versions: Version[]) {
+export function computeTree(versions: VersionRead[]) {
 
     // Calculate children
-    const children: {[versionId: string]: Version[]} = {}
+    const children: {[versionId: string]: VersionRead[]} = {}
 
     for (const version of versions || []) {
         children[version.versionId] = []
@@ -14,7 +14,7 @@ export function computeTree(versions: Version[]) {
 
     // Calculate siblings
 
-    const siblings: {[versionId: string]: Version[]} = {}
+    const siblings: {[versionId: string]: VersionRead[]} = {}
 
     for (const version of versions || []) {
         siblings[version.versionId] = []

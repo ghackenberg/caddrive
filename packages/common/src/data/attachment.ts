@@ -1,17 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class AttachmentUpdateData {
+export class AttachmentUpdate {
     @ApiProperty()
     name: string
     @ApiProperty()
     type: string
 }
 
-export class AttachmentAddData extends AttachmentUpdateData {
+export class AttachmentCreate extends AttachmentUpdate {
 
 }
 
-export class Attachment extends AttachmentAddData {
+export class AttachmentRead extends AttachmentCreate {
     @ApiProperty()
     productId: string
     @ApiProperty()

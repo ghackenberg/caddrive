@@ -3,7 +3,7 @@ import { useState, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Milestone } from 'productboard-common'
+import { MilestoneRead } from 'productboard-common'
 
 import { MilestoneClient } from '../../clients/rest/milestone'
 import { UserContext } from '../../contexts/User'
@@ -49,7 +49,7 @@ export const ProductMilestoneView = () => {
    
     // FUNCTIONS
 
-    async function deleteMilestone(event: React.UIEvent, milestone: Milestone) {
+    async function deleteMilestone(event: React.UIEvent, milestone: MilestoneRead) {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this milestone?')) {
@@ -59,7 +59,7 @@ export const ProductMilestoneView = () => {
 
     // CONSTANTS
 
-    const columns: Column<Milestone>[] = [
+    const columns: Column<MilestoneRead>[] = [
         { label: '🧑', content: milestone => (
             <ProductUserPicture userId={milestone.userId} productId={productId} class='icon small round'/>
         ) },

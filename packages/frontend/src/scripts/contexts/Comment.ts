@@ -1,10 +1,10 @@
 import * as React from 'react'
 
-import { Comment } from 'productboard-common'
+import { CommentRead } from 'productboard-common'
 
 type CommentContextProps = {
-    contextComment: Comment
-    setContextComment: (comment: Comment) => void
+    contextComment: CommentRead
+    setContextComment: (comment: CommentRead) => void
 }
 
 export const CommentContext = React.createContext<CommentContextProps>(undefined)

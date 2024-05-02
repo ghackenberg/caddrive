@@ -1,24 +1,22 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
 
-import { Issue } from 'productboard-common'
-
 import { CommentEntity } from './comment'
 import { MilestoneEntity } from './milestone'
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class IssueEntity extends Issue {
+export class IssueEntity {
     @Column({nullable: false})
-    override userId: string
+    userId: string
     @Column({ nullable: false })
-    override productId: string
+    productId: string
     @PrimaryColumn({ nullable: false })
-    override issueId: string
+    issueId: string
     @Column({nullable: true})
-    override milestoneId: string
+    milestoneId: string
     @Column('simple-array')
-    override assignedUserIds: string[]
+    assignedUserIds: string[]
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
@@ -34,16 +32,16 @@ export class IssueEntity extends Issue {
     comments: CommentEntity[]
 
     @Column({ nullable: false })
-    override created: number
+    created: number
     @Column({ nullable: false, default: 0 })
-    override updated: number
+    updated: number
     @Column({ nullable: true })
-    override deleted: number
+    deleted: number
 
     @Column({nullable: false})
-    override number: number
+    number: number
     @Column({nullable: false, default: 'open'})
-    override state: 'open' | 'closed'
+    state: 'open' | 'closed'
     @Column({nullable: false})
-    override label: string
+    label: string
 }

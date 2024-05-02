@@ -5,7 +5,7 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery
 
 import 'multer'
 
-import { User, UserREST, UserUpdateData } from 'productboard-common'
+import { UserREST, UserRead, UserUpdate } from 'productboard-common'
 
 import { UserService } from './user.service'
 import { canFindUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
@@ -15,7 +15,7 @@ import { TokenOptionalGuard } from '../tokens/token.guard'
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
-@ApiExtraModels(UserUpdateData)
+@ApiExtraModels(UserUpdate)
 export class UserController implements UserREST<string, Express.Multer.File> {
     constructor(
         private readonly userService: UserService,
@@ -26,21 +26,21 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     @Get()
     @ApiQuery({ name: 'productId', type: 'string', required: false })
     @ApiQuery({ name: 'query', type: 'string', required: false })
-    @ApiResponse({ type: [User] })
+    @ApiResponse({ type: [UserRead] })
     async findUsers(
         @Query('productId') productId?: string,
         @Query('query') query?: string
-    ): Promise<User[]> {
+    ): Promise<UserRead[]> {
         await canFindUserOrFail(this.request.user && this.request.user.userId, productId, query)
         return this.userService.findUsers(productId, query)
     }
 
     @Get(':userId')
     @ApiParam({ name: 'userId', type: 'string', required: true })
-    @ApiResponse({ type: User })
+    @ApiResponse({ type: UserRead })
     async getUser(
         @Param('userId') userId: string
-    ): Promise<User> {
+    ): Promise<UserRead> {
         await canReadUserOrFail(this.request.user && this.request.user.userId, userId)
         return this.userService.getUser(userId)
     }
@@ -53,28 +53,28 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         schema: {
             type: 'object',
             properties: {
-                data: { $ref: getSchemaPath(UserUpdateData) },
+                data: { $ref: getSchemaPath(UserUpdate) },
                 file: { type: 'string', format: 'binary' }
             },
             required: ['data']
         }
     })
-    @ApiResponse({ type: User })
+    @ApiResponse({ type: UserRead })
     async updateUser(
         @Param('userId') userId: string,
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
-    ): Promise<User> {
+    ): Promise<UserRead> {
         await canUpdateUserOrFail(this.request.user && this.request.user.userId, userId)
         return this.userService.updateUser(userId, JSON.parse(data), file)
     }
 
     @Delete(':userId')
     @ApiParam({ name: 'userId', type: 'string', required: true })
-    @ApiResponse({ type: User })
+    @ApiResponse({ type: UserRead })
     async deleteUser(
         @Param('userId') userId: string
-    ): Promise<User> {
+    ): Promise<UserRead> {
         await canDeleteUserOrFail(this.request.user && this.request.user.userId, userId)
         return this.userService.deleteUser(userId)
     }

@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react'
 
 import { Object3D } from 'three'
 
-import { Version } from 'productboard-common'
+import { VersionRead } from 'productboard-common'
 
 import { VersionContext } from '../../contexts/Version'
 import { useComments, useVersions } from '../../hooks/list'
@@ -20,7 +20,7 @@ interface Part {
     objectName: string
 }
 
-export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], over?: (version: Version, object: Object3D) => void, out?: (version: Version, object: Object3D) => void, click?: (version: Version, object: Object3D) => void }) => {
+export const ProductView3D = (props: { productId: string, issueId?: string, mouse: boolean, highlighted?: Part[], marked?: Part[], selected?: Part[], over?: (version: VersionRead, object: Object3D) => void, out?: (version: VersionRead, object: Object3D) => void, click?: (version: VersionRead, object: Object3D) => void }) => {
     // CONSTANTS
     
     const productId = props.productId

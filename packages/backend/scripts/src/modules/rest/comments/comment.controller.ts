@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiResponse } from '@
 
 import 'multer'
 
-import { Comment, CommentAddData, CommentUpdateData, CommentREST } from 'productboard-common'
+import { CommentCreate, CommentREST, CommentRead, CommentUpdate } from 'productboard-common'
 
 import { CommentService } from './comment.service'
 import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../../functions/permission'
@@ -14,7 +14,7 @@ import { TokenOptionalGuard } from '../tokens/token.guard'
 @Controller('rest/products/:productId/issues/:issueId/comments')
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
-@ApiExtraModels(CommentAddData, CommentUpdateData)
+@ApiExtraModels(CommentCreate, CommentUpdate)
 export class CommentController implements CommentREST {
     constructor(
         private readonly commentService: CommentService,
@@ -25,11 +25,11 @@ export class CommentController implements CommentREST {
     @Get()
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
-    @ApiResponse({ type: [Comment] })
+    @ApiResponse({ type: [CommentRead] })
     async findComments(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string
-    ): Promise<Comment[]> {
+    ): Promise<CommentRead[]> {
         await canFindCommentOrFail(this.request.user && this.request.user.userId, productId, issueId)
         return this.commentService.findComments(productId, issueId)
     }
@@ -37,13 +37,13 @@ export class CommentController implements CommentREST {
     @Post()
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
-    @ApiBody({ type: CommentAddData, required: true })
+    @ApiBody({ type: CommentCreate, required: true })
     @ApiResponse({ type: Comment })
     async addComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
-        @Body() data: CommentAddData
-    ): Promise<Comment> {
+        @Body() data: CommentCreate
+    ): Promise<CommentRead> {
         await canCreateCommentOrFail(this.request.user && this.request.user.userId, productId, issueId)
         return this.commentService.addComment(productId, issueId, data)
     }
@@ -52,12 +52,12 @@ export class CommentController implements CommentREST {
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiParam({ name: 'commentId', type: 'string', required: true })
-    @ApiResponse({ type: Comment })
+    @ApiResponse({ type: CommentRead })
     async getComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
         @Param('commentId') commentId: string
-    ): Promise<Comment> {
+    ): Promise<CommentRead> {
         await canReadCommentOrFail(this.request.user && this.request.user.userId, productId, issueId, commentId)
         return this.commentService.getComment(productId, issueId, commentId)
     }
@@ -66,14 +66,14 @@ export class CommentController implements CommentREST {
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiParam({ name: 'commentId', type: 'string', required: true })
-    @ApiBody({ type: CommentUpdateData, required: true })
+    @ApiBody({ type: CommentUpdate, required: true })
     @ApiResponse({ type: Comment })
     async updateComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
         @Param('commentId') commentId: string,
-        @Body() data: CommentUpdateData
-    ): Promise<Comment> {
+        @Body() data: CommentUpdate
+    ): Promise<CommentRead> {
         await canUpdateCommentOrFail(this.request.user && this.request.user.userId, productId, issueId, commentId)
         return this.commentService.updateComment(productId, issueId, commentId, data)
     }
@@ -82,12 +82,12 @@ export class CommentController implements CommentREST {
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiParam({ name: 'commentId', type: 'string', required: true })
-    @ApiResponse({ type: Comment })
+    @ApiResponse({ type: CommentRead })
     async deleteComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
         @Param('commentId') commentId: string
-    ): Promise<Comment> {
+    ): Promise<CommentRead> {
         await canDeleteCommentOrFail(this.request.user && this.request.user.userId, productId, issueId, commentId)
         return this.commentService.deleteComment(productId, issueId, commentId)
     }

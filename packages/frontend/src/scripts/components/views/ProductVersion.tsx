@@ -3,7 +3,7 @@ import { useState, useEffect, useContext, Fragment } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Version } from 'productboard-common'
+import { VersionRead } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
@@ -47,10 +47,10 @@ export const ProductVersionView = () => {
     // STATES
 
     // - Computations
-    const [children, setChildren] = useState<{[versionId: string]: Version[]}>(initialTree.children)
+    const [children, setChildren] = useState<{[versionId: string]: VersionRead[]}>(initialTree.children)
     const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
     const [childrenMax, setChildrenMax] = useState<{[versionId: string]: number}>(initialTree.childrenMax)
-    const [siblings, setSiblings] = useState<{[versionId: string]: Version[]}>(initialTree.siblings)
+    const [siblings, setSiblings] = useState<{[versionId: string]: VersionRead[]}>(initialTree.siblings)
     const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
     const [indent, setIndent] = useState<number>(initialTree.indent)
     
@@ -71,7 +71,7 @@ export const ProductVersionView = () => {
 
     // FUNCTIONS
 
-    function onClick(version: Version) {
+    function onClick(version: VersionRead) {
         setContextVersion(version)
         setActive('right')
     }

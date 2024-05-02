@@ -5,7 +5,7 @@ import { ApiBody, ApiResponse, ApiParam, ApiConsumes, getSchemaPath, ApiExtraMod
 
 import 'multer'
 
-import { Version, VersionAddData, VersionREST, VersionUpdateData } from 'productboard-common'
+import { VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
 
 import { VersionService } from './version.service'
 import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../../functions/permission'
@@ -15,7 +15,7 @@ import { TokenOptionalGuard } from '../tokens/token.guard'
 @Controller('rest/products/:productId/versions')
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
-@ApiExtraModels(VersionAddData, VersionUpdateData)
+@ApiExtraModels(VersionCreate, VersionUpdate)
 export class VersionController implements VersionREST<string, string, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         private versionService: VersionService,
@@ -25,10 +25,10 @@ export class VersionController implements VersionREST<string, string, Express.Mu
 
     @Get()
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiResponse({ type: [Version] }) 
+    @ApiResponse({ type: [VersionRead] }) 
     async findVersions(
         @Param('productId') productId: string
-    ): Promise<Version[]> {
+    ): Promise<VersionRead[]> {
         await canFindVersionOrFail(this.request.user && this.request.user.userId, productId)
         return this.versionService.findVersions(productId)
     }
@@ -46,7 +46,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         schema: {
             type: 'object',
             properties: {
-                data: { $ref: getSchemaPath(VersionAddData) },
+                data: { $ref: getSchemaPath(VersionCreate) },
                 model: { type: 'string', format: 'binary' },
                 image: { type: 'string', format: 'binary' }
             },
@@ -54,13 +54,13 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         },
         required: true
     })
-    @ApiResponse({ type: Version })
+    @ApiResponse({ type: VersionRead })
     async addVersion(
         @Param('productId') productId: string,
         @Body('data') data: string,
         @UploadedFiles() files: { model: Express.Multer.File[], image: Express.Multer.File[] }
-    ): Promise<Version> {
-        const dataParsed = <VersionAddData> JSON.parse(data)
+    ): Promise<VersionRead> {
+        const dataParsed = <VersionCreate> JSON.parse(data)
         await canCreateVersionOrFail(this.request.user && this.request.user.userId, productId)
         return this.versionService.addVersion(productId, dataParsed, files)
     }
@@ -68,11 +68,11 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     @Get(':versionId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'versionId', type: 'string', required: true })
-    @ApiResponse({ type: Version })
+    @ApiResponse({ type: VersionRead })
     async getVersion(
         @Param('productId') productId: string,
         @Param('versionId') versionId: string
-    ): Promise<Version> {
+    ): Promise<VersionRead> {
         await canReadVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
         return this.versionService.getVersion(productId, versionId)
     }
@@ -91,7 +91,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         schema: {
             type: 'object',
             properties: {
-                data: { $ref: getSchemaPath(VersionUpdateData) },
+                data: { $ref: getSchemaPath(VersionUpdate) },
                 model: { type: 'string', format: 'binary' },
                 image: { type: 'string', format: 'binary' }
             },
@@ -99,13 +99,13 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         },
         required: true
     })
-    @ApiResponse({ type: Version })
+    @ApiResponse({ type: VersionRead })
     async updateVersion(
         @Param('productId') productId: string,
         @Param('versionId') versionId: string,
         @Body('data') data: string,
         @UploadedFiles() files?: { model: Express.Multer.File[], image: Express.Multer.File[] }
-    ): Promise<Version> {
+    ): Promise<VersionRead> {
         await canUpdateVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
         return this.versionService.updateVersion(productId, versionId, JSON.parse(data), files)
     }
@@ -113,11 +113,11 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     @Delete(':versionId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'versionId', type: 'string', required: true })
-    @ApiResponse({ type: Version })
+    @ApiResponse({ type: VersionRead })
     async deleteVersion(
         @Param('productId') productId: string,
         @Param('versionId') versionId: string
-    ): Promise<Version> {
+    ): Promise<VersionRead> {
         await canDeleteVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
         return this.versionService.deleteVersion(productId, versionId)
     }

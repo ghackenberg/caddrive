@@ -3,7 +3,7 @@ import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 
 import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike } from 'jose'
 
-import { Comment, Issue, Member, Milestone, Product, User, Version } from 'productboard-common'
+import { CommentRead, IssueRead, MemberRead, MilestoneRead, ProductRead, UserRead, VersionRead } from 'productboard-common'
 
 import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
@@ -42,14 +42,14 @@ const Root = () => {
     const [payload, setPayload] = React.useState<{ userId: string }>()
     const [userId, setUserId] = React.useState<string>()
     const [authContextToken, setAuthContextToken] = React.useState<string>()
-    const [authContextUser, setAuthContextUser] = React.useState<User>()
-    const [contextUser, setContextUser] = React.useState<User>(jwt ? undefined : null)
-    const [contextProduct, setContextProduct] = React.useState<Product>()
-    const [contextMember, setContextMember] = React.useState<Member>()
-    const [contextVersion, setContextVersion] = React.useState<Version>()
-    const [contextIssue, setContextIssue] = React.useState<Issue>()
-    const [contextComment, setContextComment] = React.useState<Comment>()
-    const [contextMilestone, setContextMilestone] = React.useState<Milestone>()
+    const [authContextUser, setAuthContextUser] = React.useState<UserRead>()
+    const [contextUser, setContextUser] = React.useState<UserRead>(jwt ? undefined : null)
+    const [contextProduct, setContextProduct] = React.useState<ProductRead>()
+    const [contextMember, setContextMember] = React.useState<MemberRead>()
+    const [contextVersion, setContextVersion] = React.useState<VersionRead>()
+    const [contextIssue, setContextIssue] = React.useState<IssueRead>()
+    const [contextComment, setContextComment] = React.useState<CommentRead>()
+    const [contextMilestone, setContextMilestone] = React.useState<MilestoneRead>()
     const [initialized, setInitialized] = React.useState(false)
 
     // EFFECTS
@@ -192,7 +192,7 @@ const Root = () => {
 
     // FUNCTIONS
     
-    function intercept(newContextUser: User) {
+    function intercept(newContextUser: UserRead) {
         if (contextUser && newContextUser) {
             if (contextUser.userId != newContextUser.userId) {
                 clear()

@@ -1,10 +1,10 @@
 import * as React from 'react'
 
-import { Milestone } from 'productboard-common'
+import { MilestoneRead } from 'productboard-common'
 
 type MilestoneContextProps = {
-    contextMilestone: Milestone
-    setContextMilestone: (milestone: Milestone) => void
+    contextMilestone: MilestoneRead
+    setContextMilestone: (milestone: MilestoneRead) => void
 }
 
 export const MilestoneContext = React.createContext<MilestoneContextProps>(undefined)

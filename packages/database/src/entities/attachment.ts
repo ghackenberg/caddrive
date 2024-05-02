@@ -1,18 +1,16 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
-import { Attachment } from 'productboard-common'
-
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class AttachmentEntity extends Attachment {
+export class AttachmentEntity {
     @Column({ nullable: false })
-    override productId: string
+    productId: string
     @PrimaryColumn({ nullable: false })
-    override attachmentId: string
+    attachmentId: string
     @Column({ nullable: false })
-    override userId: string
+    userId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
@@ -22,14 +20,14 @@ export class AttachmentEntity extends Attachment {
     user: UserEntity
 
     @Column({ nullable: false })
-    override created: number
+    created: number
     @Column({ nullable: false })
-    override updated: number
+    updated: number
     @Column({ nullable: true })
-    override deleted: number
+    deleted: number
     
     @Column({ nullable: false })
-    override name: string
+    name: string
     @Column({ nullable: false })
-    override type: string
+    type: string
 }

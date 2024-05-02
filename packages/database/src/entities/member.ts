@@ -1,18 +1,18 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
-import { Member, MemberRole } from 'productboard-common'
+import { MemberRole } from 'productboard-common'
 
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
 
 @Entity()
-export class MemberEntity extends Member {
+export class MemberEntity {
     @Column({ nullable: false })
-    override productId: string
+    productId: string
     @PrimaryColumn({ nullable: false })
-    override memberId: string
+    memberId: string
     @Column({ nullable: false })
-    override userId: string
+    userId: string
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
@@ -22,12 +22,12 @@ export class MemberEntity extends Member {
     user: UserEntity
 
     @Column({ nullable: false })
-    override created: number
+    created: number
     @Column({ nullable: false, default: 0 })
-    override updated: number
+    updated: number
     @Column({ nullable: true })
-    override deleted: number
+    deleted: number
 
     @Column({ nullable: false, type: 'simple-enum', enum: ["manager", "engineer", "customer"] })
-    override role: MemberRole
+    role: MemberRole
 }

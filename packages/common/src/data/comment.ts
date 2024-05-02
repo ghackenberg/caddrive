@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CommentUpdateData {
+export class CommentUpdate {
     @ApiProperty()
     text: string
 }
 
-export class CommentAddData extends CommentUpdateData {
+export class CommentCreate extends CommentUpdate {
     @ApiProperty()
     action: 'none' | 'close' | 'reopen'
 }
 
-export class Comment extends CommentAddData {
+export class CommentRead extends CommentCreate {
     @ApiProperty()
     productId: string
     @ApiProperty()

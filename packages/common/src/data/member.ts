@@ -2,17 +2,17 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export type MemberRole = 'manager' | 'engineer' | 'customer'
 
-export class MemberUpdateData {
+export class MemberUpdate {
     @ApiProperty()
     role: MemberRole
 }
 
-export class MemberAddData extends MemberUpdateData {
+export class MemberCreate extends MemberUpdate {
     @ApiProperty()
     userId: string
 }
 
-export class Member extends MemberAddData {
+export class MemberRead extends MemberCreate {
     @ApiProperty()
     productId: string
     @ApiProperty()

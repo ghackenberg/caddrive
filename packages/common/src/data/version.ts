@@ -4,7 +4,7 @@ export type ModelType = 'glb' | 'ldr' | 'mpd'
 
 export type ImageType = 'png' | null
 
-export class VersionUpdateData {
+export class VersionUpdate {
     @ApiProperty()
     major: number
     @ApiProperty()
@@ -15,12 +15,12 @@ export class VersionUpdateData {
     @ApiProperty()
     description: string
 }
-export class VersionAddData extends VersionUpdateData {
+export class VersionCreate extends VersionUpdate {
     @ApiProperty()
     baseVersionIds: string[]
 }
 
-export class Version extends VersionAddData {
+export class VersionRead extends VersionCreate {
     @ApiProperty()
     productId: string
     @ApiProperty()

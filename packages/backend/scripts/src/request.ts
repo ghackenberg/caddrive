@@ -1,5 +1,5 @@
 import { Request } from "express"
 
-import { User } from "productboard-common"
+import { UserRead } from "productboard-common"
 
-export type AuthorizedRequest = Request & { user: User }
+export type AuthorizedRequest = Request & { user: UserRead }

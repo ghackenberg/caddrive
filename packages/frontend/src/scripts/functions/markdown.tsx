@@ -8,7 +8,7 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { unified } from "unified"
 
-import { Comment } from 'productboard-common'
+import { CommentRead } from 'productboard-common'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const JSX_RUNTIME: any = jsxRuntime
@@ -26,7 +26,7 @@ export interface Part {
 
 type Handler = (event: MouseEvent<HTMLAnchorElement>, part: Part) => void
 
-export function collectCommentParts(comments: {[id: string]: Comment[]}) {
+export function collectCommentParts(comments: {[id: string]: CommentRead[]}) {
     const commentPartsNew: {[id: string]: Part[]} = {}
     for (const issueId of Object.keys(comments || {})) {
         for (const comment of comments[issueId] || []) {

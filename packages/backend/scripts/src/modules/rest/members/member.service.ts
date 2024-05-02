@@ -5,7 +5,7 @@ import { getTestMessageUrl } from 'nodemailer'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
-import { Member, MemberAddData, MemberUpdateData, MemberREST, Product } from 'productboard-common'
+import { MemberCreate, MemberREST, MemberRead, MemberUpdate, ProductRead } from 'productboard-common'
 import { Database, convertMember } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
@@ -19,15 +19,15 @@ export class MemberService implements MemberREST {
         private readonly request: AuthorizedRequest
     ) {}
 
-    async findMembers(productId: string): Promise<Member[]> {
+    async findMembers(productId: string): Promise<MemberRead[]> {
         const where = { productId, deleted: IsNull() }
-        const result: Member[] = []
+        const result: MemberRead[] = []
         for (const member of await Database.get().memberRepository.findBy(where))
             result.push(convertMember(member))
         return result
     }
 
-    async addMember(productId: string, data: MemberAddData): Promise<Member> {
+    async addMember(productId: string, data: MemberCreate): Promise<MemberRead> {
         // Create member
         const memberId = shortid()
         const created = Date.now()
@@ -45,12 +45,12 @@ export class MemberService implements MemberREST {
         return convertMember(member)
     }
 
-    async getMember(productId: string, memberId: string): Promise<Member> {
+    async getMember(productId: string, memberId: string): Promise<MemberRead> {
        const member = await Database.get().memberRepository.findOneByOrFail({ productId, memberId })
         return convertMember(member)
     }
 
-    async updateMember(productId: string, memberId: string, data: MemberUpdateData): Promise<Member> {
+    async updateMember(productId: string, memberId: string, data: MemberUpdate): Promise<MemberRead> {
         // Update member
         const member = await Database.get().memberRepository.findOneByOrFail({ productId, memberId })
         member.updated = Date.now()
@@ -68,7 +68,7 @@ export class MemberService implements MemberREST {
         return convertMember(member)
     }
     
-    async deleteMember(productId: string, memberId: string): Promise<Member> {
+    async deleteMember(productId: string, memberId: string): Promise<MemberRead> {
         // Update member
         const member = await Database.get().memberRepository.findOneByOrFail({ productId, memberId })
         member.deleted = Date.now()
@@ -84,7 +84,7 @@ export class MemberService implements MemberREST {
         return convertMember(member)
     }
 
-    async notifyMember(product: Product, member: Member, subject: string) {
+    async notifyMember(product: ProductRead, member: MemberRead, subject: string) {
         const user = await Database.get().userRepository.findOneBy({ userId: member.userId, deleted: IsNull() })
         const transporter = await TRANSPORTER
         const info = await transporter.sendMail({

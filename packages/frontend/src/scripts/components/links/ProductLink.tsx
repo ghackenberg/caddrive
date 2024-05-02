@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
-import { Product } from 'productboard-common'
+import { ProductRead } from 'productboard-common'
 
 import { useAsyncHistory } from '../../hooks/history'
 import { PRODUCTS_4 } from '../../pattern'
 
 import ProductIcon from '/src/images/product.png'
 
-export const ProductLink = (props: {product?: Product}) => {
+export const ProductLink = (props: {product?: ProductRead}) => {
 
     const { pathname } = useLocation()
     const { go, replace, goBack } = useAsyncHistory()

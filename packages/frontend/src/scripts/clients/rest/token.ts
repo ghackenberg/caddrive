@@ -1,18 +1,18 @@
 import axios from "axios"
 
-import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse, TokenREST } from "productboard-common"
+import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenREST, TokenRefreshResponse } from "productboard-common"
 
 import { auth } from "../auth"
 
 class TokenClientImpl implements TokenREST {
-    async createToken(request: CreateTokenRequest): Promise<CreateTokenResponse> {
-        return (await axios.post<CreateTokenResponse>('/rest/tokens', request)).data
+    async createToken(request: TokenCreateRequest): Promise<TokenCreateResponse> {
+        return (await axios.post<TokenCreateResponse>('/rest/tokens', request)).data
     }
-    async activateToken(tokenId: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse> {
-        return (await axios.put<ActivateTokenResponse>(`/rest/tokens/${tokenId}`, request)).data
+    async activateToken(tokenId: string, request: TokenActivateRequest): Promise<TokenActivateResponse> {
+        return (await axios.put<TokenActivateResponse>(`/rest/tokens/${tokenId}`, request)).data
     }
-    async refreshToken(): Promise<RefreshTokenResponse> {
-        return (await axios.patch<RefreshTokenResponse>('/rest/tokens', null, auth)).data
+    async refreshToken(): Promise<TokenRefreshResponse> {
+        return (await axios.patch<TokenRefreshResponse>('/rest/tokens', null, auth)).data
     }
 }
 

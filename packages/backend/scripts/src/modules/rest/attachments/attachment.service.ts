@@ -6,28 +6,28 @@ import { REQUEST } from '@nestjs/core'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 
-import { Attachment, AttachmentAddData, AttachmentREST, AttachmentUpdateData } from 'productboard-common'
+import { AttachmentCreate, AttachmentREST, AttachmentRead, AttachmentUpdate } from 'productboard-common'
 import { Database, convertAttachment } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
 import { AuthorizedRequest } from '../../../request'
 
-export class AttachmentService implements AttachmentREST<AttachmentAddData, AttachmentUpdateData, Express.Multer.File> {
+export class AttachmentService implements AttachmentREST<AttachmentCreate, AttachmentUpdate, Express.Multer.File> {
 
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
     ) {}
 
-    async findAttachments(productId: string): Promise<Attachment[]> {
+    async findAttachments(productId: string): Promise<AttachmentRead[]> {
         const where = { productId, deleted: IsNull() }
-        const result: Attachment[] = []
+        const result: AttachmentRead[] = []
         for (const attachment of await Database.get().attachmentRepository.findBy(where))
             result.push(convertAttachment(attachment))
         return result
     }
 
-    async addAttachment(productId: string, data: AttachmentAddData, file: Express.Multer.File): Promise<Attachment> {
+    async addAttachment(productId: string, data: AttachmentCreate, file: Express.Multer.File): Promise<AttachmentRead> {
         const attachmentId = shortid()
         // Save file
         writeFileSync(`./uploads/${attachmentId}`, file.buffer)
@@ -46,7 +46,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         return convertAttachment(attachment)
     }
 
-    async getAttachment(productId: string, attachmentId: string): Promise<Attachment> {
+    async getAttachment(productId: string, attachmentId: string): Promise<AttachmentRead> {
         const attachment = await Database.get().attachmentRepository.findOneByOrFail({ productId, attachmentId })
         return convertAttachment(attachment)
     }
@@ -81,7 +81,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         }
     }
 
-    async updateAttachment(productId: string, attachmentId: string, data: AttachmentUpdateData, file?: Express.Multer.File): Promise<Attachment> {
+    async updateAttachment(productId: string, attachmentId: string, data: AttachmentUpdate, file?: Express.Multer.File): Promise<AttachmentRead> {
         // Save file
         writeFileSync(`./uploads/${attachmentId}`, file.buffer)
         // Update attachment
@@ -100,7 +100,7 @@ export class AttachmentService implements AttachmentREST<AttachmentAddData, Atta
         return convertAttachment(attachment)
     }
 
-    async deleteAttachment(productId: string, attachmentId: string): Promise<Attachment> {
+    async deleteAttachment(productId: string, attachmentId: string): Promise<AttachmentRead> {
         // Delete attachment
         const attachment = await Database.get().attachmentRepository.findOneByOrFail({ productId, attachmentId })
         attachment.deleted = Date.now()

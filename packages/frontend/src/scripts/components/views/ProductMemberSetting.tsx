@@ -2,7 +2,7 @@ import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 
-import { MemberRole, User } from 'productboard-common'
+import { MemberRole, UserRead } from 'productboard-common'
 
 import { CacheAPI } from '../../clients/cache'
 import { MemberClient } from '../../clients/rest/member'
@@ -52,8 +52,8 @@ export const ProductMemberSettingView = () => {
     // STATES
     
     // - Entities
-    const [users, setUsers] = useState<User[]>()
-    const [user, setUser] = useState<User>(initialUser)
+    const [users, setUsers] = useState<UserRead[]>()
+    const [user, setUser] = useState<UserRead>(initialUser)
     // - Computations
     const [names, setNames] = useState<React.ReactNode[]>()
     // - Values
@@ -111,13 +111,13 @@ export const ProductMemberSettingView = () => {
         }
     }
 
-    function handleClick(user: User) {
+    function handleClick(user: UserRead) {
         setUser(user)
     }
 
     // CONSTANTS
 
-    const selectedUserColumns: Column<User>[] = [
+    const selectedUserColumns: Column<UserRead>[] = [
         { label: '👤', class: 'center', content: user => (
             <UserPictureWidget user={user} class='icon medium round'/>
         ) },
@@ -133,7 +133,7 @@ export const ProductMemberSettingView = () => {
         ) }
     ]
 
-    const queriedUserColumns: Column<User>[] = [
+    const queriedUserColumns: Column<UserRead>[] = [
         { label: '👤', class: 'center', content: user => (
             <UserPictureWidget user={user} class='icon medium round'/>
         ) },

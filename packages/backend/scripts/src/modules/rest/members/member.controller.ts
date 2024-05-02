@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } fr
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
 
-import { Member, MemberAddData, MemberUpdateData, MemberREST } from 'productboard-common'
+import { MemberCreate, MemberREST, MemberRead, MemberUpdate } from 'productboard-common'
 
 import { MemberService } from './member.service'
 import { canReadMemberOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail, canFindMemberOrFail, canCreateMemberOrFail } from '../../../functions/permission'
@@ -21,22 +21,22 @@ export class MemberController implements MemberREST {
 
     @Get()
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiResponse({ type: [Member] })
+    @ApiResponse({ type: [MemberRead] })
     async findMembers(
         @Param('productId') productId: string
-    ): Promise<Member[]> {
+    ): Promise<MemberRead[]> {
         await canFindMemberOrFail(this.request.user && this.request.user.userId, productId)
         return this.memberService.findMembers(productId)
     }
 
     @Post()
     @ApiParam({ name: 'productId', type: 'string', required: true })
-    @ApiBody({ type: MemberAddData, required: true })
-    @ApiResponse({ type: Member })
+    @ApiBody({ type: MemberCreate, required: true })
+    @ApiResponse({ type: MemberRead })
     async addMember(
         @Param('productId') productId: string,
-        @Body() data: MemberAddData
-    ): Promise<Member> {
+        @Body() data: MemberCreate
+    ): Promise<MemberRead> {
         await canCreateMemberOrFail(this.request.user && this.request.user.userId, productId)
         return this.memberService.addMember(productId, data)
     }
@@ -44,11 +44,11 @@ export class MemberController implements MemberREST {
     @Get(':memberId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'memberId', type: 'string', required: true })
-    @ApiResponse({ type: Member })
+    @ApiResponse({ type: MemberRead })
     async getMember(
         @Param('productId') productId: string,
         @Param('memberId') memberId: string
-    ): Promise<Member> {
+    ): Promise<MemberRead> {
         await canReadMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
         return this.memberService.getMember(productId, memberId)
     }
@@ -56,13 +56,13 @@ export class MemberController implements MemberREST {
     @Put(':memberId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'memberId', type: 'string', required: true })
-    @ApiBody({ type: Member, required: true })
-    @ApiResponse({ type: Member })
+    @ApiBody({ type: MemberUpdate, required: true })
+    @ApiResponse({ type: MemberRead })
     async updateMember(
         @Param('productId') productId: string,
         @Param('memberId') memberId: string,
-        @Body() data: MemberUpdateData
-    ): Promise<Member> {
+        @Body() data: MemberUpdate
+    ): Promise<MemberRead> {
         await canUpdateMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
         return this.memberService.updateMember(productId, memberId, data)
     }
@@ -70,11 +70,11 @@ export class MemberController implements MemberREST {
     @Delete(':memberId')
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'memberId', type: 'string', required: true })
-    @ApiResponse({ type: [Member] })
+    @ApiResponse({ type: MemberRead })
     async deleteMember(
         @Param('productId') productId: string,
         @Param('memberId') memberId: string
-    ): Promise<Member> {
+    ): Promise<MemberRead> {
         await canDeleteMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
         return this.memberService.deleteMember(productId, memberId)
     }

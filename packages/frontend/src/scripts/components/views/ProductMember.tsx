@@ -3,7 +3,7 @@ import { useState, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Member } from 'productboard-common'
+import { MemberRead } from 'productboard-common'
 
 import { MemberClient } from '../../clients/rest/member'
 import { UserContext } from '../../contexts/User'
@@ -46,7 +46,7 @@ export const ProductMemberView = () => {
 
     // FUNCTIONS
 
-    async function deleteMember(event: React.UIEvent, member: Member) {
+    async function deleteMember(event: React.UIEvent, member: MemberRead) {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this member?')) {
@@ -56,7 +56,7 @@ export const ProductMemberView = () => {
 
     // CONSTANTS
 
-    const columns: Column<Member>[] = [
+    const columns: Column<MemberRead>[] = [
         { label: '👤', content: member => (
             <ProductUserPicture userId={member.userId} productId={productId} class='icon medium round middle'/>
         ) },

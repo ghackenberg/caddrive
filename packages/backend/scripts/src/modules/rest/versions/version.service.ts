@@ -14,7 +14,7 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 import { unified } from 'unified'
 
-import { Version, VersionAddData, VersionUpdateData, VersionREST, Product } from 'productboard-common'
+import { ProductRead, VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
 import { Database, convertVersion } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
@@ -24,21 +24,21 @@ import { renderGlb, renderLDraw } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
-export class VersionService implements VersionREST<VersionAddData, VersionUpdateData, Express.Multer.File[], Express.Multer.File[]> {
+export class VersionService implements VersionREST<VersionCreate, VersionUpdate, Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
     ) {}
 
-    async findVersions(productId: string) : Promise<Version[]> {
+    async findVersions(productId: string) : Promise<VersionRead[]> {
         const where = { productId, deleted: IsNull() }
-        const result: Version[] = []
+        const result: VersionRead[] = []
         for (const version of await Database.get().versionRepository.findBy(where))
             result.push(convertVersion(version))
         return result
     }
  
-    async addVersion(productId: string, data: VersionAddData, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
+    async addVersion(productId: string, data: VersionCreate, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<VersionRead> {
         // Create version
         const versionId = shortid()
         const created = Date.now()
@@ -59,12 +59,12 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         return convertVersion(version)
     }
 
-    async getVersion(productId: string, versionId: string): Promise<Version> {
+    async getVersion(productId: string, versionId: string): Promise<VersionRead> {
         const version = await Database.get().versionRepository.findOneByOrFail({ productId, versionId })
         return convertVersion(version)
     }
 
-    async updateVersion(productId: string, versionId: string, data: VersionUpdateData, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<Version> {
+    async updateVersion(productId: string, versionId: string, data: VersionUpdate, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<VersionRead> {
         // Update version
         const version = await Database.get().versionRepository.findOneByOrFail({ productId, versionId })
         version.updated = Date.now()
@@ -87,7 +87,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         return convertVersion(version)
     }
 
-    async deleteVersion(productId: string, versionId: string): Promise<Version> {
+    async deleteVersion(productId: string, versionId: string): Promise<VersionRead> {
         // Delete version
         const version = await Database.get().versionRepository.findOneByOrFail({ productId, versionId })
         version.deleted = Date.now()
@@ -220,7 +220,7 @@ export class VersionService implements VersionREST<VersionAddData, VersionUpdate
         this.notifyAddOrUpdateVersion(product, version)
     }
 
-    async notifyAddOrUpdateVersion(product: Product, version: Version) {
+    async notifyAddOrUpdateVersion(product: ProductRead, version: VersionRead) {
         // Send emails
         //const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeMermaid).use(rehypeStringify).process(version.description)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(version.description)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')

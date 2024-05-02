@@ -3,7 +3,7 @@ import { useState, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
-import { Issue } from 'productboard-common'
+import { IssueRead } from 'productboard-common'
 
 import { IssueClient } from '../../clients/rest/issue'
 import { UserContext } from '../../contexts/User'
@@ -51,14 +51,14 @@ export const ProductIssueView = () => {
     // STATES
     
     // - Interactions
-    const [hovered, setHovered] = useState<Issue>()
+    const [hovered, setHovered] = useState<IssueRead>()
     const [active, setActive] = useState<string>('left')
 
     // FUNCTIONS
 
     let timeout: NodeJS.Timeout
 
-    function handleMouseOver(issue: Issue) {
+    function handleMouseOver(issue: IssueRead) {
         setHovered(issue)
         if (timeout !== undefined) {
             clearTimeout(timeout)
@@ -74,7 +74,7 @@ export const ProductIssueView = () => {
         }, 0)
     }
 
-    async function deleteIssue(event: React.UIEvent, issue: Issue) {
+    async function deleteIssue(event: React.UIEvent, issue: IssueRead) {
         // TODO handle unmount!
         event.stopPropagation()
         if (confirm('Do you really want to delete this issue?')) {
@@ -84,7 +84,7 @@ export const ProductIssueView = () => {
 
     // CONSTANTS
 
-    const columns: Column<Issue>[] = [
+    const columns: Column<IssueRead>[] = [
         { label: '🧑', class: 'center', content: issue => (
             <ProductUserPicture userId={issue.userId} productId={productId} class='icon small round'/>
         ) },

@@ -10,7 +10,7 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 import { unified } from 'unified'
 
-import { CommentREST, Comment, CommentAddData, CommentUpdateData, Product, Issue } from 'productboard-common'
+import { CommentCreate, CommentREST, CommentRead, CommentUpdate, IssueRead, ProductRead } from 'productboard-common'
 import { Database, convertComment } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
@@ -24,15 +24,15 @@ export class CommentService implements CommentREST {
         private readonly request: AuthorizedRequest
     ) {}
 
-    async findComments(productId: string, issueId: string): Promise<Comment[]> {
+    async findComments(productId: string, issueId: string): Promise<CommentRead[]> {
         const where = { productId, issueId, deleted: IsNull() }
-        const result: Comment[] = []
+        const result: CommentRead[] = []
         for (const comment of await Database.get().commentRepository.findBy(where))
             result.push(convertComment(comment))
         return result
     }
 
-    async addComment(productId: string, issueId: string, data: CommentAddData): Promise<Comment> {
+    async addComment(productId: string, issueId: string, data: CommentCreate): Promise<CommentRead> {
         // Create comment
         const commentId = shortid()
         const created = Date.now()
@@ -60,12 +60,12 @@ export class CommentService implements CommentREST {
         return convertComment(comment)
     }
 
-    async getComment(productId: string, issueId: string, commentId: string): Promise<Comment> {
+    async getComment(productId: string, issueId: string, commentId: string): Promise<CommentRead> {
         const comment = await Database.get().commentRepository.findOneByOrFail({ productId, issueId, commentId })
         return convertComment(comment)
     }
     
-    async updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdateData): Promise<Comment> {
+    async updateComment(productId: string, issueId: string, commentId: string, data: CommentUpdate): Promise<CommentRead> {
         // Update comment
         const comment = await Database.get().commentRepository.findOneByOrFail({ productId, issueId, commentId })
         comment.updated = Date.now()
@@ -87,7 +87,7 @@ export class CommentService implements CommentREST {
         return convertComment(comment)
     }
 
-    async deleteComment(productId: string, issueId: string, commentId: string): Promise<Comment> {
+    async deleteComment(productId: string, issueId: string, commentId: string): Promise<CommentRead> {
         // Update comment
         const comment = await Database.get().commentRepository.findOneByOrFail({ productId, issueId, commentId })
         comment.deleted = Date.now()
@@ -108,7 +108,7 @@ export class CommentService implements CommentREST {
         return convertComment(comment)
     }
 
-    async notifyComment(product: Product, issue: Issue, comment: Comment, subject: string) {
+    async notifyComment(product: ProductRead, issue: IssueRead, comment: CommentRead, subject: string) {
         // Send emails
         //const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeMermaid).use(rehypeStringify).process(comment.text)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(comment.text)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')

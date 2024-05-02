@@ -5,7 +5,7 @@ import { SignJWT } from 'jose'
 import { getTestMessageUrl } from "nodemailer"
 import shortid from "shortid"
 
-import { ActivateTokenRequest, ActivateTokenResponse, CreateTokenRequest, CreateTokenResponse, RefreshTokenResponse, TokenREST, User } from "productboard-common"
+import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenREST, TokenRefreshResponse, UserRead } from "productboard-common"
 import { Database, getTokenOrFail, getUserOrFail } from "productboard-database"
 
 import { emitUserMessage } from "../../../functions/emit"
@@ -20,7 +20,7 @@ export class TokenService implements TokenREST {
         private readonly request: AuthorizedRequest
     ) {}
 
-    async createToken(request: CreateTokenRequest): Promise<CreateTokenResponse> {
+    async createToken(request: TokenCreateRequest): Promise<TokenCreateResponse> {
         const tokenId = shortid()
         const created = Date.now()
         const updated = created
@@ -43,7 +43,7 @@ export class TokenService implements TokenREST {
         return { tokenId }
     }
     
-    async activateToken(tokenId: string, request: ActivateTokenRequest): Promise<ActivateTokenResponse> {
+    async activateToken(tokenId: string, request: TokenActivateRequest): Promise<TokenActivateResponse> {
         // Find token
         const token = await getTokenOrFail({ tokenId }, NotFoundException)
         // Update count
@@ -81,7 +81,7 @@ export class TokenService implements TokenREST {
         }
     }
 
-    async refreshToken(): Promise<RefreshTokenResponse> {
+    async refreshToken(): Promise<TokenRefreshResponse> {
         // Get user
         const user = this.request.user
         // Return JWT
@@ -89,7 +89,7 @@ export class TokenService implements TokenREST {
     }
 }
 
-async function createJWT(user: User) {
+async function createJWT(user: UserRead) {
     // Get key pair
     const keyPair = await KEY_PAIR
     // Get private key

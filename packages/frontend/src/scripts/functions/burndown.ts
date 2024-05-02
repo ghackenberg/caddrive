@@ -1,4 +1,4 @@
-import { Comment, Issue } from "productboard-common"
+import { CommentRead, IssueRead } from "productboard-common"
 
 export function defineIncrement(start: number, end: number) {
     const delta = end - start
@@ -27,7 +27,7 @@ export function cropTimestamp(timestamp: number, start: number, end: number) {
     return count * increment
 }
 
-export function calculateActual(startDate: number, endDate: number, issues: Issue[], comments: {[id: string]: Comment[]}) {
+export function calculateActual(startDate: number, endDate: number, issues: IssueRead[], comments: {[id: string]: CommentRead[]}) {
     const TIME_STEP = defineIncrement(startDate, endDate)
 
     // Calculate detlas
