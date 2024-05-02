@@ -1,3 +1,0 @@
-# CADdrive LeoVR
-
-Coming soon ...
