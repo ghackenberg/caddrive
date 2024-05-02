@@ -1,5 +1,5 @@
 {
-    "extends": "../asconfig.json",
+    "extends": "../../asconfig.json",
     "entries": [
         "src/main.ts"
     ],

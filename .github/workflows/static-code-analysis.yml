@@ -4,11 +4,11 @@ on:
   push:
     branches: [ master ]
     paths:
-      - packages/node/**
+      - packages/**
   pull_request:
     branches: [ master ]
     paths:
-      - packages/node/**
+      - packages/**
 
 jobs:
   build:
@@ -29,8 +29,8 @@ jobs:
       - name: Update NPM
         run: npm install -g npm@latest
       - name: Install dependencies
-        run: cd packages/node && npm install
+        run: npm install
       - name: Build sources
-        run: cd packages/node && npm run build
+        run: npm run build
       - name: Lint sources
-        run: cd packages/node && npm run lint
+        run: npm run lint

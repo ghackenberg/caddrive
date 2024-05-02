@@ -1,5 +1,5 @@
 {
-    "extends": "../tsconfig.json",
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
         "rootDirs": ["scripts/src", "../common/src", "../database/src"],
         "outDir": "scripts/bin",

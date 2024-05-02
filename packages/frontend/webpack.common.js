@@ -33,7 +33,7 @@ export default {
     },
     resolve: {
         alias: {
-            'three': resolve('../node_modules/three')
+            'three': resolve('../../node_modules/three')
         },
         fallback: {
             'os': false,
