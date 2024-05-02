@@ -8,8 +8,7 @@ const materialsFileName = 'LDConfig.ldr'
 
 const materialsFilePath = path.join(ldrawPath, materialsFileName)
 
-console.log('Loading materials file "' + materialsFilePath + '"...')
-const materialsContent = fs.readFileSync(materialsFilePath, { encoding: 'utf8' })
+var materialsContent: string = null
 
 export function packLDrawText(text: string) {
     const fileName = `${shortid()}.ldr`
@@ -48,6 +47,12 @@ export function packLDrawFile(fileName: string) {
         console.error('Some files were not found, aborting.')
         throw 'error'
     }
+
+	// Loading materials content
+	if (!materialsContent) {
+		console.log('Loading materials file "' + materialsFilePath + '"...')
+		materialsContent = fs.readFileSync(materialsFilePath, { encoding: 'utf8' })
+	}
 
     // Obtain packed content
     let packedContent = materialsContent + '\n'

@@ -38,7 +38,7 @@ export class CommentController implements CommentREST {
     @ApiParam({ name: 'productId', type: 'string', required: true })
     @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiBody({ type: CommentCreate, required: true })
-    @ApiResponse({ type: Comment })
+    @ApiResponse({ type: CommentRead })
     async addComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
@@ -67,7 +67,7 @@ export class CommentController implements CommentREST {
     @ApiParam({ name: 'issueId', type: 'string', required: true })
     @ApiParam({ name: 'commentId', type: 'string', required: true })
     @ApiBody({ type: CommentUpdate, required: true })
-    @ApiResponse({ type: Comment })
+    @ApiResponse({ type: CommentRead })
     async updateComment(
         @Param('productId') productId: string,
         @Param('issueId') issueId: string,
