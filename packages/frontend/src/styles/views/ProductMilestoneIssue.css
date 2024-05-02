@@ -1,0 +1,27 @@
+main.view.product-milestone-issue div.header span.value.product_user_name {
+    font-weight: bold;
+}
+
+main.view.product-milestone-issue div.header span.date {
+    font-weight: bold;
+}
+
+main.view.product-milestone-issue td.assignees img {
+    margin-left: 0.25em;
+}
+main.view.product-milestone-issue td.assignees img:first-child {
+    margin-left: 0;
+}
+
+@media screen and (max-width: 45em){
+    main.view.product-milestone-issue table > thead > tr > th:nth-child(4),
+    main.view.product-milestone-issue table > thead > tr > th:nth-child(5),
+    main.view.product-milestone-issue table > thead > tr > th:nth-child(6) {
+        display: none;
+    }
+    main.view.product-milestone-issue table > tbody > tr > td:nth-child(4),
+    main.view.product-milestone-issue table > tbody > tr > td:nth-child(5),
+    main.view.product-milestone-issue table > tbody > tr > td:nth-child(6) {
+        display: none;
+    }
+}

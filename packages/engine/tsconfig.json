@@ -1,0 +1,7 @@
+{
+    "extends": "assemblyscript/std/assembly.json",
+    "compilerOptions": {
+        "rootDirs": ["src"],
+        "outDir": "bin"
+    }
+}

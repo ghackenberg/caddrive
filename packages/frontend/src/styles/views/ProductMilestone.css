@@ -1,0 +1,28 @@
+@media screen and (max-width: 50em) {
+    main.view.product-milestone table > thead > tr > th:nth-child(3),
+    main.view.product-milestone table > thead > tr > th:nth-child(4) {
+        display: none;
+    }
+    main.view.product-milestone table > tbody > tr > td:nth-child(3),
+    main.view.product-milestone table > tbody > tr > td:nth-child(4){
+        display: none;
+    }
+}
+@media screen and (max-width: 40em) {
+    main.view.product-milestone table > thead > tr > th:nth-child(5),
+    main.view.product-milestone table > thead > tr > th:nth-child(6) {
+        display: none;
+    }
+    main.view.product-milestone table > tbody > tr > td:nth-child(5),
+    main.view.product-milestone table > tbody > tr > td:nth-child(6) {
+        display: none;
+    }
+}
+@media screen and (max-width: 30em) {
+    main.view.product-milestone table > thead > tr > th:nth-child(7) {
+        display: none;
+    }
+    main.view.product-milestone table > tbody > tr > td:nth-child(7) {
+        display: none;
+    }
+}

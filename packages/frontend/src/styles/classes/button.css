@@ -1,0 +1,139 @@
+*.button {
+    display: inline-block;
+
+    box-sizing: border-box;
+
+    max-width: 100%;
+
+    font-family: inherit;
+    font-size: inherit;
+
+    line-height: inherit;
+}
+
+form *.button {
+    display: block;
+}
+
+*.button.fill {
+    padding-top: calc(0.75rem - 0.25em);
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    padding-bottom: calc(0.75rem - 0.25em);
+
+    border: 0;
+    border-radius: 0.5em;
+
+    outline: 0;
+    
+    background-image: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.1));
+}
+*.button.stroke {
+    padding-top: calc(0.75rem - 0.25em - 1px);
+    padding-left: calc(0.75em - 1px);
+    padding-right: calc(0.75em - 1px);
+    padding-bottom: calc(0.75rem - 0.25em - 1px);
+
+    border: 1px;
+    border-radius: 0.5em;
+    border-style: solid;
+
+    outline: 0;
+
+    background-color: white;
+}
+
+*.button.fill.white {
+    background-color: white;
+    color: black;
+}
+*.button.fill.white:disabled {
+    color: gray;
+}
+
+*.button.fill.lightgray {
+    background-color: lightgray;
+    color: black;
+}
+*.button.fill.lightgray:disabled {
+    color: gray;
+}
+
+*.button.fill.gray {
+    background-color: gray;
+    color: white;
+}
+*.button.fill.gray:disabled {
+    color: lightgray;
+}
+
+*.button.fill.black {
+    background-color: black;
+    color: white;
+}
+*.button.fill.black:disabled {
+    color: lightgray;
+}
+
+*.button.fill.red {
+    background-color: var(--red);
+    color: white;
+}
+*.button.fill.red:disabled {
+    color: lightgray;
+}
+
+*.button.fill.green {
+    background-color: var(--green);
+    color: white;
+}
+*.button.fill.green:disabled {
+    color: lightgray;
+}
+
+*.button.fill.blue {
+    background-color: var(--blue);
+    color: white;
+}
+*.button.fill.blue:disabled {
+    color: lightgray;
+}
+
+*.button.stroke.white {
+    background-color: black;
+    border-color: white;
+    color: white;
+}
+*.button.stroke.lightgray {
+    background-color: black;
+    border-color: lightgray;
+    color: lightgray;
+}
+*.button.stroke.gray {
+    border-color: gray;
+    color: gray;
+}
+*.button.stroke.black {
+    border-color: black;
+    color: black;
+}
+*.button.stroke.red {
+    border-color: var(--red);
+    color: var(--red);
+}
+*.button.stroke.green {
+    border-color: var(--green);
+    color: var(--green);
+}
+*.button.stroke.blue {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+@media screen and (max-width: 45em) {
+    *.button.block-when-responsive {
+        display: block;
+        width: fit-content;
+        margin-bottom: 0.75em;
+    }
+}

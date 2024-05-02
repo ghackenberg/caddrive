@@ -1,0 +1,14 @@
+a {
+    text-decoration: none;
+    
+    color: var(--blue);
+    
+    cursor: pointer;
+}
+
+a > img.icon:first-child {
+    margin-right: 0.25em;
+}
+a > img.icon:last-child {
+    margin-right: 0;
+}

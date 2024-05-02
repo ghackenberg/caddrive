@@ -1,8 +1,0 @@
-{
-    "extends": "../tsconfig.json",
-    "compilerOptions": {
-        "rootDirs": ["src", "../common/src", "../database/src"],
-        "outDir": "bin",
-        "lib": ["ES2015", "DOM"]
-    }
-}

@@ -1,0 +1,122 @@
+main.view {
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: row;
+
+    overflow: hidden;
+}
+
+main.view > div:first-child:last-child {
+    width: 100vw;
+}
+
+main.view > div:nth-child(1) {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 50em;
+        
+    overflow: auto;
+}
+main.view > div:nth-child(1) > div {
+    box-sizing: border-box;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+main.view > div:nth-child(1) > div:first-child {
+    padding-top: 0.5em;
+}
+main.view > div:nth-child(1) > div:last-child {    
+    padding-bottom: 0.5rem;
+}
+
+main.view > div:nth-child(1) > div.header > a.button {
+    margin-top: 0.5em;
+    margin-right: 1em;
+    margin-bottom: 0.5em;
+}
+main.view > div:nth-child(1) > div.header > a.button.right {
+    float: right;
+
+    margin-left: 1em;
+    margin-right: 0em;
+}
+
+main.view > div:nth-child(1) > div.main {
+    flex: 1;
+}
+
+main.view > div:nth-child(1) > div.main.center {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+}
+main.view > div:nth-child(1) > div.main.center > div {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-items: center;
+
+    align-items: center;
+
+    text-align: center;
+}
+main.view > div:nth-child(1) > div.main.center > div > img {
+    display: block;
+
+    margin: 1em;
+
+    width: 5em;
+    height: 5em;
+}
+
+main.view > div:nth-child(1) > div.footer {
+    flex: 0;
+
+    text-align: center;
+
+    font-size: 0.75em;
+
+    color: rgb(128,128,128);
+}
+main.view > div:nth-child(1) > div.footer > a {
+    margin-left: 0.5rem;
+
+    color: rgb(192,192,192);
+}
+main.view > div:nth-child(1) > div.footer > a:hover {
+    color: black;
+}
+
+main.view > div:nth-child(2) {
+    flex: 1;
+
+    overflow: hidden;
+}
+
+@media screen and (max-width: 70em) {
+    main.view.sidebar > div {
+        width: 100vw;
+    }
+
+    main.view.sidebar > div:nth-child(2) {
+        display: none;
+    }
+
+    main.view.sidebar.visible > div:nth-child(1) {
+        display: none;
+    }
+    main.view.sidebar.visible > div:nth-child(2) {
+        display: block;
+    }
+}

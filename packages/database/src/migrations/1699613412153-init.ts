@@ -1,0 +1,80 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class Init1699613412153 implements MigrationInterface {
+    name = 'Init1699613412153'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        try {
+            await queryRunner.query(`CREATE TABLE "token_entity" ("tokenId" varchar PRIMARY KEY NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "email" varchar NOT NULL, "code" varchar NOT NULL, "count" integer NOT NULL)`);
+            await queryRunner.query(`CREATE TABLE "milestone_entity" ("productId" varchar NOT NULL, "milestoneId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "start" integer NOT NULL, "end" integer NOT NULL, "label" varchar NOT NULL)`);
+            await queryRunner.query(`CREATE TABLE "version_entity" ("productId" varchar NOT NULL, "versionId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "baseVersionIds" text NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "major" integer NOT NULL, "minor" integer NOT NULL, "patch" integer NOT NULL, "description" varchar NOT NULL, "modelType" varchar NOT NULL, "imageType" varchar)`);
+            await queryRunner.query(`CREATE TABLE "user_entity" ("userId" varchar PRIMARY KEY NOT NULL, "pictureId" varchar, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "email" varchar NOT NULL, "consent" boolean, "name" varchar)`);
+            await queryRunner.query(`CREATE TABLE "member_entity" ("productId" varchar NOT NULL, "memberId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "role" varchar CHECK( "role" IN ('manager','engineer','customer') ) NOT NULL)`);
+            await queryRunner.query(`CREATE TABLE "product_entity" ("productId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "name" varchar NOT NULL, "description" varchar NOT NULL, "public" boolean NOT NULL)`);
+            await queryRunner.query(`CREATE TABLE "comment_entity" ("productId" varchar NOT NULL, "issueId" varchar NOT NULL, "commentId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "audioId" varchar, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "text" varchar NOT NULL, "action" varchar NOT NULL DEFAULT ('none'))`);
+            await queryRunner.query(`CREATE TABLE "issue_entity" ("productId" varchar NOT NULL, "issueId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "milestoneId" varchar, "audioId" varchar, "assignedUserIds" text NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "label" varchar NOT NULL, "text" varchar NOT NULL, "state" varchar NOT NULL DEFAULT ('open'))`);
+            await queryRunner.query(`CREATE TABLE "temporary_milestone_entity" ("productId" varchar NOT NULL, "milestoneId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "start" integer NOT NULL, "end" integer NOT NULL, "label" varchar NOT NULL, CONSTRAINT "FK_682bce40bc0372d593c81957cd1" FOREIGN KEY ("productId") REFERENCES "product_entity" ("productId") ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT "FK_b97d81489387af0595e33625379" FOREIGN KEY ("userId") REFERENCES "user_entity" ("userId") ON DELETE NO ACTION ON UPDATE NO ACTION)`);
+            await queryRunner.query(`INSERT INTO "temporary_milestone_entity"("productId", "milestoneId", "userId", "created", "updated", "deleted", "start", "end", "label") SELECT "productId", "milestoneId", "userId", "created", "updated", "deleted", "start", "end", "label" FROM "milestone_entity"`);
+            await queryRunner.query(`DROP TABLE "milestone_entity"`);
+            await queryRunner.query(`ALTER TABLE "temporary_milestone_entity" RENAME TO "milestone_entity"`);
+            await queryRunner.query(`CREATE TABLE "temporary_version_entity" ("productId" varchar NOT NULL, "versionId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "baseVersionIds" text NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "major" integer NOT NULL, "minor" integer NOT NULL, "patch" integer NOT NULL, "description" varchar NOT NULL, "modelType" varchar NOT NULL, "imageType" varchar, CONSTRAINT "FK_0c69da100b526232dfa46ba1c90" FOREIGN KEY ("productId") REFERENCES "product_entity" ("productId") ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT "FK_32505c73c9adb5464074bcc5906" FOREIGN KEY ("userId") REFERENCES "user_entity" ("userId") ON DELETE NO ACTION ON UPDATE NO ACTION)`);
+            await queryRunner.query(`INSERT INTO "temporary_version_entity"("productId", "versionId", "userId", "baseVersionIds", "created", "updated", "deleted", "major", "minor", "patch", "description", "modelType", "imageType") SELECT "productId", "versionId", "userId", "baseVersionIds", "created", "updated", "deleted", "major", "minor", "patch", "description", "modelType", "imageType" FROM "version_entity"`);
+            await queryRunner.query(`DROP TABLE "version_entity"`);
+            await queryRunner.query(`ALTER TABLE "temporary_version_entity" RENAME TO "version_entity"`);
+            await queryRunner.query(`CREATE TABLE "temporary_member_entity" ("productId" varchar NOT NULL, "memberId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "role" varchar CHECK( "role" IN ('manager','engineer','customer') ) NOT NULL, CONSTRAINT "FK_8bd41fc4efb4c90fe1faa631c62" FOREIGN KEY ("productId") REFERENCES "product_entity" ("productId") ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT "FK_b4349fa6345252b670a7ab0f032" FOREIGN KEY ("userId") REFERENCES "user_entity" ("userId") ON DELETE NO ACTION ON UPDATE NO ACTION)`);
+            await queryRunner.query(`INSERT INTO "temporary_member_entity"("productId", "memberId", "userId", "created", "updated", "deleted", "role") SELECT "productId", "memberId", "userId", "created", "updated", "deleted", "role" FROM "member_entity"`);
+            await queryRunner.query(`DROP TABLE "member_entity"`);
+            await queryRunner.query(`ALTER TABLE "temporary_member_entity" RENAME TO "member_entity"`);
+            await queryRunner.query(`CREATE TABLE "temporary_product_entity" ("productId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "name" varchar NOT NULL, "description" varchar NOT NULL, "public" boolean NOT NULL, CONSTRAINT "FK_9b522961bc02b956d1699a23ae3" FOREIGN KEY ("userId") REFERENCES "user_entity" ("userId") ON DELETE NO ACTION ON UPDATE NO ACTION)`);
+            await queryRunner.query(`INSERT INTO "temporary_product_entity"("productId", "userId", "created", "updated", "deleted", "name", "description", "public") SELECT "productId", "userId", "created", "updated", "deleted", "name", "description", "public" FROM "product_entity"`);
+            await queryRunner.query(`DROP TABLE "product_entity"`);
+            await queryRunner.query(`ALTER TABLE "temporary_product_entity" RENAME TO "product_entity"`);
+            await queryRunner.query(`CREATE TABLE "temporary_comment_entity" ("productId" varchar NOT NULL, "issueId" varchar NOT NULL, "commentId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "audioId" varchar, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "text" varchar NOT NULL, "action" varchar NOT NULL DEFAULT ('none'), CONSTRAINT "FK_997397d79ae31163d54c0a7d017" FOREIGN KEY ("productId") REFERENCES "product_entity" ("productId") ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT "FK_d5a10b365505539d7e41941d312" FOREIGN KEY ("issueId") REFERENCES "issue_entity" ("issueId") ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT "FK_e391949c5735c084dddcb6e6468" FOREIGN KEY ("userId") REFERENCES "user_entity" ("userId") ON DELETE NO ACTION ON UPDATE NO ACTION)`);
+            await queryRunner.query(`INSERT INTO "temporary_comment_entity"("productId", "issueId", "commentId", "userId", "audioId", "created", "updated", "deleted", "text", "action") SELECT "productId", "issueId", "commentId", "userId", "audioId", "created", "updated", "deleted", "text", "action" FROM "comment_entity"`);
+            await queryRunner.query(`DROP TABLE "comment_entity"`);
+            await queryRunner.query(`ALTER TABLE "temporary_comment_entity" RENAME TO "comment_entity"`);
+            await queryRunner.query(`CREATE TABLE "temporary_issue_entity" ("productId" varchar NOT NULL, "issueId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "milestoneId" varchar, "audioId" varchar, "assignedUserIds" text NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "label" varchar NOT NULL, "text" varchar NOT NULL, "state" varchar NOT NULL DEFAULT ('open'), CONSTRAINT "FK_31b85793e20fe663da11f62f4d3" FOREIGN KEY ("productId") REFERENCES "product_entity" ("productId") ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT "FK_03a6d234e95e8b464380056b34d" FOREIGN KEY ("userId") REFERENCES "user_entity" ("userId") ON DELETE NO ACTION ON UPDATE NO ACTION, CONSTRAINT "FK_fc8cbe9f0c89471abe226892954" FOREIGN KEY ("milestoneId") REFERENCES "milestone_entity" ("milestoneId") ON DELETE NO ACTION ON UPDATE NO ACTION)`);
+            await queryRunner.query(`INSERT INTO "temporary_issue_entity"("productId", "issueId", "userId", "milestoneId", "audioId", "assignedUserIds", "created", "updated", "deleted", "label", "text", "state") SELECT "productId", "issueId", "userId", "milestoneId", "audioId", "assignedUserIds", "created", "updated", "deleted", "label", "text", "state" FROM "issue_entity"`);
+            await queryRunner.query(`DROP TABLE "issue_entity"`);
+            await queryRunner.query(`ALTER TABLE "temporary_issue_entity" RENAME TO "issue_entity"`);
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "issue_entity" RENAME TO "temporary_issue_entity"`);
+        await queryRunner.query(`CREATE TABLE "issue_entity" ("productId" varchar NOT NULL, "issueId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "milestoneId" varchar, "audioId" varchar, "assignedUserIds" text NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "label" varchar NOT NULL, "text" varchar NOT NULL, "state" varchar NOT NULL DEFAULT ('open'))`);
+        await queryRunner.query(`INSERT INTO "issue_entity"("productId", "issueId", "userId", "milestoneId", "audioId", "assignedUserIds", "created", "updated", "deleted", "label", "text", "state") SELECT "productId", "issueId", "userId", "milestoneId", "audioId", "assignedUserIds", "created", "updated", "deleted", "label", "text", "state" FROM "temporary_issue_entity"`);
+        await queryRunner.query(`DROP TABLE "temporary_issue_entity"`);
+        await queryRunner.query(`ALTER TABLE "comment_entity" RENAME TO "temporary_comment_entity"`);
+        await queryRunner.query(`CREATE TABLE "comment_entity" ("productId" varchar NOT NULL, "issueId" varchar NOT NULL, "commentId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "audioId" varchar, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "text" varchar NOT NULL, "action" varchar NOT NULL DEFAULT ('none'))`);
+        await queryRunner.query(`INSERT INTO "comment_entity"("productId", "issueId", "commentId", "userId", "audioId", "created", "updated", "deleted", "text", "action") SELECT "productId", "issueId", "commentId", "userId", "audioId", "created", "updated", "deleted", "text", "action" FROM "temporary_comment_entity"`);
+        await queryRunner.query(`DROP TABLE "temporary_comment_entity"`);
+        await queryRunner.query(`ALTER TABLE "product_entity" RENAME TO "temporary_product_entity"`);
+        await queryRunner.query(`CREATE TABLE "product_entity" ("productId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "name" varchar NOT NULL, "description" varchar NOT NULL, "public" boolean NOT NULL)`);
+        await queryRunner.query(`INSERT INTO "product_entity"("productId", "userId", "created", "updated", "deleted", "name", "description", "public") SELECT "productId", "userId", "created", "updated", "deleted", "name", "description", "public" FROM "temporary_product_entity"`);
+        await queryRunner.query(`DROP TABLE "temporary_product_entity"`);
+        await queryRunner.query(`ALTER TABLE "member_entity" RENAME TO "temporary_member_entity"`);
+        await queryRunner.query(`CREATE TABLE "member_entity" ("productId" varchar NOT NULL, "memberId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "role" varchar CHECK( "role" IN ('manager','engineer','customer') ) NOT NULL)`);
+        await queryRunner.query(`INSERT INTO "member_entity"("productId", "memberId", "userId", "created", "updated", "deleted", "role") SELECT "productId", "memberId", "userId", "created", "updated", "deleted", "role" FROM "temporary_member_entity"`);
+        await queryRunner.query(`DROP TABLE "temporary_member_entity"`);
+        await queryRunner.query(`ALTER TABLE "version_entity" RENAME TO "temporary_version_entity"`);
+        await queryRunner.query(`CREATE TABLE "version_entity" ("productId" varchar NOT NULL, "versionId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "baseVersionIds" text NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "major" integer NOT NULL, "minor" integer NOT NULL, "patch" integer NOT NULL, "description" varchar NOT NULL, "modelType" varchar NOT NULL, "imageType" varchar)`);
+        await queryRunner.query(`INSERT INTO "version_entity"("productId", "versionId", "userId", "baseVersionIds", "created", "updated", "deleted", "major", "minor", "patch", "description", "modelType", "imageType") SELECT "productId", "versionId", "userId", "baseVersionIds", "created", "updated", "deleted", "major", "minor", "patch", "description", "modelType", "imageType" FROM "temporary_version_entity"`);
+        await queryRunner.query(`DROP TABLE "temporary_version_entity"`);
+        await queryRunner.query(`ALTER TABLE "milestone_entity" RENAME TO "temporary_milestone_entity"`);
+        await queryRunner.query(`CREATE TABLE "milestone_entity" ("productId" varchar NOT NULL, "milestoneId" varchar PRIMARY KEY NOT NULL, "userId" varchar NOT NULL, "created" integer NOT NULL, "updated" integer NOT NULL DEFAULT (0), "deleted" integer, "start" integer NOT NULL, "end" integer NOT NULL, "label" varchar NOT NULL)`);
+        await queryRunner.query(`INSERT INTO "milestone_entity"("productId", "milestoneId", "userId", "created", "updated", "deleted", "start", "end", "label") SELECT "productId", "milestoneId", "userId", "created", "updated", "deleted", "start", "end", "label" FROM "temporary_milestone_entity"`);
+        await queryRunner.query(`DROP TABLE "temporary_milestone_entity"`);
+        await queryRunner.query(`DROP TABLE "issue_entity"`);
+        await queryRunner.query(`DROP TABLE "comment_entity"`);
+        await queryRunner.query(`DROP TABLE "product_entity"`);
+        await queryRunner.query(`DROP TABLE "member_entity"`);
+        await queryRunner.query(`DROP TABLE "user_entity"`);
+        await queryRunner.query(`DROP TABLE "version_entity"`);
+        await queryRunner.query(`DROP TABLE "milestone_entity"`);
+        await queryRunner.query(`DROP TABLE "token_entity"`);
+    }
+
+}

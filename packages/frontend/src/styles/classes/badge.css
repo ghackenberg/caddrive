@@ -1,0 +1,101 @@
+span.badge {
+    display: inline-block;
+
+    font-size: 75%;
+
+    line-height: 1.25rem;
+
+    margin-top: 0.125rem;
+    margin-left: 0.5rem;
+    margin-bottom: 0.125rem;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+
+    border-radius: 0.5rem;
+
+    vertical-align: top;
+
+    background-color: rgb(225,225,225);
+
+    color: gray;
+}
+span.badge.stroke {
+    line-height: calc(1.25rem - 2px);
+
+    padding-left: calc(0.5rem - 1px);
+    padding-right: calc(0.5rem - 1px);
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: lightgray;
+
+    background-color: transparent;
+}
+span.badge:first-child {
+    margin-left: 0;
+}
+span.badge.public {
+    background-color: gray;
+
+    color: white;
+}
+span.badge.private {
+    background-color: gray;
+
+    color: white;
+}
+span.badge.role {
+    background-color: black;
+
+    color: white;
+}
+span.badge.role.manager {
+    background-color: var(--red);
+}
+span.badge.role.engineer {
+    background-color: var(--green);
+}
+span.badge.role.customer {
+    background-color: var(--blue);
+}
+span.badge.red {
+    background-color: var(--red);
+
+    color: white;
+}
+span.badge.green {
+    background-color: var(--green);
+
+    color: white;
+}
+span.badge.blue {
+    background-color: var(--blue);
+
+    color: white;
+}
+span.badge.italic {
+    font-style: italic;
+}
+
+.button.fill span.badge {
+    background-color: rgba(255,255,255,0.5);
+
+    color: white;
+}
+
+.button.stroke span.badge {
+    color: white;
+}
+.button.stroke.blue span.badge {
+    background-color: var(--blue-alpha-50);
+}
+.button.stroke.green span.badge {
+    background-color: var(--green-alpha-50);
+}
+
+table span.badge {
+    max-width: 7em;
+
+    overflow: hidden;
+}

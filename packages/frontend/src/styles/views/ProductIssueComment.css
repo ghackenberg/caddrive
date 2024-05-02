@@ -1,0 +1,21 @@
+main.view.product-issue-comment div.header span.number {
+    opacity: 0.5;
+}
+main.view.product-issue-comment div.header span.number::before {
+    content: '#';
+}
+main.view.product-issue-comment div.header span.number::after {
+    content: ' - ';
+}
+
+main.view.product-issue-comment div.header span.value.product_user_name {
+    font-weight: bold;
+}
+
+main.view.product-issue-comment div.header span.date {
+    font-weight: bold;
+}
+
+main.view.product-issue-comment div.header span.assignees > * {
+    margin-left: 0.5em;
+}

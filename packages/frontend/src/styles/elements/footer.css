@@ -1,0 +1,45 @@
+/* View footer */
+
+footer.page {
+    flex: 0;
+
+    display: none;
+
+    background-color: rgb(245,245,245);
+
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgb(215,215,215);
+}
+footer.page > div {
+    white-space: nowrap;
+
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+footer.page > div > span > a {
+    display: inline-block;
+    
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 0.75em;
+
+    color: black;
+}
+footer.page > div > span > a.active {
+    font-weight: bold;
+
+    border-top-width: 4px;
+    border-top-style: solid;
+    border-top-color: orange;
+
+    padding-top: calc(0.75em - 1px);
+
+    margin-top: -1px;
+}
+
+@media screen and (max-width: 70em) {
+    footer.page {
+        display: block;
+    }
+}

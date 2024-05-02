@@ -1,0 +1,197 @@
+div.widget.issue_thread {
+    position: relative;
+
+    margin-top: 0.5em;
+    
+    border-top: 1px solid rgb(215,215,215);
+    
+    padding-top: 1em;
+    padding-bottom: 0.5em;
+}
+div.widget.issue_thread::before {
+    content: "";
+
+    display: block;
+    
+    position: absolute;
+    
+    top: 1em;
+    left: calc(5.5em - 1px);
+    bottom: 1em;
+    
+    border-left: 2px solid rgb(215,215,215);
+}
+div.widget.issue_thread > div {
+    display: table;
+    
+    position: relative;
+
+    width: 100%;
+}
+div.widget.issue_thread > div {
+    margin-top: 1em;
+}
+div.widget.issue_thread > div:first-child {
+    margin-top: 0;
+}
+div.widget.issue_thread > div > div {
+    display: table-row;
+}
+div.widget.issue_thread > div > div > div {
+    display: table-cell;
+
+    border-width: 0;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+}
+div.widget.issue_thread > div > div > div.icon {
+    vertical-align: middle;
+
+    padding-right: 1em;
+}
+div.widget.issue_thread > div > div > div.icon > a {
+    display: block;
+
+    box-sizing: border-box;
+    
+    width: 2.5em;
+    height: 2.5em;
+    
+    background-color: rgb(245,245,245);
+    
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+    border-radius: 50%;
+}
+div.widget.issue_thread > div.self > div > div.icon > a {
+    background-color: rgb(225,235,245);
+}
+div.widget.issue_thread > div > div > div.icon > a > img {
+    display: block;
+
+    width: calc(2.5em - 2px);
+    height: calc(2.5em - 2px);
+
+    border-radius: 50%;
+}
+div.widget.issue_thread > div > div > div.icon > a > img.pad {
+    width: 1em;
+    height: 1em;
+
+    padding: calc(0.75em - 1px);
+}
+div.widget.issue_thread > div > div.head > div.text,
+div.widget.issue_thread > div > div.body > div.text {
+    width: 100%;
+
+    padding-left: 1em;
+    padding-right: 1em;
+    
+    border-left-width: 1px;
+    border-right-width: 1px;
+}
+div.widget.issue_thread > div > div.head > div.text {
+    background-color: rgb(245,245,245);
+
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+}
+div.widget.issue_thread > div > div.head > div.text::before {
+    content: "";
+
+    display: block;
+    
+    position: absolute;
+    
+    box-sizing: border-box;
+    
+    width: 0.5em;
+    height: 0.5em;
+    
+    top: 1em;
+    left: 3.25em;
+    
+    background-color: rgb(245,245,245);
+    
+    border-top: 1px solid rgb(215,215,215);
+    border-left: 1px solid rgb(215,215,215);
+    
+    transform: rotate(-45deg);
+}
+div.widget.issue_thread > div.self > div.head > div.text {
+    background-color: rgb(225,235,245);
+}
+div.widget.issue_thread > div.self > div.head > div.text::before {
+    background-color: rgb(225,235,245);
+}
+div.widget.issue_thread > div > div.body > div.text {
+    background-color: white;
+
+    border-bottom-width: 1px;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+}
+div.widget.issue_thread > div > div.body > div.text img {
+    max-width: 100%;
+}
+div.widget.issue_thread > div > div.body > div.text > textarea {
+    display: block;
+    
+    outline: none;
+    border: none;
+
+    font-size: inherit;
+
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    width: 100%;
+    height: 10em;
+}
+
+div.widget.issue_thread > div > div.note > div.text {
+    padding-top: 1em;
+    padding-left: 1em;
+}
+div.widget.issue_thread > div > div.note > div.text > a[href] {
+    margin-right: 0.5em;
+}
+div.widget.issue_thread > div > div.note > div.text > a > span {
+    display: inline-block;
+
+    vertical-align: middle;
+
+    box-sizing: border-box;
+
+    width: 2em;
+    height: 2em;
+
+    margin-right: 0.5em;
+
+    padding: calc(0.5em - 1px);
+
+    background-color: white;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(215,215,215);
+    border-radius: 1em;
+}
+div.widget.issue_thread > div > div.note.action.close > div.text > a > span {
+    background-color: green;
+}
+div.widget.issue_thread > div > div.note.action.reopen > div.text > a > span {
+    background-color: red;
+}
+div.widget.issue_thread > div > div.note > div.text > a > span > img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+}
+div.widget.issue_thread > div > div.note.action > div.text > a > span > img {
+    filter: invert(1);
+}

@@ -1,0 +1,54 @@
+{
+    "name": "productboard-database",
+    "version": "0.0.1",
+    "description": "Database library",
+    "license": "UNLICENSED",
+    "private": "true",
+    "main": "src/main",
+    "types": "src/main",
+    "type": "module",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@fh-wels.at"
+    },
+    "contributors": [
+        {
+            "name": "Georg Hackenberg",
+            "email": "georg.hackenberg@fh-wels.at"
+        },{
+            "name": "Christian Zehetner",
+            "email": "christian.zehetner@fh-wels.at"
+        },{
+            "name": "Jürgen Humenberger",
+            "email": "juergen.humenberger@fh-wels.at"
+        },{
+            "name": "Dominik Frühwirth",
+            "email": "dominik.fruewirth@fh-wels.at"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ghackenberg/caddrive.git",
+        "directory": "packages/node/database"
+    },
+    "scripts": {
+        "clean": "rm -rf bin",
+        "build": "tsc",
+        "lint": "eslint src",
+        "loc": "sloc src",
+        "typeorm": "node --loader ts-node/esm --experimental-specifier-resolution=node ../../node_modules/typeorm/cli.js",
+        "migration:generate": "npm run typeorm -- migration:generate -d src/config.ts",
+        "migration:create": "npm run typeorm -- migration:create",
+        "migration:run": "npm run typeorm -- migration:run -d src/config.ts",
+        "migration:revert": "npm run typeorm -- migration:revert -d src/config.ts",
+        "migration:show": "npm run typeorm -- migration:show -d src/config.ts"
+    },
+    "dependencies": {
+        "pg": "^8.9.0",
+        "productboard-common": "^0.0.1",
+        "typeorm": "^0.3.11"
+    },
+    "devDependencies": {
+        "sqlite3": "^5.1.4"
+    }
+}

@@ -1,2 +1,0 @@
-requests-toolbelt
-pyqt5

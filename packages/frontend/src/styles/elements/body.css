@@ -1,0 +1,18 @@
+body {
+    margin: 0;
+
+    font-family: Arial;
+    
+    line-height: 150%;
+
+    overflow: hidden;
+}
+
+body > div {
+    display: flex;
+
+    flex-direction: column;
+
+    width: 100vw;
+    height: 100dvh;
+}
