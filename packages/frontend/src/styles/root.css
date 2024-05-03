@@ -21,6 +21,10 @@
     --blue-alpha-50: rgba(var(--blue-r), var(--blue-g), var(--blue-b), 0.5);
 }
 
+* {
+    hyphens: auto;
+}
+
 /* Element specific styles */
 
 @import url(./elements/anchor.css);
@@ -49,6 +53,7 @@
 @import url(./widgets/IssueThread.css);
 @import url(./widgets/ModelGraph.css);
 @import url(./widgets/ModelView3D.css);
+@import url(./widgets/ProductList.css);
 @import url(./widgets/ProductView3D.css);
 @import url(./widgets/VersionTree.css);
 @import url(./widgets/VersionView3D.css);

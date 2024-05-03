@@ -2,24 +2,21 @@ import * as React from 'react'
 import { useEffect, useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 
-import { ProductRead } from 'productboard-common'
-
-import { ProductClient } from '../../clients/rest/product'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { useAsyncHistory } from '../../hooks/history'
 import { useProducts } from '../../hooks/list'
-//import { ProductCount } from '../counts/Products'
 import { LegalFooter } from '../snippets/LegalFooter'
-import { Column, Table } from '../widgets/Table'
 import { ProductImageWidget } from '../widgets/ProductImage'
+import { ProductUserName } from '../values/ProductUserName'
 import { ProductUserPicture } from '../values/ProductUserPicture'
 import { LoadingView } from './Loading'
 
 import ProductIcon from '/src/images/product.png'
-import DeleteIcon from '/src/images/delete.png'
 
 export const ProductView = () => {
+
+    // HOOKS
 
     const { push } = useAsyncHistory()
     
@@ -39,60 +36,6 @@ export const ProductView = () => {
     // EFFECTS
 
     useEffect(() => { setContextVersion(undefined) })
-
-    // FUNCTIONS
-
-    async function deleteProduct(event: React.UIEvent, product: ProductRead) {
-        // TODO handle unmount!
-        event.stopPropagation()
-        if (confirm('Do you really want to delete this Product?')) {
-            await ProductClient.deleteProduct(product.productId)
-        }
-    }
-
-    // CONSTANTS
-    
-    const columns: Column<ProductRead>[] = [
-        { label: '📷', class: 'center', content: product => (
-            <ProductImageWidget productId={product.productId}/>
-        ) },
-        { label: 'Name / description', class: 'left fill', content: product => (
-            <>
-                <div>
-                    <strong>{product.name}</strong>
-                    {product.public ? (
-                        <span className='badge public'>public</span>
-                    ) : (
-                        <span className='badge private'>private</span>
-                    )}
-                </div>
-                <div>{product.description}</div>
-            </>
-        ) },
-        { label: 'Versions', class: 'center', content: product => (
-            <span className='badge'>
-                {product.versionCount}
-            </span>
-        ) },
-        { label: 'Issues', class: 'center', content: product => (
-            <span className='badge'>
-                {product.openIssueCount}
-            </span>
-        ) },
-        { label: 'Members', class: 'center', content: product => (
-            <span className='badge'>
-                {product.memberCount}
-            </span>
-        ) },
-        { label: '🧑', class: 'center', content: product => (
-            <ProductUserPicture userId={product.userId} productId={product.productId} class='icon medium round'/>
-        ) },
-        { label: '🛠️', content: product => (
-            <a onClick={event => deleteProduct(event, product)}>
-                <img src={DeleteIcon} className='icon medium pad'/>
-            </a>
-        ) }
-    ]
 
     // RETURN
 
@@ -126,7 +69,21 @@ export const ProductView = () => {
                         </div>
                     ) : (
                         <div className='main'>
-                            <Table columns={columns} items={products.map(p => p).reverse()} onClick={product => push(`/products/${product.productId}/versions`)}/>
+                            <div className='widget product_list'>
+                                {products.reverse().map(product => (
+                                    <div key={product.productId} onClick={() => push(`/products/${product.productId}`)}>
+                                        <ProductImageWidget productId={product.productId}/>
+                                        <div>
+                                            <h2>{product.name}</h2>
+                                            <p>{product.description}</p>
+                                            <p>
+                                                <ProductUserPicture class='icon small round' productId={product.productId} userId={product.userId}/>
+                                                <ProductUserName productId={product.productId} userId={product.userId}/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )
                 ) : (
