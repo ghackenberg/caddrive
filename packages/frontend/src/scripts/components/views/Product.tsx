@@ -74,12 +74,12 @@ export const ProductView = () => {
                                     <div key={product.productId} onClick={() => push(`/products/${product.productId}`)}>
                                         <ProductImageWidget productId={product.productId}/>
                                         <div>
-                                            <h2>{product.name}</h2>
-                                            <p>{product.description}</p>
                                             <p>
                                                 <ProductUserPicture class='icon small round' productId={product.productId} userId={product.userId}/>
                                                 <ProductUserName productId={product.productId} userId={product.userId}/>
                                             </p>
+                                            <h2>{product.name}</h2>
+                                            <p>{product.description}</p>
                                         </div>
                                     </div>
                                 ))}

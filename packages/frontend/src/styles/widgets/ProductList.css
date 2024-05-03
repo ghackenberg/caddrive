@@ -27,6 +27,8 @@
 
 .widget.product_list > div:hover {
     background-color: rgb(230, 230, 230);
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.1);
 }
 
 .widget.product_list > div > div:first-child {
@@ -51,6 +53,6 @@
     font-style: italic;
 }
 
-.widget.product_list > div > div:last-child > p:last-child > img {
+.widget.product_list > div > div:last-child > p:first-child > img {
     margin-right: 0.5em;
 }
