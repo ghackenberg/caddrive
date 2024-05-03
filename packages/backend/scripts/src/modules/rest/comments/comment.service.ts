@@ -11,7 +11,7 @@ import { IsNull } from 'typeorm'
 import { unified } from 'unified'
 
 import { CommentCreate, CommentREST, CommentRead, CommentUpdate, IssueRead, ProductRead } from 'productboard-common'
-import { Database, convertComment } from 'productboard-database'
+import { Database, MilestoneEntity, convertComment } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
 import { TRANSPORTER } from '../../../functions/mail'
@@ -53,8 +53,14 @@ export class CommentService implements CommentREST {
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = comment.updated
         await Database.get().productRepository.save(product)
-        // Find milestone
-        const milestones = issue.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: issue.milestoneId }) : []
+        // Update milestone
+        const milestones: MilestoneEntity[] = []
+        if (issue.milestoneId) {
+            const milestone = await Database.get().milestoneRepository.findOneBy({ milestoneId: issue.milestoneId })
+            milestone.updated = comment.updated
+            await Database.get().milestoneRepository.save(milestone)
+            milestones.push(milestone)
+        }
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment], milestones })
         // Notify changes
@@ -82,8 +88,14 @@ export class CommentService implements CommentREST {
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = comment.updated
         await Database.get().productRepository.save(product)
-        // Find milestone
-        const milestones = issue.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: issue.milestoneId }) : []
+        // Update milestone
+        const milestones: MilestoneEntity[] = []
+        if (issue.milestoneId) {
+            const milestone = await Database.get().milestoneRepository.findOneBy({ milestoneId: issue.milestoneId })
+            milestone.updated = comment.updated
+            await Database.get().milestoneRepository.save(milestone)
+            milestones.push(milestone)
+        }
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment], milestones })
         // Notify changes
@@ -107,8 +119,14 @@ export class CommentService implements CommentREST {
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = comment.updated
         await Database.get().productRepository.save(product)
-        // Find milestone
-        const milestones = issue.milestoneId ? await Database.get().milestoneRepository.findBy({ milestoneId: issue.milestoneId }) : []
+        // Update milestone
+        const milestones: MilestoneEntity[] = []
+        if (issue.milestoneId) {
+            const milestone = await Database.get().milestoneRepository.findOneBy({ milestoneId: issue.milestoneId })
+            milestone.updated = comment.updated
+            await Database.get().milestoneRepository.save(milestone)
+            milestones.push(milestone)
+        }
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], comments: [comment], milestones })
         // Return comment

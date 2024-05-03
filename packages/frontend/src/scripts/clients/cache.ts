@@ -71,7 +71,7 @@ function notify<T>(callbacks: Index<Callback<T>[]>, id: string, value: T) {
     }
 }
 function update<T extends Entity>(entityCache: Index<T>, childCache: Index<Index<boolean>>, entityCallbacks: Index<Callback<T>[]>, childCallbacks: Index<Callback<T[]>[]>, entityId: string, parentId: string, value: T) {
-    if (!(entityId in entityCache) || entityCache[entityId].updated <= value.updated) {
+    if (!(entityId in entityCache) || entityCache[entityId].updated < value.updated) {
         // Update caches
         entityCache[entityId] = value
         if (parentId) {
