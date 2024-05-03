@@ -73,13 +73,13 @@ export const ProductView = () => {
                                 {products.reverse().map(product => (
                                     <div key={product.productId} onClick={() => push(`/products/${product.productId}`)}>
                                         <ProductImageWidget productId={product.productId}/>
-                                        <div>
-                                            <p>
-                                                <ProductUserPicture class='icon small round' productId={product.productId} userId={product.userId}/>
-                                                <ProductUserName productId={product.productId} userId={product.userId}/>
-                                            </p>
+                                        <div className="product">
                                             <h2>{product.name}</h2>
                                             <p>{product.description}</p>
+                                        </div>
+                                        <div className="user">
+                                            <ProductUserPicture class='icon small round' productId={product.productId} userId={product.userId}/>
+                                            <ProductUserName productId={product.productId} userId={product.userId}/>
                                         </div>
                                     </div>
                                 ))}

@@ -1,3 +1,5 @@
+/* List */
+
 .widget.product_list {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
@@ -11,7 +13,11 @@
     gap: 1em;
 }
 
+/* Item */
+
 .widget.product_list > div {
+    position: relative;
+
     background-color: rgb(245, 245, 245);
 
     max-width: 42em;
@@ -24,14 +30,15 @@
  
     cursor: pointer;
 }
-
 .widget.product_list > div:hover {
     background-color: rgb(230, 230, 230);
 
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.1);
 }
 
-.widget.product_list > div > div:first-child {
+/* Item model */
+
+.widget.product_list > div > div.model {
     background-color: rgb(215, 215, 215);
     background-size: cover;
     background-position: center;
@@ -42,17 +49,26 @@
     aspect-ratio: 16/9;
 }
 
-.widget.product_list > div > div:last-child {
+/* Item product */
+
+.widget.product_list > div > div.product {
     padding-top: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
-    padding-bottom: 0.5em;
+    padding-bottom: 3em;
 }
 
-.widget.product_list > div > div:last-child > p:first-child {
+/* Item user */
+
+.widget.product_list > div > div.user {
+    position: absolute;
+
+    left: 1em;
+    right: 1em;
+    bottom: 1em;
+
     font-style: italic;
 }
-
-.widget.product_list > div > div:last-child > p:first-child > img {
+.widget.product_list > div > div.user > img {
     margin-right: 0.5em;
 }
