@@ -49,7 +49,7 @@
     padding-bottom: 0.5em;
 }
 
-.widget.product_list > div > div:last-child > p:last-child {
+.widget.product_list > div > div:last-child > p:first-child {
     font-style: italic;
 }
 
