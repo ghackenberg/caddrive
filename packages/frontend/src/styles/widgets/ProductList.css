@@ -15,10 +15,14 @@
 
 /* Item */
 
-.widget.product_list > div {
+.widget.product_list > a {
+    display: block;
+
     position: relative;
 
     background-color: rgb(245, 245, 245);
+
+    color: black;
 
     max-width: 42em;
 
@@ -30,7 +34,7 @@
  
     cursor: pointer;
 }
-.widget.product_list > div:hover {
+.widget.product_list > a:hover {
     background-color: rgb(230, 230, 230);
 
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.1);
@@ -38,7 +42,7 @@
 
 /* Item model */
 
-.widget.product_list > div > div.model {
+.widget.product_list > a > div.model {
     background-color: rgb(215, 215, 215);
     background-size: cover;
     background-position: center;
@@ -51,16 +55,47 @@
 
 /* Item product */
 
-.widget.product_list > div > div.product {
+.widget.product_list > a > div.product {
     padding-top: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
-    padding-bottom: 3em;
+    padding-bottom: 5.5em;
+}
+
+/* Item count */
+
+.widget.product_list > a > div.count {
+    position: absolute;
+
+    left: 1em;
+    right: 1em;
+    bottom: 3.5em;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+}
+
+.widget.product_list > a > div.count::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 1em;
+
+    background-image: linear-gradient(to right, rgba(245, 245, 245, 0), rgba(245, 245, 245, 1));
+}
+.widget.product_list > a:hover > div.count::after {
+    background-image: linear-gradient(to right, rgba(230, 230, 230, 0), rgba(230, 230, 230, 1));
 }
 
 /* Item user */
 
-.widget.product_list > div > div.user {
+.widget.product_list > a > div.user {
     position: absolute;
 
     left: 1em;
@@ -68,7 +103,29 @@
     bottom: 1em;
 
     font-style: italic;
+
+    white-space: nowrap;
+
+    overflow: hidden;
 }
-.widget.product_list > div > div.user > img {
+
+.widget.product_list > a > div.user::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 1em;
+
+    background-image: linear-gradient(to right, rgba(245, 245, 245, 0), rgba(245, 245, 245, 1));
+}
+.widget.product_list > a:hover > div.user::after {
+    background-image: linear-gradient(to right, rgba(230, 230, 230, 0), rgba(230, 230, 230, 1));
+}
+
+.widget.product_list > a > div.user > img {
     margin-right: 0.5em;
 }

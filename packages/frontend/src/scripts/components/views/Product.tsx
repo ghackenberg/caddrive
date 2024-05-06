@@ -4,7 +4,6 @@ import { NavLink } from 'react-router-dom'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
-import { useAsyncHistory } from '../../hooks/history'
 import { useProducts } from '../../hooks/list'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductImageWidget } from '../widgets/ProductImage'
@@ -15,10 +14,6 @@ import { LoadingView } from './Loading'
 import ProductIcon from '/src/images/product.png'
 
 export const ProductView = () => {
-
-    // HOOKS
-
-    const { push } = useAsyncHistory()
     
     // CONTEXTS
     
@@ -71,17 +66,27 @@ export const ProductView = () => {
                         <div className='main'>
                             <div className='widget product_list'>
                                 {products.reverse().map(product => (
-                                    <div key={product.productId} onClick={() => push(`/products/${product.productId}`)}>
+                                    <NavLink key={product.productId} to={`/products/${product.productId}`}>
                                         <ProductImageWidget productId={product.productId}/>
                                         <div className="product">
-                                            <h2>{product.name}</h2>
-                                            <p>{product.description}</p>
+                                            <h2>
+                                                {product.name}
+                                            </h2>
+                                            <p>
+                                                {product.description}
+                                            </p>
+                                        </div>
+                                        <div className="count">
+                                            <span className="badge">{product.versionCount} versions</span>
+                                            <span className="badge">{product.openIssueCount} issues</span>
+                                            <span className="badge">{product.openMilestoneCount} milestones</span>
+                                            <span className="badge">{product.memberCount} members</span>
                                         </div>
                                         <div className="user">
                                             <ProductUserPicture class='icon small round' productId={product.productId} userId={product.userId}/>
                                             <ProductUserName productId={product.productId} userId={product.userId}/>
                                         </div>
-                                    </div>
+                                    </NavLink>
                                 ))}
                             </div>
                         </div>
