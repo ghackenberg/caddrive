@@ -82,12 +82,27 @@ export const ProductSettingView = () => {
         }
     }
 
+    async function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        if (confirm('Do you really want to delete the product?')) {
+            await ProductClient.deleteProduct(productId)
+            await goBack()
+        }
+    }
+
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
         { name: 'left', text: 'Form view', image: LeftIcon },
         { name: 'right', text: 'Model view', image: RightIcon }
     ]
+
+    const isNew = productId == 'new'
+    const isManager = contextUser && members && members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1
+    const isOwner = contextUser && product && contextUser.userId == product.userId
+
+    const canSave = contextUser && (isNew || isManager)
+    const canDelete = isOwner
 
     // RETURN
 
@@ -112,13 +127,27 @@ export const ProductSettingView = () => {
                                     <TextInput label='Description' placeholder='Type description' value={description} change={setDescription} required/>
                                     <BooleanInput label='Public' value={_public} change={setPublic}/>
                                     {contextUser ? (
-                                        (productId == 'new' || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1) ? (
-                                            <ButtonInput value='Save'/>
-                                        ) : (
-                                            <ButtonInput value='Save' badge='requires role' disabled={true}/>
-                                        )
+                                        <>
+                                            {canSave ? (
+                                                <ButtonInput value='Save'/>
+                                            ) : (
+                                                <ButtonInput value='Save' badge='requires role' disabled={true}/>
+                                            )}
+                                            {!isNew && (
+                                                canDelete ? (
+                                                    <ButtonInput value='Delete' class='red' click={handleDelete}/>
+                                                ) : (
+                                                    <ButtonInput value='Delete' class='red' badge='requires owner' disabled={true}/>
+                                                )
+                                            )}
+                                        </>
                                     ) : (
-                                        <ButtonInput value='Save' badge='requires login' disabled={true}/>
+                                        <>
+                                            <ButtonInput value='Save' badge='requires login' disabled={true}/>
+                                            {!isNew && (
+                                                <ButtonInput value='Delete' class='red' badge='requires login' disabled={true}/>
+                                            )}
+                                        </>
                                     )}
                                 </form>
                             </div>
