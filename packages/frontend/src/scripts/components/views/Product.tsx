@@ -77,9 +77,9 @@ export const ProductView = () => {
                                             </p>
                                         </div>
                                         <div className="count">
-                                            {product.versionCount > 0 && <span className="badge">{product.versionCount} versions</span>}
-                                            {product.openIssueCount > 0 && <span className="badge">{product.openIssueCount} issues</span>}
-                                            {product.openMilestoneCount > 0 && <span className="badge">{product.openMilestoneCount} milestones</span>}
+                                            {product.versionCount > 0 && <span className="badge">{product.versionCount} version{product.versionCount > 1 && 's'}</span>}
+                                            {product.openIssueCount > 0 && <span className="badge">{product.openIssueCount} issue{product.openIssueCount > 1 && 's'}</span>}
+                                            {product.openMilestoneCount > 0 && <span className="badge">{product.openMilestoneCount} milestone{product.openMilestoneCount > 1 && 's'}</span>}
                                             {product.memberCount > 1 && <span className="badge">{product.memberCount} members</span>}
                                         </div>
                                         <div className="user">
