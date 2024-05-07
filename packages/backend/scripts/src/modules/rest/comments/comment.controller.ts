@@ -30,7 +30,7 @@ export class CommentController implements CommentREST {
         @Param('productId') productId: string,
         @Param('issueId') issueId: string
     ): Promise<CommentRead[]> {
-        await canFindCommentOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        await canFindCommentOrFail(this.request.user, productId, issueId)
         return this.commentService.findComments(productId, issueId)
     }
 
@@ -44,7 +44,7 @@ export class CommentController implements CommentREST {
         @Param('issueId') issueId: string,
         @Body() data: CommentCreate
     ): Promise<CommentRead> {
-        await canCreateCommentOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        await canCreateCommentOrFail(this.request.user, productId, issueId)
         return this.commentService.addComment(productId, issueId, data)
     }
 
@@ -58,7 +58,7 @@ export class CommentController implements CommentREST {
         @Param('issueId') issueId: string,
         @Param('commentId') commentId: string
     ): Promise<CommentRead> {
-        await canReadCommentOrFail(this.request.user && this.request.user.userId, productId, issueId, commentId)
+        await canReadCommentOrFail(this.request.user, productId, issueId, commentId)
         return this.commentService.getComment(productId, issueId, commentId)
     }
 
@@ -74,7 +74,7 @@ export class CommentController implements CommentREST {
         @Param('commentId') commentId: string,
         @Body() data: CommentUpdate
     ): Promise<CommentRead> {
-        await canUpdateCommentOrFail(this.request.user && this.request.user.userId, productId, issueId, commentId)
+        await canUpdateCommentOrFail(this.request.user, productId, issueId, commentId)
         return this.commentService.updateComment(productId, issueId, commentId, data)
     }
 
@@ -88,7 +88,7 @@ export class CommentController implements CommentREST {
         @Param('issueId') issueId: string,
         @Param('commentId') commentId: string
     ): Promise<CommentRead> {
-        await canDeleteCommentOrFail(this.request.user && this.request.user.userId, productId, issueId, commentId)
+        await canDeleteCommentOrFail(this.request.user, productId, issueId, commentId)
         return this.commentService.deleteComment(productId, issueId, commentId)
     }
 }

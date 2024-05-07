@@ -34,7 +34,7 @@ export class ProductController implements ProductREST {
     async addProduct(
         @Body() data: ProductCreate
     ): Promise<ProductRead> {
-        await canCreateProductOrFail(this.request.user && this.request.user.userId)
+        await canCreateProductOrFail(this.request.user)
         return this.productService.addProduct(data)
     }
 
@@ -44,7 +44,7 @@ export class ProductController implements ProductREST {
     async getProduct(
         @Param('productId') productId: string
     ): Promise<ProductRead> {
-        await canReadProductOrFail(this.request.user && this.request.user.userId, productId)
+        await canReadProductOrFail(this.request.user, productId)
         return this.productService.getProduct(productId)
     }
 
@@ -56,7 +56,7 @@ export class ProductController implements ProductREST {
         @Param('productId') productId: string,
         @Body() data: ProductUpdate
     ): Promise<ProductRead> {
-        await canUpdateProductOrFail(this.request.user && this.request.user.userId, productId)
+        await canUpdateProductOrFail(this.request.user, productId)
         return this.productService.updateProduct(productId, data)
     }
 
@@ -66,7 +66,7 @@ export class ProductController implements ProductREST {
     async deleteProduct(
         @Param('productId') productId: string
     ): Promise<ProductRead> {
-        await canDeleteProductOrFail(this.request.user && this.request.user.userId, productId)
+        await canDeleteProductOrFail(this.request.user, productId)
         return this.productService.deleteProduct(productId)
     }
 }

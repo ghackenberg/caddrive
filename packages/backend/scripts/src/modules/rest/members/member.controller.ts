@@ -25,7 +25,7 @@ export class MemberController implements MemberREST {
     async findMembers(
         @Param('productId') productId: string
     ): Promise<MemberRead[]> {
-        await canFindMemberOrFail(this.request.user && this.request.user.userId, productId)
+        await canFindMemberOrFail(this.request.user, productId)
         return this.memberService.findMembers(productId)
     }
 
@@ -37,7 +37,7 @@ export class MemberController implements MemberREST {
         @Param('productId') productId: string,
         @Body() data: MemberCreate
     ): Promise<MemberRead> {
-        await canCreateMemberOrFail(this.request.user && this.request.user.userId, productId)
+        await canCreateMemberOrFail(this.request.user, productId)
         return this.memberService.addMember(productId, data)
     }
 
@@ -49,7 +49,7 @@ export class MemberController implements MemberREST {
         @Param('productId') productId: string,
         @Param('memberId') memberId: string
     ): Promise<MemberRead> {
-        await canReadMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
+        await canReadMemberOrFail(this.request.user, productId, memberId)
         return this.memberService.getMember(productId, memberId)
     }
 
@@ -63,7 +63,7 @@ export class MemberController implements MemberREST {
         @Param('memberId') memberId: string,
         @Body() data: MemberUpdate
     ): Promise<MemberRead> {
-        await canUpdateMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
+        await canUpdateMemberOrFail(this.request.user, productId, memberId)
         return this.memberService.updateMember(productId, memberId, data)
     }
 
@@ -75,7 +75,7 @@ export class MemberController implements MemberREST {
         @Param('productId') productId: string,
         @Param('memberId') memberId: string
     ): Promise<MemberRead> {
-        await canDeleteMemberOrFail(this.request.user && this.request.user.userId, productId, memberId)
+        await canDeleteMemberOrFail(this.request.user, productId, memberId)
         return this.memberService.deleteMember(productId, memberId)
     }
 }

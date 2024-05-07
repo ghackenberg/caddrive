@@ -24,12 +24,20 @@ export class ProductService implements ProductREST {
             if (_public == 'true') {
                 where = { public: true, deleted: IsNull() }
             } else if (_public == 'false') {
-                where = { public: false, members: [ { userId, deleted: IsNull() } ], deleted: IsNull() }
+                if (this.request.user.admin) {
+                    where = { public: false, deleted: IsNull() }
+                } else {
+                    where = { public: false, members: [ { userId, deleted: IsNull() } ], deleted: IsNull() }
+                }
             } else {
-                where = [
-                    { public: true, deleted: IsNull() },
-                    { public: false, members: [ { userId, deleted: IsNull() } ], deleted: IsNull() }
-                ]   
+                if (this.request.user.admin) {
+                    where = { deleted: IsNull() }
+                } else {
+                    where = [
+                        { public: true, deleted: IsNull() },
+                        { public: false, members: [ { userId, deleted: IsNull() } ], deleted: IsNull() }
+                    ]
+                }
             }
         } else {
             if (_public == 'true') {

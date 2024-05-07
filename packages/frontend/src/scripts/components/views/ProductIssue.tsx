@@ -144,7 +144,7 @@ export const ProductIssueView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.userId).length == 1 ? (
+                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
                                             <strong>New</strong> issue
                                         </NavLink>

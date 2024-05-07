@@ -152,7 +152,7 @@ export const ProductMilestoneSettingView = () => {
                                     <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={updateStart} required/>
                                     <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={updateEnd} required/>
                                     {contextUser ? (
-                                        (productId == 'new' || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1) ? (
+                                        contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                             <ButtonInput value='Save'/>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>

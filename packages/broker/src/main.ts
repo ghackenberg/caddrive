@@ -8,7 +8,7 @@ import { exec } from 'mqtt-pattern'
 import { IsNull } from 'typeorm'
 import ws from 'ws'
 
-import { ProductMessage } from 'productboard-common'
+import { ProductMessage, UserMessage } from 'productboard-common'
 import { Database, compileProductMessage, compileUserMessage } from 'productboard-database'
 
 type Index<T> = { [key: string]: T }
@@ -23,6 +23,7 @@ const NET_PORT = 3003
 const HTTP_PORT = 3004
 
 const CLIENT_USER_IDS: Index<string> = {} // Remember user ID of each MQTT client
+const USER_ADMINS: Index<boolean> = {} // Remember user admin flag of each MQTT client
 const PRODUCT_PUBLIC: Index<boolean> = {} // Remember product public flag
 const PRODUCT_MEMBERS: Index<Index<boolean>> = {} // Remember product members list
 
@@ -71,7 +72,9 @@ async function boot() {
 
     aedes.authenticate = async (client, username, _password, callback) => {
         try {
+
             console.log('authenticate', client.id)
+
             if (username) {
                 // Load JWT public key from Nest.js backend if necessary!
                 !JWK_PUBLIC_KEY && await loadJWK()
@@ -82,6 +85,11 @@ async function boot() {
                 const userId = payload.userId
                 // Remember user ID of MQTT client
                 CLIENT_USER_IDS[client.id] = userId
+                // Remember user admin flag
+                if (userId && !(userId in USER_ADMINS)) {
+                    const user = await Database.get().userRepository.findOneBy({ userId })
+                    USER_ADMINS[userId] = !user || user.admin
+                }
                 // Allow authenticate
                 callback(null, true)
             } else {
@@ -91,7 +99,9 @@ async function boot() {
                 callback(null, true)
             }
         } catch (e) {
+
             console.error('Authenticate exception', e)
+
             // Remember user ID of MQTT client
             CLIENT_USER_IDS[client.id] = null
             // Allow authenticate
@@ -103,12 +113,15 @@ async function boot() {
 
     aedes.authorizeSubscribe = async (client, subscription, callback) => {
         try {
+
             console.log('authorizeSubscribe', client.id, subscription.topic)
+
             // User topics do not require any further action
             const userMatch = exec('/users/+userId', subscription.topic)
             if (userMatch) {
                 // Parse topic
                 const userId = userMatch.userId
+
                 // Schedule initialization
                 setTimeout(async () => {
                     const users = await Database.get().userRepository.findBy({ userId, deleted: IsNull() })
@@ -126,19 +139,23 @@ async function boot() {
                         }
                     })
                 }, 0)
+
                 // Allow subscribe
                 return callback(null, subscription)
             }
+
             // For product topics, the product data has to be loaded
             const productMatch = exec('/products/+productId', subscription.topic)
             if (productMatch) {
                 // Parse topic
                 const productId = productMatch.productId
+
                 // Load product public
                 if (!(productId in PRODUCT_PUBLIC)) {
                     const product = await Database.get().productRepository.findOneByOrFail({ productId, deleted: IsNull() })
                     PRODUCT_PUBLIC[productId] = product.public
                 }
+
                 // Load product members
                 if (!(productId in PRODUCT_MEMBERS)) {
                     const members = await Database.get().memberRepository.findBy({ productId, deleted: IsNull() })
@@ -147,9 +164,10 @@ async function boot() {
                         PRODUCT_MEMBERS[productId][member.userId] = true
                     }
                 }
+
                 // Schedule initialization
                 const userId = CLIENT_USER_IDS[client.id]
-                if (PRODUCT_PUBLIC[productId] || PRODUCT_MEMBERS[productId][userId]) {
+                if (USER_ADMINS[userId] || PRODUCT_PUBLIC[productId] || PRODUCT_MEMBERS[productId][userId]) {
                     setTimeout(async () => {
                         const products = await Database.get().productRepository.findBy({ productId, deleted: IsNull() })
                         const members = await Database.get().memberRepository.findBy({ productId, deleted: IsNull() })
@@ -172,35 +190,59 @@ async function boot() {
                         })
                     }, 0)
                 }
+
                 // Allow subscribe
                 return callback(null, subscription)
             }
+
             // Deny subscribe
             return callback(new Error('Topic does not exist'), null)
         } catch (e) {
+
             console.error('Authorize subscribe exception', e)
+
             // Deny subscribe
             return callback(e, null)
         }
     }
     
     aedes.authorizePublish = async (client, packet, callback) => {
+
         console.log('authorizePublish', client.id, packet.topic)
+
         // Only backend can publish messages!
         if (CLIENT_USER_IDS[client.id] == 'backend') {
+
             // Allow publish
             callback(null)
+
+            // Update user admin
+            const userMatch = exec('/users/+userId', packet.topic)
+            if (userMatch) {
+                // Parse topic and payload
+                const userId = userMatch.userId
+                const userMessage = JSON.parse(packet.payload.toString()) as UserMessage
+
+                // Update user asdmin
+                if (userMessage.users) {
+                    const user = userMessage.users[0]
+                    USER_ADMINS[userId] = user.admin
+                }
+            }
+
             // Update product public
             const productMatch = exec('/products/+productId', packet.topic)
             if (productMatch) {
                 // Parse topic and payload
                 const productId = productMatch.productId
                 const productMessage = JSON.parse(packet.payload.toString()) as ProductMessage
+
                 // Update product public
                 if (productMessage.products) {
                     const product = productMessage.products[0]
                     PRODUCT_PUBLIC[productId] = product.public
                 }
+
                 // Update product members
                 if (productId in PRODUCT_MEMBERS && productMessage.members) {
                     for (const member of productMessage.members) {
@@ -208,6 +250,7 @@ async function boot() {
                     }
                 }
             }
+
         } else {
             // Deny publish
             callback(new Error('You are not allowed to publish'))
@@ -215,31 +258,43 @@ async function boot() {
     }
 
     aedes.authorizeForward = (client, packet) => {
+
         console.log('authorizeForward', client.id, packet.topic)
+
         // User topics can be forwarded without further checks
         const userMatch = exec('/users/+userId', packet.topic)
         if (userMatch) {
             // Allow forward
             return packet
         }
+
         // Product topics have to be checked more carefully
         const productMatch = exec('/products/+productId', packet.topic)
         if (productMatch) {
-            // Check product public
+            // Get IDs
+            const userId = CLIENT_USER_IDS[client.id]
             const productId = productMatch.productId
+
+            // Check user admin
+            if (USER_ADMINS[userId]) {
+                // Allow forward
+                return packet
+            }
+            // Check product public
             if (PRODUCT_PUBLIC[productId]) {
                 // Allow forward
                 return packet
             }
             // Check product members
-            const userId = CLIENT_USER_IDS[client.id]
             if (PRODUCT_MEMBERS[productId][userId]) {
                 // Allow forward
                 return packet
             }
+
             // Deny forward
             return null
         }
+
         // Deny forward
         return null
     }
@@ -247,16 +302,24 @@ async function boot() {
     // MQTT Broker - Events
 
     aedes.on('subscribe', (subscriptions, client) => {
+
         console.log('subscribe', client.id, subscriptions[0].topic)
+
     })
     aedes.on('unsubscribe', (unsubscriptions, client) => {
+
         console.log('unsubscribe', client.id, unsubscriptions[0])
+
     })
     aedes.on('publish', (packet, client) => {
+
         client && console.log('publish', client.id, packet.topic)
+
     })
     aedes.on('clientDisconnect', client => {
+
         console.log('clientDisconnect', client.id)
+
         delete CLIENT_USER_IDS[client.id]
     })
 
@@ -264,14 +327,18 @@ async function boot() {
 
     const netServer = net.createServer(socket => aedes.handle(socket, undefined))
     netServer.listen(NET_PORT, () => {
+
         console.log('NET server listening')
+
     })
 
     // HTTP server
 
     const httpServer = http.createServer()
     httpServer.listen(HTTP_PORT, () => {
+
         console.log('HTTP server listening')
+
     })
 
     // WebSocket server

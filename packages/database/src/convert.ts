@@ -22,7 +22,8 @@ export async function convertUser(user: UserEntity, full: boolean): Promise<User
         email: full ? user.email : null,
         consent: user.consent,
         name: user.name,
-        emailNotification: user.emailNotification
+        emailNotification: user.emailNotification,
+        admin: user.admin
     }
 }
 

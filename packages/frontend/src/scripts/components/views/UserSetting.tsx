@@ -102,7 +102,7 @@ export const UserSettingView = () => {
                                     <BooleanInput label='Email notification' value={emailNotification} change={setEmailNotification}/>
                                 )}
                                 {contextUser ? (
-                                    userId == contextUser.userId ? (
+                                    contextUser.admin || userId == contextUser.userId ? (
                                         <ButtonInput value='Save'/>
                                     ) : (
                                         <ButtonInput value='Save' badge='requires permission' disabled={true}/>

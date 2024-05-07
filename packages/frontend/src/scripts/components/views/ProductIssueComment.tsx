@@ -156,7 +156,7 @@ export const ProductIssueCommentView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.userId).length == 1 ? (
+                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/${issueId}/settings`} className='button fill gray right'>
                                             <strong>Edit</strong> issue
                                         </NavLink>

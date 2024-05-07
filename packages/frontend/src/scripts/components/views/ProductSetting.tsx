@@ -101,8 +101,8 @@ export const ProductSettingView = () => {
     const isManager = contextUser && members && members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1
     const isOwner = contextUser && product && contextUser.userId == product.userId
 
-    const canSave = contextUser && (isNew || isManager)
-    const canDelete = isOwner
+    const canSave = contextUser && (contextUser.admin || isNew || isManager)
+    const canDelete = contextUser && (contextUser.admin || isOwner)
 
     // RETURN
 

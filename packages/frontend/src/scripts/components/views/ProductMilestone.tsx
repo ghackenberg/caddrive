@@ -112,7 +112,7 @@ export const ProductMilestoneView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
                                             <strong>New</strong> milestone
                                         </NavLink>

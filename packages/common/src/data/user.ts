@@ -28,4 +28,6 @@ export class UserRead extends UserCreate {
 
     @ApiProperty()
     email: string
+    @ApiProperty()
+    admin?: boolean
 }

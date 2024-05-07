@@ -31,7 +31,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         @Query('productId') productId?: string,
         @Query('query') query?: string
     ): Promise<UserRead[]> {
-        await canFindUserOrFail(this.request.user && this.request.user.userId, productId, query)
+        await canFindUserOrFail(this.request.user, productId, query)
         return this.userService.findUsers(productId, query)
     }
 
@@ -41,7 +41,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     async getUser(
         @Param('userId') userId: string
     ): Promise<UserRead> {
-        await canReadUserOrFail(this.request.user && this.request.user.userId, userId)
+        await canReadUserOrFail(this.request.user, userId)
         return this.userService.getUser(userId)
     }
 
@@ -65,7 +65,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
         @Body('data') data: string,
         @UploadedFile() file?: Express.Multer.File
     ): Promise<UserRead> {
-        await canUpdateUserOrFail(this.request.user && this.request.user.userId, userId)
+        await canUpdateUserOrFail(this.request.user, userId)
         return this.userService.updateUser(userId, JSON.parse(data), file)
     }
 
@@ -75,7 +75,7 @@ export class UserController implements UserREST<string, Express.Multer.File> {
     async deleteUser(
         @Param('userId') userId: string
     ): Promise<UserRead> {
-        await canDeleteUserOrFail(this.request.user && this.request.user.userId, userId)
+        await canDeleteUserOrFail(this.request.user, userId)
         return this.userService.deleteUser(userId)
     }
 }

@@ -28,7 +28,7 @@ export class IssueController implements IssueREST {
     async findIssues(
         @Param('productId') productId: string
     ): Promise<IssueRead[]> {
-        await canReadProductOrFail(this.request.user && this.request.user.userId, productId)
+        await canReadProductOrFail(this.request.user, productId)
         return this.issueService.findIssues(productId)
     }
 
@@ -40,7 +40,7 @@ export class IssueController implements IssueREST {
         @Param('productId') productId: string,
         @Body() data: IssueCreate
     ): Promise<IssueRead> {
-        await canCreateIssueOrFail(this.request.user && this.request.user.userId, productId)
+        await canCreateIssueOrFail(this.request.user, productId)
         return this.issueService.addIssue(productId, data)
     }  
 
@@ -52,7 +52,7 @@ export class IssueController implements IssueREST {
         @Param('productId') productId: string,
         @Param('issueId') issueId: string
     ): Promise<IssueRead> {
-        await canReadIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        await canReadIssueOrFail(this.request.user, productId, issueId)
         return this.issueService.getIssue(productId, issueId)
     } 
 
@@ -66,7 +66,7 @@ export class IssueController implements IssueREST {
         @Param('issueId') issueId: string,
         @Body() data: IssueUpdate
     ): Promise<IssueRead> {
-        await canUpdateIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        await canUpdateIssueOrFail(this.request.user, productId, issueId)
         return this.issueService.updateIssue(productId, issueId, data)
     }
 
@@ -77,7 +77,7 @@ export class IssueController implements IssueREST {
         @Param('productId') productId: string,
         @Param('issueId') issueId: string
     ): Promise<IssueRead> {
-        await canDeleteIssueOrFail(this.request.user && this.request.user.userId, productId, issueId)
+        await canDeleteIssueOrFail(this.request.user, productId, issueId)
         return this.issueService.deleteIssue(productId, issueId)
     } 
 }

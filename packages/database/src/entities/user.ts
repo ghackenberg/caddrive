@@ -27,8 +27,10 @@ export class UserEntity {
     consent: boolean
     @Column({ nullable: true })
     name: string
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     emailNotification: boolean
+    @Column({ nullable: true })
+    admin: boolean
 
     @OneToMany(() => ProductEntity, product => product.user)
     products: ProductEntity[]

@@ -27,7 +27,7 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
     async findAttachments(
         @Param('productId') productId: string
     ): Promise<AttachmentRead[]> {
-        await canFindAttachmentOrFail(this.request.user.userId, productId)
+        await canFindAttachmentOrFail(this.request.user, productId)
         return this.service.findAttachments(productId)
     }
 
@@ -51,7 +51,7 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         @Body('data') data: string,
         @UploadedFile() file: Express.Multer.File
     ): Promise<AttachmentRead> {
-        await canCreateAttachmentOrFail(this.request.user.userId, productId)
+        await canCreateAttachmentOrFail(this.request.user, productId)
         return this.service.addAttachment(productId, JSON.parse(data), file)
     }
 
@@ -63,7 +63,7 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         @Param('productId') productId: string,
         @Param('attachmentId') attachmentId: string
     ): Promise<AttachmentRead> {
-        await canReadAttachmentOrFail(this.request.user.userId, productId, attachmentId)
+        await canReadAttachmentOrFail(this.request.user, productId, attachmentId)
         return this.service.getAttachment(productId, attachmentId)
     }
 
@@ -101,7 +101,7 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         @Body('data') data: string,
         @UploadedFile() file: Express.Multer.File
     ): Promise<AttachmentRead> {
-        await canUpdateAttachmentOrFail(this.request.user.userId, productId, attachmentId)
+        await canUpdateAttachmentOrFail(this.request.user, productId, attachmentId)
         return this.service.updateAttachment(productId, attachmentId, JSON.parse(data), file)
     }
 
@@ -113,7 +113,7 @@ export class AttachmentController implements AttachmentREST<string, string, Expr
         @Param('productId') productId: string,
         @Param('attachmentId') attachmentId: string
     ): Promise<AttachmentRead> {
-        await canDeleteAttachmentOrFail(this.request.user.userId, productId, attachmentId)
+        await canDeleteAttachmentOrFail(this.request.user, productId, attachmentId)
         return this.service.deleteAttachment(productId, attachmentId)
     }
 }

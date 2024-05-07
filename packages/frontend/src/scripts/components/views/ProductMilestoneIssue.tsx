@@ -178,7 +178,7 @@ export const ProductMilestoneIssueView = () => {
                         <div>
                             <div className='header'>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
                                             <strong>Edit</strong> milestone
                                         </NavLink>
@@ -213,7 +213,7 @@ export const ProductMilestoneIssueView = () => {
                                     </span>
                                 </p>
                                 {contextUser ? (
-                                    members.filter(member => member.userId == contextUser.userId).length == 1 ? (
+                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
                                             <strong>New</strong> issue
                                         </NavLink>

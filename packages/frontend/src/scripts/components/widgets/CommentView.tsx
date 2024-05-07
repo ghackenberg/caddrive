@@ -289,11 +289,11 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     const save = commentId ? update : <>{add} | {issue.state == 'open' ? close : open}</>
     const toggle = mode == Mode.VIEW ? edit : (mode == Mode.PREVIEW ? <>{edit} | preview | {cancel} | {save}</> : <>edit | {preview} | {cancel} | {save}</>) 
-    const action = contextUser && comment && contextUser.userId == comment.userId ? <>({toggle})</> : <></>
+    const action = contextUser && comment && (contextUser.admin || contextUser.userId == comment.userId) ? <>({toggle})</> : <></>
 
     const parts = (mode == Mode.VIEW && partsView) || (mode == Mode.PREVIEW && partsEdit) || []
 
-    const disabled = !members || !userId || members.filter(member => member.userId == userId).length == 0
+    const disabled = !members || !userId || (!contextUser.admin && members.filter(member => member.userId == userId).length == 0)
     const placeholder = 'Enter your comment here.'
 
     // RETURN

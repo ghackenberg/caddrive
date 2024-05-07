@@ -4,57 +4,64 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common'
 
 import { In, IsNull } from 'typeorm'
 
+import { UserRead } from 'productboard-common'
 import { getAttachmentOrFail, getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getVersionOrFail } from 'productboard-database'
 
 // USER
 
-export async function canFindUserOrFail(_userId: string, _productId: string, _query: string) {
+export async function canFindUserOrFail(_user: UserRead, _productId: string, _query: string) {
     // empty
 }
-export async function canCreateUserOrFail(_userId: string) {
+export async function canCreateUserOrFail(_user: UserRead) {
     throw new ForbiddenException()
 }
-export async function canReadUserOrFail(_userId: string, _otherUserId: string) {
+export async function canReadUserOrFail(_user: UserRead, _otherUserId: string) {
     // empty
 }
-export async function canUpdateUserOrFail(userId: string, otherUserId: string) {
-    if (userId != otherUserId) {
+export async function canUpdateUserOrFail(user: UserRead, otherUserId: string) {
+    if (!user || (!user.admin && user.userId != otherUserId)) {
         throw new ForbiddenException()
     }   
 }
-export async function canDeleteUserOrFail(userId: string, otherUserId: string) {
-    if (userId != otherUserId) {
+export async function canDeleteUserOrFail(user: UserRead, otherUserId: string) {
+    if (!user || (!user.admin && user.userId != otherUserId)) {
         throw new ForbiddenException()
     }   
 }
 
 // PRODUCT
 
-export async function canCreateProductOrFail(_userId: string) {
+export async function canCreateProductOrFail(_user: UserRead) {
     // empty
 }
-export async function canReadProductOrFail(userId: string, productId: string) {
+export async function canReadProductOrFail(user: UserRead, productId: string) {
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canUpdateProductOrFail(userId: string, productId: string) {
+export async function canUpdateProductOrFail(user: UserRead, productId: string) {
     await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canDeleteProductOrFail(userId: string, productId: string) {
+export async function canDeleteProductOrFail(user: UserRead, productId: string) {
     await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
@@ -62,45 +69,55 @@ export async function canDeleteProductOrFail(userId: string, productId: string) 
 
 // MEMBER
 
-export async function canFindMemberOrFail(userId: string, productId: string) {
+export async function canFindMemberOrFail(user: UserRead, productId: string) {
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else if (!product.public) {
         throw new ForbiddenException()
     }
 }
-export async function canCreateMemberOrFail(userId: string, productId: string) {
+export async function canCreateMemberOrFail(user: UserRead, productId: string) {
     await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canReadMemberOrFail(userId: string, productId: string, memberId: string) {
+export async function canReadMemberOrFail(user: UserRead, productId: string, memberId: string) {
     await getMemberOrFail({ productId, memberId, deleted: IsNull() }, NotFoundException)
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canUpdateMemberOrFail(userId: string, productId: string, memberId: string) {
+export async function canUpdateMemberOrFail(user: UserRead, productId: string, memberId: string) {
     await getMemberOrFail({ productId, memberId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canDeleteMemberOrFail(userId: string, productId: string, memberId: string) {
+export async function canDeleteMemberOrFail(user: UserRead, productId: string, memberId: string) {
     await getMemberOrFail({ productId, memberId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId: userId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: 'manager', deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
@@ -108,44 +125,54 @@ export async function canDeleteMemberOrFail(userId: string, productId: string, m
 
 // VERSION
 
-export async function canFindVersionOrFail(userId: string, productId: string) {
+export async function canFindVersionOrFail(user: UserRead, productId: string) {
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else if (!product.public) {
         throw new ForbiddenException()
     }
 }
-export async function canCreateVersionOrFail(userId: string, productId: string) {
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+export async function canCreateVersionOrFail(user: UserRead, productId: string) {
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canReadVersionOrFail(userId: string, productId: string, versionId: string) {
+export async function canReadVersionOrFail(user: UserRead, productId: string, versionId: string) {
     await getVersionOrFail({ productId, versionId, deleted: IsNull() }, NotFoundException)
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canUpdateVersionOrFail(userId: string, productId: string, versionId: string) {
+export async function canUpdateVersionOrFail(user: UserRead, productId: string, versionId: string) {
     await getVersionOrFail({ productId, versionId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canDeleteVersionOrFail(userId: string, productId: string, versionId: string) {
+export async function canDeleteVersionOrFail(user: UserRead, productId: string, versionId: string) {
     await getVersionOrFail({ productId, versionId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
@@ -153,59 +180,69 @@ export async function canDeleteVersionOrFail(userId: string, productId: string, 
 
 // FILE
 
-export async function canCreateFileOrFail(_userId: string, _fileId: string) {
+export async function canCreateFileOrFail(_user: UserRead, _fileId: string) {
     // empty
 }
-export async function canReadFileOrFail(_userId: string, _fileId: string) {
+export async function canReadFileOrFail(_user: UserRead, _fileId: string) {
     // empty
 }
-export async function canUpdateFileOrFail(_userId: string, _fileId: string) {
+export async function canUpdateFileOrFail(_user: UserRead, _fileId: string) {
     // empty
 }
-export async function canDeleteFileOrFail(_userId: string, _fileId: string) {
+export async function canDeleteFileOrFail(_user: UserRead, _fileId: string) {
     // empty
 }
 
 // ISSUE
 
-export async function canFindIssuenOrFail(userId: string, productId: string) {
+export async function canFindIssuenOrFail(user: UserRead, productId: string) {
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else if (!product.public) {
         throw new ForbiddenException()
     }
 }
-export async function canCreateIssueOrFail(userId: string, productId: string) {
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+export async function canCreateIssueOrFail(user: UserRead, productId: string) {
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canReadIssueOrFail(userId: string, productId: string, issueId: string) {
+export async function canReadIssueOrFail(user: UserRead, productId: string, issueId: string) {
     await getIssueOrFail({ productId, issueId, deleted: IsNull() }, NotFoundException)
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canUpdateIssueOrFail(userId: string, productId: string, issueId: string) {
+export async function canUpdateIssueOrFail(user: UserRead, productId: string, issueId: string) {
     await getIssueOrFail({ productId, issueId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canDeleteIssueOrFail(userId: string, productId: string, issueId: string) {
+export async function canDeleteIssueOrFail(user: UserRead, productId: string, issueId: string) {
     await getIssueOrFail({ productId, issueId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
@@ -213,48 +250,62 @@ export async function canDeleteIssueOrFail(userId: string, productId: string, is
 
 // COMMENT
 
-export async function canFindCommentOrFail(userId: string, productId: string, issueId: string) {
+export async function canFindCommentOrFail(user: UserRead, productId: string, issueId: string) {
     await getIssueOrFail({ productId, issueId, deleted: IsNull() }, NotFoundException)
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canCreateCommentOrFail(userId: string, productId: string, issueId: string) {
+export async function canCreateCommentOrFail(user: UserRead, productId: string, issueId: string) {
     await getIssueOrFail({ productId, issueId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canReadCommentOrFail(userId: string, productId: string, issueId: string, commentId: string) {
+export async function canReadCommentOrFail(user: UserRead, productId: string, issueId: string, commentId: string) {
     await getCommentOrFail({ productId, issueId, commentId, deleted: IsNull() }, NotFoundException)
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canUpdateCommentOrFail(userId: string, productId: string, issueId: string, commentId: string) {
-    await getCommentOrFail({ userId, productId, issueId, commentId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+export async function canUpdateCommentOrFail(user: UserRead, productId: string, issueId: string, commentId: string) {
+    const comment = await getCommentOrFail({ productId, issueId, commentId, deleted: IsNull() }, NotFoundException)
+    if (user) {
+        if (!user.admin) {
+            if (user.userId == comment.userId) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+            } else {
+                throw new ForbiddenException()
+            }
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canDeleteCommentOrFail(userId: string, productId: string, issueId: string, commentId: string) {
+export async function canDeleteCommentOrFail(user: UserRead, productId: string, issueId: string, commentId: string) {
     await getCommentOrFail({ productId, issueId, commentId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
@@ -262,44 +313,54 @@ export async function canDeleteCommentOrFail(userId: string, productId: string, 
 
 // ATTACHMENT
 
-export async function canFindAttachmentOrFail(userId: string, productId: string) {
+export async function canFindAttachmentOrFail(user: UserRead, productId: string) {
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else if (!product.public) {
         throw new ForbiddenException()
     }
 }
-export async function canCreateAttachmentOrFail(userId: string, productId: string) {
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+export async function canCreateAttachmentOrFail(user: UserRead, productId: string) {
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canReadAttachmentOrFail(userId: string, productId: string, attachmentId: string) {
+export async function canReadAttachmentOrFail(user: UserRead, productId: string, attachmentId: string) {
     await getAttachmentOrFail({ productId, attachmentId, deleted: IsNull() }, NotFoundException)
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canUpdateAttachmentOrFail(userId: string, productId: string, attachmentId: string) {
+export async function canUpdateAttachmentOrFail(user: UserRead, productId: string, attachmentId: string) {
     await getAttachmentOrFail({ productId, attachmentId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canDeleteAttachmentOrFail(userId: string, productId: string, attachmentId: string) {
+export async function canDeleteAttachmentOrFail(user: UserRead, productId: string, attachmentId: string) {
     await getAttachmentOrFail({ productId, attachmentId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
@@ -307,46 +368,56 @@ export async function canDeleteAttachmentOrFail(userId: string, productId: strin
 
 // MILESTONE
 
-export async function canFindMilestoneOrFail(userId: string, productId: string) {
+export async function canFindMilestoneOrFail(user: UserRead, productId: string) {
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canCreateMilestoneOrFail(userId: string, productId: string) {
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+export async function canCreateMilestoneOrFail(user: UserRead, productId: string) {
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canReadMilestoneOrFail(userId: string, productId: string, milestoneId: string) {
+export async function canReadMilestoneOrFail(user: UserRead, productId: string, milestoneId: string) {
     await getMilestoneOrFail({ productId, milestoneId, deleted: IsNull() }, NotFoundException)
     const product = await getProductOrFail({ productId, deleted: IsNull() }, NotFoundException)
     if (!product.public) {
-        if (userId) {
-            await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+        if (user) {
+            if (!user.admin) {
+                await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer', 'customer']), deleted: IsNull() }, ForbiddenException)
+            }
         } else {
             throw new ForbiddenException()
         }
     }
 }
-export async function canUpdateMilestoneOrFail(userId: string, productId: string, milestoneId: string) {
+export async function canUpdateMilestoneOrFail(user: UserRead, productId: string, milestoneId: string) {
     await getMilestoneOrFail({ productId, milestoneId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }
 }
-export async function canDeleteMilestoneOrFail(userId: string, productId: string, milestoneId: string) {
+export async function canDeleteMilestoneOrFail(user: UserRead, productId: string, milestoneId: string) {
     await getMilestoneOrFail({ productId, milestoneId, deleted: IsNull() }, NotFoundException)
-    if (userId) {
-        await getMemberOrFail({ productId, userId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+    if (user) {
+        if (!user.admin) {
+            await getMemberOrFail({ userId: user.userId, productId, role: In(['manager', 'engineer']), deleted: IsNull() }, ForbiddenException)
+        }
     } else {
         throw new ForbiddenException()
     }

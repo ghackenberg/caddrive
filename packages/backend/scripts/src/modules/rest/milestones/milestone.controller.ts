@@ -25,7 +25,7 @@ export class MilestoneController implements MilestoneREST {
     async findMilestones(
         @Param('productId') productId: string
     ): Promise<MilestoneRead[]> {
-        await canFindMilestoneOrFail(this.request.user && this.request.user.userId, productId)
+        await canFindMilestoneOrFail(this.request.user, productId)
         return this.milestoneService.findMilestones(productId)
     }   
 
@@ -37,7 +37,7 @@ export class MilestoneController implements MilestoneREST {
         @Param('productId') productId: string,
         @Body() data: MilestoneCreate
     ): Promise<MilestoneRead> {
-        await canCreateMilestoneOrFail(this.request.user && this.request.user.userId, productId)
+        await canCreateMilestoneOrFail(this.request.user, productId)
         return this.milestoneService.addMilestone(productId, data)
     }
     @Get(':milestoneId')
@@ -48,7 +48,7 @@ export class MilestoneController implements MilestoneREST {
         @Param('productId') productId: string,
         @Param('milestoneId') milestoneId: string
     ): Promise<MilestoneRead> {
-        await canReadMilestoneOrFail(this.request.user && this.request.user.userId, productId, milestoneId)
+        await canReadMilestoneOrFail(this.request.user, productId, milestoneId)
         return this.milestoneService.getMilestone(productId, milestoneId)
     }
     @Put(':milestoneId')
@@ -61,7 +61,7 @@ export class MilestoneController implements MilestoneREST {
         @Param('milestoneId') milestoneId: string,
         @Body() data: MilestoneUpdate
     ): Promise<MilestoneRead> {
-        await canUpdateMilestoneOrFail(this.request.user && this.request.user.userId, productId, milestoneId)
+        await canUpdateMilestoneOrFail(this.request.user, productId, milestoneId)
         return this.milestoneService.updateMilestone(productId, milestoneId, data)
     }
     @Delete(':milestoneId')
@@ -72,7 +72,7 @@ export class MilestoneController implements MilestoneREST {
         @Param('productId') productId: string,
         @Param('milestoneId') milestoneId: string
     ): Promise<MilestoneRead> {
-        await canDeleteMilestoneOrFail(this.request.user && this.request.user.userId, productId, milestoneId)
+        await canDeleteMilestoneOrFail(this.request.user, productId, milestoneId)
         return this.milestoneService.deleteMilestone(productId, milestoneId)
     }
 }

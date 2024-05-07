@@ -191,7 +191,7 @@ export const ProductMemberSettingView = () => {
                                                 </div>
                                             </div>
                                             {contextUser ? (
-                                                members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                                contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                                     <ButtonInput value='Save'/>
                                                 ) : (
                                                     <ButtonInput value='Save' badge='requires role' disabled={true}/>

@@ -29,7 +29,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     async findVersions(
         @Param('productId') productId: string
     ): Promise<VersionRead[]> {
-        await canFindVersionOrFail(this.request.user && this.request.user.userId, productId)
+        await canFindVersionOrFail(this.request.user, productId)
         return this.versionService.findVersions(productId)
     }
 
@@ -61,7 +61,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @UploadedFiles() files: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<VersionRead> {
         const dataParsed = <VersionCreate> JSON.parse(data)
-        await canCreateVersionOrFail(this.request.user && this.request.user.userId, productId)
+        await canCreateVersionOrFail(this.request.user, productId)
         return this.versionService.addVersion(productId, dataParsed, files)
     }
 
@@ -73,7 +73,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @Param('productId') productId: string,
         @Param('versionId') versionId: string
     ): Promise<VersionRead> {
-        await canReadVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
+        await canReadVersionOrFail(this.request.user, productId, versionId)
         return this.versionService.getVersion(productId, versionId)
     }
 
@@ -106,7 +106,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @Body('data') data: string,
         @UploadedFiles() files?: { model: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<VersionRead> {
-        await canUpdateVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
+        await canUpdateVersionOrFail(this.request.user, productId, versionId)
         return this.versionService.updateVersion(productId, versionId, JSON.parse(data), files)
     }
 
@@ -118,7 +118,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @Param('productId') productId: string,
         @Param('versionId') versionId: string
     ): Promise<VersionRead> {
-        await canDeleteVersionOrFail(this.request.user && this.request.user.userId, productId, versionId)
+        await canDeleteVersionOrFail(this.request.user, productId, versionId)
         return this.versionService.deleteVersion(productId, versionId)
     }
 }

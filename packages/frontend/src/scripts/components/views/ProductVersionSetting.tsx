@@ -209,7 +209,7 @@ export const ProductVersionSettingView = () => {
                                         )}
                                     </GenericInput>
                                     {contextUser ? (
-                                        members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
+                                        contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
                                             blob ? (
                                                 <ButtonInput value='Save'/>
                                             ) : (
