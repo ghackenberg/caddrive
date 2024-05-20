@@ -293,7 +293,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     const parts = (mode == Mode.VIEW && partsView) || (mode == Mode.PREVIEW && partsEdit) || []
 
-    const disabled = !members || !userId || (!contextUser.admin && members.filter(member => member.userId == userId).length == 0)
+    const disabled = !members || !userId || !contextUser || (!contextUser.admin && members.filter(member => member.userId == userId).length == 0)
     const placeholder = 'Enter your comment here.'
 
     // RETURN
