@@ -32,7 +32,7 @@ function init() {
     // Forward message to handlers
     client.on('message', (topic, payload) => {
         const object = JSON.parse(payload.toString())
-        console.log(object)
+        //console.log(object)
         for (const pattern in handlers) {
             if (matches(pattern, topic)) {
                 for (const handler of handlers[pattern]) {
