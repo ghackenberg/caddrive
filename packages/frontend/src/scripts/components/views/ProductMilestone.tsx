@@ -10,7 +10,7 @@ import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useMilestones, useMembers } from '../../hooks/list'
-import { formatDateTime } from '../../functions/time'
+import { formatDateHourMinute } from '../../functions/time'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
 import { MilestoneProgressWidget } from '../widgets/MilestoneProgress'
@@ -67,12 +67,12 @@ export const ProductMilestoneView = () => {
         ) },
         { label: 'Start', class: 'nowrap center', content: milestone => (
             <span className='badge stroke'>
-                {formatDateTime(new Date(milestone.start))}
+                {formatDateHourMinute(new Date(milestone.start))}
             </span>
         ) },
         { label: 'End', class: 'nowrap center', content: milestone => (
             <span className='badge stroke'>
-                {formatDateTime(new Date(milestone.end))}
+                {formatDateHourMinute(new Date(milestone.end))}
             </span>
         ) },
         { label: 'Open', class: 'center', content: milestone => (

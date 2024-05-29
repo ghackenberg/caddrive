@@ -50,7 +50,7 @@ export function calculateActual(startDate: number, endDate: number, issues: Issu
         actual.push({ time: startDate, actual: 0 })
     }
     if (actual[actual.length - 1].time < endDate) {
-        actual.push({ time: endDate, actual: actual[actual.length - 1].actual})
+        actual.push({ time: Math.min(endDate, Date.now()), actual: actual[actual.length - 1].actual})
     }
 
     return actual

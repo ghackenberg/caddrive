@@ -12,7 +12,7 @@ import { UserContext } from '../../contexts/User'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useComments, useMembers } from '../../hooks/list'
 import { Part, collectParts } from '../../functions/markdown'
-import { formatDateTime } from '../../functions/time'
+import { formatDateHourMinute } from '../../functions/time'
 import { computePath } from '../../functions/path'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -177,7 +177,7 @@ export const ProductIssueCommentView = () => {
                                     <ProductUserPicture productId={productId} userId={issue.userId} class='icon small round'/>
                                     <span> </span>
                                     <ProductUserName productId={productId} userId={issue.userId}/>
-                                    <span> created this issue on <span className='date'>{formatDateTime(new Date(issue.created))}</span></span>
+                                    <span> created this issue on <span className='date'>{formatDateHourMinute(new Date(issue.created))}</span></span>
                                 </p>
                                 <p>
                                     <span className={`state badge ${issue.state == 'open' ? 'red' : 'green'}`}>

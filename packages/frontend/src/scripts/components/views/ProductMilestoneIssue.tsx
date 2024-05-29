@@ -12,7 +12,7 @@ import { useAsyncHistory } from '../../hooks/history'
 import { useMembers, useIssues } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { calculateActual } from '../../functions/burndown'
-import { formatDateTime } from '../../functions/time'
+import { formatDateHourMinute } from '../../functions/time'
 import { PartCount } from '../counts/Parts'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -200,16 +200,16 @@ export const ProductMilestoneIssueView = () => {
                                     <span> </span>
                                     <ProductUserName productId={productId} userId={milestone.userId}/>
                                     <span> created this milestone on </span>
-                                    <span className='date'>{formatDateTime(new Date(milestone.created))}</span>
+                                    <span className='date'>{formatDateHourMinute(new Date(milestone.created))}</span>
                                 </p>
                                 <p style={{color: 'gray'}}>
                                     <span>This milestone starts on</span>    
                                     <span className='badge stroke'>
-                                        {formatDateTime(new Date(milestone.start))}
+                                        {formatDateHourMinute(new Date(milestone.start))}
                                     </span>
                                     <span style={{marginLeft: '0.5em'}}>and ends on</span>  
                                     <span className='badge stroke'>
-                                        {formatDateTime(new Date(milestone.end))}
+                                        {formatDateHourMinute(new Date(milestone.end))}
                                     </span>
                                 </p>
                                 {contextUser ? (

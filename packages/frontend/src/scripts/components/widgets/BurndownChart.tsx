@@ -3,26 +3,126 @@ import { useState } from 'react'
 
 import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
-/*
+import { formatDate, formatDateHour, formatDateHourMinute, formatMonth } from '../../functions/time'
+
+function monthTickFormatter(time: number) {
+    return formatMonth(new Date(time))
+}
+
 function dateTickFormatter(time: number) {
     return formatDate(new Date(time))
 }
 
-function dateTimeTickFormatter(time: number) {
-    return formatDateTime(new Date(time))
+function dateHourTickFormatter(time: number) {
+    return formatDateHour(new Date(time))
 }
-*/
+
+function dateHourMinuteTickFormatter(time: number) {
+    return formatDateHourMinute(new Date(time))
+}
 
 export const BurndownChartWidget = (props: { start: number, end: number, total: number, actual: { time: number, actual: number }[] }) => {
     // CONSTANTS
 
-    const start = props.start
-    const end = props.end
+    let start = props.start
+    let end = props.end
+
+    const span = end - start
     const now = Date.now()
+
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+
+    let step: number
+
+    if (span <= 1000 * 60 * 60) {
+
+        step = 1000 * 60
+
+        startDate.setMinutes(startDate.getMinutes(), 0, 0)
+        start = startDate.getTime()
+
+        endDate.setMinutes(endDate.getMinutes() + 1, 0, 0)
+        end = endDate.getTime()
+
+    } else if (span <= 1000 * 60 * 60 * 24) {
+    
+        step = 1000 * 60 * 60
+
+        startDate.setHours(startDate.getHours(), 0, 0, 0)
+        start = startDate.getTime()
+
+        endDate.setHours(endDate.getHours() + 1, 0, 0, 0)
+        end = endDate.getTime()
+
+    } else if (span <= 1000 * 60 * 60 * 24 * 48) {
+
+        step = 1000 * 60 * 60 * 24
+
+        startDate.setDate(startDate.getDate())
+        startDate.setHours(0, 0, 0, 0)
+        start = startDate.getTime()
+
+        endDate.setDate(endDate.getDate() + 1)
+        endDate.setHours(0, 0, 0, 0)
+        end = endDate.getTime()
+
+    } else {
+
+        startDate.setMonth(startDate.getMonth(), 2)
+        startDate.setHours(0, 0, 0, 0)
+        start = startDate.getTime()
+
+        endDate.setMonth(endDate.getMonth() + 1, 2)
+        endDate.setHours(0, 0, 0, 0)
+        end = endDate.getTime()
+
+    }
+
     const total = props.total
     const actual = props.actual
 
     const padding = 50
+
+    const domain = [start, end]
+
+    const ticks = []
+    if (step) {
+        for (let i = start; i <= end; i += step) {
+            ticks.push(i)
+        }
+    } else {
+        while (startDate <= endDate) {
+            ticks.push(startDate.getTime())
+            startDate.setMonth(startDate.getMonth() + 1)
+        }
+    }
+
+    let tickFormatter: (timestamp: number) => string
+    if (step) {
+        if (step <= 1000 * 60) {
+            tickFormatter = dateHourMinuteTickFormatter
+        } else if (step <= 1000 * 60 * 60) {
+            tickFormatter = dateHourTickFormatter
+        } else {
+            tickFormatter = dateTickFormatter
+        }
+    } else {
+        tickFormatter = monthTickFormatter
+    }
+
+    let height: number
+    if (step) {
+        if (step <= 1000 * 60) {
+            height = 150
+        } else if (step <= 1000 * 60 * 60) {
+            height = 130
+        } else {
+            height = 90
+        }
+    } else {
+        height = 70
+    }
 
     // INITIAL STATES
 
@@ -35,8 +135,8 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
     // EFFECTS
 
     React.useEffect(() => {
-        setTarget([{ time: start, target: total }, { time: end, target: 0 }])
-    }, [start, end, total])
+        setTarget([{ time: props.start, target: total }, { time: props.end, target: 0 }])
+    }, [props.start, props.end, total])
 
     // RETURN
 
@@ -45,14 +145,14 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
             <ResponsiveContainer>
                 <LineChart>
                     <CartesianGrid/>
-                    <XAxis name='Time' dataKey='time' type='number' domain={[start, end]} scale='time' interval={0} angle={-45} textAnchor='end' padding={{left: padding, right: padding}}/>
+                    <XAxis name='Time' dataKey='time' type='number' scale='time' domain={domain} ticks={ticks} tickFormatter={tickFormatter} height={height} angle={-45} textAnchor='end' padding={{left: padding, right: padding}}/>
                     <YAxis name='Open issue count' dataKey='target' domain={[0, total]} allowDecimals={false} interval={0} tickFormatter={value => `${Math.round(value)}`} padding={{top: padding}}/>
                     <Legend/>
                     {now >= start && now <= end && (
                         <ReferenceLine x={now} label={{value: 'Now', position: now <= (start + end) / 2 ? 'right' : 'left', fill: 'black'}} stroke='gray' strokeWidth={2} strokeDasharray='6 6'/>
                     )}
-                    <ReferenceLine x={start} label={{value: 'Start', position: 'left', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
-                    <ReferenceLine x={end} label={{value: 'End', position: 'right', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
+                    <ReferenceLine x={props.start} label={{value: 'Start', position: 'left', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
+                    <ReferenceLine x={props.end} label={{value: 'End', position: 'right', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
                     <ReferenceLine y={total} label={{value: 'Total', position: 'top', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
                     <Line name='Target burndown' isAnimationActive={false} data={target} dataKey='target' stroke='green' strokeWidth={2} strokeDasharray='6 6' dot={{fill: 'rgb(215,215,215)', stroke: 'green', strokeDasharray: ''}}/>
                     <Line name='Actual burndown' isAnimationActive={false} data={actual} dataKey='actual' stroke='blue' strokeWidth={2} dot={{fill: 'blue', stroke: 'blue'}}/>

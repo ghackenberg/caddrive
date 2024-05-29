@@ -12,7 +12,7 @@ import { VersionContext } from '../../contexts/Version'
 import { useComment, useIssue } from '../../hooks/entity'
 import { useMembers, useVersions } from '../../hooks/list'
 import { collectParts, createProcessor } from '../../functions/markdown'
-import { formatDateTime } from '../../functions/time'
+import { formatDateHourMinute } from '../../functions/time'
 import { computePath } from '../../functions/path'
 import { ProductUserPicture } from '../values/ProductUserPicture'
 import { ProductUserName } from '../values/ProductUserName'
@@ -310,7 +310,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                     <p>
                         {comment ? (
                             <>
-                                <strong><ProductUserName userId={userId} productId={productId}/></strong> commented on {formatDateTime(new Date(comment.created))} {upload ? 'uploading ...' : action}
+                                <strong><ProductUserName userId={userId} productId={productId}/></strong> commented on {formatDateHourMinute(new Date(comment.created))} {upload ? 'uploading ...' : action}
                             </>
                         ) : (
                             <>
