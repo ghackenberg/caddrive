@@ -13,8 +13,7 @@ export const DateInput = (props: {class?: string, label: string, change?: (value
     const required = props.required
 
     function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-        console.log(event.currentTarget.value)
-        props.change && props.change(new Date(event.currentTarget.value))
+        props.change && props.change(new Date(event.currentTarget.valueAsNumber))
     }
     
     return (
