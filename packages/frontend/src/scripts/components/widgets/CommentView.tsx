@@ -323,7 +323,19 @@ export const CommentView = (props: { productId: string, issueId: string, comment
             <div className="body">
                 <div className="free"/>
                 <div className="text">
-                    {mode == Mode.VIEW && htmlView}
+                    {mode == Mode.VIEW && (
+                        textView ? htmlView : (
+                            comment.action == 'close' ? (
+                                <p>
+                                    <em>Issue closed without comment</em>
+                                </p>
+                            ) : (
+                                <p>
+                                    <em>Issue re-opened without comment</em>
+                                </p>
+                            )
+                        )
+                    )}
                     {mode == Mode.PREVIEW && htmlEdit}
                     {mode == Mode.EDIT && <textarea ref={textRef} value={textEdit} onFocus={handleFocus} onPaste={handlePaste} onChange={event => setTextEdit(event.currentTarget.value)} disabled={disabled || upload} placeholder={placeholder}/>}
                 </div>

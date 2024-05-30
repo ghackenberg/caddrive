@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 
 import { IssueRead } from 'productboard-common'
 
-import { IssueClient } from '../../clients/rest/issue'
+import { CommentClient } from '../../clients/rest/comment'
 import { UserContext } from '../../contexts/User'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
@@ -23,8 +23,9 @@ import { Column, Table } from '../widgets/Table'
 import { LoadingView } from './Loading'
 
 import IssueIcon from '/src/images/issue.png'
-import DeleteIcon from '/src/images/delete.png'
+import CloseIcon from '/src/images/close.png'
 import LeftIcon from '/src/images/list.png'
+import ReopenIcon from '/src/images/reopen.png'
 import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = () => {
@@ -100,15 +101,21 @@ export const ProductMilestoneIssueView = () => {
 
     // FUNCTIONS
 
-    async function deleteIssue(event: React.UIEvent, issue: IssueRead) {
-        // TODO handle unmount!
+    async function closeIssue(event: React.MouseEvent<HTMLAnchorElement>, issue: IssueRead) {
         event.stopPropagation()
-        if (confirm('Do you really want to delete this issue from this milestone?')) {
-            await IssueClient.updateIssue(productId, issue.issueId, { ...issue, milestoneId: null })
+        if (confirm('Do you really want to close this issue without comment?')) {
+            await CommentClient.addComment(productId, issue.issueId, { action: 'close', text: '' })
         }
     }
 
-    async function handleClickLink(event: React.UIEvent<HTMLAnchorElement>) {
+    async function reopenIssue(event: React.MouseEvent<HTMLAnchorElement>, issue: IssueRead) {
+        event.stopPropagation()
+        if (confirm('Do you really want to re-open this issue without comment?')) {
+            await CommentClient.addComment(productId, issue.issueId, { action: 'reopen', text: '' })
+        }
+    }
+
+    async function handleClickLink(event: React.MouseEvent<HTMLAnchorElement>) {
         event.preventDefault()
         const pathname = event.currentTarget.pathname
         const search = event.currentTarget.search
@@ -155,9 +162,15 @@ export const ProductMilestoneIssueView = () => {
             </span>
         ) },
         { label: '🛠️', class: 'center', content: issue => (
-            <a onClick={event => deleteIssue(event, issue)}>
-                <img src={DeleteIcon} className='icon medium pad'/>
-            </a>
+            issue.state == 'open' ? (
+                <a onClick={event => closeIssue(event, issue)} title='Close issue'>
+                    <img src={CloseIcon} className='icon medium pad'/>
+                </a>
+            ) : (
+                <a onClick={event => reopenIssue(event, issue)} title='Re-open issue'>
+                    <img src={ReopenIcon} className='icon medium pad'/>
+                </a>
+            )
         ) }
     ]
 

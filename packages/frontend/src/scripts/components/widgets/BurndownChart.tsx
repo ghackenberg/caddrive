@@ -39,7 +39,7 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
 
     let step: number
 
-    if (span <= 1000 * 60 * 60) {
+    if (span <= 1000 * 60 * 60 * 2) {
 
         step = 1000 * 60
 
@@ -49,7 +49,7 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
         endDate.setMinutes(endDate.getMinutes() + 1, 0, 0)
         end = endDate.getTime()
 
-    } else if (span <= 1000 * 60 * 60 * 24) {
+    } else if (span <= 1000 * 60 * 60 * 24 * 2) {
     
         step = 1000 * 60 * 60
 
@@ -112,7 +112,7 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
 
     let tickFormatter: (timestamp: number) => string
     if (step) {
-        if (step <= 1000 * 60 * 60 * 24) {
+        if (step <= 1000 * 60 * 60 * 24 * 2) {
             if (startDateString == endDateString) {
                 tickFormatter = timeTickFormatter
             } else {
@@ -129,7 +129,7 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
 
     let height: number
     if (step) {
-        if (step <= 1000 * 60 * 60 * 24) {
+        if (step <= 1000 * 60 * 60 * 24 * 2) {
             if (startDateString == endDateString) {
                 height = 70
             } else {
