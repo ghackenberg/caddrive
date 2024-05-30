@@ -1,15 +1,27 @@
+function format(value: number) {
+    if (value < 10) {
+        return `0${value}`
+    } else {
+        return `${value}`
+    }
+}
+
+export function formatYear(date: Date) {
+    return `${date.getFullYear()}`
+}
+
 export function formatMonth(date: Date) {
-    return date.toISOString().substring(0,7)
+    return `${formatYear(date)}-${format(date.getMonth() + 1)}`
 }
 
 export function formatDate(date: Date) {
-    return date.toISOString().substring(0,10)
+    return `${formatMonth(date)}-${format(date.getDate())}`
 }
 
-export function formatDateHour(date: Date) {
-    return `${formatDate(date)} @ ${date.toLocaleTimeString().substring(0,5)}`
+export function formatTime(date: Date) {
+    return `${format(date.getHours())}:${format(date.getMinutes())}`
 }
 
 export function formatDateHourMinute(date: Date) {
-    return `${formatDate(date)} @ ${date.toLocaleTimeString().substring(0,5)}`
+    return `${formatDate(date)} @ ${formatTime(date)}`
 }

@@ -11,6 +11,7 @@ import { useIssues, useMembers } from '../../hooks/list'
 import { useIssuesComments } from '../../hooks/map'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { DateInput } from '../inputs/DateInput'
+import { GenericInput } from '../inputs/GenericInput'
 import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
@@ -154,9 +155,14 @@ export const ProductMilestoneSettingView = () => {
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
                                     <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
+                                    {start >= end &&
+                                        <GenericInput>
+                                            <span style={{color: 'red'}}>Start must be before end!</span>
+                                        </GenericInput>
+                                    }
                                     {contextUser ? (
                                         contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
-                                            <ButtonInput value='Save'/>
+                                            <ButtonInput value='Save' disabled={start >= end}/>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>
                                         )

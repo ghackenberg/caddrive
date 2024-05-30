@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
-import { formatDate, formatDateHour, formatDateHourMinute, formatMonth } from '../../functions/time'
+import { formatDate, formatDateHourMinute, formatMonth, formatTime } from '../../functions/time'
 
 function monthTickFormatter(time: number) {
     return formatMonth(new Date(time))
@@ -13,25 +13,29 @@ function dateTickFormatter(time: number) {
     return formatDate(new Date(time))
 }
 
-function dateHourTickFormatter(time: number) {
-    return formatDateHour(new Date(time))
-}
-
 function dateHourMinuteTickFormatter(time: number) {
     return formatDateHourMinute(new Date(time))
 }
 
+function timeTickFormatter(time: number) {
+    return formatTime(new Date(time))
+}
+
 export const BurndownChartWidget = (props: { start: number, end: number, total: number, actual: { time: number, actual: number }[] }) => {
+
     // CONSTANTS
 
-    let start = props.start
-    let end = props.end
+    let start = Math.min(props.start, props.end)
+    let end = Math.max(props.start, props.end)
 
     const span = end - start
     const now = Date.now()
 
     const startDate = new Date(start)
     const endDate = new Date(end)
+
+    const startDateString = dateTickFormatter(start)
+    const endDateString = dateTickFormatter(end)
 
     let step: number
 
@@ -82,9 +86,15 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
     const total = props.total
     const actual = props.actual
 
+    // padding
+
     const padding = 50
 
+    // domain
+
     const domain = [start, end]
+
+    // ticks
 
     const ticks = []
     if (step) {
@@ -98,12 +108,16 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
         }
     }
 
+    // tickFormatter
+
     let tickFormatter: (timestamp: number) => string
     if (step) {
-        if (step <= 1000 * 60) {
-            tickFormatter = dateHourMinuteTickFormatter
-        } else if (step <= 1000 * 60 * 60) {
-            tickFormatter = dateHourTickFormatter
+        if (step <= 1000 * 60 * 60 * 24) {
+            if (startDateString == endDateString) {
+                tickFormatter = timeTickFormatter
+            } else {
+                tickFormatter = dateHourMinuteTickFormatter
+            }
         } else {
             tickFormatter = dateTickFormatter
         }
@@ -111,12 +125,16 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
         tickFormatter = monthTickFormatter
     }
 
+    // height
+
     let height: number
     if (step) {
-        if (step <= 1000 * 60) {
-            height = 125
-        } else if (step <= 1000 * 60 * 60) {
-            height = 125
+        if (step <= 1000 * 60 * 60 * 24) {
+            if (startDateString == endDateString) {
+                height = 70
+            } else {
+                height = 125
+            }
         } else {
             height = 90
         }
@@ -152,7 +170,7 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
                         <Label value='Open issue count' angle={-90} fontWeight='bold'/>
                     </YAxis>
                     <Legend/>
-                    {now >= start && now <= end && (
+                    {now >= props.start && now <= props.end && (
                         <ReferenceLine x={now} label={{value: 'Now', position: now <= (start + end) / 2 ? 'right' : 'left', fill: 'gray', fontWeight: 'bold'}} stroke='gray' strokeWidth={2} strokeDasharray='6 6'/>
                     )}
                     <ReferenceLine x={props.start} label={{value: 'Start', position: 'left', fill: 'red', fontWeight: 'bold', offset: 10}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
