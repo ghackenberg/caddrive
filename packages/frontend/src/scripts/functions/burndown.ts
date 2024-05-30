@@ -46,10 +46,13 @@ export function calculateActual(startDate: number, endDate: number, issues: Issu
         }
     }
 
+    // All events were before milestone start
     if (actual.length == 0) {
-        actual.push({ time: startDate, actual: 0 })
+        actual.push({ time: startDate, actual: count })
     }
-    if (actual[actual.length - 1].time < endDate) {
+
+    // Last event was before milestone end and before now
+    if (actual[actual.length - 1].time < endDate && actual[actual.length - 1].time < Date.now()) {
         actual.push({ time: Math.min(endDate, Date.now()), actual: actual[actual.length - 1].actual})
     }
 

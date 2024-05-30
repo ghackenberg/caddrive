@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 
-import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 
 import { formatDate, formatDateHour, formatDateHourMinute, formatMonth } from '../../functions/time'
 
@@ -114,14 +114,14 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
     let height: number
     if (step) {
         if (step <= 1000 * 60) {
-            height = 150
+            height = 125
         } else if (step <= 1000 * 60 * 60) {
-            height = 130
+            height = 125
         } else {
             height = 90
         }
     } else {
-        height = 70
+        height = 80
     }
 
     // INITIAL STATES
@@ -143,17 +143,21 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
     return (
         <div className="widget burndown_chart">
             <ResponsiveContainer>
-                <LineChart>
+                <LineChart margin={{top: 20, left: 20, right: 20, bottom: 20}}>
                     <CartesianGrid/>
-                    <XAxis name='Time' dataKey='time' type='number' scale='time' domain={domain} ticks={ticks} tickFormatter={tickFormatter} height={height} angle={-45} textAnchor='end' padding={{left: padding, right: padding}}/>
-                    <YAxis name='Open issue count' dataKey='target' domain={[0, total]} allowDecimals={false} interval={0} tickFormatter={value => `${Math.round(value)}`} padding={{top: padding}}/>
+                    <XAxis dataKey='time' type='number' scale='time' domain={domain} ticks={ticks} tickFormatter={tickFormatter} height={height} angle={-45} fontSize={12} textAnchor='end' padding={{left: padding, right: padding}}>
+                        <Label value='Time' fontWeight='bold' position='bottom' offset={-20}/>
+                    </XAxis>
+                    <YAxis dataKey='target' domain={[0, total]} allowDecimals={false} interval={0} tickFormatter={value => `${Math.round(value)}`} fontSize={12} padding={{top: padding}}>
+                        <Label value='Open issue count' angle={-90} fontWeight='bold'/>
+                    </YAxis>
                     <Legend/>
                     {now >= start && now <= end && (
-                        <ReferenceLine x={now} label={{value: 'Now', position: now <= (start + end) / 2 ? 'right' : 'left', fill: 'black'}} stroke='gray' strokeWidth={2} strokeDasharray='6 6'/>
+                        <ReferenceLine x={now} label={{value: 'Now', position: now <= (start + end) / 2 ? 'right' : 'left', fill: 'gray', fontWeight: 'bold'}} stroke='gray' strokeWidth={2} strokeDasharray='6 6'/>
                     )}
-                    <ReferenceLine x={props.start} label={{value: 'Start', position: 'left', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
-                    <ReferenceLine x={props.end} label={{value: 'End', position: 'right', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
-                    <ReferenceLine y={total} label={{value: 'Total', position: 'top', fill: 'darkred'}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
+                    <ReferenceLine x={props.start} label={{value: 'Start', position: 'left', fill: 'red', fontWeight: 'bold', offset: 10}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
+                    <ReferenceLine x={props.end} label={{value: 'End', position: 'right', fill: 'red', fontWeight: 'bold', offset: 10}} stroke='red' strokeWidth={2} strokeDasharray='6 6'/>
+                    <ReferenceLine y={total} label={{value: 'Total issue count', position: 'top', fill: 'black', fontWeight: 'bold', offset: 10}} stroke='black' strokeWidth={2} strokeDasharray='6 6'/>
                     <Line name='Target burndown' isAnimationActive={false} data={target} dataKey='target' stroke='green' strokeWidth={2} strokeDasharray='6 6' dot={{fill: 'rgb(215,215,215)', stroke: 'green', strokeDasharray: ''}}/>
                     <Line name='Actual burndown' isAnimationActive={false} data={actual} dataKey='actual' stroke='blue' strokeWidth={2} dot={{fill: 'blue', stroke: 'blue'}}/>
                 </LineChart>

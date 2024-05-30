@@ -75,6 +75,21 @@ export const ProductMilestoneSettingView = () => {
     useEffect(() => { milestone && setEnd(new Date(milestone.end)) }, [milestone])
 
     // - Computations
+
+    useEffect(() => {
+        function updateActualBurndown() {
+            setActualBurndown(milestone && issues && comments && calculateActual(start.getTime(), end.getTime(), issues, comments))
+        }
+        let interval: NodeJS.Timer
+        const timeout = setTimeout(() => {
+            interval = setInterval(updateActualBurndown, 1000)
+            updateActualBurndown()
+        }, 1000 - Date.now() % 1000)
+        return () => {
+            clearTimeout(timeout)
+            interval && clearInterval(interval)
+        }
+    })
     
     useEffect(() => {
         if (issues) {
@@ -94,31 +109,19 @@ export const ProductMilestoneSettingView = () => {
 
     // FUNCTIONS
 
-    function updateStart(date: Date) {
-        if (date.getTime() < end.getTime()) {
-            setStart(date)
-        } else {
-            alert('Start must be before end!')
-        }
-    }
-    
-    function updateEnd(date: Date) {
-        if (date.getTime() > start.getTime()) {
-            setEnd(date)
-        } else {
-            alert('End must be after start!')
-        }
-    }
-
     async function submitMilestone(event: FormEvent){
         // TODO handle unmount!
         event.preventDefault()
-        if(milestoneId == 'new') {
-            const milestone = await MilestoneClient.addMilestone(productId, { label, start: start.getTime(), end: end.getTime() })
-            await replace(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)
+        if (start.getTime() > end.getTime()) {
+            alert('Start must be before end!')
         } else {
-            await MilestoneClient.updateMilestone(productId, milestoneId, { label, start: start.getTime(), end: end.getTime() })
-            await goBack()
+            if(milestoneId == 'new') {
+                const milestone = await MilestoneClient.addMilestone(productId, { label, start: start.getTime(), end: end.getTime() })
+                await replace(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)
+            } else {
+                await MilestoneClient.updateMilestone(productId, milestoneId, { label, start: start.getTime(), end: end.getTime() })
+                await goBack()
+            }
         }
     }
 
@@ -149,8 +152,8 @@ export const ProductMilestoneSettingView = () => {
                                 </h1>
                                 <form onSubmit={submitMilestone} onReset={goBack}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
-                                    <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={updateStart} required/>
-                                    <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={updateEnd} required/>
+                                    <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
+                                    <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>
                                     {contextUser ? (
                                         contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
                                             <ButtonInput value='Save'/>
