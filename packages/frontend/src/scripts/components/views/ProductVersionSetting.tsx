@@ -7,6 +7,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { VersionRead } from 'productboard-common'
 
+import { CacheAPI } from '../../clients/cache'
 import { VersionClient } from '../../clients/rest/version'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
@@ -23,6 +24,7 @@ import { NumberInput } from '../inputs/NumberInput'
 import { TextareaInput } from '../inputs/TextareaInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
+import { clearModel } from '../widgets/FileView3D'
 import { ModelView3D } from '../widgets/ModelView3D'
 import { Column, Table } from '../widgets/Table'
 import { VersionView3D } from '../widgets/VersionView3D'
@@ -55,13 +57,21 @@ export const ProductVersionSettingView = () => {
     const versions = useVersions(productId)
     const version = useVersion(productId, versionId)
 
+    // INITIAL STATES
+
+    const initialMajor = version ? version.major : (versions && versions.length > 0 ? versions[versions.length - 1].major : 0)
+    const initialMinor = version ? version.minor : (versions && versions.length > 0 ? versions[versions.length - 1].minor : 0)
+    const initialPatch = version ? version.patch : (versions && versions.length > 0 ? versions[versions.length - 1].patch + 1 : 0)
+    const initialBaseVersionIds = version ? version.baseVersionIds : []
+    const initialDescription = version && version.description
+
     // STATES
 
-    const [major, setMajor] = useState<number>(0)
-    const [minor, setMinor] = useState<number>(0)
-    const [patch, setPatch] = useState<number>(0)
-    const [baseVersionIds, setBaseVersionIds] = useState<string[]>([])
-    const [description, setDescription] = useState<string>('')
+    const [major, setMajor] = useState<number>(initialMajor)
+    const [minor, setMinor] = useState<number>(initialMinor)
+    const [patch, setPatch] = useState<number>(initialPatch)
+    const [baseVersionIds, setBaseVersionIds] = useState<string[]>(initialBaseVersionIds)
+    const [description, setDescription] = useState<string>(initialDescription)
     const [file, setFile] = useState<File>()
 
     const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
@@ -74,6 +84,7 @@ export const ProductVersionSettingView = () => {
 
     // EFFECTS
 
+    useEffect(() => { version && setBaseVersionIds(version.baseVersionIds) }, [version])
     useEffect(() => { version && setMajor(version.major) }, [version])
     useEffect(() => { version && setMinor(version.minor) }, [version])
     useEffect(() => { version && setPatch(version.patch) }, [version])
@@ -136,10 +147,19 @@ export const ProductVersionSettingView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (versionId == 'new') {
-            const version = await VersionClient.addVersion(productId, { baseVersionIds, major, minor, patch, description }, { model: file, image: blob })
+            const data = { baseVersionIds, major, minor, patch, description }
+            const files = { model: file, image: blob }
+            const version = await VersionClient.addVersion(productId, data, files)
             setContextVersion(version)
         } else {
-            await VersionClient.updateVersion(productId, versionId, { major, minor, patch, description }, { model: file, image: blob })
+            const previous = `${versionId}.${version.modelType}`
+            const data = { baseVersionIds, major, minor, patch, description }
+            const files = file && { model: file, image: blob }
+            await VersionClient.updateVersion(productId, versionId, data, files)
+            if (file) {
+                CacheAPI.clearFile(previous)
+                clearModel(previous)
+            }
             setContextVersion(version)
         }
         await goBack()
@@ -157,7 +177,7 @@ export const ProductVersionSettingView = () => {
             </span>
         ) },
         { label: '🛠️', class: 'center', content: version => (
-            <input type="checkbox" value={version.versionId} onChange={onChange}/>
+            <input type="checkbox" value={version.versionId} checked={baseVersionIds.includes(version.versionId)} onChange={onChange}/>
         ) }
     ]
 
@@ -190,13 +210,11 @@ export const ProductVersionSettingView = () => {
                                     <NumberInput label='Patch' placeholder='Type patch' value={patch} change={setPatch}/>
                                     {versions.length > 0 && (
                                         <GenericInput label="Base">
-                                            <Table columns={columns} items={versions.map(v => v).reverse()}/>
+                                            <Table columns={columns} items={versions.filter(vers => version == undefined || vers.created < version.created).map(v => v).reverse()}/>
                                         </GenericInput>
                                     )}
                                     <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                    {versionId == 'new' && (
-                                        <FileInput label='File' placeholder='Select file' accept='.glb,.ldr,.mpd' change={setFile} required={true}/>
-                                    )}
+                                    <FileInput label='File' placeholder='Select file' accept='.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
                                     <GenericInput label='Preview'>
                                         {dataUrl ? (
                                             <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>
@@ -210,7 +228,7 @@ export const ProductVersionSettingView = () => {
                                     </GenericInput>
                                     {contextUser ? (
                                         contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
-                                            blob ? (
+                                            version || blob ? (
                                                 <ButtonInput value='Save'/>
                                             ) : (
                                                 <ButtonInput value='Save' badge='requires file' disabled={true}/>
@@ -227,7 +245,17 @@ export const ProductVersionSettingView = () => {
                         </div>
                         <div>
                             {version ? (
-                                <VersionView3D version={version} mouse={true}/>
+                                file ? (
+                                    <div className="widget version_view_3d">
+                                        {!group ? (
+                                            <img src={LoadIcon} className='icon small position center animation spin'/>
+                                        ) : (
+                                            <ModelView3D model={group} highlighted={[]} marked={[]} selected={[]}/>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <VersionView3D version={version} mouse={true}/>
+                                )
                             ) : (
                                 <div className="widget version_view_3d">
                                     {!file ? (

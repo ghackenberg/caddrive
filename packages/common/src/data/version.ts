@@ -6,6 +6,9 @@ export type ImageType = 'png' | null
 
 export class VersionUpdate {
     @ApiProperty()
+    baseVersionIds: string[]
+    
+    @ApiProperty()
     major: number
     @ApiProperty()
     minor: number
@@ -16,8 +19,6 @@ export class VersionUpdate {
     description: string
 }
 export class VersionCreate extends VersionUpdate {
-    @ApiProperty()
-    baseVersionIds: string[]
 }
 
 export class VersionRead extends VersionCreate {

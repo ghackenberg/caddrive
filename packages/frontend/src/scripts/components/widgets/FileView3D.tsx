@@ -30,6 +30,14 @@ async function getLDrawModel(path: string) {
     return LDRAW_MODEL_CACHE[path]
 }
 
+export function clearModel(path: string) {
+    if (path in GLTF_MODEL_CACHE) {
+        delete GLTF_MODEL_CACHE[path]
+    } else if (path in LDRAW_MODEL_CACHE) {
+        delete LDRAW_MODEL_CACHE[path]
+    }
+}
+
 export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
 
     // CONSTANTS

@@ -69,6 +69,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         // Update version
         const version = await Database.get().versionRepository.findOneByOrFail({ productId, versionId })
         version.updated = Date.now()
+        version.baseVersionIds = data.baseVersionIds
         version.major = data.major
         version.minor = data.minor
         version.patch = data.patch
@@ -105,27 +106,23 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
     }
 
     async processModel(versionId: string, modelType: 'glb' | 'ldr' | 'mpd', files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
-        if (files) {
-            if (files.model) {
-                if (files.model.length == 1) {
-                    if (files.model[0].originalname.endsWith('.glb')) {
-                        writeFileSync(`./uploads/${versionId}.glb`, files.model[0].buffer)
-                        return 'glb'
-                    } else if (files.model[0].originalname.endsWith('.ldr')) {
-                        writeFileSync(`./uploads/${versionId}.ldr`, files.model[0].buffer)
-                        writeFileSync(`./uploads/${versionId}-packed.ldr`, packLDrawText(files.model[0].buffer.toString('utf-8')))
-                        return 'ldr'
-                    } else if (files.model[0].originalname.endsWith('.mpd')) {
-                        writeFileSync(`./uploads/${versionId}.mpd`, files.model[0].buffer)
-                        return 'mpd'
-                    } else {
-                        throw new HttpException('Model file type not supported.', 400)
-                    }
+        if (files.model) {
+            if (files.model.length == 1) {
+                if (files.model[0].originalname.endsWith('.glb')) {
+                    writeFileSync(`./uploads/${versionId}.glb`, files.model[0].buffer)
+                    return 'glb'
+                } else if (files.model[0].originalname.endsWith('.ldr')) {
+                    writeFileSync(`./uploads/${versionId}.ldr`, files.model[0].buffer)
+                    writeFileSync(`./uploads/${versionId}-packed.ldr`, packLDrawText(files.model[0].buffer.toString('utf-8')))
+                    return 'ldr'
+                } else if (files.model[0].originalname.endsWith('.mpd')) {
+                    writeFileSync(`./uploads/${versionId}.mpd`, files.model[0].buffer)
+                    return 'mpd'
                 } else {
-                    throw new HttpException('Only one model file supported.', 400)
+                    throw new HttpException('Model file type not supported.', 400)
                 }
             } else {
-                throw new HttpException('Model file must be provided.', 400)
+                throw new HttpException('Only one model file supported.', 400)
             }
         } else {
             if (modelType) {
@@ -137,24 +134,20 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
     }
     
     async processImage(versionId: string, imageType: 'png', files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
-        if (files) {
-            if (files.image) {
-                if (files.image.length == 1) {
-                    if (files.image[0].mimetype == 'image/png') {
-                        writeFileSync(`./uploads/${versionId}.png`, files.image[0].buffer)
-                        return 'png'
-                    } else {
-                        throw new HttpException('Image file type not supported.', 400)
-                    }
+        if (files.image) {
+            if (files.image.length == 1) {
+                if (files.image[0].mimetype == 'image/png') {
+                    writeFileSync(`./uploads/${versionId}.png`, files.image[0].buffer)
+                    return 'png'
                 } else {
-                    throw new HttpException('Only one image file supported.', 400)
+                    throw new HttpException('Image file type not supported.', 400)
                 }
-            } else if (files.model) {
-                // Render model later
-                return null
             } else {
-                throw new HttpException('Image or model file must be provided.', 400)
+                throw new HttpException('Only one image file supported.', 400)
             }
+        } else if (files.model) {
+            // Render model later
+            return null
         } else {
             if (imageType) {
                 return imageType
@@ -165,7 +158,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
     }
     
     async renderImage(productId: string, versionId: string, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
-        if (files) {
+        if (files && (files.image || files.model)) {
             if (files.image) {
                 // Model must not be rendered
             } else if (files.model) {

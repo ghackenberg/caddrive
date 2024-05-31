@@ -7,6 +7,7 @@ import { VersionRead } from 'productboard-common'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
+import { useAsyncHistory } from '../../hooks/history'
 import { useProduct } from '../../hooks/entity'
 import { useMembers, useVersions } from '../../hooks/list'
 import { computeTree } from '../../functions/tree'
@@ -29,6 +30,10 @@ export const ProductVersionView = () => {
 
     const { contextUser } = useContext(UserContext)
     const { contextVersion, setContextVersion } = useContext(VersionContext)
+
+    // HISTORY
+
+    const { push } = useAsyncHistory()
 
     // PARAMS
 
@@ -71,9 +76,13 @@ export const ProductVersionView = () => {
 
     // FUNCTIONS
 
-    function onClick(version: VersionRead) {
-        setContextVersion(version)
-        setActive('right')
+    async function onClick(event: React.MouseEvent<HTMLDivElement>, version: VersionRead) {
+        if (event.ctrlKey) {
+            await push(`/products/${productId}/versions/${version.versionId}/settings`)
+        } else {
+            setContextVersion(version)
+            setActive('right')
+        }
     }
 
     // CONSTANTS
@@ -135,7 +144,7 @@ export const ProductVersionView = () => {
                                                         <div className="text" style={{color: 'orange'}}/>
                                                     </div>
                                                 )}
-                                                <div className={`version${contextVersion && contextVersion.versionId == vers.versionId ? ' selected' : ''}`} onClick={() => onClick(vers)}>
+                                                <div className={`version${contextVersion && contextVersion.versionId == vers.versionId ? ' selected' : ''}`} onClick={event => onClick(event, vers)}>
                                                     <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
                                                         {vers.versionId in siblings && siblings[vers.versionId].map(sibling => (
                                                             <span key={sibling.versionId} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
@@ -155,7 +164,7 @@ export const ProductVersionView = () => {
                                                     </div>
                                                     <div className="text">
                                                         <div>
-                                                            <a className="download" title="Download CAD model revision" href={`/rest/files/${vers.versionId}.${vers.modelType}`}>
+                                                            <a className="download" title="Download model" href={`/rest/files/${vers.versionId}.${vers.modelType}`}>
                                                                 <img src={DownloadIcon}/>
                                                             </a>
                                                             <span className="label">

@@ -305,6 +305,10 @@ export const CacheAPI = {
 
     // Other
 
+    clearFile(fileId: string) {
+        delete FILE_REQUEST[fileId]
+    },
+
     clear() {
         // Requests
         
