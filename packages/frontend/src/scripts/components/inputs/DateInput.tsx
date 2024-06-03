@@ -2,22 +2,13 @@ import * as React from 'react'
 
 import { GenericInput } from './GenericInput'
 
-const year = new Intl.DateTimeFormat('en', {
-    year: 'numeric',
-})
-const month = new Intl.DateTimeFormat('en', {
-    month: '2-digit',
-})
-const day = new Intl.DateTimeFormat('en', {
-    day: '2-digit',
-})
-const hour = new Intl.DateTimeFormat('en', {
-    hour: '2-digit',
-    hour12: false
-})
-const minute = new Intl.DateTimeFormat('en', {
-    minute: '2-digit'
-})
+function format(value: number) {
+    if (value < 10) {
+        return `0${value}`
+    } else {
+        return `${value}`
+    }
+}
 
 export const DateInput = (props: {class?: string, label: string, change?: (value: Date) => void, value: Date, placeholder?: string, disabled?: boolean, required?: boolean}) => {
     const label = props.label
@@ -25,7 +16,7 @@ export const DateInput = (props: {class?: string, label: string, change?: (value
     const className = `button fill ${props.class || 'lightgray'}`
     const placeholder = props.placeholder
     const valueAsDate = (props.value ? props.value : new Date())
-    const value = `${year.format(valueAsDate)}-${month.format(valueAsDate)}-${day.format(valueAsDate)}T${hour.format(valueAsDate)}:${minute.format(valueAsDate)}`
+    const value = `${valueAsDate.getFullYear()}-${format(valueAsDate.getMonth() + 1)}-${format(valueAsDate.getDate())}T${format(valueAsDate.getHours())}:${format(valueAsDate.getMinutes())}`
     const disabled = props.disabled
     const required = props.required
 
