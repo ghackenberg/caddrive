@@ -10,9 +10,19 @@ div.widget.version_tree {
 
 div.widget.version_tree > div.between > svg {
     display: block;
+}
+div.widget.version_tree > div.between > svg > g > .foreground {
+    stroke-width: 3px;
+    stroke-linecap: round;
 
-    margin-top: -1em;
-    margin-bottom: -1em;
+    fill: none;
+}
+div.widget.version_tree > div.between > svg > g > .background {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 6px;
+    stroke-linecap: round;
+
+    fill: none;
 }
 
 div.widget.version_tree > div.version {
@@ -38,16 +48,35 @@ div.widget.version_tree > div.version > div.tree {
 
     align-self: stretch;
 
-    padding-top: 1em;
-    padding-bottom: 1em;
-
     border-top-left-radius: 1em;
     border-bottom-left-radius: 1em;
 }
-div.widget.version_tree > div.version > div.tree span {
-    display: block;
-
-    position: absolute;
+div.widget.version_tree > div.version > div.tree > svg > line.vertical {
+    stroke-width: 3px;
+    stroke-linecap: round;
+}
+div.widget.version_tree > div.version > div.tree > svg > line.horizontal.background {
+    stroke: rgba(245, 245, 245, 0.5);
+    stroke-width: 6px;
+    stroke-linecap: round;
+    stroke-dasharray: 6;
+}
+div.widget.version_tree > div.version.selected > div.tree > svg > line.horizontal.background,
+div.widget.version_tree > div.version:hover > div.tree > svg > line.horizontal.background {
+    stroke: rgba(230, 230, 230, 0.5);
+}
+div.widget.version_tree > div.version > div.tree > svg > line.horizontal.foreground {
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-dasharray: 6;
+}
+div.widget.version_tree > div.version > div.tree > svg > circle.background {
+    stroke: rgba(245, 245, 245, 0.5);
+    stroke-width: 4px;
+}
+div.widget.version_tree > div.version.selected > div.tree > svg > circle.background,
+div.widget.version_tree > div.version:hover > div.tree > svg > circle.background {
+    stroke: rgba(230, 230, 230, 0.5);
 }
 
 div.widget.version_tree > div.version > div.text {

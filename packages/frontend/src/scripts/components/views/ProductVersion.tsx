@@ -24,10 +24,13 @@ import DownloadIcon from '/src/images/download.png'
 import VersionIcon from '/src/images/version.png'
 import PartIcon from '/src/images/part.png'
 
-const STROKE_WIDTH = '3px'
+const SVG_HEIGHT = 24
 
-function hsl(hue: number) {
-    return `hsl(${hue}, 50%, 50%)`
+const RATIO_TOTAL = 10
+const RATIO_CURVE = 3
+
+function hsl(hue: number, saturation = 50, level = 50) {
+    return `hsl(${hue}, ${saturation}%, ${level}%)`
 }
 
 export const ProductVersionView = () => {
@@ -55,7 +58,6 @@ export const ProductVersionView = () => {
 
     const color = computeColor(versions)
     const tree = computeTree(versions)
-    const line = false
 
     // STATES
     
@@ -121,7 +123,7 @@ export const ProductVersionView = () => {
                                             <Fragment key={curVers.versionId}>
                                                 {curVersIdx > 0 && (
                                                     <div className="between">
-                                                        <svg width={`${1.5 + Math.max(1 + tree[curVersIdx - 1].afterRest.length, tree[curVersIdx].before.length) * 1.5}em`} height='3em'>
+                                                        <svg width={`${1.5 + Math.max(1 + tree[curVersIdx - 1].afterRest.length, tree[curVersIdx].before.length) * 1.5}em`} height={SVG_HEIGHT}>
                                                             <defs>
                                                                 {tree[curVersIdx - 1].afterFirst.map((prevVersId, prevVersIdx) => {
                                                                     const versionId = tree[curVersIdx - 1].versionId
@@ -135,7 +137,7 @@ export const ProductVersionView = () => {
                                                                         </linearGradient>
                                                                     )
                                                                 })}
-                                                                {line && tree[curVersIdx - 1].afterRest.map((prevVersId, prevVersIdx) => {
+                                                                {tree[curVersIdx - 1].afterRest.map((prevVersId, prevVersIdx) => {
                                                                     const id = `gradient-${curVersIdx}-${tree[curVersIdx - 1].afterFirst.length + prevVersIdx}`
                                                                     const colorA = hsl(color[prevVersId])
                                                                     const colorB = hsl(color[prevVersId])
@@ -147,96 +149,67 @@ export const ProductVersionView = () => {
                                                                     )
                                                                 })}
                                                             </defs>
-                                                            {line ? (
-                                                                <>
-                                                                    {tree[curVersIdx - 1].afterFirst.map((prevVersId, prevVersIdx) => {
-                                                                        
-                                                                        const x1 = 24
-                                                                        const x2 = 24 + tree[curVersIdx].before.indexOf(prevVersId) * 24
+                                                            {tree[curVersIdx - 1].afterFirst.map((prevVersId, prevVersIdx) => {
+                                                                
+                                                                const x1 = 24
+                                                                const x3 = 24 + tree[curVersIdx].before.indexOf(prevVersId) * 24
+                                                                const x2 = (x1 + x3) / 2
+                                                                
+                                                                const y1 = 0
+                                                                const y2 = SVG_HEIGHT / RATIO_TOTAL * RATIO_CURVE
+                                                                const y3 = SVG_HEIGHT / 2
+                                                                const y4 = SVG_HEIGHT / RATIO_TOTAL * (RATIO_TOTAL - RATIO_CURVE)
+                                                                const y5 = SVG_HEIGHT
+                                                                
+                                                                const d = `M ${x1} ${y1} Q ${x1} ${y2} , ${x2} ${y3} Q ${x3} ${y4} , ${x3} ${y5}`
+                                                                
+                                                                const stroke = color[prevVersId] == color[tree[curVersIdx - 1].versionId] ? hsl(color[prevVersId]) : `url(#gradient-${curVersIdx}-${prevVersIdx})`
 
-                                                                        const y1 = 0
-                                                                        const y2 = 48
+                                                                return tree[curVersIdx].before.includes(prevVersId) && (
+                                                                    x1 == x2 ? (
+                                                                        <g key={prevVersId}>
+                                                                            <line x1={x1} y1='0' x2={x3 + 0.0001} y2={y5} className='background'/>
+                                                                            <line x1={x1} y1='0' x2={x3 + 0.0001} y2={y5} className='foreground' stroke={stroke}/>
+                                                                        </g>
+                                                                    ) : (
+                                                                        <g key={prevVersId}>
+                                                                            <path d={d} className='background'/>
+                                                                            <path d={d} className='foreground' stroke={stroke}/>
+                                                                        </g>
+                                                                    )
+                                                                )
 
-                                                                        const stroke = color[prevVersId] == color[tree[curVersIdx - 1].versionId] ? hsl(color[prevVersId]) : `url(#gradient-${curVersIdx}-${prevVersIdx})`
-                                                                        const strokeWidth = STROKE_WIDTH
-                                                                        
-                                                                        const fill = 'none'
-                                                                        
-                                                                        return tree[curVersIdx].before.includes(prevVersId) && (
-                                                                            <line key={prevVersId} x1={x1} y1={y1} x2={x2 + 0.0001} y2={y2} stroke={stroke} strokeWidth={strokeWidth} fill={fill}/>
-                                                                        )
-
-                                                                    })}
-                                                                    {tree[curVersIdx - 1].afterRest.map((prevVersId, prevVersIdx) => {
-                                                                        
-                                                                        const x1 = 48 + prevVersIdx * 24
-                                                                        const x2 = 24 + tree[curVersIdx].before.indexOf(prevVersId) * 24
-                                                                        
-                                                                        const y1 = 0
-                                                                        const y2 = 48
-                                                                        
-                                                                        const stroke = hsl(color[prevVersId])
-                                                                        const strokeWidth = STROKE_WIDTH
-                                                                        
-                                                                        const fill = 'none'
-                                                                        
-                                                                        return tree[curVersIdx].before.includes(prevVersId) && (
-                                                                            <line key={prevVersId} x1={x1} y1={y1} x2={x2 + 0.0001} y2={y2} stroke={stroke} strokeWidth={strokeWidth} fill={fill}/>
-                                                                        )
-
-                                                                    })}
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    {tree[curVersIdx - 1].afterFirst.map((prevVersId, prevVersIdx) => {
-                                                                        
-                                                                        const x1 = 24
-                                                                        const x2 = 24 + tree[curVersIdx].before.indexOf(prevVersId) * 24
-                                                                       
-                                                                        const y1 = 0
-                                                                        const y2 = 28
-                                                                        
-                                                                        const d = `M ${x1} ${y1} C ${x1} ${y2} , ${x2} ${y1} , ${x2} ${y2} L ${x2} 48`
-                                                                        
-                                                                        const stroke = color[prevVersId] == color[tree[curVersIdx - 1].versionId] ? hsl(color[prevVersId]) : `url(#gradient-${curVersIdx}-${prevVersIdx})`
-                                                                        const strokeWidth = STROKE_WIDTH
-                                                                        
-                                                                        const fill = 'none'
-
-                                                                        return tree[curVersIdx].before.includes(prevVersId) && (
-                                                                            x1 == x2 ? (
-                                                                                <line key={prevVersId} x1={x1 + 0.0001} y1={y1} x2={x2} y2='48' stroke={stroke} strokeWidth={strokeWidth} fill={fill}/>
-                                                                            ) : (
-                                                                                <path key={prevVersId} d={d} stroke={stroke} strokeWidth={strokeWidth} fill={fill}/>
-                                                                            )
-                                                                        )
-
-                                                                    })}
-                                                                    {tree[curVersIdx - 1].afterRest.map((prevVersId, prevVersIdx) => {
-                                                                        
-                                                                        const x1 = 48 + prevVersIdx * 24
-                                                                        const x2 = 24.0001 + tree[curVersIdx].before.indexOf(prevVersId) * 24
-                                                                        
-                                                                        const y1 = 16
-                                                                        const y2 = 48
-                                                                        
-                                                                        const d = `M ${x1} 0 L ${x1} ${y1} C ${x1} ${y2} , ${x2} ${y1} , ${x2} ${y2}`
-                                                                        
-                                                                        const stroke = hsl(color[prevVersId])
-                                                                        const strokeWidth = STROKE_WIDTH
-                                                                        
-                                                                        const fill = 'none'
-                                                                        
-                                                                        return tree[curVersIdx].before.includes(prevVersId) && (
-                                                                            x1 == x2 ? (
-                                                                                <line key={prevVersId} x1={x1} y1='0' x2={x2 + 0.0001} y2={y2} stroke={stroke} strokeWidth={strokeWidth} fill={fill}/>
-                                                                            ) : (
-                                                                                <path key={prevVersId} d={d} stroke={stroke} strokeWidth={strokeWidth} fill={fill}/>
-                                                                            )
-                                                                        )
-                                                                    })}
-                                                                </>
-                                                            )}
+                                                            })}
+                                                            {tree[curVersIdx - 1].afterRest.map((prevVersId, prevVersIdx) => {
+                                                                
+                                                                const x1 = 48 + prevVersIdx * 24
+                                                                const x3 = 24.0001 + tree[curVersIdx].before.indexOf(prevVersId) * 24
+                                                                const x2 = (x1 + x3) / 2
+                                                                
+                                                                const y1 = 0
+                                                                const y2 = SVG_HEIGHT / RATIO_TOTAL * RATIO_CURVE
+                                                                const y3 = SVG_HEIGHT / 2
+                                                                const y4 = SVG_HEIGHT / RATIO_TOTAL * (RATIO_TOTAL - RATIO_CURVE)
+                                                                const y5 = SVG_HEIGHT
+                                                                
+                                                                const d = `M ${x1} ${y1} Q ${x1} ${y2} , ${x2} ${y3} Q ${x3} ${y4} , ${x3} ${y5}`
+                                                                
+                                                                const stroke = hsl(color[prevVersId])
+                                                                
+                                                                return tree[curVersIdx].before.includes(prevVersId) && (
+                                                                    x1 == x2 ? (
+                                                                        <g key={prevVersId}>
+                                                                            <line x1={x1} y1='0' x2={x3 + 0.0001} y2={y5} className='background'/>
+                                                                            <line x1={x1} y1='0' x2={x3 + 0.0001} y2={y5} className='foreground' stroke={stroke}/>
+                                                                        </g>
+                                                                    ) : (
+                                                                        <g key={prevVersId}>
+                                                                            <path d={d} className='background'/>
+                                                                            <path d={d} className='foreground' stroke={stroke}/>
+                                                                        </g>
+                                                                    )
+                                                                )
+                                                            })}
                                                         </svg>
                                                     </div>
                                                 )}
@@ -249,18 +222,18 @@ export const ProductVersionView = () => {
                                                                 const hasNoPredecessors = (number == 0 && tree[curVersIdx].afterFirst.length == 0)
 
                                                                 const x = `${1.5 + number * 1.5}em`
-                                                                const y1 = (hasNoSuccessors ? '1.5em' : '0')
-                                                                const y2 = (hasNoPredecessors ? '1.5em' : '100%')
+                                                                const y1 = (hasNoSuccessors ? '2.5em' : '0')
+                                                                const y2 = (hasNoPredecessors ? '2.5em' : '100%')
 
                                                                 const stroke = hsl(color[tree[curVersIdx].before[number]])
-                                                                const strokeWidth = STROKE_WIDTH
 
-                                                                const fill = 'none'
-
-                                                                return <line key={number} x1={x} y1={y1} x2={x} y2={y2} stroke={stroke} strokeWidth={strokeWidth} fill={fill}/>
+                                                                return <line key={number} x1={x} y1={y1} x2={x} y2={y2} className='vertical' stroke={stroke}/>
 
                                                             })}
-                                                            <circle cx={24} cy={24} r={8} fill={hsl(color[curVers.versionId])}/>
+                                                            <line x1='1.5em' y1='2.5em' x2='100%' y2='2.5em' className='horizontal background' stroke={hsl(color[curVers.versionId])}/>
+                                                            <line x1='1.5em' y1='2.5em' x2='100%' y2='2.5em' className='horizontal foreground' stroke={hsl(color[curVers.versionId])}/>
+                                                            <circle cx='1.5em' cy='2.5em' r='0.5em' className='background'/>
+                                                            <circle cx='1.5em' cy='2.5em' r='0.5em' className='foreground' fill={hsl(color[curVers.versionId])}/>
                                                         </svg>
                                                         <span className='dot'/>
                                                     </div>
