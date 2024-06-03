@@ -10,6 +10,9 @@ div.widget.version_tree {
 
 div.widget.version_tree > div.between > svg {
     display: block;
+
+    margin-top: -1em;
+    margin-bottom: -1em;
 }
 div.widget.version_tree > div.between > svg > g > .foreground {
     stroke-width: 3px;
@@ -47,6 +50,9 @@ div.widget.version_tree > div.version > div.tree {
     grid-row: 1;
 
     align-self: stretch;
+
+    padding-top: 1em;
+    padding-bottom: 1em;
 
     border-top-left-radius: 1em;
     border-bottom-left-radius: 1em;
