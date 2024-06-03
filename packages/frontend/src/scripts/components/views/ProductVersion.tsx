@@ -215,27 +215,28 @@ export const ProductVersionView = () => {
                                                 )}
                                                 <div className={`version${contextVersion && contextVersion.versionId == curVers.versionId ? ' selected' : ''}`} onClick={event => onClick(event, curVers)}>
                                                     <div className="tree" style={{width: `${1.5 + tree[curVersIdx].before.length * 1.5}em`}}>
-                                                        <svg width={`${1.5 + Math.max(tree[curVersIdx].before.length) * 1.5}em`} height='100%'>
-                                                            {[...Array(tree[curVersIdx].before.length).keys()].map(number => {
-                                                                
-                                                                const hasNoSuccessors = (number == 0 && (curVersIdx == 0 || !(tree[curVersIdx - 1].afterFirst.includes(curVers.versionId) || tree[curVersIdx - 1].afterRest.includes(curVers.versionId))))
-                                                                const hasNoPredecessors = (number == 0 && tree[curVersIdx].afterFirst.length == 0)
+                                                        <div>
+                                                            <svg width={`${1.5 + Math.max(tree[curVersIdx].before.length) * 1.5}em`} height='100000px'>
+                                                                {[...Array(tree[curVersIdx].before.length).keys()].map(number => {
+                                                                    
+                                                                    const hasNoSuccessors = (number == 0 && (curVersIdx == 0 || !(tree[curVersIdx - 1].afterFirst.includes(curVers.versionId) || tree[curVersIdx - 1].afterRest.includes(curVers.versionId))))
+                                                                    const hasNoPredecessors = (number == 0 && tree[curVersIdx].afterFirst.length == 0)
 
-                                                                const x = `${1.5 + number * 1.5}em`
-                                                                const y1 = (hasNoSuccessors ? '1.5em' : '0')
-                                                                const y2 = (hasNoPredecessors ? '1.5em' : '100%')
+                                                                    const x = `${1.5 + number * 1.5}em`
+                                                                    const y1 = (hasNoSuccessors ? '1.5em' : '0')
+                                                                    const y2 = (hasNoPredecessors ? '1.5em' : '100%')
 
-                                                                const stroke = hsl(color[tree[curVersIdx].before[number]])
+                                                                    const stroke = hsl(color[tree[curVersIdx].before[number]])
 
-                                                                return <line key={number} x1={x} y1={y1} x2={x} y2={y2} className='vertical' stroke={stroke}/>
+                                                                    return <line key={number} x1={x} y1={y1} x2={x} y2={y2} className='vertical' stroke={stroke}/>
 
-                                                            })}
-                                                            <line x1='1.5em' y1='1.5em' x2='100%' y2='1.5em' className='horizontal background' stroke={hsl(color[curVers.versionId])}/>
-                                                            <line x1='1.5em' y1='1.5em' x2='100%' y2='1.5em' className='horizontal foreground' stroke={hsl(color[curVers.versionId])}/>
-                                                            <circle cx='1.5em' cy='1.5em' r='0.5em' className='background'/>
-                                                            <circle cx='1.5em' cy='1.5em' r='0.5em' className='foreground' fill={hsl(color[curVers.versionId])}/>
-                                                        </svg>
-                                                        <span className='dot'/>
+                                                                })}
+                                                                <line x1='1.5em' y1='1.5em' x2='100%' y2='1.5em' className='horizontal background' stroke={hsl(color[curVers.versionId])}/>
+                                                                <line x1='1.5em' y1='1.5em' x2='100%' y2='1.5em' className='horizontal foreground' stroke={hsl(color[curVers.versionId])}/>
+                                                                <circle cx='1.5em' cy='1.5em' r='0.5em' className='background'/>
+                                                                <circle cx='1.5em' cy='1.5em' r='0.5em' className='foreground' fill={hsl(color[curVers.versionId])}/>
+                                                            </svg>
+                                                        </div>
                                                     </div>
                                                     <div className="text">
                                                         <div>

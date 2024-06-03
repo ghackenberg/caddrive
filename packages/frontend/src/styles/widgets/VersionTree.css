@@ -48,39 +48,49 @@ div.widget.version_tree > div.version:last-child {
 }
 
 div.widget.version_tree > div.version > div.tree {
+    position: relative;
+    
     grid-column: 1;
     grid-row: 1;
 
     align-self: stretch;
-
-    padding-top: 1em;
-    padding-bottom: 1em;
 }
-div.widget.version_tree > div.version > div.tree > svg > line.vertical {
+div.widget.version_tree > div.version > div.tree > div {
+    position: absolute;
+
+    top: 1em;
+    bottom: 1em;
+
+    overflow: hidden;
+}
+div.widget.version_tree > div.version > div.tree > div > svg {
+    display: block;
+}
+div.widget.version_tree > div.version > div.tree > div > svg > line.vertical {
     stroke-width: 3px;
     stroke-linecap: round;
 }
-div.widget.version_tree > div.version > div.tree > svg > line.horizontal.background {
+div.widget.version_tree > div.version > div.tree > div > svg > line.horizontal.background {
     stroke: rgba(245, 245, 245, 0.5);
     stroke-width: 6px;
     stroke-linecap: round;
     stroke-dasharray: 6;
 }
-div.widget.version_tree > div.version.selected > div.tree > svg > line.horizontal.background,
-div.widget.version_tree > div.version:hover > div.tree > svg > line.horizontal.background {
+div.widget.version_tree > div.version.selected > div.tree > div > svg > line.horizontal.background,
+div.widget.version_tree > div.version:hover > div.tree > div > svg > line.horizontal.background {
     stroke: rgba(230, 230, 230, 0.5);
 }
-div.widget.version_tree > div.version > div.tree > svg > line.horizontal.foreground {
+div.widget.version_tree > div.version > div.tree > div > svg > line.horizontal.foreground {
     stroke-width: 3px;
     stroke-linecap: round;
     stroke-dasharray: 6;
 }
-div.widget.version_tree > div.version > div.tree > svg > circle.background {
+div.widget.version_tree > div.version > div.tree > div > svg > circle.background {
     stroke: rgba(245, 245, 245, 0.5);
     stroke-width: 4px;
 }
-div.widget.version_tree > div.version.selected > div.tree > svg > circle.background,
-div.widget.version_tree > div.version:hover > div.tree > svg > circle.background {
+div.widget.version_tree > div.version.selected > div.tree > div > svg > circle.background,
+div.widget.version_tree > div.version:hover > div.tree > div > svg > circle.background {
     stroke: rgba(230, 230, 230, 0.5);
 }
 
