@@ -48,7 +48,7 @@ export const ProductVersionView = () => {
     // CONSTANTS
 
     const tree = computeTree(versions)
-    const line = false
+    const line = true
 
     // STATES
     
