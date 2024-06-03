@@ -24,7 +24,7 @@ import DownloadIcon from '/src/images/download.png'
 import VersionIcon from '/src/images/version.png'
 import PartIcon from '/src/images/part.png'
 
-const SVG_HEIGHT = 48
+const SVG_HEIGHT = 33
 
 const RATIO_TOTAL = 10
 const RATIO_CURVE = 3

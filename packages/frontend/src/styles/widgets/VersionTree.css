@@ -3,9 +3,6 @@ div.widget.version_tree {
     
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-
-    border-top-left-radius: 1em;
-    border-top-right-radius: 1em;
 }
 
 div.widget.version_tree > div.between > svg {
@@ -41,8 +38,13 @@ div.widget.version_tree > div.version.selected,
 div.widget.version_tree > div.version:hover {
     background-color: rgb(230, 230, 230);
 }
-div.widget.version_tree > div.version {
-    border-radius: 1em;
+div.widget.version_tree > div.version:first-child {
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+}
+div.widget.version_tree > div.version:last-child {
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
 }
 
 div.widget.version_tree > div.version > div.tree {
@@ -53,9 +55,6 @@ div.widget.version_tree > div.version > div.tree {
 
     padding-top: 1em;
     padding-bottom: 1em;
-
-    border-top-left-radius: 1em;
-    border-bottom-left-radius: 1em;
 }
 div.widget.version_tree > div.version > div.tree > svg > line.vertical {
     stroke-width: 3px;
@@ -107,20 +106,23 @@ div.widget.version_tree > div.version > div.text > div:first-child {
 }
 div.widget.version_tree > div.version > div.text > div:first-child::after {
     content: '';
+
     position: absolute;
+
     top: 0;
     right: 3em;
     bottom: 0;
-    width: 1em;
-    background-image: linear-gradient(to right, rgba(245,245,245,0),rgba(245,245,245,1));
 
+    width: 1em;
+
+    background-image: linear-gradient(to right, rgba(245,245,245,0),rgba(245,245,245,1));
 }
 div.widget.version_tree > div.version.selected > div.text > div:first-child::after,
 div.widget.version_tree > div.version:hover > div.text > div:first-child::after {
     background-image: linear-gradient(to right, rgba(230,230,230,0),rgba(230,230,230,1));
 }
 div.widget.version_tree > div.version > div.text > div:last-child {
-    margin-bottom: 0.75em;
+    margin-bottom: 1.25em;
 
     text-align: justify;
 }
@@ -186,13 +188,17 @@ div.widget.version_tree > div.version > div.model {
 
     align-self: stretch;
 
-    border-top-right-radius: 1em;
-    border-bottom-right-radius: 1em;
-
     width: 10em;
 
     background-color: rgb(215,215,215);
 }
+div.widget.version_tree > div.version:first-child > div.model {
+    border-top-right-radius: 1em;
+}
+div.widget.version_tree > div.version:last-child > div.model {
+    border-bottom-right-radius: 1em;
+}
+
 div.widget.version_tree > div.version > div.model > * {
     align-self: center;
 }
@@ -211,8 +217,10 @@ div.widget.version_tree > div.version > div.model > * > img.image {
         display: none;
     }
 
-    div.widget.version_tree > div.version > div.text {
+    div.widget.version_tree > div.version:first-child > div.text {
         border-top-right-radius: 1em;
+    }
+    div.widget.version_tree > div.version:last-child > div.text {
         border-bottom-right-radius: 1em;
     }
 }
