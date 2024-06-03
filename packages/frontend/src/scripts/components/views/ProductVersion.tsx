@@ -110,69 +110,79 @@ export const ProductVersionView = () => {
                             ) : (
                                 <div className='main'>
                                     <div className="widget version_tree">
-                                        { versions.map(i => i).reverse().map((vers, index) => (
-                                            <Fragment key={vers.versionId}>
-                                                {index > 0 && (
+                                        { versions.map(i => i).reverse().map((curVers, curVersIdx) => (
+                                            <Fragment key={curVers.versionId}>
+                                                {curVersIdx > 0 && (
                                                     <div className="between">
-                                                        <svg width={`${1.5 + Math.max(1 + tree[index - 1].afterRest.length, tree[index].before.length) * 1.5}em`} height='1em'>
-                                                            {line && tree[index - 1].afterFirst.map(prevVersId => (
-                                                                tree[index].before.includes(prevVersId) && (
-                                                                    <line key={prevVersId} x1='1.5em' y1='0' x2={`${1.5 + tree[index].before.indexOf(prevVersId) * 1.5}em`} y2='100%' stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                        <svg width={`${1.5 + Math.max(1 + tree[curVersIdx - 1].afterRest.length, tree[curVersIdx].before.length) * 1.5}em`} height='1em'>
+                                                            {line && tree[curVersIdx - 1].afterFirst.map(prevVersId => (
+                                                                tree[curVersIdx].before.includes(prevVersId) && (
+                                                                    <line key={prevVersId} x1='1.5em' y1='0' x2={`${1.5 + tree[curVersIdx].before.indexOf(prevVersId) * 1.5}em`} y2='100%' stroke='gray' strokeWidth='2px' fill='transparent'/>
                                                                 )
                                                             ))}
-                                                            {line && tree[index - 1].afterRest.map((prevVersId, prevVersIdx) => (
-                                                                tree[index].before.includes(prevVersId) && (
-                                                                    <line key={prevVersId} x1={`${3.0 + prevVersIdx * 1.5}em`} y1='0' x2={`${1.5 + tree[index].before.indexOf(prevVersId) * 1.5}em`} y2='100%' stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                            {line && tree[curVersIdx - 1].afterRest.map((prevVersId, prevVersIdx) => (
+                                                                tree[curVersIdx].before.includes(prevVersId) && (
+                                                                    <line key={prevVersId} x1={`${3.0 + prevVersIdx * 1.5}em`} y1='0' x2={`${1.5 + tree[curVersIdx].before.indexOf(prevVersId) * 1.5}em`} y2='100%' stroke='gray' strokeWidth='2px' fill='transparent'/>
                                                                 )
                                                             ))}
-                                                            {!line && tree[index - 1].afterFirst.map((prevVersId, prevVersIdx) => (
-                                                                tree[index].before.includes(prevVersId) && (
-                                                                    <path key={prevVersId} d={`M 24 0 C 24 ${(1 + prevVersIdx) / tree[index - 1].afterFirst.length * 16} , ${24 + tree[index].before.indexOf(prevVersId) * 24} 0 , ${24 + tree[index].before.indexOf(prevVersId) * 24} 16`} stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                            {!line && tree[curVersIdx - 1].afterFirst.map((prevVersId, prevVersIdx) => (
+                                                                tree[curVersIdx].before.includes(prevVersId) && (
+                                                                    <path key={prevVersId} d={`M 24 0 C 24 ${(1 + prevVersIdx) / tree[curVersIdx - 1].afterFirst.length * 16} , ${24 + tree[curVersIdx].before.indexOf(prevVersId) * 24} 0 , ${24 + tree[curVersIdx].before.indexOf(prevVersId) * 24} 16`} stroke='gray' strokeWidth='2px' fill='transparent'/>
                                                                 )
                                                             ))}
-                                                            {!line && tree[index - 1].afterRest.map((prevVersId, prevVersIdx) => (
-                                                                tree[index].before.includes(prevVersId) && (
-                                                                    <path key={prevVersId} d={`M ${48 + prevVersIdx * 24} 0 C ${48 + prevVersIdx * 24} ${(1 + prevVersIdx) / tree[index - 1].afterRest.length * 16} , ${24 + tree[index].before.indexOf(prevVersId) * 24} 0 , ${24 + tree[index].before.indexOf(prevVersId) * 24} 16`} stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                            {!line && tree[curVersIdx - 1].afterRest.map((prevVersId, prevVersIdx) => (
+                                                                tree[curVersIdx].before.includes(prevVersId) && (
+                                                                    <path key={prevVersId} d={`M ${48 + prevVersIdx * 24} 0 C ${48 + prevVersIdx * 24} ${(1 + prevVersIdx) / tree[curVersIdx - 1].afterRest.length * 16} , ${24 + tree[curVersIdx].before.indexOf(prevVersId) * 24} 0 , ${24 + tree[curVersIdx].before.indexOf(prevVersId) * 24} 16`} stroke='gray' strokeWidth='2px' fill='transparent'/>
                                                                 )
                                                             ))}
                                                         </svg>
                                                     </div>
                                                 )}
-                                                <div className={`version${contextVersion && contextVersion.versionId == vers.versionId ? ' selected' : ''}`} onClick={event => onClick(event, vers)}>
-                                                    <div className="tree" style={{width: `${1.5 + tree[index].before.length * 1.5}em`}}>
-                                                        {[...Array(tree[index].before.length).keys()].map(number => (
-                                                            <span key={number} className='line' style={{ left: `calc(${1.5 + number * 1.5}em - 1px)` }}/>
-                                                        ))}
+                                                <div className={`version${contextVersion && contextVersion.versionId == curVers.versionId ? ' selected' : ''}`} onClick={event => onClick(event, curVers)}>
+                                                    <div className="tree" style={{width: `${1.5 + tree[curVersIdx].before.length * 1.5}em`}}>
+                                                        {[...Array(tree[curVersIdx].before.length).keys()].map(number => {
+                                                            
+                                                            const hasNoSuccessors = (number == 0 && (curVersIdx == 0 || !(tree[curVersIdx - 1].afterFirst.includes(curVers.versionId) || tree[curVersIdx - 1].afterRest.includes(curVers.versionId))))
+                                                            const hasNoPredecessors = (number == 0 && tree[curVersIdx].afterFirst.length == 0)
+
+                                                            const top = (hasNoSuccessors ? '2.5em' : '0')
+                                                            const left = `calc(${1.5 + number * 1.5}em - 1px)`
+                                                            const bottom = (hasNoPredecessors ? 'auto' : '0')
+                                                            const height = (hasNoPredecessors ? (hasNoSuccessors ? '0' : '2.5em') : 'auto')
+
+                                                            return <span key={number} className='line' style={{ top, left, bottom, height }}/>
+
+                                                        })}
                                                         <span className='dot'/>
                                                     </div>
                                                     <div className="text">
                                                         <div>
-                                                            <a className="download" title="Download model" href={`/rest/files/${vers.versionId}.${vers.modelType}`}>
+                                                            <a className="download" title="Download model" href={`/rest/files/${curVers.versionId}.${curVers.modelType}`}>
                                                                 <img src={DownloadIcon}/>
                                                             </a>
                                                             <span className="label">
-                                                                {vers.major}.{vers.minor}.{vers.patch}
+                                                                {curVers.major}.{curVers.minor}.{curVers.patch}
                                                             </span>
-                                                            <ProductUserPicture userId={vers.userId} productId={productId} class='icon medium round middle'/>
+                                                            <ProductUserPicture userId={curVers.userId} productId={productId} class='icon medium round middle'/>
                                                             <span className="user">
                                                                 <span className="name">
-                                                                    <ProductUserName userId={vers.userId} productId={productId}/>
+                                                                    <ProductUserName userId={curVers.userId} productId={productId}/>
                                                                 </span>
                                                                 <span className="email">
-                                                                    <ProductUserEmail userId={vers.userId} productId={productId}/>
+                                                                    <ProductUserEmail userId={curVers.userId} productId={productId}/>
                                                                 </span>
                                                             </span>
                                                         </div>
                                                         <div>
                                                             <span className="description">
-                                                                {vers.description}
+                                                                {curVers.description}
                                                             </span>
                                                         </div>
                                                     </div>
                                                     <div className="model">
-                                                        {vers.imageType ? (
+                                                        {curVers.imageType ? (
                                                             <em>
-                                                                <img src={`/rest/files/${vers.versionId}.${vers.imageType}`} className="image"/>
+                                                                <img src={`/rest/files/${curVers.versionId}.${curVers.imageType}`} className="image"/>
                                                             </em>
                                                         ) : (
                                                             <span>
