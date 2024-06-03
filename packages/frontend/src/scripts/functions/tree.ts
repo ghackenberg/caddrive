@@ -1,10 +1,32 @@
 import { VersionRead } from "productboard-common"
 
+export function computeColor(versions: VersionRead[]) {
+
+    const result: { [versionId: string]: number } = {}
+
+    let hue = 240
+
+    for (const curVers of (versions || []).map(i => i).reverse()) {
+        if (!(curVers.versionId in result)) {
+            result[curVers.versionId] = hue
+            hue += 140
+        }
+        (curVers.baseVersionIds || []).forEach((prevVersId, prevVersIdx) => {
+            if (!(prevVersId in result)) {
+                result[prevVersId] = result[curVers.versionId] + prevVersIdx * 40
+            }
+        })
+    }
+
+    return result
+
+}
+
 export function computeTree(versions: VersionRead[]) {
 
     // Initialize result
 
-    const result: { before: string[], afterFirst: string[], afterRest: string[] }[] = []
+    const result: { versionId: string, before: string[], afterFirst: string[], afterRest: string[] }[] = []
 
     // Initialize iterator
 
@@ -26,7 +48,7 @@ export function computeTree(versions: VersionRead[]) {
 
         // Remember tree node
 
-        result.push({ before, afterFirst, afterRest })
+        result.push({ versionId: version.versionId, before, afterFirst, afterRest })
 
         // Update iterator
 
