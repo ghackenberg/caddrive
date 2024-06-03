@@ -1,10 +1,4 @@
 div.widget.version_tree {
-    display: table;
-    
-    table-layout: fixed;
-    border-spacing: 0;
-    border-collapse: collapse;
-
     width: 100%;
     
     margin-top: 0.5em;
@@ -13,13 +7,16 @@ div.widget.version_tree {
     border-top-left-radius: 1em;
     border-top-right-radius: 1em;
 }
-div.widget.version_tree > div {
-    display: table-row;
+
+div.widget.version_tree > div.between > svg {
+    display: block;
 }
-div.widget.version_tree > div.between {
-    height: 1px;
-}
+
 div.widget.version_tree > div.version {
+    display: grid;
+
+    grid-template-columns: min-content auto min-content;
+
     cursor: pointer;
 
     background-color: rgb(245, 245, 245);
@@ -28,65 +25,56 @@ div.widget.version_tree > div.version.selected,
 div.widget.version_tree > div.version:hover {
     background-color: rgb(230, 230, 230);
 }
-div.widget.version_tree > div > div {
-    display: table-cell;
+div.widget.version_tree > div.version {
+    border-radius: 1em;
+}
+
+div.widget.version_tree > div.version > div.tree {
+    grid-column: 1;
+    grid-row: 1;
+
+    align-self: stretch;
 
     position: relative;
-    
-    vertical-align: top;
-}
-div.widget.version_tree > div:first-child {
+
     border-top-left-radius: 1em;
-    border-top-right-radius: 1em;
-}
-div.widget.version_tree > div:first-child > div.tree {
-    border-top-left-radius: 1em;
-}
-div.widget.version_tree > div:first-child > div.model {
-    border-top-right-radius: 1em;
-}
-div.widget.version_tree > div:last-child > div.tree {
     border-bottom-left-radius: 1em;
 }
-div.widget.version_tree > div:last-child > div.model {
-    border-bottom-right-radius: 1em;
-}
-div.widget.version_tree > div > div.tree span {
+div.widget.version_tree > div.version > div.tree span {
     display: block;
 
     position: absolute;
 }
-div.widget.version_tree > div > div.tree span.line {
+div.widget.version_tree > div.version > div.tree span.line {
+    top: 0;
+    width: 2px;
+
+    bottom: 0;
+
     background-color: gray;
 }
-div.widget.version_tree > div > div.tree span.line.vertical {
-    width: 2px;
-}
-div.widget.version_tree > div > div.tree span.line.horizontal {
-    height: 2px;
+div.widget.version_tree > div.version > div.tree span.dot {
+    top: 2em;
+    left: 1em;
 
-    border-top: 2px solid rgb(245,245,245);
-    border-bottom: 2px solid rgb(245,245,245);
-}
-div.widget.version_tree > div.selected > div.tree span.line.horizontal,
-div.widget.version_tree > div:hover > div.tree span.line.horizontal {
-    border-top-color: rgb(230,230,230);
-    border-bottom-color: rgb(230,230,230);
-}
-div.widget.version_tree > div > div.tree span.dot {
     width: 1em;
     height: 1em;
-
-    margin: 0.25em;
     
     border-radius: 0.5em;
     
     background-color: black;
 }
-div.widget.version_tree > div > div.text {
+
+div.widget.version_tree > div.version > div.text {
+    grid-column: 2;
+    grid-row: 1;
+
+    justify-self: stretch;
+    align-self: stretch;
+
     padding-right: 1em;
 }
-div.widget.version_tree > div > div.text > div:first-child {
+div.widget.version_tree > div.version > div.text > div:first-child {
     position: relative;
     
     margin-top: 1em;
@@ -97,7 +85,7 @@ div.widget.version_tree > div > div.text > div:first-child {
     
     font-weight: bold;
 }
-div.widget.version_tree > div > div.text > div:first-child::after {
+div.widget.version_tree > div.version > div.text > div:first-child::after {
     content: '';
     position: absolute;
     top: 0;
@@ -107,16 +95,16 @@ div.widget.version_tree > div > div.text > div:first-child::after {
     background-image: linear-gradient(to right, rgba(245,245,245,0),rgba(245,245,245,1));
 
 }
-div.widget.version_tree > div.selected > div.text > div:first-child::after,
-div.widget.version_tree > div:hover > div.text > div:first-child::after {
+div.widget.version_tree > div.version.selected > div.text > div:first-child::after,
+div.widget.version_tree > div.version:hover > div.text > div:first-child::after {
     background-image: linear-gradient(to right, rgba(230,230,230,0),rgba(230,230,230,1));
 }
-div.widget.version_tree > div > div.text > div:last-child {
+div.widget.version_tree > div.version > div.text > div:last-child {
     margin-bottom: 0.75em;
 
     text-align: justify;
 }
-div.widget.version_tree > div > div.text > div > a.download {
+div.widget.version_tree > div.version > div.text > div > a.download {
     display: block;
 
     position: relative;
@@ -130,11 +118,11 @@ div.widget.version_tree > div > div.text > div > a.download {
 
     background-color: rgb(245,245,245);
 }
-div.widget.version_tree > div.selected > div.text > div > a.download,
-div.widget.version_tree > div:hover > div.text > div > a.download {
+div.widget.version_tree > div.version.selected > div.text > div > a.download,
+div.widget.version_tree > div.version:hover > div.text > div > a.download {
     background-color: rgb(230,230,230);
 }
-div.widget.version_tree > div > div.text > div > a.download > img {
+div.widget.version_tree > div.version > div.text > div > a.download > img {
     display: block;
 
     width: 1em;
@@ -146,10 +134,10 @@ div.widget.version_tree > div > div.text > div > a.download > img {
 
     border-radius: 50%;
 }
-div.widget.version_tree > div > div.text > div > a.download:hover > img {
+div.widget.version_tree > div.version > div.text > div > a.download:hover > img {
     background-color: rgb(205,205,205);
 }
-div.widget.version_tree > div > div.text > div > span.label {
+div.widget.version_tree > div.version > div.text > div > span.label {
     display: inline-block;
 
     margin-right: 1em;
@@ -163,41 +151,48 @@ div.widget.version_tree > div > div.text > div > span.label {
     
     color: white;
 }
-div.widget.version_tree > div > div.text > div > span.user {
+div.widget.version_tree > div.version > div.text > div > span.user {
     margin-left: 1em;
 }
-div.widget.version_tree > div > div.text > div > span.user > span.email {
+div.widget.version_tree > div.version > div.text > div > span.user > span.email {
     display: none;
 }
-div.widget.version_tree > div > div.model {
-    position: relative;
+
+div.widget.version_tree > div.version > div.model {
+    display: grid;
+
+    grid-column: 3;
+    grid-row: 1;
+
+    align-self: stretch;
+
+    border-top-right-radius: 1em;
+    border-bottom-right-radius: 1em;
 
     width: 10em;
-    height: 10em;
 
     background-color: rgb(215,215,215);
-
-    vertical-align: middle;
 }
-div.widget.version_tree > div > div.model > * > img {
+div.widget.version_tree > div.version > div.model > * {
+    align-self: center;
+}
+div.widget.version_tree > div.version > div.model > * > img {
     display: block;
 
     margin-left: auto;
     margin-right: auto;
 }
-div.widget.version_tree > div > div.model > * > img.image {
+div.widget.version_tree > div.version > div.model > * > img.image {
     width: 100%;
 }
 
 @media screen and (max-width: 45em){
-    div.widget.version_tree > div> div.model {
+    div.widget.version_tree > div.version > div.model {
         display: none;
     }
 
-    div.widget.version_tree > div:first-child > div.text {
+    div.widget.version_tree > div.version > div.text {
         border-top-right-radius: 1em;
-    }
-    div.widget.version_tree > div:last-child > div.text {
         border-bottom-right-radius: 1em;
     }
 }

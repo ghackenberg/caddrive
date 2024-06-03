@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect, useContext, Fragment } from 'react'
+import { useState, useContext, Fragment } from 'react'
 import { Redirect, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
@@ -45,34 +45,15 @@ export const ProductVersionView = () => {
     const members = useMembers(productId)
     const versions = useVersions(productId)
 
-    // INITIAL STATES
+    // CONSTANTS
 
-    const initialTree = computeTree(versions)
+    const tree = computeTree(versions)
+    const line = false
 
     // STATES
-
-    // - Computations
-    const [children, setChildren] = useState<{[versionId: string]: VersionRead[]}>(initialTree.children)
-    const [childrenMin, setChildrenMin] = useState<{[versionId: string]: number}>(initialTree.childrenMin)
-    const [childrenMax, setChildrenMax] = useState<{[versionId: string]: number}>(initialTree.childrenMax)
-    const [siblings, setSiblings] = useState<{[versionId: string]: VersionRead[]}>(initialTree.siblings)
-    const [indents, setIndents] = useState<{[versionId: string]: number}>(initialTree.indents)
-    const [indent, setIndent] = useState<number>(initialTree.indent)
     
     // - Interactions
     const [active, setActive] = useState<string>('left')
-
-    // EFFECTS
-
-    useEffect(() => { 
-        const tree = computeTree(versions)
-        setChildren(tree.children)
-        setSiblings(tree.siblings)
-        setIndents(tree.indents)
-        setIndent(tree.indent)
-        setChildrenMin(tree.childrenMin)
-        setChildrenMax(tree.childrenMax)
-    }, [versions])
 
     // FUNCTIONS
 
@@ -129,38 +110,40 @@ export const ProductVersionView = () => {
                             ) : (
                                 <div className='main'>
                                     <div className="widget version_tree">
-                                        { versions.map(version => version).reverse().map((vers, index) => (
+                                        { versions.map(i => i).reverse().map((vers, index) => (
                                             <Fragment key={vers.versionId}>
                                                 {index > 0 && (
                                                     <div className="between">
-                                                        <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
-                                                            {vers.versionId in siblings && siblings[vers.versionId].map(sibling => (
-                                                                <span key={sibling.versionId} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                        <svg width={`${1.5 + Math.max(1 + tree[index - 1].afterRest.length, tree[index].before.length) * 1.5}em`} height='1em'>
+                                                            {line && tree[index - 1].afterFirst.map(prevVersId => (
+                                                                tree[index].before.includes(prevVersId) && (
+                                                                    <line key={prevVersId} x1='1.5em' y1='0' x2={`${1.5 + tree[index].before.indexOf(prevVersId) * 1.5}em`} y2='100%' stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                                )
                                                             ))}
-                                                            {vers.versionId in children && children[vers.versionId].map(child => (
-                                                                <span className='line vertical child' key={child.versionId} style={{top: 0, left: `calc(${1.5 + indents[child.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                            {line && tree[index - 1].afterRest.map((prevVersId, prevVersIdx) => (
+                                                                tree[index].before.includes(prevVersId) && (
+                                                                    <line key={prevVersId} x1={`${3.0 + prevVersIdx * 1.5}em`} y1='0' x2={`${1.5 + tree[index].before.indexOf(prevVersId) * 1.5}em`} y2='100%' stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                                )
                                                             ))}
-                                                        </div>
-                                                        <div className="text" style={{color: 'orange'}}/>
+                                                            {!line && tree[index - 1].afterFirst.map((prevVersId, prevVersIdx) => (
+                                                                tree[index].before.includes(prevVersId) && (
+                                                                    <path key={prevVersId} d={`M 24 0 C 24 ${(1 + prevVersIdx) / tree[index - 1].afterFirst.length * 16} , ${24 + tree[index].before.indexOf(prevVersId) * 24} 0 , ${24 + tree[index].before.indexOf(prevVersId) * 24} 16`} stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                                )
+                                                            ))}
+                                                            {!line && tree[index - 1].afterRest.map((prevVersId, prevVersIdx) => (
+                                                                tree[index].before.includes(prevVersId) && (
+                                                                    <path key={prevVersId} d={`M ${48 + prevVersIdx * 24} 0 C ${48 + prevVersIdx * 24} ${(1 + prevVersIdx) / tree[index - 1].afterRest.length * 16} , ${24 + tree[index].before.indexOf(prevVersId) * 24} 0 , ${24 + tree[index].before.indexOf(prevVersId) * 24} 16`} stroke='gray' strokeWidth='2px' fill='transparent'/>
+                                                                )
+                                                            ))}
+                                                        </svg>
                                                     </div>
                                                 )}
                                                 <div className={`version${contextVersion && contextVersion.versionId == vers.versionId ? ' selected' : ''}`} onClick={event => onClick(event, vers)}>
-                                                    <div className="tree" style={{width: `${indent * 1.5 + 1.5}em`}}>
-                                                        {vers.versionId in siblings && siblings[vers.versionId].map(sibling => (
-                                                            <span key={sibling.versionId} className='line vertical sibling' style={{top: 0, left: `calc(${1.5 + indents[sibling.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
+                                                    <div className="tree" style={{width: `${1.5 + tree[index].before.length * 1.5}em`}}>
+                                                        {[...Array(tree[index].before.length).keys()].map(number => (
+                                                            <span key={number} className='line' style={{ left: `calc(${1.5 + number * 1.5}em - 1px)` }}/>
                                                         ))}
-                                                        {vers.versionId in childrenMin && vers.versionId in childrenMax && (
-                                                            <span className='line horizontal parent' style={{top: 'calc(2.5em - 3px)', left: `calc(${1.5 + childrenMin[vers.versionId] * 1.5}em + 1px)`, width: `calc(${(childrenMax[vers.versionId] - childrenMin[vers.versionId]) * 1.5}em - 2px)`}}/>
-                                                        )}
-                                                        {vers.versionId in children && children[vers.versionId].map(child => (
-                                                            <span className='line vertical child' key={child.versionId} style={{top: 0, left: `calc(${1.5 + indents[child.versionId] * 1.5}em - 1px)`, height: 'calc(2.5em + 1px)'}}/>
-                                                        ))}
-                                                        {vers.versionId in indents && (
-                                                            <span className='line vertical parent' style={{top: 'calc(2.5em - 1px)', left: `calc(${1.5 + indents[vers.versionId] * 1.5}em - 1px)`, bottom: 0}}/>
-                                                        )}
-                                                        {vers.versionId in indents && (
-                                                            <span className='dot parent' style={{top: '1.75em', left: `${0.75 + indents[vers.versionId] * 1.5}em`}}/>
-                                                        )}
+                                                        <span className='dot'/>
                                                     </div>
                                                     <div className="text">
                                                         <div>

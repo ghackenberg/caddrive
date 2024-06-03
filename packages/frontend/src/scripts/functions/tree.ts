@@ -2,80 +2,45 @@ import { VersionRead } from "productboard-common"
 
 export function computeTree(versions: VersionRead[]) {
 
-    // Calculate children
-    const children: {[versionId: string]: VersionRead[]} = {}
+    // Initialize result
 
-    for (const version of versions || []) {
-        children[version.versionId] = []
-        for (const baseVersionId of version.baseVersionIds) {
-            children[baseVersionId].push(version)
-        }
-    }
+    const result: { before: string[], afterFirst: string[], afterRest: string[] }[] = []
 
-    // Calculate siblings
+    // Initialize iterator
 
-    const siblings: {[versionId: string]: VersionRead[]} = {}
+    let iterator: string[] = []
 
-    for (const version of versions || []) {
-        siblings[version.versionId] = []
-    }
+    // Process versions
 
-    for (let outerIndex = versions? versions.length - 1 : -1 ; outerIndex >= 0; outerIndex--) {
-        const outerVersion = versions[outerIndex]
-        const baseVersionIds = [...outerVersion.baseVersionIds]
-        for (let innerIndex = outerIndex - 1; innerIndex >= 0; innerIndex--) {
-            const innerVersion = versions[innerIndex]
-            const baseIndex = baseVersionIds.indexOf(innerVersion.versionId)
-            if (baseIndex != -1) {
-                baseVersionIds.splice(baseIndex, 1)
-            }
-            if (baseVersionIds.length > 0) {
-                siblings[innerVersion.versionId].push(outerVersion)
-            }
-        }
-    }
+    for(const version of (versions || []).map(i => i).reverse()) {
 
-    // Calculate indents
-    const indents: {[versionId: string]: number} = {}
+        // Calculate before
 
-    let next = 0
+        const before = iterator.filter(i => i != version.versionId)
+        before.unshift(version.versionId)
 
-    for (const version of versions || []) {
-        if (!(version.versionId in indents)) {
-            const indent = version.baseVersionIds.length > 0 ? indents[version.baseVersionIds[0]] : next
-        
-            indents[version.versionId] = indent
-        }
+        // Calculate after
 
-        for (let index = 0; index < children[version.versionId].length; index++) {
-            const child = children[version.versionId][index]
-            if (!(child.versionId in indents)) {
-                if (index == 0) {
-                    indents[child.versionId] = indents[version.versionId]
-                } else {
-                    indents[child.versionId] = ++next
-                }
+        const afterFirst = (version.baseVersionIds || []).map(i => i)
+        const afterRest = iterator.filter(i => i != version.versionId)
+
+        // Remember tree node
+
+        result.push({ before, afterFirst, afterRest })
+
+        // Update iterator
+
+        iterator = iterator.filter(i => i != version.versionId)
+        for (const baseVersionId of version.baseVersionIds || []) {
+            if (!iterator.includes(baseVersionId)) {
+                iterator.push(baseVersionId)
             }
         }
+
     }
 
-    // Calculate min/max
-    const childrenMin: {[versionId: string]: number} = {}
-    const childrenMax: {[versionId: string]: number} = {}
+    // Return result
 
-    for (const version of versions || []) {
-        let min = indents[version.versionId]
-        let max = 0
+    return result
 
-        for (const child of children[version.versionId]) {
-            min = Math.min(min, indents[child.versionId])
-            max = Math.max(max, indents[child.versionId])
-        }
-
-        childrenMin[version.versionId] = min
-        childrenMax[version.versionId] = max
-    }
-
-    return { children, siblings, indents, indent: next+1, childrenMin, childrenMax }
-    
 }
