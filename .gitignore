@@ -23,6 +23,9 @@ manuscripts/*/*.bcf
 manuscripts/*/*.blg
 manuscripts/*/*.fdb_latexmk
 manuscripts/*/*.fls
+manuscripts/*/*.idx
+manuscripts/*/*.ilg
+manuscripts/*/*.ind
 manuscripts/*/*.lof
 manuscripts/*/*.log
 manuscripts/*/*.nlo
