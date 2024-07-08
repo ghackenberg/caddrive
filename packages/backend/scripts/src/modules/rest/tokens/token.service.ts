@@ -13,6 +13,14 @@ import { TRANSPORTER } from "../../../functions/mail"
 import { KEY_PAIR } from "../../../key"
 import { AuthorizedRequest } from "../../../request"
 
+function generateCode() {
+    let code = ''
+    while (code.length < 6) {
+        code += `${Math.floor(Math.random() * 10)}`
+    }
+    return code
+}
+
 @Injectable()
 export class TokenService implements TokenREST {
     constructor(
@@ -25,7 +33,7 @@ export class TokenService implements TokenREST {
         const created = Date.now()
         const updated = created
         const email = request.email
-        const code = shortid().substring(0, 6)
+        const code = request.email == 'demo@caddrive.com' ? '000000' : generateCode()
         const count = 0
         await Database.get().tokenRepository.save({ tokenId, created, updated, email, code, count })
         const transporter = await TRANSPORTER
