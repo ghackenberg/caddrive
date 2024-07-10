@@ -29,7 +29,7 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/ghackenberg/caddrive.git",
-        "directory": "packages/node/common"
+        "directory": "packages/common"
     },
     "scripts": {
         "clean": "rm -rf bin",
