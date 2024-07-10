@@ -5,7 +5,7 @@ import * as ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter } from 'react-router-dom'
 
-import { main } from 'productboard-engine'
+import { main, compute } from 'productboard-engine'
 
 import './clients/mqtt'
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
@@ -18,6 +18,7 @@ import AppIcon from '/src/images/app.png'
 import '/src/styles/root.css'
 
 main()
+console.log(compute(1, 2))
 
 const Root = React.lazy(() => import('./components/Root'))
 
