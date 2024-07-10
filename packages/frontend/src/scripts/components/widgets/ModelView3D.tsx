@@ -8,6 +8,7 @@ import { initializeCamera, initializeOrbit, initializeRenderer, initializeScene,
 
 interface Props {
     model: Group
+    update?: number
     highlighted?: string[]
     marked?: string[]
     selected?: string[]

@@ -12,8 +12,11 @@ import { ModelView3D } from './ModelView3D'
 
 import LoadIcon from '/src/images/load.png'
 
+type Callback = () => void
+
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
+const LDRAW_UPDATE_CACHE: {[path: string]: Callback[]} = {}
 
 async function getGLTFModel(path: string) {
     if (!(path in GLTF_MODEL_CACHE)) {
@@ -23,9 +26,25 @@ async function getGLTFModel(path: string) {
 
 }
 
+function trackLDrawModel(path: string, callback: () => void) {
+    // Subscribe
+    if (!(path in LDRAW_UPDATE_CACHE)) {
+        LDRAW_UPDATE_CACHE[path] = []
+    }
+    LDRAW_UPDATE_CACHE[path].push(callback)
+    // Unsubscribe
+    return () => {
+        LDRAW_UPDATE_CACHE[path].splice(LDRAW_UPDATE_CACHE[path].indexOf(callback), 1)
+    }
+}
+
 async function getLDrawModel(path: string) {
     if (!(path in LDRAW_MODEL_CACHE)) {
-        LDRAW_MODEL_CACHE[path] = await loadLDrawModel(path)
+        LDRAW_MODEL_CACHE[path] = await loadLDrawModel(path, () => {
+            for (const callback of LDRAW_UPDATE_CACHE[path] || []) {
+                callback()
+            }
+        })
     }
     return LDRAW_MODEL_CACHE[path]
 }
@@ -69,6 +88,13 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     const [selected, setSelected] = useState<string[]>(props.selected)
 
     // EFFECTS
+
+    useEffect(() => {
+        return trackLDrawModel(props.path, () => {
+            const newGroup = new Group().add(LDRAW_MODEL_CACHE[props.path])
+            setGroup(newGroup)
+        })
+    }, [props.path])
     
     useEffect(() => {
         let exec = true

@@ -5,20 +5,14 @@ import * as ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter } from 'react-router-dom'
 
-import { main, compute } from 'productboard-engine'
-
 import './clients/mqtt'
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
 import { LoadingView } from './components/views/Loading'
 import './plausible'
-import './worker'
 
 import AppIcon from '/src/images/app.png'
 
 import '/src/styles/root.css'
-
-main()
-console.log(compute(1, 2))
 
 const Root = React.lazy(() => import('./components/Root'))
 
