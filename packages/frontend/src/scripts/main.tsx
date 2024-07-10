@@ -5,6 +5,8 @@ import * as ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import { BrowserRouter } from 'react-router-dom'
 
+import { main } from 'productboard-engine'
+
 import './clients/mqtt'
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
 import { LoadingView } from './components/views/Loading'
@@ -14,6 +16,8 @@ import './worker'
 import AppIcon from '/src/images/app.png'
 
 import '/src/styles/root.css'
+
+main()
 
 const Root = React.lazy(() => import('./components/Root'))
 

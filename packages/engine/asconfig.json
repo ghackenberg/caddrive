@@ -3,9 +3,6 @@
     "entries": [
         "src/main.ts"
     ],
-    "options": {
-        "importTable": true
-    },
     "targets": {
         "release": {
             "optimize": true,
