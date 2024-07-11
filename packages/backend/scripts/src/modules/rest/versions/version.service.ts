@@ -95,12 +95,20 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         version.deleted = Date.now()
         version.updated = version.deleted
         await Database.get().versionRepository.save(version)
+        // Update other versions
+        const versions = await Database.get().versionRepository.findBy({ productId, deleted: IsNull() })
+        for (const version of versions) {
+            if (version.baseVersionIds.includes(versionId)) {
+                version.baseVersionIds = version.baseVersionIds.filter(baseVersionId => baseVersionId != versionId)
+                await Database.get().versionRepository.save(version)
+            }
+        }
         // Update product
         const product = await Database.get().productRepository.findOneBy({ productId })
         product.updated = version.updated
         await Database.get().productRepository.save(product)
         // Emit changes
-        emitProductMessage(productId, { type: 'patch', products: [product], versions: [version] })
+        emitProductMessage(productId, { type: 'patch', products: [product], versions: [version, ...versions] })
         // Return version
         return convertVersion(version)
     }

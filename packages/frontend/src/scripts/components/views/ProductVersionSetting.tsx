@@ -179,6 +179,20 @@ export const ProductVersionSettingView = () => {
         await goBack()
     }
 
+    async function onClick(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault()
+        if (confirm('Are you sure?')) {
+            await VersionClient.deleteVersion(productId, versionId)
+            const filtered = versions && versions.filter(version => version.versionId != versionId)
+            if (filtered && filtered.length > 0) {
+                setContextVersion(filtered[filtered.length - 1])
+            } else {
+                setContextVersion(undefined)
+            }
+            await goBack()
+        }
+    }
+
     // CONSTANTS
 
     const columns: Column<VersionRead>[] = [
@@ -242,11 +256,14 @@ export const ProductVersionSettingView = () => {
                                     </GenericInput>
                                     {contextUser ? (
                                         contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
-                                            version || blob ? (
-                                                <ButtonInput value='Save'/>
-                                            ) : (
-                                                <ButtonInput value='Save' badge='requires file' disabled={true}/>
-                                            )
+                                            <>
+                                                {version || blob ? (
+                                                    <ButtonInput value='Save'/>
+                                                ) : (
+                                                    <ButtonInput value='Save' badge='requires file' disabled={true}/>
+                                                )}
+                                                <ButtonInput value='Delete' class='red' click={onClick}/>
+                                            </>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>
                                         )
