@@ -8,6 +8,7 @@ import { initializeCamera, initializeOrbit, initializeRenderer, initializeScene,
 
 interface Props {
     model: Group
+    update?: number
     highlighted?: string[]
     marked?: string[]
     selected?: string[]
@@ -20,6 +21,7 @@ export class ModelView3D extends React.Component<Props> {
 
     private div: React.RefObject<HTMLDivElement>
 
+    private update: number
     private scene: Scene
     private camera: PerspectiveCamera
     private renderer: WebGLRenderer
@@ -185,10 +187,12 @@ export class ModelView3D extends React.Component<Props> {
 
     reload() {
         // Update
-        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model) {
+        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model || this.update != this.props.update) {
             // Cache
             this.highlight_cache = undefined
             this.select_cache = undefined
+            // Update
+            this.update = this.props.update
             // Scene
             this.scene.remove(this.scene.children[this.scene.children.length - 1])
             this.scene.add(this.props.model)

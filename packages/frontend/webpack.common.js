@@ -2,7 +2,7 @@ import { resolve } from 'path'
 
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import webpack from 'webpack'
-const { ProvidePlugin } = webpack
+const { NormalModuleReplacementPlugin, ProvidePlugin } = webpack
 
 export default {
     stats: 'minimal',
@@ -13,6 +13,12 @@ export default {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
+            },{
+                test: /\.(wasm)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'modules/[hash][ext][query]'
+                }
             },{
                 test: /\.(css)$/i,
                 use: ['style-loader', 'css-loader']
@@ -36,23 +42,27 @@ export default {
             'three': resolve('../../node_modules/three')
         },
         fallback: {
-            'os': false,
-            'stream': false,
+            'crypto': false,
             'http': false,
             'https': false,
-            'zlib': false,
-            'util': false,
+            'fs': false,
+            'os': false,
             'path': false,
-            'crypto': false,
-            '@nestjs/core': false,
+            'stream': false,
+            'util': false,
+            'zlib': false,
             '@nestjs/common': false,
+            '@nestjs/core': false,
             '@nestjs/mapped-types': false,
-            '@nestjs/swagger': false,
-            '@nestjs/microservices': false
+            '@nestjs/microservices': false,
+            '@nestjs/swagger': false
         },
         extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [
+        new NormalModuleReplacementPlugin(/node:/, resource => {
+            return resource.request = resource.request.replace(/node:/, "")
+        }),
         new ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
             process: 'process/browser.js'

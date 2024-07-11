@@ -9,7 +9,6 @@ import './clients/mqtt'
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
 import { LoadingView } from './components/views/Loading'
 import './plausible'
-import './worker'
 
 import AppIcon from '/src/images/app.png'
 

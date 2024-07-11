@@ -31,54 +31,56 @@ export class Matrix {
 }
 
 export abstract class Entry {
+    constructor(public line: string) {
 
+    }
 }
 
 export class Comment extends Entry {
-    constructor(public text: string) {
-        super()
+    constructor(line: string, public text: string) {
+        super(line)
     }
 }
 
 export class Command extends Entry {
-    constructor(public text: string) {
-        super()
+    constructor(line: string, public text: string) {
+        super(line)
     }
 }
 
 export class Reference extends Entry {
-    constructor(public color: number, public position: Vector, public orientation: Matrix, public file: string) {
-        super()
+    constructor(line: string, public color: number, public position: Vector, public orientation: Matrix, public file: string) {
+        super(line)
     }
 }
 
 export abstract class Shape extends Entry {
-    constructor(public color: number) {
-        super()
+    constructor(line: string, public color: number) {
+        super(line)
     }
 }
 
 export class Line extends Shape {
-    constructor(color: number, public firstPoint: Vector, public secondPoint: Vector) {
-        super(color)
+    constructor(line: string, color: number, public firstPoint: Vector, public secondPoint: Vector) {
+        super(line, color)
     }
 }
 
 export class Triangle extends Shape {
-    constructor(color: number, public firstPoint: Vector, public secondPoint: Vector, public thirdPoint: Vector) {
-        super(color)
+    constructor(line: string, color: number, public firstPoint: Vector, public secondPoint: Vector, public thirdPoint: Vector) {
+        super(line, color)
     }
 }
 
 export class Quadrilateral extends Shape {
-    constructor(color: number, public firstPoint: Vector, public secondPoint: Vector, public thirdPoint: Vector, public fourthVector: Vector) {
-        super(color)
+    constructor(line: string, color: number, public firstPoint: Vector, public secondPoint: Vector, public thirdPoint: Vector, public fourthVector: Vector) {
+        super(line, color)
     }
 }
 
 export class OptionalLine extends Shape {
-    constructor(color: number, public firstPoint: Vector, public secondPoint: Vector, public firstControlPoint: Vector, public secondControlPoint: Vector) {
-        super(color)
+    constructor(line: string, color: number, public firstPoint: Vector, public secondPoint: Vector, public firstControlPoint: Vector, public secondControlPoint: Vector) {
+        super(line, color)
     }
 }
 

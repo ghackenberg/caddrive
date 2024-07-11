@@ -45,7 +45,7 @@ export class Parser {
     }
 
     private parseCommand(context: Context, data: string) {
-        context.current.addCommand(new Command(data.substring('0 !'.length)))
+        context.current.addCommand(new Command(data, data.substring('0 !'.length)))
         if (data.startsWith('0 !DATA ')) {
             const name = data.substring('0 !DATA '.length)
             const model = new Model(name, context.root)
@@ -129,11 +129,11 @@ export class Parser {
         } else if (data.startsWith('0 NOFILE')) {
             context.current = context.root
         } else if (data.startsWith('0 // ')) {
-            context.current.addComment(new Comment(data.substring('0 // '.length)))
+            context.current.addComment(new Comment(data, data.substring('0 // '.length)))
         } else if (data.startsWith('0 //')) {
-            context.current.addComment(new Comment(data.substring('0 //'.length)))
+            context.current.addComment(new Comment(data, data.substring('0 //'.length)))
         } else {
-            context.current.addComment(new Comment(data.substring('0 '.length)))
+            context.current.addComment(new Comment(data, data.substring('0 '.length)))
         }
     }
 
@@ -162,7 +162,7 @@ export class Parser {
 
         const file = item[13]
         
-        context.current.addReference(new Reference(color, position, orientation, file))
+        context.current.addReference(new Reference(data, color, position, orientation, file))
     }
 
     private parseLine(context: Context, data: string) {
@@ -182,7 +182,7 @@ export class Parser {
 
         const secondPoint = new Vector(x2, y2, z2)
 
-        context.current.addLine(new Line(color, firstPoint, secondPoint))
+        context.current.addLine(new Line(data, color, firstPoint, secondPoint))
     }
 
     private parseTriangle(context: Context, data: string) {
@@ -208,7 +208,7 @@ export class Parser {
 
         const thirdPoint = new Vector(x3, y3, z3)
 
-        context.current.addTriangle(new Triangle(color, firstPoint, secondPoint, thirdPoint))
+        context.current.addTriangle(new Triangle(data, color, firstPoint, secondPoint, thirdPoint))
     }
 
     private parseQuadrilateral(context: Context, data: string) {
@@ -240,7 +240,7 @@ export class Parser {
 
         const fourthPoint = new Vector(x4, y4, z4)
 
-        context.current.addQuadliteral(new Quadrilateral(color, firstPoint, secondPoint, thirdPoint, fourthPoint))
+        context.current.addQuadliteral(new Quadrilateral(data, color, firstPoint, secondPoint, thirdPoint, fourthPoint))
     }
 
     private parseOptionalLine(context: Context, data: string) {
@@ -272,7 +272,7 @@ export class Parser {
 
         const secondControlPoint = new Vector(x4, y4, z4)
 
-        context.current.addOptionalLine(new OptionalLine(color, firstPoint, secondPoint, firstControlPoint, secondControlPoint))
+        context.current.addOptionalLine(new OptionalLine(data, color, firstPoint, secondPoint, firstControlPoint, secondControlPoint))
     }
 
 }
