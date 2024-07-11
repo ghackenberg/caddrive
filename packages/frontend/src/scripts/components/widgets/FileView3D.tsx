@@ -40,7 +40,8 @@ function trackLDrawModel(path: string, callback: () => void) {
 
 async function getLDrawModel(path: string) {
     if (!(path in LDRAW_MODEL_CACHE)) {
-        LDRAW_MODEL_CACHE[path] = await loadLDrawModel(path, () => {
+        LDRAW_MODEL_CACHE[path] = await loadLDrawModel(path, (part, loaded, total) => {
+            console.log(part, loaded, total)
             for (const callback of LDRAW_UPDATE_CACHE[path] || []) {
                 callback()
             }

@@ -5,9 +5,9 @@ import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 import { Model, Parser } from "productboard-ldraw"
 
 import { CacheAPI } from "../clients/cache"
-//import { worker } from "../worker"
 
-const empty = () => {/**/}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const empty = (_part: string, _loaded: number, _total: number) => {/**/}
 
 const TEXT_DECODER = new TextDecoder()
 
@@ -43,33 +43,61 @@ export async function parseLDrawModel(data: string, update = empty) {
     const model = new Parser().parse(data)
     if (model.files.length > 0) {
         const group = new THREE.Group()
-        setTimeout(() => parseReference(group, model, model.files[0], 0, update), 1)
+        const total = countParts(model, model.files[0])
+        parseModel(group, model, model.files[0], 0, total, update)
+        group.rotation.x = Math.PI
         return group
     } else {
         if (model.shapes.length > 0) {
-            return parseFull(data)
+            const group = await parseFull(data)
+            group.rotation.x = Math.PI
+            return group
         } else {
             const group = new THREE.Group()
-            setTimeout(() => parseReference(group, model, model, 0, update), 1)
+            const total = countParts(model, model)
+            parseModel(group, model, model, 0, total, update)
+            group.rotation.x = Math.PI
             return group
         }
     }
 }
 
-function parseReference(group: THREE.Group, context: Model, model: Model, index: number, update = empty, finish = empty) {
-    if (index < model.references.length) {
+async function pause(milliseconds: number) {
+    return new Promise<void>(resolve => {
+        setTimeout(resolve, milliseconds)
+    })
+}
 
-        const reference = model.references[index]
+function countParts(context: Model, model: Model) {
+    let count = 0
+
+    for (const reference of model.references) {
+        if (reference.file.endsWith('.dat')) {
+            count++
+        } else if (reference.file in context.fileIndex) {
+            count += countParts(context, context.fileIndex[reference.file])
+        }
+    }
+
+    return count
+}
+
+async function parseModel(group: THREE.Group, context: Model, model: Model, loaded: number, total: number, update = empty) {
+    for (const reference of model.references) {
 
         if (reference.file.endsWith('.dat')) {
 
             // Load part
 
-            parseFull(reference.line).then(child => {
-                group.add(child)
-                update() // Notify
-                setTimeout(() => parseReference(group, context, model, index + 1, update, finish), 1)
-            })
+            const submodel = await parseFull(reference.line)
+            
+            group.add(submodel.children[0])
+
+            loaded++
+
+            update(reference.file, loaded, total)
+
+            await pause(5)
 
         } else if (reference.file in context.fileIndex) {
 
@@ -80,34 +108,22 @@ function parseReference(group: THREE.Group, context: Model, model: Model, index:
             const child = new THREE.Group()
 
             child.position.set(reference.position.x, reference.position.y, reference.position.z)
-            // TODO Set position
             // TODO Set rotation
 
             group.add(child)
 
             // Continue loading submodel
-            parseReference(child, context, submodel, 0, update, () => {
-                // Continue loading parent model
-                setTimeout(() => parseReference(group, context, model, index + 1, update, finish), 1)
-            })
-        } else {
-
-            // Omit reference
-
-            parseReference(group, context, model, index + 1, update, finish)
-
+            loaded = await parseModel(child, context, submodel, loaded, total, update)
         }
-    } else {
-        finish()
     }
+
+    return loaded
 }
 
 function parseFull(data: string) {
     return new Promise<THREE.Group>(resolve => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (LDRAW_LOADER as any).parse(data, (group: THREE.Group) => {
-            // Fix coordinates
-            group.rotation.x = Math.PI
             // Resolve
             resolve(group)
         })
