@@ -108,7 +108,13 @@ function countParts(context: Model, model: Model) {
     return count
 }
 
-async function parseModel(path: string, group: THREE.Group, context: Model, model: Model, loaded: number, total: number, update = empty) {
+async function pause(milliseconds: number) {
+    return new Promise<void>(resolve => {
+        setTimeout(resolve, milliseconds)
+    })
+}
+
+async function parseModel(path: string, group: THREE.Group, context: Model, model: Model, loaded: number, total: number, update = empty, time = Date.now()) {
 
     update(undefined, loaded, total)
 
@@ -161,11 +167,21 @@ async function parseModel(path: string, group: THREE.Group, context: Model, mode
             group.add(child)
 
             // Continue loading submodel
-            loaded = await parseModel(path, child, context, submodel, loaded, total, update)
+            const result = await parseModel(path, child, context, submodel, loaded, total, update, time)
+
+            loaded = result.loaded
+
+            time = result.time
+        }
+
+        if (Date.now() - time > 1000 / 60) {
+            await pause(0)
+
+            time = Date.now()
         }
     }
 
-    return loaded
+    return { loaded, time }
 }
 
 function parseFull(data: string) {
