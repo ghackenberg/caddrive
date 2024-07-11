@@ -21,6 +21,8 @@ const LOADING_MANAGER = new THREE.LoadingManager().setURLModifier(url => {
 
 const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
 
+LDRAW_LOADER.smoothNormals = false
+
 LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
     console.log('Materials loaded!')
 }).catch(error => {
@@ -92,12 +94,6 @@ export async function parseLDrawModel(path: string, data: string, update = empty
     }
 }
 
-async function pause(milliseconds: number) {
-    return new Promise<void>(resolve => {
-        setTimeout(resolve, milliseconds)
-    })
-}
-
 function countParts(context: Model, model: Model) {
     let count = 0
 
@@ -133,8 +129,6 @@ async function parseModel(path: string, group: THREE.Group, context: Model, mode
 
             update(reference.file, loaded, total)
 
-            await pause(0)
-
         } else if (reference.file in context.fileIndex) {
 
             // Load submodel
@@ -143,8 +137,26 @@ async function parseModel(path: string, group: THREE.Group, context: Model, mode
 
             const child = new THREE.Group()
 
-            child.position.set(reference.position.x, reference.position.y, reference.position.z)
-            // TODO Set rotation
+            child.userData = {
+                name: reference.file
+            }
+
+            const matrix = new THREE.Matrix4().set(
+                reference.orientation.a, reference.orientation.b, reference.orientation.c, reference.position.x,
+                reference.orientation.d, reference.orientation.e, reference.orientation.f, reference.position.y,
+                reference.orientation.g, reference.orientation.h, reference.orientation.i, reference.position.z,
+                0, 0, 0, 1
+            )
+
+            const position = new THREE.Vector3()
+            const quaternion = new THREE.Quaternion()
+            const scale = new THREE.Vector3()
+
+            matrix.decompose(position, quaternion, scale)
+
+            child.position.copy(position)
+            child.quaternion.copy(quaternion)
+            child.scale.copy(scale)
 
             group.add(child)
 
