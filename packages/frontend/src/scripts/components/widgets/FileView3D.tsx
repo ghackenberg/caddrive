@@ -12,10 +12,12 @@ import { ModelView3D } from './ModelView3D'
 
 import LoadIcon from '/src/images/load.png'
 
-type Callback = () => void
+type Callback = (part: string, loaded: number, total: number) => void
 
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
+const LDRAW_LOADED_CACHE: {[path: string]: number} = {}
+const LDRAW_TOTAL_CACHE: {[path: string]: number} = {}
 const LDRAW_UPDATE_CACHE: {[path: string]: Callback[]} = {}
 
 async function getGLTFModel(path: string) {
@@ -26,7 +28,7 @@ async function getGLTFModel(path: string) {
 
 }
 
-function trackLDrawModel(path: string, callback: () => void) {
+function trackLDrawModel(path: string, callback: Callback) {
     // Subscribe
     if (!(path in LDRAW_UPDATE_CACHE)) {
         LDRAW_UPDATE_CACHE[path] = []
@@ -41,9 +43,10 @@ function trackLDrawModel(path: string, callback: () => void) {
 async function getLDrawModel(path: string) {
     if (!(path in LDRAW_MODEL_CACHE)) {
         LDRAW_MODEL_CACHE[path] = await loadLDrawModel(path, (part, loaded, total) => {
-            console.log(part, loaded, total)
+            LDRAW_LOADED_CACHE[path] = loaded
+            LDRAW_TOTAL_CACHE[path] = total
             for (const callback of LDRAW_UPDATE_CACHE[path] || []) {
-                callback()
+                callback(part, loaded, total)
             }
         })
     }
@@ -83,6 +86,9 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     
     // Entities
     const [group, setGroup] = useState<Group>(initialGroup)
+    const [loaded, setLoaded] = useState<number>()
+    const [total, setTotal] = useState<number>()
+    const [update, setUpdate] = useState<number>(Date.now())
     
     // Interactions
     const [toggle, setToggle] = useState(false)
@@ -91,9 +97,10 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     // EFFECTS
 
     useEffect(() => {
-        return trackLDrawModel(props.path, () => {
-            const newGroup = new Group().add(LDRAW_MODEL_CACHE[props.path])
-            setGroup(newGroup)
+        return trackLDrawModel(props.path, (_part, loaded, total) => {
+            setLoaded(loaded)
+            setTotal(total)
+            setUpdate(Date.now())
         })
     }, [props.path])
     
@@ -121,7 +128,15 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
             {group ? (
                 <>
                     <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
-                    <ModelView3D model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    <ModelView3D model={group} update={update} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    {loaded != total && (
+                        <div style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}>
+                            <div style={{position: 'absolute', left: '1em', right: '1em', bottom: '1em', backgroundColor: 'white', backgroundImage: 'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.1))', borderRadius: '0.5em'}}>
+                                <div style={{position: 'absolute', zIndex: 0, top: 0, left: 0, bottom: 0, width: `${Math.floor(loaded / total * 100)}%`, backgroundColor: 'orange', backgroundImage: 'linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0))', borderRadius: '0.5em'}}></div>
+                                <div style={{position: 'relative', zIndex: 1, textAlign: 'center'}}>{Math.floor(loaded / total * 100)}%</div>
+                            </div>
+                        </div>
+                    )}
                     <a onClick={() => setToggle(!toggle)} className='button fill lightgray'>
                         <span/>
                     </a>
