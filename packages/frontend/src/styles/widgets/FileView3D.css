@@ -7,7 +7,7 @@ div.widget.file_view_3d {
     background-color: rgb(215,215,215);
 }
 
-div.widget.file_view_3d > div.model_graph {
+div.widget.file_view_3d > div.widget.model_graph {
     position: absolute;
 
     box-sizing: border-box;
@@ -23,11 +23,11 @@ div.widget.file_view_3d > div.model_graph {
     
     overflow: auto;
 }
-div.widget.file_view_3d.toggle > div.model_graph {
+div.widget.file_view_3d.toggle > div.widget.model_graph {
     z-index: 2;
 }
 
-div.widget.file_view_3d > div.model_view_3d {
+div.widget.file_view_3d > div.widget.model_view_3d {
     position: absolute;
 
     z-index: 0;
@@ -39,6 +39,40 @@ div.widget.file_view_3d > div.model_view_3d {
 
     width: auto;
     height: auto;
+}
+
+div.widget.file_view_3d > div.progress_bar {
+    position: absolute;
+    
+    left: 1em;
+    right: 21em;
+    bottom: 1em;
+
+    border-radius: 0.5em;
+
+    overflow: hidden;
+    
+    background-color: white;
+    background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.1));
+}
+div.widget.file_view_3d > div.progress_bar > div.indicator {    
+    position: absolute;
+
+    z-index: 0;
+    
+    top: 0;
+    left: 0;
+    bottom: 0;
+    
+    background-color: orange;
+    background-image: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+}
+div.widget.file_view_3d > div.progress_bar > div.text {
+    position: relative;
+    
+    z-index: 1;
+
+    text-align: center;
 }
 
 div.widget.file_view_3d > a {
@@ -74,8 +108,11 @@ div.widget.file_view_3d.toggle > a > span {
 }
 
 @media screen and (max-width: 100em) {
-    div.widget.file_view_3d > div.model_view_3d {
+    div.widget.file_view_3d > div.widget.model_view_3d {
         right: 0;
+    }
+    div.widget.file_view_3d > div.progress_bar {
+        right: 1em;
     }
     div.widget.file_view_3d > a {
         display: block;
@@ -83,8 +120,11 @@ div.widget.file_view_3d.toggle > a > span {
 }
 
 @media screen and (max-width: 70em) {
-    div.widget.file_view_3d > div.model_view_3d {
+    div.widget.file_view_3d > div.widget.model_view_3d {
         right: 20em;
+    }
+    div.widget.file_view_3d > div.progress_bar {
+        right: 21em;
     }
     div.widget.file_view_3d > a {
         display: none;
@@ -92,8 +132,11 @@ div.widget.file_view_3d.toggle > a > span {
 }
 
 @media screen and (max-width: 50em) {
-    div.widget.file_view_3d > div.model_view_3d {
+    div.widget.file_view_3d > div.widget.model_view_3d {
         right: 0;
+    }
+    div.widget.file_view_3d > div.progress_bar {
+        right: 1em;
     }
     div.widget.file_view_3d > a {
         display: block;

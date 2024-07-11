@@ -22,7 +22,7 @@ const LOADING_MANAGER = new THREE.LoadingManager().setURLModifier(url => {
 const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
 
 LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
-    // console.log('Materials loaded!')
+    console.log('Materials loaded!')
 }).catch(error => {
     console.error(error)
 })
@@ -30,21 +30,51 @@ LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
 export async function loadLDrawModel(path: string, update = empty) {
     const file = await CacheAPI.loadFile(path)
     const text = TEXT_DECODER.decode(file)
-    //worker.postMessage({ text, url: path })
-    return parseLDrawModel(text, update)
+    return parseLDrawModel(path, text, update)
+}
+
+const LDRAW_PAUSE: {[path: string]: boolean} = {}
+const LDRAW_RESUME: {[path: string]: () => void} = {}
+const LDRAW_ACTIVE: {[path: string]: () => Promise<void>} = {}
+
+export function pauseLoadLDrawPath(path: string) {
+    LDRAW_PAUSE[path] = true
+}
+
+export function resumeLoadLDrawPath(path: string) {
+    LDRAW_PAUSE[path] = false
+
+    // Resume running load process
+    LDRAW_RESUME[path] && LDRAW_RESUME[path]()
 }
 
 export async function loadLDrawPath(path: string, update = empty) {
     const response = await axios.get(path)
-    return parseLDrawModel(response.data, update)
+
+    return parseLDrawModel(path, response.data, update)
 }
 
-export async function parseLDrawModel(data: string, update = empty) {
+export async function parseLDrawModel(path: string, data: string, update = empty) {
+    LDRAW_PAUSE[path] = false
+
+    LDRAW_ACTIVE[path] = async () => {
+        if (LDRAW_PAUSE[path]) {
+            // Wait for load process to be resumed
+            return new Promise<void>(resolve => {
+                LDRAW_RESUME[path] = resolve
+            })
+        } else {
+            // Continue load process
+            return
+        }
+    }
+
     const model = new Parser().parse(data)
+
     if (model.files.length > 0) {
         const group = new THREE.Group()
         const total = countParts(model, model.files[0])
-        parseModel(group, model, model.files[0], 0, total, update)
+        parseModel(path, group, model, model.files[0], 0, total, update)
         group.rotation.x = Math.PI
         return group
     } else {
@@ -55,7 +85,7 @@ export async function parseLDrawModel(data: string, update = empty) {
         } else {
             const group = new THREE.Group()
             const total = countParts(model, model)
-            parseModel(group, model, model, 0, total, update)
+            parseModel(path, group, model, model, 0, total, update)
             group.rotation.x = Math.PI
             return group
         }
@@ -82,8 +112,14 @@ function countParts(context: Model, model: Model) {
     return count
 }
 
-async function parseModel(group: THREE.Group, context: Model, model: Model, loaded: number, total: number, update = empty) {
+async function parseModel(path: string, group: THREE.Group, context: Model, model: Model, loaded: number, total: number, update = empty) {
+
+    update(undefined, loaded, total)
+
     for (const reference of model.references) {
+
+        // Check if load process is active and wait, if necessary, for load process to be resumed
+        await LDRAW_ACTIVE[path]()
 
         if (reference.file.endsWith('.dat')) {
 
@@ -97,7 +133,7 @@ async function parseModel(group: THREE.Group, context: Model, model: Model, load
 
             update(reference.file, loaded, total)
 
-            await pause(5)
+            await pause(0)
 
         } else if (reference.file in context.fileIndex) {
 
@@ -113,7 +149,7 @@ async function parseModel(group: THREE.Group, context: Model, model: Model, load
             group.add(child)
 
             // Continue loading submodel
-            loaded = await parseModel(child, context, submodel, loaded, total, update)
+            loaded = await parseModel(path, child, context, submodel, loaded, total, update)
         }
     }
 

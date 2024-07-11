@@ -5,7 +5,7 @@ import { Group, Object3D } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { loadGLTFModel } from '../../loaders/gltf'
-import { loadLDrawModel } from '../../loaders/ldraw'
+import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
 import { computePath } from '../../functions/path'
 import { ModelGraph } from './ModelGraph'
 import { ModelView3D } from './ModelView3D'
@@ -15,6 +15,7 @@ import LoadIcon from '/src/images/load.png'
 type Callback = (part: string, loaded: number, total: number) => void
 
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
+
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
 const LDRAW_LOADED_CACHE: {[path: string]: number} = {}
 const LDRAW_TOTAL_CACHE: {[path: string]: number} = {}
@@ -34,9 +35,14 @@ function trackLDrawModel(path: string, callback: Callback) {
         LDRAW_UPDATE_CACHE[path] = []
     }
     LDRAW_UPDATE_CACHE[path].push(callback)
+
     // Unsubscribe
     return () => {
         LDRAW_UPDATE_CACHE[path].splice(LDRAW_UPDATE_CACHE[path].indexOf(callback), 1)
+
+        if (LDRAW_UPDATE_CACHE[path].length == 0) {
+            pauseLoadLDrawPath(path)
+        }
     }
 }
 
@@ -49,6 +55,8 @@ async function getLDrawModel(path: string) {
                 callback(part, loaded, total)
             }
         })
+    } else {
+        resumeLoadLDrawPath(path)
     }
     return LDRAW_MODEL_CACHE[path]
 }
@@ -82,13 +90,17 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         initialGroup = LDRAW_MODEL_CACHE[props.path]
     }
 
+    const initialLoaded = (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) && LDRAW_LOADED_CACHE[props.path]
+    const initialTotal = (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) && LDRAW_TOTAL_CACHE[props.path]
+    const initialUpdate = Date.now()
+
     // STATES
     
     // Entities
     const [group, setGroup] = useState<Group>(initialGroup)
-    const [loaded, setLoaded] = useState<number>()
-    const [total, setTotal] = useState<number>()
-    const [update, setUpdate] = useState<number>(Date.now())
+    const [loaded, setLoaded] = useState<number>(initialLoaded)
+    const [total, setTotal] = useState<number>(initialTotal)
+    const [update, setUpdate] = useState<number>(initialUpdate)
     
     // Interactions
     const [toggle, setToggle] = useState(false)
@@ -97,11 +109,15 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     // EFFECTS
 
     useEffect(() => {
-        return trackLDrawModel(props.path, (_part, loaded, total) => {
-            setLoaded(loaded)
-            setTotal(total)
-            setUpdate(Date.now())
-        })
+        if (props.path) {
+            return trackLDrawModel(props.path, (_part, loaded, total) => {
+                setLoaded(loaded)
+                setTotal(total)
+                setUpdate(Date.now())
+            })
+        } else {
+            return () => {/**/}
+        }
     }, [props.path])
     
     useEffect(() => {
@@ -127,16 +143,27 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         <div className={`widget file_view_3d ${toggle ? 'toggle' : ''}`}>
             {group ? (
                 <>
-                    <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
-                    <ModelView3D model={group} update={update} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    {loaded != total ? (
+                        <div className='widget model_graph'>
+                            Loading ...
+                        </div>
+                    ) : (
+                        <ModelGraph model={group} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    )}
+                    
+                    {loaded != total ? (
+                        <ModelView3D model={group} update={update}/>
+                    ) : (
+                        <ModelView3D model={group} update={update} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                    )}
+                    
                     {loaded != total && (
-                        <div style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}>
-                            <div style={{position: 'absolute', left: '1em', right: '1em', bottom: '1em', backgroundColor: 'white', backgroundImage: 'linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.1))', borderRadius: '0.5em'}}>
-                                <div style={{position: 'absolute', zIndex: 0, top: 0, left: 0, bottom: 0, width: `${Math.floor(loaded / total * 100)}%`, backgroundColor: 'orange', backgroundImage: 'linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0))', borderRadius: '0.5em'}}></div>
-                                <div style={{position: 'relative', zIndex: 1, textAlign: 'center'}}>{Math.floor(loaded / total * 100)}%</div>
-                            </div>
+                        <div className='progress_bar'>
+                            <div className='indicator' style={{width: `${Math.floor(loaded / total * 100)}%`}}></div>
+                            <div className='text'>{Math.floor(loaded / total * 100)}%</div>
                         </div>
                     )}
+
                     <a onClick={() => setToggle(!toggle)} className='button fill lightgray'>
                         <span/>
                     </a>

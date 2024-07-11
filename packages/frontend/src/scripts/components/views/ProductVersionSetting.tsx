@@ -116,7 +116,7 @@ export const ProductVersionSettingView = () => {
 
     useEffect(() => {
         let exec = true
-        text && parseLDrawModel(text).then(group => exec && setGroup(group))
+        text && parseLDrawModel(undefined, text).then(group => exec && setGroup(group))
         return () => { exec = false }
     }, [text])
 
