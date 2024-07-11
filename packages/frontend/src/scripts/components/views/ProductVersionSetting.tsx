@@ -16,7 +16,7 @@ import { useMembers, useVersions } from '../../hooks/list'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
 import { parseGLTFModel } from '../../loaders/gltf'
-import { parseLDrawModel } from '../../loaders/ldraw'
+import { parseLDrawModel, pauseLoadLDrawPath } from '../../loaders/ldraw'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
@@ -24,6 +24,7 @@ import { NumberInput } from '../inputs/NumberInput'
 import { TextareaInput } from '../inputs/TextareaInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
+import { ModelGraph } from '../widgets/ModelGraph'
 import { clearModel } from '../widgets/FileView3D'
 import { ModelView3D } from '../widgets/ModelView3D'
 import { Column, Table } from '../widgets/Table'
@@ -34,6 +35,7 @@ import EmptyIcon from '/src/images/empty.png'
 import LoadIcon from '/src/images/load.png'
 import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
+
 const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
 
@@ -78,6 +80,9 @@ export const ProductVersionSettingView = () => {
     const [text, setText] = useState<string>(null)
     const [model, setModel] = useState<GLTF>(null)
     const [group, setGroup] = useState<Group>(null)
+    const [update, setUpdate] = useState<number>()
+    const [loaded, setLoaded] = useState<number>()
+    const [total, setTotal] = useState<number>()
     const [blob, setBlob] = useState<Blob>(null) 
     const [dataUrl, setDataUrl] = useState<string>(null) 
     const [active, setActive] = useState<string>('left')
@@ -116,22 +121,31 @@ export const ProductVersionSettingView = () => {
 
     useEffect(() => {
         let exec = true
-        text && parseLDrawModel(undefined, text).then(group => exec && setGroup(group))
-        return () => { exec = false }
+        function update(_part: string, loaded: number, total: number) {
+            setUpdate(Date.now())
+            setLoaded(loaded)
+            setTotal(total)
+        }
+        const path = `${Math.random()}`
+        text && parseLDrawModel(path, text, update).then(group => exec && setGroup(group))
+        return () => {
+            exec = false
+            pauseLoadLDrawPath(path)
+        }
     }, [text])
 
     useEffect(() => { model && setGroup(model.scene) }, [model])
     
     useEffect(() => {
         let exec = true
-        group && render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
+        group && loaded == total && render(group.clone(true), PREVIEW_WIDTH, PREVIEW_HEIGHT).then(result => {
             if (exec) {
                 setBlob(result.blob)
                 setDataUrl(result.dataUrl)
             }
         })
         return () => { exec = false }
-    }, [group])
+    }, [group, loaded, total])
 
     // FUNCTIONS
 
@@ -247,26 +261,64 @@ export const ProductVersionSettingView = () => {
                             {version ? (
                                 file ? (
                                     <div className="widget version_view_3d">
-                                        {!group ? (
-                                            <img src={LoadIcon} className='icon small position center animation spin'/>
-                                        ) : (
-                                            <ModelView3D model={group} highlighted={[]} marked={[]} selected={[]}/>
-                                        )}
+                                        <div className="widget file_view_3d">
+                                            {!group ? (
+                                                <img src={LoadIcon} className='icon small position center animation spin'/>
+                                            ) : (
+                                                <>
+                                                    {loaded != total ? (
+                                                        <div className='widget model_graph'>
+                                                            Loading ...
+                                                        </div>
+                                                    ) : (
+                                                        <ModelGraph model={group}/>
+                                                    )}
+
+                                                    <ModelView3D model={group} update={update}/>
+
+                                                    {loaded != total && (
+                                                        <div className='progress_bar'>
+                                                            <div className='indicator' style={{width: `${Math.floor(loaded / total * 100)}%`}}></div>
+                                                            <div className='text'>{Math.floor(loaded / total * 100)}%</div>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 ) : (
                                     <VersionView3D version={version} mouse={true}/>
                                 )
                             ) : (
                                 <div className="widget version_view_3d">
-                                    {!file ? (
-                                        <img src={EmptyIcon} className='icon medium position center'/>
-                                    ) : (
-                                        !group ? (
-                                            <img src={LoadIcon} className='icon small position center animation spin'/>
+                                    <div className="widget file_view_3d">
+                                        {!file ? (
+                                            <img src={EmptyIcon} className='icon medium position center'/>
                                         ) : (
-                                            <ModelView3D model={group} highlighted={[]} marked={[]} selected={[]}/>
-                                        )
-                                    )}
+                                            !group ? (
+                                                <img src={LoadIcon} className='icon small position center animation spin'/>
+                                            ) : (
+                                                <>
+                                                    {loaded != total ? (
+                                                        <div className='widget model_graph'>
+                                                            Loading ...
+                                                        </div>
+                                                    ) : (
+                                                        <ModelGraph model={group}/>
+                                                    )}
+
+                                                    <ModelView3D model={group} update={update}/>
+
+                                                    {loaded != total && (
+                                                        <div className='progress_bar'>
+                                                            <div className='indicator' style={{width: `${Math.floor(loaded / total * 100)}%`}}></div>
+                                                            <div className='text'>{Math.floor(loaded / total * 100)}%</div>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>

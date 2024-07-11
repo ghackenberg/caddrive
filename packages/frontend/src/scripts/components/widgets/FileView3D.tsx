@@ -110,6 +110,9 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
 
     useEffect(() => {
         if (props.path) {
+            setLoaded(LDRAW_LOADED_CACHE[props.path])
+            setTotal(LDRAW_TOTAL_CACHE[props.path])
+            setUpdate(Date.now())
             return trackLDrawModel(props.path, (_part, loaded, total) => {
                 setLoaded(loaded)
                 setTotal(total)
