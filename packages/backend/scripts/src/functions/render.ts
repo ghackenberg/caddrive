@@ -174,6 +174,8 @@ let LDRAW_MATERIALS = false
 
 const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
 
+LDRAW_LOADER.smoothNormals = false
+
 export async function renderLDraw(model: string, width: number, height: number) {
     if (!LDRAW_MATERIALS) {
         await LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
