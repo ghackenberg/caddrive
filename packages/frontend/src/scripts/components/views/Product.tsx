@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useEffect, useContext } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
@@ -20,11 +20,15 @@ export const ProductView = () => {
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
-    // QUERIES
+    // LOCATION
 
-    const _public = new URLSearchParams(location.search).get('public') == 'false' ? 'false' : 'true'
+    const { search } = useLocation()
 
-    // HOOKS
+    // QUERY
+
+    const _public = new URLSearchParams(search).get('public') == 'false' ? 'false' : 'true'
+
+    // ENTITIES
 
     const products = useProducts(_public)
 

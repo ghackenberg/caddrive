@@ -1,6 +1,6 @@
 import  * as React from 'react'
-import { useState, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { useContext } from 'react'
+import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { MilestoneRead } from 'productboard-common'
@@ -26,25 +26,27 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = () => {
 
+    // HISTORY
+
     const { push } = useAsyncHistory()
 
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // LOCATION
+
+    const { hash } = useLocation()
+
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
     const milestones = useMilestones(productId)
-    
-    // STATES
-
-    const [active, setActive] = useState<string>('left')
    
     // FUNCTIONS
 
@@ -96,8 +98,8 @@ export const ProductMilestoneView = () => {
     ]
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'List view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'List view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
 
     // RETURN
@@ -108,7 +110,7 @@ export const ProductMilestoneView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-milestone sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-milestone sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
                                 {contextUser ? (
@@ -145,7 +147,7 @@ export const ProductMilestoneView = () => {
                             <ProductView3D productId={productId} mouse={true}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

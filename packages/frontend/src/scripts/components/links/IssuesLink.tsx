@@ -10,8 +10,13 @@ import IssueIcon from '/src/images/issue.png'
 
 export const IssuesLink = (props: {product: ProductRead}) => {
 
-    const { pathname } = useLocation()
-    const { go, goBack, replace } = useAsyncHistory()
+    // HISTORY
+
+    const { go, replace } = useAsyncHistory()
+
+    // LOCATION
+    
+    const { pathname, hash } = useLocation()
 
     // FUNCTIONS
 
@@ -19,13 +24,9 @@ export const IssuesLink = (props: {product: ProductRead}) => {
         event.preventDefault()
         const products4 = PRODUCTS_4.exec(pathname)
         if (products4) {
-            if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
-                await go(-2)
-            } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
-                await go(-2)
-            } else {
-                await goBack()
-            }
+            await go(hash ? -2 : -1)
+        } else {
+            hash && await go(-1)
         }
         await replace(`/products/${props.product.productId}/issues`)
     }

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect, useContext, FormEvent, ChangeEvent } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 
 import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
@@ -41,6 +41,8 @@ const PREVIEW_HEIGHT = 1000
 
 export const ProductVersionSettingView = () => {
 
+    // HISTORY
+
     const { goBack } = useAsyncHistory()
 
     // CONTEXTS
@@ -48,11 +50,15 @@ export const ProductVersionSettingView = () => {
     const { contextUser } = useContext(UserContext)
     const { setContextVersion } = useContext(VersionContext)
 
+    // LOCATION
+
+    const { hash } = useLocation()
+
     // PARAMS
 
     const { productId, versionId } = useParams<{ productId: string, versionId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
@@ -84,8 +90,7 @@ export const ProductVersionSettingView = () => {
     const [loaded, setLoaded] = useState<number>()
     const [total, setTotal] = useState<number>()
     const [blob, setBlob] = useState<Blob>(null) 
-    const [dataUrl, setDataUrl] = useState<string>(null) 
-    const [active, setActive] = useState<string>('left')
+    const [dataUrl, setDataUrl] = useState<string>(null)
 
     // EFFECTS
 
@@ -210,8 +215,8 @@ export const ProductVersionSettingView = () => {
     ]
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Form view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'Form view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
 
     // RETURN
@@ -222,7 +227,7 @@ export const ProductVersionSettingView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className= {`view sidebar product-version-setting ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className= {`view sidebar product-version-setting ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
                                 <h1>
@@ -340,7 +345,7 @@ export const ProductVersionSettingView = () => {
                             )}
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

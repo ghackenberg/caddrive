@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useContext, useState, useEffect, FormEvent } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 
 import { UserContext } from '../../contexts/User'
 import { MilestoneClient } from '../../clients/rest/milestone'
@@ -22,6 +22,8 @@ import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneSettingView = () => {
+
+    // HISTORY
     
     const { goBack, replace } = useAsyncHistory()
 
@@ -29,11 +31,15 @@ export const ProductMilestoneSettingView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // LOCATION
+
+    const { hash } = useLocation()
+
     // PARAMS
 
     const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
@@ -62,10 +68,6 @@ export const ProductMilestoneSettingView = () => {
 
     const [total, setTotalIssueCount] = useState(initialTotal) 
     const [actual, setActualBurndown] = useState(initialActual)
-
-    // - Interactions
-    
-    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
     
@@ -129,8 +131,8 @@ export const ProductMilestoneSettingView = () => {
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Form view', image: LeftIcon },
-        { name: 'right', text: 'Chart view', image: RightIcon }
+        { text: 'Form view', image: LeftIcon, hash: '' },
+        { text: 'Chart view', image: RightIcon, hash: '#chart' }
     ]
 
     // RETURN
@@ -141,7 +143,7 @@ export const ProductMilestoneSettingView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-milestone-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-milestone-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
                                 <h1>
@@ -177,7 +179,7 @@ export const ProductMilestoneSettingView = () => {
                             <BurndownChartWidget start={start.getTime()} end={end.getTime()} total={total} actual={actual}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

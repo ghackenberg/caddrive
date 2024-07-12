@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 
 import { MemberRole, UserRead } from 'productboard-common'
 
@@ -27,6 +27,8 @@ import RightIcon from '/src/images/part.png'
 const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 
 export const ProductMemberSettingView = () => {
+
+    // HISTORY
     
     const { goBack } = useAsyncHistory()
 
@@ -34,11 +36,15 @@ export const ProductMemberSettingView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // LOCATION
+
+    const { hash } = useLocation()
+
     // PARAMS
 
     const { productId, memberId } = useParams<{ productId: string, memberId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
@@ -60,7 +66,6 @@ export const ProductMemberSettingView = () => {
     const [role, setRole] = useState<MemberRole>(initialRole)
     // - Interactions
     const [query, setQuery] = useState<string>('')
-    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -143,8 +148,8 @@ export const ProductMemberSettingView = () => {
     ]
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Form view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'Form view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
     
     // RETURN
@@ -155,7 +160,7 @@ export const ProductMemberSettingView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-member-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-member-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
                                 <h1>
@@ -221,7 +226,7 @@ export const ProductMemberSettingView = () => {
                             <ProductView3D productId={productId} mouse={true}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>       
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

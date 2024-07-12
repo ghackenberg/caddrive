@@ -1,6 +1,6 @@
 import  * as React from 'react'
-import { useState, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { useContext } from 'react'
+import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { MemberRead } from 'productboard-common'
@@ -25,24 +25,26 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductMemberView = () => {
 
+    // HISTORY
+
     const { push } = useAsyncHistory()
 
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // LOCATION
+
+    const { hash } = useLocation()
+
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
-    
-    // STATES
-
-    const [active, setActive] = useState<string>('left')
 
     // FUNCTIONS
 
@@ -74,8 +76,8 @@ export const ProductMemberView = () => {
     ]
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'List view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'List view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
 
     // RETURN
@@ -86,7 +88,7 @@ export const ProductMemberView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-member sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
+                    <main className={`view product-member sidebar ${!hash ? 'hidden' : 'visible'}` }>
                         <div>
                             <div className='header'>
                                 {contextUser ? (
@@ -123,7 +125,7 @@ export const ProductMemberView = () => {
                             <ProductView3D productId={productId} mouse={true}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

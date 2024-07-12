@@ -37,7 +37,7 @@ type PartHandler = (event: React.MouseEvent<HTMLAnchorElement>, part: Part) => v
 type SubHandler = (commentId: string, handler: ObjectHandler) => () => void
 type UpdateHandler = (commentId: string, markedView: Part[], markedEdit: Part[]) => void
 
-export const CommentView = (props: { productId: string, issueId: string, commentId?: string, sub: SubHandler, up: UpdateHandler, over: PartHandler, out: PartHandler }) => {
+export const CommentView = (props: { productId: string, issueId: string, commentId?: string, sub: SubHandler, up: UpdateHandler, over: PartHandler, click: PartHandler, out: PartHandler }) => {
 
     // REFERENCES
 
@@ -46,7 +46,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     // CONTEXTS
 
     const { contextUser } = React.useContext(UserContext)
-    const { contextVersion, setContextVersion } = React.useContext(VersionContext)
+    const { contextVersion } = React.useContext(VersionContext)
     const { contextComment, setContextComment } = React.useContext(CommentContext)
 
     // CONSTANTS
@@ -58,6 +58,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const sub = props.sub
     const up = props.up
     const over = props.over
+    const click = props.click
     const out = props.out
 
     // HOOKS
@@ -74,8 +75,8 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const initialTextView = comment && comment.text
     const initialTextEdit = ''
 
-    const initialHtmlView = initialTextView && createProcessor(over, out, handleClick, false).processSync(initialTextView).result
-    const initialHtmlEdit = createProcessor(over, out, handleClick, false).processSync(initialTextEdit).result
+    const initialHtmlView = initialTextView && createProcessor(over, out, click, false).processSync(initialTextView).result
+    const initialHtmlEdit = createProcessor(over, out, click, false).processSync(initialTextEdit).result
 
     const initialPartsView = initialTextView && collectParts(initialTextView)
     const initialPartsEdit = collectParts(initialTextEdit)
@@ -126,7 +127,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     React.useEffect(() => {
         if (textView) {
-            const vfile = createProcessor(over, out, handleClick, false).processSync(textView)
+            const vfile = createProcessor(over, out, click, false).processSync(textView)
             setHtmlView(vfile.result)
             setPartsView(collectParts(textView))
         } else {
@@ -142,17 +143,6 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     }, [partsView, partsEdit, mode])
 
     // FUNCTIONS
-
-    function handleClick(event: React.MouseEvent<HTMLAnchorElement>, part: Part) {
-        event.preventDefault()
-        if (!contextVersion || contextVersion.versionId != part.versionId) {
-            for (const version of versions) {
-                if (version.versionId == part.versionId) {
-                    setContextVersion(version)
-                }
-            }
-        }
-    }
 
     function handleFocus() {
         setContextComment(comment)
@@ -219,7 +209,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     async function handlePreview() {
         if (textEdit) {
-            const vfile = createProcessor(over, out, handleClick, false).processSync(textEdit)
+            const vfile = createProcessor(over, out, click, false).processSync(textEdit)
             setHtmlEdit(vfile.result)
             setMode(Mode.PREVIEW)
         } else {
@@ -344,7 +334,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
                 <div key={index} className="note part">
                     <div className="free"/>
                     <div className="text">
-                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => props.over(event, part)} onMouseOut={event => props.out(event, part)} onClick={event => handleClick(event, part)}>
+                        <a href={`/products/${part.productId}/versions/${part.versionId}/objects/${part.objectPath}`} onMouseOver={event => over(event, part)} onMouseOut={event => out(event, part)} onClick={event => click(event, part)}>
                             <span>
                                 <img src={PartIcon}/>
                             </span>

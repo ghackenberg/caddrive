@@ -14,14 +14,19 @@ import SettingIcon from '/src/images/setting.png'
 
 export const ProductHeader = () => {
 
-    const { pathname } = useLocation()
-    const { goBack, replace } = useAsyncHistory()
+    // HISTORY
+
+    const { go, replace } = useAsyncHistory()
+
+    // LOCATION
+
+    const { pathname, hash } = useLocation()
 
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
 
@@ -30,7 +35,9 @@ export const ProductHeader = () => {
     async function handleClick(event: React.UIEvent) {
         event.preventDefault()
         if (PRODUCTS_4.test(pathname)) {
-            await goBack()
+            await go(hash ? -2 : -1)
+        } else {
+            hash && await go(-1)
         }
         await replace(`/products/${productId}/settings`)
     }

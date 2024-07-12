@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { IssueRead } from 'productboard-common'
@@ -26,21 +26,27 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductIssueView = () => {
 
+    // HISTORY
+
     const { push } = useAsyncHistory()
 
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // LOCATION
+
+    const { hash, search } = useLocation()
+
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
 
-    // QUERIES
+    // QUERY
 
-    const state = new URLSearchParams(location.search).get('state') || 'open'
+    const state = new URLSearchParams(search).get('state') || 'open'
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
@@ -50,7 +56,6 @@ export const ProductIssueView = () => {
     
     // - Interactions
     const [hovered, setHovered] = useState<IssueRead>()
-    const [active, setActive] = useState<string>('left')
 
     // FUNCTIONS
 
@@ -128,8 +133,8 @@ export const ProductIssueView = () => {
     ]
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'List view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'List view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
 
     // RETURN
@@ -140,7 +145,7 @@ export const ProductIssueView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-issue sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
                                 {contextUser ? (
@@ -183,7 +188,7 @@ export const ProductIssueView = () => {
                             <ProductView3D productId={productId} issueId={hovered && hovered.issueId} mouse={true}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

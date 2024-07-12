@@ -13,7 +13,7 @@ import UserIcon from '/src/images/user.png'
 
 export const UserView = () => {
 
-    // HOOKS
+    // ENTITIES
 
     const users = useUsers()
 

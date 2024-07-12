@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { IssueRead } from 'productboard-common'
@@ -29,6 +29,8 @@ import ReopenIcon from '/src/images/reopen.png'
 import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = () => {
+
+    // HISTORY
     
     const { goBack, replace, push } = useAsyncHistory()
 
@@ -36,15 +38,19 @@ export const ProductMilestoneIssueView = () => {
 
     const { contextUser } = useContext(UserContext)
 
+    // LOCATION
+
+    const { hash, search } = useLocation()
+
     // PARAMS
 
     const { productId, milestoneId } = useParams<{ productId: string, milestoneId: string }>()
 
-    // QUERIES
+    // QUERY
 
-    const state = new URLSearchParams(location.search).get('state') || 'open'
+    const state = new URLSearchParams(search).get('state') || 'open'
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
@@ -62,9 +68,6 @@ export const ProductMilestoneIssueView = () => {
     // - Computations
     const [total, setTotalIssueCount] = useState(initialTotal)
     const [actual, setActualBurndown] = useState(initialActual)
-
-    // - Interactions
-    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -175,8 +178,8 @@ export const ProductMilestoneIssueView = () => {
     ]
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'List view', image: LeftIcon },
-        { name: 'right', text: 'Chart view', image: RightIcon }
+        { text: 'List view', image: LeftIcon, hash: '' },
+        { text: 'Chart view', image: RightIcon, hash: '#model' }
     ]
 
     // RETURN
@@ -187,7 +190,7 @@ export const ProductMilestoneIssueView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className= {`view product-milestone-issue sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className= {`view product-milestone-issue sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
                                 {contextUser ? (
@@ -265,7 +268,7 @@ export const ProductMilestoneIssueView = () => {
                             <BurndownChartWidget start={milestone.start} end={milestone.end} total={total} actual={actual}/>
                         </div>
                     </main>                            
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

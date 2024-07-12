@@ -10,23 +10,28 @@ import ProductIcon from '/src/images/product.png'
 
 export const ProductLink = (props: {product?: ProductRead}) => {
 
-    const { pathname } = useLocation()
-    const { go, replace, goBack } = useAsyncHistory()
+    // HISTORY
+
+    const { go, replace } = useAsyncHistory()
+
+    // LOCATION
+    
+    const { pathname, hash } = useLocation()
+
+    // FUNCTIONS
 
     async function handleClick(event: React.UIEvent) {
         event.preventDefault()
         const products4 = PRODUCTS_4.exec(pathname)
         if (products4) {
-            if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
-                await go(-2)
-            } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
-                await go(-2)
-            } else {
-                await goBack()
-            }
+            await go(hash ? -2 : -1)
+        } else {
+            hash && await go(-1)
         }
         await replace(`/products/${props.product.productId}/versions`)
     }
+
+    // RETURN
 
     return (
         props.product ? (

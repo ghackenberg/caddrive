@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { useState, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { useState, useContext, useRef } from 'react'
+import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { Object3D } from 'three'
@@ -8,9 +8,11 @@ import { Object3D } from 'three'
 import { CommentRead, VersionRead } from 'productboard-common'
 
 import { CommentContext } from '../../contexts/Comment'
+import { VersionContext } from '../../contexts/Version'
 import { UserContext } from '../../contexts/User'
 import { useIssue, useProduct } from '../../hooks/entity'
-import { useComments, useMembers } from '../../hooks/list'
+import { useAsyncHistory } from '../../hooks/history'
+import { useComments, useMembers, useVersions } from '../../hooks/list'
 import { Part, collectParts } from '../../functions/markdown'
 import { formatDateHourMinute } from '../../functions/time'
 import { computePath } from '../../functions/path'
@@ -32,20 +34,34 @@ type Index = {[commentId: string]: Part[]}
 
 export const ProductIssueCommentView = () => {
 
+    // HISTORY
+
+    const { push } = useAsyncHistory()
+
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextVersion, setContextVersion } = useContext(VersionContext)
+
+    // LOCATION
+
+    const { hash } = useLocation()
 
     // PARAMS
 
     const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
+    const versions = useVersions(productId)
     const issue = useIssue(productId, issueId)
     const comments = useComments(productId, issueId)
+
+    // REFS
+
+    const ref = useRef<HTMLDivElement>()
 
     // INITIAL STATES
 
@@ -77,7 +93,6 @@ export const ProductIssueCommentView = () => {
     const [marked, setMarked] = useState(initialMarked)
 
     const [contextComment, setContextComment] = useState<CommentRead>()
-    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -115,6 +130,22 @@ export const ProductIssueCommentView = () => {
     function overPart(_event: React.MouseEvent<HTMLAnchorElement>, part: Part) {
         setSelected([part])
     }
+
+    async function clickPart(event: React.MouseEvent<HTMLAnchorElement>, part: Part) {
+        event.preventDefault()
+        // Change context version (if necessary)
+        if (!contextVersion || contextVersion.versionId != part.versionId) {
+            for (const version of versions) {
+                if (version.versionId == part.versionId) {
+                    setContextVersion(version)
+                }
+            }
+        }
+        // Switch to model view on small screens
+        if (window.getComputedStyle(ref.current).display == 'none') {
+            await push('#model')
+        }
+    }
     function outPart() {
         setSelected([])
     }
@@ -138,8 +169,8 @@ export const ProductIssueCommentView = () => {
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Thread view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'Thread view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
 
     const handlers: {[commentId: string]: SubHandler} = {}
@@ -152,7 +183,7 @@ export const ProductIssueCommentView = () => {
                 <Redirect to='/' />
             ) : (
                 <CommentContext.Provider value={{ contextComment, setContextComment }}>
-                    <main className={`view product-issue-comment sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-issue-comment sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
                                 {contextUser ? (
@@ -202,18 +233,18 @@ export const ProductIssueCommentView = () => {
                             <div className='main'>
                                 <div className="widget issue_thread">
                                     {comments && comments.map(comment => (
-                                        <CommentView key={comment.commentId} productId={productId} issueId={issueId} commentId={comment.commentId} sub={sub} up={up} over={overPart} out={outPart}/>
+                                        <CommentView key={comment.commentId} productId={productId} issueId={issueId} commentId={comment.commentId} sub={sub} up={up} over={overPart} click={clickPart} out={outPart}/>
                                     ))}
-                                    <CommentView productId={productId} issueId={issueId} sub={sub} up={up} over={overPart} out={outPart}/>
+                                    <CommentView productId={productId} issueId={issueId} sub={sub} up={up} over={overPart} click={clickPart} out={outPart}/>
                                 </div>
                             </div>
                             <LegalFooter/>
                         </div>
-                        <div>
+                        <div ref={ref}>
                             <ProductView3D productId={productId} mouse={true} highlighted={highlighted} selected={selected} marked={marked} over={overObject3D} out={outObject3D} click={clickObject3D}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive} />
+                    <ProductFooter items={items}/>
                 </CommentContext.Provider>
             )
         ) : (

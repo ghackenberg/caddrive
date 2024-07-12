@@ -16,6 +16,8 @@ import { TextInput } from '../inputs/TextInput'
 import { LegalFooter } from '../snippets/LegalFooter'
 
 export const UserSettingView = () => {
+
+    // HISTORY
     
     const { goBack } = useAsyncHistory()
     
@@ -27,7 +29,7 @@ export const UserSettingView = () => {
 
     const { userId } = useParams<{ userId: string }>()
     
-    // HOOKS
+    // ENTITIES
 
     const user = useUser(userId)
 
@@ -38,8 +40,6 @@ export const UserSettingView = () => {
     const [name, setName] = useState<string>(user ? user.name || '' : '')
     const [emailNotification, setEmailNotification] = useState<boolean>(user ? user.emailNotification : true)
     const [picture, setPicture] = useState<File>()
-
-    console.log(user)
 
     // EFFECTS
     

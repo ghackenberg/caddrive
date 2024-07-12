@@ -1,33 +1,53 @@
 import * as React from 'react'
+import { useLocation } from 'react-router'
+
+import { useAsyncHistory } from '../../hooks/history'
 
 export type ProductFooterItem = {
-    name: string
+    hash: string
     text: string
     image: string
 }
 
-export const ProductFooter = (props: { items: ProductFooterItem[], active: string, setActive: (name: string) => void }) => {
+export const ProductFooter = (props: { items: ProductFooterItem[] }) => {
+
+    // HISTORY
+
+    const { goBack, push, replace } = useAsyncHistory()
+
+    // LOCATION
+
+    const { hash } = useLocation()
+
     // CONSTANTS
 
     const items = props.items
-    const active = props.active
-    const setActive = props.setActive
 
     // FUNCTIONS
 
-    function handleClick(event: React.UIEvent, active: string) {
+    async function handleClick(event: React.UIEvent, item: ProductFooterItem) {
         event.preventDefault()
-        setActive(active)
+        if (!hash) {
+            if (item.hash) {
+                await push(item.hash)
+            }
+        } else {
+            if (item.hash) {
+                await replace(item.hash)
+            } else {
+                await goBack()
+            }
+        }
     }
 
     return (
         <footer className='page'>
             <div>
-                {items.map(({ name, image, text }) => (
-                    <span key={name}>
-                        <a className={name == active ? 'active' : ''} onClick={event => handleClick(event, name)}>
-                            <img src={image} className='icon small'/>
-                            <span>{text}</span>
+                {items.map(item => (
+                    <span key={item.hash}>
+                        <a className={hash == item.hash ? 'active' : ''} onClick={event => handleClick(event, item)}>
+                            <img src={item.image} className='icon small'/>
+                            <span>{item.text}</span>
                         </a>
                     </span>
                 ))} 

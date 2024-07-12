@@ -1,6 +1,6 @@
 import  * as React from 'react'
 import { useState, useEffect, useContext, FormEvent } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 
 import { MemberRead } from 'productboard-common'
 
@@ -24,17 +24,23 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductIssueSettingView = () => {
 
+    // HISTORY
+
     const { goBack, replace } = useAsyncHistory()
 
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
 
+    // LOCATION
+
+    const { hash, search } = useLocation()
+
     // PARAMS
 
     const { productId, issueId } = useParams<{ productId: string, issueId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
@@ -44,7 +50,7 @@ export const ProductIssueSettingView = () => {
     // INITIAL STATES
 
     const initialLabel = issue ? issue.label : ''
-    const initialMilestoneId = new URLSearchParams(location.search).get('milestone') || (issue && issue.milestoneId)
+    const initialMilestoneId = new URLSearchParams(search).get('milestone') || (issue && issue.milestoneId)
     const initialAssigneeIds = issue ? issue.assignedUserIds : []
     
     // STATES
@@ -53,9 +59,6 @@ export const ProductIssueSettingView = () => {
     const [label, setLabel] = useState<string>(initialLabel)
     const [milestoneId, setMilestoneId] = useState<string>(initialMilestoneId)
     const [assignedUserIds, setAssignedUserIds] = useState<string[]>(initialAssigneeIds)
-
-    // - Interactions
-    const [active, setActive] = useState<string>('left')
 
     // EFFECTS
 
@@ -108,8 +111,8 @@ export const ProductIssueSettingView = () => {
     ]
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Form view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'Form view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
 
     // RETURN
@@ -120,7 +123,7 @@ export const ProductIssueSettingView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-issue-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className={`view product-issue-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
                                 <h1>
@@ -175,7 +178,7 @@ export const ProductIssueSettingView = () => {
                             <ProductView3D productId={productId} mouse={true}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

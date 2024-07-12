@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { useState, useContext, Fragment } from 'react'
-import { Redirect, useParams } from 'react-router'
+import { useContext, useRef, Fragment } from 'react'
+import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
 import { VersionRead } from 'productboard-common'
@@ -35,34 +35,37 @@ function hsl(hue: number, saturation = 50, level = 50) {
 
 export const ProductVersionView = () => {
 
+    // HISTORY
+
+    const { push } = useAsyncHistory()
+
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
     const { contextVersion, setContextVersion } = useContext(VersionContext)
 
-    // HISTORY
+    // LOCATION
 
-    const { push } = useAsyncHistory()
+    const { hash } = useLocation()
 
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
     const versions = useVersions(productId)
 
+    // REFS
+
+    const ref = useRef<HTMLDivElement>()
+
     // CONSTANTS
 
     const color = computeColor(versions)
     const tree = computeTree(versions)
-
-    // STATES
-    
-    // - Interactions
-    const [active, setActive] = useState<string>('left')
 
     // FUNCTIONS
 
@@ -70,16 +73,20 @@ export const ProductVersionView = () => {
         if (event.ctrlKey) {
             await push(`/products/${productId}/versions/${version.versionId}/settings`)
         } else {
+            // Set context model
             setContextVersion(version)
-            setActive('right')
+            // Switch to model view on small screens
+            if (window.getComputedStyle(ref.current).display == 'none') {
+                await push('#model')
+            }
         }
     }
 
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Tree view', image: VersionIcon },
-        { name: 'right', text: 'Model view', image: PartIcon }
+        { text: 'Tree view', image: VersionIcon, hash: '' },
+        { text: 'Model view', image: PartIcon, hash: '#model' }
     ]
 
     // RETURN
@@ -90,7 +97,7 @@ export const ProductVersionView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className={`view product-version sidebar ${active == 'left' ? 'hidden' : 'visible'}` }>
+                    <main className={`view product-version sidebar ${!hash ? 'hidden' : 'visible'}` }>
                         <div>
                             <div className='header'>
                                 {contextUser ? (
@@ -281,11 +288,11 @@ export const ProductVersionView = () => {
                             )}
                             <LegalFooter/>
                         </div>
-                        <div>
+                        <div ref={ref}>
                             <ProductView3D productId={productId} mouse={true}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Redirect, useParams } from 'react-router'
+import { Redirect, useLocation, useParams } from 'react-router'
 
 import { ProductClient } from '../../clients/rest/product'
 import { UserContext } from '../../contexts/User'
@@ -19,21 +19,27 @@ import RightIcon from '/src/images/part.png'
 
 export const ProductSettingView = () => {
 
+    // HISTORY
+
     const { goBack, replace, push } = useAsyncHistory()
 
     // CONTEXTS
 
     const { contextUser } = React.useContext(UserContext)
 
+    // LOCATION
+
+    const { hash, search } = useLocation()
+
     // PARAMS
 
     const { productId } = useParams<{ productId: string }>()
 
-    // QUERIES
+    // QUERY
 
-    const _initialPublic = new URLSearchParams(location.search).get('public') == 'false' ? 'false' : 'true'
+    const _initialPublic = new URLSearchParams(search).get('public') == 'false' ? 'false' : 'true'
 
-    // HOOKS
+    // ENTITIES
 
     const product = useProduct(productId)
     const members = useMembers(productId)
@@ -50,9 +56,6 @@ export const ProductSettingView = () => {
     const [name, setName] = React.useState<string>(initialName)
     const [description, setDescription] = React.useState<string>(initialDescription)
     const [_public, setPublic] = React.useState<boolean>(initialPublic)
-
-    // - Interactions
-    const [active, setActive] = React.useState<string>('left')
     
     // EFFECTS
     
@@ -93,8 +96,8 @@ export const ProductSettingView = () => {
     // CONSTANTS
 
     const items: ProductFooterItem[] = [
-        { name: 'left', text: 'Form view', image: LeftIcon },
-        { name: 'right', text: 'Model view', image: RightIcon }
+        { text: 'Form view', image: LeftIcon, hash: '' },
+        { text: 'Model view', image: RightIcon, hash: '#model' }
     ]
 
     const isNew = productId == 'new'
@@ -112,7 +115,7 @@ export const ProductSettingView = () => {
                 <Redirect to='/'/>
             ) : (
                 <>
-                    <main className= {`view product-setting sidebar ${active == 'left' ? 'hidden' : 'visible'}`}>
+                    <main className= {`view product-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='main'>
                                 <h1>
@@ -157,7 +160,7 @@ export const ProductSettingView = () => {
                             <ProductView3D productId={productId} mouse={true}/>
                         </div>
                     </main>
-                    <ProductFooter items={items} active={active} setActive={setActive}/>
+                    <ProductFooter items={items}/>
                 </>
             )
         ) : (
