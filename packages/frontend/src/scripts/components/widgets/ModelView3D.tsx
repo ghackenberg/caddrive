@@ -186,11 +186,17 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     reload() {
-        // Update
-        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model || this.update != this.props.update) {
-            // Cache
-            this.highlight_cache = undefined
+        // Reverting highlight and select
+        if (this.select_cache) {
+            this.revertSelect(this.scene.children[this.scene.children.length - 1])
             this.select_cache = undefined
+        }
+        if (this.highlight_cache) {
+            this.revertHighlight(this.scene.children[this.scene.children.length - 1])
+            this.highlight_cache = undefined
+        }
+        // Updating scene
+        if (this.scene.children.length == 0 || this.scene.children[this.scene.children.length - 1] != this.props.model || this.update != this.props.update) {
             // Update
             this.update = this.props.update
             // Scene
@@ -199,15 +205,7 @@ export class ModelView3D extends React.Component<Props> {
             // Orbit
             reset(this.props.model, this.camera, this.orbit)
         }
-        // Highlight and select
-        if (this.select_cache) {
-            this.revertSelect(this.props.model)
-            this.select_cache = undefined
-        }
-        if (this.highlight_cache) {
-            this.revertHighlight(this.props.model)
-            this.highlight_cache = undefined
-        }
+        // Setting hghlight and select
         if ((this.props.highlighted && this.props.highlighted.length > 0) || (this.props.marked && this.props.marked.length > 0)) {
             this.highlight_cache = {}
             this.setHighlight(this.props.model)
