@@ -103,11 +103,30 @@ header.view > div {
 }
 
 header.view > div.entity {
+    position: relative;
+
     padding: 1rem;
 
     font-size: 200%;
 
     line-height: 150%;
+
+    overflow: hidden;
+}
+header.view > div.entity::after {
+    content: "";
+
+    display: block;
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 1rem;
+
+    background-image: linear-gradient(to right, rgba(245, 245, 245, 0), rgba(245, 245, 245, 1));
 }
 
 header.view > div.entity > span.badge {
