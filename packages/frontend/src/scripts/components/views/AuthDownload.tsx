@@ -21,7 +21,7 @@ export const AuthDownloadView = () => {
     async function handleDownload(event: React.UIEvent) {
         event.preventDefault()
         if (WINDOWS) {
-            window.open('https://fhooe-my.sharepoint.com/:u:/g/personal/p28500_fhooe_at/ERPebWA1eEFEswEwxKxOTMQBsShhoK_G_zDUjVm6_3xmag?e=2rUaHO', '_blank') // TODO Permanent download URL
+            window.open('https://www.leocad.org/', '_blank') // TODO Download URL
         } else if (MAC) {            
             window.open('https://www.leocad.org/', '_blank') // TODO Download URL
         } else if (LINUX) {
