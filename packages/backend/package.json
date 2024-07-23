@@ -50,6 +50,7 @@
         "@types/nodemailer": "^6.4.7",
         "@types/yauzl": "^2.10.0",
         "compression": "^1.7.4",
+        "cssnano": "^7.0.4",
         "gl": "^6.0.2",
         "htmlnano": "^2.1.1",
         "jimp": "^0.22.10",
@@ -64,6 +65,7 @@
         "remark-parse": "^11.0.0",
         "remark-rehype": "^11.0.0",
         "rxjs": "^7.1.0",
+        "svgo": "^3.3.2",
         "swagger-ui-express": "^4.1.6",
         "unified": "^11.0.4",
         "yauzl": "^2.10.0"
