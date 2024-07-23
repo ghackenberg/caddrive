@@ -1,6 +1,3 @@
-export const LEGAL_1 = /^\/legal\/(.*)/
-export const LEGAL_0 = /^\/legal/
-
 export const AUTH_1 = /^\/auth\/(.*)/
 export const AUTH_0 = /^\/auth/
 

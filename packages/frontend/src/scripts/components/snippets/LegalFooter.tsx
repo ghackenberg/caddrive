@@ -1,15 +1,13 @@
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
 
-export const LegalFooter = (props: { replace?: boolean }) => {
-    const replace = props.replace || false
+export const LegalFooter = () => {
     return (
         <div className='footer'>
             <span>&copy; 2023 FHOOE</span>
-            <a href="https://caddrive.org" target="_blank">About</a>
-            <NavLink to="/legal/terms" replace={replace}>Terms</NavLink>
-            <NavLink to="/legal/privacy" replace={replace}>Privacy</NavLink>
-            <NavLink to="/legal/imprint" replace={replace}>Imprint</NavLink>
+            <a href="https://caddrive.org/" target="_blank">About</a>
+            <a href="https://caddrive.org/en/terms/" target="_blank">Terms</a>
+            <a href="https://caddrive.org/en/privacy/" target="_blank">Privacy</a>
+            <a href="https://caddrive.org/en/imprint/" target="_blank">Imprint</a>
         </div>
     )
 }

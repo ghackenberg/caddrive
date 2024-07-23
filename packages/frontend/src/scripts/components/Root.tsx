@@ -21,10 +21,9 @@ import { ProductContext } from '../contexts/Product'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
 import { useAsyncHistory } from '../hooks/history'
-import { AUTH_0, AUTH_1, LEGAL_0, LEGAL_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, USERS_0, USERS_1, USERS_2 } from '../pattern'
+import { AUTH_0, AUTH_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, USERS_0, USERS_1, USERS_2 } from '../pattern'
 
 const AuthRouter = React.lazy(() => import('./routers/Auth'))
-const LegalRouter = React.lazy(() => import('./routers/Legal'))
 const ProductsRouter = React.lazy(() => import('./routers/Products'))
 const UsersRouter = React.lazy(() => import('./routers/Users'))
 
@@ -109,9 +108,6 @@ const Root = () => {
 
         const path = pathname
         
-        const legal1 = LEGAL_1.exec(path)
-        const legal0 = LEGAL_0.exec(path)
-        
         const auth1 = AUTH_1.exec(path)
         const auth0 = AUTH_0.exec(path)
         
@@ -124,15 +120,7 @@ const Root = () => {
         const products2 = PRODUCTS_2.exec(path)
         const products1 = PRODUCTS_1.exec(path)
 
-        if (legal1) {
-            replace('/products').
-                then(() => push(`/legal/${legal1[1]}`)).
-                then(() => setInitialized(true))
-        } else if (legal0) {
-            replace('/products').
-                then(() => push('/legal')).
-                then(() => setInitialized(true))
-        } else if (auth1) {
+        if (auth1) {
             replace('/products').
                 then(() => push(`/auth/email`)).
                 then(() => setInitialized(true))
@@ -226,7 +214,6 @@ const Root = () => {
                                         {initialized ? (
                                             <React.Suspense fallback={<LoadingView/>}>
                                                 <Switch>
-                                                    <Route path="/legal" component={LegalRouter}/>
                                                     <Route path="/auth" component={AuthRouter}/>
                                                     <Route path="/users" component={UsersRouter}/>
                                                     <Route path="/products" component={ProductsRouter}/>

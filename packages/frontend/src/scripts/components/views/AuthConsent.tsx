@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Redirect } from 'react-router'
-import { NavLink } from 'react-router-dom'
 
 import { UserClient } from '../../clients/rest/user'
 import { AuthContext } from '../../contexts/Auth'
@@ -55,7 +54,7 @@ export const AuthConsentView = () => {
                             <h5>Authentication process</h5>
                             <h1>Step 3: <span>User agreement</span></h1>
                             <p>
-                                Please read carefully our <NavLink to='/legal/terms'>terms of use</NavLink> and <NavLink to='/legal/policy'>privacy policy</NavLink>.
+                                Please read carefully our <a href='https://caddrive.org/en/terms/' target='_blank'>terms of use</a> and <a href='https://caddrive.org/en/privacy/' target='_blank'>privacy policy</a>.
                                 Then <strong>agree</strong> or <strong>cancel</strong> the authentication process.
                             </p>
                             <div>
