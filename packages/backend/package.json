@@ -51,6 +51,7 @@
         "@types/yauzl": "^2.10.0",
         "compression": "^1.7.4",
         "gl": "^6.0.2",
+        "htmlnano": "^2.1.1",
         "jimp": "^0.22.10",
         "nodemailer": "^6.9.1",
         "nodemailer-mjml": "^1.2.17",
