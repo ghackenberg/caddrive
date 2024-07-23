@@ -24,17 +24,17 @@ export class PartService {
 
     private async prepare(): Promise<void> {
         return new Promise<void>(resolve => {
-            console.log('Checking LDraw')
+            console.log(new Date(), 'Checking LDraw')
             if (!existsSync(this.LDRAW)) {
-                console.log('Downloading LDraw')
+                console.log(new Date(), 'Downloading LDraw')
                 axios.get(this.URL, { responseType: 'arraybuffer' }).then(response => {
-                    console.log('Unzipping LDraw')
+                    console.log(new Date(), 'Unzipping LDraw')
                     fromBuffer(response.data as Buffer, { lazyEntries: true }, (error, file) => {
                         if (error) {
                             console.error(error)
                         } else {
                             file.on('entry', (entry: Entry)  => {
-                                console.log(`Creating ${join(this.ASSETS, entry.fileName)}`)
+                                console.log(new Date(), `Creating ${join(this.ASSETS, entry.fileName)}`)
                                 if (/\/$/.test(entry.fileName)) {
                                     file.readEntry()
                                 } else {
@@ -73,7 +73,7 @@ export class PartService {
     }
 
     private index(parent: string) {
-        console.log(`Indexing ${parent}`)
+        console.log(new Date(), `Indexing ${parent}`)
         for (const name of readdirSync(parent)) {
             const child = join(parent, name)
             if (statSync(child).isDirectory()) {
@@ -91,7 +91,7 @@ export class PartService {
             if (name.endsWith('.png')) {
                 const partName = name.replace('.png', '.dat')
                 if (partName in this.paths) {
-                    console.log(`Rendering ${partName}`)
+                    console.log(new Date(), `Rendering ${partName}`)
                     const partPath = this.paths[partName]
                     const partData = readFileSync(partPath, 'utf-8')
                     const imagePath = partPath.replace('.dat', '.png')

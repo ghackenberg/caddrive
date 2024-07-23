@@ -101,6 +101,6 @@ export class MemberService implements MemberREST {
                 link: `https://caddrive.com/products/${product.productId}`
             }
         })
-        console.log(getTestMessageUrl(info))
+        console.log(new Date(), getTestMessageUrl(info))
     }
 }

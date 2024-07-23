@@ -152,7 +152,7 @@ export class IssueService implements IssueREST {
                             link: `https://caddrive.com/products/${product.productId}/issues/${issue.issueId}`
                         }
                     })
-                    console.log(getTestMessageUrl(info))
+                    console.log(new Date(), getTestMessageUrl(info))
                 }
             }
         }

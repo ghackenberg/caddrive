@@ -24,7 +24,7 @@ export function packLDrawText(text: string) {
 }
 
 export function packLDrawFile(fileName: string) {
-    console.log('Packing "' + fileName + '"...')
+    console.log(new Date(), 'Packing "' + fileName + '"...')
 
     const objectsPaths: string[] = []
     const objectsContents: string[] = []
@@ -40,17 +40,17 @@ export function packLDrawFile(fileName: string) {
     for (let i = 0; i < listOfNotFound.length; i++) {
         if (!pathMap[listOfNotFound[i]]) {
             someNotFound = true
-            console.error('Error: File object not found: "' + fileName + '".')
+            console.error(new Date(), 'Error: File object not found: "' + fileName + '".')
         }
     }
     if (someNotFound) {
-        console.error('Some files were not found, aborting.')
+        console.error(new Date(), 'Some files were not found, aborting.')
         throw 'error'
     }
 
 	// Loading materials content
 	if (!materialsContent) {
-		console.log('Loading materials file "' + materialsFilePath + '"...')
+		console.log(new Date(), 'Loading materials file "' + materialsFilePath + '"...')
 		materialsContent = fs.readFileSync(materialsFilePath, { encoding: 'utf8' })
 	}
 
@@ -68,7 +68,7 @@ export function packLDrawFile(fileName: string) {
 //
 function parseObject(fileName: string, isRoot: boolean, objectsPaths: string[], objectsContents: string[], pathMap: {[path: string]: string}, listOfNotFound: string[]) {
 	// Returns the located path for fileName or null if not found
-	console.log('Adding "' + fileName + '".')
+	console.log(new Date(), 'Adding "' + fileName + '".')
 
 	const originalFileName = fileName
 

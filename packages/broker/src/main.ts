@@ -36,10 +36,10 @@ function tryLoadJWK(repetition: number, resolve: (value: void | PromiseLike<void
     axios.get<JWK>('http://localhost:3001/rest/keys').then(response => {
         importJWK(response.data, "PS256").then(jwkPublicKey => {
             JWK_PUBLIC_KEY = jwkPublicKey
-            console.log('JWK loaded and imported successfully')
+            console.log(new Date(), 'JWK loaded and imported successfully')
             resolve()
         }).catch(error => {
-            console.log(`Could not import JWK ${repetition + 1} times (trying again in ${REPETITION_TIMEOUT} ms)`)
+            console.log(new Date(), `Could not import JWK ${repetition + 1} times (trying again in ${REPETITION_TIMEOUT} ms)`)
             if (repetition < MAX_REPETITIONS) {
                 setTimeout(() => tryLoadJWK(repetition + 1, resolve, reject), REPETITION_TIMEOUT)
             } else {
@@ -47,7 +47,7 @@ function tryLoadJWK(repetition: number, resolve: (value: void | PromiseLike<void
             }
         })
     }).catch(error => {
-        console.log(`Could not load JWK ${repetition + 1} times (trying again in ${REPETITION_TIMEOUT} ms)`)
+        console.log(new Date(), `Could not load JWK ${repetition + 1} times (trying again in ${REPETITION_TIMEOUT} ms)`)
         if (repetition < MAX_REPETITIONS) {
             setTimeout(() => tryLoadJWK(repetition + 1, resolve, reject), REPETITION_TIMEOUT)
         } else {
@@ -73,7 +73,7 @@ async function boot() {
     aedes.authenticate = async (client, username, _password, callback) => {
         try {
 
-            console.log('authenticate', client.id)
+            console.log(new Date(), 'authenticate', client.id)
 
             if (username) {
                 // Load JWT public key from Nest.js backend if necessary!
@@ -100,7 +100,7 @@ async function boot() {
             }
         } catch (e) {
 
-            console.error('Authenticate exception', e)
+            console.error(new Date(), 'Authenticate exception', e)
 
             // Remember user ID of MQTT client
             CLIENT_USER_IDS[client.id] = null
@@ -114,7 +114,7 @@ async function boot() {
     aedes.authorizeSubscribe = async (client, subscription, callback) => {
         try {
 
-            console.log('authorizeSubscribe', client.id, subscription.topic)
+            console.log(new Date(), 'authorizeSubscribe', client.id, subscription.topic)
 
             // User topics do not require any further action
             const userMatch = exec('/users/+userId', subscription.topic)
@@ -135,7 +135,7 @@ async function boot() {
                         topic: subscription.topic,
                     }, error => {
                         if (error) {
-                            console.error('Could not initialize user', error)
+                            console.error(new Date(), 'Could not initialize user', error)
                         }
                     })
                 }, 0)
@@ -185,7 +185,7 @@ async function boot() {
                             topic: subscription.topic
                         }, error => {
                             if (error) {
-                                console.error('Could not initialize product', error)
+                                console.error(new Date(), 'Could not initialize product', error)
                             }
                         })
                     }, 0)
@@ -199,7 +199,7 @@ async function boot() {
             return callback(new Error('Topic does not exist'), null)
         } catch (e) {
 
-            console.error('Authorize subscribe exception', e)
+            console.error(new Date(), 'Authorize subscribe exception', e)
 
             // Deny subscribe
             return callback(e, null)
@@ -208,7 +208,7 @@ async function boot() {
     
     aedes.authorizePublish = async (client, packet, callback) => {
 
-        console.log('authorizePublish', client.id, packet.topic)
+        console.log(new Date(), 'authorizePublish', client.id, packet.topic)
 
         // Only backend can publish messages!
         if (CLIENT_USER_IDS[client.id] == 'backend') {
@@ -259,7 +259,7 @@ async function boot() {
 
     aedes.authorizeForward = (client, packet) => {
 
-        console.log('authorizeForward', client.id, packet.topic)
+        console.log(new Date(), 'authorizeForward', client.id, packet.topic)
 
         // User topics can be forwarded without further checks
         const userMatch = exec('/users/+userId', packet.topic)
@@ -303,22 +303,22 @@ async function boot() {
 
     aedes.on('subscribe', (subscriptions, client) => {
 
-        console.log('subscribe', client.id, subscriptions[0].topic)
+        console.log(new Date(), 'subscribe', client.id, subscriptions[0].topic)
 
     })
     aedes.on('unsubscribe', (unsubscriptions, client) => {
 
-        console.log('unsubscribe', client.id, unsubscriptions[0])
+        console.log(new Date(), 'unsubscribe', client.id, unsubscriptions[0])
 
     })
     aedes.on('publish', (packet, client) => {
 
-        client && console.log('publish', client.id, packet.topic)
+        client && console.log(new Date(), 'publish', client.id, packet.topic)
 
     })
     aedes.on('clientDisconnect', client => {
 
-        console.log('clientDisconnect', client.id)
+        console.log(new Date(), 'clientDisconnect', client.id)
 
         delete CLIENT_USER_IDS[client.id]
     })
@@ -328,7 +328,7 @@ async function boot() {
     const netServer = net.createServer(socket => aedes.handle(socket, undefined))
     netServer.listen(NET_PORT, () => {
 
-        console.log('NET server listening')
+        console.log(new Date(), 'NET server listening')
 
     })
 
@@ -337,7 +337,7 @@ async function boot() {
     const httpServer = http.createServer()
     httpServer.listen(HTTP_PORT, () => {
 
-        console.log('HTTP server listening')
+        console.log(new Date(), 'HTTP server listening')
 
     })
 

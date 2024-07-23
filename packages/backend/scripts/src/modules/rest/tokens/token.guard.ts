@@ -26,7 +26,7 @@ abstract class TokenGuard implements CanActivate {
             }
         } catch (e) {
             // Log error
-            console.error(e)
+            console.error(new Date(), e)
             // Init user
             request.user = null
         }

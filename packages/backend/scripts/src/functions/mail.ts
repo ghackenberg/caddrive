@@ -9,7 +9,7 @@ const SMTP_AUTH_PASS = process.env['SMTP_AUTH_PASS']
 
 async function create() {
     if (SMTP_HOST && SMTP_PORT && SMTP_SECURE && SMTP_AUTH_USER && SMTP_AUTH_PASS) {
-        console.log('Using env SMTP server connection')
+        console.log(new Date(), 'Using env SMTP server connection')
         return createTransport({
             host: SMTP_HOST,
             port: parseInt(SMTP_PORT),
@@ -22,7 +22,7 @@ async function create() {
     } else {
         try {
             const account = await createTestAccount()
-            console.log('Using test SMTP server connection')
+            console.log(new Date(), 'Using test SMTP server connection')
             return createTransport({
                 host: account.smtp.host,
                 port: account.smtp.port,
@@ -33,7 +33,7 @@ async function create() {
                 }
             })
         } catch (error) {
-            console.log('Using stub SMTP server connection')
+            console.log(new Date(), 'Using stub SMTP server connection')
             return createTransport({
                 jsonTransport: true
             })

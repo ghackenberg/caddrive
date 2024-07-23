@@ -177,21 +177,21 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                             const image = await renderGlb(files.model[0].buffer, 1000, 1000)
                             await this.updateImage(productId, versionId, image)
                         } catch (e) {
-                            console.error('Could not render image', e)
+                            console.error(new Date(), 'Could not render image', e)
                         }
                     } else if (files.model[0].originalname.endsWith('.ldr')) {
                         try {
                             const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
                             await this.updateImage(productId, versionId, image)
                         } catch (e) {
-                            console.error('Could not render image', e)
+                            console.error(new Date(), 'Could not render image', e)
                         }
                     } else if (files.model[0].originalname.endsWith('.mpd')) {
                         try {
                             const image = await renderLDraw(files.model[0].buffer.toString(), 1000, 1000)
                             await this.updateImage(productId, versionId, image)
                         } catch (e) {
-                            console.error('Could not render image', e)
+                            console.error(new Date(), 'Could not render image', e)
                         }
                     } else {
                         throw new HttpException('Model file type not supported.', 400)
@@ -248,7 +248,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                             link: `https://caddrive.com/products/${product.productId}`
                         }
                     })
-                    console.log(getTestMessageUrl(info))
+                    console.log(new Date(), getTestMessageUrl(info))
                 }
             }
         }
