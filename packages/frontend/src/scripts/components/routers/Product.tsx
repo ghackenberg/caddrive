@@ -9,6 +9,8 @@ import { ProductMemberView } from '../views/ProductMember'
 import { ProductMemberSettingView } from '../views/ProductMemberSetting'
 import { ProductMilestoneView } from '../views/ProductMilestone'
 import { ProductMilestoneIssueView } from '../views/ProductMilestoneIssue'
+import { ProductMilestoneIssueCommentView } from '../views/ProductMilestoneIssueComment'
+import { ProductMilestoneIssueSettingView } from '../views/ProductMilestoneIssueSetting'
 import { ProductMilestoneSettingView } from '../views/ProductMilestoneSetting'
 import { ProductSettingView } from '../views/ProductSetting'
 import { ProductVersionView } from '../views/ProductVersion'
@@ -26,6 +28,8 @@ const ProductRouter = () => {
                 <Redirect path="/products/:productId/members/:memberId" to="/products/:productId/members/:memberId/settings" push={false}/>
                 <Route path="/products/:productId/members" component={ProductMemberView}/>
 
+                <Route path="/products/:productId/milestones/:milestoneId/issues/:issueId/comments" component={ProductMilestoneIssueCommentView}/>
+                <Route path="/products/:productId/milestones/:milestoneId/issues/:issueId/settings" component={ProductMilestoneIssueSettingView}/>
                 <Route path="/products/:productId/milestones/:milestoneId/issues" component={ProductMilestoneIssueView}/>
                 <Route path="/products/:productId/milestones/:milestoneId/settings" component={ProductMilestoneSettingView}/>
                 <Redirect path="/products/:productId/milestones/:milestoneId" to="/products/:productId/milestones/:milestoneId/issues" push={false}/>

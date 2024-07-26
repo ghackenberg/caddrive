@@ -21,7 +21,7 @@ import { ProductContext } from '../contexts/Product'
 import { UserContext } from '../contexts/User'
 import { VersionContext } from '../contexts/Version'
 import { useAsyncHistory } from '../hooks/history'
-import { AUTH_0, AUTH_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, USERS_0, USERS_1, USERS_2 } from '../pattern'
+import { AUTH_0, AUTH_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, PRODUCTS_5, PRODUCTS_6, USERS_0, USERS_1, USERS_2 } from '../pattern'
 
 const AuthRouter = React.lazy(() => import('./routers/Auth'))
 const ProductsRouter = React.lazy(() => import('./routers/Products'))
@@ -115,6 +115,8 @@ const Root = () => {
         const users1 = USERS_1.exec(path)
         const users0 = USERS_0.exec(path)
         
+        const products6 = PRODUCTS_6.exec(path)
+        const products5 = PRODUCTS_5.exec(path)
         const products4 = PRODUCTS_4.exec(path)
         const products3 = PRODUCTS_3.exec(path)
         const products2 = PRODUCTS_2.exec(path)
@@ -140,18 +142,33 @@ const Root = () => {
             replace('/products').
                 then(() => push('/users')).
                 then(() => setInitialized(true))
+        } else if (products6) {
+            if (products6[4] == 'issues' && products6[5] != 'new' && products6[6] == 'settings') {
+                replace('/products').
+                    then(() => push(`/products/${products6[1]}/${products6[2]}`)).
+                    then(() => push(`/products/${products6[1]}/${products6[2]}/${products6[3]}/${products6[4]}`)).
+                    then(() => push(`/products/${products6[1]}/${products6[2]}/${products6[3]}/${products6[4]}/${products6[5]}/comments`)).
+                    then(() => push(`/products/${products6[1]}/${products6[2]}/${products6[3]}/${products6[4]}/${products6[5]}/${products6[6]}`)).
+                    then(() => setInitialized(true))
+            } else {
+                replace('/products').
+                    then(() => push(`/products/${products6[1]}/${products6[2]}`)).
+                    then(() => push(`/products/${products6[1]}/${products6[2]}/${products6[3]}/${products6[4]}`)).
+                    then(() => push(`/products/${products6[1]}/${products6[2]}/${products6[3]}/${products6[4]}/${products6[5]}/${products6[6]}`)).
+                    then(() => setInitialized(true))
+            }
+        } else if (products5) {
+            replace('/products').
+                then(() => push(`/products/${products5[1]}/${products5[2]}`)).
+                then(() => push(`/products/${products5[1]}/${products5[2]}/${products5[3]}/${products5[4]}`)).
+                then(() => push(`/products/${products5[1]}/${products5[2]}/${products5[3]}/${products5[4]}/${products5[5]}`)).
+                then(() => setInitialized(true))
         } else if (products4) {
             if (products4[2] == 'issues' && products4[3] != 'new' && products4[4] == 'settings') {
                 replace('/products').
                     then(() => push(`/products/${products4[1]}/${products4[2]}`)).
                     then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/comments`)).
-                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/settings`)).
-                    then(() => setInitialized(true))
-            } else if (products4[2] == 'milestones' && products4[3] != 'new' && products4[4] == 'settings') {
-                replace('/products').
-                    then(() => push(`/products/${products4[1]}/${products4[2]}`)).
-                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/issues`)).
-                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/settings`)).
+                    then(() => push(`/products/${products4[1]}/${products4[2]}/${products4[3]}/${products4[4]}`)).
                     then(() => setInitialized(true))
             } else {
                 replace('/products').

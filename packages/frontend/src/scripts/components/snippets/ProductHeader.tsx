@@ -1,26 +1,21 @@
 import * as React from 'react'
-import { NavLink, useLocation, useParams } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 
-import { useAsyncHistory } from '../../hooks/history'
+import { useNavigationStack } from '../../hooks/navigation'
 import { useProduct } from '../../hooks/entity'
 import { IssuesLink } from '../links/IssuesLink'
 import { MembersLink } from '../links/MembersLink'
 import { MilestonesLink } from '../links/MilestonesLink'
 import { ProductLink } from '../links/ProductLink'
 import { VersionsLink } from '../links/VersionsLink'
-import { PRODUCTS_4 } from '../../pattern'
 
 import SettingIcon from '/src/images/setting.png'
 
 export const ProductHeader = () => {
 
-    // HISTORY
+    // NAVIGATION
 
-    const { go, replace } = useAsyncHistory()
-
-    // LOCATION
-
-    const { pathname, hash } = useLocation()
+    const { navigate } = useNavigationStack()
 
     // PARAMS
 
@@ -29,18 +24,6 @@ export const ProductHeader = () => {
     // ENTITIES
 
     const product = useProduct(productId)
-
-    // FUNCTIONS
-
-    async function handleClick(event: React.UIEvent) {
-        event.preventDefault()
-        if (PRODUCTS_4.test(pathname)) {
-            await go(hash ? -2 : -1)
-        } else {
-            hash && await go(-1)
-        }
-        await replace(`/products/${productId}/settings`)
-    }
 
     // RETURN
 
@@ -73,7 +56,7 @@ export const ProductHeader = () => {
                             <span>Settings</span>
                         </a>
                     ) : (
-                        <NavLink to={`/products/${productId}/settings`} onClick={handleClick}>
+                        <NavLink to={`/products/${productId}/settings`} onClick={navigate}>
                             <img src={SettingIcon} className='icon small'/>
                             <span>Settings</span>
                         </NavLink>

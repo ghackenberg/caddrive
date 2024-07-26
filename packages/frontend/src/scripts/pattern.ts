@@ -5,6 +5,8 @@ export const USERS_2 = /^\/users\/(.*)\/(.*)/
 export const USERS_1 = /^\/users\/(.*)/
 export const USERS_0 = /^\/users/
 
+export const PRODUCTS_6 = /^\/products\/(.*)\/(.*)\/(.*)\/(.*)\/(.*)\/(.*)/
+export const PRODUCTS_5 = /^\/products\/(.*)\/(.*)\/(.*)\/(.*)\/(.*)/
 export const PRODUCTS_4 = /^\/products\/(.*)\/(.*)\/(.*)\/(.*)/
 export const PRODUCTS_3 = /^\/products\/(.*)\/(.*)\/(.*)/
 export const PRODUCTS_2 = /^\/products\/(.*)\/(.*)/

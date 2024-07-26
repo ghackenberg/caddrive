@@ -32,7 +32,7 @@ export const ProductMilestoneIssueView = () => {
 
     // HISTORY
     
-    const { goBack, replace, push } = useAsyncHistory()
+    const { push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -118,19 +118,8 @@ export const ProductMilestoneIssueView = () => {
         }
     }
 
-    async function handleClickLink(event: React.MouseEvent<HTMLAnchorElement>) {
-        event.preventDefault()
-        const pathname = event.currentTarget.pathname
-        const search = event.currentTarget.search
-        await goBack()
-        await replace(`/products/${productId}/issues`)
-        await push(`${pathname}${search}`)
-    }
-
     async function handleClickIssue(issue: IssueRead) {
-        await goBack()
-        await replace(`/products/${productId}/issues`)
-        await push(`/products/${productId}/issues/${issue.issueId}/comments`)
+        await push(`/products/${productId}/milestones/${milestoneId}/issues/${issue.issueId}/comments`)
     }
     
     // CONSTANTS
@@ -230,7 +219,7 @@ export const ProductMilestoneIssueView = () => {
                                 </p>
                                 {contextUser ? (
                                     contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
-                                        <NavLink to={`/products/${productId}/issues/new/settings?milestone=${milestoneId}`} onClick={handleClickLink} className='button fill green block-when-responsive'>
+                                        <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues/new/settings`} className='button fill green block-when-responsive'>
                                             <strong>New</strong> issue
                                         </NavLink>
                                     ) : (
