@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install packages
-        run: sudo apt-get install -y libxi-dev libmesa-dev
+        run: sudo apt-get install -y libxi-dev libgl-dev
       - name: Update NPM
         run: npm install -g npm@latest
       - name: Install dependencies
