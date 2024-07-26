@@ -14,6 +14,15 @@ import './mqtt'
 import { renderGlb, renderLDraw } from './functions/render'
 import { RESTModule } from './modules/rest.module'
 
+// Polyfill class ProgressEvent on Node.js backend
+if (!global.ProgressEvent) {
+    global.ProgressEvent = class {
+        constructor() {
+            return
+        }
+    } as never
+}
+
 async function bootstrap() {
     console.log(new Date(), 'Initializing upload folder (if necessary)')
 
