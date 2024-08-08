@@ -15,6 +15,7 @@ import { useProduct, useVersion } from '../../hooks/entity'
 import { useMembers, useVersions } from '../../hooks/list'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
+import { parseDAEModel } from '../../loaders/dae'
 import { parseFBXModel } from '../../loaders/fbx'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel, pauseLoadLDrawPath } from '../../loaders/ldraw'
@@ -114,7 +115,7 @@ export const ProductVersionSettingView = () => {
             setDataUrl(null)
             if (file.name.endsWith('.fbx') || file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
                 file.arrayBuffer().then(arrayBuffer => exec && setArrayBuffer(arrayBuffer))
-            } else if (file.name.endsWith('.ply') || file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
+            } else if (file.name.endsWith('.dae') || file.name.endsWith('.ply') || file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
                 file.text().then(text => exec && setText(text))
             }
         }
@@ -144,7 +145,9 @@ export const ProductVersionSettingView = () => {
         }
         const path = `${Math.random()}`
         if (text) {
-            if (file.name.endsWith('.ply')) {
+            if (file.name.endsWith('.dae')) {
+                parseDAEModel(text).then(group => exec && setGroup(group))
+            } else if (file.name.endsWith('.ply')) {
                 parsePLYModel(text).then(group => exec && setGroup(group))
             } else if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
                 parseLDrawModel(path, text, update).then(group => exec && setGroup(group))
@@ -264,7 +267,7 @@ export const ProductVersionSettingView = () => {
                                         </GenericInput>
                                     )}
                                     <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                    <FileInput label='File' placeholder='Select file' accept='.fbx,.stl,.ply,.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
+                                    <FileInput label='File' placeholder='Select file' accept='.dae,.fbx,.stl,.ply,.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
                                     <GenericInput label='Preview'>
                                         {dataUrl ? (
                                             <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>

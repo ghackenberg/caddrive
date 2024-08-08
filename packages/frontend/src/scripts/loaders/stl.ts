@@ -3,7 +3,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
 import { CacheAPI } from '../clients/cache'
 
-const loader = new STLLoader()
+const STL_LOADER = new STLLoader()
 
 export async function loadSTLModel(path: string) {
     const file = await CacheAPI.loadFile(path)
@@ -11,7 +11,7 @@ export async function loadSTLModel(path: string) {
 }
 
 export async function parseSTLModel(data: ArrayBuffer) {
-    const face_geometry = loader.parse(data)
+    const face_geometry = STL_LOADER.parse(data)
 
     face_geometry.computeVertexNormals()
 

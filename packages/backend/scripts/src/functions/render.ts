@@ -2,6 +2,7 @@ import gl from 'gl'
 import Jimp from 'jimp'
 import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, EdgesGeometry, Group, LineBasicMaterial, LineSegments, LoadingManager, Mesh, MeshPhongMaterial, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
@@ -199,7 +200,22 @@ const FBX_LOADER = new FBXLoader()
 
 export async function renderFbx(buffer: Buffer, width: number, height: number) {
     const group = FBX_LOADER.parse(buffer, '')
-    
+
+    return await render(group, width, height)
+}
+
+const DAE_LOADER = new ColladaLoader()
+
+export async function renderDae(buffer: string, width: number, height: number) {
+    const model = DAE_LOADER.parse(buffer, '')
+    const group = new Group()
+     
+    for (const child of model.scene.children) {
+        group.add(child)
+    }
+    group.rotateX(Math.PI * 3 / 2)
+    group.rotateZ(Math.PI * 3 / 2)
+
     return await render(group, width, height)
 }
 

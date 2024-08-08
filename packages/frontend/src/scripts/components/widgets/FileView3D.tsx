@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Group, Object3D } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
+import { loadDAEModel } from '../../loaders/dae'
 import { loadFBXModel } from '../../loaders/fbx'
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
@@ -20,6 +21,7 @@ type Callback = (part: string, loaded: number, total: number) => void
 const STL_MODEL_CACHE: {[path: string]: Group} = {}
 const PLY_MODEL_CACHE: {[path: string]: Group} = {}
 const FBX_MODEL_CACHE: {[path: string]: Group} = {}
+const DAE_MODEL_CACHE: {[path: string]: Group} = {}
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
 
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
@@ -46,6 +48,13 @@ async function getFBXModel(path: string) {
         FBX_MODEL_CACHE[path] = await loadFBXModel(path)
     }
     return FBX_MODEL_CACHE[path]
+}
+
+async function getDAEModel(path: string) {
+    if (!(path in DAE_MODEL_CACHE)) {
+        DAE_MODEL_CACHE[path] = await loadDAEModel(path)
+    }
+    return DAE_MODEL_CACHE[path]
 }
 
 async function getGLTFModel(path: string) {
@@ -117,6 +126,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         initialGroup = PLY_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.fbx')) {
         initialGroup = FBX_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.dae')) {
+        initialGroup = DAE_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.glb')) {
         initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
     } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
@@ -164,6 +175,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
                 getSTLModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.ply')) {
                 getPLYModel(props.path).then(group => exec && setGroup(group))
+            } else if (props.path.endsWith('.dae')) {
+                getDAEModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.fbx')) {
                 getFBXModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.glb')) {
