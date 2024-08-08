@@ -1,4 +1,3 @@
-import axios from "axios"
 import * as THREE from "three"
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 
@@ -48,12 +47,6 @@ export function resumeLoadLDrawPath(path: string) {
 
     // Resume running load process
     LDRAW_RESUME[path] && LDRAW_RESUME[path]()
-}
-
-export async function loadLDrawPath(path: string, update = empty) {
-    const response = await axios.get(path)
-
-    return parseLDrawModel(path, response.data, update)
 }
 
 export async function parseLDrawModel(path: string, data: string, update = empty) {
