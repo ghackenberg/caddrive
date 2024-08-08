@@ -6,6 +6,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
+import { loadPLYModel } from '../../loaders/ply'
 import { loadSTLModel } from '../../loaders/stl'
 import { computePath } from '../../functions/path'
 import { ModelGraph } from './ModelGraph'
@@ -16,6 +17,8 @@ import LoadIcon from '/src/images/load.png'
 type Callback = (part: string, loaded: number, total: number) => void
 
 const STL_MODEL_CACHE: {[path: string]: Group} = {}
+
+const PLY_MODEL_CACHE: {[path: string]: Group} = {}
 
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
 
@@ -29,6 +32,13 @@ async function getSTLModel(path: string) {
         STL_MODEL_CACHE[path] = await loadSTLModel(path)
     }
     return STL_MODEL_CACHE[path]
+}
+
+async function getPLYModel(path: string) {
+    if (!(path in PLY_MODEL_CACHE)) {
+        PLY_MODEL_CACHE[path] = await loadPLYModel(path)
+    }
+    return PLY_MODEL_CACHE[path]
 }
 
 async function getGLTFModel(path: string) {
@@ -96,6 +106,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
 
     if (props.path.endsWith('.stl')) {
         initialGroup = STL_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.ply')) {
+        initialGroup = PLY_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.glb')) {
         initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
     } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
@@ -140,9 +152,11 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         if (props.path) {
             setGroup(undefined)
             if (props.path.endsWith('.stl')) {
-                getSTLModel(props.path).then(stlModel => exec && setGroup(stlModel))
+                getSTLModel(props.path).then(group => exec && setGroup(group))
+            } else if (props.path.endsWith('.ply')) {
+                getPLYModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.glb')) {
-                getGLTFModel(props.path).then(gltfModel => exec && setGroup(gltfModel.scene))
+                getGLTFModel(props.path).then(model => exec && setGroup(model.scene))
             } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
                 getLDrawModel(props.path).then(group => exec && setGroup(group))
             }

@@ -1,18 +1,21 @@
 import { EdgesGeometry, Group, LineBasicMaterial, LineSegments, Mesh, MeshPhongMaterial } from 'three'
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 
 import { CacheAPI } from '../clients/cache'
 
-const loader = new STLLoader()
+const TEXT_DECODER = new TextDecoder()
 
-export async function loadSTLModel(path: string) {
+const PLY_LOADER = new PLYLoader()
+
+export async function loadPLYModel(path: string) {
     const file = await CacheAPI.loadFile(path)
-    return parseSTLModel(file)
+    const text = TEXT_DECODER.decode(file)
+    return parsePLYModel(text)
 }
 
-export async function parseSTLModel(data: ArrayBuffer) {
-    const face_geometry = loader.parse(data)
-
+export async function parsePLYModel(data: string) {
+    const face_geometry = PLY_LOADER.parse(data)
+    
     face_geometry.computeVertexNormals()
 
     const face_material = new MeshPhongMaterial({ color: 'orange' })

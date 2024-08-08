@@ -4,6 +4,7 @@ import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, EdgesGeome
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
 function initializeScene() {
@@ -214,6 +215,25 @@ const STL_LOADER = new STLLoader()
 
 export async function renderStl(buffer: Buffer, width: number, height: number) {
     const face_geometry = STL_LOADER.parse(buffer)
+    const face_material = new MeshPhongMaterial({ color: 'orange' })
+
+    const edge_geometry = new EdgesGeometry(face_geometry.clone(), 45)
+    const edge_material = new LineBasicMaterial({ color: 'yellow' })
+
+    const face_mesh = new Mesh(face_geometry, face_material)
+    const edge_mesh = new LineSegments(edge_geometry, edge_material)
+
+    const group = new Group()
+    group.add(edge_mesh)
+    group.add(face_mesh)
+
+    return await render(group, width, height)
+}
+
+const PLY_LOADER = new PLYLoader()
+
+export async function renderPly(buffer: string, width: number, height: number) {
+    const face_geometry = PLY_LOADER.parse(buffer)
     const face_material = new MeshPhongMaterial({ color: 'orange' })
 
     const edge_geometry = new EdgesGeometry(face_geometry.clone(), 45)
