@@ -20,7 +20,7 @@ import { Database, convertVersion } from 'productboard-database'
 import { emitProductMessage } from '../../../functions/emit'
 import { TRANSPORTER } from '../../../functions/mail'
 import { packLDrawText } from '../../../functions/pack'
-import { renderGlb, renderLDraw, renderPly, renderStl } from '../../../functions/render'
+import { renderFbx, renderGlb, renderLDraw, renderPly, renderStl } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -123,6 +123,9 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                 } else if (files.model[0].originalname.endsWith('.ply')) {
                     writeFileSync(`./uploads/${versionId}.ply`, files.model[0].buffer)
                     return 'ply'
+                } else if (files.model[0].originalname.endsWith('.fbx')) {
+                    writeFileSync(`./uploads/${versionId}.fbx`, files.model[0].buffer)
+                    return 'fbx'
                 } else if (files.model[0].originalname.endsWith('.glb')) {
                     writeFileSync(`./uploads/${versionId}.glb`, files.model[0].buffer)
                     return 'glb'
@@ -188,6 +191,13 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                     } else if (files.model[0].originalname.endsWith('.ply')) {
                         try {
                             const image = await renderPly(files.model[0].buffer.toString(), 1000, 1000)
+                            await this.updateImage(productId, versionId, image)
+                        } catch (e) {
+                            console.error(new Date(), 'Could not render image', e)
+                        }
+                    } else if (files.model[0].originalname.endsWith('.fbx')) {
+                        try {
+                            const image = await renderFbx(files.model[0].buffer, 1000, 1000)
                             await this.updateImage(productId, versionId, image)
                         } catch (e) {
                             console.error(new Date(), 'Could not render image', e)

@@ -2,6 +2,7 @@ import gl from 'gl'
 import Jimp from 'jimp'
 import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, EdgesGeometry, Group, LineBasicMaterial, LineSegments, LoadingManager, Mesh, MeshPhongMaterial, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
@@ -192,6 +193,14 @@ export async function renderLDraw(model: string, width: number, height: number) 
             render(group, width, height).then(resolve).catch(reject)
         })
     })
+}
+
+const FBX_LOADER = new FBXLoader()
+
+export async function renderFbx(buffer: Buffer, width: number, height: number) {
+    const group = FBX_LOADER.parse(buffer, '')
+    
+    return await render(group, width, height)
 }
 
 const GLTF_LOADER = new GLTFLoader()

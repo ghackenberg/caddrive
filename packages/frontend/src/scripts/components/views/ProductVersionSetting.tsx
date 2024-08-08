@@ -15,6 +15,7 @@ import { useProduct, useVersion } from '../../hooks/entity'
 import { useMembers, useVersions } from '../../hooks/list'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
+import { parseFBXModel } from '../../loaders/fbx'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel, pauseLoadLDrawPath } from '../../loaders/ldraw'
 import { parsePLYModel } from '../../loaders/ply'
@@ -111,7 +112,7 @@ export const ProductVersionSettingView = () => {
             setGroup(null)
             setBlob(null)
             setDataUrl(null)
-            if (file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
+            if (file.name.endsWith('.fbx') || file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
                 file.arrayBuffer().then(arrayBuffer => exec && setArrayBuffer(arrayBuffer))
             } else if (file.name.endsWith('.ply') || file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
                 file.text().then(text => exec && setText(text))
@@ -123,7 +124,9 @@ export const ProductVersionSettingView = () => {
     useEffect(() => {
         let exec = true
         if (arrayBuffer) {
-            if (file.name.endsWith('.stl')) {
+            if (file.name.endsWith('.fbx')) {
+                parseFBXModel(arrayBuffer).then(group => exec && setGroup(group))
+            } else if (file.name.endsWith('.stl')) {
                 parseSTLModel(arrayBuffer).then(group => exec && setGroup(group))
             } else if (file.name.endsWith('.glb')) {
                 parseGLTFModel(arrayBuffer).then(model => exec && setModel(model))
@@ -261,7 +264,7 @@ export const ProductVersionSettingView = () => {
                                         </GenericInput>
                                     )}
                                     <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                    <FileInput label='File' placeholder='Select file' accept='.stl,.ply,.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
+                                    <FileInput label='File' placeholder='Select file' accept='.fbx,.stl,.ply,.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
                                     <GenericInput label='Preview'>
                                         {dataUrl ? (
                                             <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>

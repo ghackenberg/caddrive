@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Group, Object3D } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
+import { loadFBXModel } from '../../loaders/fbx'
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
 import { loadPLYModel } from '../../loaders/ply'
@@ -17,9 +18,8 @@ import LoadIcon from '/src/images/load.png'
 type Callback = (part: string, loaded: number, total: number) => void
 
 const STL_MODEL_CACHE: {[path: string]: Group} = {}
-
 const PLY_MODEL_CACHE: {[path: string]: Group} = {}
-
+const FBX_MODEL_CACHE: {[path: string]: Group} = {}
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
 
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
@@ -39,6 +39,13 @@ async function getPLYModel(path: string) {
         PLY_MODEL_CACHE[path] = await loadPLYModel(path)
     }
     return PLY_MODEL_CACHE[path]
+}
+
+async function getFBXModel(path: string) {
+    if (!(path in FBX_MODEL_CACHE)) {
+        FBX_MODEL_CACHE[path] = await loadFBXModel(path)
+    }
+    return FBX_MODEL_CACHE[path]
 }
 
 async function getGLTFModel(path: string) {
@@ -108,6 +115,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         initialGroup = STL_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.ply')) {
         initialGroup = PLY_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.fbx')) {
+        initialGroup = FBX_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.glb')) {
         initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
     } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
@@ -155,6 +164,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
                 getSTLModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.ply')) {
                 getPLYModel(props.path).then(group => exec && setGroup(group))
+            } else if (props.path.endsWith('.fbx')) {
+                getFBXModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.glb')) {
                 getGLTFModel(props.path).then(model => exec && setGroup(model.scene))
             } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
