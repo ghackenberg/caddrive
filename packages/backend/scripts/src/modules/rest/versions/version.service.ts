@@ -14,13 +14,13 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 import { unified } from 'unified'
 
-import { ProductRead, VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
+import { ModelType, ProductRead, VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
 import { Database, convertVersion } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
 import { TRANSPORTER } from '../../../functions/mail'
 import { packLDrawText } from '../../../functions/pack'
-import { renderGlb, renderLDraw } from '../../../functions/render'
+import { renderGlb, renderLDraw, renderStl } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -114,10 +114,13 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         return convertVersion(version)
     }
 
-    async processModel(versionId: string, modelType: 'glb' | 'ldr' | 'mpd', files?: {model: Express.Multer.File[], image: Express.Multer.File[]}) {
+    async processModel(versionId: string, modelType: ModelType, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<ModelType> {
         if (files.model) {
             if (files.model.length == 1) {
-                if (files.model[0].originalname.endsWith('.glb')) {
+                if (files.model[0].originalname.endsWith('.stl')) {
+                    writeFileSync(`./uploads/${versionId}.stl`, files.model[0].buffer)
+                    return 'stl'
+                } else if (files.model[0].originalname.endsWith('.glb')) {
                     writeFileSync(`./uploads/${versionId}.glb`, files.model[0].buffer)
                     return 'glb'
                 } else if (files.model[0].originalname.endsWith('.ldr')) {
@@ -172,7 +175,14 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                 // Model must not be rendered
             } else if (files.model) {
                 if (files.model.length == 1) {
-                    if (files.model[0].originalname.endsWith('.glb')) {
+                    if (files.model[0].originalname.endsWith('.stl')) {
+                        try {
+                            const image = await renderStl(files.model[0].buffer, 1000, 1000)
+                            await this.updateImage(productId, versionId, image)
+                        } catch (e) {
+                            console.error(new Date(), 'Could not render image', e)
+                        }
+                    } else if (files.model[0].originalname.endsWith('.glb')) {
                         try {
                             const image = await renderGlb(files.model[0].buffer, 1000, 1000)
                             await this.updateImage(productId, versionId, image)

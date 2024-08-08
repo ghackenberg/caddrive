@@ -17,6 +17,7 @@ import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel, pauseLoadLDrawPath } from '../../loaders/ldraw'
+import { parseSTLModel } from '../../loaders/stl'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { FileInput } from '../inputs/FileInput'
 import { GenericInput } from '../inputs/GenericInput'
@@ -109,7 +110,7 @@ export const ProductVersionSettingView = () => {
             setGroup(null)
             setBlob(null)
             setDataUrl(null)
-            if (file.name.endsWith('.glb')) {
+            if (file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
                 file.arrayBuffer().then(arrayBuffer => exec && setArrayBuffer(arrayBuffer))
             } else if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
                 file.text().then(text => exec && setText(text))
@@ -120,7 +121,13 @@ export const ProductVersionSettingView = () => {
 
     useEffect(() => {
         let exec = true
-        arrayBuffer && parseGLTFModel(arrayBuffer).then(model => exec && setModel(model))
+        if (arrayBuffer) {
+            if (file.name.endsWith('.stl')) {
+                parseSTLModel(arrayBuffer).then(group => exec && setGroup(group))
+            } else if (file.name.endsWith('.glb')) {
+                parseGLTFModel(arrayBuffer).then(model => exec && setModel(model))
+            }
+        }
         return () => { exec = false }
     }, [arrayBuffer])
 
@@ -132,7 +139,11 @@ export const ProductVersionSettingView = () => {
             setTotal(total)
         }
         const path = `${Math.random()}`
-        text && parseLDrawModel(path, text, update).then(group => exec && setGroup(group))
+        if (text) {
+            if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
+                parseLDrawModel(path, text, update).then(group => exec && setGroup(group))
+            }
+        }
         return () => {
             exec = false
             pauseLoadLDrawPath(path)
@@ -247,7 +258,7 @@ export const ProductVersionSettingView = () => {
                                         </GenericInput>
                                     )}
                                     <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                    <FileInput label='File' placeholder='Select file' accept='.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
+                                    <FileInput label='File' placeholder='Select file' accept='.stl,.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
                                     <GenericInput label='Preview'>
                                         {dataUrl ? (
                                             <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>

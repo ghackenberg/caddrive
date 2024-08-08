@@ -1,9 +1,10 @@
 import gl from 'gl'
 import Jimp from 'jimp'
-import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, LoadingManager, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
+import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, EdgesGeometry, Group, LineBasicMaterial, LineSegments, LoadingManager, Mesh, MeshPhongMaterial, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
 function initializeScene() {
     const ambient_light = new AmbientLight(0xffffff, 0.5)
@@ -207,4 +208,23 @@ export async function renderGlb(buffer: Buffer, width: number, height: number) {
             reject(error)
         })
     })
+}
+
+const STL_LOADER = new STLLoader()
+
+export async function renderStl(buffer: Buffer, width: number, height: number) {
+    const face_geometry = STL_LOADER.parse(buffer)
+    const face_material = new MeshPhongMaterial({ color: 'orange' })
+
+    const edge_geometry = new EdgesGeometry(face_geometry.clone(), 45)
+    const edge_material = new LineBasicMaterial({ color: 'yellow' })
+
+    const face_mesh = new Mesh(face_geometry, face_material)
+    const edge_mesh = new LineSegments(edge_geometry, edge_material)
+
+    const group = new Group()
+    group.add(edge_mesh)
+    group.add(face_mesh)
+
+    return await render(group, width, height)
 }

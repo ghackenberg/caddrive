@@ -10,7 +10,7 @@ export const VersionView3D = (props: { version: VersionRead, mouse: boolean, hig
     const version = props.version
     const versionId = version.versionId
     const modelType = version.modelType
-    const path = modelType == 'ldr' ? `${versionId}.ldr` : `${versionId}.${modelType}`
+    const path = `${versionId}.${modelType}`
     return (
         <div className="widget version_view_3d">
             <FileView3D path={path} mouse={props.mouse} highlighted={props.highlighted} marked={props.marked} selected={props.selected} over={props.over} out={props.out} click={props.click}/>

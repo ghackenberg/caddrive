@@ -6,6 +6,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
+import { loadSTLModel } from '../../loaders/stl'
 import { computePath } from '../../functions/path'
 import { ModelGraph } from './ModelGraph'
 import { ModelView3D } from './ModelView3D'
@@ -14,12 +15,21 @@ import LoadIcon from '/src/images/load.png'
 
 type Callback = (part: string, loaded: number, total: number) => void
 
+const STL_MODEL_CACHE: {[path: string]: Group} = {}
+
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
 
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
 const LDRAW_LOADED_CACHE: {[path: string]: number} = {}
 const LDRAW_TOTAL_CACHE: {[path: string]: number} = {}
 const LDRAW_UPDATE_CACHE: {[path: string]: Callback[]} = {}
+
+async function getSTLModel(path: string) {
+    if (!(path in STL_MODEL_CACHE)) {
+        STL_MODEL_CACHE[path] = await loadSTLModel(path)
+    }
+    return STL_MODEL_CACHE[path]
+}
 
 async function getGLTFModel(path: string) {
     if (!(path in GLTF_MODEL_CACHE)) {
@@ -84,7 +94,9 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
 
     let initialGroup: Group = undefined
 
-    if (props.path.endsWith('.glb')) {
+    if (props.path.endsWith('.stl')) {
+        initialGroup = STL_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.glb')) {
         initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
     } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
         initialGroup = LDRAW_MODEL_CACHE[props.path]
@@ -127,7 +139,9 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         let exec = true
         if (props.path) {
             setGroup(undefined)
-            if (props.path.endsWith('.glb')) {
+            if (props.path.endsWith('.stl')) {
+                getSTLModel(props.path).then(stlModel => exec && setGroup(stlModel))
+            } else if (props.path.endsWith('.glb')) {
                 getGLTFModel(props.path).then(gltfModel => exec && setGroup(gltfModel.scene))
             } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
                 getLDrawModel(props.path).then(group => exec && setGroup(group))
