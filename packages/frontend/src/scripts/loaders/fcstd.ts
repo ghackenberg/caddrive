@@ -21,7 +21,8 @@ export async function parseFCStdModel(data: ReadableStream) {
         } else if (entry.filename.endsWith('.brp')) {
             const writer = new TextWriter()
             const content = await entry.getData(writer)
-            console.log(entry.filename, parseBRep(content))
+            console.log(entry.filename)
+            parseBRep(content)
         }
     }
     await reader.close()
