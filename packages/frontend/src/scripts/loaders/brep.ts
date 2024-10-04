@@ -93,7 +93,27 @@ export function parseBRep(data: string) {
                 throw 'Location type not supported!'
             }
         } else if (section == Section.Curve2ds) {
-            // TODO
+            if (line.startsWith('1')) {
+                // TODO Parse line
+            } else if (line.startsWith('2')) {
+                // TODO Parse circle
+            } else if (line.startsWith('3')) {
+                // TODO Parse ellipse
+            } else if (line.startsWith('4')) {
+                // TODO Parse parabola
+            } else if (line.startsWith('5')) {
+                // TODO Parse hyperbola
+            } else if (line.startsWith('6')) {
+                // TODO Parse Bezier curve
+            } else if (line.startsWith('7')) {
+                // TODO Parse B-Spline curve
+            } else if (line.startsWith('8')) {
+                // TODO Parse trimmed curve
+            } else if (line.startsWith('9')) {
+                // TODO Parse offset curve
+            } else {
+                throw 'Curve type not supported!'
+            }
         } else if (section == Section.Curves) {
             if (line.startsWith('1')) {
                 // TODO Parse line
@@ -126,21 +146,113 @@ export function parseBRep(data: string) {
             // TODO
         } else if (section == Section.TShapes) {
             if (line.startsWith('Ve')) {
-                // TODO
+                // Parse vertex
+                ({line, offset} = advance(data, offset))
+                const tolerance = Number.parseFloat(line.trim());
+                ({line, offset} = advance(data, offset))
+                const coordinates = line.trim().split(' ').map(part => Number.parseFloat(part));
+                ({line, offset} = advance(data, offset))
+                if (!line.startsWith('0 0')) {
+                    throw 'Vertex: End delimiter expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                if (line.trim().length > 0) {
+                    throw 'Vertex: Empty line expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                const flags = line;
+                if (line.trim().length != 7) {
+                    throw 'Vertex: Seven chars expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                const more = line;
+                if (!line.trim().endsWith('*')) {
+                    throw 'Vertex: Star symbol expected!'
+                }
+                console.log('vertex', tolerance, coordinates, flags, more)
             } else if (line.startsWith('Ed')) {
-                // TODO
+                // Parse edge
+                ({line, offset} = advance(data, offset))
+                const tolerance = line;
+                const edges = []
+                do {
+                    ({line, offset} = advance(data, offset))
+                    if (line.startsWith('0')) {
+                        // Ignore
+                    } else if (line.startsWith('1')) {
+                        // TODO Parse 3D curve
+                        edges.push('3D curve')
+                    } else if (line.startsWith('2')) {
+                        // TODO Parse 2D curve on surface
+                        edges.push('2D curve on surface')
+                    } else if (line.startsWith('3')) {
+                        // TODO Parse 2D curve on closed surface
+                        edges.push('2D curve on closed surface')
+                    } else if (line.startsWith('4')) {
+                        // TODO Parse ?
+                        edges.push('?')
+                    } else if (line.startsWith('5')) {
+                        // TODO Parse 3D polyline
+                        edges.push('3D polyline')
+                    } else if (line.startsWith('6')) {
+                        // TODO Parse polyline on triangulation
+                        edges.push('polyline on triangulation')
+                    } else if (line.startsWith('7')) {
+                        // TODO Parse ?
+                        edges.push('?')
+                    } else {
+                        throw 'Edge type not supported!'
+                    }
+                } while (!line.startsWith('0'))
+                ({line, offset} = advance(data, offset))
+                if (line.trim().length != 0) {
+                    throw 'Edge: Empty line expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                const flags = line;
+                if (line.trim().length != 7) {
+                    throw 'Edge: Seven chars expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                const more = line;
+                if (!line.trim().endsWith('*')) {
+                    throw 'Edge: Star symbol expected!'
+                } else if (line.trim().split(' ').length != 5) {
+                    throw 'Edge: Four numbers expected!'
+                }
+                console.log('edge', tolerance, edges, flags, more)
             } else if (line.startsWith('Wi')) {
-                // TODO
+                // TODO Parse wire
             } else if (line.startsWith('Fa')) {
-                // TODO
+                // Parse face
+                ({line, offset} = advance(data, offset))
+                const tolerance = line;
+                if (line.trim().split(' ').length != 5) {
+                    throw 'Face: Five parts expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                if (line.trim().length != 0) {
+                    throw 'Face: Empty line expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                const flags = line;
+                if (line.trim().length != 7) {
+                    throw 'Face: Seven chars expected!'
+                }
+                ({line, offset} = advance(data, offset))
+                const more = line;
+                if (!line.trim().endsWith('*')) {
+                    throw 'Face: Star symbol expected!'
+                }
+                console.log('face', tolerance, flags, more)
             } else if (line.startsWith('Sh')) {
-                // TODO
+                // TODO Parse shell
             } else if (line.startsWith('So')) {
-                // TODO
+                // TODO Parse solid
             } else if (line.startsWith('CS')) {
-                // TODO
+                // TODO Parse compsolid
             } else if (line.startsWith('Co')) {
-                // TODO
+                // TODO Parse compound
             } else {
                 // TODO throw 'Shape type not supported!'
             }
