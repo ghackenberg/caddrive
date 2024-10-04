@@ -17,6 +17,7 @@ import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
 import { parseDAEModel } from '../../loaders/dae'
 import { parseFBXModel } from '../../loaders/fbx'
+import { parseFCStdModel } from '../../loaders/fcstd'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel, pauseLoadLDrawPath } from '../../loaders/ldraw'
 import { parsePLYModel } from '../../loaders/ply'
@@ -86,6 +87,7 @@ export const ProductVersionSettingView = () => {
     const [description, setDescription] = useState<string>(initialDescription)
     const [file, setFile] = useState<File>()
 
+    const [stream, setStream] = useState<ReadableStream>(null)
     const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>(null)
     const [text, setText] = useState<string>(null)
     const [model, setModel] = useState<GLTF>(null)
@@ -107,13 +109,16 @@ export const ProductVersionSettingView = () => {
     useEffect(() => {
         let exec = true
         if (file) {
+            setStream(null)
             setArrayBuffer(null)
             setText(null)
             setModel(null)
             setGroup(null)
             setBlob(null)
             setDataUrl(null)
-            if (file.name.endsWith('.fbx') || file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
+            if (file.name.endsWith('.FCStd')) {
+                setStream(file.stream())
+            } else if (file.name.endsWith('.FCStd') || file.name.endsWith('.fbx') || file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
                 file.arrayBuffer().then(arrayBuffer => exec && setArrayBuffer(arrayBuffer))
             } else if (file.name.endsWith('.dae') || file.name.endsWith('.ply') || file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
                 file.text().then(text => exec && setText(text))
@@ -121,6 +126,16 @@ export const ProductVersionSettingView = () => {
         }
         return () => { exec = false }
     }, [file])
+
+    useEffect(() => {
+        let exec = true
+        if (stream) {
+            if (file.name.endsWith('.FCStd')) {
+                parseFCStdModel(stream).then(group => exec && setGroup(group))
+            }
+        }
+        return () => { exec = false }
+    }, [stream])
 
     useEffect(() => {
         let exec = true
@@ -267,7 +282,7 @@ export const ProductVersionSettingView = () => {
                                         </GenericInput>
                                     )}
                                     <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                    <FileInput label='File' placeholder='Select file' accept='.dae,.fbx,.stl,.ply,.glb,.ldr,.mpd' change={setFile} required={version == undefined}/>
+                                    <FileInput label='File' placeholder='Select file' accept='.dae,.fbx,.stl,.ply,.glb,.ldr,.mpd,.FCStd' change={setFile} required={version == undefined}/>
                                     <GenericInput label='Preview'>
                                         {dataUrl ? (
                                             <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>

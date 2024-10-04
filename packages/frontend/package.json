@@ -41,6 +41,7 @@
         "start": "http-server -p 3002 -s"
     },
     "dependencies": {
+        "@zip.js/zip.js": "^2.7.52",
         "buffer": "^5.7.1",
         "deep-equal": "^2.2.1",
         "http-server": "^14.1.0",

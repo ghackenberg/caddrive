@@ -49,6 +49,7 @@
         "@types/multer": "^1.4.7",
         "@types/nodemailer": "^6.4.7",
         "@types/yauzl": "^2.10.0",
+        "@zip.js/zip.js": "^2.7.52",
         "compression": "^1.7.4",
         "cssnano": "^7.0.4",
         "gl": "^6.0.2",
