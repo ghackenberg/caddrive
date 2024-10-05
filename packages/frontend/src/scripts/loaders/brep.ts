@@ -4,6 +4,129 @@ enum Section {
     None, Locations, Curve2ds, Curves, Polygon3D, PolygonOnTriangulations, Surfaces, Triangulations, TShapes
 }
 
+// Curve
+
+abstract class Curve {
+
+}
+class Line extends Curve {
+    constructor(public p: number[], public d: number[]) {
+        super()
+    }
+}
+class Circle extends Curve {
+    constructor(public p: number[], public dN: number[], public dX: number[], public dY: number[], public r: number) {
+        super()
+    }
+}
+class Ellipse extends Curve {
+    constructor(public p: number[], public n: number[], public dMaj: number[], public dMin: number[], public rMaj: number, public rMin: number) {
+        super()
+    }
+}
+class Bezier extends Curve {
+    constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[]) {
+        super()
+    }
+}
+class BSpline extends Curve {
+    constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
+        super()
+    }
+}
+class TrimmedCurve extends Curve {
+    constructor(public uMin: number, public uMax: number, public curve: Curve) {
+        super()
+    }
+}
+
+// Surface
+
+abstract class Surface {
+
+}
+class Plane extends Surface {
+    constructor(public p: number[], public dN: number[], public dU: number[], public dV: number[]) {
+        super()
+    }
+}
+class Cylinder extends Surface {
+    constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number) {
+        super()
+    }
+}
+class Cone extends Surface {
+    constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number, public phi: number) {
+        super()
+    }
+}
+class Sphere extends Surface {
+    constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number) {
+        super()
+    }
+}
+class Extrusion extends Surface {
+    constructor(public d: number[], public curve: Curve) {
+        super()
+    }
+}
+class Revolution extends Surface {
+    constructor(public p: number[], public d: number[], public curve: Curve) {
+        super()
+    }
+}
+
+// TShape
+
+interface SubShape {
+    orientation: string
+    tshape: TShape
+    location: Matrix4
+}
+
+abstract class TShape {
+    constructor(public flags: string, public subShapes: SubShape[]) {
+
+    }
+}
+class Vertex extends TShape {
+    constructor(public tolerance: number, public point: number[], flags: string, subShapes: SubShape[]) {
+        super(flags, subShapes)
+    }
+}
+class Edge extends TShape {
+    constructor(public tolerance: number, public parameter: boolean, public r: boolean, public d: boolean, flags: string, subShapes: SubShape[]) {
+        super(flags, subShapes)
+    }
+}
+class Wire extends TShape {
+    constructor(flags: string, subShapes: SubShape[]) {
+        super(flags, subShapes)
+    }
+}
+class Face extends TShape {
+    constructor(public natural: boolean, public tolerance: number, public surface: Surface, public location: Matrix4, flags: string, subShapes: SubShape[]) {
+        super(flags, subShapes)
+    }
+}
+class Shell extends TShape {
+    constructor(flags: string, subShapes: SubShape[]) {
+        super(flags, subShapes)
+    }
+}
+class Solid extends TShape {
+    constructor(flags: string, subShapes: SubShape[]) {
+        super(flags, subShapes)
+    }
+}
+class Compound extends TShape {
+    constructor(flags: string, subShapes: SubShape[]) {
+        super(flags, subShapes)
+    }
+}
+
+// Parse
+
 export function parseBRep(data: string) {
 
     let offset = 0
@@ -115,7 +238,7 @@ export function parseBRep(data: string) {
         return [real(log), real(log), real(log), real(log)]
     }
 
-    function location(type: string) {
+    function location(type: string): Matrix4 {
         if (type == '1') {
             // Parse location type 1
 
@@ -130,7 +253,7 @@ export function parseBRep(data: string) {
             const location = new Matrix4()
             location.elements = [...row1, ...row2, ...row3, 0, 0, 0, 1]
             
-            locations.push(location)
+            return location
         } else if (type == '2') {
             // Parse location type 2
 
@@ -155,7 +278,7 @@ export function parseBRep(data: string) {
             
             newline()
 
-            locations.push(location)
+            return location
         } else {
             throw 'Location type not supported: ' + type
         }
@@ -215,12 +338,13 @@ export function parseBRep(data: string) {
         }
     }
 
-    function curve(type: string, log = false) {
+    function curve(type: string, log = false): Curve {
         if (type == '1') {
-            const point = vector3()
-            const direction = vector3()
+            const p = vector3()
+            const d = vector3()
             newline()
-            log && console.log('line', point, direction)
+            log && console.log('line', p, d)
+            return new Line(p, d)
         } else if (type == '2') {
             const c = vector3()
             const dN = vector3()
@@ -229,6 +353,7 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('circle', c, dN, dX, dY, r)
+            return new Circle(c, dN, dX, dY, r)
         } else if (type == '3') {
             const c = vector3()
             const n = vector3()
@@ -238,6 +363,7 @@ export function parseBRep(data: string) {
             const rMin = real()
             newline()
             log && console.log('ellipse', c, n, dMaj, dMin, rMaj, rMin)
+            return new Ellipse(c, n, dMaj, dMin, rMaj, rMin)
         } else if (type == '6') {
             const rational = flag()
             const degree = int()
@@ -252,6 +378,7 @@ export function parseBRep(data: string) {
 
             newline()
             log && console.log('bezier', rational, degree, poles)
+            return new Bezier(rational, degree, poles)
         } else if (type == '7') {
             const rational = flag()
             flag()
@@ -282,18 +409,20 @@ export function parseBRep(data: string) {
 
             newline()
             log && console.log('b-spline', rational, degree, poleCount, knotCount, poles, knots)
+            return new BSpline(rational, degree, poles, knots)
         } else if (type == '8') {
             const umin = real()
             const umax = real()
             newline()
-            curve(token())
+            const child = curve(token())
             log && console.log('trimmed curve', umin, umax)
+            return new TrimmedCurve(umin, umax, child)
         } else {
             throw 'Curve type not supported: ' + type
         }
     }
 
-    function surface(type: string, log = false) {
+    function surface(type: string, log = false): Surface {
         if (type == '1') {
             const p = vector3()
             const dN = vector3()
@@ -301,7 +430,7 @@ export function parseBRep(data: string) {
             const dV = vector3()
             newline()
             log && console.log('plane', p, dN, dU, dV)
-            surfaces.push('plane')
+            return new Plane(p, dN, dU, dV)
         } else if (type == '2') {
             const p = vector3()
             const dZ = vector3()
@@ -310,7 +439,7 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('cylinder', p, dZ, dX, dY, r)
-            surfaces.push('cylinder')
+            return new Cylinder(p, dZ, dX, dY, r)
         } else if (type == '3') {
             const p = vector3()
             const dZ = vector3()
@@ -321,7 +450,7 @@ export function parseBRep(data: string) {
             const phi = real()
             newline()
             log && console.log('cone', p, dZ, dX, dY, r, phi)
-            surfaces.push('cone')
+            return new Cone(p, dZ, dX, dY, r, phi)
         } else if (type == '4') {
             const p = vector3()
             const dZ = vector3()
@@ -330,26 +459,27 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('sphere', p, dZ, dX, dY, r)
-            surfaces.push('sphere')
+            return new Sphere(p, dZ, dX, dY, r)
         } else if (type == '6') {
             const dV = vector3()
             newline()
-            curve(token())
-            log && console.log(dV)
+            const c = curve(token())
+            log && console.log('extrusion', dV)
+            return new Extrusion(dV, c)
         } else if (type == '7') {
             const p = vector3()
             const d = vector3()
             newline()
-            curve(token())
+            const c = curve(token())
             log && console.log('revolution', p, d)
-            surfaces.push('revolution')
+            return new Revolution(p, d, c)
         } else {
             throw 'Surface type not supported: ' + type
         }
     }
 
-    function subshapes(log = false) {
-        const subshapes: { o: string, iS: number, iL: number }[] = []
+    function subshapes(log = false): SubShape[] {
+        const result: SubShape[] = []
 
         let next: string
 
@@ -364,27 +494,27 @@ export function parseBRep(data: string) {
                 const iS = Number.parseInt(next.substring(1))
                 const iL = int()
 
-                subshapes.push({ o, iS, iL })
+                result.push({ orientation: o, tshape: tshapes[nTShapes - iS], location: locations[iL - 1] })
             } else if (next.startsWith('-')) {
                 const o = next.substring(0, 1)
                 const iS = Number.parseInt(next.substring(1))
                 const iL = int()
 
-                subshapes.push({ o, iS, iL })
+                result.push({ orientation: o, tshape: tshapes[nTShapes - iS], location: locations[iL - 1] })
             } else {
                 throw 'Orientation expected: ' + next
             }
         } while (next != '*')
 
-        log && console.log('subshapes', subshapes)
+        log && console.log('subshapes', result)
 
-        return subshapes
+        return result
     }
 
-    function tshape(type: string, log = false) {
+    function tshape(type: string, log = false): TShape {
         if (type == 'Ve') {
             newline()
-            const tolerance = real()
+            const t = real()
             newline()
             const p = vector3()
             newline()
@@ -395,16 +525,17 @@ export function parseBRep(data: string) {
             newline()
             const flags = token()
             newline()
-            subshapes()
+            const ss = subshapes()
             newline()
-            log && console.log('vertex', tolerance, p, flags)
+            log && console.log('vertex', t, p, flags, ss)
+            return new Vertex(t, p, flags, ss)
         } else if (type == 'Ed') {
             newline()
             empty()
-            const tolerance = real()
-            const parameter = flag()
-            const range = flag()
-            const degenerated = flag()
+            const t = real()
+            const p = flag()
+            const r = flag()
+            const d = flag()
             newline()
 
             let subtype: string
@@ -421,7 +552,7 @@ export function parseBRep(data: string) {
                     const min = real()
                     const max = real()
                     newline()
-                    log && console.log('edge data curve3D', iCurve, iLocation, min, max)
+                    false && console.log('edge data curve3D', iCurve, iLocation, min, max)
                 } else if (subtype == '2') {
                     empty()
                     const iCurve = int()
@@ -430,7 +561,7 @@ export function parseBRep(data: string) {
                     const min = real()
                     const max = real()
                     newline()
-                    log && console.log('edge data curve2D on surface', iCurve, iSurface, iLocation, min, max)
+                    false && console.log('edge data curve2D on surface', iCurve, iSurface, iLocation, min, max)
                 } else if (subtype == '3') {
                     empty()
                     const iCurve = int()
@@ -440,7 +571,7 @@ export function parseBRep(data: string) {
                     const min = real()
                     const max = real()
                     newline()
-                    log && console.log('edge data curve2D on closed surface', iCurve, continuity, iSurface, iLocation, min, max)
+                    false && console.log('edge data curve2D on closed surface', iCurve, continuity, iSurface, iLocation, min, max)
                 } else if (subtype == '4') {
                     const continuity = token()
                     const iSurface1 = int()
@@ -448,68 +579,70 @@ export function parseBRep(data: string) {
                     const iSurface2 = int()
                     const iLocation2 = int()
                     newline()
-                    log && console.log('edge data 4', continuity, iSurface1, iLocation1, iSurface2, iLocation2)
+                    false && console.log('edge data 4', continuity, iSurface1, iLocation1, iSurface2, iLocation2)
                 } else {
                     throw 'Edge data representation type not suppoted: ' + subtype
                 }
             } while (subtype != '0') 
 
             newline()
-            const flags = token()
+            const f = token()
             newline()
-            subshapes()
+            const s = subshapes()
             newline()
-            log && console.log('edge', tolerance, parameter, range, degenerated, flags)
+            log && console.log('edge', t, p, r, d, f, s)
+            return new Edge(t, p, r, d, f, s)
         } else if (type == 'Wi') {
             newline()
             newline()
-            const flags = token()
+            const f = token()
             newline()
-            subshapes()
+            const s = subshapes()
             newline()
-            log && console.log('wire', flags)
+            log && console.log('wire', f, s)
+            return new Wire(f, s)
         } else if (type == 'Fa') {
             newline()
-            const natural = flag()
+            const n = flag()
             empty()
-            const tolerance = real()
-            const iSurface = int()
-            const iLocation = int()
+            const t = real()
+            const iS = int()
+            const iL = int()
+            newline()
+            newline()
+            const f = token()
+            newline()
+            const s = subshapes()
+            newline()
+            log && console.log('face', n, t, iS, iL, f, surfaces[iS - 1], s)
+            return new Face(n, t, surfaces[iS - 1], locations[iL - 1], f, s)
+        } else if (type == 'Sh') {
+            newline()
+            newline()
+            const f = token()
+            newline()
+            const s = subshapes()
+            newline()
+            log && console.log('shell', f, s)
+            return new Shell(f, s)
+        } else if (type == 'So') {
+            newline()
+            newline()
+            const flags = token()
+            newline()
+            const sub = subshapes()
+            newline()
+            log && console.log('solid', flags, sub)
+            return new Solid(flags, sub)
+        } else if (type == 'Co') {
             newline()
             newline()
             const flags = token()
             newline()
             const ss = subshapes()
             newline()
-            true && console.log('face', natural, tolerance, iSurface, iLocation, flags, surfaces[iSurface - 1], ss)
-        } else if (type == 'Sh') {
-            newline()
-            newline()
-            const flags = token()
-            newline()
-            subshapes()
-            newline()
-            log && console.log('shell', flags)
-        } else if (type == 'So') {
-            newline()
-            newline()
-            const flags = token()
-            newline()
-            subshapes()
-            newline()
-            log && console.log('solid', flags)
-        } else if (type == 'Co') {
-            newline()
-            newline()
-            const flags = token()
-            newline()
-            subshapes()
-            newline()
-            log && console.log('compound', flags)
-        } else if (type == '\n') {
-            token()
-            token()
-            log && console.log('end')
+            log && console.log('compound', flags, ss)
+            return new Compound(flags, ss)
         } else {
             throw 'TShape type not supported: ' + type
         }
@@ -527,7 +660,9 @@ export function parseBRep(data: string) {
     let nTShapes = 0
 
     const locations: Matrix4[] = []
-    const surfaces: string[] = []
+    const curves: Curve[] = []
+    const surfaces: Surface[] = []
+    const tshapes: TShape[] = []
 
     while (offset < data.length) {
         const next = token()
@@ -570,23 +705,30 @@ export function parseBRep(data: string) {
             section = Section.TShapes
             nTShapes = int()
             newline()
-            nTShapes == 0 && console.log('TShapes', nTShapes)
+            false && console.log('TShapes', nTShapes)
         } else if (section == Section.Locations) {
-            location(next)
+            locations.push(location(next))
         } else if (section == Section.Curve2ds) {
             curve2d(next)
         } else if (section == Section.Curves) {
-            curve(next)
+            curves.push(curve(next))
         } else if (section == Section.Polygon3D) {
             // TODO
         } else if (section == Section.PolygonOnTriangulations) {
             // TODO
         } else if (section == Section.Surfaces) {
-            surface(next)
+            surfaces.push(surface(next))
         } else if (section == Section.Triangulations) {
             // TODO
         } else if (section == Section.TShapes) {
-            tshape(next)
+            if (next != '\n') {
+                tshapes.push(tshape(next))
+            } else {
+                token()
+                token()
+            }
         }
     }
+
+    return { locations, curves, surfaces, tshapes }
 }
