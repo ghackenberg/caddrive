@@ -4,6 +4,32 @@ enum Section {
     None, Locations, Curve2ds, Curves, Polygon3D, PolygonOnTriangulations, Surfaces, Triangulations, TShapes
 }
 
+// Curve2D
+
+abstract class Curve2D {
+
+}
+class Line2D extends Curve2D {
+    constructor(public p: number[], public d: number[]) {
+        super()
+    }
+}
+class Circle2D extends Curve2D {
+    constructor(public p: number[], public dX: number[], public dY: number[], public r: number) {
+        super()
+    }
+}
+class BSline2D extends Curve2D {
+    constructor(public degree: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
+        super()
+    }
+}
+class TrimmedCurve2D extends Curve2D {
+    constructor(public uMin: number, public uMax: number, public curve: Curve2D) {
+        super()
+    }
+}
+
 // Curve
 
 abstract class Curve {
@@ -95,7 +121,7 @@ class Vertex extends TShape {
     }
 }
 class Edge extends TShape {
-    constructor(public tolerance: number, public parameter: boolean, public r: boolean, public d: boolean, flags: string, subShapes: SubShape[]) {
+    constructor(public tolerance: number, public parameter: boolean, public range: boolean, public degenerated: boolean, public edgeData: EdgeData[], flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
 }
@@ -122,6 +148,32 @@ class Solid extends TShape {
 class Compound extends TShape {
     constructor(flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
+    }
+}
+
+// Edge data
+
+abstract class EdgeData {
+
+}
+class EdgeDataCurve3D extends EdgeData {
+    constructor(public curve: Curve, public location: Matrix4, public min: number, public max: number) {
+        super()
+    }
+}
+class EdgeDataCurve2DSurface extends EdgeData {
+    constructor(public curve: Curve2D, public surface: Surface, public location: Matrix4, public min: number, public max: number) {
+        super()
+    }
+}
+class EdgeDataCurve2DClosedSurface extends EdgeData {
+    constructor(public curve: Curve2D, public continuity: string, public surface: Surface, public location: Matrix4, public min: number, public max: number) {
+        super()
+    }
+}
+class EdgeData4 extends EdgeData {
+    constructor(public continuity: string, public surface1: Surface, public location1: Matrix4, public surface2: Surface, public location2: Matrix4) {
+        super()
     }
 }
 
@@ -284,12 +336,13 @@ export function parseBRep(data: string) {
         }
     }
 
-    function curve2d(type: string, log = false) {
+    function curve2d(type: string, log = false): Curve2D {
         if (type == '1') {
             const p = vector2()
             const d = vector2()
             newline()
             log && console.log('line', p, d)
+            return new Line2D(p, d)
         } else if (type == '2') {
             const c = vector2()
             const dx = vector2()
@@ -297,6 +350,7 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('circle', c, dx, dy, r)
+            return new Circle2D(c, dx, dy, r)
         } else if (type == '7') {
             const rational = flag()
             flag()
@@ -327,12 +381,14 @@ export function parseBRep(data: string) {
             
             newline()
             log && console.log('b-sline', degree, poleCount, knotCount, poles, knots)
+            return new BSline2D(degree, poles, knots)
         } else if (type == '8') {
             const umin = real()
             const umax = real()
             newline()
-            curve2d(token())
+            const child = curve2d(token())
             log && console.log(umin, umax)
+            return new TrimmedCurve2D(umin, umax, child)
         } else {
             throw 'Curve2d type not supported: ' + type
         }
@@ -538,6 +594,8 @@ export function parseBRep(data: string) {
             const d = flag()
             newline()
 
+            const ed: EdgeData[] = []
+
             let subtype: string
 
             do {
@@ -547,39 +605,43 @@ export function parseBRep(data: string) {
                     newline()
                 } else if (subtype == '1') {
                     empty()
-                    const iCurve = int()
-                    const iLocation = int()
+                    const iC = int()
+                    const iL = int()
                     const min = real()
                     const max = real()
                     newline()
-                    false && console.log('edge data curve3D', iCurve, iLocation, min, max)
+                    false && console.log('edge data curve3D', iC, iL, min, max)
+                    ed.push(new EdgeDataCurve3D(curves[iC - 1], locations[iL - 1], min, max))
                 } else if (subtype == '2') {
                     empty()
-                    const iCurve = int()
-                    const iSurface = int()
-                    const iLocation = int()
+                    const iC = int()
+                    const iS = int()
+                    const iL = int()
                     const min = real()
                     const max = real()
                     newline()
-                    false && console.log('edge data curve2D on surface', iCurve, iSurface, iLocation, min, max)
+                    false && console.log('edge data curve2D on surface', iC, iS, iL, min, max)
+                    ed.push(new EdgeDataCurve2DSurface(curve2ds[iC - 1], surfaces[iS - 1], locations[iL - 1], min, max))
                 } else if (subtype == '3') {
                     empty()
-                    const iCurve = int()
+                    const iC = int()
                     const continuity = token()
-                    const iSurface = int()
-                    const iLocation = int()
+                    const iS = int()
+                    const iL = int()
                     const min = real()
                     const max = real()
                     newline()
-                    false && console.log('edge data curve2D on closed surface', iCurve, continuity, iSurface, iLocation, min, max)
+                    false && console.log('edge data curve2D on closed surface', iC, continuity, iS, iL, min, max)
+                    ed.push(new EdgeDataCurve2DClosedSurface(curve2ds[iC - 1], continuity, surfaces[iS - 1], locations[iL - 1], min, max))
                 } else if (subtype == '4') {
                     const continuity = token()
-                    const iSurface1 = int()
-                    const iLocation1 = int()
-                    const iSurface2 = int()
-                    const iLocation2 = int()
+                    const iS1 = int()
+                    const iL1 = int()
+                    const iS2 = int()
+                    const iL2 = int()
                     newline()
-                    false && console.log('edge data 4', continuity, iSurface1, iLocation1, iSurface2, iLocation2)
+                    false && console.log('edge data 4', continuity, iS1, iL1, iS2, iL2)
+                    ed.push(new EdgeData4(continuity, surfaces[iS1 - 1], locations[iL1 - 1], surfaces[iS2 - 1], locations[iL2 - 1]))
                 } else {
                     throw 'Edge data representation type not suppoted: ' + subtype
                 }
@@ -591,7 +653,7 @@ export function parseBRep(data: string) {
             const s = subshapes()
             newline()
             log && console.log('edge', t, p, r, d, f, s)
-            return new Edge(t, p, r, d, f, s)
+            return new Edge(t, p, r, d, ed, f, s)
         } else if (type == 'Wi') {
             newline()
             newline()
@@ -660,6 +722,7 @@ export function parseBRep(data: string) {
     let nTShapes = 0
 
     const locations: Matrix4[] = []
+    const curve2ds: Curve2D[] = []
     const curves: Curve[] = []
     const surfaces: Surface[] = []
     const tshapes: TShape[] = []
@@ -709,7 +772,7 @@ export function parseBRep(data: string) {
         } else if (section == Section.Locations) {
             locations.push(location(next))
         } else if (section == Section.Curve2ds) {
-            curve2d(next)
+            curve2ds.push(curve2d(next))
         } else if (section == Section.Curves) {
             curves.push(curve(next))
         } else if (section == Section.Polygon3D) {
@@ -730,5 +793,5 @@ export function parseBRep(data: string) {
         }
     }
 
-    return { locations, curves, surfaces, tshapes }
+    return { locations, curve2ds, curves, surfaces, tshapes }
 }
