@@ -653,7 +653,9 @@ export function parseBRep(data: string) {
             const s = subshapes()
             newline()
             log && console.log('edge', t, p, r, d, f, s)
-            return new Edge(t, p, r, d, ed, f, s)
+            const edge = new Edge(t, p, r, d, ed, f, s)
+            log && console.log(edge)
+            return edge
         } else if (type == 'Wi') {
             newline()
             newline()
@@ -662,7 +664,23 @@ export function parseBRep(data: string) {
             const s = subshapes()
             newline()
             log && console.log('wire', f, s)
-            return new Wire(f, s)
+            const wire = new Wire(f, s)
+            console.log('\twire', wire.subShapes.length)
+            for (const edge of wire.subShapes) {
+                console.log('\t\tedge')
+                if (edge.tshape instanceof Edge) {
+                    for (const vertex of edge.tshape.subShapes) {
+                        if (vertex.tshape instanceof Vertex) {
+                            console.log('\t\t\t', vertex.tshape.point)
+                        } else {
+                            throw 'Vertex expected ' + vertex.constructor.name
+                        }
+                    }
+                } else {
+                    throw 'Edge expected: ' + edge.constructor.name
+                }
+            }
+            return wire
         } else if (type == 'Fa') {
             newline()
             const n = flag()
@@ -695,7 +713,9 @@ export function parseBRep(data: string) {
             const sub = subshapes()
             newline()
             log && console.log('solid', flags, sub)
-            return new Solid(flags, sub)
+            const solid = new Solid(flags, sub)
+            log && console.log(solid)
+            return solid
         } else if (type == 'Co') {
             newline()
             newline()
