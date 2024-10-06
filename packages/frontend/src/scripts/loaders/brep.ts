@@ -4,27 +4,37 @@ enum Section {
     None, Locations, Curve2ds, Curves, Polygon3D, PolygonOnTriangulations, Surfaces, Triangulations, TShapes
 }
 
+// BRep
+
+export class BRep {
+    locations: Matrix4[] = []
+    curve2ds: Curve2D[] = []
+    curves: Curve[] = []
+    surfaces: Surface[] = []
+    tshapes: TShape[] = []
+}
+
 // Curve2D
 
-abstract class Curve2D {
+export abstract class Curve2D {
 
 }
-class Line2D extends Curve2D {
+export class Line2D extends Curve2D {
     constructor(public p: number[], public d: number[]) {
         super()
     }
 }
-class Circle2D extends Curve2D {
+export class Circle2D extends Curve2D {
     constructor(public p: number[], public dX: number[], public dY: number[], public r: number) {
         super()
     }
 }
-class BSline2D extends Curve2D {
+export class BSline2D extends Curve2D {
     constructor(public degree: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
         super()
     }
 }
-class TrimmedCurve2D extends Curve2D {
+export class TrimmedCurve2D extends Curve2D {
     constructor(public uMin: number, public uMax: number, public curve: Curve2D) {
         super()
     }
@@ -32,35 +42,35 @@ class TrimmedCurve2D extends Curve2D {
 
 // Curve
 
-abstract class Curve {
+export abstract class Curve {
 
 }
-class Line extends Curve {
+export class Line extends Curve {
     constructor(public p: number[], public d: number[]) {
         super()
     }
 }
-class Circle extends Curve {
+export class Circle extends Curve {
     constructor(public p: number[], public dN: number[], public dX: number[], public dY: number[], public r: number) {
         super()
     }
 }
-class Ellipse extends Curve {
+export class Ellipse extends Curve {
     constructor(public p: number[], public n: number[], public dMaj: number[], public dMin: number[], public rMaj: number, public rMin: number) {
         super()
     }
 }
-class Bezier extends Curve {
+export class Bezier extends Curve {
     constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[]) {
         super()
     }
 }
-class BSpline extends Curve {
+export class BSpline extends Curve {
     constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
         super()
     }
 }
-class TrimmedCurve extends Curve {
+export class TrimmedCurve extends Curve {
     constructor(public uMin: number, public uMax: number, public curve: Curve) {
         super()
     }
@@ -68,35 +78,35 @@ class TrimmedCurve extends Curve {
 
 // Surface
 
-abstract class Surface {
+export abstract class Surface {
 
 }
-class Plane extends Surface {
+export class Plane extends Surface {
     constructor(public p: number[], public dN: number[], public dU: number[], public dV: number[]) {
         super()
     }
 }
-class Cylinder extends Surface {
+export class Cylinder extends Surface {
     constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number) {
         super()
     }
 }
-class Cone extends Surface {
+export class Cone extends Surface {
     constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number, public phi: number) {
         super()
     }
 }
-class Sphere extends Surface {
+export class Sphere extends Surface {
     constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number) {
         super()
     }
 }
-class Extrusion extends Surface {
+export class Extrusion extends Surface {
     constructor(public d: number[], public curve: Curve) {
         super()
     }
 }
-class Revolution extends Surface {
+export class Revolution extends Surface {
     constructor(public p: number[], public d: number[], public curve: Curve) {
         super()
     }
@@ -104,48 +114,48 @@ class Revolution extends Surface {
 
 // TShape
 
-interface SubShape {
+export interface SubShape {
     orientation: string
     tshape: TShape
     location: Matrix4
 }
 
-abstract class TShape {
+export abstract class TShape {
     constructor(public flags: string, public subShapes: SubShape[]) {
 
     }
 }
-class Vertex extends TShape {
+export class Vertex extends TShape {
     constructor(public tolerance: number, public point: number[], flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
 }
-class Edge extends TShape {
+export class Edge extends TShape {
     constructor(public tolerance: number, public parameter: boolean, public range: boolean, public degenerated: boolean, public edgeData: EdgeData[], flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
 }
-class Wire extends TShape {
+export class Wire extends TShape {
     constructor(flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
 }
-class Face extends TShape {
+export class Face extends TShape {
     constructor(public natural: boolean, public tolerance: number, public surface: Surface, public location: Matrix4, flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
 }
-class Shell extends TShape {
+export class Shell extends TShape {
     constructor(flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
 }
-class Solid extends TShape {
+export class Solid extends TShape {
     constructor(flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
 }
-class Compound extends TShape {
+export class Compound extends TShape {
     constructor(flags: string, subShapes: SubShape[]) {
         super(flags, subShapes)
     }
@@ -153,25 +163,25 @@ class Compound extends TShape {
 
 // Edge data
 
-abstract class EdgeData {
+export abstract class EdgeData {
 
 }
-class EdgeDataCurve3D extends EdgeData {
+export class EdgeDataCurve3D extends EdgeData {
     constructor(public curve: Curve, public location: Matrix4, public min: number, public max: number) {
         super()
     }
 }
-class EdgeDataCurve2DSurface extends EdgeData {
+export class EdgeDataCurve2DSurface extends EdgeData {
     constructor(public curve: Curve2D, public surface: Surface, public location: Matrix4, public min: number, public max: number) {
         super()
     }
 }
-class EdgeDataCurve2DClosedSurface extends EdgeData {
+export class EdgeDataCurve2DClosedSurface extends EdgeData {
     constructor(public curve: Curve2D, public continuity: string, public surface: Surface, public location: Matrix4, public min: number, public max: number) {
         super()
     }
 }
-class EdgeData4 extends EdgeData {
+export class EdgeData4 extends EdgeData {
     constructor(public continuity: string, public surface1: Surface, public location1: Matrix4, public surface2: Surface, public location2: Matrix4) {
         super()
     }
@@ -665,13 +675,13 @@ export function parseBRep(data: string) {
             newline()
             log && console.log('wire', f, s)
             const wire = new Wire(f, s)
-            console.log('\twire', wire.subShapes.length)
+            log && console.log('\twire', wire.subShapes.length)
             for (const edge of wire.subShapes) {
-                console.log('\t\tedge')
+                log && console.log('\t\tedge')
                 if (edge.tshape instanceof Edge) {
                     for (const vertex of edge.tshape.subShapes) {
                         if (vertex.tshape instanceof Vertex) {
-                            console.log('\t\t\t', vertex.tshape.point)
+                            log && console.log('\t\t\t', vertex.tshape.point)
                         } else {
                             throw 'Vertex expected ' + vertex.constructor.name
                         }
@@ -723,7 +733,7 @@ export function parseBRep(data: string) {
             newline()
             const ss = subshapes()
             newline()
-            log && console.log('compound', flags, ss)
+            true && console.log('compound', flags, ss)
             return new Compound(flags, ss)
         } else {
             throw 'TShape type not supported: ' + type
@@ -741,11 +751,13 @@ export function parseBRep(data: string) {
     let nTriangulations = 0
     let nTShapes = 0
 
-    const locations: Matrix4[] = []
-    const curve2ds: Curve2D[] = []
-    const curves: Curve[] = []
-    const surfaces: Surface[] = []
-    const tshapes: TShape[] = []
+    const brep = new BRep()
+
+    const locations = brep.locations
+    const curve2ds = brep.curve2ds
+    const curves = brep.curves
+    const surfaces = brep.surfaces
+    const tshapes = brep.tshapes
 
     while (offset < data.length) {
         const next = token()
@@ -813,5 +825,5 @@ export function parseBRep(data: string) {
         }
     }
 
-    return { locations, curve2ds, curves, surfaces, tshapes }
+    return brep
 }
