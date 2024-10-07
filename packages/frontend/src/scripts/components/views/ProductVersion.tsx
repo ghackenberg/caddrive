@@ -102,7 +102,7 @@ export const ProductVersionView = () => {
                             <div className='header'>
                                 {contextUser ? (
                                     contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                        <NavLink to={`/products/${productId}/versions/new`} className='button green fill'>
                                             <strong>New</strong> version
                                         </NavLink>
                                     ) : (

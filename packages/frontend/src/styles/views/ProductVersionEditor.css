@@ -1,0 +1,12 @@
+main.view.product-version-editor {
+    background-color: red;
+}
+
+main.view.product-version-editor div.model div {
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+main.view.product-version-editor div.palette img {
+    width: 5em;
+}
