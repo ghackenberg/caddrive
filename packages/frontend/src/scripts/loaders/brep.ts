@@ -733,7 +733,7 @@ export function parseBRep(data: string) {
             newline()
             const ss = subshapes()
             newline()
-            true && console.log('compound', flags, ss)
+            log && console.log('compound', flags, ss)
             return new Compound(flags, ss)
         } else {
             throw 'TShape type not supported: ' + type

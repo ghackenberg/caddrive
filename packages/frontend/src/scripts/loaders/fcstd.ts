@@ -1,114 +1,42 @@
 import { TextWriter, ZipReader } from '@zip.js/zip.js'
-import { Group } from 'three'
+import { Group, Quaternion, Vector3 } from 'three'
 
 import { BRep, parseBRep } from './brep'
 
 export class FCDocument {
+    public label: string
     public objects: {[name: string]: FCObject} = {}
-    public properties: {[name: string]: FCProperty} = {}
+}
+
+export class FCPlacement {
+    constructor(public position: Vector3, public quaternion: Quaternion, public angle: number, public origin: Vector3) {
+
+    }
 }
 
 export class FCObject {
-    public dependencies: FCObject[] = []
-    public properties: {[name: string]: FCProperty} = {}
+    public parents: { property: string, object: FCObject }[] = []
+
+    public subtractions: FCObject[]
+    public shapes: FCObject[]
+    public filter: FCObject[]
+    public group: FCObject[]
+    public origin_features: FCObject[]
+
+    public origin: FCObject
+    public mesh: FCObject
+    public tool: FCObject
+    public profile: FCObject
+    public base: FCObject
+
+    public label: string
+    public placement: FCPlacement
+    public shape_file: string
+    public shape: BRep
+    public visible: boolean
+
     constructor(public name: string, public type: string) {
 
-    }
-}
-
-export abstract class FCProperty {
-    constructor(public name: string, public type: string) {
-
-    }
-}
-export class FCPropertyBool extends FCProperty {
-    constructor(name: string, type: string, public value: boolean) {
-        super(name, type)
-    }
-}
-export class FCPropertyString extends FCProperty {
-    constructor(name: string, type: string, public value: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyEnumeration extends FCProperty {
-    constructor(name: string, type: string, public value: number) {
-        super(name, type)
-    }
-}
-export class FCPropertyFloat extends FCProperty {
-    constructor(name: string, type: string, public value: number) {
-        super(name, type)
-    }
-}
-export class FCPropertyLength extends FCProperty {
-    constructor(name: string, type: string, public value: number) {
-        super(name, type)
-    }
-}
-export class FCPropertyAngle extends FCProperty {
-    constructor(name: string, type: string, public value: number) {
-        super(name, type)
-    }
-}
-export class FCPropertyUUID extends FCProperty {
-    constructor(name: string, type: string, public value: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyVector extends FCProperty {
-    constructor(name: string, type: string, public value: { x: number, y: number, z: number }) {
-        super(name, type)
-    }
-}
-export class FCPropertyPlacement extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyPartShape extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyLink extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyLinkList extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyLinkSub extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyLinkSubList extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyMap extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyExpressionEngine extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyConstraintList extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
-    }
-}
-export class FCPropertyGeometryList extends FCProperty {
-    constructor(name: string, type: string) {
-        super(name, type)
     }
 }
 
@@ -118,26 +46,43 @@ export async function loadFCStdModel(path: string) {
 }
 
 export async function parseFCStdModel(data: ReadableStream) {
-    const reader = new ZipReader(data)
-    const parser = new DOMParser()
-    const entries = await reader.getEntries()
     const breps: {[name: string]: BRep} = {}
     let doc: FCDocument
+    const reader = new ZipReader(data)
+    const parser = new DOMParser()
+    // Read files in ZIP archive
+    const entries = await reader.getEntries()
     for (const entry of entries) {
+        // Check file type
         if (entry.filename == 'Document.xml') {
+            // Parse XML file
             const writer = new TextWriter()
             const content = await entry.getData(writer)
             const document = parser.parseFromString(content, 'application/xml')
             doc = parseFCStdDocument(document)
         } else if (entry.filename.endsWith('.brp')) {
+            // Parse BRep file
             const writer = new TextWriter()
             const content = await entry.getData(writer)
             breps[entry.filename] = parseBRep(content)
         }
     }
     await reader.close()
+    // Connect BReps to objects
+    for (const object of Object.values(doc.objects)) {
+        if (object.shape_file in breps) {
+            object.shape = breps[object.shape_file]
+        }
+    }
+    // Delete objects with parents
+    for (const object of Object.values(doc.objects)) {
+        if (object.parents.length > 0) {
+            delete doc.objects[object.name]
+        }
+    }
+    // Log result
     console.log(doc)
-    console.log(breps)
+    // Convert to THREEJS
     return new Group()
 }
 
@@ -159,9 +104,17 @@ function parseFCStdDocumentProperties(data: Document, doc: FCDocument) {
 
     for (let i = 0; i < property_list.length; i++) {
         const property = property_list.item(i)
-        const property_name = property.getAttribute('name')
 
-        doc.properties[property_name] = parseFCStdProperty(property)
+        parseFCStdDocumentProperty(property, doc)
+    }
+}
+
+function parseFCStdDocumentProperty(data: Element, doc: FCDocument) {
+    const name = data.getAttribute('name')
+
+    if (name == 'Label') {
+        const child = data.getElementsByTagName('String')[0]
+        doc.label = child.getAttribute('value')
     }
 }
 
@@ -178,23 +131,6 @@ function parseFCStdDocumentObjects(data: Document, doc: FCDocument) {
 
         doc.objects[object_name] = new FCObject(object_name, object_type)
     }
-
-    // Parse object dependencies
-    const objectdeps_list = objects.getElementsByTagName('ObjectDeps')
-
-    for (let i = 0; i < objectdeps_list.length; i++) {
-        const objectdeps = objectdeps_list.item(i)
-        const objectdeps_name = objectdeps.getAttribute('Name')
-
-        const dep_list = objectdeps.getElementsByTagName('Dep')
-
-        for (let j = 0; j < dep_list.length; j++) {
-            const dep = dep_list.item(j)
-            const dep_name = dep.getAttribute('Name')
-
-            doc.objects[objectdeps_name].dependencies.push(doc.objects[dep_name])
-        }
-    }
 }
 
 function parseFCStdDocumentObjectData(data: Document, doc: FCDocument) {
@@ -210,93 +146,122 @@ function parseFCStdDocumentObjectData(data: Document, doc: FCDocument) {
 
         for (let j = 0; j < property_list.length; j++) {
             const property = property_list.item(j)
-            const property_name = property.getAttribute('name')
 
-            doc.objects[object_name].properties[property_name] = parseFCStdProperty(property)
+            parseFCStdDocumentObjectProperty(property, doc.objects[object_name], doc)
         }
     }
 }
 
-function parseFCStdProperty(data: Element): FCProperty {
+function parseFCStdDocumentObjectProperty(data: Element, obj: FCObject, doc: FCDocument) {
     const name = data.getAttribute('name')
     const type = data.getAttribute('type')
-
-    if (type == 'App::PropertyString') {
-        const child = data.getElementsByTagName('String')[0]
-        const value = child.getAttribute('value')
-        return new FCPropertyString(name, type, value)
-    } else if (type == 'App::PropertyEnumeration') {
-        const child = data.getElementsByTagName('Integer')[0]
-        const value = Number.parseInt(child.getAttribute('value'))
-        return new FCPropertyEnumeration(name, type, value)
-    } else if (type == 'App::PropertyFloat') {
-        const child = data.getElementsByTagName('Float')[0]
-        const value = Number.parseFloat(child.getAttribute('value'))
-        return new FCPropertyFloat(name, type, value)
-    } else if (type == 'App::PropertyLength') {
-        const child = data.getElementsByTagName('Float')[0]
-        const value = Number.parseFloat(child.getAttribute('value'))
-        return new FCPropertyLength(name, type, value)
-    } else if (type == 'App::PropertyAngle') {
-        const child = data.getElementsByTagName('Float')[0]
-        const value = Number.parseFloat(child.getAttribute('value'))
-        return new FCPropertyAngle(name, type, value)
-    } else if (type == 'App::PropertyBool') {
-        const child = data.getElementsByTagName('Bool')[0]
-        const value = child.getAttribute('value') == 'true'
-        return new FCPropertyBool(name, type, value)
-    } else if (type == 'App::PropertyUUID') {
-        const child = data.getElementsByTagName('Uuid')[0]
-        const value = child.getAttribute('value')
-        return new FCPropertyUUID(name, type, value)
-    } else if (type == 'App::PropertyVector') {
-        const child = data.getElementsByTagName('PropertyVector')[0]
-        const x = Number.parseFloat(child.getAttribute('valueX'))
-        const y = Number.parseFloat(child.getAttribute('valueY'))
-        const z = Number.parseFloat(child.getAttribute('valueZ'))
-        return new FCPropertyVector(name, type, { x, y, z })
-    } else if (type == 'App::PropertyPlacement') {
-        console.log(data)
-        // TODO Parse property link
-        return new FCPropertyPlacement(name, type)
-    } else if (type == 'Part::PropertyPartShape') {
-        console.log(data)
-        // TODO Parse property link
-        return new FCPropertyPartShape(name, type)
-    } else if (type == 'App::PropertyLink') {
-        console.log(data)
-        // TODO Parse property link
-        return new FCPropertyLink(name, type)
-    } else if (type == 'App::PropertyLinkList') {
-        console.log(data)
-        // TODO Parse property link
-        return new FCPropertyLinkList(name, type)
-    } else if (type == 'App::PropertyLinkSub') {
-        console.log(data)
-        // TODO Parse property link
-        return new FCPropertyLinkSub(name, type)
-    } else if (type == 'App::PropertyLinkSubList') {
-        console.log(data)
-        // TODO Parse property link
-        return new FCPropertyLinkSubList(name, type)
-    } else if (type == 'App::PropertyMap') {
-        console.log(data)
-        // TODO Parse property maps
-        return new FCPropertyMap(name, type)
-    } else if (type == 'App::PropertyExpressionEngine') {
-        console.log(data)
-        // TODO Parse property expression engine
-        return new FCPropertyExpressionEngine(name, type)
-    } else if (type == 'Sketcher::PropertyConstraintList') {
-        console.log(data)
-        // TODO Parse property expression engine
-        return new FCPropertyConstraintList(name, type)
-    } else if (type == 'Part::PropertyGeometryList') {
-        console.log(data)
-        // TODO Parse property expression engine
-        return new FCPropertyGeometryList(name, type)
-    } else {
-        console.log(data)
-        throw 'Property type not supported: ' + type
+    try {
+        if (name == 'Label') {
+            const child = data.getElementsByTagName('String')[0]
+            obj.label = child.getAttribute('value')
+        } else if (name == 'Placement') {
+            const child = data.getElementsByTagName('PropertyPlacement')[0]
+            const px = Number.parseFloat(child.getAttribute('Px'))
+            const py = Number.parseFloat(child.getAttribute('Py'))
+            const pz = Number.parseFloat(child.getAttribute('Pz'))
+            const q0 = Number.parseFloat(child.getAttribute('Q0'))
+            const q1 = Number.parseFloat(child.getAttribute('Q1'))
+            const q2 = Number.parseFloat(child.getAttribute('Q2'))
+            const q3 = Number.parseFloat(child.getAttribute('Q3'))
+            const a = Number.parseFloat(child.getAttribute('A'))
+            const ox = Number.parseFloat(child.getAttribute('Ox'))
+            const oy = Number.parseFloat(child.getAttribute('Oz'))
+            const oz = Number.parseFloat(child.getAttribute('Oz'))
+            obj.placement = new FCPlacement(new Vector3(px, py, pz), new Quaternion(q0, q1, q2, q3), a, new Vector3(ox, oy, oz))
+        } else if (name == 'Shape' && type == 'Part::PropertyPartShape') {
+            // TODO sometimes shape is a link to another FCObject
+            const child = data.getElementsByTagName('Part')[0]
+            obj.shape_file = child.getAttribute('file')
+        } else if (name == 'Visible') {
+            const child = data.getElementsByTagName('Bool')[0]
+            obj.visible = (child.getAttribute('value') == 'true')
+        } else if (name == 'Profile' && type == 'App::PropertyLinkSub') {
+            const child = data.getElementsByTagName('LinkSub')[0]
+            const other = doc.objects[child.getAttribute('value')]
+            if (other) {
+                obj.profile = other
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Base' && type == 'App::PropertyLink') {
+            const child = data.getElementsByTagName('Link')[0]
+            const other = doc.objects[child.getAttribute('value')]
+            if (other) {
+                obj.base = other
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Tool') {
+            const child = data.getElementsByTagName('Link')[0]
+            const other = doc.objects[child.getAttribute('value')]
+            if (other) {
+                obj.tool = other
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Mesh') {
+            const child = data.getElementsByTagName('Link')[0]
+            const other = doc.objects[child.getAttribute('value')]
+            if (other) {
+                obj.mesh = other
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Origin') {
+            const child = data.getElementsByTagName('Link')[0]
+            const other = doc.objects[child.getAttribute('value')]
+            if (other) {
+                obj.origin = other
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Group') {
+            obj.group = []
+            const child = data.getElementsByTagName('LinkList')[0]
+            const grandchild = child.getElementsByTagName('Link')
+            for (let i = 0; i < grandchild.length; i++) {
+                const other = doc.objects[grandchild.item(i).getAttribute('value')]
+                obj.group.push(other)
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Subtractions') {
+            obj.subtractions = []
+            const child = data.getElementsByTagName('LinkList')[0]
+            const grandchild = child.getElementsByTagName('Link')
+            for (let i = 0; i < grandchild.length; i++) {
+                const other = doc.objects[grandchild.item(i).getAttribute('value')]
+                obj.subtractions.push(other)
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Shapes') {
+            obj.shapes = []
+            const child = data.getElementsByTagName('LinkList')[0]
+            const grandchild = child.getElementsByTagName('Link')
+            for (let i = 0; i < grandchild.length; i++) {
+                const other = doc.objects[grandchild.item(i).getAttribute('value')]
+                obj.shapes.push(other)
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'Filter') {
+            obj.filter = []
+            const child = data.getElementsByTagName('LinkList')[0]
+            const grandchild = child.getElementsByTagName('Link')
+            for (let i = 0; i < grandchild.length; i++) {
+                const other = doc.objects[grandchild.item(i).getAttribute('value')]
+                obj.filter.push(other)
+                other.parents.push({ property: name, object: obj })
+            }
+        } else if (name == 'OriginFeatures') {
+            obj.origin_features = []
+            const child = data.getElementsByTagName('LinkList')[0]
+            const grandchild = child.getElementsByTagName('Link')
+            for (let i = 0; i < grandchild.length; i++) {
+                const other = doc.objects[grandchild.item(i).getAttribute('value')]
+                obj.origin_features.push(other)
+                other.parents.push({ property: name, object: obj })
+            }
+        }
+    } catch (e) {
+        console.log(name, type, data)
     }
 }
