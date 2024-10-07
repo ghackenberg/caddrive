@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Scene, PerspectiveCamera, WebGLRenderer, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial } from 'three'
+import { Scene, PerspectiveCamera, WebGLRenderer, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Vector3 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import { comparePath } from '../../functions/path'
@@ -15,6 +15,7 @@ interface Props {
     over?: (object: Object3D) => void
     out?: (object: Object3D) => void
     click?: (object: Object3D) => void
+    drop?: (event: React.DragEvent, pos: Vector3) => void
 }
 
 export class ModelView3D extends React.Component<Props> {
@@ -47,6 +48,11 @@ export class ModelView3D extends React.Component<Props> {
         this.handleTouchStart = this.handleTouchStart.bind(this)
         this.handleTouchMove = this.handleTouchMove.bind(this)
         this.handleTouchEnd = this.handleTouchEnd.bind(this)
+
+        this.handleDragEnter = this.handleDragEnter.bind(this)
+        this.handleDragOver = this.handleDragOver.bind(this)
+        this.handleDragLeave = this.handleDragLeave.bind(this)
+        this.handleDrop = this.handleDrop.bind(this)
 
         this.paint = this.paint.bind(this)
     }
@@ -345,13 +351,70 @@ export class ModelView3D extends React.Component<Props> {
         this.position_end = null
     }
 
+    handleDragEnter() {
+        // TODO drag enter
+    }
+
+    handleDragOver(e: React.DragEvent) {
+        e.stopPropagation()
+        e.preventDefault()
+
+        // TODO drag over
+    }
+
+    handleDragLeave() {
+        // TODO drag leave
+    }
+
+    handleDrop(e: React.DragEvent) {
+        if (this.props.drop) {
+            this.props.drop(e, this.unproject(e.clientX, e.clientY))
+        }
+    }
+
+    private unproject(x: number, y: number) {
+        const vec = new Vector3()
+        const pos = new Vector3()
+
+        let i = this.renderer.domElement as HTMLElement
+
+        let top = 0
+        let left = 0
+
+        while (i) {
+            top += i.offsetTop
+            left += i.offsetLeft
+
+            i = i.offsetParent as HTMLElement
+        }
+
+        const width = this.renderer.domElement.offsetWidth
+        const height = this.renderer.domElement.offsetHeight
+
+        vec.set(
+            ( (x - left) / width ) * 2 - 1,
+            - ( (y - top) / height ) * 2 + 1,
+            0.5,
+        )
+            
+        vec.unproject( this.camera )
+            
+        vec.sub( this.camera.position ).normalize()
+            
+        const distance = - this.camera.position.y / vec.y
+            
+        pos.copy( this.camera.position ).add( vec.multiplyScalar( distance ) )
+
+        return pos
+    }
+
     paint() {
         this.orbit.update()
         this.renderer.render(this.scene, this.camera)
     }
     
     override render() {
-        return <div className="widget model_view_3d" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} ref={this.div}/>   
+        return <div className="widget model_view_3d" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseUp={this.handleMouseUp} onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove} onTouchEnd={this.handleTouchEnd} onDragEnter={this.handleDragEnter} onDragOver={this.handleDragOver} onDragLeave={this.handleDragLeave} onDrop={this.handleDrop} ref={this.div}/>
     }
     
 }
