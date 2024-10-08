@@ -1,10 +1,11 @@
-import { TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
+import { BlobReader, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
 import initOpenCascade, { OpenCascadeInstance } from 'opencascade.js'
 import { Color, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { BRep, parseBRep } from './brep'
 import { parseGLTFModel } from './gltf'
+import { CacheAPI } from '../clients/cache'
 
 let OCCT: Promise<OpenCascadeInstance>
 
@@ -60,8 +61,8 @@ export class FreeCADObject {
 }
 
 export async function loadFCStdModel(path: string) {
-    console.log('Not yet implemented!', path)
-    return new Group()
+    const file = await CacheAPI.loadFile(path)
+    return parseFCStdModel(new BlobReader(new Blob([file])))
 }
 
 function traverse(object: Object3D, material: MeshStandardMaterial) {
@@ -73,7 +74,7 @@ function traverse(object: Object3D, material: MeshStandardMaterial) {
     }
 }
 
-export async function parseFCStdModel(data: ReadableStream) {
+export async function parseFCStdModel(data: ReadableStream | BlobReader) {
     const diffuse: {[name: string]: MeshStandardMaterial[]} = {}
     const breps: {[name: string]: BRep} = {}
     const gltfs: {[name: string]: GLTF} = {}

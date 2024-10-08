@@ -34,6 +34,8 @@ jobs:
         run: npm install -g npm@latest
       - name: Install dependencies
         run: npm install
+      - name: Re-install opencascade.js@beta dependency
+        run: npm install -w packages/frontend opencascade.js@beta
       - name: Build sources
         run: npm run build
       - name: Lint sources

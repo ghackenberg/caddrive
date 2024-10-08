@@ -6,6 +6,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { loadDAEModel } from '../../loaders/dae'
 import { loadFBXModel } from '../../loaders/fbx'
+import { loadFCStdModel } from '../../loaders/fcstd'
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
 import { loadPLYModel } from '../../loaders/ply'
@@ -23,6 +24,7 @@ const PLY_MODEL_CACHE: {[path: string]: Group} = {}
 const FBX_MODEL_CACHE: {[path: string]: Group} = {}
 const DAE_MODEL_CACHE: {[path: string]: Group} = {}
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
+const FCSTD_MODEL_CACHE: {[path: string]: Group} = {}
 
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
 const LDRAW_LOADED_CACHE: {[path: string]: number} = {}
@@ -62,7 +64,13 @@ async function getGLTFModel(path: string) {
         GLTF_MODEL_CACHE[path] = await loadGLTFModel(path)
     }
     return GLTF_MODEL_CACHE[path]
+}
 
+async function getFCStdModel(path: string) {
+    if (!(path in FCSTD_MODEL_CACHE)) {
+        FCSTD_MODEL_CACHE[path] = await loadFCStdModel(path)
+    }
+    return FCSTD_MODEL_CACHE[path]
 }
 
 function trackLDrawModel(path: string, callback: Callback) {
@@ -132,6 +140,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
     } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
         initialGroup = LDRAW_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.FCStd')) {
+        initialGroup = FCSTD_MODEL_CACHE[props.path]
     }
 
     const initialLoaded = (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) && LDRAW_LOADED_CACHE[props.path]
@@ -183,6 +193,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
                 getGLTFModel(props.path).then(model => exec && setGroup(model.scene))
             } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
                 getLDrawModel(props.path).then(group => exec && setGroup(group))
+            } else if (props.path.endsWith('.FCStd')) {
+                getFCStdModel(props.path).then(group => exec && setGroup(group))
             }
         } else {
             setGroup(undefined)

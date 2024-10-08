@@ -104,22 +104,24 @@ export class ModelView3D extends React.Component<Props> {
             this.highlight_cache[mesh.uuid] = mesh.material
             const highlighted = this.props.highlighted.filter(prefix => comparePath(prefix, path)).length > 0
             const marked = this.props.marked.filter(prefix => comparePath(prefix, path)).length > 0
-            if (highlighted && marked) {
-                mesh.material = new MeshStandardMaterial({
-                    color: 0x0000ff
-                })
-            } else if (highlighted) {
-                mesh.material = new MeshStandardMaterial({
-                    color: 0xff0000
-                })
-            } else if (marked) {
-                mesh.material = new MeshStandardMaterial({
-                    color: 0x00ff00
-                })
-            } else {
-                mesh.material = new MeshStandardMaterial({
-                    color: 0xffffff, transparent: true, opacity: 0.25
-                })
+            if (mesh.material instanceof MeshStandardMaterial && !mesh.material.wireframe) {
+                if (highlighted && marked) {
+                    mesh.material = new MeshStandardMaterial({
+                        color: 0x0000ff
+                    })
+                } else if (highlighted) {
+                    mesh.material = new MeshStandardMaterial({
+                        color: 0xff0000
+                    })
+                } else if (marked) {
+                    mesh.material = new MeshStandardMaterial({
+                        color: 0x00ff00
+                    })
+                } else {
+                    mesh.material = new MeshStandardMaterial({
+                        color: 0xffffff, transparent: true, opacity: 0.25
+                    })
+                }
             }
         }
         // Process children
@@ -154,7 +156,9 @@ export class ModelView3D extends React.Component<Props> {
                         const copy = material.clone()
                         if (copy instanceof MeshStandardMaterial) {
                             const standard = copy as MeshStandardMaterial
-                            standard.emissive.setScalar(0.1)
+                            if (!standard.wireframe) {
+                                standard.emissive.setScalar(0.1)
+                            }
                         }
                         array.push(copy)
                     }
@@ -163,7 +167,9 @@ export class ModelView3D extends React.Component<Props> {
                     const copy = mesh.material.clone()
                     if (copy instanceof MeshStandardMaterial) {
                         const standard = copy as MeshStandardMaterial
-                        standard.emissive.setScalar(0.1)
+                        if (!standard.wireframe) {
+                            standard.emissive.setScalar(0.1)
+                        }
                     }
                     mesh.material = copy
                 }
