@@ -7,12 +7,18 @@ const renderer = initializeRenderer()
 const orbit = initializeOrbit(camera, renderer)
 
 export function initializeScene() {
-    const ambient_light = new AmbientLight(0xffffff, 0.5)
+    const ambient_light = new AmbientLight(0xffffff, 0.125)
+
     const directional_light = new DirectionalLight(0xffffff, 1)
+    directional_light.position.set(1, 1, 1)
+
+    const directional_light_2 = new DirectionalLight(0xffffff, 0.25)
+    directional_light_2.position.set(-1, -1, -1)
 
     const scene = new Scene()
     scene.add(ambient_light)
     scene.add(directional_light)
+    scene.add(directional_light_2)
     scene.add(new Object3D())
 
     return scene

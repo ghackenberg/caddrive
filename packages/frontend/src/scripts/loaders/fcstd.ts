@@ -1,6 +1,6 @@
 import { TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
 import initOpenCascade, { OpenCascadeInstance } from 'opencascade.js'
-import { Color, Group, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 } from 'three'
+import { Color, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { BRep, parseBRep } from './brep'
@@ -20,12 +20,6 @@ export class FreeCADDocument {
     public objects: {[name: string]: FreeCADObject} = {}
 }
 
-export class FreeCADPlacement {
-    constructor(public position: Vector3, public quaternion: Quaternion, public angle: number, public origin: Vector3) {
-
-    }
-}
-
 export class FreeCADObject {
     public parents: { property: string, object: FreeCADObject }[] = []
 
@@ -43,7 +37,6 @@ export class FreeCADObject {
     public shape: FreeCADObject
 
     public label: string
-    public placement: FreeCADPlacement
     public visibility: boolean
 
     public shape_file: string
@@ -189,6 +182,9 @@ function convertFCObject(obj: FreeCADObject) {
     container.name = obj.label
 
     if (obj.shape_file) {
+        const clone = obj.shape_gltf.scene.clone(true)
+        traverse(clone, new MeshStandardMaterial({ color: 'black', wireframe: true }))
+        container.add(clone)
         container.add(obj.shape_gltf.scene)
     } else if (obj.group) {
         for (const child of obj.group) {
@@ -274,20 +270,6 @@ function parseFCStdDocumentObjectProperty(data: Element, obj: FreeCADObject, doc
         if (name == 'Label') {
             const child = data.getElementsByTagName('String')[0]
             obj.label = child.getAttribute('value')
-        } else if (name == 'Placement') {
-            const child = data.getElementsByTagName('PropertyPlacement')[0]
-            const px = Number.parseFloat(child.getAttribute('Px'))
-            const py = Number.parseFloat(child.getAttribute('Py'))
-            const pz = Number.parseFloat(child.getAttribute('Pz'))
-            const q0 = Number.parseFloat(child.getAttribute('Q0'))
-            const q1 = Number.parseFloat(child.getAttribute('Q1'))
-            const q2 = Number.parseFloat(child.getAttribute('Q2'))
-            const q3 = Number.parseFloat(child.getAttribute('Q3'))
-            const a = Number.parseFloat(child.getAttribute('A'))
-            const ox = Number.parseFloat(child.getAttribute('Ox'))
-            const oy = Number.parseFloat(child.getAttribute('Oz'))
-            const oz = Number.parseFloat(child.getAttribute('Oz'))
-            obj.placement = new FreeCADPlacement(new Vector3(px, py, pz), new Quaternion(q0, q1, q2, q3), a, new Vector3(ox, oy, oz))
         } else if (name == 'Shape') {
             if (type == 'Part::PropertyPartShape') {
                 const child = data.getElementsByTagName('Part')[0]

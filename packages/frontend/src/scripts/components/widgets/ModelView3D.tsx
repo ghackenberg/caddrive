@@ -261,7 +261,7 @@ export class ModelView3D extends React.Component<Props> {
 
         if (intersections.length > 0) {
             let iterator = intersections[0].object
-            while (iterator && !iterator.name) {
+            while (iterator && (!iterator.name || (iterator.parent && !iterator.parent.name))) {
                 iterator = iterator.parent
             }
             this.hovered = iterator
