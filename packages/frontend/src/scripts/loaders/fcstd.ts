@@ -1,7 +1,19 @@
 import { TextWriter, ZipReader } from '@zip.js/zip.js'
+import initOpenCascade, { OpenCascadeInstance } from 'opencascade.js'
 import { Group, Quaternion, Vector3 } from 'three'
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { BRep, convertBRep, parseBRep } from './brep'
+import { BRep, parseBRep } from './brep'
+import { parseGLTFModel } from './gltf'
+
+let OCCT: Promise<OpenCascadeInstance>
+
+function getOCCT() {
+    if (!OCCT) {
+        OCCT = initOpenCascade()
+    }
+    return OCCT
+}
 
 export class FreeCADDocument {
     public label: string
@@ -36,11 +48,12 @@ export class FreeCADObject {
 
     public shape_file: string
     public shape_brep: BRep
+    public shape_gltf: GLTF
 
     constructor(public name: string, public type: string) {}
 
     hasShapeBRep() {
-        if (this.shape_brep) {
+        if (this.shape_file) {
             return true
         } else {
             for (const child of this.group || []) {
@@ -60,6 +73,7 @@ export async function loadFCStdModel(path: string) {
 
 export async function parseFCStdModel(data: ReadableStream) {
     const breps: {[name: string]: BRep} = {}
+    const gltfs: {[name: string]: GLTF} = {}
     let doc: FreeCADDocument
     const reader = new ZipReader(data)
     const parser = new DOMParser()
@@ -79,6 +93,35 @@ export async function parseFCStdModel(data: ReadableStream) {
             const content = await entry.getData(writer)
             //console.log('Parsing', entry.filename)
             breps[entry.filename] = parseBRep(content)
+            const occt = await getOCCT()
+            // Parse shape
+            console.log('Reading BRep', entry.filename)
+            const shape = new occt.TopoDS_Shape()
+            occt.FS.createDataFile('.', entry.filename, content, true, true, true)
+            const builder = new occt.BRep_Builder()
+            const readProgress = new occt.Message_ProgressRange_1()
+            occt.BRepTools.Read_2(shape, `./${entry.filename}`, builder, readProgress)
+            occt.FS.unlink(`./${entry.filename}`)
+            // Visualize shape
+            console.log('Meshing BRep', entry.filename)
+            const storageformat = new occt.TCollection_ExtendedString_1()
+            const doc = new occt.TDocStd_Document(storageformat)
+            const shapeTool = occt.XCAFDoc_DocumentTool.ShapeTool(doc.Main()).get()
+            shapeTool.SetShape(shapeTool.NewShape(), shape)
+            new occt.BRepMesh_IncrementalMesh_2(shape, 0.1, false, 0.1, false)
+            // Export a GLB file (this will also perform the meshing)
+            console.log('Writing GLB', entry.filename)
+            const glbFileName = new occt.TCollection_AsciiString_2(`./${entry.filename}.glb`)
+            const cafWriter = new occt.RWGltf_CafWriter(glbFileName, true)
+            const docHandle = new occt.Handle_TDocStd_Document_2(doc)
+            const fileInfo = new occt.TColStd_IndexedDataMapOfStringString_1()
+            const writeProgress = new occt.Message_ProgressRange_1()
+            cafWriter.Perform_2(docHandle, fileInfo, writeProgress)
+            // Read the GLB file from the virtual file system
+            console.log('Readling GLB', entry.filename)
+            const glbFileData = occt.FS.readFile(`./${entry.filename}.glb`, { encoding: "binary" })
+            occt.FS.unlink(`./${entry.filename}.glb`)
+            gltfs[entry.filename] = await parseGLTFModel(glbFileData.buffer)
         }
     }
     await reader.close()
@@ -86,6 +129,7 @@ export async function parseFCStdModel(data: ReadableStream) {
     for (const object of Object.values(doc.objects)) {
         if (object.shape_file in breps) {
             object.shape_brep = breps[object.shape_file]
+            object.shape_gltf = gltfs[object.shape_file]
         }
     }
     // Delete objects with parents
@@ -99,12 +143,12 @@ export async function parseFCStdModel(data: ReadableStream) {
     // Convert to THREEJS
     const model = new Group()
     model.name = doc.label
+    model.rotateX(-Math.PI / 2)
     for (const obj of Object.values(doc.objects)) {
         if (obj.hasShapeBRep()) {
             model.add(convertFCObject(obj))
         }
     }
-    console.log(model)
     return model
 }
 
@@ -112,8 +156,8 @@ function convertFCObject(obj: FreeCADObject) {
     const container = new Group()
     container.name = obj.label
 
-    if (obj.shape_brep) {
-        container.add(convertBRep(obj.shape_brep))
+    if (obj.shape_file) {
+        container.add(obj.shape_gltf.scene)
     } else if (obj.group) {
         for (const child of obj.group) {
             if (child.hasShapeBRep()) {
