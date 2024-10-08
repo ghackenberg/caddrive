@@ -1,6 +1,6 @@
-import { TextWriter, ZipReader } from '@zip.js/zip.js'
+import { TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
 import initOpenCascade, { OpenCascadeInstance } from 'opencascade.js'
-import { Group, Quaternion, Vector3 } from 'three'
+import { Color, Group, Mesh, MeshStandardMaterial, Object3D, Quaternion, Vector3 } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { BRep, parseBRep } from './brep'
@@ -71,7 +71,17 @@ export async function loadFCStdModel(path: string) {
     return new Group()
 }
 
+function traverse(object: Object3D, material: MeshStandardMaterial) {
+    if (object instanceof Mesh) {
+        object.material = material
+    }
+    for (const child of object.children) {
+        traverse(child, material)
+    }
+}
+
 export async function parseFCStdModel(data: ReadableStream) {
+    const diffuse: {[name: string]: MeshStandardMaterial[]} = {}
     const breps: {[name: string]: BRep} = {}
     const gltfs: {[name: string]: GLTF} = {}
     let doc: FreeCADDocument
@@ -80,6 +90,7 @@ export async function parseFCStdModel(data: ReadableStream) {
     // Read files in ZIP archive
     const entries = await reader.getEntries()
     for (const entry of entries) {
+        //console.log(entry.filename)
         // Check file type
         if (entry.filename == 'Document.xml') {
             // Parse XML file
@@ -87,6 +98,19 @@ export async function parseFCStdModel(data: ReadableStream) {
             const content = await entry.getData(writer)
             const document = parser.parseFromString(content, 'application/xml')
             doc = parseFCStdDocument(document)
+        } else if (entry.filename.startsWith('DiffuseColor')) {
+            const writer = new Uint8ArrayWriter()
+            const content = await entry.getData(writer)
+            diffuse[entry.filename] = []
+            for (let i = 1; i < content.length / 4; i++) {
+                const a = 1 - content[i * 4 + 0] / 255
+                const b = 1 - content[i * 4 + 1] / 255
+                const g = 1 - content[i * 4 + 2] / 255
+                const r = 1 - content[i * 4 + 3] / 255
+                const color = new Color(r, g, b)
+                const material = new MeshStandardMaterial({ color, opacity: a })
+                diffuse[entry.filename].push(material)
+            }
         } else if (entry.filename.endsWith('.brp')) {
             // Parse BRep file
             const writer = new TextWriter()
@@ -95,7 +119,7 @@ export async function parseFCStdModel(data: ReadableStream) {
             breps[entry.filename] = parseBRep(content)
             const occt = await getOCCT()
             // Parse shape
-            console.log('Reading BRep', entry.filename)
+            //console.log('Reading BRep', entry.filename)
             const shape = new occt.TopoDS_Shape()
             occt.FS.createDataFile('.', entry.filename, content, true, true, true)
             const builder = new occt.BRep_Builder()
@@ -103,14 +127,14 @@ export async function parseFCStdModel(data: ReadableStream) {
             occt.BRepTools.Read_2(shape, `./${entry.filename}`, builder, readProgress)
             occt.FS.unlink(`./${entry.filename}`)
             // Visualize shape
-            console.log('Meshing BRep', entry.filename)
+            //console.log('Meshing BRep', entry.filename)
             const storageformat = new occt.TCollection_ExtendedString_1()
             const doc = new occt.TDocStd_Document(storageformat)
             const shapeTool = occt.XCAFDoc_DocumentTool.ShapeTool(doc.Main()).get()
             shapeTool.SetShape(shapeTool.NewShape(), shape)
             new occt.BRepMesh_IncrementalMesh_2(shape, 0.1, false, 0.1, false)
             // Export a GLB file (this will also perform the meshing)
-            console.log('Writing GLB', entry.filename)
+            //console.log('Writing GLB', entry.filename)
             const glbFileName = new occt.TCollection_AsciiString_2(`./${entry.filename}.glb`)
             const cafWriter = new occt.RWGltf_CafWriter(glbFileName, true)
             const docHandle = new occt.Handle_TDocStd_Document_2(doc)
@@ -118,13 +142,21 @@ export async function parseFCStdModel(data: ReadableStream) {
             const writeProgress = new occt.Message_ProgressRange_1()
             cafWriter.Perform_2(docHandle, fileInfo, writeProgress)
             // Read the GLB file from the virtual file system
-            console.log('Readling GLB', entry.filename)
+            //console.log('Readling GLB', entry.filename)
             const glbFileData = occt.FS.readFile(`./${entry.filename}.glb`, { encoding: "binary" })
             occt.FS.unlink(`./${entry.filename}.glb`)
             gltfs[entry.filename] = await parseGLTFModel(glbFileData.buffer)
         }
     }
     await reader.close()
+    // Update mesh materials
+    for (const file of Object.keys(gltfs)) {
+        const other = file.replace('PartShape', 'DiffuseColor').replace('.brp', '')
+        if (other in diffuse) {
+            const material = diffuse[other][0]
+            traverse(gltfs[file].scene, material)
+        }
+    }
     // Connect BReps to objects
     for (const object of Object.values(doc.objects)) {
         if (object.shape_file in breps) {
