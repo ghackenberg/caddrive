@@ -3,39 +3,54 @@ import { Group, Quaternion, Vector3 } from 'three'
 
 import { BRep, convertBRep, parseBRep } from './brep'
 
-export class FCDocument {
+export class FreeCADDocument {
     public label: string
-    public objects: {[name: string]: FCObject} = {}
+    public objects: {[name: string]: FreeCADObject} = {}
 }
 
-export class FCPlacement {
+export class FreeCADPlacement {
     constructor(public position: Vector3, public quaternion: Quaternion, public angle: number, public origin: Vector3) {
 
     }
 }
 
-export class FCObject {
-    public parents: { property: string, object: FCObject }[] = []
+export class FreeCADObject {
+    public parents: { property: string, object: FreeCADObject }[] = []
 
-    public subtractions: FCObject[]
-    public shapes: FCObject[]
-    public filter: FCObject[]
-    public group: FCObject[]
-    public origin_features: FCObject[]
+    public subtractions: FreeCADObject[]
+    public shapes: FreeCADObject[]
+    public filter: FreeCADObject[]
+    public group: FreeCADObject[]
+    public origin_features: FreeCADObject[]
 
-    public origin: FCObject
-    public mesh: FCObject
-    public tool: FCObject
-    public profile: FCObject
-    public base: FCObject
+    public origin: FreeCADObject
+    public mesh: FreeCADObject
+    public tool: FreeCADObject
+    public profile: FreeCADObject
+    public base: FreeCADObject
+    public shape: FreeCADObject
 
     public label: string
-    public placement: FCPlacement
-    public shape_file: string
-    public shape: BRep
+    public placement: FreeCADPlacement
     public visible: boolean
 
+    public shape_file: string
+    public shape_brep: BRep
+
     constructor(public name: string, public type: string) {}
+
+    hasShapeBRep() {
+        if (this.shape_brep) {
+            return true
+        } else {
+            for (const child of this.group || []) {
+                if (child.hasShapeBRep()) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
 }
 
 export async function loadFCStdModel(path: string) {
@@ -45,7 +60,7 @@ export async function loadFCStdModel(path: string) {
 
 export async function parseFCStdModel(data: ReadableStream) {
     const breps: {[name: string]: BRep} = {}
-    let doc: FCDocument
+    let doc: FreeCADDocument
     const reader = new ZipReader(data)
     const parser = new DOMParser()
     // Read files in ZIP archive
@@ -69,7 +84,7 @@ export async function parseFCStdModel(data: ReadableStream) {
     // Connect BReps to objects
     for (const object of Object.values(doc.objects)) {
         if (object.shape_file in breps) {
-            object.shape = breps[object.shape_file]
+            object.shape_brep = breps[object.shape_file]
         }
     }
     // Delete objects with parents
@@ -84,21 +99,25 @@ export async function parseFCStdModel(data: ReadableStream) {
     const model = new Group()
     model.name = doc.label
     for (const obj of Object.values(doc.objects)) {
-        model.add(convertFCObject(obj))
+        if (obj.hasShapeBRep()) {
+            model.add(convertFCObject(obj))
+        }
     }
     console.log(model)
     return model
 }
 
-function convertFCObject(obj: FCObject) {
+function convertFCObject(obj: FreeCADObject) {
     const container = new Group()
     container.name = obj.label
 
-    if (obj.shape) {
-        container.add(convertBRep(obj.shape))
+    if (obj.shape_brep) {
+        container.add(convertBRep(obj.shape_brep))
     } else if (obj.group) {
         for (const child of obj.group) {
-            container.add(convertFCObject(child))
+            if (child.hasShapeBRep()) {
+                container.add(convertFCObject(child))
+            }
         }
     }
 
@@ -106,7 +125,7 @@ function convertFCObject(obj: FCObject) {
 }
 
 function parseFCStdDocument(data: Document) {
-    const doc = new FCDocument()
+    const doc = new FreeCADDocument()
     
     parseFCStdDocumentProperties(data, doc)
     parseFCStdDocumentObjects(data, doc)
@@ -115,7 +134,7 @@ function parseFCStdDocument(data: Document) {
     return doc
 }
 
-function parseFCStdDocumentProperties(data: Document, doc: FCDocument) {
+function parseFCStdDocumentProperties(data: Document, doc: FreeCADDocument) {
     const properties = data.getElementsByTagName('Properties')[0]
 
     // Parse properties
@@ -128,7 +147,7 @@ function parseFCStdDocumentProperties(data: Document, doc: FCDocument) {
     }
 }
 
-function parseFCStdDocumentProperty(data: Element, doc: FCDocument) {
+function parseFCStdDocumentProperty(data: Element, doc: FreeCADDocument) {
     const name = data.getAttribute('name')
 
     if (name == 'Label') {
@@ -137,7 +156,7 @@ function parseFCStdDocumentProperty(data: Element, doc: FCDocument) {
     }
 }
 
-function parseFCStdDocumentObjects(data: Document, doc: FCDocument) {
+function parseFCStdDocumentObjects(data: Document, doc: FreeCADDocument) {
     const objects = data.getElementsByTagName('Objects')[0]
 
     // Parse objects
@@ -148,11 +167,11 @@ function parseFCStdDocumentObjects(data: Document, doc: FCDocument) {
         const object_name = object.getAttribute('name')
         const object_type = object.getAttribute('type')
 
-        doc.objects[object_name] = new FCObject(object_name, object_type)
+        doc.objects[object_name] = new FreeCADObject(object_name, object_type)
     }
 }
 
-function parseFCStdDocumentObjectData(data: Document, doc: FCDocument) {
+function parseFCStdDocumentObjectData(data: Document, doc: FreeCADDocument) {
     const objectdata = data.getElementsByTagName('ObjectData')[0]
     const object_list = objectdata.getElementsByTagName('Object')
 
@@ -171,7 +190,7 @@ function parseFCStdDocumentObjectData(data: Document, doc: FCDocument) {
     }
 }
 
-function parseFCStdDocumentObjectProperty(data: Element, obj: FCObject, doc: FCDocument) {
+function parseFCStdDocumentObjectProperty(data: Element, obj: FreeCADObject, doc: FreeCADDocument) {
     const name = data.getAttribute('name')
     const type = data.getAttribute('type')
     try {
@@ -191,27 +210,45 @@ function parseFCStdDocumentObjectProperty(data: Element, obj: FCObject, doc: FCD
             const ox = Number.parseFloat(child.getAttribute('Ox'))
             const oy = Number.parseFloat(child.getAttribute('Oz'))
             const oz = Number.parseFloat(child.getAttribute('Oz'))
-            obj.placement = new FCPlacement(new Vector3(px, py, pz), new Quaternion(q0, q1, q2, q3), a, new Vector3(ox, oy, oz))
-        } else if (name == 'Shape' && type == 'Part::PropertyPartShape') {
-            // TODO sometimes shape is a link to another FCObject
-            const child = data.getElementsByTagName('Part')[0]
-            obj.shape_file = child.getAttribute('file')
+            obj.placement = new FreeCADPlacement(new Vector3(px, py, pz), new Quaternion(q0, q1, q2, q3), a, new Vector3(ox, oy, oz))
+        } else if (name == 'Shape') {
+            if (type == 'Part::PropertyPartShape') {
+                const child = data.getElementsByTagName('Part')[0]
+                obj.shape_file = child.getAttribute('file')
+            } else if (type == 'App::PropertyLink') {
+                const child = data.getElementsByTagName('LinkSub')[0]
+                const other = doc.objects[child.getAttribute('value')]
+                if (other) {
+                    obj.shape = other
+                    other.parents.push({ property: name, object: obj })
+                }
+            } else {
+                console.log(name, type, data)
+            }
         } else if (name == 'Visible') {
             const child = data.getElementsByTagName('Bool')[0]
             obj.visible = (child.getAttribute('value') == 'true')
-        } else if (name == 'Profile' && type == 'App::PropertyLinkSub') {
-            const child = data.getElementsByTagName('LinkSub')[0]
-            const other = doc.objects[child.getAttribute('value')]
-            if (other) {
-                obj.profile = other
-                other.parents.push({ property: name, object: obj })
+        } else if (name == 'Profile') {
+            if (type == 'App::PropertyLinkSub') {
+                const child = data.getElementsByTagName('LinkSub')[0]
+                const other = doc.objects[child.getAttribute('value')]
+                if (other) {
+                    obj.profile = other
+                    other.parents.push({ property: name, object: obj })
+                }
+            } else {
+                console.log(name, type, data)
             }
-        } else if (name == 'Base' && type == 'App::PropertyLink') {
-            const child = data.getElementsByTagName('Link')[0]
-            const other = doc.objects[child.getAttribute('value')]
-            if (other) {
-                obj.base = other
-                other.parents.push({ property: name, object: obj })
+        } else if (name == 'Base') {
+            if (type == 'App::PropertyLink') {
+                const child = data.getElementsByTagName('Link')[0]
+                const other = doc.objects[child.getAttribute('value')]
+                if (other) {
+                    obj.base = other
+                    other.parents.push({ property: name, object: obj })
+                }
+            } else {
+                console.log(name, type, data)
             }
         } else if (name == 'Tool') {
             const child = data.getElementsByTagName('Link')[0]

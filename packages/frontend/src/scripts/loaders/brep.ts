@@ -1,190 +1,186 @@
 import { Group, Matrix4 } from 'three'
 
-enum Section {
-    None, Locations, Curve2ds, Curves, Polygon3D, PolygonOnTriangulations, Surfaces, Triangulations, TShapes
-}
-
-// BRep
-
-export class BRep {
-    locations: Matrix4[] = []
-    curve2ds: Curve2D[] = []
-    curves: Curve[] = []
-    surfaces: Surface[] = []
-    tshapes: TShape[] = []
-}
-
 // Curve2D
 
-export abstract class Curve2D {
+export abstract class BRepCurve2D {
 
 }
-export class Line2D extends Curve2D {
+export class BRepLine2D extends BRepCurve2D {
     constructor(public p: number[], public d: number[]) {
         super()
     }
 }
-export class Circle2D extends Curve2D {
+export class BRepCircle2D extends BRepCurve2D {
     constructor(public p: number[], public dX: number[], public dY: number[], public r: number) {
         super()
     }
 }
-export class BSline2D extends Curve2D {
+export class BRepBSline2D extends BRepCurve2D {
     constructor(public degree: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
         super()
     }
 }
-export class TrimmedCurve2D extends Curve2D {
-    constructor(public uMin: number, public uMax: number, public curve: Curve2D) {
+export class BRepTrimmedCurve2D extends BRepCurve2D {
+    constructor(public uMin: number, public uMax: number, public curve: BRepCurve2D) {
         super()
     }
 }
 
 // Curve
 
-export abstract class Curve {
+export abstract class BRepCurve {
 
 }
-export class Line extends Curve {
+export class BRepLine extends BRepCurve {
     constructor(public p: number[], public d: number[]) {
         super()
     }
 }
-export class Circle extends Curve {
+export class BRepCircle extends BRepCurve {
     constructor(public p: number[], public dN: number[], public dX: number[], public dY: number[], public r: number) {
         super()
     }
 }
-export class Ellipse extends Curve {
+export class BRepEllipse extends BRepCurve {
     constructor(public p: number[], public n: number[], public dMaj: number[], public dMin: number[], public rMaj: number, public rMin: number) {
         super()
     }
 }
-export class Bezier extends Curve {
+export class BRepBezier extends BRepCurve {
     constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[]) {
         super()
     }
 }
-export class BSpline extends Curve {
+export class BRepBSpline extends BRepCurve {
     constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
         super()
     }
 }
-export class TrimmedCurve extends Curve {
-    constructor(public uMin: number, public uMax: number, public curve: Curve) {
+export class BRepTrimmedCurve extends BRepCurve {
+    constructor(public uMin: number, public uMax: number, public curve: BRepCurve) {
         super()
     }
 }
 
 // Surface
 
-export abstract class Surface {
+export abstract class BRepSurface {
 
 }
-export class Plane extends Surface {
+export class BRepPlane extends BRepSurface {
     constructor(public p: number[], public dN: number[], public dU: number[], public dV: number[]) {
         super()
     }
 }
-export class Cylinder extends Surface {
+export class BRepCylinder extends BRepSurface {
     constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number) {
         super()
     }
 }
-export class Cone extends Surface {
+export class BRepCone extends BRepSurface {
     constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number, public phi: number) {
         super()
     }
 }
-export class Sphere extends Surface {
+export class BRepSphere extends BRepSurface {
     constructor(public p: number[], public dZ: number[], public dU: number[], public dV: number[], public r: number) {
         super()
     }
 }
-export class Extrusion extends Surface {
-    constructor(public d: number[], public curve: Curve) {
+export class BRepExtrusion extends BRepSurface {
+    constructor(public d: number[], public curve: BRepCurve) {
         super()
     }
 }
-export class Revolution extends Surface {
-    constructor(public p: number[], public d: number[], public curve: Curve) {
+export class BRepRevolution extends BRepSurface {
+    constructor(public p: number[], public d: number[], public curve: BRepCurve) {
         super()
     }
 }
 
 // TShape
 
-export interface SubShape {
+export interface BRepSubShape {
     orientation: string
-    tshape: TShape
+    tshape: BRepTShape
     location: Matrix4
 }
 
-export abstract class TShape {
-    constructor(public flags: string, public subShapes: SubShape[]) {
+export abstract class BRepTShape {
+    constructor(public flags: string, public subShapes: BRepSubShape[]) {
 
     }
 }
-export class Vertex extends TShape {
-    constructor(public tolerance: number, public point: number[], flags: string, subShapes: SubShape[]) {
+export class BRepVertex extends BRepTShape {
+    constructor(public tolerance: number, public point: number[], flags: string, subShapes: BRepSubShape[]) {
         super(flags, subShapes)
     }
 }
-export class Edge extends TShape {
-    constructor(public tolerance: number, public parameter: boolean, public range: boolean, public degenerated: boolean, public edgeData: EdgeData[], flags: string, subShapes: SubShape[]) {
+export class BRepEdge extends BRepTShape {
+    constructor(public tolerance: number, public parameter: boolean, public range: boolean, public degenerated: boolean, public edgeData: BRepEdgeData[], flags: string, subShapes: BRepSubShape[]) {
         super(flags, subShapes)
     }
 }
-export class Wire extends TShape {
-    constructor(flags: string, subShapes: SubShape[]) {
+export class BRepWire extends BRepTShape {
+    constructor(flags: string, subShapes: BRepSubShape[]) {
         super(flags, subShapes)
     }
 }
-export class Face extends TShape {
-    constructor(public natural: boolean, public tolerance: number, public surface: Surface, public location: Matrix4, flags: string, subShapes: SubShape[]) {
+export class BRepFace extends BRepTShape {
+    constructor(public natural: boolean, public tolerance: number, public surface: BRepSurface, public location: Matrix4, flags: string, subShapes: BRepSubShape[]) {
         super(flags, subShapes)
     }
 }
-export class Shell extends TShape {
-    constructor(flags: string, subShapes: SubShape[]) {
+export class BRepShell extends BRepTShape {
+    constructor(flags: string, subShapes: BRepSubShape[]) {
         super(flags, subShapes)
     }
 }
-export class Solid extends TShape {
-    constructor(flags: string, subShapes: SubShape[]) {
+export class BRepSolid extends BRepTShape {
+    constructor(flags: string, subShapes: BRepSubShape[]) {
         super(flags, subShapes)
     }
 }
-export class Compound extends TShape {
-    constructor(flags: string, subShapes: SubShape[]) {
+export class BRepCompound extends BRepTShape {
+    constructor(flags: string, subShapes: BRepSubShape[]) {
         super(flags, subShapes)
     }
 }
 
 // Edge data
 
-export abstract class EdgeData {
+export abstract class BRepEdgeData {
 
 }
-export class EdgeDataCurve3D extends EdgeData {
-    constructor(public curve: Curve, public location: Matrix4, public min: number, public max: number) {
+export class BRepEdgeDataCurve3D extends BRepEdgeData {
+    constructor(public curve: BRepCurve, public location: Matrix4, public min: number, public max: number) {
         super()
     }
 }
-export class EdgeDataCurve2DSurface extends EdgeData {
-    constructor(public curve: Curve2D, public surface: Surface, public location: Matrix4, public min: number, public max: number) {
+export class BRepEdgeDataCurve2DSurface extends BRepEdgeData {
+    constructor(public curve: BRepCurve2D, public surface: BRepSurface, public location: Matrix4, public min: number, public max: number) {
         super()
     }
 }
-export class EdgeDataCurve2DClosedSurface extends EdgeData {
-    constructor(public curve: Curve2D, public continuity: string, public surface: Surface, public location: Matrix4, public min: number, public max: number) {
+export class BRepEdgeDataCurve2DClosedSurface extends BRepEdgeData {
+    constructor(public curve: BRepCurve2D, public continuity: string, public surface: BRepSurface, public location: Matrix4, public min: number, public max: number) {
         super()
     }
 }
-export class EdgeData4 extends EdgeData {
-    constructor(public continuity: string, public surface1: Surface, public location1: Matrix4, public surface2: Surface, public location2: Matrix4) {
+export class BRepEdgeData4 extends BRepEdgeData {
+    constructor(public continuity: string, public surface1: BRepSurface, public location1: Matrix4, public surface2: BRepSurface, public location2: Matrix4) {
         super()
     }
+}
+
+// BRep
+
+export class BRep {
+    locations: Matrix4[] = []
+    curve2ds: BRepCurve2D[] = []
+    curves: BRepCurve[] = []
+    surfaces: BRepSurface[] = []
+    tshapes: BRepTShape[] = []
 }
 
 // Convert
@@ -193,22 +189,23 @@ export function convertBRep(brep: BRep) {
     const group = new Group()
 
     for (const tshape of brep.tshapes) {
-        if (tshape instanceof Wire) {
+        if (tshape instanceof BRepWire) {
             console.log('wire')
             for (const edge of tshape.subShapes) {
-                if (edge.tshape instanceof Edge) {
+                if (edge.tshape instanceof BRepEdge) {
                     if (edge.tshape.subShapes.length != 2) {
                         throw 'Number of subshapes unexpected: ' + edge.tshape.subShapes.length
                     }
-                    if (!(edge.tshape.subShapes[0].tshape instanceof Vertex)) {
+                    if (!(edge.tshape.subShapes[0].tshape instanceof BRepVertex)) {
                         throw 'Subshape type unexpected: ' + edge.tshape.subShapes[0].tshape
                     }
-                    if (!(edge.tshape.subShapes[1].tshape instanceof Vertex)) {
+                    if (!(edge.tshape.subShapes[1].tshape instanceof BRepVertex)) {
                         throw 'Subshape type unexpected: ' + edge.tshape.subShapes[1].tshape
                     }
-                    const vertex1 = edge.tshape.subShapes[0].tshape as Vertex
-                    const vertex2 = edge.tshape.subShapes[1].tshape as Vertex
-                    console.log(vertex1.point, vertex2.point)
+                    const vertex1 = edge.tshape.subShapes[0].tshape as BRepVertex
+                    const vertex2 = edge.tshape.subShapes[1].tshape as BRepVertex
+                    vertex1
+                    vertex2
                 }
             }
         }
@@ -222,6 +219,10 @@ export function convertBRep(brep: BRep) {
 export function parseBRep(data: string) {
 
     let offset = 0
+
+    enum BRepSection {
+        None, Locations, Curve2ds, Curves, Polygon3D, PolygonOnTriangulations, Surfaces, Triangulations, TShapes
+    }
 
     function token(log = false) {
         if (data[offset] == '\n') {
@@ -376,13 +377,13 @@ export function parseBRep(data: string) {
         }
     }
 
-    function curve2d(type: string, log = false): Curve2D {
+    function curve2d(type: string, log = false): BRepCurve2D {
         if (type == '1') {
             const p = vector2()
             const d = vector2()
             newline()
             log && console.log('line', p, d)
-            return new Line2D(p, d)
+            return new BRepLine2D(p, d)
         } else if (type == '2') {
             const c = vector2()
             const dx = vector2()
@@ -390,7 +391,7 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('circle', c, dx, dy, r)
-            return new Circle2D(c, dx, dy, r)
+            return new BRepCircle2D(c, dx, dy, r)
         } else if (type == '7') {
             const rational = flag()
             flag()
@@ -421,26 +422,26 @@ export function parseBRep(data: string) {
             
             newline()
             log && console.log('b-sline', degree, poleCount, knotCount, poles, knots)
-            return new BSline2D(degree, poles, knots)
+            return new BRepBSline2D(degree, poles, knots)
         } else if (type == '8') {
             const umin = real()
             const umax = real()
             newline()
             const child = curve2d(token())
             log && console.log(umin, umax)
-            return new TrimmedCurve2D(umin, umax, child)
+            return new BRepTrimmedCurve2D(umin, umax, child)
         } else {
             throw 'Curve2d type not supported: ' + type
         }
     }
 
-    function curve(type: string, log = false): Curve {
+    function curve(type: string, log = false): BRepCurve {
         if (type == '1') {
             const p = vector3()
             const d = vector3()
             newline()
             log && console.log('line', p, d)
-            return new Line(p, d)
+            return new BRepLine(p, d)
         } else if (type == '2') {
             const c = vector3()
             const dN = vector3()
@@ -449,7 +450,7 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('circle', c, dN, dX, dY, r)
-            return new Circle(c, dN, dX, dY, r)
+            return new BRepCircle(c, dN, dX, dY, r)
         } else if (type == '3') {
             const c = vector3()
             const n = vector3()
@@ -459,7 +460,7 @@ export function parseBRep(data: string) {
             const rMin = real()
             newline()
             log && console.log('ellipse', c, n, dMaj, dMin, rMaj, rMin)
-            return new Ellipse(c, n, dMaj, dMin, rMaj, rMin)
+            return new BRepEllipse(c, n, dMaj, dMin, rMaj, rMin)
         } else if (type == '6') {
             const rational = flag()
             const degree = int()
@@ -474,7 +475,7 @@ export function parseBRep(data: string) {
 
             newline()
             log && console.log('bezier', rational, degree, poles)
-            return new Bezier(rational, degree, poles)
+            return new BRepBezier(rational, degree, poles)
         } else if (type == '7') {
             const rational = flag()
             flag()
@@ -505,20 +506,20 @@ export function parseBRep(data: string) {
 
             newline()
             log && console.log('b-spline', rational, degree, poleCount, knotCount, poles, knots)
-            return new BSpline(rational, degree, poles, knots)
+            return new BRepBSpline(rational, degree, poles, knots)
         } else if (type == '8') {
             const umin = real()
             const umax = real()
             newline()
             const child = curve(token())
             log && console.log('trimmed curve', umin, umax)
-            return new TrimmedCurve(umin, umax, child)
+            return new BRepTrimmedCurve(umin, umax, child)
         } else {
             throw 'Curve type not supported: ' + type
         }
     }
 
-    function surface(type: string, log = false): Surface {
+    function surface(type: string, log = false): BRepSurface {
         if (type == '1') {
             const p = vector3()
             const dN = vector3()
@@ -526,7 +527,7 @@ export function parseBRep(data: string) {
             const dV = vector3()
             newline()
             log && console.log('plane', p, dN, dU, dV)
-            return new Plane(p, dN, dU, dV)
+            return new BRepPlane(p, dN, dU, dV)
         } else if (type == '2') {
             const p = vector3()
             const dZ = vector3()
@@ -535,7 +536,7 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('cylinder', p, dZ, dX, dY, r)
-            return new Cylinder(p, dZ, dX, dY, r)
+            return new BRepCylinder(p, dZ, dX, dY, r)
         } else if (type == '3') {
             const p = vector3()
             const dZ = vector3()
@@ -546,7 +547,7 @@ export function parseBRep(data: string) {
             const phi = real()
             newline()
             log && console.log('cone', p, dZ, dX, dY, r, phi)
-            return new Cone(p, dZ, dX, dY, r, phi)
+            return new BRepCone(p, dZ, dX, dY, r, phi)
         } else if (type == '4') {
             const p = vector3()
             const dZ = vector3()
@@ -555,27 +556,27 @@ export function parseBRep(data: string) {
             const r = real()
             newline()
             log && console.log('sphere', p, dZ, dX, dY, r)
-            return new Sphere(p, dZ, dX, dY, r)
+            return new BRepSphere(p, dZ, dX, dY, r)
         } else if (type == '6') {
             const dV = vector3()
             newline()
             const c = curve(token())
             log && console.log('extrusion', dV)
-            return new Extrusion(dV, c)
+            return new BRepExtrusion(dV, c)
         } else if (type == '7') {
             const p = vector3()
             const d = vector3()
             newline()
             const c = curve(token())
             log && console.log('revolution', p, d)
-            return new Revolution(p, d, c)
+            return new BRepRevolution(p, d, c)
         } else {
             throw 'Surface type not supported: ' + type
         }
     }
 
-    function subshapes(log = false): SubShape[] {
-        const result: SubShape[] = []
+    function subshapes(log = false): BRepSubShape[] {
+        const result: BRepSubShape[] = []
 
         let next: string
 
@@ -607,7 +608,7 @@ export function parseBRep(data: string) {
         return result
     }
 
-    function tshape(type: string, log = false): TShape {
+    function tshape(type: string, log = false): BRepTShape {
         if (type == 'Ve') {
             newline()
             const t = real()
@@ -624,7 +625,7 @@ export function parseBRep(data: string) {
             const ss = subshapes()
             newline()
             log && console.log('vertex', t, p, flags, ss)
-            return new Vertex(t, p, flags, ss)
+            return new BRepVertex(t, p, flags, ss)
         } else if (type == 'Ed') {
             newline()
             empty()
@@ -634,7 +635,7 @@ export function parseBRep(data: string) {
             const d = flag()
             newline()
 
-            const ed: EdgeData[] = []
+            const ed: BRepEdgeData[] = []
 
             let subtype: string
 
@@ -651,7 +652,7 @@ export function parseBRep(data: string) {
                     const max = real()
                     newline()
                     false && console.log('edge data curve3D', iC, iL, min, max)
-                    ed.push(new EdgeDataCurve3D(curves[iC - 1], locations[iL - 1], min, max))
+                    ed.push(new BRepEdgeDataCurve3D(curves[iC - 1], locations[iL - 1], min, max))
                 } else if (subtype == '2') {
                     empty()
                     const iC = int()
@@ -661,7 +662,7 @@ export function parseBRep(data: string) {
                     const max = real()
                     newline()
                     false && console.log('edge data curve2D on surface', iC, iS, iL, min, max)
-                    ed.push(new EdgeDataCurve2DSurface(curve2ds[iC - 1], surfaces[iS - 1], locations[iL - 1], min, max))
+                    ed.push(new BRepEdgeDataCurve2DSurface(curve2ds[iC - 1], surfaces[iS - 1], locations[iL - 1], min, max))
                 } else if (subtype == '3') {
                     empty()
                     const iC = int()
@@ -672,7 +673,7 @@ export function parseBRep(data: string) {
                     const max = real()
                     newline()
                     false && console.log('edge data curve2D on closed surface', iC, continuity, iS, iL, min, max)
-                    ed.push(new EdgeDataCurve2DClosedSurface(curve2ds[iC - 1], continuity, surfaces[iS - 1], locations[iL - 1], min, max))
+                    ed.push(new BRepEdgeDataCurve2DClosedSurface(curve2ds[iC - 1], continuity, surfaces[iS - 1], locations[iL - 1], min, max))
                 } else if (subtype == '4') {
                     const continuity = token()
                     const iS1 = int()
@@ -681,7 +682,7 @@ export function parseBRep(data: string) {
                     const iL2 = int()
                     newline()
                     false && console.log('edge data 4', continuity, iS1, iL1, iS2, iL2)
-                    ed.push(new EdgeData4(continuity, surfaces[iS1 - 1], locations[iL1 - 1], surfaces[iS2 - 1], locations[iL2 - 1]))
+                    ed.push(new BRepEdgeData4(continuity, surfaces[iS1 - 1], locations[iL1 - 1], surfaces[iS2 - 1], locations[iL2 - 1]))
                 } else {
                     throw 'Edge data representation type not suppoted: ' + subtype
                 }
@@ -693,7 +694,7 @@ export function parseBRep(data: string) {
             const s = subshapes()
             newline()
             log && console.log('edge', t, p, r, d, f, s)
-            const edge = new Edge(t, p, r, d, ed, f, s)
+            const edge = new BRepEdge(t, p, r, d, ed, f, s)
             log && console.log(edge)
             return edge
         } else if (type == 'Wi') {
@@ -704,13 +705,13 @@ export function parseBRep(data: string) {
             const s = subshapes()
             newline()
             log && console.log('wire', f, s)
-            const wire = new Wire(f, s)
+            const wire = new BRepWire(f, s)
             log && console.log('\twire', wire.subShapes.length)
             for (const edge of wire.subShapes) {
                 log && console.log('\t\tedge')
-                if (edge.tshape instanceof Edge) {
+                if (edge.tshape instanceof BRepEdge) {
                     for (const vertex of edge.tshape.subShapes) {
-                        if (vertex.tshape instanceof Vertex) {
+                        if (vertex.tshape instanceof BRepVertex) {
                             log && console.log('\t\t\t', vertex.tshape.point)
                         } else {
                             throw 'Vertex expected ' + vertex.constructor.name
@@ -735,7 +736,7 @@ export function parseBRep(data: string) {
             const s = subshapes()
             newline()
             log && console.log('face', n, t, iS, iL, f, surfaces[iS - 1], s)
-            return new Face(n, t, surfaces[iS - 1], locations[iL - 1], f, s)
+            return new BRepFace(n, t, surfaces[iS - 1], locations[iL - 1], f, s)
         } else if (type == 'Sh') {
             newline()
             newline()
@@ -744,7 +745,7 @@ export function parseBRep(data: string) {
             const s = subshapes()
             newline()
             log && console.log('shell', f, s)
-            return new Shell(f, s)
+            return new BRepShell(f, s)
         } else if (type == 'So') {
             newline()
             newline()
@@ -753,7 +754,7 @@ export function parseBRep(data: string) {
             const sub = subshapes()
             newline()
             log && console.log('solid', flags, sub)
-            const solid = new Solid(flags, sub)
+            const solid = new BRepSolid(flags, sub)
             log && console.log(solid)
             return solid
         } else if (type == 'Co') {
@@ -764,13 +765,13 @@ export function parseBRep(data: string) {
             const ss = subshapes()
             newline()
             log && console.log('compound', flags, ss)
-            return new Compound(flags, ss)
+            return new BRepCompound(flags, ss)
         } else {
             throw 'TShape type not supported: ' + type
         }
     }
     
-    let section = Section.None
+    let section = BRepSection.None
 
     let nLocations = 0
     let nCurve2ds = 0
@@ -792,60 +793,60 @@ export function parseBRep(data: string) {
     while (offset < data.length) {
         const next = token()
         if (next == 'Locations') {
-            section = Section.Locations
+            section = BRepSection.Locations
             nLocations = int()
             newline()
             false && console.log('Locations', nLocations)
         } else if (next == 'Curve2ds') {
-            section = Section.Curve2ds
+            section = BRepSection.Curve2ds
             nCurve2ds = int()
             newline()
             false && console.log('Curve2ds', nCurve2ds)
         } else if (next == 'Curves') {
-            section = Section.Curves
+            section = BRepSection.Curves
             nCurves = int()
             newline()
             false && console.log('Curves', nCurves)
         } else if (next == 'Polygon3D') {
-            section = Section.Polygon3D
+            section = BRepSection.Polygon3D
             nPolygon3D = int()
             newline()
             nPolygon3D > 0 && console.log('Polygon3D', nPolygon3D)
         } else if (next == 'PolygonOnTriangulations') {
-            section = Section.PolygonOnTriangulations
+            section = BRepSection.PolygonOnTriangulations
             nPolygonOnTriangulations = int()
             newline()
             nPolygonOnTriangulations > 0 && console.log('PolygonOnTriangulation', nPolygonOnTriangulations)
         } else if (next == 'Surfaces') {
-            section = Section.Surfaces
+            section = BRepSection.Surfaces
             nSurfaces = int()
             newline()
             false && console.log('Surfaces', nSurfaces)
         } else if (next == 'Triangulations') {
-            section = Section.Triangulations
+            section = BRepSection.Triangulations
             nTriangulations = int()
             newline()
             nTriangulations > 0 && console.log('Triangulations', nTriangulations)
         } else if (next == 'TShapes') {
-            section = Section.TShapes
+            section = BRepSection.TShapes
             nTShapes = int()
             newline()
             false && console.log('TShapes', nTShapes)
-        } else if (section == Section.Locations) {
+        } else if (section == BRepSection.Locations) {
             locations.push(location(next))
-        } else if (section == Section.Curve2ds) {
+        } else if (section == BRepSection.Curve2ds) {
             curve2ds.push(curve2d(next))
-        } else if (section == Section.Curves) {
+        } else if (section == BRepSection.Curves) {
             curves.push(curve(next))
-        } else if (section == Section.Polygon3D) {
+        } else if (section == BRepSection.Polygon3D) {
             // TODO
-        } else if (section == Section.PolygonOnTriangulations) {
+        } else if (section == BRepSection.PolygonOnTriangulations) {
             // TODO
-        } else if (section == Section.Surfaces) {
+        } else if (section == BRepSection.Surfaces) {
             surfaces.push(surface(next))
-        } else if (section == Section.Triangulations) {
+        } else if (section == BRepSection.Triangulations) {
             // TODO
-        } else if (section == Section.TShapes) {
+        } else if (section == BRepSection.TShapes) {
             if (next != '\n') {
                 tshapes.push(tshape(next))
             } else {
