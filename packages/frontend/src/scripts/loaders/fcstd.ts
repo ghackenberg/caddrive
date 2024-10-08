@@ -44,7 +44,7 @@ export class FreeCADObject {
 
     public label: string
     public placement: FreeCADPlacement
-    public visible: boolean
+    public visibility: boolean
 
     public shape_file: string
     public shape_brep: BRep
@@ -54,7 +54,7 @@ export class FreeCADObject {
 
     hasShapeBRep() {
         if (this.shape_file) {
-            return true
+            return this.visibility === undefined || this.visibility
         } else {
             for (const child of this.group || []) {
                 if (child.hasShapeBRep()) {
@@ -270,9 +270,9 @@ function parseFCStdDocumentObjectProperty(data: Element, obj: FreeCADObject, doc
             } else {
                 console.log(name, type, data)
             }
-        } else if (name == 'Visible') {
+        } else if (name == 'Visibility') {
             const child = data.getElementsByTagName('Bool')[0]
-            obj.visible = (child.getAttribute('value') == 'true')
+            obj.visibility = (child.getAttribute('value') == 'true')
         } else if (name == 'Profile') {
             if (type == 'App::PropertyLinkSub') {
                 const child = data.getElementsByTagName('LinkSub')[0]
