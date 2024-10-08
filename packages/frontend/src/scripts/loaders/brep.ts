@@ -1,4 +1,4 @@
-import { Group, Matrix4 } from 'three'
+import { BufferGeometry, Color, DoubleSide, Group, Line, LineBasicMaterial, Matrix4, Mesh, MeshBasicMaterial, Vector3 } from 'three'
 
 // Curve2D
 
@@ -196,10 +196,150 @@ export class BRep {
 // Convert
 
 export function convertBRep(brep: BRep) {
+    const tshape = brep.tshapes[brep.tshapes.length - 1]
+    return convertBRepTShape(tshape)
+}
+function convertBRepTShape(tshape: BRepTShape) {
+    if (tshape instanceof BRepWire) {
+        return convertBRepWire(tshape)
+    } else if (tshape instanceof BRepFace) {
+        return convertBRepFace(tshape)
+    } else if (tshape instanceof BRepSolid) {
+        return convertBRepSolid(tshape)
+    } else if (tshape instanceof BRepShell) {
+        return convertBRepShell(tshape)
+    } else if (tshape instanceof BRepCompound) {
+        return convertBRepCompound(tshape)
+    } else {
+        console.log(tshape)
+        throw 'TShape type not supported'
+    }
+}
+function convertBRepWire(wire: BRepWire) {
+    console.log(wire)
+
+    const points: Vector3[] = []
+    for (const subShape of wire.subShapes) {
+        const edge = subShape.tshape
+        const orientation = subShape.orientation
+
+        if (edge instanceof BRepEdge) {
+            if (edge.subShapes.length != 2) {
+                console.log(edge)
+                throw 'Two subshapes expected'
+            }
+
+            if (!(edge.subShapes[0].tshape instanceof BRepVertex)) {
+                console.log(edge)
+                throw 'BRepVertex expected'
+            }
+            if (!(edge.subShapes[1].tshape instanceof BRepVertex)) {
+                console.log(edge)
+                throw 'BRepVertex expected'
+            }
+            
+            const vertex1 = edge.subShapes[0].tshape as BRepVertex
+            const location1 = edge.subShapes[0].location || new Matrix4()
+            const orientation1 = edge.subShapes[0].orientation
+            const vector1 = new Vector3(vertex1.point[0], vertex1.point[1], vertex1.point[2]).applyMatrix4(location1)
+
+            const vertex2 = edge.subShapes[1].tshape as BRepVertex
+            const location2 = edge.subShapes[1].location || new Matrix4()
+            const orientation2 = edge.subShapes[1].orientation
+            const vector2 = new Vector3(vertex2.point[0], vertex2.point[1], vertex2.point[2]).applyMatrix4(location2)
+
+            console.log(`${orientation} ${orientation1} [${vector1.x},${vector1.y},${vector1.z}] ${orientation2} [${vector2.x},${vector2.y},${vector2.z}]`)
+            
+            if (orientation == '+') {
+                if (orientation1 == '+') {
+                    points.length % 3 == 0 && points.push(vector2)
+                    points.push(vector1)
+                } else {
+                    points.length % 3 == 0 && points.push(vector1)
+                    points.push(vector2)
+                }
+            } else if (orientation == '-') {
+                if (orientation1 == '-') {
+                    points.length % 3 == 0 && points.push(vector2)
+                    points.push(vector1)
+                } else {
+                    points.length % 3 == 0 && points.push(vector1)
+                    points.push(vector2)
+                }
+            } else {
+                throw 'Orientation unknown'
+            }
+        } else {
+            throw 'TShape type not supported'
+        }
+    }
+
+    console.log(points)
+
+    const geometry = new BufferGeometry()
+    geometry.setFromPoints(points)
+
+    const lineMat = new LineBasicMaterial({ color: 'black' })
+
+    const line = new Line(geometry, lineMat)
+    line.name = 'BRepWire'
+
+    const meshMat = new MeshBasicMaterial({ color: new Color(Math.random(), Math.random(), Math.random()), side: DoubleSide })
+
+    const mesh = new Mesh(geometry, meshMat)
+    mesh.name = 'BRepWire'
+
     const group = new Group()
+    group.add(line, mesh)
 
-    console.log(brep.tshapes[brep.tshapes.length - 1])
-
+    return group
+}
+function convertBRepFace(face: BRepFace) {
+    const group = new Group()
+    group.name = 'BRepFace'
+    for (const subShape of face.subShapes) {
+        const tshape = subShape.tshape
+        const location = subShape.location
+        const object = convertBRepTShape(tshape)
+        location && object.matrix.copy(location)
+        group.add(object)
+    }
+    return group
+}
+function convertBRepSolid(solid: BRepSolid) {
+    const group = new Group()
+    group.name = 'BRepSolid'
+    for (const subShape of solid.subShapes) {
+        const tshape = subShape.tshape
+        const location = subShape.location
+        const object = convertBRepTShape(tshape)
+        location && object.matrix.copy(location)
+        group.add(object)
+    }
+    return group
+}
+function convertBRepShell(shell: BRepShell) {
+    const group = new Group()
+    group.name = 'BRepShell'
+    for (const subShape of shell.subShapes) {
+        const tshape = subShape.tshape
+        const location = subShape.location
+        const object = convertBRepTShape(tshape)
+        location && object.matrix.copy(location)
+        group.add(object)
+    }
+    return group
+}
+function convertBRepCompound(compound: BRepCompound) {
+    const group = new Group()
+    group.name = 'BRepCompound'
+    for (const subShape of compound.subShapes) {
+        const tshape = subShape.tshape
+        const location = subShape.location
+        const object = convertBRepTShape(tshape)
+        location && object.matrix.copy(location)
+        group.add(object)
+    }
     return group
 }
 
