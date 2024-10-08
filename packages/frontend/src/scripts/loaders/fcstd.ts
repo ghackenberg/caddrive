@@ -1,7 +1,7 @@
 import { TextWriter, ZipReader } from '@zip.js/zip.js'
 import { Group, Quaternion, Vector3 } from 'three'
 
-import { BRep, parseBRep } from './brep'
+import { BRep, convertBRep, parseBRep } from './brep'
 
 export class FCDocument {
     public label: string
@@ -35,9 +35,7 @@ export class FCObject {
     public shape: BRep
     public visible: boolean
 
-    constructor(public name: string, public type: string) {
-
-    }
+    constructor(public name: string, public type: string) {}
 }
 
 export async function loadFCStdModel(path: string) {
@@ -83,7 +81,28 @@ export async function parseFCStdModel(data: ReadableStream) {
     // Log result
     console.log(doc)
     // Convert to THREEJS
-    return new Group()
+    const model = new Group()
+    model.name = doc.label
+    for (const obj of Object.values(doc.objects)) {
+        model.add(convertFCObject(obj))
+    }
+    console.log(model)
+    return model
+}
+
+function convertFCObject(obj: FCObject) {
+    const container = new Group()
+    container.name = obj.label
+
+    if (obj.shape) {
+        container.add(convertBRep(obj.shape))
+    } else if (obj.group) {
+        for (const child of obj.group) {
+            container.add(convertFCObject(child))
+        }
+    }
+
+    return container
 }
 
 function parseFCStdDocument(data: Document) {

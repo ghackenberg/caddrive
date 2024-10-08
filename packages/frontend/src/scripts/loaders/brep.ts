@@ -1,4 +1,4 @@
-import { Matrix4 } from 'three'
+import { Group, Matrix4 } from 'three'
 
 enum Section {
     None, Locations, Curve2ds, Curves, Polygon3D, PolygonOnTriangulations, Surfaces, Triangulations, TShapes
@@ -185,6 +185,36 @@ export class EdgeData4 extends EdgeData {
     constructor(public continuity: string, public surface1: Surface, public location1: Matrix4, public surface2: Surface, public location2: Matrix4) {
         super()
     }
+}
+
+// Convert
+
+export function convertBRep(brep: BRep) {
+    const group = new Group()
+
+    for (const tshape of brep.tshapes) {
+        if (tshape instanceof Wire) {
+            console.log('wire')
+            for (const edge of tshape.subShapes) {
+                if (edge.tshape instanceof Edge) {
+                    if (edge.tshape.subShapes.length != 2) {
+                        throw 'Number of subshapes unexpected: ' + edge.tshape.subShapes.length
+                    }
+                    if (!(edge.tshape.subShapes[0].tshape instanceof Vertex)) {
+                        throw 'Subshape type unexpected: ' + edge.tshape.subShapes[0].tshape
+                    }
+                    if (!(edge.tshape.subShapes[1].tshape instanceof Vertex)) {
+                        throw 'Subshape type unexpected: ' + edge.tshape.subShapes[1].tshape
+                    }
+                    const vertex1 = edge.tshape.subShapes[0].tshape as Vertex
+                    const vertex2 = edge.tshape.subShapes[1].tshape as Vertex
+                    console.log(vertex1.point, vertex2.point)
+                }
+            }
+        }
+    }
+
+    return group
 }
 
 // Parse
