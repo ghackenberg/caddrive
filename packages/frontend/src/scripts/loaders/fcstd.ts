@@ -77,6 +77,7 @@ export async function parseFCStdModel(data: ReadableStream) {
             // Parse BRep file
             const writer = new TextWriter()
             const content = await entry.getData(writer)
+            console.log('Parsing', entry.filename)
             breps[entry.filename] = parseBRep(content)
         }
     }

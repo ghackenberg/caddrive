@@ -15,7 +15,7 @@ export class BRepCircle2D extends BRepCurve2D {
         super()
     }
 }
-export class BRepBSline2D extends BRepCurve2D {
+export class BRepBSlineCurve2D extends BRepCurve2D {
     constructor(public degree: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
         super()
     }
@@ -46,12 +46,12 @@ export class BRepEllipse extends BRepCurve {
         super()
     }
 }
-export class BRepBezier extends BRepCurve {
+export class BRepBezierCurve extends BRepCurve {
     constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[]) {
         super()
     }
 }
-export class BRepBSpline extends BRepCurve {
+export class BRepBSplineCurve extends BRepCurve {
     constructor(public rational: boolean, public degrees: number, public poles: { b: number[], h: number | void }[], public knots: { u: number, q: number }[]) {
         super()
     }
@@ -94,6 +94,16 @@ export class BRepExtrusion extends BRepSurface {
 }
 export class BRepRevolution extends BRepSurface {
     constructor(public p: number[], public d: number[], public curve: BRepCurve) {
+        super()
+    }
+}
+export class BRepBSplineSurface extends BRepSurface {
+    constructor(public uRational: number, public vRational: number, public uDegree: number, public vDegree: number, public weightPoles: { b: number[], h: number | void }[][], public uKnots: { u: number, q: number }[], public vKnots: { u: number, q: number }[]) {
+        super()
+    }
+}
+export class BRepTrimmedSurface extends BRepSurface {
+    constructor(public uMin: number, public uMax: number, public vMin: number, public vMax: number, public surface: BRepSurface) {
         super()
     }
 }
@@ -188,28 +198,7 @@ export class BRep {
 export function convertBRep(brep: BRep) {
     const group = new Group()
 
-    for (const tshape of brep.tshapes) {
-        if (tshape instanceof BRepWire) {
-            console.log('wire')
-            for (const edge of tshape.subShapes) {
-                if (edge.tshape instanceof BRepEdge) {
-                    if (edge.tshape.subShapes.length != 2) {
-                        throw 'Number of subshapes unexpected: ' + edge.tshape.subShapes.length
-                    }
-                    if (!(edge.tshape.subShapes[0].tshape instanceof BRepVertex)) {
-                        throw 'Subshape type unexpected: ' + edge.tshape.subShapes[0].tshape
-                    }
-                    if (!(edge.tshape.subShapes[1].tshape instanceof BRepVertex)) {
-                        throw 'Subshape type unexpected: ' + edge.tshape.subShapes[1].tshape
-                    }
-                    const vertex1 = edge.tshape.subShapes[0].tshape as BRepVertex
-                    const vertex2 = edge.tshape.subShapes[1].tshape as BRepVertex
-                    vertex1
-                    vertex2
-                }
-            }
-        }
-    }
+    console.log(brep.tshapes[brep.tshapes.length - 1])
 
     return group
 }
@@ -422,7 +411,7 @@ export function parseBRep(data: string) {
             
             newline()
             log && console.log('b-sline', degree, poleCount, knotCount, poles, knots)
-            return new BRepBSline2D(degree, poles, knots)
+            return new BRepBSlineCurve2D(degree, poles, knots)
         } else if (type == '8') {
             const umin = real()
             const umax = real()
@@ -475,7 +464,7 @@ export function parseBRep(data: string) {
 
             newline()
             log && console.log('bezier', rational, degree, poles)
-            return new BRepBezier(rational, degree, poles)
+            return new BRepBezierCurve(rational, degree, poles)
         } else if (type == '7') {
             const rational = flag()
             flag()
@@ -506,7 +495,7 @@ export function parseBRep(data: string) {
 
             newline()
             log && console.log('b-spline', rational, degree, poleCount, knotCount, poles, knots)
-            return new BRepBSpline(rational, degree, poles, knots)
+            return new BRepBSplineCurve(rational, degree, poles, knots)
         } else if (type == '8') {
             const umin = real()
             const umax = real()
@@ -570,6 +559,59 @@ export function parseBRep(data: string) {
             const c = curve(token())
             log && console.log('revolution', p, d)
             return new BRepRevolution(p, d, c)
+        } else if (type == '9') {
+            const uRational = int()
+            const vRational = int()
+            zero()
+            zero()
+            const uDegree = int()
+            const vDegree = int()
+            const uPoleCount = int()
+            const vPoleCount = int()
+            const uKnotCount = int()
+            const vKnotCount = int()
+            log && console.log('b-spline', uRational, vRational, uDegree, vDegree, uPoleCount, vPoleCount, uKnotCount, vKnotCount)
+            const weightPoles: { b: number[], h: number | void }[][] = []
+            while (weightPoles.length < uPoleCount) {
+                const weightPoleGroup: { b: number[], h: number | void }[] = []
+                while (weightPoleGroup.length < vPoleCount) {
+                    const b = vector3()
+                    const h = (uRational + vRational) ? real() : empty()
+                    weightPoleGroup.push({ b, h })
+                }
+                newline()
+                weightPoles.push(weightPoleGroup)
+            }
+            log && console.log('b-spline', 'weightPoles', weightPoles)
+            newline()
+            const uKnots: { u: number, q: number }[] = []
+            while (uKnots.length < uKnotCount) {
+                const u = real()
+                const q = int()
+                newline()
+                uKnots.push({ u, q })
+            }
+            newline()
+            log && console.log('b-spline', 'uKnots', uKnots)
+            const vKnots: { u: number, q: number }[] = []
+            while (vKnots.length < vKnotCount) {
+                const u = real()
+                const q = int()
+                newline()
+                vKnots.push({ u, q })
+            }
+            newline()
+            log && console.log('b-spline', 'vKnots', vKnots)
+            return new BRepBSplineSurface(uRational, vRational, uDegree, vDegree, weightPoles, uKnots, vKnots)
+        } else if (type == '10') {
+            const uMin = real()
+            const uMax = real()
+            const vMin = real()
+            const vMax = real()
+            newline()
+            const child = surface(token())
+            log && console.log('trimmed surface', uMin, uMax, vMin, vMax, child)
+            return new BRepTrimmedSurface(uMin, uMax, vMin, vMax, child)
         } else {
             throw 'Surface type not supported: ' + type
         }
