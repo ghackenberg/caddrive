@@ -1,4 +1,4 @@
-import { BlobReader, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
+import { BlobReader, Entry, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
 import { Color, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
@@ -29,7 +29,6 @@ export class FreeCADObject {
     public visibility: boolean
 
     public shape_file: string
-    public shape_gltf: GLTF
 
     constructor(public name: string, public type: string) {}
 
@@ -58,7 +57,7 @@ function traverse(object: Object3D, material: MeshStandardMaterial) {
 
 export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Glb: (content: string) => Promise<Uint8Array>) {
     const diffuse: {[name: string]: MeshStandardMaterial[]} = {}
-    const gltfs: {[name: string]: GLTF} = {}
+    const breps: {[name: string]: Entry} = {}
     let doc: FreeCADDocument
     const reader = new ZipReader(data)
     const parser = new DOMParser()
@@ -87,35 +86,10 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
                 diffuse[entry.filename].push(material)
             }
         } else if (entry.filename.endsWith('.brp')) {
-            try {
-                // Parse BRep file
-                const writer = new TextWriter()
-                const content = await entry.getData(writer)
-                console.log('Parsing', entry.filename)
-                const glbFileData = await brep2Glb(content)
-                gltfs[entry.filename] = await new Promise<GLTF>((resolve, reject) => {
-                    GLTF.parse(glbFileData.buffer, undefined, resolve, reject)
-                })
-            } catch (e) {
-                console.log(e)
-            }
+            breps[entry.filename] = entry
         }
     }
     await reader.close()
-    // Update mesh materials
-    for (const file of Object.keys(gltfs)) {
-        const other = file.replace('PartShape', 'DiffuseColor').replace('.brp', '')
-        if (other in diffuse) {
-            const material = diffuse[other][0]
-            traverse(gltfs[file].scene, material)
-        }
-    }
-    // Connect BReps to objects
-    for (const object of Object.values(doc.objects)) {
-        if (object.shape_file in gltfs) {
-            object.shape_gltf = gltfs[object.shape_file]
-        }
-    }
     // Delete objects with parents
     for (const object of Object.values(doc.objects)) {
         if (object.parents.length > 0) {
@@ -130,27 +104,45 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
     model.rotateX(-Math.PI / 2)
     for (const obj of Object.values(doc.objects)) {
         if (obj.hasShapeBRep()) {
-            model.add(convertFCObject(obj))
+            model.add(await convertFCObject(obj, diffuse, breps, brep2Glb))
         }
     }
     return model
 }
 
-function convertFCObject(obj: FreeCADObject) {
+async function convertFCObject(obj: FreeCADObject, diffuse: {[name: string]: MeshStandardMaterial[]}, breps: {[name: string]: Entry}, brep2Glb: (content: string) => Promise<Uint8Array>) {
     const container = new Group()
     container.name = obj.label
 
     if (obj.shape_file) {
-        if (obj.shape_gltf) {
-            const clone = obj.shape_gltf.scene.clone(true)
+        try {
+            // Parse BRep file
+            const entry = breps[obj.shape_file]
+            const writer = new TextWriter()
+            const content = await entry.getData(writer)
+            console.log('Parsing', entry.filename)
+            const glbFileData = await brep2Glb(content)
+            const gltf = await new Promise<GLTF>((resolve, reject) => {
+                GLTF.parse(glbFileData.buffer, undefined, resolve, reject)
+            })
+            const clone = gltf.scene.clone(true)
+            // Update mesh materials
+            const other = entry.filename.replace('PartShape', 'DiffuseColor').replace('.brp', '')
+            if (other in diffuse) {
+                const material = diffuse[other][0]
+                traverse(gltf.scene, material)
+            }
             traverse(clone, new MeshStandardMaterial({ color: 'black', wireframe: true }))
+            // Add scene objects
             container.add(clone)
-            container.add(obj.shape_gltf.scene)
+            container.add(gltf.scene)
+        } catch (e) {
+            console.log(e)
         }
     } else if (obj.group) {
         for (const child of obj.group) {
             if (child.hasShapeBRep()) {
-                container.add(convertFCObject(child))
+                container.add(await convertFCObject(child, diffuse, breps, brep2Glb))
             }
         }
     }
