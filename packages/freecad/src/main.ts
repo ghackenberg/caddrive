@@ -1,20 +1,10 @@
 import { BlobReader, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
-import initOpenCascade, { OpenCascadeInstance } from 'opencascade.js'
 import { Color, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { BRep, parseBRep } from 'productboard-brep'
 
 const GLTF = new GLTFLoader()
-
-let OCCT: Promise<OpenCascadeInstance>
-
-function getOCCT() {
-    if (!OCCT) {
-        OCCT = initOpenCascade()
-    }
-    return OCCT
-}
 
 export class FreeCADDocument {
     public label: string
@@ -69,7 +59,7 @@ function traverse(object: Object3D, material: MeshStandardMaterial) {
     }
 }
 
-export async function parseFCStdModel(data: ReadableStream | BlobReader) {
+export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Glb: (content: string) => Promise<Uint8Array>) {
     const diffuse: {[name: string]: MeshStandardMaterial[]} = {}
     const breps: {[name: string]: BRep} = {}
     const gltfs: {[name: string]: GLTF} = {}
@@ -106,34 +96,7 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader) {
             const content = await entry.getData(writer)
             //console.log('Parsing', entry.filename)
             breps[entry.filename] = parseBRep(content)
-            const occt = await getOCCT()
-            // Parse shape
-            //console.log('Reading BRep', entry.filename)
-            const shape = new occt.TopoDS_Shape()
-            occt.FS.createDataFile('.', entry.filename, content, true, true, true)
-            const builder = new occt.BRep_Builder()
-            const readProgress = new occt.Message_ProgressRange_1()
-            occt.BRepTools.Read_2(shape, `./${entry.filename}`, builder, readProgress)
-            occt.FS.unlink(`./${entry.filename}`)
-            // Visualize shape
-            //console.log('Meshing BRep', entry.filename)
-            const storageformat = new occt.TCollection_ExtendedString_1()
-            const doc = new occt.TDocStd_Document(storageformat)
-            const shapeTool = occt.XCAFDoc_DocumentTool.ShapeTool(doc.Main()).get()
-            shapeTool.SetShape(shapeTool.NewShape(), shape)
-            new occt.BRepMesh_IncrementalMesh_2(shape, 0.1, false, 0.1, false)
-            // Export a GLB file (this will also perform the meshing)
-            //console.log('Writing GLB', entry.filename)
-            const glbFileName = new occt.TCollection_AsciiString_2(`./${entry.filename}.glb`)
-            const cafWriter = new occt.RWGltf_CafWriter(glbFileName, true)
-            const docHandle = new occt.Handle_TDocStd_Document_2(doc)
-            const fileInfo = new occt.TColStd_IndexedDataMapOfStringString_1()
-            const writeProgress = new occt.Message_ProgressRange_1()
-            cafWriter.Perform_2(docHandle, fileInfo, writeProgress)
-            // Read the GLB file from the virtual file system
-            //console.log('Readling GLB', entry.filename)
-            const glbFileData = occt.FS.readFile(`./${entry.filename}.glb`, { encoding: "binary" })
-            occt.FS.unlink(`./${entry.filename}.glb`)
+            const glbFileData = await brep2Glb(content)
             gltfs[entry.filename] = await new Promise<GLTF>((resolve, reject) => {
                 GLTF.parse(glbFileData.buffer, undefined, resolve, reject)
             })

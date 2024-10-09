@@ -1,0 +1,1 @@
+export const worker = new Worker('/scripts/worker/main.js')

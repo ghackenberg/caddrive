@@ -16,6 +16,7 @@ import { useProduct, useVersion } from '../../hooks/entity'
 import { useMembers, useVersions } from '../../hooks/list'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
+import { parseBRep } from '../../loaders/brep'
 import { parseDAEModel } from '../../loaders/dae'
 import { parseFBXModel } from '../../loaders/fbx'
 import { parseGLTFModel } from '../../loaders/gltf'
@@ -131,7 +132,7 @@ export const ProductVersionSettingView = () => {
         let exec = true
         if (stream) {
             if (file.name.endsWith('.FCStd')) {
-                parseFCStdModel(stream).then(group => exec && setGroup(group))
+                parseFCStdModel(stream, parseBRep).then(group => exec && setGroup(group))
             }
         }
         return () => { exec = false }

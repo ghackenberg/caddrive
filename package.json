@@ -39,6 +39,7 @@
         "packages/database",
         "packages/broker",
         "packages/backend",
+        "packages/worker",
         "packages/frontend",
         "packages/gateway"
     ],
