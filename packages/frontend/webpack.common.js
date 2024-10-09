@@ -17,7 +17,7 @@ export default {
                 test: /\.(wasm)$/i,
                 type: 'asset/resource',
                 generator: {
-                    filename: 'modules/[hash][ext][query]'
+                    filename: 'modules/frontend/[hash][ext][query]'
                 }
             },{
                 test: /\.(css)$/i,
@@ -26,13 +26,13 @@ export default {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
                 type: 'asset/resource',
                 generator: {
-                    filename: 'images/[hash][ext][query]'
+                    filename: 'images/frontend/[hash][ext][query]'
                 }
             },{
                 test: /\.(woff|woff2|eot|ttf|otf)$/i,
                 type: 'asset/resource',
                 generator: {
-                    filename: 'fonts/[hash][ext][query]'
+                    filename: 'fonts/frontend/[hash][ext][query]'
                 }
             }
         ],

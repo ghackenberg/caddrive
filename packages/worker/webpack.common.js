@@ -15,7 +15,7 @@ export default {
                 test: /\.(wasm)$/i,
                 type: 'asset/resource',
                 generator: {
-                    filename: 'modules/[hash][ext][query]'
+                    filename: 'modules/worker/[hash][ext][query]'
                 }
             }
         ],
