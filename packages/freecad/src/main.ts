@@ -2,8 +2,6 @@ import { BlobReader, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip
 import { Color, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { BRep, parseBRep } from 'productboard-brep'
-
 const GLTF = new GLTFLoader()
 
 export class FreeCADDocument {
@@ -31,7 +29,6 @@ export class FreeCADObject {
     public visibility: boolean
 
     public shape_file: string
-    public shape_brep: BRep
     public shape_gltf: GLTF
 
     constructor(public name: string, public type: string) {}
@@ -61,7 +58,6 @@ function traverse(object: Object3D, material: MeshStandardMaterial) {
 
 export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Glb: (content: string) => Promise<Uint8Array>) {
     const diffuse: {[name: string]: MeshStandardMaterial[]} = {}
-    const breps: {[name: string]: BRep} = {}
     const gltfs: {[name: string]: GLTF} = {}
     let doc: FreeCADDocument
     const reader = new ZipReader(data)
@@ -91,15 +87,18 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
                 diffuse[entry.filename].push(material)
             }
         } else if (entry.filename.endsWith('.brp')) {
-            // Parse BRep file
-            const writer = new TextWriter()
-            const content = await entry.getData(writer)
-            //console.log('Parsing', entry.filename)
-            breps[entry.filename] = parseBRep(content)
-            const glbFileData = await brep2Glb(content)
-            gltfs[entry.filename] = await new Promise<GLTF>((resolve, reject) => {
-                GLTF.parse(glbFileData.buffer, undefined, resolve, reject)
-            })
+            try {
+                // Parse BRep file
+                const writer = new TextWriter()
+                const content = await entry.getData(writer)
+                console.log('Parsing', entry.filename)
+                const glbFileData = await brep2Glb(content)
+                gltfs[entry.filename] = await new Promise<GLTF>((resolve, reject) => {
+                    GLTF.parse(glbFileData.buffer, undefined, resolve, reject)
+                })
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
     await reader.close()
@@ -113,8 +112,7 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
     }
     // Connect BReps to objects
     for (const object of Object.values(doc.objects)) {
-        if (object.shape_file in breps) {
-            object.shape_brep = breps[object.shape_file]
+        if (object.shape_file in gltfs) {
             object.shape_gltf = gltfs[object.shape_file]
         }
     }
@@ -143,10 +141,12 @@ function convertFCObject(obj: FreeCADObject) {
     container.name = obj.label
 
     if (obj.shape_file) {
-        const clone = obj.shape_gltf.scene.clone(true)
-        traverse(clone, new MeshStandardMaterial({ color: 'black', wireframe: true }))
-        container.add(clone)
-        container.add(obj.shape_gltf.scene)
+        if (obj.shape_gltf) {
+            const clone = obj.shape_gltf.scene.clone(true)
+            traverse(clone, new MeshStandardMaterial({ color: 'black', wireframe: true }))
+            container.add(clone)
+            container.add(obj.shape_gltf.scene)
+        }
     } else if (obj.group) {
         for (const child of obj.group) {
             if (child.hasShapeBRep()) {
