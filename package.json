@@ -12,13 +12,16 @@
         {
             "name": "Georg Hackenberg",
             "email": "georg.hackenberg@fh-wels.at"
-        },{
+        },
+        {
             "name": "Christian Zehetner",
             "email": "christian.zehetner@fh-wels.at"
-        },{
+        },
+        {
             "name": "Jürgen Humenberger",
             "email": "juergen.humenberger@fh-wels.at"
-        },{
+        },
+        {
             "name": "Dominik Frühwirth",
             "email": "dominik.fruehwirth@fh-wels.at"
         }
@@ -30,6 +33,8 @@
     "workspaces": [
         "packages/codeaster",
         "packages/ldraw",
+        "packages/brep",
+        "packages/freecad",
         "packages/common",
         "packages/database",
         "packages/broker",
@@ -42,8 +47,8 @@
         "build": "workspaces-run -- npm run build",
         "lint": "workspaces-run -- npm run lint",
         "loc": "workspaces-run -- npm run loc",
-        "dev": "workspaces-run --parallel --ignore=\"productboard-{ldraw,codeaster,common,database}\" -- npm run dev",
-        "start": "workspaces-run --parallel --ignore=\"productboard-{ldraw,codeaster,common,database}\" -- npm run start",
+        "dev": "workspaces-run --parallel --ignore=\"productboard-{ldraw,brep,freecad,codeaster,common,database}\" -- npm run dev",
+        "start": "workspaces-run --parallel --ignore=\"productboard-{ldraw,brep,freecad,codeaster,common,database}\" -- npm run start",
         "migration:generate": "workspaces-run --only=\"productboard-database\" -- npm run migration:generate",
         "migration:create": "workspaces-run --only=\"productboard-database\" -- npm run migration:create",
         "migration:run": "workspaces-run --only=\"productboard-database\" -- npm run migration:run",
@@ -58,10 +63,12 @@
         "@types/node": "^16.18.37",
         "@types/shortid": "^0.0.29",
         "@types/three": "^0.150.2",
+        "@zip.js/zip.js": "^2.7.52",
         "axios": "^0.26.1",
         "jose": "^4.14.1",
         "mqtt": "^4.3.7",
         "mqtt-pattern": "^2.1.0",
+        "opencascade.js": "^2.0.0-beta.b5ff984",
         "reflect-metadata": "^0.1.13",
         "shortid": "^2.2.16",
         "three": "^0.151.3",
