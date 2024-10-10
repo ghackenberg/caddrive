@@ -1,5 +1,5 @@
 import { BlobReader, Entry, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
-import { Color, Group, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
+import { BufferGeometry, Color, EdgesGeometry, Group, LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 const GLTF = new GLTFLoader()
@@ -68,7 +68,6 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
     // Data stuctures
     const colors: {[name: string]: MeshStandardMaterial[]} = {}
     const breps: {[name: string]: Entry} = {}
-    const gltfs: {[name: string]: GLTF} = {}
     // Main document
     let doc: FreeCADDocument
     let guiDoc: Document
@@ -126,13 +125,40 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
     model.rotateX(-Math.PI / 2)
     for (const obj of Object.values(doc.objects)) {
         if (obj.isVisible()) {
-            model.add(await convertFCObject(obj, colors, breps, gltfs, brep2Glb))
+            model.add(await convertFCObject(obj, colors, breps, brep2Glb))
         }
     }
     return model
 }
 
-async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: MeshStandardMaterial[]}, breps: {[name: string]: Entry}, gltfs: {[name: string]: GLTF}, brep2Glb: (content: string) => Promise<Uint8Array>) {
+function makeWire(object: Object3D): Object3D {
+    if (object instanceof Group) {
+        const group = new Group()
+        group.rotation.copy(object.rotation)
+        group.position.copy(object.position)
+        
+        for (const child of object.children) {
+            group.add(makeWire(child))
+        }
+
+        return group
+    } else if (object instanceof Mesh) {
+        const geometry = object.geometry as BufferGeometry
+
+        const edge_geometry = new EdgesGeometry(geometry.clone(), 45)
+        const edge_material = new LineBasicMaterial({ color: 'black' })
+
+        const lines = new LineSegments(edge_geometry, edge_material)
+        lines.position.copy(object.position)
+        lines.rotation.copy(object.rotation)
+
+        return lines
+    } else {
+        throw 'Unexpected object type: ' + object.constructor.name
+    }
+}
+
+async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: MeshStandardMaterial[]}, breps: {[name: string]: Entry}, brep2Glb: (content: string) => Promise<Uint8Array>) {
     const container = new Group()
     container.name = obj.label
     if (obj.placement) {
@@ -146,20 +172,17 @@ async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: Mesh
         try {
             const file = obj.brep
             // Parse brep
-            if (!(file in gltfs)) {
-                const entry = breps[obj.brep]
-                const writer = new TextWriter()
-                const content = await entry.getData(writer)
-                //console.log('Converting', file)
-                const data = await brep2Glb(content)
-                //console.log('Parsing', file)
-                gltfs[file] = await new Promise<GLTF>((resolve, reject) => {
-                    GLTF.parse(data.buffer, undefined, resolve, reject)
-                })
-            }
-            // Clone scene
-            const face = gltfs[file].scene.clone(true)
-            const wire = gltfs[file].scene.clone(true)
+            const entry = breps[file]
+            const writer = new TextWriter()
+            const content = await entry.getData(writer)
+            //console.log('Converting', file)
+            const data = await brep2Glb(content)
+            const gltf = await new Promise<GLTF>((resolve, reject) => {
+                GLTF.parse(data.buffer, undefined, resolve, reject)
+            })
+            //console.log('Parsing', file)
+            const face = gltf.scene
+            const wire = makeWire(face)
             // Update mesh materials
             traverse(face, colors[obj.diffuse][0])
             traverse(wire, new MeshStandardMaterial({ color: 'black', wireframe: true }))
@@ -172,7 +195,7 @@ async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: Mesh
     } else if (obj.group) {
         for (const child of obj.group) {
             if (child.isVisible()) {
-                container.add(await convertFCObject(child, colors, breps, gltfs, brep2Glb))
+                container.add(await convertFCObject(child, colors, breps, brep2Glb))
             }
         }
     }
