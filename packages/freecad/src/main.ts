@@ -146,9 +146,9 @@ async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: Mesh
                 const entry = breps[obj.brep]
                 const writer = new TextWriter()
                 const content = await entry.getData(writer)
-                console.log('Converting', file)
+                //console.log('Converting', file)
                 const data = await brep2Glb(content)
-                console.log('Parsing', file)
+                //console.log('Parsing', file)
                 gltfs[file] = await new Promise<GLTF>((resolve, reject) => {
                     GLTF.parse(data.buffer, undefined, resolve, reject)
                 })
