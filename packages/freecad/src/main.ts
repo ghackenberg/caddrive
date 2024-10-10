@@ -10,7 +10,7 @@ export class FreeCADDocument {
 }
 
 export class FreeCADPlacement {
-    constructor(public position: Vector3) {
+    constructor(public position: Vector3, public axis: Vector3, public angle: number) {
 
     }
 }
@@ -136,7 +136,11 @@ async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: Mesh
     const container = new Group()
     container.name = obj.label
     if (obj.placement) {
-        //container.position.copy(obj.placement.position)
+        if (obj.type == 'App::Part') {
+            container.rotateOnAxis(obj.placement.axis, obj.placement.angle)
+            container.position.copy(obj.placement.position)
+            console.log(container.matrix)
+        }
     }
     if (obj.brep) {
         try {
@@ -256,8 +260,14 @@ function parseFCStdDocumentObjectProperty(data: Element, obj: FreeCADObject, doc
             const px = Number.parseFloat(child.getAttribute('Px'))
             const py = Number.parseFloat(child.getAttribute('Py'))
             const pz = Number.parseFloat(child.getAttribute('Pz'))
+            const ox = Number.parseFloat(child.getAttribute('Ox'))
+            const oy = Number.parseFloat(child.getAttribute('Oy'))
+            const oz = Number.parseFloat(child.getAttribute('Oz'))
+            const a = Number.parseFloat(child.getAttribute('A'))
             const position = new Vector3(px, py, pz)
-            obj.placement = new FreeCADPlacement(position)
+            const axis = new Vector3(ox, oy, oz)
+            //console.log(matrix)
+            obj.placement = new FreeCADPlacement(position, axis, a)
         } else if (name == 'Shape') {
             if (type == 'Part::PropertyPartShape') {
                 const child = data.getElementsByTagName('Part')[0]
