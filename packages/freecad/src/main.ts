@@ -1,5 +1,5 @@
 import { BlobReader, Entry, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
-import { Color, Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
+import { Color, Group, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 const GLTF = new GLTFLoader()
@@ -7,6 +7,12 @@ const GLTF = new GLTFLoader()
 export class FreeCADDocument {
     public label: string
     public objects: {[name: string]: FreeCADObject} = {}
+}
+
+export class FreeCADPlacement {
+    constructor(public position: Vector3) {
+
+    }
 }
 
 export class FreeCADObject {
@@ -25,7 +31,10 @@ export class FreeCADObject {
     public base: FreeCADObject
     public shape: FreeCADObject
 
+    public placement: FreeCADPlacement
+
     public label: string
+    public diffuse: string
     public visibility: boolean
 
     public brep: string
@@ -62,29 +71,37 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
     const gltfs: {[name: string]: GLTF} = {}
     // Main document
     let doc: FreeCADDocument
+    let guiDoc: Document
     // Read ZIP file
     const reader = new ZipReader(data)
     const entries = await reader.getEntries()
     for (const entry of entries) {
         if (entry.filename == 'Document.xml') {
-            // Read main document
+            // Read document
             const writer = new TextWriter()
             const content = await entry.getData(writer)
             const parser = new DOMParser()
             const document = parser.parseFromString(content, 'application/xml')
             doc = parseFCStdDocument(document)
+        } else if (entry.filename == 'GuiDocument.xml') {
+            // Read GUI document
+            const writer = new TextWriter()
+            const content = await entry.getData(writer)
+            const parser = new DOMParser()
+            guiDoc = parser.parseFromString(content, 'application/xml')
         } else if (entry.filename.startsWith('DiffuseColor')) {
             // Read color specification
             const writer = new Uint8ArrayWriter()
             const content = await entry.getData(writer)
             colors[entry.filename] = []
             for (let i = 1; i < content.length / 4; i++) {
-                const a = 1 - content[i * 4 + 0] / 255
-                const b = 1 - content[i * 4 + 1] / 255
-                const g = 1 - content[i * 4 + 2] / 255
-                const r = 1 - content[i * 4 + 3] / 255
-                const color = new Color(r, g, b)
-                const material = new MeshStandardMaterial({ color, opacity: a })
+                const a = content[i * 4 + 0]
+                const b = content[i * 4 + 1]
+                const g = content[i * 4 + 2]
+                const r = content[i * 4 + 3]
+                //console.log(entry.filename, r, g, b, a)
+                const color = new Color(r / 255, g / 255, b / 255)
+                const material = new MeshStandardMaterial({ color, opacity: a / 255 })
                 colors[entry.filename].push(material)
             }
         } else if (entry.filename.endsWith('.brp')) {
@@ -93,6 +110,10 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
         }
     }
     await reader.close()
+    // Parse gui document
+    if (guiDoc) {
+        parseFCStdGuiDocument(guiDoc, doc)
+    }
     // Delete objects with parents
     for (const object of Object.values(doc.objects)) {
         if (object.parents.length > 0) {
@@ -114,6 +135,9 @@ export async function parseFCStdModel(data: ReadableStream | BlobReader, brep2Gl
 async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: MeshStandardMaterial[]}, breps: {[name: string]: Entry}, gltfs: {[name: string]: GLTF}, brep2Glb: (content: string) => Promise<Uint8Array>) {
     const container = new Group()
     container.name = obj.label
+    if (obj.placement) {
+        //container.position.copy(obj.placement.position)
+    }
     if (obj.brep) {
         try {
             const file = obj.brep
@@ -133,11 +157,7 @@ async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: Mesh
             const face = gltfs[file].scene.clone(true)
             const wire = gltfs[file].scene.clone(true)
             // Update mesh materials
-            const other = file.replace('PartShape', 'DiffuseColor').replace('.brp', '')
-            if (other in colors) {
-                const material = colors[other][0]
-                traverse(face, material)
-            }
+            traverse(face, colors[obj.diffuse][0])
             traverse(wire, new MeshStandardMaterial({ color: 'black', wireframe: true }))
             // Add scene objects
             container.add(face)
@@ -228,6 +248,16 @@ function parseFCStdDocumentObjectProperty(data: Element, obj: FreeCADObject, doc
         if (name == 'Label') {
             const child = data.getElementsByTagName('String')[0]
             obj.label = child.getAttribute('value')
+        } else if (name == 'Visibility') {
+            const child = data.getElementsByTagName('Bool')[0]
+            obj.visibility = (child.getAttribute('value') == 'true')
+        } else if (name == 'Placement') {
+            const child = data.getElementsByTagName('PropertyPlacement')[0]
+            const px = Number.parseFloat(child.getAttribute('Px'))
+            const py = Number.parseFloat(child.getAttribute('Py'))
+            const pz = Number.parseFloat(child.getAttribute('Pz'))
+            const position = new Vector3(px, py, pz)
+            obj.placement = new FreeCADPlacement(position)
         } else if (name == 'Shape') {
             if (type == 'Part::PropertyPartShape') {
                 const child = data.getElementsByTagName('Part')[0]
@@ -242,9 +272,6 @@ function parseFCStdDocumentObjectProperty(data: Element, obj: FreeCADObject, doc
             } else {
                 console.log(name, type, data)
             }
-        } else if (name == 'Visibility') {
-            const child = data.getElementsByTagName('Bool')[0]
-            obj.visibility = (child.getAttribute('value') == 'true')
         } else if (name == 'Profile') {
             if (type == 'App::PropertyLinkSub') {
                 const child = data.getElementsByTagName('LinkSub')[0]
@@ -336,5 +363,31 @@ function parseFCStdDocumentObjectProperty(data: Element, obj: FreeCADObject, doc
         }
     } catch (e) {
         console.log(name, type, data)
+    }
+}
+
+function parseFCStdGuiDocument(data: Document, doc: FreeCADDocument) {
+    const gui = data.documentElement
+    const vpd = gui.getElementsByTagName('ViewProviderData')[0]
+    const vp_list = vpd.getElementsByTagName('ViewProvider')
+
+    for (let i = 0; i < vp_list.length; i++) {
+        const vp = vp_list.item(i)
+        const vp_name = vp.getAttribute('name')
+
+        const props = vp.getElementsByTagName('Properties')[0]
+        const prop_list = props.getElementsByTagName('Property')
+
+        for (let j = 0; j < prop_list.length; j++) {
+            const prop = prop_list.item(j)
+            const prop_name = prop.getAttribute('name')
+
+            if (prop_name == 'DiffuseColor') {
+                const colorlist = prop.getElementsByTagName('ColorList')[0]
+                const colorlist_file = colorlist.getAttribute('file')
+
+                doc.objects[vp_name].diffuse = colorlist_file
+            }
+        }
     }
 }
