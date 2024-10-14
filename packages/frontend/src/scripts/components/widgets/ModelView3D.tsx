@@ -15,7 +15,12 @@ interface Props {
     over?: (object: Object3D) => void
     out?: (object: Object3D) => void
     click?: (object: Object3D) => void
-    drop?: (event: React.DragEvent, pos: Vector3) => void
+    moveStart?: (object: Object3D, pos: Vector3) => void
+    moveAborted?: (object: Object3D) => void
+    drageEnter?: (event: React.DragEvent, pos: Vector3) => void
+    drag?: (pos: Vector3) => void
+    dragLeave?: (event: React.DragEvent) => void
+    drop?: (pos: Vector3) => void
 }
 
 export class ModelView3D extends React.Component<Props> {
@@ -314,6 +319,11 @@ export class ModelView3D extends React.Component<Props> {
     handleMouseDown(event: React.MouseEvent) {
         this.position_start = event
         this.position_end = event
+
+        if (event.ctrlKey) {
+            this.orbit.enabled = false
+            this.props.moveStart(this.hovered, this.unproject(event.clientX, event.clientY))
+        }
     }
 
     handleMouseMove(event: React.MouseEvent) {
@@ -322,9 +332,25 @@ export class ModelView3D extends React.Component<Props> {
         } else {
             this.updateHovered(event)
         }
+
+        if(!this.orbit.enabled) {
+            const positionY = event.clientY - this.renderer.domElement.offsetTop
+            const positionX = event.clientX - this.renderer.domElement.offsetLeft
+            if((positionX < 0)||(positionX > this.renderer.domElement.offsetWidth)||(positionY > this.renderer.domElement.offsetHeight)||(positionY < 0)) {
+                this.props.moveAborted(this.hovered)
+                this.orbit.enabled = true
+            }
+            else if(event.ctrlKey) {
+                this.props.drag(this.unproject(event.clientX, event.clientY))
+            }
+            else {
+                this.props.moveAborted(this.hovered)
+                this.orbit.enabled = true
+            }
+        }
     }
 
-    handleMouseUp() {
+    handleMouseUp(event: React.MouseEvent) {
         if (this.position_start && this.position_end) {
             if (this.calculateDistance() <= 1) {
                  this.updateSelected(this.position_end)
@@ -332,6 +358,11 @@ export class ModelView3D extends React.Component<Props> {
             this.position_start = null
             this.position_end = null
         }
+        if(!this.orbit.enabled) {
+            this.orbit.enabled = true
+            this.props.drop(this.unproject(event.clientX, event.clientY))
+        }
+        
     }
 
     handleTouchStart(event: React.TouchEvent) {
@@ -351,24 +382,29 @@ export class ModelView3D extends React.Component<Props> {
         this.position_end = null
     }
 
-    handleDragEnter() {
-        // TODO drag enter
+    handleDragEnter(e: React.DragEvent) {
+        if(this.props.drageEnter) {
+            this.props.drageEnter(e, this.unproject(e.clientX, e.clientY))
+        }
     }
 
     handleDragOver(e: React.DragEvent) {
-        e.stopPropagation()
-        e.preventDefault()
-
-        // TODO drag over
+        if(this.props.drag) {
+            e.stopPropagation()
+            e.preventDefault()
+            this.props.drag(this.unproject(e.clientX,e.clientY))
+        }
     }
 
-    handleDragLeave() {
-        // TODO drag leave
+    handleDragLeave(e: React.DragEvent) {
+        if(this.props.dragLeave) {
+            this.props.dragLeave(e)
+        }
     }
 
     handleDrop(e: React.DragEvent) {
         if (this.props.drop) {
-            this.props.drop(e, this.unproject(e.clientX, e.clientY))
+            this.props.drop(this.unproject(e.clientX, e.clientY))
         }
     }
 
