@@ -5,16 +5,16 @@ import { CacheAPI } from '../clients/cache'
 
 const TEXT_DECODER = new TextDecoder()
 
-const DAE_LOADER = new ColladaLoader()
+const COLLADA_LOADER = new ColladaLoader()
 
-export async function loadDAEModel(path: string) {
+export async function loadColladaModel(path: string) {
     const file = await CacheAPI.loadFile(path)
     const text = TEXT_DECODER.decode(file)
-    return parseDAEModel(text)
+    return parseColladaModel(text)
 }
 
-export async function parseDAEModel(data: string) {
-    const model = await DAE_LOADER.parse(data, '')
+export async function parseColladaModel(data: string) {
+    const model = await COLLADA_LOADER.parse(data, '')
     const group = new Group()
 
     for (const child of model.scene.children) {

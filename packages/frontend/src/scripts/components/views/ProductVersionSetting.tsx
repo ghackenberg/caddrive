@@ -6,7 +6,7 @@ import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import { VersionRead } from 'productboard-common'
-import { parseFCStdModel } from 'productboard-freecad'
+import { parseFreeCADModel } from 'productboard-freecad'
 
 import { CacheAPI } from '../../clients/cache'
 import { VersionClient } from '../../clients/rest/version'
@@ -17,11 +17,12 @@ import { useMembers, useVersions } from '../../hooks/list'
 import { render } from '../../functions/render'
 import { useAsyncHistory } from '../../hooks/history'
 import { parseBRep } from '../../loaders/brep'
-import { parseDAEModel } from '../../loaders/dae'
+import { parseColladaModel } from '../../loaders/collada'
 import { parseFBXModel } from '../../loaders/fbx'
 import { parseGLTFModel } from '../../loaders/gltf'
 import { parseLDrawModel, pauseLoadLDrawPath } from '../../loaders/ldraw'
 import { parsePLYModel } from '../../loaders/ply'
+import { parseSTEPModel } from '../../loaders/step'
 import { parseSTLModel } from '../../loaders/stl'
 import { ButtonInput } from '../inputs/ButtonInput'
 import { FileInput } from '../inputs/FileInput'
@@ -119,9 +120,9 @@ export const ProductVersionSettingView = () => {
             setDataUrl(null)
             if (file.name.endsWith('.FCStd')) {
                 setStream(file.stream())
-            } else if (file.name.endsWith('.FCStd') || file.name.endsWith('.fbx') || file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
+            } else if (file.name.endsWith('.fbx') || file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
                 file.arrayBuffer().then(arrayBuffer => exec && setArrayBuffer(arrayBuffer))
-            } else if (file.name.endsWith('.dae') || file.name.endsWith('.ply') || file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
+            } else if (file.name.endsWith('.dae') || file.name.endsWith('.ply') || file.name.endsWith('.ldr') || file.name.endsWith('.mpd') || file.name.endsWith('.stp') || file.name.endsWith('.step')) {
                 file.text().then(text => exec && setText(text))
             }
         }
@@ -132,7 +133,7 @@ export const ProductVersionSettingView = () => {
         let exec = true
         if (stream) {
             if (file.name.endsWith('.FCStd')) {
-                parseFCStdModel(stream, parseBRep).then(group => exec && setGroup(group))
+                parseFreeCADModel(stream, parseBRep).then(group => exec && setGroup(group))
             }
         }
         return () => { exec = false }
@@ -162,11 +163,13 @@ export const ProductVersionSettingView = () => {
         const path = `${Math.random()}`
         if (text) {
             if (file.name.endsWith('.dae')) {
-                parseDAEModel(text).then(group => exec && setGroup(group))
+                parseColladaModel(text).then(group => exec && setGroup(group))
             } else if (file.name.endsWith('.ply')) {
                 parsePLYModel(text).then(group => exec && setGroup(group))
             } else if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
                 parseLDrawModel(path, text, update).then(group => exec && setGroup(group))
+            } else if (file.name.endsWith('.stp') || file.name.endsWith('.step')) {
+                parseSTEPModel(text).then(group => exec && setGroup(group))
             }
         }
         return () => {
@@ -283,7 +286,7 @@ export const ProductVersionSettingView = () => {
                                         </GenericInput>
                                     )}
                                     <TextareaInput label='Description' placeholder='Type description' value={description} change={setDescription}/>
-                                    <FileInput label='File' placeholder='Select file' accept='.dae,.fbx,.stl,.ply,.glb,.ldr,.mpd,.FCStd' change={setFile} required={version == undefined}/>
+                                    <FileInput label='File' placeholder='Select file' accept='.dae,.fbx,.stl,.ply,.glb,.ldr,.mpd,.FCStd,.stp,.step' change={setFile} required={version == undefined}/>
                                     <GenericInput label='Preview'>
                                         {dataUrl ? (
                                             <img src={dataUrl} style={{width: '10em', background: 'rgb(215,215,215)', borderRadius: '1em', display: 'block'}}/>

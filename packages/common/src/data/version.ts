@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export type ModelType = 'dae' | 'stl' | 'ply' | 'fbx' | 'glb' | 'ldr' | 'mpd' | 'FCStd'
+export type ModelType = 'dae' | 'stl' | 'ply' | 'fbx' | 'glb' | 'ldr' | 'mpd' | 'FCStd' | 'stp' | 'step'
 
 export type ImageType = 'png' | null
 

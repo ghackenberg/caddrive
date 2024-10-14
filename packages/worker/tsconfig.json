@@ -2,7 +2,7 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "target": "ES2017",
-        "rootDirs": ["src", "../brep/src", "../freecad/src"],
+        "rootDir": "src",
         "outDir": "bin",
         "lib": ["ES2017", "WebWorker"]
     }

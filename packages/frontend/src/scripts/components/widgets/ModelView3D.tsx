@@ -265,12 +265,18 @@ export class ModelView3D extends React.Component<Props> {
         this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
         const intersections = this.raycaster.intersectObjects(this.scene.children, true)
 
-        if (intersections.length > 0) {
-            let iterator = intersections[0].object
-            while (iterator && (!iterator.name || (iterator.parent && !iterator.parent.name))) {
-                iterator = iterator.parent
+        console.log(intersections)
+
+        for (let i = 0; i < intersections.length; i++) {
+            let iterator = intersections[i].object
+            if (iterator instanceof Mesh) {
+                while (iterator && !iterator.name) {
+                    iterator = iterator.parent
+                }
+                this.hovered = iterator
+                console.log(iterator)
+                break
             }
-            this.hovered = iterator
         }
             
         if (this.hovered) {

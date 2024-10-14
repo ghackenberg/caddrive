@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react'
 import { Group, Object3D } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import { loadDAEModel } from '../../loaders/dae'
+import { loadColladaModel } from '../../loaders/collada'
 import { loadFBXModel } from '../../loaders/fbx'
-import { loadFCStdModel } from '../../loaders/fcstd'
+import { loadFreeCADModel } from '../../loaders/freecad'
 import { loadGLTFModel } from '../../loaders/gltf'
 import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
 import { loadPLYModel } from '../../loaders/ply'
+import { loadSTEPModel } from '../../loaders/step'
 import { loadSTLModel } from '../../loaders/stl'
 import { computePath } from '../../functions/path'
 import { ModelGraph } from './ModelGraph'
@@ -22,9 +23,10 @@ type Callback = (part: string, loaded: number, total: number) => void
 const STL_MODEL_CACHE: {[path: string]: Group} = {}
 const PLY_MODEL_CACHE: {[path: string]: Group} = {}
 const FBX_MODEL_CACHE: {[path: string]: Group} = {}
-const DAE_MODEL_CACHE: {[path: string]: Group} = {}
 const GLTF_MODEL_CACHE: {[path: string]: GLTF} = {}
-const FCSTD_MODEL_CACHE: {[path: string]: Group} = {}
+const STEP_MODEL_CACHE: {[path: string]: Group} = {}
+const COLLADA_MODEL_CACHE: {[path: string]: Group} = {}
+const FREECAD_MODEL_CACHE: {[path: string]: Group} = {}
 
 const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
 const LDRAW_LOADED_CACHE: {[path: string]: number} = {}
@@ -52,13 +54,6 @@ async function getFBXModel(path: string) {
     return FBX_MODEL_CACHE[path]
 }
 
-async function getDAEModel(path: string) {
-    if (!(path in DAE_MODEL_CACHE)) {
-        DAE_MODEL_CACHE[path] = await loadDAEModel(path)
-    }
-    return DAE_MODEL_CACHE[path]
-}
-
 async function getGLTFModel(path: string) {
     if (!(path in GLTF_MODEL_CACHE)) {
         GLTF_MODEL_CACHE[path] = await loadGLTFModel(path)
@@ -66,11 +61,25 @@ async function getGLTFModel(path: string) {
     return GLTF_MODEL_CACHE[path]
 }
 
-async function getFCStdModel(path: string) {
-    if (!(path in FCSTD_MODEL_CACHE)) {
-        FCSTD_MODEL_CACHE[path] = await loadFCStdModel(path)
+async function getSTEPModel(path: string) {
+    if (!(path in STEP_MODEL_CACHE)) {
+        STEP_MODEL_CACHE[path] = await loadSTEPModel(path)
     }
-    return FCSTD_MODEL_CACHE[path]
+    return STEP_MODEL_CACHE[path]
+}
+
+async function getColladaModel(path: string) {
+    if (!(path in COLLADA_MODEL_CACHE)) {
+        COLLADA_MODEL_CACHE[path] = await loadColladaModel(path)
+    }
+    return COLLADA_MODEL_CACHE[path]
+}
+
+async function getFreeCADModel(path: string) {
+    if (!(path in FREECAD_MODEL_CACHE)) {
+        FREECAD_MODEL_CACHE[path] = await loadFreeCADModel(path)
+    }
+    return FREECAD_MODEL_CACHE[path]
 }
 
 function trackLDrawModel(path: string, callback: Callback) {
@@ -135,13 +144,17 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
     } else if (props.path.endsWith('.fbx')) {
         initialGroup = FBX_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.dae')) {
-        initialGroup = DAE_MODEL_CACHE[props.path]
+        initialGroup = COLLADA_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.glb')) {
         initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
     } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
         initialGroup = LDRAW_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.FCStd')) {
-        initialGroup = FCSTD_MODEL_CACHE[props.path]
+        initialGroup = FREECAD_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.stp')) {
+        initialGroup = STEP_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.step')) {
+        initialGroup = STEP_MODEL_CACHE[props.path]
     }
 
     const initialLoaded = (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) && LDRAW_LOADED_CACHE[props.path]
@@ -186,7 +199,7 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
             } else if (props.path.endsWith('.ply')) {
                 getPLYModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.dae')) {
-                getDAEModel(props.path).then(group => exec && setGroup(group))
+                getColladaModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.fbx')) {
                 getFBXModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.glb')) {
@@ -194,7 +207,9 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
             } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
                 getLDrawModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.FCStd')) {
-                getFCStdModel(props.path).then(group => exec && setGroup(group))
+                getFreeCADModel(props.path).then(group => exec && setGroup(group))
+            } else if (props.path.endsWith('.stp') || props.path.endsWith('.step')) {
+                getSTEPModel(props.path).then(group => exec && setGroup(group))
             }
         } else {
             setGroup(undefined)

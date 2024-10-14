@@ -40,9 +40,6 @@
         "dev": "webpack serve --config webpack.dev.js",
         "start": "http-server -p 3005 -s"
     },
-    "dependencies": {
-        "productboard-freecad": "^0.0.1"
-    },
     "devDependencies": {
         "ts-loader": "^9.4.1",
         "webpack": "^5.38.1",

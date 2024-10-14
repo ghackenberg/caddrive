@@ -30,6 +30,7 @@ export function parseBRep(content: string): Promise<Uint8Array> {
         worker.addEventListener('messageerror', handleMessageError)
         worker.addEventListener('error', handleError)
         // Post message
+        worker.postMessage('brp')
         worker.postMessage(content)
     })
 }

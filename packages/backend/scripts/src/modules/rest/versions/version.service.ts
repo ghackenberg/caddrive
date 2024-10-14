@@ -142,6 +142,12 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                 } else if (files.model[0].originalname.endsWith('.FCStd')) {
                     writeFileSync(`./uploads/${versionId}.FCStd`, files.model[0].buffer)
                     return 'FCStd'
+                } else if (files.model[0].originalname.endsWith('.stp')) {
+                    writeFileSync(`./uploads/${versionId}.stp`, files.model[0].buffer)
+                    return 'stp'
+                } else if (files.model[0].originalname.endsWith('.step')) {
+                    writeFileSync(`./uploads/${versionId}.step`, files.model[0].buffer)
+                    return 'step'
                 } else {
                     throw new HttpException('Model file type not supported.', 400)
                 }
