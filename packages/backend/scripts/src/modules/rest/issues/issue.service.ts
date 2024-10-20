@@ -95,6 +95,9 @@ export class IssueService implements IssueREST {
         // Emit changes
         emitProductMessage(productId, { type: 'patch', products: [product], issues: [issue], milestones })
         // Notify changes
+        // TODO assigned users change -> send email to newly assigned users
+        // TODO assigned users change -> send email to disassigned users
+        // TODO always -> send email to previously assigned and not disassigned users
         this.notifyIssue(product, issue, 'Issue notification (update)')
         // Return issue
         return convertIssue(issue)
