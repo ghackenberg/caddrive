@@ -139,7 +139,7 @@ export class CommentService implements CommentREST {
         const text = String(await unified().use(remarkParse).use(remarkRehype).use(rehypeStringify).process(comment.text)).replace('src="/', 'style="max-width: 100%" src="https://caddrive.com/').replace('href="/', 'href="https://caddrive.com/')
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
-            if (member.userId != this.request.user.userId) {
+            if (member.userId != this.request.user.userId && issue.assignedUserIds.includes(member.userId)) {
                 const user = await Database.get().userRepository.findOneBy({ userId: member.userId })
                 if (!user.deleted && user.emailNotification) {
                     const transporter = await TRANSPORTER

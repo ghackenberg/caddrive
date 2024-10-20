@@ -135,7 +135,7 @@ export class IssueService implements IssueREST {
         // Send emails
         const members = await Database.get().memberRepository.findBy({ productId: product.productId, deleted: IsNull() })
         for (const member of members) {
-            if (member.userId != this.request.user.userId) {
+            if (member.userId != this.request.user.userId && issue.assignedUserIds.includes(member.userId)) {
                 const user = await Database.get().userRepository.findOneBy({ userId: member.userId })
                 if (!user.deleted && user.emailNotification) {
                     const transporter = await TRANSPORTER
