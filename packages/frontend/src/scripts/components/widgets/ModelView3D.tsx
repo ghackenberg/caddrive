@@ -17,6 +17,9 @@ interface Props {
     click?: (object: Object3D) => void
     moveStart?: (object: Object3D, pos: Vector3) => void
     moveAborted?: (object: Object3D) => void
+    moveOnAxis?: (pos: Vector3, axisName: string) => void
+    moveOnAxisStart?: (object: Object3D, pos: Vector3) => void
+    moveOnAxisDrop?: (pos: Vector3, axisName: string) => void
     drageEnter?: (event: React.DragEvent, pos: Vector3) => void
     drag?: (pos: Vector3) => void
     dragLeave?: (event: React.DragEvent) => void
@@ -275,18 +278,23 @@ export class ModelView3D extends React.Component<Props> {
         
         this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
         const intersections = this.raycaster.intersectObjects(this.scene.children, true)
-
-        console.log(intersections)
-
+        
         for (let i = 0; i < intersections.length; i++) {
-            let iterator = intersections[i].object
+            const intersection = intersections[i]
+            let iterator = intersection.object
             if (iterator instanceof Mesh) {
                 while (iterator && !iterator.name) {
                     iterator = iterator.parent
                 }
-                this.hovered = iterator
-                console.log(iterator)
-                break
+                if (iterator && iterator.name) {
+                    if (!this.hovered) {
+                        this.hovered = iterator
+                    }
+                    if (iterator.name == 'x' || iterator.name == 'y' || iterator.name == 'z') {
+                        this.hovered = iterator
+                        break
+                    }
+                }
             }
         }
             
@@ -304,6 +312,9 @@ export class ModelView3D extends React.Component<Props> {
     updateSelected(position: { clientX: number, clientY: number }) {
         this.updateHovered(position)
         this.hovered && this.props.click && this.props.click(this.hovered)
+        if (!this.hovered) {
+            this.props.click && this.props.click(null)
+        }
     }
 
     calculateDistance() {
@@ -319,10 +330,29 @@ export class ModelView3D extends React.Component<Props> {
     handleMouseDown(event: React.MouseEvent) {
         this.position_start = event
         this.position_end = event
-
-        if (event.ctrlKey) {
+        
+        if (event.button != 0) {
+            return
+        }
+        if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z')) {
             this.orbit.enabled = false
-            this.props.moveStart(this.hovered, this.unproject(event.clientX, event.clientY))
+            //only move on one axis
+            if (this.hovered.name == 'y') {
+                if(Math.abs(this.camera.position.x)>Math.abs(this.camera.position.z)) {
+                    this.props.moveOnAxisStart(this.hovered,this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x))
+                } else{
+                    this.props.moveOnAxisStart(this.hovered,this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z))
+                }
+            } else if (this.hovered.name == 'x'){
+                this.props.moveOnAxisStart(this.hovered, this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z))
+            } else {
+                //z-axis
+                this.props.moveOnAxisStart(this.hovered, this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x))
+            }
+        }
+        else if (event.ctrlKey && this.props.moveStart) {
+            this.orbit.enabled = false
+            this.props.moveStart(this.hovered, this.unprojectXZ(event.clientX, event.clientY))
         }
     }
 
@@ -336,17 +366,34 @@ export class ModelView3D extends React.Component<Props> {
         if(!this.orbit.enabled) {
             const positionY = event.clientY - this.renderer.domElement.offsetTop
             const positionX = event.clientX - this.renderer.domElement.offsetLeft
+
             if((positionX < 0)||(positionX > this.renderer.domElement.offsetWidth)||(positionY > this.renderer.domElement.offsetHeight)||(positionY < 0)) {
                 this.props.moveAborted(this.hovered)
                 this.orbit.enabled = true
             }
+            else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z')) {
+                //only move on one axis
+                if (this.hovered.name == 'y') {
+                    if(Math.abs(this.camera.position.x)>Math.abs(this.camera.position.z)) {
+                        this.props.moveOnAxis(this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x), this.hovered.name)
+                    } else{
+                        this.props.moveOnAxis(this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z), this.hovered.name)
+                    }
+                } else if (this.hovered.name == 'x'){
+                    this.props.moveOnAxis(this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z), this.hovered.name)
+                } else {
+                    //z-axis
+                    this.props.moveOnAxis(this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x), this.hovered.name)
+                }
+            }
             else if(event.ctrlKey) {
-                this.props.drag(this.unproject(event.clientX, event.clientY))
+                this.props.drag(this.unprojectXZ(event.clientX, event.clientY))
             }
             else {
                 this.props.moveAborted(this.hovered)
                 this.orbit.enabled = true
             }
+            
         }
     }
 
@@ -360,7 +407,25 @@ export class ModelView3D extends React.Component<Props> {
         }
         if(!this.orbit.enabled) {
             this.orbit.enabled = true
-            this.props.drop(this.unproject(event.clientX, event.clientY))
+            if (event.button != 0) {
+                this.props.moveAborted(this.hovered)
+            } else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z')) {
+                //only move on one axis
+                if (this.hovered.name == 'y') {
+                    if(Math.abs(this.camera.position.x)>Math.abs(this.camera.position.z)) {
+                        this.props.moveOnAxisDrop(this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x), this.hovered.name)
+                    } else{
+                        this.props.moveOnAxisDrop(this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z), this.hovered.name)
+                    }
+                } else if (this.hovered.name == 'x'){
+                    this.props.moveOnAxisDrop(this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z), this.hovered.name)
+                } else {
+                    //z-axis
+                    this.props.moveOnAxisDrop(this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x), this.hovered.name)
+                }
+            } else {
+                this.props.drop(this.unprojectXZ(event.clientX, event.clientY))
+            }
         }
         
     }
@@ -384,7 +449,7 @@ export class ModelView3D extends React.Component<Props> {
 
     handleDragEnter(e: React.DragEvent) {
         if(this.props.drageEnter) {
-            this.props.drageEnter(e, this.unproject(e.clientX, e.clientY))
+            this.props.drageEnter(e, this.unprojectXZ(e.clientX, e.clientY))
         }
     }
 
@@ -392,7 +457,7 @@ export class ModelView3D extends React.Component<Props> {
         if(this.props.drag) {
             e.stopPropagation()
             e.preventDefault()
-            this.props.drag(this.unproject(e.clientX,e.clientY))
+            this.props.drag(this.unprojectXZ(e.clientX,e.clientY))
         }
     }
 
@@ -404,13 +469,15 @@ export class ModelView3D extends React.Component<Props> {
 
     handleDrop(e: React.DragEvent) {
         if (this.props.drop) {
-            this.props.drop(this.unproject(e.clientX, e.clientY))
+            if (this.hovered  && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z')) {
+                return
+            }
+            this.props.drop(this.unprojectXZ(e.clientX, e.clientY))
         }
     }
 
-    private unproject(x: number, y: number) {
+    private unproject(mouseX: number, mouseY: number) {
         const vec = new Vector3()
-        const pos = new Vector3()
 
         let i = this.renderer.domElement as HTMLElement
 
@@ -428,8 +495,8 @@ export class ModelView3D extends React.Component<Props> {
         const height = this.renderer.domElement.offsetHeight
 
         vec.set(
-            ( (x - left) / width ) * 2 - 1,
-            - ( (y - top) / height ) * 2 + 1,
+            ( (mouseX - left) / width ) * 2 - 1,
+            - ( (mouseY - top) / height ) * 2 + 1,
             0.5,
         )
             
@@ -437,7 +504,39 @@ export class ModelView3D extends React.Component<Props> {
             
         vec.sub( this.camera.position ).normalize()
             
-        const distance = - this.camera.position.y / vec.y
+        return vec
+    }
+    protected unprojectXZ(mouseX: number, mouseY: number, y = 0)
+    {
+        const vec = this.unproject(mouseX, mouseY)
+
+        const distance = (y - this.camera.position.y) / vec.y
+
+        const pos = new Vector3()
+            
+        pos.copy( this.camera.position ).add( vec.multiplyScalar( distance ) )
+
+        return pos
+    }
+    protected unprojectXY(mouseX: number, mouseY: number, z = 0)
+    {
+        const vec = this.unproject(mouseX, mouseY)
+
+        const distance = (z - this.camera.position.z) / vec.z
+
+        const pos = new Vector3()
+            
+        pos.copy( this.camera.position ).add( vec.multiplyScalar( distance ) )
+
+        return pos
+    }
+    protected unprojectYZ(mouseX: number, mouseY: number, x = 0)
+    {
+        const vec = this.unproject(mouseX, mouseY)
+
+        const distance = (x - this.camera.position.x) / vec.x
+
+        const pos = new Vector3()
             
         pos.copy( this.camera.position ).add( vec.multiplyScalar( distance ) )
 
