@@ -49,7 +49,7 @@ export function resumeLoadLDrawPath(path: string) {
     LDRAW_RESUME[path] && LDRAW_RESUME[path]()
 }
 
-export async function parseLDrawModel(path: string, data: string, update = empty) {
+export async function parseLDrawModel(path: string, data: string, update = empty, asynchron = true) {
     LDRAW_PAUSE[path] = false
 
     LDRAW_ACTIVE[path] = async () => {
@@ -66,14 +66,14 @@ export async function parseLDrawModel(path: string, data: string, update = empty
 
     const model = new Parser().parse(data)
 
-    if (model.files.length > 0) {
+    if (asynchron && model.files.length > 0) {
         const group = new THREE.Group()
         const total = countParts(model, model.files[0])
         parseModel(path, group, model, model.files[0], 0, total, update)
         group.rotation.x = Math.PI
         return group
     } else {
-        if (model.shapes.length > 0) {
+        if (!asynchron || model.shapes.length > 0) {
             const group = await parseFull(data)
             group.rotation.x = Math.PI
             return group

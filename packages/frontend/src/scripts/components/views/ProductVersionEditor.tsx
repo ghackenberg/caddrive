@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { CylinderGeometry, Box3, GridHelper, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, MeshStandardMaterial } from 'three'
+import { CylinderGeometry, Box3, GridHelper, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, MeshStandardMaterial, TorusGeometry, CircleGeometry } from 'three'
 
 import { parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
@@ -8,43 +8,152 @@ import { ModelView3D } from '../widgets/ModelView3D'
 export const ProductVersionEditorView = () => {
 
     const [model, setModel] = React.useState<Group>()
-    //const [file, setFile] = React.useState<string>()
-    const [part, setPart] = React.useState<Object3D>()
+    const [manipulator, setManipulator] = React.useState<Group>()
+    const [part, setPart] = React.useState<Object3D[]>()
     const [create, setCreate] = React.useState<boolean>()
-    const [fallbackPart, setfallbackPart] = React.useState<Object3D>()
-    //const [lastPart, setlastPart] = React.useState<Object3D>()
-    const [selectedPart, setselectedPart] = React.useState<Object3D>()
-    //let part = initpart
-    const [correctionVector, setcorrectionVector] = React.useState<Vector3>()
+    const [partInserted, setPartInserted] = React.useState<boolean>()
+    //const [fallbackPart, setFallbackPart] = React.useState<Object3D>()
+    const [multipleFallbackParts, setMultpleFallbackParts] = React.useState<Object3D[]>()
+
+    const [selectedPart, setSelectedPart] = React.useState<Object3D[]>()
+    const [correctionVector, setCorrectionVector] = React.useState<Vector3>()
     const [vecCalculated, setVecCalculated] = React.useState<boolean>()
-    //let dragModel = new Mesh()
+    //const [materialFromBefore, setMaterialFromBefore] = React.useState<MeshStandardMaterial>()
+
+    const [selectedMaterials, setSelectedMaterials] = React.useState<MeshStandardMaterial[]>()
+    const [selectedIndex, setSelectedIndex] = React.useState<number>()
+    //const [multiPartSelection, setMultipartSelection] = React.useState<Object3D[]>()
 
     React.useEffect(() => {
         const size = 400
         const divisions = 20
-        const gridHelper = new GridHelper( size, divisions, 'red', 'blue' )
+        const grid = new GridHelper( size, divisions, 'red', 'blue' )
+
+        //x-axis
+        const cyXB = new CylinderGeometry(1, 1, 20)
+        const maXB = new MeshBasicMaterial({ color: 'green' ,depthTest: false})
+        const meXB = new Mesh(cyXB, maXB)
+        meXB.renderOrder = 999
+        meXB.rotateZ(-Math.PI/2)
+        meXB.position.set(12, 0, 0)
+
+        const cyXA = new CylinderGeometry(2, 0, 2)
+        const maXA = new MeshBasicMaterial({ color: 'green' ,depthTest: false})
+        const meXA = new Mesh(cyXA, maXA)
+        meXA.renderOrder = 999
+        meXA.rotateZ(Math.PI/2)
+        meXA.position.set(22, 0, 0)
+
+        const arrowX = new Group()
+        arrowX.name = 'x'
+        arrowX.add(meXA)
+        arrowX.add(meXB)
+
+        //y-axis
+        const cyYB = new CylinderGeometry(1, 1, 20)
+        const maYB = new MeshBasicMaterial({ color: 'red' ,depthTest: false ,depthWrite: false})
+        const meYB = new Mesh(cyYB, maYB)
+        meYB.renderOrder = 999
+        meYB.position.set(0, -12, 0)
+
+        const cyYA = new CylinderGeometry(2, 0, 2)
+        const maYA = new MeshBasicMaterial({ color: 'red' ,depthTest: false ,depthWrite: false})
+        const meYA = new Mesh(cyYA, maYA)
+        meYA.renderOrder = 999
+        meYA.position.set(0, -22, 0)
+        
+        const arrowY = new Group()
+        arrowY.name = 'y'
+        arrowY.add(meYA)
+        arrowY.add(meYB)
+
+        //z-axis
+        const cyZB = new CylinderGeometry(1, 1, 20)
+        const maZB = new MeshBasicMaterial({ color: 'blue' ,depthTest: false ,depthWrite: false})
+        const meZB = new Mesh(cyZB, maZB)
+        meZB.renderOrder = 999
+        meZB.rotateX(Math.PI/2)
+        meZB.position.set(0, 0, -12)
+
+        const cyZA = new CylinderGeometry(2, 0, 2)
+        const maZA = new MeshBasicMaterial({ color: 'blue' ,depthTest: false ,depthWrite: false})
+        const meZA = new Mesh(cyZA, maZA)
+        meZA.renderOrder = 999
+        meZA.rotateX(Math.PI/2)
+        meZA.position.set(0, 0, -22)
+
+        const arrowZ = new Group()
+        arrowZ.name = 'z'
+        arrowZ.add(meZA)
+        arrowZ.add(meZB)
+        
+        //rotation around y
+        const trRYB = new TorusGeometry(15, 1, 16, 100, Math.PI/2)
+        const maRYB = new MeshBasicMaterial({ color: 'red' ,depthTest: false ,depthWrite: false})
+        const meRYB = new Mesh(trRYB, maRYB)
+        meRYB.renderOrder = 999
+        meRYB.rotateX(-Math.PI/2)
+        meRYB.position.set(10, 0, -10)
+
+        const cyRYA = new CylinderGeometry(0, 2, 2)
+        const maRYA = new MeshBasicMaterial({ color: 'red' ,depthTest: false ,depthWrite: false})
+        const meRYA = new Mesh(cyRYA, maRYA)
+        meRYA.renderOrder = 999
+        meRYA.rotateX(Math.PI/2)
+        meRYA.position.set(25, 0, -10)
+
+        const clRYE = new CircleGeometry(1)
+        const maRYE = new MeshBasicMaterial({ color: 'red' ,depthTest: false ,depthWrite: false})
+        const meRYE = new Mesh(clRYE, maRYE)
+        meRYE.renderOrder = 999
+        meRYE.rotateY(-Math.PI/2)
+        meRYE.position.set(10, 0, -25)
+
+        const arrowRotY = new Group()
+        arrowRotY.name = 'rotation y'
+        arrowRotY.add(meRYA)
+        arrowRotY.add(meRYB)
+        arrowRotY.add(meRYE)
+
+        const manipulator = new Group()
+        manipulator.visible = false
+        manipulator.add(arrowX)
+        manipulator.add(arrowY)
+        manipulator.add(arrowZ)
+        manipulator.add(arrowRotY)
+        setManipulator(manipulator)
+
+        setSelectedMaterials([])
+        setSelectedPart([])
+        setMultpleFallbackParts([])
+
+        //Model
         const model = new Group()
-        model.add( gridHelper )
+        model.add(grid)
+        model.add(manipulator)
+        model.rotation.x = Math.PI
         setModel(model)
     }, [])
+    /*
+    interface ObjectMaterialPair {
+        object: Object3D,
+        material: MeshStandardMaterial
+    }*/
 
     function onDragStart(event: React.DragEvent, file: string) {
-        /*if(lastPart) {
-            lastPart.remove(lastPart.getObjectByName("x"),lastPart.getObjectByName("y"),lastPart.getObjectByName("z"))
-        }*/
         unselect()
         event.dataTransfer.setDragImage(new Image(), 0, 0)
-        parseLDrawModel(file, `1 10 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`).then(part => {
-            part.name = `${file}-submodel`
-            setPart(part)
-            //setlastPart(part)
+        parseLDrawModel(file, `1 10 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`,null,false).then(part => {
+            setPart([part.children[0]])
         })
-        setcorrectionVector(new Vector3(0,0,0))
+        setCorrectionVector(new Vector3(0,0,0))
         setVecCalculated(false)
         setCreate(true)
+        setPartInserted(false)
     }
     function CalculateOffset(part: Object3D) {
-        if (!part || !part.name || !part.name.endsWith('submodel')) {
+        //TODO: add calculation for array
+        if (!part || !part.name || !part.name.endsWith('.dat')) {
             console.log(part)
             throw 'Unexpected part'
         }
@@ -52,42 +161,11 @@ export const ProductVersionEditorView = () => {
             return
         }
 
-        const bbox = new Box3().setFromObject(part.children[0]);
+        const bbox = new Box3().setFromObject(part);
         
-        /*
-        part.traverse(function(obj) {
-            const group = obj as Group
-            // logic for whether or not to include the child
-            //console.log("possible group",group)
-            if (group.isGroup && group.name != "x" && group.name != "y" && group.name != "z" ) {
-                // initialize the box to the first valid child found otherwise expand the bounds
-                //console.log("group",group)
-                if (bbox == null) {
-                    bbox = new Box3()
-                    bbox.setFromObject(obj)
-                } else {
-                    bbox.expandByObject(obj)
-                }
-            }
-        })
-        /*
-        for( const child of part.children) {
-            console.log("child", child)
-            if (child.name != "x" && child.name != "y" && child.name != "z" ) {
-                // initialize the box to the first valid child found otherwise expand the bounds
-                if (bbox == null) {
-                    bbox = new Box3()
-                    bbox.setFromObject(child)
-                } else {
-                    bbox.expandByObject(child)
-                }
-            }
-        }
-            */
         const offsetVector = new Vector3()
         bbox.getSize(offsetVector)
         offsetVector.round()
-        //console.log(offsetVector)
         if (offsetVector.x === 0) {
             setVecCalculated(false)
             return
@@ -96,182 +174,221 @@ export const ProductVersionEditorView = () => {
         offsetVector.x = (offsetVector.x%40)/2
         offsetVector.z = (offsetVector.z%40)/2
         offsetVector.y = offsetVector.y-4 + ((offsetVector.y-4)%8)/2
-        setcorrectionVector(offsetVector)
+        setCorrectionVector(offsetVector)
         setVecCalculated(true)
     }
-    function onPartDragStart(dragPart: Object3D, pos: Vector3) {
-        if (dragPart) {
-            unselect()
-            /*if(lastPart) {
-                lastPart.remove(lastPart.getObjectByName("x"),lastPart.getObjectByName("y"),lastPart.getObjectByName("z"))
-            }*/
-            setfallbackPart(dragPart.parent.clone())
-            CalculateOffset(dragPart.parent)
-            dragPart.parent.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
-                Math.round(pos.y/8)*8 + correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
-                Math.round((pos.z - correctionVector.z)/20)*20 + correctionVector.z
-            )
-            /*
-            //yAxis
-            const cyZB = new CylinderGeometry(1, 1, 20)
-            const maZB = new MeshBasicMaterial({ color: 'red' ,depthTest: false})
-            const meZB = new Mesh(cyZB, maZB)
-            meZB.position.set(0, -12, 0)
-
-            const cyZA = new CylinderGeometry(2, 0, 2)
-            const maZA = new MeshBasicMaterial({ color: 'red' ,depthTest: false })
-            const meZA = new Mesh(cyZA, maZA)
-            meZA.position.set(0, -22, 0)
-            
-            const yAxis = new Group()
-            yAxis.name = 'y'
-            yAxis.add(meZB)
-            yAxis.add(meZA)
-
-            dragPart.parent.add(yAxis)
-
-            //zAxis
-            const cyYB = new CylinderGeometry(1, 1, 20)
-            const maYB = new MeshBasicMaterial({ color: 'blue' ,depthTest: false})
-            const meYB = new Mesh(cyYB, maYB)
-            meYB.rotateX(Math.PI/2)
-            meYB.position.set(0, 0, -12)
-
-            const cyYA = new CylinderGeometry(2, 0, 2)
-            const maYA = new MeshBasicMaterial({ color: 'blue' ,depthTest: false})
-            const meYA = new Mesh(cyYA, maYA)
-            meYA.rotateX(Math.PI/2)
-            meYA.position.set(0, 0, -22)
-
-            const zAxis = new Group()
-            zAxis.name = 'z'
-            zAxis.add(meYB)
-            zAxis.add(meYA)
-
-            dragPart.parent.add(zAxis)
-
-            //xAxis
-            const cyXB = new CylinderGeometry(1, 1, 20)
-            const maXB = new MeshBasicMaterial({ color: 'green' ,depthTest: false})
-            const meXB = new Mesh(cyXB, maXB)
-            meXB.rotateZ(-Math.PI/2)
-            meXB.position.set(12, 0, 0)
-
-            const cyXA = new CylinderGeometry(2, 0, 2)
-            const maXA = new MeshBasicMaterial({ color: 'green' ,depthTest: false})
-            const meXA = new Mesh(cyXA, maXA)
-            meXA.rotateZ(Math.PI/2)
-            meXA.position.set(22, 0, 0)
-
-            const xAxis = new Group()
-            xAxis.name = 'x'
-            xAxis.add(meXB)
-            xAxis.add(meXA)
-            dragPart.parent.add(xAxis)
-            */
-            setPart(dragPart.parent)
-            setCreate(false)
-            //setlastPart(dragPart.parent)
+    function moveParts(movement: Vector3, partarray = part) {
+        for (const element of partarray) {
+            element.position.add(movement)
         }
-        
+        manipulator.position.add(movement)
+    }
+    function setFallbackForMultiple(parts = selectedPart) {
+        const fallbackArray: Object3D[] = []
+        for (const element of parts) {
+            fallbackArray.push(element.clone())
+        }
+        setMultpleFallbackParts(fallbackArray)
+    }
+    function axisMovement(axisName: string, pos: Vector3, parts = part) {
+        if(selectedPart.length > 0) {
+            console.log(selectedIndex)
+            if(selectedIndex) {
+                CalculateOffset(selectedPart[selectedIndex])
+            }
+            else if(!vecCalculated) {                
+                    setCorrectionVector(new Vector3(0,0,0))
+                    setVecCalculated(true) 
+            }
+            switch (axisName) {
+                case "x": {
+                    const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - selectedPart[selectedIndex].position.x
+                    moveParts(new Vector3(xcoord,0,0),parts)
+                    break
+                }
+                case "y": {
+                    const ycoord = (Math.round(-pos.y/8)*8) -selectedPart[selectedPart.length - 1].position.y
+                    moveParts(new Vector3(0,ycoord,0),parts)
+                    break
+                }
+                case "z": {
+                    const zcoord = (Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)- selectedPart[selectedIndex].position.z
+                    moveParts(new Vector3(0,0,zcoord),parts)
+                    break
+                }
+                case "rotation y": {
+                    //part.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
+                    const rotation = Math.round(2*pos.y/Math.PI)*Math.PI/2 - selectedPart[selectedIndex].rotation.y
+                    for (const element of parts) {
+                        element.rotateY(rotation)
+                    }
+                }
+            }
+            //manipulator.position.set(selectedPart[selectedPart.length - 1].position.x,selectedPart[selectedPart.length - 1].position.y,selectedPart[selectedPart.length - 1].position.z)
+        }
+    }
+    function onPartDragStart(dragPart: Object3D, pos: Vector3) {
+        //TODO: move multiple
+        const index = selectedPart.indexOf(dragPart)
+        if (dragPart && index==-1) {
+            unselect()
+            setFallbackForMultiple([dragPart])
+            CalculateOffset(dragPart)
+            dragPart.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
+                Math.round(-pos.y/8)*8,
+                Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z
+            )
+            setPart([dragPart])
+        }
+        else if(dragPart) {
+            console.log(selectedPart)
+            setSelectedIndex(index)
+            setFallbackForMultiple(selectedPart)
+            CalculateOffset(dragPart)
+            moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  dragPart.position.x,
+            (Math.round(-pos.y/8)*8) - dragPart.position.y,
+            (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - dragPart.position.z), selectedPart)
+            
+            manipulator.position.set(selectedPart[index].position.x, selectedPart[index].position.y, selectedPart[index].position.z)
+            setPart(selectedPart)
+        }
+        setCreate(false)
+    }
+    function onPartDrag(pos: Vector3) {
+        //TODO: move multiple
+        if (part) {
+            CalculateOffset(part[selectedIndex])
+            /*
+            part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
+                Math.round(-pos.y/8)*8,
+                Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
+            )*/
+           console.log(part)
+            moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedIndex].position.x,
+                (Math.round(-pos.y/8)*8) - part[selectedIndex].position.y,
+                (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - part[selectedIndex].position.z))
+        }
+    }
+    function onPartDragDrop(pos: Vector3) {
+        //TODO: move multiple
+        if (part) {
+            CalculateOffset(part[selectedIndex])
+            moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedIndex].position.x,
+                (Math.round(-pos.y/8)*8) - part[selectedIndex].position.y,
+                (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - part[selectedIndex].position.z))
+            
+            setVecCalculated(false)
+            setPart(undefined)
+        }
     }
     function onPartDragAbborted() {
-        if (part) {
-            /*
-            if (create) {
-                //TODO not used?
-                model.remove(part)
+        //TODO: Move multiple
+        if (part.length > 0 && create) {
+            model.remove(part[0])
+            return
+        }
+        console.log("Fallbacks", multipleFallbackParts)
+        if (multipleFallbackParts.length != 0) {
+            for (const i in multipleFallbackParts) {
+                //selectedpart
+                part[i].position.set(multipleFallbackParts[i].position.x,multipleFallbackParts[i].position.y,multipleFallbackParts[i].position.z)
             }
-            */
-            model.remove(part)
+            setVecCalculated(false)
+            unselect(multipleFallbackParts)
+        }
+        /*
+        else if (part) {
+            model.remove(part[0])
+            if (create) {
+                return
+            }
             model.add(fallbackPart)
             setPart(undefined)
-            setselectedPart(fallbackPart)
-            //setlastPart(fallbackPart)
+            unselect([fallbackPart])
             setVecCalculated(false)
-            //part = new Group()
-            //model.add(partBeforeMove)
-        }
+        }*/
     }
     function onDragEnter(_event: React.DragEvent, pos: Vector3) {
-        /*
-        const geometry = new BoxGeometry( 1, 1, 1 )
-        const material = new MeshBasicMaterial( {color: 0xff0000} )
-        dragModel = new Mesh( geometry, material )
-        */
-        if (part) {
+        if (part && part.length > 0) {
             if (create) {
-                model.add(part)
+                model.add(part[0])
+                setPartInserted(true)
             }
-            CalculateOffset(part)
-            part.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
-                Math.round(pos.y/8)*8 + correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
-                Math.round((pos.z - correctionVector.z)/20)*20 + correctionVector.z
+            CalculateOffset(part[0])
+            part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
+                Math.round(-pos.y/8)*8 - correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
+                Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
             )
         }
-
     }
     function onDrag(pos: Vector3) {
-        //model.remove(part)
-        //const geometry = new BoxGeometry( 1, 1, 1 )
-        //const material = new MeshBasicMaterial( {color: 0xff0000} )
-        //dragModel = new Mesh( geometry, material )
-        if (part) {
-            CalculateOffset(part)
-            part.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
-                Math.round(pos.y/8)*8 + correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
-                Math.round((pos.z - correctionVector.z)/20)*20 + correctionVector.z
+        if (part && part.length > 0) {
+            if (create  && !partInserted) {
+                model.add(part[0])
+                setPartInserted(true)
+            }
+            CalculateOffset(part[0])
+            part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
+                Math.round(-pos.y/8)*8 - correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
+                Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
             )
         }
-        //model.add(part)
     }
+    /*
     function onDragLeave() {
         if (part) {
             if (create) {
                 model.remove(part)
             }
         }
-        //dragModel = null
-    }
+    }*/
     function onDrop(pos: Vector3) {
-        //model.remove(dragModel)
-        //dragModel = null
-        /*
-        const geometry = new BoxGeometry( 1, 1, 1 )
-        const material = new MeshBasicMaterial( {color: 0x00ff00} )
-        const cube = new Mesh( geometry, material )
-        */
-        if (part) {
-            CalculateOffset(part)
-            part.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
-                Math.round(pos.y/8)*8 + correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
-                Math.round((pos.z - correctionVector.z)/20)*20 + correctionVector.z
+        if (part && part.length > 0) {
+            CalculateOffset(part[0])
+            part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
+                Math.round(-pos.y/8)*8 - correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
+                Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
             )
             setVecCalculated(false)
             setPart(undefined)
         }
-        //model.add(cube)
     }
     function onMoveOnAxisStart(object: Object3D, pos: Vector3) {
-        CalculateOffset(object.parent)
-        setfallbackPart(object.parent.clone())
-        switch (object.name) {
-            case "x": {
-                object.parent.position.setX(Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x)
-                break
+        if(selectedPart) {
+            //CalculateOffset(selectedPart[selectedPart.length - 1])
+            setFallbackForMultiple()
+            setPart(selectedPart)
+            axisMovement(object.name, pos, selectedPart)
+            //setFallbackPart(selectedPart.clone())
+            /*
+            switch (object.name) {
+                case "x": {
+                    //selectedPart.position.setX(Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x)
+                    const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - selectedPart[selectedPart.length - 1].position.x
+                    moveParts(new Vector3(xcoord,0,0))
+                    break
+                }
+                case "y": {
+                    selectedPart.position.setY(Math.round(-pos.y/8)*8)
+                    break
+                }
+                case "z": {
+                    selectedPart.position.setZ(Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)
+                    break
+                }
+                case "rotation y": {
+                    selectedPart.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
+                }
             }
-            case "y": {
-                object.parent.position.setY(Math.round(pos.y/8)*8)
-                break
-            }
-            case "z": {
-                object.parent.position.setZ(Math.round((pos.z - correctionVector.z)/20)*20 + correctionVector.z)
-            }
+            manipulator.position.set(selectedPart.position.x,selectedPart.position.y,selectedPart.position.z)
+            setPart(selectedPart)
+            */
+            setCreate(false)
         }
-        setPart(object.parent)
-        setCreate(false)
     }
     function onMoveOnAxis(pos: Vector3, axisName: string) {
+        axisMovement(axisName, pos)
+        /*
         if(part) {
             CalculateOffset(part)
             switch (axisName) {
@@ -280,16 +397,25 @@ export const ProductVersionEditorView = () => {
                     break
                 }
                 case "y": {
-                    part.position.setY(Math.round(pos.y/8)*8)
+                    part.position.setY(Math.round(-pos.y/8)*8)
                     break
                 }
                 case "z": {
-                    part.position.setZ(Math.round((pos.z - correctionVector.z)/20)*20 + correctionVector.z)
+                    part.position.setZ(Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)
+                    break
+                }
+                case "rotation y": {
+                    part.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
                 }
             }
+            manipulator.position.set(part.position.x,part.position.y,part.position.z)
         }
+        */
     }
     function onMoveOnAxisDrop(pos: Vector3, axisName: string) {
+        //TODO: change to be able to move multiple
+        axisMovement(axisName, pos)
+        /*
         if (part) {
             CalculateOffset(part)
             switch (axisName) {
@@ -298,19 +424,27 @@ export const ProductVersionEditorView = () => {
                     break
                 }
                 case "y": {
-                    part.position.setY(Math.round(pos.y/8)*8)
+                    part.position.setY(Math.round(-pos.y/8)*8)
                     break
                 }
                 case "z": {
-                    part.position.setZ(Math.round((pos.z - correctionVector.z)/20)*20 + correctionVector.z)
+                    part.position.setZ(Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)
+                    break
+                }
+                case "rotation y": {
+                    part.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
                 }
             }
-            setPart(part)
+            manipulator.position.set(part.position.x,part.position.y,part.position.z)
+            //setPart(part)
             setCreate(false)
         }
+        */
+       setVecCalculated(false)
+       setPart(undefined)
     }
     function onOver(object: Object3D) {
-        if (object.name === "x" || object.name === "y" || object.name === "z") {
+        if (object.name === "x" || object.name === "y" || object.name === "z" || object.name === "rotation y") {
             object.traverse(function(obj) {
                 const mater = obj as Mesh<BufferGeometry,MeshBasicMaterial>
                 if(mater.isMesh) {
@@ -326,7 +460,8 @@ export const ProductVersionEditorView = () => {
                 color = "green"
                 break
             }
-            case "y": {
+            case "y":
+            case "rotation y": {
                 color = "red"
                 break
             }
@@ -342,98 +477,95 @@ export const ProductVersionEditorView = () => {
             }
         })
     }
-    function onClick(object: Object3D) {
-        console.log('click', object)
-        unselect()
-        if(object != null && object.name.endsWith(".dat")) {
-
-            object.traverse(function(obj) {
-                const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
-                if(mater.isMesh) {
-                    mater.material = mater.material.clone()
-                    mater.material.color.set("white")
-                }
-            })
-
-            //yAxis
-            const cyZB = new CylinderGeometry(1, 1, 20)
-            const maZB = new MeshBasicMaterial({ color: 'red' ,depthTest: false})
-            const meZB = new Mesh(cyZB, maZB)
-            meZB.position.set(0, -12, 0)
-
-            const cyZA = new CylinderGeometry(2, 0, 2)
-            const maZA = new MeshBasicMaterial({ color: 'red' ,depthTest: false })
-            const meZA = new Mesh(cyZA, maZA)
-            meZA.position.set(0, -22, 0)
-            
-            const yAxis = new Group()
-            yAxis.name = 'y'
-            yAxis.add(meZB)
-            yAxis.add(meZA)
-
-            object.parent.add(yAxis)
-
-            //zAxis
-            const cyYB = new CylinderGeometry(1, 1, 20)
-            const maYB = new MeshBasicMaterial({ color: 'blue' ,depthTest: false})
-            const meYB = new Mesh(cyYB, maYB)
-            meYB.rotateX(Math.PI/2)
-            meYB.position.set(0, 0, -12)
-
-            const cyYA = new CylinderGeometry(2, 0, 2)
-            const maYA = new MeshBasicMaterial({ color: 'blue' ,depthTest: false})
-            const meYA = new Mesh(cyYA, maYA)
-            meYA.rotateX(Math.PI/2)
-            meYA.position.set(0, 0, -22)
-
-            const zAxis = new Group()
-            zAxis.name = 'z'
-            zAxis.add(meYB)
-            zAxis.add(meYA)
-
-            object.parent.add(zAxis)
-
-            //xAxis
-            const cyXB = new CylinderGeometry(1, 1, 20)
-            const maXB = new MeshBasicMaterial({ color: 'green' ,depthTest: false})
-            const meXB = new Mesh(cyXB, maXB)
-            meXB.rotateZ(-Math.PI/2)
-            meXB.position.set(12, 0, 0)
-
-            const cyXA = new CylinderGeometry(2, 0, 2)
-            const maXA = new MeshBasicMaterial({ color: 'green' ,depthTest: false})
-            const meXA = new Mesh(cyXA, maXA)
-            meXA.rotateZ(Math.PI/2)
-            meXA.position.set(22, 0, 0)
-
-            const xAxis = new Group()
-            xAxis.name = 'x'
-            xAxis.add(meXB)
-            xAxis.add(meXA)
-            object.parent.add(xAxis)
-
-            setPart(object.parent)
-
-            setselectedPart(object.parent)
-        }
-        else {
-            setselectedPart(undefined)
+    function onkeyDown(key: React.KeyboardEvent) {
+        if(selectedPart && key.key == "Delete") {
+            for (const element of selectedPart) {
+                model.remove(element)
+            }
+            unselect()
         }
     }
-    function unselect() {
-        selectedPart && selectedPart.traverse(function(obj) {
+    function onClick(object: Object3D, isCtrlPressed: boolean) {
+        !isCtrlPressed && unselect()
+        console.log("Ctrl Pressed:", isCtrlPressed)
+
+        if(object != null && object.name.endsWith(".dat")) {
+            let index = selectedPart.indexOf(object)
+            if (index == -1) {
+                object.traverse(function(obj) {
+                const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
+                if(mater.isMesh) {
+                    //setMaterialFromBefore(mater.material)
+
+                    selectedMaterials.push(mater.material)
+                    selectedPart.push(object)
+
+                    mater.material = mater.material.clone()
+                    mater.material.color.set("white")
+                    }
+                })
+                index = selectedMaterials.length - 1
+            }
+
+            setSelectedIndex(index)
+            //TODO: bei xz bewegung mehrere teile kkordinatensystem mitverschieben
+            //      Koordinatensystem bei gruppe zentrieren wenn mit strg ins nichts geklickt wird
+            //      Rotation y
+            //      bonus: grid bei annäherung der Grenze expandieren; 
+            //      bonus: grid bei verschibung höher gelegener teile in passender ebene anzeigen
+
+            /*if(isCtrlPressed) {
+                manipulator.position.set(object.position.x,object.position.y,object.position.z)
+                manipulator.visible = true
+                part.add(object)
+                setSelectedPart(object)
+            }*/
+            manipulator.position.set(object.position.x,object.position.y,object.position.z)
+            manipulator.visible = true
+            //setPart(object)
+            //setSelectedPart(object)
+        }
+        else if (isCtrlPressed) {
+            //TODO: Calculate center and move manipulator there
+            const box  = new Box3()
+            for (const element of selectedPart) {
+                box.expandByObject(element,true)
+            }
+            const vec = new Vector3()
+            box.getCenter(vec)
+            manipulator.position.set(vec.x, -vec.y, -vec.z)
+            setSelectedIndex(undefined)
+        }
+    }
+    function unselect(partsToUnselect = selectedPart) {
+        for (let i = partsToUnselect.length; i > 0; i--) {
+            const material = selectedMaterials.pop()
+            const object = selectedPart.pop()
+            object && object.traverse(function(obj) {
+                const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
+                if(mater.isMesh) {
+                    mater.material = material
+                }
+            })        
+        }
+        /*materialFromBefore && partToUnselect && partToUnselect.traverse(function(obj) {
             const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
             if(mater.isMesh) {
-                mater.material.color.setRGB(0.09758734713304495,0.407240211891531, 0.05286064701616471 )
+                mater.material = materialFromBefore
+                //mater.material.color.setRGB(0.09758734713304495,0.407240211891531, 0.05286064701616471 )
             }
         })
-        selectedPart && selectedPart.remove(selectedPart.getObjectByName("x"),selectedPart.getObjectByName("y"),selectedPart.getObjectByName("z"))
+
+        setSelectedPart(undefined)*/
+
+        manipulator.visible = false
+        //setSelectedMaterials([])
     }
 
     return  (
         <main className={`view product-version-editor`}>
             <div className='model'>
-                {model && <ModelView3D model={model} over={onOver} out={onOut} click={onClick} moveStart={onPartDragStart} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onDragLeave}/>}
+                {model && <ModelView3D model={model} over={onOver} out={onOut} click={onClick} keyDown={onkeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDragDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>}
             </div>
             <div className="palette">
                 <img src='/rest/parts/3001.png' onDragStart={event => onDragStart(event, '3001.dat')}/>
