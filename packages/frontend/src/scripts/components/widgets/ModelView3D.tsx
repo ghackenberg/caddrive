@@ -345,7 +345,7 @@ export class ModelView3D extends React.Component<Props> {
         if (event.button != 0) {
             return
         }
-        if (this.hovered && (this.props.moveOnAxisStart && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z'))) {
+        if (this.hovered && (this.props.moveOnAxisStart && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y'))) {
             this.orbit.enabled = false
             //only move on one axis
             if (this.hovered.name == 'y') {
@@ -356,9 +356,11 @@ export class ModelView3D extends React.Component<Props> {
                 }
             } else if (this.hovered.name == 'x'){
                 this.props.moveOnAxisStart(this.hovered, this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z))
-            } else {
-                //z-axis
+            } else if (this.hovered.name == 'z'){
                 this.props.moveOnAxisStart(this.hovered, this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x))
+            } else {
+                //rotation around the y-axis
+                this.props.moveOnAxisStart(this.hovered, this.unprojectXZ(event.clientX, event.clientY, this.hovered.parent.position.y))
             }
         }
         else if (event.shiftKey && this.props.moveStart && this.hovered) {
@@ -382,7 +384,7 @@ export class ModelView3D extends React.Component<Props> {
                 this.props.moveAborted(this.hovered)
                 this.orbit.enabled = true
             }
-            else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z')) {
+            else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
                 //only move on one axis
                 if (this.hovered.name == 'y') {
                     if(Math.abs(this.camera.position.x)>Math.abs(this.camera.position.z)) {
@@ -392,9 +394,11 @@ export class ModelView3D extends React.Component<Props> {
                     }
                 } else if (this.hovered.name == 'x'){
                     this.props.moveOnAxis(this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z), this.hovered.name)
-                } else {
-                    //z-axis
+                } else if (this.hovered.name == 'z'){
                     this.props.moveOnAxis(this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x), this.hovered.name)
+                } else {
+                    //rotation around y-axis
+                    this.props.moveOnAxis(this.unprojectXZ(event.clientX, event.clientY, this.hovered.parent.position.y), this.hovered.name)
                 }
             }
             else if(event.shiftKey) {
@@ -413,7 +417,7 @@ export class ModelView3D extends React.Component<Props> {
             this.orbit.enabled = true
             if (event.button != 0) {
                 this.props.moveAborted(this.hovered)
-            } else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z')) {
+            } else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
                 //only move on one axis
                 if (this.hovered.name == 'y') {
                     if(Math.abs(this.camera.position.x)>Math.abs(this.camera.position.z)) {
@@ -423,9 +427,11 @@ export class ModelView3D extends React.Component<Props> {
                     }
                 } else if (this.hovered.name == 'x'){
                     this.props.moveOnAxisDrop(this.unprojectXY(event.clientX, event.clientY, this.hovered.parent.position.z), this.hovered.name)
-                } else {
-                    //z-axis
+                } else if (this.hovered.name == 'z'){
                     this.props.moveOnAxisDrop(this.unprojectYZ(event.clientX, event.clientY, this.hovered.parent.position.x), this.hovered.name)
+                } else {
+                    //rotation around y-axis
+                    this.props.moveOnAxisDrop(this.unprojectXZ(event.clientX, event.clientY, this.hovered.parent.position.y), this.hovered.name)
                 }
             } else if(event.shiftKey){
                 this.props.moveDrop(this.unprojectXZ(event.clientX, event.clientY,this.hovered.position.y))
@@ -554,6 +560,9 @@ export class ModelView3D extends React.Component<Props> {
 
         return pos
     }
+    /*protected unprojectRotationY(mouseX: number, mouseY: number, y = 0) {
+        //
+    }*/
 
     paint() {
         this.orbit.update()

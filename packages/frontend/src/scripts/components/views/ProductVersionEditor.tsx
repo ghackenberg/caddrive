@@ -12,17 +12,18 @@ export const ProductVersionEditorView = () => {
     const [part, setPart] = React.useState<Object3D[]>()
     const [create, setCreate] = React.useState<boolean>()
     const [partInserted, setPartInserted] = React.useState<boolean>()
-    //const [fallbackPart, setFallbackPart] = React.useState<Object3D>()
     const [multipleFallbackParts, setMultpleFallbackParts] = React.useState<Object3D[]>()
 
     const [selectedPart, setSelectedPart] = React.useState<Object3D[]>()
     const [correctionVector, setCorrectionVector] = React.useState<Vector3>()
     const [vecCalculated, setVecCalculated] = React.useState<boolean>()
-    //const [materialFromBefore, setMaterialFromBefore] = React.useState<MeshStandardMaterial>()
 
     const [selectedMaterials, setSelectedMaterials] = React.useState<MeshStandardMaterial[]>()
     const [selectedIndex, setSelectedIndex] = React.useState<number>()
-    //const [multiPartSelection, setMultipartSelection] = React.useState<Object3D[]>()
+
+    const [rotationStartPos, setRotationStartPos] = React.useState<Vector3>()
+    //const [lastRotation, setlastRotation] = React.useState<number>()
+    let lastRotation = 0
 
     React.useEffect(() => {
         const size = 400
@@ -134,11 +135,6 @@ export const ProductVersionEditorView = () => {
         model.rotation.x = Math.PI
         setModel(model)
     }, [])
-    /*
-    interface ObjectMaterialPair {
-        object: Object3D,
-        material: MeshStandardMaterial
-    }*/
 
     function onDragStart(event: React.DragEvent, file: string) {
         unselect()
@@ -152,7 +148,6 @@ export const ProductVersionEditorView = () => {
         setPartInserted(false)
     }
     function CalculateOffset(part: Object3D) {
-        //TODO: add calculation for array
         if (!part || !part.name || !part.name.endsWith('.dat')) {
             console.log(part)
             throw 'Unexpected part'
@@ -170,7 +165,7 @@ export const ProductVersionEditorView = () => {
             setVecCalculated(false)
             return
         }
-
+        
         offsetVector.x = (offsetVector.x%40)/2
         offsetVector.z = (offsetVector.z%40)/2
         offsetVector.y = offsetVector.y-4 + ((offsetVector.y-4)%8)/2
@@ -192,8 +187,11 @@ export const ProductVersionEditorView = () => {
     }
     function axisMovement(axisName: string, pos: Vector3, parts = part) {
         if(selectedPart.length > 0) {
-            console.log(selectedIndex)
+            let position = manipulator.position
+            //let rotation = manipulator.rotation
             if(selectedIndex) {
+                position = selectedPart[selectedIndex].position
+                //rotation = selectedPart[selectedIndex].rotation
                 CalculateOffset(selectedPart[selectedIndex])
             }
             else if(!vecCalculated) {                
@@ -202,36 +200,53 @@ export const ProductVersionEditorView = () => {
             }
             switch (axisName) {
                 case "x": {
-                    const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - selectedPart[selectedIndex].position.x
+                    const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - position.x
                     moveParts(new Vector3(xcoord,0,0),parts)
                     break
                 }
                 case "y": {
-                    const ycoord = (Math.round(-pos.y/8)*8) -selectedPart[selectedPart.length - 1].position.y
+                    const ycoord = (Math.round(-pos.y/8)*8) - position.y
                     moveParts(new Vector3(0,ycoord,0),parts)
                     break
                 }
                 case "z": {
-                    const zcoord = (Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)- selectedPart[selectedIndex].position.z
+                    const zcoord = (Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)- position.z
                     moveParts(new Vector3(0,0,zcoord),parts)
                     break
                 }
                 case "rotation y": {
-                    //part.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
-                    const rotation = Math.round(2*pos.y/Math.PI)*Math.PI/2 - selectedPart[selectedIndex].rotation.y
-                    for (const element of parts) {
-                        element.rotateY(rotation)
+                    if(!rotationStartPos) {
+                        return
+                    }
+                    const vecA = new Vector3(rotationStartPos.x, -rotationStartPos.y, -rotationStartPos.z)
+                    const vecB = new Vector3(pos.x, -pos.y, -pos.z)
+                    vecA.sub(manipulator.position)
+                    vecB.sub(manipulator.position)
+                    let angle = -Math.round(vecA.angleTo(vecB)*4/Math.PI)*Math.PI/4
+                    if (vecA.cross(vecB).y > 0) { 
+                        angle *= -1 
+                    }
+                    if  (angle != lastRotation) {
+                        angle -= lastRotation
+                        console.log("vecA", vecA, "\nvecB", vecB, "\ncross", vecA, "\nangle", angle)
+                        for (const element of parts) {
+                            const rotationVec = element.position.clone()
+                            element.position.sub(rotationVec.sub(manipulator.position))
+                            element.position.add(rotationVec.applyAxisAngle(new Vector3(0,1,0),angle))
+                            element.rotateY(angle)
+                        }
+                        lastRotation += angle
                     }
                 }
             }
-            //manipulator.position.set(selectedPart[selectedPart.length - 1].position.x,selectedPart[selectedPart.length - 1].position.y,selectedPart[selectedPart.length - 1].position.z)
         }
     }
     function onPartDragStart(dragPart: Object3D, pos: Vector3) {
-        //TODO: move multiple
         const index = selectedPart.indexOf(dragPart)
+        console.log(dragPart,index)
         if (dragPart && index==-1) {
             unselect()
+            setSelectedIndex(0)
             setFallbackForMultiple([dragPart])
             CalculateOffset(dragPart)
             dragPart.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
@@ -255,22 +270,14 @@ export const ProductVersionEditorView = () => {
         setCreate(false)
     }
     function onPartDrag(pos: Vector3) {
-        //TODO: move multiple
         if (part) {
             CalculateOffset(part[selectedIndex])
-            /*
-            part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
-                Math.round(-pos.y/8)*8,
-                Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
-            )*/
-           console.log(part)
             moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedIndex].position.x,
                 (Math.round(-pos.y/8)*8) - part[selectedIndex].position.y,
                 (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - part[selectedIndex].position.z))
         }
     }
     function onPartDragDrop(pos: Vector3) {
-        //TODO: move multiple
         if (part) {
             CalculateOffset(part[selectedIndex])
             moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedIndex].position.x,
@@ -282,7 +289,6 @@ export const ProductVersionEditorView = () => {
         }
     }
     function onPartDragAbborted() {
-        //TODO: Move multiple
         if (part.length > 0 && create) {
             model.remove(part[0])
             return
@@ -290,25 +296,14 @@ export const ProductVersionEditorView = () => {
         console.log("Fallbacks", multipleFallbackParts)
         if (multipleFallbackParts.length != 0) {
             for (const i in multipleFallbackParts) {
-                //selectedpart
                 part[i].position.set(multipleFallbackParts[i].position.x,multipleFallbackParts[i].position.y,multipleFallbackParts[i].position.z)
             }
             setVecCalculated(false)
             unselect(multipleFallbackParts)
         }
-        /*
-        else if (part) {
-            model.remove(part[0])
-            if (create) {
-                return
-            }
-            model.add(fallbackPart)
-            setPart(undefined)
-            unselect([fallbackPart])
-            setVecCalculated(false)
-        }*/
     }
     function onDragEnter(_event: React.DragEvent, pos: Vector3) {
+        console.log(_event.dataTransfer)
         if (part && part.length > 0) {
             if (create) {
                 model.add(part[0])
@@ -334,14 +329,6 @@ export const ProductVersionEditorView = () => {
             )
         }
     }
-    /*
-    function onDragLeave() {
-        if (part) {
-            if (create) {
-                model.remove(part)
-            }
-        }
-    }*/
     function onDrop(pos: Vector3) {
         if (part && part.length > 0) {
             CalculateOffset(part[0])
@@ -355,93 +342,23 @@ export const ProductVersionEditorView = () => {
     }
     function onMoveOnAxisStart(object: Object3D, pos: Vector3) {
         if(selectedPart) {
-            //CalculateOffset(selectedPart[selectedPart.length - 1])
             setFallbackForMultiple()
             setPart(selectedPart)
+            //setlastRotation(0)
+            lastRotation = 0
+            setRotationStartPos(pos)
             axisMovement(object.name, pos, selectedPart)
-            //setFallbackPart(selectedPart.clone())
-            /*
-            switch (object.name) {
-                case "x": {
-                    //selectedPart.position.setX(Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x)
-                    const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - selectedPart[selectedPart.length - 1].position.x
-                    moveParts(new Vector3(xcoord,0,0))
-                    break
-                }
-                case "y": {
-                    selectedPart.position.setY(Math.round(-pos.y/8)*8)
-                    break
-                }
-                case "z": {
-                    selectedPart.position.setZ(Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)
-                    break
-                }
-                case "rotation y": {
-                    selectedPart.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
-                }
-            }
-            manipulator.position.set(selectedPart.position.x,selectedPart.position.y,selectedPart.position.z)
-            setPart(selectedPart)
-            */
             setCreate(false)
         }
     }
     function onMoveOnAxis(pos: Vector3, axisName: string) {
         axisMovement(axisName, pos)
-        /*
-        if(part) {
-            CalculateOffset(part)
-            switch (axisName) {
-                case "x": {
-                    part.position.setX(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x)
-                    break
-                }
-                case "y": {
-                    part.position.setY(Math.round(-pos.y/8)*8)
-                    break
-                }
-                case "z": {
-                    part.position.setZ(Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)
-                    break
-                }
-                case "rotation y": {
-                    part.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
-                }
-            }
-            manipulator.position.set(part.position.x,part.position.y,part.position.z)
-        }
-        */
     }
     function onMoveOnAxisDrop(pos: Vector3, axisName: string) {
-        //TODO: change to be able to move multiple
         axisMovement(axisName, pos)
-        /*
-        if (part) {
-            CalculateOffset(part)
-            switch (axisName) {
-                case "x": {
-                    part.position.setX(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x)
-                    break
-                }
-                case "y": {
-                    part.position.setY(Math.round(-pos.y/8)*8)
-                    break
-                }
-                case "z": {
-                    part.position.setZ(Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)
-                    break
-                }
-                case "rotation y": {
-                    part.rotation.y = (2*pos.y/Math.PI)*Math.PI/2
-                }
-            }
-            manipulator.position.set(part.position.x,part.position.y,part.position.z)
-            //setPart(part)
-            setCreate(false)
-        }
-        */
-       setVecCalculated(false)
-       setPart(undefined)
+        setRotationStartPos(undefined)
+        setVecCalculated(false)
+        setPart(undefined)
     }
     function onOver(object: Object3D) {
         if (object.name === "x" || object.name === "y" || object.name === "z" || object.name === "rotation y") {
@@ -487,16 +404,12 @@ export const ProductVersionEditorView = () => {
     }
     function onClick(object: Object3D, isCtrlPressed: boolean) {
         !isCtrlPressed && unselect()
-        console.log("Ctrl Pressed:", isCtrlPressed)
-
         if(object != null && object.name.endsWith(".dat")) {
             let index = selectedPart.indexOf(object)
             if (index == -1) {
                 object.traverse(function(obj) {
                 const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
                 if(mater.isMesh) {
-                    //setMaterialFromBefore(mater.material)
-
                     selectedMaterials.push(mater.material)
                     selectedPart.push(object)
 
@@ -506,27 +419,14 @@ export const ProductVersionEditorView = () => {
                 })
                 index = selectedMaterials.length - 1
             }
-
             setSelectedIndex(index)
-            //TODO: bei xz bewegung mehrere teile kkordinatensystem mitverschieben
-            //      Koordinatensystem bei gruppe zentrieren wenn mit strg ins nichts geklickt wird
-            //      Rotation y
-            //      bonus: grid bei annäherung der Grenze expandieren; 
+            //TODO: bonus: grid bei annäherung der Grenze expandieren; 
             //      bonus: grid bei verschibung höher gelegener teile in passender ebene anzeigen
 
-            /*if(isCtrlPressed) {
-                manipulator.position.set(object.position.x,object.position.y,object.position.z)
-                manipulator.visible = true
-                part.add(object)
-                setSelectedPart(object)
-            }*/
             manipulator.position.set(object.position.x,object.position.y,object.position.z)
             manipulator.visible = true
-            //setPart(object)
-            //setSelectedPart(object)
         }
         else if (isCtrlPressed) {
-            //TODO: Calculate center and move manipulator there
             const box  = new Box3()
             for (const element of selectedPart) {
                 box.expandByObject(element,true)
@@ -548,18 +448,7 @@ export const ProductVersionEditorView = () => {
                 }
             })        
         }
-        /*materialFromBefore && partToUnselect && partToUnselect.traverse(function(obj) {
-            const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
-            if(mater.isMesh) {
-                mater.material = materialFromBefore
-                //mater.material.color.setRGB(0.09758734713304495,0.407240211891531, 0.05286064701616471 )
-            }
-        })
-
-        setSelectedPart(undefined)*/
-
         manipulator.visible = false
-        //setSelectedMaterials([])
     }
 
     return  (
