@@ -1,0 +1,454 @@
+\documentclass[onecolumn]{PDS}
+%%%% Packages
+\usepackage{graphicx}
+\usepackage{multicol,multirow}
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb,amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amsthm}
+\usepackage[figuresright]{rotating}
+\usepackage{appendix}
+\usepackage[authoryear]{natbib}
+\usepackage{ifpdf}
+%\usepackage{newtxtext}
+%\usepackage{newtxmath}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage[colorlinks,allcolors=dscolor,bookmarks=false]{hyperref}
+
+\jdoi{https://doi.org/10.1017/pds.2025.xxx}
+
+\usepackage{boites}
+
+\begin{document}
+
+\articletype{}% Leave empty
+
+\title[]{How to use the PDS \LaTeX\ class}
+
+
+\maketitle
+
+\hrule{}
+\vspace{35mm}
+Leave empty for metadata
+\vspace{35mm}
+\hrule{}
+
+
+\section{Introduction}\label{sec1}
+
+This latex class file is available for the authors to prepare
+the manuscript for PDS Journal. It is assumed that
+the authors are familiar with either plain \TeX, \LaTeX,\
+\AmS-\TeX\ or a standard latex set-up, hence, only the
+essential points are described in this document. To get more
+details please go through the \textit{\LaTeX\ User's Guide} or
+\textit{The not so short introduction to \LaTeXe} (which is available online).
+The \verb|PDS.cls| is similar as the \texttt{article.cls} of
+\LaTeX, with only few additional changes in the preamble portion.
+
+\section{Installation}
+The \texttt{PDS.cls} has to be copied into a directory
+where tex looks for input files. The other files has to
+keep as a reference during the preparation of your
+manuscripts. Please use pre-defined commands from
+for title, authors, address, abstract, keywords, body etc. as shown in Box 1.
+
+\section{How to start using PDS.cls}
+
+Before you type anything that actually appears in the paper
+you need to include a\break \verb|\documentclass{PDS}|
+command at the very beginning and then, the two commands
+that have to be part of any latex document,
+\verb|\begin{document}| at the start and the
+\verb|\end{document}| at the end of your paper. The main
+structure of your document should be as follows:
+
+\vskip1pc
+\noindent Box 1: Structure of a document.
+
+\begin{breakbox}
+\begin{verbatim}
+\documentclass{PDS} %%% For double column layout.
+
+%%% In case if you want the article in single column, then please use
+%%% the option "onecolumn" in the optional of document class as shown below
+%%% Also, if you want to submit your article in 11pt size, then please use
+%%% the option xipt in the document class as shown below.
+
+%%% \documentclass[onecolumn,xipt]{PDS}
+
+\begin{document}
+
+\title{How to use the PDS \LaTeX\ class}
+
+\author[1]{First author}
+\author[2]{Second author}
+\author*[3]{Third author - Corres author}
+
+\address[1]{First author address,}
+\address[2]{Second author address,}
+\address[3]{Third author address}
+
+\corresemail{xxxx@xxxx.xxx.xx}
+
+\abstract{abstract text }
+
+\keywords{keyword entry 1, keyword entry 2, keyword entry 3}
+
+\maketitle
+
+\section{....}
+...
+\subsection{....}
+....
+\end{document}
+\end{verbatim}
+\end{breakbox}
+
+\vspace*{2pc}
+
+\section{Preamble part}
+
+All the options in \texttt{article.cls} are
+available with this class file, by default it
+will produce all elements single spaced throughout the
+document.
+
+By default, PDS class file produce numbered bibliography.
+
+\subsection{Paper Title}
+
+The paper title is declared like: \verb|\title{...}| in the standard LATEX manner.
+Line breaks \verb|\\| may be used to equalize the length of the title lines.
+
+\subsection{Author Names}
+
+The name and associated information is declared with the
+\verb|\author| command. \verb|\author| behaves slightly differently
+depending on the document mode. For more details about author information see Box 1.
+
+\subsection{Abstract \& Keywords}
+
+The abstract is generally the first part of a paper. The abstract text is placed within the abstract
+environment.
+
+\newpage
+Keywords should be inserted immediately after the abstract text with grouping as shown below.
+
+\begin{verbatim}
+\abstract{
+Abstract text here
+}
+
+\keywords{Keyword text here}
+\end{verbatim}
+
+\section{Body part}
+
+\subsection{Sections}
+\label{sec3.6}
+
+The coding for section is \verb|\section{text}|. This will generate section number automatically.
+Use the starred form (\verb|\section*{text}|) of the command to suppress the automatic numbering.
+If you want to make cross references to the section levels use the \verb|\label| and \verb|\ref| command.
+You can have sections up to five levels.
+
+The sectioning commands are \verb|\section|, \verb|\subsection|, \verb|\subsubsection|,
+\verb|\paragraph| and \verb|\subparagraph|.
+
+
+\subsection{Figures and tables}\label{sec3.9}
+
+Use the default \LaTeX\ coding for figures and tables.
+Figure and table environments should be inserted after the end of the paragraph,
+nearest to the citation.
+
+
+\noindent The coding for figure is:
+
+\begin{verbatim}
+\begin{figure}[!h]
+\centering{\includegraphics{sample.eps}}
+\caption{Insert figure caption\label{fig1}}
+\end{figure}
+\end{verbatim}
+
+\noindent The coding for table is:
+
+\begin{verbatim}
+\begin{table}[!t]
+\centering
+\caption{Insert table caption her\label{tab1}}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lllll@{}}
+\Toprule
+Column head 1 & Column head 2 & Column head 3 &
+Column head 4 & Column head 5\\
+\midrule
+Table body & Table body & Table body  & Table body  & Table body  \\
+Table body & Table body & Table body  & Table body  & Table body  \\
+Table body & Table body & Table body  & Table body  & Table body  \\
+Table body & Table body & Table body  & Table body  & Table body  \\
+Table body & Table body & Table body  & Table body  & Table body  \\
+\botrule
+\end{tabular*}
+\end{table}\end{verbatim}
+
+As always with \LaTeX, the \verb|\label| must be after the
+\verb|\caption|, and inside the figure or table environment. The reference for
+figures and tables inside text can be made using the \verb|\ref{key}| command.
+
+
+\subsection{Equations}\label{sec3.10}
+
+Equations are used in the same way as described in the \LaTeX\ manual.
+Equations are numbered consecutively, with equation numbers
+in parentheses flush right.\noindent
+
+\newpage
+\noindent For example, if you type
+\begin{verbatim}
+\begin{equation}\label{eq1}
+\int^{r_2}_0 F(r,\varphi){\rm d}r\,{\rm d}\varphi = [\sigma r_2/(2\mu_0)]
+\int^{\infty}_0\exp(-\lambda|z_j-z_i|)\lambda^{-1}J_1 (\lambda r_2)J_0
+(\lambda r_i\,\lambda {\rm d}\lambda)
+\end{equation}
+\end{verbatim}
+then you will get the following output:
+\begin{equation}\label{eq1}
+\int^{r_2}_0 F(r,\varphi){\rm d}r\,{\rm d}\varphi = [\sigma r_2/(2\mu_0)]\int^{\infty}_0
+\exp(-\lambda|z_j-z_i|)\lambda^{-1}J_1 (\lambda r_2)J_0 (\lambda r_i\,\lambda {\rm d}\lambda)
+\end{equation}
+\AmS-\LaTeX{} has several environments that
+make it easier to typeset complicated multiline displayed equations. These are explained in the
+\AmS-\LaTeX{} User Guide. A \verb|subequation| environment is available to create equations with
+sub-numbering of the equation counter. It takes one (optional)
+argument to specify the way that the sub-counter should appear.
+
+
+\subsection{Quotes and displayed text}
+\label{sec3.11}
+
+Quotes are indented from the left and right margins. There are various types of quotes,
+short quote, long quote and display poetry.\vskip1pc
+
+\noindent The coding for short quote is \verb|\begin{quote}...\end{quote}|.
+\begin{quote}
+   This is a short quotation.  It consists of a
+   single paragraph of text.  See how it is formatted.
+\end{quote}
+
+\noindent The coding for long quote is \verb|\begin{quotation}...\end{quotation}|.
+
+\begin{quotation}
+   This is a longer quotation.  It consists of two
+   paragraphs of text, neither of which are
+   particularly interesting.
+
+   This is the second paragraph of the quotation.  It
+   is just as dull as the first paragraph.
+\end{quotation}
+
+\subsection{Listings}
+\label{sec3.12}
+
+Another frequently displayed structure is a list. There are various types of list
+numbered, itemized and bulleted list.
+
+\noindent The coding for bulleted list are as follows:
+
+\begin{verbatim}
+\begin{itemize}
+\item Bulleted list 1
+\item Bulleted list 2
+\item Bulleted list 3
+\end{itemize}
+\end{verbatim}
+
+\noindent The coding for numbered list are as follows:
+
+\begin{verbatim}
+\begin{enumerate}
+\item Numbered list 1
+\item Numbered list 2
+\item Numbered list 3
+\end{enumerate}
+\end{verbatim}
+
+\noindent The coding for description list are as follows:
+
+\begin{verbatim}
+\begin{description}
+\item Description list 1
+\item Description list 2
+\item Description list 3
+\end{description}
+\end{verbatim}
+
+\subsection{Enunciations like theorem, lemma etc.}
+\label{sec3.13}
+
+The \AmS-\LaTeX\ package for enunciations (amsthm.sty) has been already loaded in the class file.
+
+To get the theorem environment use the coding as:
+\begin{verbatim}
+\begin{theorem}
+Theorem text. Theorem text. Theorem text.
+Theorem text. Theorem text. Theorem text.
+\end{theorem}
+\end{verbatim}
+
+and \verb|\newtheorem{theorem}{Theorem}| in the preamble.
+
+Similarly, we can define for lemma, corollary, proposition, definition etc.
+
+\subsection{Cross-referencing}
+\label{sec3.14}
+
+LATEX provides the following commands for cross referencing\vskip1pc
+
+\noindent \verb|\label{marker}|, \verb|\ref{marker}| and \verb|\pageref{marker}|\vskip1pc
+
+\noindent where marker is an identifier chosen by the user. LATEX replaces \verb|\ref| by
+the number of the section, subsection, figure, table, or theorem after which
+the corresponding \verb|\label| command was issued. \verb|\pageref| prints the page
+number of the page where the \verb|\label| command occurred.
+
+\subsection{Citations}
+
+Citations are made with the \verb|\cite| command as usual. In this class file we have
+used natbib.sty for cross references and reference style.
+
+For bibliography the natbib package has been defined in the template as \verb|\usepackage{natbib}|
+with \verb|\bibpunct{[}{]}{,}{n}{,}{;}| command
+
+For more details about natbib.sty can be found at
+http://ctan.org/tex-archive/macros/latex/contrib/natbib/
+
+\section{Back Matter}
+
+\begin{verbatim}
+
+\begin{Backmatter}
+
+\section*{Acknowledgments}
+
+Acknowledgments
+
+
+\begin{thebibliography}{}
+
+...
+..
+\end{thebibliography}
+
+\appendix
+\section*{Appendix}
+
+\end{Backmatter}
+
+\end{verbatim}
+
+\begin{Backmatter}
+
+\section*{Acknowledgements}
+
+Acknowledgements and other unnumbered sections are created
+using the \verb|\section*| command:
+
+\subsection{References}
+\label{sec3.18}
+
+The reference entries can be \LaTeX\ typed bibliographies or generated through a BIB\TeX\ database.
+BIB\TeX\ is an adjunct to \LaTeX\ that aids in the preparation of bibliographies. BIB\TeX\
+allows authors to build up a database or collection of bibliography entries that may be used for many
+manuscripts. They also save us the trouble of having to specify formatting. More details can be found
+in the \textit{BIB\TeX\ Guide}. For \LaTeX\ reference entries use the
+\verb|\begin{thebibliography}...\end{thebibliography}| environment (see below) to make references in your paper.
+By default the class file will produce the numbered \LaTeX\ bibliography.
+
+\begin{verbatim}
+\begin{thebibliography}{}
+\bibitem[Cadero et al.(2018)]{cadero2018global}
+{Cad\'ero, A., Aubry, A., Brun, F.,   Dourmad, J. Y., Sala\'l\'zn, Y.
+ and Garcia-Launay, F.} (2018).
+Global sensitivity analysis of a pig fattening unit model simulating
+technico-economic performance and environmental impacts.
+\textit{Agricultural Systems}, {165}, 221--229.
+
+\bibitem[Cao(2015)]{r16}
+{Cao, L.} (2015). Improved Genetic Algorithm for Fast Path Planning of USV.
+\textit{International Symposium on Multispectral Image Processing
+ and Pattern Recognition (MIPPR2015)}, 9815, 981529.
+
+\bibitem[Cheng et al.(2015)]{r27}
+{Cheng, Z., Tong, Y., Shen L. and Ming, L. I.} (2015). Improved bacteria
+foraging optimisation algorithm for solving flexible job-shop scheduling problem.
+\textit{Journal of Computer Applications}, 63--67.
+
+\end{thebibliography}
+
+\end{verbatim}
+
+
+\subsection{Formatting}
+\label{sec3.8}
+
+One should always use \LaTeX\ macros rather than the lower-level
+\TeX\ macros like \verb|\it|, \verb|\bf| and \verb|\tt|. The
+\LaTeX\ macros offer much improved features. The following table summarizes the font
+selection commands in \LaTeX.
+
+\subsection*{\LaTeX\ text formatting commands}
+\begin{tabular}{ll@{\hskip60pt}ll}
+\verb|\textit|  & Italics      &\verb|\textsf|  & Sans Serif\\[3pt]
+\verb|\textbf|  & Boldface     &\verb|\textsc|  & Small Caps\\[3pt]
+\verb|\texttt|  & Typewriter   &\verb|\textmd|  & Medium Series\\[3pt]
+\verb|\textrm|  & Roman        &\verb|\textnormal| & Normal Series\\[3pt]
+\verb|\textsl|  & Slanted      &\verb|\textup|  & Upright Series
+\end{tabular}
+
+
+\subsection*{\LaTeX\ math formatting commands}
+\begin{tabular}{ll@{\qquad}ll}
+\verb|\mathit|     & Math Italics        &\verb|\mathfrak|   & Fraktur\\[3pt]
+\verb|\mathbf|     & Math Boldface       &\verb|\mathbb|     & Blackboard Bold\\[3pt]
+\verb|\mathtt|     & Math Typewriter     &\verb|\mathnormal| & Math Normal\\[3pt]
+\verb|\mathsf|     & Math Sans Serif     &\verb|\boldsymbol| & Bold math for Greek letters\\[3pt]
+\verb|\mathcal|    & Calligraphic        &                   & and other symbols
+\end{tabular}
+
+\newpage
+
+\section{\color{dscolor}Macro packages}
+\label{sec4}
+
+The commonly used packages which can be used frequently are:
+
+\begin{verbatim}
+amsmath      graphicx     rotating         multirow
+amssymb      endnotes     subfigure        tikz
+amsfonts     setspace     array            siunitx
+xspace       latexsym     url              natbib
+amscd        multicol     algorithm        biblatex
+\end{verbatim}
+
+
+Additionally, you can use other packages and these should be loaded
+using the \verb|\usepackage| command in the preamble.
+
+\appendix
+\section*{\color{dscolor}Appendix}
+\label{sec3.16}
+
+The \verb|\appendix| command signals that all following sections are
+appendices, and therefore the headings after \verb|\appendix| will be set
+as appendix headings.
+
+Note: All the figures, tables, equations, enunciations will be automatically
+numbered as A.1, A.2, etc. in the appendix part.
+\end{Backmatter}
+
+\end{document}
