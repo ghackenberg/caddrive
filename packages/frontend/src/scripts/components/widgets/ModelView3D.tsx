@@ -265,7 +265,7 @@ export class ModelView3D extends React.Component<Props> {
         this.raycaster.setFromCamera(this.normalizeMousePosition(position), this.camera)
         const intersections = this.raycaster.intersectObjects(this.scene.children, true)
 
-        console.log(intersections)
+        //console.log(intersections)
 
         for (let i = 0; i < intersections.length; i++) {
             let iterator = intersections[i].object
@@ -274,7 +274,7 @@ export class ModelView3D extends React.Component<Props> {
                     iterator = iterator.parent
                 }
                 this.hovered = iterator
-                console.log(iterator)
+                //console.log(iterator)
                 break
             }
         }

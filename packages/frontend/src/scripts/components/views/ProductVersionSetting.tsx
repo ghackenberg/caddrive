@@ -118,11 +118,12 @@ export const ProductVersionSettingView = () => {
             setGroup(null)
             setBlob(null)
             setDataUrl(null)
-            if (file.name.endsWith('.FCStd')) {
+            const name = file.name.toLocaleLowerCase()
+            if (name.endsWith('.fcstd')) {
                 setStream(file.stream())
-            } else if (file.name.endsWith('.fbx') || file.name.endsWith('.stl') || file.name.endsWith('.glb')) {
+            } else if (name.endsWith('.fbx') || name.endsWith('.stl') || name.endsWith('.glb')) {
                 file.arrayBuffer().then(arrayBuffer => exec && setArrayBuffer(arrayBuffer))
-            } else if (file.name.endsWith('.dae') || file.name.endsWith('.ply') || file.name.endsWith('.ldr') || file.name.endsWith('.mpd') || file.name.endsWith('.stp') || file.name.endsWith('.step')) {
+            } else if (name.endsWith('.dae') || name.endsWith('.ply') || name.endsWith('.ldr') || name.endsWith('.mpd') || name.endsWith('.stp') || name.endsWith('.step')) {
                 file.text().then(text => exec && setText(text))
             }
         }
@@ -132,7 +133,8 @@ export const ProductVersionSettingView = () => {
     useEffect(() => {
         let exec = true
         if (stream) {
-            if (file.name.endsWith('.FCStd')) {
+            const name = file.name.toLocaleLowerCase()
+            if (name.endsWith('.fcstd')) {
                 parseFreeCADModel(stream, parseBRep).then(group => exec && setGroup(group))
             }
         }
@@ -142,11 +144,12 @@ export const ProductVersionSettingView = () => {
     useEffect(() => {
         let exec = true
         if (arrayBuffer) {
-            if (file.name.endsWith('.fbx')) {
+            const name = file.name.toLocaleLowerCase()
+            if (name.endsWith('.fbx')) {
                 parseFBXModel(arrayBuffer).then(group => exec && setGroup(group))
-            } else if (file.name.endsWith('.stl')) {
+            } else if (name.endsWith('.stl')) {
                 parseSTLModel(arrayBuffer).then(group => exec && setGroup(group))
-            } else if (file.name.endsWith('.glb')) {
+            } else if (name.endsWith('.glb')) {
                 parseGLTFModel(arrayBuffer).then(model => exec && setModel(model))
             }
         }
@@ -162,13 +165,14 @@ export const ProductVersionSettingView = () => {
         }
         const path = `${Math.random()}`
         if (text) {
-            if (file.name.endsWith('.dae')) {
+            const name = file.name.toLocaleLowerCase()
+            if (name.endsWith('.dae')) {
                 parseColladaModel(text).then(group => exec && setGroup(group))
-            } else if (file.name.endsWith('.ply')) {
+            } else if (name.endsWith('.ply')) {
                 parsePLYModel(text).then(group => exec && setGroup(group))
-            } else if (file.name.endsWith('.ldr') || file.name.endsWith('.mpd')) {
+            } else if (name.endsWith('.ldr') || name.endsWith('.mpd')) {
                 parseLDrawModel(path, text, update).then(group => exec && setGroup(group))
-            } else if (file.name.endsWith('.stp') || file.name.endsWith('.step')) {
+            } else if (name.endsWith('.stp') || name.endsWith('.step')) {
                 parseSTEPModel(text).then(group => exec && setGroup(group))
             }
         }

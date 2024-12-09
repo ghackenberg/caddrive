@@ -1,10 +1,26 @@
 import initOpenCascade from 'opencascade.js'
 
+const DEBUG = true
+
+// Define triangulation parameters
+
+const LIN_DEFLECTION = 5
+const IS_RELATIVE = true
+
+const ANG_DEFLECTION = 1
+const IS_IN_PARALLEL = false
+
+// Load OpenCascade CAD kernel
+
 const OCCT = initOpenCascade()
 
 OCCT.then(() => console.log('OpenCascade.js initialized!'))
 
+// Remember type of model
+
 let type: string
+
+// Process incoming messages
 
 addEventListener('message', async message => {
     // Check message data type
@@ -38,7 +54,7 @@ addEventListener('message', async message => {
         const doc = new occt.TDocStd_Document(storageformat)
         const shapeTool = occt.XCAFDoc_DocumentTool.ShapeTool(doc.Main()).get()
         shapeTool.SetShape(shapeTool.NewShape(), shape)
-        new occt.BRepMesh_IncrementalMesh_2(shape, 1, false, 1, false)
+        new occt.BRepMesh_IncrementalMesh_2(shape, LIN_DEFLECTION, IS_RELATIVE, ANG_DEFLECTION, IS_IN_PARALLEL)
     
         // Export a GLB file (this will also perform the meshing)
         //console.log('Writing GLB')
@@ -60,7 +76,7 @@ addEventListener('message', async message => {
         type = undefined
 
         // Read STEP file
-        console.log('Reading STEP file')
+        DEBUG && console.log('Reading STEP file')
         occt.FS.createDataFile('.', 'model.stp', content, true, true, true)
         const reader = new occt.STEPCAFControl_Reader_1()
         const result = reader.ReadFile('./model.stp')
@@ -70,7 +86,7 @@ addEventListener('message', async message => {
         }
 
         // Transfer STEP file
-        console.log('Transferring STEP file')
+        DEBUG && console.log('Transferring STEP file')
         const format = new occt.TCollection_ExtendedString_1()
         const doc = new occt.TDocStd_Document(format)
         const docHandle = new occt.Handle_TDocStd_Document_2(doc)
@@ -78,7 +94,7 @@ addEventListener('message', async message => {
         reader.Transfer_1(docHandle, readProgress)
         
         // Mesh STEP file
-        console.log('Meshing STEP file')
+        DEBUG && console.log('Meshing STEP file')
         const builder = new occt.BRep_Builder()
         const compound = new occt.TopoDS_Compound()
         builder.MakeCompound(compound)
@@ -92,10 +108,10 @@ addEventListener('message', async message => {
                 builder.Add(compound, shape)
             }
         }
-        new occt.BRepMesh_IncrementalMesh_2(compound, 1, false, 1, false)
+        new occt.BRepMesh_IncrementalMesh_2(compound, LIN_DEFLECTION, IS_RELATIVE, ANG_DEFLECTION, IS_IN_PARALLEL)
 
         // Export a GLB file (this will also perform the meshing)
-        //console.log('Writing GLB')
+        DEBUG && console.log('Writing GLB')
         const glbFileName = new occt.TCollection_AsciiString_2('./model.glb')
         const cafWriter = new occt.RWGltf_CafWriter(glbFileName, true)
         const fileInfo = new occt.TColStd_IndexedDataMapOfStringString_1()
@@ -103,7 +119,7 @@ addEventListener('message', async message => {
         cafWriter.Perform_2(docHandle, fileInfo, writeProgress)
     
         // Read the GLB file from the virtual file system
-        //console.log('Readling GLB')
+        DEBUG && console.log('Readling GLB')
         const glbFileData = occt.FS.readFile('./model.glb', { encoding: 'binary' })
         occt.FS.unlink('./model.glb')
     
