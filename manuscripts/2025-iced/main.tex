@@ -22,7 +22,7 @@
 
 \begin{document}
 
-\title{First experiences from using CADdrive in education}
+\title{First experiences from using CADdrive with digital LEGO and classical CAD in different educational settings}
 
 \author{Georg Hackenberg}
 \author{Christian Zehetner}
@@ -32,7 +32,13 @@
 \corresemail{georg.hackenberg@fh-wels.at}
 
 \abstract{
-    TODO
+Due to rising product and system complexities, design and engineering have become a team effort that requires well planned and synchronized activities to achieve high degrees of process efficiency and effectiveness.
+In recent years, online collaboration platforms emerged which help managing all relevant project information in a central repository and, hence, speed up the information flow between the different stakeholders.
+However, inspiring high school children to pursue a carreer in this field and preparing undergraduate as well as graduate students for what they will face in practice remains a challenge for institutions and societies worldwide.
+To overcome the current situation, in this paper we present our experiences with conducting different course formats both with children from high school as well as with adults pursueing a Master-level study programme.
+We provide insights into the organization of the different course formats, the various backgrounds and profiles of their participants, the work results produced by the individual teams, as well as the participants' feedback.
+Overall, we conclude that online collaboration platforms like CADdrive with integrated version management, issue tracking, and task scheduling are well suited for conducting project-based courses with predefined design tasks.
+In particular, our participants appreciated the transparency which can be achieved by means of online collaboration platforms as well as the accountability of the individual team members, which fosters active participation and learning.
 }
 
 \keywords{product design, systems engineering, engineering education}
@@ -104,9 +110,13 @@ And the goal of the thrid course was to design two innovative, but not otherwise
 \subsubsection{Glasshouse for Alpine regions}
 \label{sec:master-product-lego}
 
-The first course started in the winter term 2023 in the Master programme "Innovation and Product Management" at the School of Engineering of the University of Applied Sciences Upper Austria with 10 students.
-The participants included 5 women and 5 men between 26 and 40 years old and between 1 and 16 years of work experience in different industries (e.g.\ automotive, retail, oil gas, banking, etc.) and departments (e.g.\ product development, logistics, sales and marketing, etc.).
-In this project-based course, the task of the group was to design an energy-efficient glasshouse for growing sweet tomatos over the winter months in Alpine regions.
+The first course started in the winter term 2023 in the full-time Master programme "Innovation and Product Management".
+The participants included 5 women and 5 men between 26 and 40 years old and between 1 and 16 years of work experience in different industries (e.g.\ automotive, retail, banking, etc.) and departments (e.g.\ product development, logistics, martketng and sales, etc.).
+Furthermore, 8 students were holding a Bachelor degree and 2 students were holding a Master degree in some field.
+Also, most students were already familiar with some CAD tool (e.g.\ PTC Creo, AutoDesk AutoCAD, Siemens NX, etc.) as well as simulation software (e.g.\ Abaqus, Matlab Simulink, Ansys, etc.).
+
+In this project-based course, the goal of the group was to design an energy-efficient glasshouse for growing sweet tomatos over the winter months in Alpine regions.
+The tasks included requirements analysis, modular architecture design, mechanical design, electrical design, and simulation-based verification of selected system properties.
 Figure~\ref{fig:glasshouse} shows the mechanical design developed by the group with digital LEGO bricks and LeoCAD.
 The mechanical design comprises a grow area for the plants with glass walls and windows as well as solar panels on the roof (see Figure~\ref{fig:glasshouse_2}), and a shed area for storing tools and batteries (see Figure~\ref{fig:glasshouse_3}).
 
@@ -128,18 +138,18 @@ The mechanical design comprises a grow area for the plants with glass walls and 
         \caption{Interior design (shed area)}
         \label{fig:glasshouse_3}
     \end{subfigure}
-    \caption{Mechanical design with digital LEGO bricks.}
+    \caption{Mechanical design of the glasshouse with digital LEGO bricks.}
     \label{fig:glasshouse}
 \end{figure}
 
-Besides requirements analysis and mechanical design the group was tasked with applying finite element analysis, computational fluid dynamics, and multi-physics simulation for validating selected system properties.
-The group decided to apply finite element analysis for analysing the stability of the mechanical structure under snow and wind pressure, as well as computational fluid dynamics for analyzing the heat loss characteristics.
-Furthermore, Figure~\ref{fig:glasshouse-sim} TODO
+In the context of simulation-based verification, the group was tasked with applying finite element analysis (FEA), computational fluid dynamics (CFD), and multi-physics simulation (MPS) for analyzing selected system properties.
+The group decided to apply finite element analysis for analyzing the stability of the mechanical structure under snow and wind pressure, as well as computational fluid dynamics for analyzing the heat loss characteristics.
+Furthermore, the group decided to employ multi-physics simulation with OpenModelica\footnote{\url{https://github.com/OpenModelica/OpenModelica}} for analyzing the electrical energy consumption caused by the automatic window opening and closing system as shown in Figure~\ref{fig:glasshouse-sim}.
 
 \begin{figure}[htbp]
     \begin{subfigure}[b]{0.56\textwidth}
         \includegraphics[width=\textwidth]{./figures/glasshouse_mechatronic_1.png}
-        \caption{Component model}
+        \caption{OpenModelica component model}
         \label{fig:glasshouse-sim-1}
     \end{subfigure}
     \hfill
@@ -148,16 +158,17 @@ Furthermore, Figure~\ref{fig:glasshouse-sim} TODO
         \caption{3D visualization}
         \label{fig:glasshouse-sim-2}
     \end{subfigure}
-    \caption{Mechatronic simulation.}
+    \caption{Multi-physics simulation of automatic window opening and closing system.}
     \label{fig:glasshouse-sim}
 \end{figure}
-
-TODO
 
 \subsubsection{Paper folding machines}
 \label{sec:master-system-lego}
 
-TODO
+The second course also started in winter term 2023 in the part-time Master programme "Robotic Systems Engineering".
+The participants included 1 woman and 12 men between 25 and 33 years old and between 3 and 10 years of work experience in different industries (e.g.\ logistics, chemical, agriculture, etc.) and departmets (e.g.\ automation engineering, business development, project management, etc.).
+Furthermore, all students were holding a Bachelor degree in some technical field, while none was holding a Master degree.
+Also, TODO
 
 \begin{figure}[htbp]
     \begin{subfigure}[b]{0.3\textwidth}
