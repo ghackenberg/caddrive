@@ -95,17 +95,20 @@ Finally, we draw our conclusions from the previous experiments and their data, d
 \section{Course experiments}
 \label{sec:contribution}
 
-For our experiements we use CADdrive\footnote{\url{https://github.com/ghackenberg/caddrive}} as the underlying online collaboration platform with version management, issue tracking, and task scheduling, as well as LeoCAD\footnote{\url{https://github.com/leozide/leocad}} for digital LEGO design and  Dassault Systèmes SolidWorks\footnote{\url{https://www.solidworks.com/}} for classical CAD.
+For our experiements we used the open source software CADdrive\footnote{\url{https://github.com/ghackenberg/caddrive}} as the underlying online collaboration platform with version management, issue tracking, and task scheduling, as well as the open source software LeoCAD\footnote{\url{https://github.com/leozide/leocad}} for digital LEGO design.
+% and  Dassault Systèmes SolidWorks\footnote{\url{https://www.solidworks.com/}} for classical CAD.
 Subsequently, we first describe our Master-level course formats with students at University of Applied Sciences Upper Austria in Section~\ref{sec:master}, before explaining our workshop format with high school children in Section~\ref{sec:school}.
 Both for the Master-level courses and the workshop we introduce the organizational settings and show the most interesting work results delivered by the individual teams.
 
 \subsection{Master level}
 \label{sec:master}
 
-At Master level, we conducted three different courses over two semesters in two different study programmes with slightly varied organizational settings.
+At Master level, we conducted two different courses in two independent study programmes with slightly varied study plans and, hence, organizational settings.
 The goal of the first course was to design a energy-optimal glasshouse for growing sweet tomatos over the winter months in Alpine regions as explained in Section~\ref{sec:master-product-lego}.
+Furthermore, the course included a fair amount of simulation tasks for verification and validation.
 The goal of the second course was to design a paper folding machine turning plain paper sheets into boxes as expained in Section~\ref{sec:master-system-lego}.
-And the goal of the thrid course was to design two innovative, but not otherwise constrained products in the vertical farming space as explained in Section~\ref{sec:master-product-classical}.
+However, the course did not include simulation tasks, but verification and validation was achieved through manual reviews only.
+%And the goal of the thrid course was to design two innovative, but not otherwise constrained products in the vertical farming space as explained in Section~\ref{sec:master-product-classical}.
 
 \subsubsection{Glasshouse for Alpine regions}
 \label{sec:master-product-lego}
@@ -121,19 +124,19 @@ Figure~\ref{fig:glasshouse} shows the mechanical design developed by the group w
 The mechanical design comprises a grow area for the plants with glass walls and windows as well as solar panels on the roof (see Figure~\ref{fig:glasshouse_2}), and a shed area for storing tools and batteries (see Figure~\ref{fig:glasshouse_3}).
 
 \begin{figure}[htbp]
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \includegraphics[width=\textwidth]{./figures/glasshouse_1.png}
         \caption{Exterior design}
         \label{fig:glasshouse_1}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \includegraphics[width=\textwidth]{./figures/glasshouse_2.png}
         \caption{Interior design (grow area)}
         \label{fig:glasshouse_2}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \includegraphics[width=\textwidth]{./figures/glasshouse_3.png}
         \caption{Interior design (shed area)}
         \label{fig:glasshouse_3}
@@ -143,17 +146,17 @@ The mechanical design comprises a grow area for the plants with glass walls and 
 \end{figure}
 
 In the context of simulation-based verification, the group was tasked with applying finite element analysis (FEA), computational fluid dynamics (CFD), and multi-physics simulation (MPS) for analyzing selected system properties.
-The group decided to apply finite element analysis for analyzing the stability of the mechanical structure under snow and wind pressure, as well as computational fluid dynamics for analyzing the heat loss characteristics.
+The group decided to apply finite element analysis for analyzing the stability of the mechanical structure under snow and wind pressure, as well as computational fluid dynamics for analyzing the heat loss characteristics of the building.
 Furthermore, the group decided to employ multi-physics simulation with OpenModelica\footnote{\url{https://github.com/OpenModelica/OpenModelica}} for analyzing the electrical energy consumption caused by the automatic window opening and closing system as shown in Figure~\ref{fig:glasshouse-sim}.
 
 \begin{figure}[htbp]
-    \begin{subfigure}[b]{0.56\textwidth}
+    \begin{subfigure}[b]{0.575\textwidth}
         \includegraphics[width=\textwidth]{./figures/glasshouse_mechatronic_1.png}
         \caption{OpenModelica component model}
         \label{fig:glasshouse-sim-1}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.4\textwidth}
+    \begin{subfigure}[b]{0.41\textwidth}
         \includegraphics[width=\textwidth]{./figures/glasshouse_mechatronic_2.png}
         \caption{3D visualization}
         \label{fig:glasshouse-sim-2}
@@ -168,93 +171,107 @@ Furthermore, the group decided to employ multi-physics simulation with OpenModel
 The second course also started in winter term 2023 in the part-time Master programme "Robotic Systems Engineering".
 The participants included 1 woman and 12 men between 25 and 33 years old and between 3 and 10 years of work experience in different industries (e.g.\ logistics, chemical, agriculture, etc.) and departmets (e.g.\ automation engineering, business development, project management, etc.).
 Furthermore, all students were holding a Bachelor degree in some technical field, while none was holding a Master degree.
-Also, TODO
+Also, most students were familar with some CAD software (e.g.\ AutoDesk AutoCAD, Dassault Systèmes Catia, PTC Creo, etc.), while only two students did not have prior CAD experience.
+
+The course was divided into two parts, a theory part followed by a practice part.
+In the theory part different concepts such as (model-based) systems engineering, systems lifecycle processes, requirements analysis, systems architecture, systems integration, as well as verification and validation were introduced.
+In the practice part the students were split into teams and were given the goal of developing a paper folding machine, which turns plain paper sheets into boxes with defined measures.
+The tasks included the analysis of the requirements, the derivation of a mechatronic systems architecture, as well as the design of the mechanical, electrical, and logical system structure.
+Figure~\ref{fig:paper} shows three different mechanical designs.
 
 \begin{figure}[htbp]
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \includegraphics[width=\textwidth]{./figures/paper_1.png}
-        \caption{First group}
+        \caption{First team}
         \label{fig:paper_1}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \includegraphics[width=\textwidth]{./figures/paper_2.png}
-        \caption{Second group}
+        \caption{Second team}
         \label{fig:paper_2}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \includegraphics[width=\textwidth]{./figures/paper_3.png}
-        \caption{Third group}
+        \caption{Third team}
         \label{fig:paper_3}
     \end{subfigure}
-    \caption{Mechanical designs.}
+    \caption{Different mechanical designs of the paper folding machine.}
     \label{fig:paper}
 \end{figure}
 
-TODO
+In contrast, Figure~\ref{fig:paper-sub} shows the electrical and logical design of one paper folding machine.
+This particular team worked with E-Plan Electric\footnote{\url{todo}} for the electrical design as well as XXX\footnote{\url{todo}} for the logical design of the target system.
+Note that in this case one student was already familiar with E-Plan Electric, which is why the first tool was selected.
+Furhtermore, note that the notation for the logical design was not prescribed by the course instructor, but resembles some form of state chart formalism, which is common in control engineering.
+Finally, validation of the different designs was performed with manual review techniques across all teams.
 
 \begin{figure}[htbp]
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{./figures/paper_electric.png}
         \caption{Electrical design}
+        \label{fig:paper-sub-1}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.5\textwidth}
         \includegraphics[width=\textwidth]{./figures/paper_control.png}
         \caption{Logical design}
+        \label{fig:paper-sub-2}
     \end{subfigure}
-    \caption{Electrical and logical designs.}
+    \caption{Electrical and logical design of one paper folding machine.}
+    \label{fig:paper-sub}
 \end{figure}
 
-TODO
+% \subsubsection{Vertical farming products}
+% \label{sec:master-product-classical}
 
-\subsubsection{Vertical farming products}
-\label{sec:master-product-classical}
+% TODO
 
-TODO
+% \begin{figure}[htbp]
+%     \begin{subfigure}[b]{0.27\textwidth}
+%         \includegraphics[width=\textwidth]{./figures/ecoflush.png}
+%         \caption{EcoFlush}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{0.375\textwidth}
+%         \includegraphics[width=\textwidth]{./figures/golazo-1.jpg}
+%         \caption{Golazo building}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{0.27\textwidth}
+%         \includegraphics[width=\textwidth]{./figures/golazo-2.jpg}
+%         \caption{Golazo engine}
+%     \end{subfigure}
+%     \caption{Mechanical designs.}
+% \end{figure}
 
-\begin{figure}[htbp]
-    \begin{subfigure}[b]{0.27\textwidth}
-        \includegraphics[width=\textwidth]{./figures/ecoflush.png}
-        \caption{EcoFlush}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.375\textwidth}
-        \includegraphics[width=\textwidth]{./figures/golazo-1.jpg}
-        \caption{Golazo building}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.27\textwidth}
-        \includegraphics[width=\textwidth]{./figures/golazo-2.jpg}
-        \caption{Golazo engine}
-    \end{subfigure}
-    \caption{Mechanical designs.}
-\end{figure}
+% TODO
 
-TODO
+% \begin{figure}
+%     \begin{subfigure}[b]{0.49\textwidth}
+%         \includegraphics[width=\textwidth]{./figures/golazo-structure.png}
+%         \caption{Module architecture}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{0.49\textwidth}
+%         \includegraphics[width=\textwidth]{./figures/golazo-sim.jpg}
+%         \caption{Static simulation}
+%     \end{subfigure}
+%     \caption{Module architecture and static simulation.}
+% \end{figure}
 
-\begin{figure}
-    \begin{subfigure}[b]{0.49\textwidth}
-        \includegraphics[width=\textwidth]{./figures/golazo-structure.png}
-        \caption{Module architecture}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.49\textwidth}
-        \includegraphics[width=\textwidth]{./figures/golazo-sim.jpg}
-        \caption{Static simulation}
-    \end{subfigure}
-    \caption{Module architecture and static simulation.}
-\end{figure}
-
-TODO
+% TODO
 
 \subsection{High school level}
 \label{sec:school}
 
-Section~\ref{sec:school-lego}
+At high school level, we conducted one single-day workshop with children from around Wels city in Upper Austria.
+The workshop was organized as part of the KinderUni\footnote{\url{todo}} summer programme at the the School of Engineering of the University of Applied Sciences of Upper Austria in Wels, Austria.
+The KinderUni programme provides children the chance to experience science hands-on and to learn about different topics such as engineering, biology, architecture, and many more.
+Section~\ref{sec:school-lego} explains the structure of this single-day workshop and highlights results developed by the children during the course of the workshop.
 
-\subsubsection{Product design with digital LEGO}
+\subsubsection{LEGO product ideas}
 \label{sec:school-lego}
 
 TODO
