@@ -24,52 +24,53 @@
 
 \title{First experiences from using CADdrive with digital LEGO for product design and systems engineering education}
 
-\author{Georg Hackenberg}
-\author{Christian Zehetner}
+\author{--}
+\address{--}
+\corresemail{--}
 
-\address{School of Engineering, University of Applied Sciences Upper Austria, 4600 Wels, Austria}
+%\author{Georg Hackenberg}
+%\author{Christian Zehetner}
 
-\corresemail{georg.hackenberg@fh-wels.at}
+%\address{School of Engineering, University of Applied Sciences Upper Austria, 4600 Wels, Austria}
+
+%\corresemail{georg.hackenberg@fh-wels.at}
 
 \abstract{
-Due to rising product and system complexities, design and engineering have become a team effort that requires well planned and synchronized activities to achieve high degrees of process efficiency and effectiveness.
-In recent years, online collaboration platforms emerged which help managing all relevant project information in a central repository and, hence, speed up the information flow between the different stakeholders.
-However, inspiring high school children to pursue a carreer in this field and preparing undergraduate as well as graduate students for what they will face in practice remains a challenge for institutions and societies worldwide.
-To overcome the current situation, in this paper we present our experiences with conducting different course formats both with children from high school as well as with adults pursueing a Master-level study programme.
-We provide insights into the organization of the different course formats, the various backgrounds and profiles of their participants, the work results produced by the individual teams, as well as the participants' feedback.
-Overall, we conclude that online collaboration platforms like CADdrive with integrated version management, issue tracking, and task scheduling are well suited for conducting project-based courses with predefined design tasks.
-In particular, our participants appreciated the transparency which can be achieved by means of online collaboration platforms as well as the accountability of the individual team members, which fosters active participation and learning.
+Due to rising product and system complexities, design and engineering have become a team effort that requires well planned and synchronized activities to achieve a high degree of process efficiency and effectiveness.
+Inspiring high school children to pursue a carreer in this field and preparing undergraduate as well as graduate students for what they will face in practice remains a challenge for societies and institutions worldwide.
+To overcome this situation, in this paper we present our experience from conducting two courses for Master students and one workshop for high school children based on an online collaboration platform and the digital LEGO framework.
+We provide insights into the organization of the different formats, the various backgrounds and profiles of their participants, the work results produced by the individual teams, as well as the participants' learning experience.
 }
 
-\keywords{product design, systems engineering, engineering education}
+\keywords{Design education, Collaborative design, Systems Engineering (SE)}
 
 \maketitle
 
 \section{Introduction}
 \label{sec:introduction}
 
-\cite{Luo_2017} show based on U.S.\ patent data that the complexity of innovation processes and their outcomes has been growing steadily over the past 20 years.
-According to \cite{Trattner_2019} the growing complexity of our products and systems can be seen, for example, in the growing number of components, their interfaces, and their interactions.
-Futhermore, \cite{Thramboulidis_2008} explains that the interfaces between these components typically are not limited to one engineering discipline (e.g.\ mechanics or electrics) anymore, but span several disciplines.
-Ultimately, we deal with a mutlitude of mechatronic components, which exhibit relevant mechanical, electrical, and logical characteristics.
-For such mechatronic components, \cite{Youcef_Toumi_1996} already identified that they come with their own integration issues, which are not considered in the classical engineering disciplines.
+\cite{Luo_2017} argue based on official datasets from the U.S.\ patent office that the complexity of innovation processes and their outcomes has been growing steadily over the past 20 years.
+According to \cite{Trattner_2019} the growing complexity of our products and systems can be seen, for example, in the increased number of components, their interfaces, and their various ways of interaction.
+Futhermore, \cite{Thramboulidis_2008} explains that the interfaces between these components typically are not limited to one engineering discipline (e.g.\ mechanics, electrics, or software) anymore, but span several disciplines.
+Ultimately, when building modern products and systems we typically deal with a mutlitude of mechatronic components, which exhibit relevant mechanical, electrical, and software characteristics.
+For such mechatronic components, \cite{Youcef_Toumi_1996} already identified that they come with their very own integration issues, which are not considered in the classical engineering disciplines.
 
-In the past, the sole ability to engineer such complex systems might have been a sufficient success factor for societies and organizations.
-As \cite{Senescu_2014} argue, today due to rising global competition in many domains the engineering ability alone is not sufficient anymore, but the efficiency and effectiveness of the underlying engineering processes must be considered.
+In the past, the sole ability to engineer such complex systems might have been a sufficient success factor for societies and organizations across the globe.
+As \cite{Senescu_2014} argue, today due to rising global competition in many domains the engineering ability alone is not sufficient anymore, but the efficiency and effectiveness of the underlying engineering processes must be taken into account.
 According to \cite{Zidane2017}, different definitions exist for the terms \textit{efficiency} and \textit{effectiveness} in this context.
 One possible definition of efficiency is that the overall engineering process can be executed as fast as possbile and the desired target system's time-to-market is minimized.
 In contrast, one possible definition of effectiveness is that the engineering process leading to the desired target system consumes as little resources as possible and, hence, the overall process costs are minimized.
 
 As \cite{Strauss_1985} already argued, one key to efficiency (i.e.\ high development speeds) is dividing the overall work into individual activities, which can be executed in parallel, but also might require synchronization of their work results.
-\cite{Hartmann_2022} explain that these activities must be scheduled carefully such that the work results of one activity are ready when they are needed by another acitivity, leading to the well-known project scheduling problem.
+\cite{Hartmann_2022} explain that these activities must be scheduled carefully such that the work results of one activity are ready when they are needed by another acitivity, leading to the well-known project scheduling problem and the critical path.
 When required work results are not ready in time, you typically have two choices:
 Either you delay follow-up activities potentially causing a suboptimal utilization of project resources as \cite{Kumaraswamy_1998} explain for the construction industry.
 Or you start follow-up activities anyways and risk working with wrong assumptions causing unnecessary revisions of work results later in the process as \cite{Chapman_2006} argues from the viewpoint of project and risk management.
 
-In contrast, \cite{Maalem_2016} argue that one key to effectiveness is to understand stakeholder requirements and validate assumptions as early as possible in the engineering process.
+In contrast, \cite{Maalem_2016} emphasize that one key to effectiveness is to understand stakeholder requirements and validate assumptions as early as possible in the engineering process.
 According to \cite{Mobin_2019} validation activities must be planned where applicable to ensure that such mistakes are uncovered and resolved quickly and to minimize their impact on the future course of the project.
-In this context, agile methodologies and frameworks have emerged over the past two decades ensuring stakeholder integration along the entire development process as \cite{Chan_2009} explain.
-In agile approaches, stakeholders have the obligation to review work results frequently and give their feedback to engineering team as \cite{Deininger_2019} describe.
+In this context, agile methodologies and frameworks have emerged over the past two decades ensuring stakeholder integration along the entire development process as \cite{Chan_2009} describe.
+In agile approaches, according to \cite{Deininger_2019} stakeholders have the obligation to review work results frequently and give their feedback to engineering team.
 
 Furthermore, \cite{Hackenberg_2023} argue that online collaboration platforms with vision management, issue tracking, and task scheduling support engineering teams in achieving high degrees of efficiency and effectiveness.
 \cite{Tony_Liu_2001} already explained that the idea behind such web-based platforms is to bundle all relevant project information in a central repository, to which all stakeholders have access from anywhere, anytime, and with any device.
@@ -99,17 +100,18 @@ Finally, we draw our conclusions from the previous experiments and their data, d
 
 For our experiements we used the open source software CADdrive\footnote{\url{https://github.com/ghackenberg/caddrive}} as the underlying online collaboration platform with version management, issue tracking, and task scheduling, as well as the open source software LeoCAD\footnote{\url{https://github.com/leozide/leocad}} for digital LEGO design.
 % and  Dassault Systèmes SolidWorks\footnote{\url{https://www.solidworks.com/}} for classical CAD.
-Subsequently, we first describe our Master-level course formats with students at University of Applied Sciences Upper Austria in Section~\ref{sec:master}, before explaining our workshop format with high school children in Section~\ref{sec:school}.
+Subsequently, we first describe our Master-level course formats that we conducted with students from University of Applied Sciences Upper Austria in Section~\ref{sec:master}, before explaining our workshop format with that we conducted high school children in Section~\ref{sec:school}.
 Both for the Master-level courses and the workshop we introduce the organizational settings and show the most interesting work results delivered by the individual teams.
 
 \subsection{Master level}
 \label{sec:master}
 
-At Master level, we conducted two courses with about 30 work hours per student in two independent study programmes with slightly varied study plans and, hence, organizational settings.
+At Master level, we conducted two independent courses in two different study programmes with slightly varied study plans and, hence, organizational settings.
+Both courses spanned an entire semester, required about 30 work hours per student, and included grading based on project participation as well as quantity and quality of project deliverables.
 The goal of the first course was to design a energy-optimal glasshouse for growing sweet tomatos over the winter months in Alpine regions as explained in Section~\ref{sec:master-product-lego}.
 Furthermore, the course included a fair amount of simulation tasks for verification and validation.
 The goal of the second course was to design a paper folding machine turning plain paper sheets into boxes as expained in Section~\ref{sec:master-system-lego}.
-However, the course did not include simulation tasks, but verification and validation was achieved through manual reviews only.
+The second course did not include simulation tasks, but verification and validation was achieved through manual reviews in this case.
 %And the goal of the thrid course was to design two innovative, but not otherwise constrained products in the vertical farming space as explained in Section~\ref{sec:master-product-classical}.
 
 \subsubsection{Glasshouse for Alpine regions}
@@ -205,11 +207,11 @@ Figure~\ref{fig:paper} shows three different mechanical designs proposed by the 
     \label{fig:paper}
 \end{figure}
 
-In contrast, Figure~\ref{fig:paper-sub} shows the electrical and logical design of one paper folding machine.
-This particular team worked with EPLAN Electric P8\footnote{\url{https://www.eplan-software.com/solutions/eplan-electric-p8/}} for the electrical design as well as Excalidraw\footnote{\url{https://excalidraw.com/}} for the logical design of the target system.
-Note that in this case one student was already familiar with EPLAN Electric P8, which is why the first tool was selected.
-Furhtermore, note that the notation for the logical design was not prescribed by the course instructor, but resembles some form of state chart formalism, which is common in control engineering.
-Finally, validation of the different designs was performed with manual review techniques across all teams.
+In contrast, Figure~\ref{fig:paper-sub} shows the electrical design and software design of one paper folding machine.
+This particular team worked with EPLAN Electric P8\footnote{\url{https://www.eplan-software.com/solutions/eplan-electric-p8/}} for the electrical design as well as Excalidraw\footnote{\url{https://excalidraw.com/}} for the software design of the target system.
+Note that in this case one student of the team was already familiar with EPLAN Electric P8 and had access to the tool through his employer, which is why the tool was selected.
+Furhtermore, note that the notation for the software design was not prescribed by the course instructor, but resembles some form of state chart formalism, which is common in control engineering.
+Finally, as described previously the validation of the different designs was performed with manual review techniques across all teams.
 
 \begin{figure}[htbp]
     \centering
