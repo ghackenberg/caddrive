@@ -71,7 +71,7 @@ export const ProductVersionView = () => {
 
     async function onClick(event: React.MouseEvent<HTMLDivElement>, version: VersionRead) {
         if (event.ctrlKey) {
-            await push(`/products/${productId}/versions/${version.versionId}/settings`)
+            await push(`/products/${productId}/versions/${version.versionId}/editor`)
         } else {
             // Set context model
             setContextVersion(version)

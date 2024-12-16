@@ -1,11 +1,13 @@
 import * as React from 'react'
+import { useContext } from 'react'
 import { useParams } from 'react-router'
 
 import { CylinderGeometry, Box3, GridHelper, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, MeshStandardMaterial, TorusGeometry, CircleGeometry } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
+import { VersionContext } from '../../contexts/Version'
 import { useAsyncHistory } from '../../hooks/history'
-import { parseLDrawModel } from '../../loaders/ldraw'
+import { loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
 
 export const ProductVersionEditorView = () => {
@@ -17,6 +19,10 @@ export const ProductVersionEditorView = () => {
     // PARAMS
 
     const { productId, versionId } = useParams<{ productId: string, versionId: string }>()
+
+    // CONTEXTSD
+
+    const { setContextVersion } = useContext(VersionContext)
 
     // STATES
 
@@ -148,6 +154,23 @@ export const ProductVersionEditorView = () => {
         model.rotation.x = Math.PI
         setModel(model)
     }, [])
+
+    React.useEffect(() => {
+        let exec = true
+        if (model && versionId != 'new') {
+            let group: Group
+            loadLDrawModel(`${versionId}.ldr`, () => {
+                if (exec && group) {
+                    for (const child of group.children) {
+                        model.add(child)
+                    }
+                }
+            }).then(g => {
+                group = g
+            })
+        }
+        return () => { exec = false }
+    }, [model, versionId])
 
     function onDragStart(event: React.DragEvent, file: string) {
         unselect()
@@ -470,49 +493,48 @@ export const ProductVersionEditorView = () => {
     }
 
     async function save() {
-        if (versionId == 'new') {
-            const baseVersionIds: string[] = []
-            const major = parseInt(prompt('Major', '0'))
-            const minor = parseInt(prompt('Minor', '0'))
-            const patch = parseInt(prompt('Patch', '0'))
-            const description = prompt('Description')
-            const data = { baseVersionIds, major, minor, patch, description }
+        const baseVersionIds =  versionId != 'new' ? [versionId] : []
+        const major = parseInt(prompt('Major', '0'))
+        const minor = parseInt(prompt('Minor', '0'))
+        const patch = parseInt(prompt('Patch', '0'))
+        const description = prompt('Description')
+        const data = { baseVersionIds, major, minor, patch, description }
 
-            let ldraw = ''
-            for (const child of model.children) {
-                if (child.name && child.name.endsWith('.dat')) {
-                    const color = '10'
+        let ldraw = ''
+        for (const child of model.children) {
+            if (child.name && child.name.endsWith('.dat')) {
+                const color = '10'
 
-                    const x = child.position.x
-                    const y = child.position.y
-                    const z = child.position.z
+                const x = child.position.x
+                const y = child.position.y
+                const z = child.position.z
 
-                    const a = child.matrix.elements[0]
-                    const b = child.matrix.elements[1]
-                    const c = child.matrix.elements[2]
-                    const d = child.matrix.elements[4]
-                    const e = child.matrix.elements[5]
-                    const f = child.matrix.elements[6]
-                    const g = child.matrix.elements[8]
-                    const h = child.matrix.elements[9]
-                    const i = child.matrix.elements[10]
+                const a = child.matrix.elements[0]
+                const b = child.matrix.elements[1]
+                const c = child.matrix.elements[2]
+                const d = child.matrix.elements[4]
+                const e = child.matrix.elements[5]
+                const f = child.matrix.elements[6]
+                const g = child.matrix.elements[8]
+                const h = child.matrix.elements[9]
+                const i = child.matrix.elements[10]
 
-                    const file = child.name
+                const file = child.name
 
-                    ldraw += `1 ${color} ${x} ${y} ${z} ${a} ${b} ${c} ${d} ${e} ${f} ${g} ${h} ${i} ${file}\n`
-                }
+                ldraw += `1 ${color} ${x} ${y} ${z} ${a} ${b} ${c} ${d} ${e} ${f} ${g} ${h} ${i} ${file}\n`
             }
-
-            console.log(ldraw)
-
-            const model2 = new Blob([ldraw], { type: 'application/x-ldraw' })
-            const image: Blob = null
-            const files = { model: model2, image }
-
-            await VersionClient.addVersion(productId, data, files)
-        } else {
-            alert('Not implemented yet.')
         }
+
+        console.log(ldraw)
+
+        const model2 = new Blob([ldraw], { type: 'application/x-ldraw' })
+        const image: Blob = null
+        const files = { model: model2, image }
+
+        const version = await VersionClient.addVersion(productId, data, files)
+
+        setContextVersion(version)
+
         await goBack()
     }
 
