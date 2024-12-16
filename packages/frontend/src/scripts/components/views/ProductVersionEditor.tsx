@@ -1,11 +1,24 @@
 import * as React from 'react'
+import { useParams } from 'react-router'
 
 import { CylinderGeometry, Box3, GridHelper, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, MeshStandardMaterial, TorusGeometry, CircleGeometry } from 'three'
 
+import { VersionClient } from '../../clients/rest/version'
+import { useAsyncHistory } from '../../hooks/history'
 import { parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
 
 export const ProductVersionEditorView = () => {
+
+    // HISTORY
+
+    const { goBack } = useAsyncHistory()
+
+    // PARAMS
+
+    const { productId, versionId } = useParams<{ productId: string, versionId: string }>()
+
+    // STATES
 
     const [model, setModel] = React.useState<Group>()
     const [manipulator, setManipulator] = React.useState<Group>()
@@ -456,10 +469,60 @@ export const ProductVersionEditorView = () => {
         manipulator.visible = false
     }
 
+    async function save() {
+        if (versionId == 'new') {
+            const baseVersionIds: string[] = []
+            const major = parseInt(prompt('Major', '0'))
+            const minor = parseInt(prompt('Minor', '0'))
+            const patch = parseInt(prompt('Patch', '0'))
+            const description = prompt('Description')
+            const data = { baseVersionIds, major, minor, patch, description }
+
+            let ldraw = ''
+            for (const child of model.children) {
+                if (child.name && child.name.endsWith('.dat')) {
+                    const color = '10'
+
+                    const x = child.position.x
+                    const y = child.position.y
+                    const z = child.position.z
+
+                    const a = child.matrix.elements[0]
+                    const b = child.matrix.elements[1]
+                    const c = child.matrix.elements[2]
+                    const d = child.matrix.elements[4]
+                    const e = child.matrix.elements[5]
+                    const f = child.matrix.elements[6]
+                    const g = child.matrix.elements[8]
+                    const h = child.matrix.elements[9]
+                    const i = child.matrix.elements[10]
+
+                    const file = child.name
+
+                    ldraw += `1 ${color} ${x} ${y} ${z} ${a} ${b} ${c} ${d} ${e} ${f} ${g} ${h} ${i} ${file}\n`
+                }
+            }
+
+            console.log(ldraw)
+
+            const model2 = new Blob([ldraw], { type: 'application/x-ldraw' })
+            const image: Blob = null
+            const files = { model: model2, image }
+
+            await VersionClient.addVersion(productId, data, files)
+        } else {
+            alert('Not implemented yet.')
+        }
+        await goBack()
+    }
+
     return  (
         <main className={`view product-version-editor`}>
-            <div className='model'>
+            <div className='model' style={{position: 'relative'}}>
                 {model && <ModelView3D model={model} over={onOver} out={onOut} click={onClick} keyDown={onkeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDragDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>}
+                <button style={{position: 'absolute', left: '1em', top: '1em'}} onClick={save}>
+                    Save
+                </button>
             </div>
             <div className="palette">
                 <img src='/rest/parts/3001.png' onDragStart={event => onDragStart(event, '3001.dat')}/>
