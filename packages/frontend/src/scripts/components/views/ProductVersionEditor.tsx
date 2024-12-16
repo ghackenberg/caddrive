@@ -147,28 +147,37 @@ export const ProductVersionEditorView = () => {
         setCreate(true)
         setPartInserted(false)
     }
-    function CalculateOffset(part: Object3D) {
-        if (!part || !part.name || !part.name.endsWith('.dat')) {
+    function CalculateOffset(part: Object3D[], index : number) {
+        if (!part || !part[0].name || !part[0].name.endsWith('.dat')) {
             console.log(part)
             throw 'Unexpected part'
         }
-        if (vecCalculated || part.children.length == 0) {
+        if (vecCalculated) {
             return
         }
-
-        const bbox = new Box3().setFromObject(part);
-        
         const offsetVector = new Vector3()
+        const bbox = new Box3()
+        if (index != undefined && index >= 0) {
+            /*const bbox = new Box3().setFromObject(part[index]);
+            
+            bbox.getSize(offsetVector)
+            offsetVector.round()
+            */
+           bbox.setFromObject(part[index])
+        }
+        else {
+            for (const element of part) {
+                bbox.expandByObject(element,true)
+            }
+        }
         bbox.getSize(offsetVector)
-        offsetVector.round()
         if (offsetVector.x === 0) {
             setVecCalculated(false)
             return
         }
-        
-        offsetVector.x = (offsetVector.x%40)/2
-        offsetVector.z = (offsetVector.z%40)/2
-        offsetVector.y = offsetVector.y-4 + ((offsetVector.y-4)%8)/2
+        offsetVector.x = Math.round(100*(offsetVector.x%40)/2)/100
+        offsetVector.z = Math.round(100*(offsetVector.z%40)/2)/100
+        offsetVector.y = Math.round(100*(offsetVector.y-4 + ((offsetVector.y-4)%8)/2))/100
         setCorrectionVector(offsetVector)
         setVecCalculated(true)
     }
@@ -188,16 +197,17 @@ export const ProductVersionEditorView = () => {
     function axisMovement(axisName: string, pos: Vector3, parts = part) {
         if(selectedPart.length > 0) {
             let position = manipulator.position
+            CalculateOffset(selectedPart, selectedIndex)
             //let rotation = manipulator.rotation
             if(selectedIndex) {
                 position = selectedPart[selectedIndex].position
                 //rotation = selectedPart[selectedIndex].rotation
-                CalculateOffset(selectedPart[selectedIndex])
+                //CalculateOffset(selectedPart, selectedIndex)
             }
-            else if(!vecCalculated) {                
+            /*else if(!vecCalculated) {                
                     setCorrectionVector(new Vector3(0,0,0))
                     setVecCalculated(true) 
-            }
+            }*/
             switch (axisName) {
                 case "x": {
                     const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - position.x
@@ -223,12 +233,11 @@ export const ProductVersionEditorView = () => {
                     vecA.sub(manipulator.position)
                     vecB.sub(manipulator.position)
                     let angle = -Math.round(vecA.angleTo(vecB)*4/Math.PI)*Math.PI/4
-                    if (vecA.cross(vecB).y > 0) { 
+                    if (vecA.cross(vecB).y > 0) {
                         angle *= -1 
                     }
                     if  (angle != lastRotation) {
                         angle -= lastRotation
-                        console.log("vecA", vecA, "\nvecB", vecB, "\ncross", vecA, "\nangle", angle)
                         for (const element of parts) {
                             const rotationVec = element.position.clone()
                             element.position.sub(rotationVec.sub(manipulator.position))
@@ -243,12 +252,11 @@ export const ProductVersionEditorView = () => {
     }
     function onPartDragStart(dragPart: Object3D, pos: Vector3) {
         const index = selectedPart.indexOf(dragPart)
-        console.log(dragPart,index)
         if (dragPart && index==-1) {
             unselect()
             setSelectedIndex(0)
             setFallbackForMultiple([dragPart])
-            CalculateOffset(dragPart)
+            CalculateOffset([dragPart],0)
             dragPart.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
                 Math.round(-pos.y/8)*8,
                 Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z
@@ -256,10 +264,9 @@ export const ProductVersionEditorView = () => {
             setPart([dragPart])
         }
         else if(dragPart) {
-            console.log(selectedPart)
             setSelectedIndex(index)
             setFallbackForMultiple(selectedPart)
-            CalculateOffset(dragPart)
+            CalculateOffset([dragPart], 0)
             moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  dragPart.position.x,
             (Math.round(-pos.y/8)*8) - dragPart.position.y,
             (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - dragPart.position.z), selectedPart)
@@ -271,7 +278,7 @@ export const ProductVersionEditorView = () => {
     }
     function onPartDrag(pos: Vector3) {
         if (part) {
-            CalculateOffset(part[selectedIndex])
+            CalculateOffset(part, selectedIndex)
             moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedIndex].position.x,
                 (Math.round(-pos.y/8)*8) - part[selectedIndex].position.y,
                 (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - part[selectedIndex].position.z))
@@ -279,7 +286,7 @@ export const ProductVersionEditorView = () => {
     }
     function onPartDragDrop(pos: Vector3) {
         if (part) {
-            CalculateOffset(part[selectedIndex])
+            CalculateOffset(part, selectedIndex)
             moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedIndex].position.x,
                 (Math.round(-pos.y/8)*8) - part[selectedIndex].position.y,
                 (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - part[selectedIndex].position.z))
@@ -293,7 +300,6 @@ export const ProductVersionEditorView = () => {
             model.remove(part[0])
             return
         }
-        console.log("Fallbacks", multipleFallbackParts)
         if (multipleFallbackParts.length != 0) {
             for (const i in multipleFallbackParts) {
                 part[i].position.set(multipleFallbackParts[i].position.x,multipleFallbackParts[i].position.y,multipleFallbackParts[i].position.z)
@@ -303,13 +309,12 @@ export const ProductVersionEditorView = () => {
         }
     }
     function onDragEnter(_event: React.DragEvent, pos: Vector3) {
-        console.log(_event.dataTransfer)
         if (part && part.length > 0) {
             if (create) {
                 model.add(part[0])
                 setPartInserted(true)
             }
-            CalculateOffset(part[0])
+            CalculateOffset(part, 0)
             part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
                 Math.round(-pos.y/8)*8 - correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
                 Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
@@ -322,7 +327,7 @@ export const ProductVersionEditorView = () => {
                 model.add(part[0])
                 setPartInserted(true)
             }
-            CalculateOffset(part[0])
+            CalculateOffset(part, 0)
             part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
                 Math.round(-pos.y/8)*8 - correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
                 Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
@@ -331,7 +336,7 @@ export const ProductVersionEditorView = () => {
     }
     function onDrop(pos: Vector3) {
         if (part && part.length > 0) {
-            CalculateOffset(part[0])
+            CalculateOffset(part, 0)
             part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
                 Math.round(-pos.y/8)*8 - correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
                 Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
