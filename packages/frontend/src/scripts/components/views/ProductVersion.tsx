@@ -251,12 +251,12 @@ export const ProductVersionView = () => {
                                                     <div className="text">
                                                         <div>
                                                             <span className='actions'>
-                                                                <a title="Edit settings" href={`/products/${productId}/versions/${curVers.versionId}/settings`}>
+                                                                <NavLink title="Edit settings" to={`/products/${productId}/versions/${curVers.versionId}/settings`}>
                                                                     <img src={EditIcon}/>
-                                                                </a>
-                                                                <a title="Edit model" href={`/products/${productId}/versions/${curVers.versionId}/editor`}>
+                                                                </NavLink>
+                                                                <NavLink title="Edit model" to={`/products/${productId}/versions/${curVers.versionId}/editor`}>
                                                                     <img src={ForkIcon}/>
-                                                                </a>
+                                                                </NavLink>
                                                                 <a title="Download model" href={`/rest/files/${curVers.versionId}.${curVers.modelType}`}>
                                                                     <img src={DownloadIcon}/>
                                                                 </a>
