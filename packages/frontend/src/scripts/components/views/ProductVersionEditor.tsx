@@ -517,12 +517,6 @@ export const ProductVersionEditorView = () => {
         await goBack()
     }
 
-    async function onCancel() {
-        if (confirm('Are you sure?')) {
-            await goBack()
-        }
-    }
-
     return  (
         <main className={`view product-version-editor`}>
             <div className='editor'>
@@ -539,9 +533,6 @@ export const ProductVersionEditorView = () => {
                     <div className='buttons'>
                         <button className='button fill green' onClick={() => { setSave(true) }}>
                             Save
-                        </button>
-                        <button className='button stroke green' onClick={onCancel}>
-                            Cancel
                         </button>
                     </div>
                 </div>

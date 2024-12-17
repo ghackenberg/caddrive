@@ -20,7 +20,8 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
 import LoadIcon from '/src/images/load.png'
-import EditIcon from '/src/images/edit.png'
+import EditIcon from '/src/images/setting.png'
+import ForkIcon from '/src/images/app.png'
 import DownloadIcon from '/src/images/download.png'
 import VersionIcon from '/src/images/version.png'
 import PartIcon from '/src/images/part.png'
@@ -70,16 +71,12 @@ export const ProductVersionView = () => {
 
     // FUNCTIONS
 
-    async function onClick(event: React.MouseEvent<HTMLDivElement>, version: VersionRead) {
-        if (event.ctrlKey) {
-            await push(`/products/${productId}/versions/${version.versionId}/settings`)
-        } else {
-            // Set context model
-            setContextVersion(version)
-            // Switch to model view on small screens
-            if (window.getComputedStyle(ref.current).display == 'none') {
-                await push('#model')
-            }
+    async function onClick(_event: React.MouseEvent<HTMLDivElement>, version: VersionRead) {
+        // Set context model
+        setContextVersion(version)
+        // Switch to model view on small screens
+        if (window.getComputedStyle(ref.current).display == 'none') {
+            await push('#model')
         }
     }
 
@@ -254,8 +251,11 @@ export const ProductVersionView = () => {
                                                     <div className="text">
                                                         <div>
                                                             <span className='actions'>
-                                                                <a title="Edit model" href={`/products/${productId}/versions/${curVers.versionId}/editor`}>
+                                                                <a title="Edit settings" href={`/products/${productId}/versions/${curVers.versionId}/settings`}>
                                                                     <img src={EditIcon}/>
+                                                                </a>
+                                                                <a title="Edit model" href={`/products/${productId}/versions/${curVers.versionId}/editor`}>
+                                                                    <img src={ForkIcon}/>
                                                                 </a>
                                                                 <a title="Download model" href={`/rest/files/${curVers.versionId}.${curVers.modelType}`}>
                                                                     <img src={DownloadIcon}/>
