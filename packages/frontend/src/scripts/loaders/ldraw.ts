@@ -22,11 +22,38 @@ const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
 
 LDRAW_LOADER.smoothNormals = false
 
-LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
+const MATERIAL_LOADING = LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
     console.log('Materials loaded!')
+    console.log(LDRAW_LOADER.materials)
+    console.log(LDRAW_LOADER.materialsLibrary)
 }).catch(error => {
     console.error(error)
 })
+
+export async function getMaterialCode(material: THREE.Material): Promise<string> {
+    await MATERIAL_LOADING
+    for (const mat of LDRAW_LOADER.materials) {
+        if (mat == material) {
+            return mat.userData.code
+        }
+    }
+    throw 'Material not found!'
+}
+
+export async function getObjectMaterialCode(object: THREE.Object3D): Promise<string> {
+    if (object instanceof THREE.Mesh) {
+        return getMaterialCode(object.material)
+    } else {
+        for (const child of object.children) {
+            try {
+                return getObjectMaterialCode(child)
+            } catch (e) {
+                // ignore
+            }
+        }
+    }
+    throw 'Material not found!'
+}
 
 export async function loadLDrawModel(path: string, update = empty) {
     const file = await CacheAPI.loadFile(path)

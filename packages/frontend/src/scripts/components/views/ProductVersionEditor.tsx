@@ -7,7 +7,7 @@ import { CylinderGeometry, Box3, GridHelper, Group, Mesh, Object3D, Vector3, Mes
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
 import { useAsyncHistory } from '../../hooks/history'
-import { loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
+import { getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
 
 export const ProductVersionEditorView = () => {
@@ -41,8 +41,8 @@ export const ProductVersionEditorView = () => {
     const [selectedIndex, setSelectedIndex] = React.useState<number>()
 
     const [rotationStartPos, setRotationStartPos] = React.useState<Vector3>()
-    //const [lastRotation, setlastRotation] = React.useState<number>()
-    let lastRotation = 0
+    const [lastRotation, setlastRotation] = React.useState<number>()
+    //let lastRotation = 0
 
     React.useEffect(() => {
         const size = 400
@@ -261,7 +261,7 @@ export const ProductVersionEditorView = () => {
                     break
                 }
                 case "rotation y": {
-                    if(!rotationStartPos) {
+                    if(!rotationStartPos || lastRotation == undefined) {
                         return
                     }
                     const vecA = new Vector3(rotationStartPos.x, -rotationStartPos.y, -rotationStartPos.z)
@@ -280,7 +280,7 @@ export const ProductVersionEditorView = () => {
                             element.position.add(rotationVec.applyAxisAngle(new Vector3(0,1,0),angle))
                             element.rotateY(angle)
                         }
-                        lastRotation += angle
+                        setlastRotation(lastRotation + angle)
                     }
                 }
             }
@@ -385,8 +385,8 @@ export const ProductVersionEditorView = () => {
         if(selectedPart) {
             setFallbackForMultiple()
             setPart(selectedPart)
-            //setlastRotation(0)
-            lastRotation = 0
+            setlastRotation(0)
+            //lastRotation = 0
             setRotationStartPos(pos)
             axisMovement(object.name, pos, selectedPart)
             setCreate(false)
@@ -400,6 +400,7 @@ export const ProductVersionEditorView = () => {
         setRotationStartPos(undefined)
         setVecCalculated(false)
         setPart(undefined)
+        setlastRotation(undefined)
     }
     function onOver(object: Object3D) {
         if (object.name === "x" || object.name === "y" || object.name === "z" || object.name === "rotation y") {
@@ -503,21 +504,27 @@ export const ProductVersionEditorView = () => {
         let ldraw = ''
         for (const child of model.children) {
             if (child.name && child.name.endsWith('.dat')) {
-                const color = '10'
+                const color = await getObjectMaterialCode(child)//'10'
+                /*child.traverse(obj =>{
+                    const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
+                    if(mater.isMesh) {
+                        color = String(mater.material.color)
+                    }
+                })*/
 
-                const x = child.position.x
-                const y = child.position.y
-                const z = child.position.z
+                const x = child.position.x//.toFixed(20)
+                const y = child.position.y//.toFixed(20)
+                const z = child.position.z//.toFixed(20)
 
-                const a = child.matrix.elements[0]
-                const b = child.matrix.elements[1]
-                const c = child.matrix.elements[2]
-                const d = child.matrix.elements[4]
-                const e = child.matrix.elements[5]
-                const f = child.matrix.elements[6]
-                const g = child.matrix.elements[8]
-                const h = child.matrix.elements[9]
-                const i = child.matrix.elements[10]
+                const a = child.matrix.elements[0]//.toFixed(20)
+                const b = child.matrix.elements[1]//.toFixed(20)
+                const c = child.matrix.elements[2]//.toFixed(20)
+                const d = child.matrix.elements[4]//.toFixed(20)
+                const e = child.matrix.elements[5]//.toFixed(20)
+                const f = child.matrix.elements[6]//.toFixed(20)
+                const g = child.matrix.elements[8]//.toFixed(20)
+                const h = child.matrix.elements[9]//.toFixed(20)
+                const i = child.matrix.elements[10]//.toFixed(20)
 
                 const file = child.name
 
