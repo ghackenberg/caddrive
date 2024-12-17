@@ -64,14 +64,13 @@ main.view.product-version-editor div.parts {
 
     flex-wrap: wrap;
 
-    overflow: overlay;
+    overflow: auto;
 }
 
 main.view.product-version-editor div.parts img {
     display: block;
 
-    width: 6em;
-    height: 6em;
+    width: calc(100% / 3);
 }
 
 main.view.product-version-editor div.colors {
