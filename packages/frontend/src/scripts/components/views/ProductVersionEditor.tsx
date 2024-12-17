@@ -23,14 +23,20 @@ export const ProductVersionEditorView = () => {
 
     const { productId, versionId } = useParams<{ productId: string, versionId: string }>()
 
-    // CONTEXTSD
+    // CONTEXTS
 
     const { setContextVersion } = useContext(VersionContext)
 
     // STATES
 
+    const [loaded, setLoaded] = React.useState<number>()
+    const [total, setTotal] = React.useState<number>()
     const [model, setModel] = React.useState<Group>()
     const [manipulator, setManipulator] = React.useState<Group>()
+
+    const [availableMaterials, setAvailableMaterials] = React.useState<Material[]>()
+    const [selectedMaterial, setSelectedMaterial] = React.useState<Material>()
+
     const [part, setPart] = React.useState<Object3D[]>()
     const [create, setCreate] = React.useState<boolean>()
     const [partInserted, setPartInserted] = React.useState<boolean>()
@@ -46,9 +52,6 @@ export const ProductVersionEditorView = () => {
 
     const [rotationStartPos, setRotationStartPos] = React.useState<Vector3>()
     const [lastRotation, setlastRotation] = React.useState<number>()
-
-    const [availableMaterials, setAvailableMaterials] = React.useState<Material[]>()
-    const [selectedMaterial, setSelectedMaterial] = React.useState<Material>()
 
     // Initialize 3D scene with grid and manipulators
     React.useEffect(() => {
@@ -74,10 +77,14 @@ export const ProductVersionEditorView = () => {
         let exec = true
         if (model && versionId != 'new') {
             let group: Group
-            loadLDrawModel(`${versionId}.ldr`, () => {
-                if (exec && group) {
-                    for (const child of group.children) {
-                        model.add(child)
+            loadLDrawModel(`${versionId}.ldr`, (_part, loaded, total) => {
+                if (exec) {
+                    setLoaded(loaded)
+                    setTotal(total)
+                    if (group) {
+                        for (const child of group.children) {
+                            model.add(child)
+                        }
                     }
                 }
             }).then(g => {
@@ -481,7 +488,15 @@ export const ProductVersionEditorView = () => {
         <main className={`view product-version-editor`}>
             <div className='editor'>
                 <div className='model'>
-                    {model && <ModelView3D model={model} over={onOver} out={onOut} click={onClick} keyDown={onKeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDragDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>}
+                    {model && (
+                        <ModelView3D model={model} over={onOver} out={onOut} click={onClick} keyDown={onKeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDragDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>
+                    )}
+                    {loaded != total && (
+                        <div className='progress'>
+                            <div className='bar' style={{width: `${Math.floor(loaded / total * 100)}%`}}></div>
+                            <div className='text'>{loaded} / {total}</div>
+                        </div>
+                    )}
                     <button onClick={save}>
                         Save
                     </button>
