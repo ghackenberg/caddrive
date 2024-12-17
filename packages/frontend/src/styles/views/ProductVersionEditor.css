@@ -67,11 +67,15 @@ main.view.product-version-editor div.model div.progress div.text {
     text-align: center;
 }
 
-main.view.product-version-editor div.model button {
+main.view.product-version-editor div.model div.buttons {
     position: absolute;
 
     top: 1em;
     left: 1em;
+
+    display: flex;
+
+    gap: 1em;
 }
 
 main.view.product-version-editor div.palette {

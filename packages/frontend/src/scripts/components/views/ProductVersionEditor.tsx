@@ -94,18 +94,6 @@ export const ProductVersionEditorView = () => {
         return () => { exec = false }
     }, [model, versionId])
 
-    function onDragStart(event: React.DragEvent, file: string) {
-        unselect()
-        event.dataTransfer.setDragImage(new Image(), 0, 0)
-        parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`,null,false).then(part => {
-            setPart([part.children[0]])
-        })
-        setCorrectionVector(new Vector3(0,0,0))
-        setCorrectionVectorCalculated(false)
-        setCreate(true)
-        setPartInserted(false)
-    }
-
     function calculateOffset(part: Object3D[], index: number) {
         if (!part || !part[0].name || !part[0].name.endsWith('.dat')) {
             console.log(part)
@@ -238,7 +226,7 @@ export const ProductVersionEditorView = () => {
         }
     }
 
-    function onPartDragDrop(pos: Vector3) {
+    function onPartDrop(pos: Vector3) {
         if (part) {
             calculateOffset(part, selectedIndex)
             moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedIndex].position.x,
@@ -262,6 +250,18 @@ export const ProductVersionEditorView = () => {
             setCorrectionVectorCalculated(false)
             unselect(multipleFallbackParts)
         }
+    }
+
+    function onDragStart(event: React.DragEvent, file: string) {
+        unselect()
+        event.dataTransfer.setDragImage(new Image(), 0, 0)
+        parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`,null,false).then(part => {
+            setPart([part.children[0]])
+        })
+        setCorrectionVector(new Vector3(0,0,0))
+        setCorrectionVectorCalculated(false)
+        setCreate(true)
+        setPartInserted(false)
     }
 
     function onDragEnter(_event: React.DragEvent, pos: Vector3) {
@@ -315,7 +315,7 @@ export const ProductVersionEditorView = () => {
         }
     }
 
-    function onMoveOnAxis(pos: Vector3, axisName: string) {
+    function onMoveOnAxisContinue(pos: Vector3, axisName: string) {
         axisMovement(axisName, pos)
     }
 
@@ -327,7 +327,7 @@ export const ProductVersionEditorView = () => {
         setlastRotation(undefined)
     }
 
-    function onOver(object: Object3D) {
+    function onMouseOver(object: Object3D) {
         if (object.name === "x" || object.name === "y" || object.name === "z" || object.name === "rotation y") {
             object.traverse(function(obj) {
                 const mater = obj as Mesh<BufferGeometry,MeshBasicMaterial>
@@ -338,7 +338,7 @@ export const ProductVersionEditorView = () => {
         }
     }
 
-    function onOut(object: Object3D) {
+    function onMouseOut(object: Object3D) {
         let color : string
         switch (object.name) {
             case "x": {
@@ -437,7 +437,7 @@ export const ProductVersionEditorView = () => {
         manipulator.visible = false
     }
 
-    async function save() {
+    async function onSave() {
         unselect()
         const baseVersionIds =  versionId != 'new' ? [versionId] : []
         const major = parseInt(prompt('Major', '0'))
@@ -484,12 +484,18 @@ export const ProductVersionEditorView = () => {
         await goBack()
     }
 
+    async function onCancel() {
+        if (confirm('Are you sure?')) {
+            await goBack()
+        }
+    }
+
     return  (
         <main className={`view product-version-editor`}>
             <div className='editor'>
                 <div className='model'>
                     {model && (
-                        <ModelView3D model={model} over={onOver} out={onOut} click={onClick} keyDown={onKeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDragDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>
+                        <ModelView3D model={model} over={onMouseOver} out={onMouseOut} click={onClick} keyDown={onKeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxisContinue} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>
                     )}
                     {loaded != total && (
                         <div className='progress'>
@@ -497,9 +503,14 @@ export const ProductVersionEditorView = () => {
                             <div className='text'>{loaded} / {total}</div>
                         </div>
                     )}
-                    <button onClick={save}>
-                        Save
-                    </button>
+                    <div className='buttons'>
+                        <button className='button fill green' onClick={onSave}>
+                            Save
+                        </button>
+                        <button className='button stroke green' onClick={onCancel}>
+                            Cancel
+                        </button>
+                    </div>
                 </div>
                 <div className="palette">
                     <div className="parts">
