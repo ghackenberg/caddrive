@@ -41,9 +41,9 @@ const ProductRouter = () => {
                 <Redirect path="/products/:productId/issues/:issueId" to="/products/:productId/issues/:issueId/comments" push={false}/>
                 <Route path="/products/:productId/issues" component={ProductIssueView}/>
 
+                <Route path="/products/:productId/versions/:versionId/editor" component={ProductVersionEditorView}/>
                 <Route path="/products/:productId/versions/:versionId/settings" component={ProductVersionSettingView}/>
-                <Route path="/products/:productId/versions/:versionId" component={ProductVersionEditorView}/>
-                {/*<Redirect path="/products/:productId/versions/:versionId" to="/products/:productId/versions/:versionId/settings" push={false}/>*/}
+                <Redirect path="/products/:productId/versions/:versionId" to="/products/:productId/versions/:versionId/settings" push={false}/>
                 <Route path="/products/:productId/versions" component={ProductVersionView}/>
                 <Redirect path="/products/:productId" to="/products/:productId/versions" push={false}/>
             </Switch>

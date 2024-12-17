@@ -306,7 +306,7 @@ export const ProductVersionSettingView = () => {
                                                 ) : (
                                                     <ButtonInput value='Save' badge='requires file' disabled={true}/>
                                                 )}
-                                                <ButtonInput value='Delete' class='red' click={onClick}/>
+                                                {versionId != 'new' && <ButtonInput value='Delete' class='red' click={onClick}/>}
                                             </>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>
