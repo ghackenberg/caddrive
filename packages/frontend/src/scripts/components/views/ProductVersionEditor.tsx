@@ -7,7 +7,9 @@ import { Box3, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
 import { createScene } from '../../functions/editor'
+import { useVersion } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
+import { useVersions } from '../../hooks/list'
 import { getMaterialColor, getMaterials, getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
 
@@ -26,6 +28,15 @@ export const ProductVersionEditorView = () => {
     // CONTEXTS
 
     const { setContextVersion } = useContext(VersionContext)
+
+    // HOOKS
+
+    const versions = useVersions(productId)
+    const version = versionId != 'new' && useVersion(productId, versionId)
+
+    // REFS
+
+    const inputRef = React.createRef<HTMLInputElement>()
 
     // STATES
 
@@ -52,6 +63,10 @@ export const ProductVersionEditorView = () => {
 
     const [rotationStartPos, setRotationStartPos] = React.useState<Vector3>()
     const [lastRotation, setlastRotation] = React.useState<number>()
+
+    const [save, setSave] = React.useState(false)
+    const [description, setDescription] = React.useState('')
+    const [number, setNumber] = React.useState('patch')
 
     // Initialize 3D scene with grid and manipulators
     React.useEffect(() => {
@@ -93,6 +108,10 @@ export const ProductVersionEditorView = () => {
         }
         return () => { exec = false }
     }, [model, versionId])
+
+    React.useEffect(() => {
+        inputRef.current && inputRef.current.focus()
+    }, [inputRef])
 
     function calculateOffset(part: Object3D[], index: number) {
         if (!part || !part[0].name || !part[0].name.endsWith('.dat')) {
@@ -440,30 +459,44 @@ export const ProductVersionEditorView = () => {
     async function onSave() {
         unselect()
         const baseVersionIds =  versionId != 'new' ? [versionId] : []
-        const major = parseInt(prompt('Major', '0'))
-        const minor = parseInt(prompt('Minor', '0'))
-        const patch = parseInt(prompt('Patch', '0'))
-        const description = prompt('Description')
+        
+        const relative = versionId != 'new' ? version : (versions.length > 0 ? versions[versions.length - 1] : null)
+        
+        let major = relative && (number == 'major' || number == 'minor' || number == 'patch') ? relative.major : 0
+        let minor = relative && (number == 'minor' || number == 'patch') ? relative.minor : 0
+        let patch = relative && (number == 'patch') ? relative.patch : 0
+
+        for (const version of versions) {
+            if (number == 'major' && version.major == major) {
+                major++
+            } else if (number == 'minor' && version.major == major && version.minor == minor) {
+                minor++
+            } else if (number == 'patch' && version.major == major && version.minor == minor && version.patch == patch) {
+                patch++
+            }
+        }
+
         const data = { baseVersionIds, major, minor, patch, description }
 
         let ldraw = ''
+
         for (const child of model.children) {
             if (child.name && child.name.endsWith('.dat')) {
-                const color = await getObjectMaterialCode(child)//'10'
+                const color = await getObjectMaterialCode(child)
 
-                const x = child.position.x//.toFixed(20)
-                const y = child.position.y//.toFixed(20)
-                const z = child.position.z//.toFixed(20)
+                const x = child.position.x
+                const y = child.position.y
+                const z = child.position.z
 
-                const a = child.matrix.elements[0]//.toFixed(20)
-                const b = child.matrix.elements[1]//.toFixed(20)
-                const c = child.matrix.elements[2]//.toFixed(20)
-                const d = child.matrix.elements[4]//.toFixed(20)
-                const e = child.matrix.elements[5]//.toFixed(20)
-                const f = child.matrix.elements[6]//.toFixed(20)
-                const g = child.matrix.elements[8]//.toFixed(20)
-                const h = child.matrix.elements[9]//.toFixed(20)
-                const i = child.matrix.elements[10]//.toFixed(20)
+                const a = child.matrix.elements[0]
+                const b = child.matrix.elements[1]
+                const c = child.matrix.elements[2]
+                const d = child.matrix.elements[4]
+                const e = child.matrix.elements[5]
+                const f = child.matrix.elements[6]
+                const g = child.matrix.elements[8]
+                const h = child.matrix.elements[9]
+                const i = child.matrix.elements[10]
 
                 const file = child.name
 
@@ -477,9 +510,9 @@ export const ProductVersionEditorView = () => {
         const image: Blob = null
         const files = { model: model2, image }
 
-        const version = await VersionClient.addVersion(productId, data, files)
+        const newVers = await VersionClient.addVersion(productId, data, files)
 
-        setContextVersion(version)
+        setContextVersion(newVers)
 
         await goBack()
     }
@@ -504,7 +537,7 @@ export const ProductVersionEditorView = () => {
                         </div>
                     )}
                     <div className='buttons'>
-                        <button className='button fill green' onClick={onSave}>
+                        <button className='button fill green' onClick={() => { setSave(true) }}>
                             Save
                         </button>
                         <button className='button stroke green' onClick={onCancel}>
@@ -530,6 +563,31 @@ export const ProductVersionEditorView = () => {
                         )}
                     </div>
                 </div>
+                {save && (
+                    <div className='save'>
+                        <div className='form'>
+                            <div className='text'>
+                                <input ref={inputRef} className='button fill lightgray' placeholder='Description' required={true} value={description} onChange={event => setDescription(event.currentTarget.value)}/>
+                            </div>
+                            <div className='number'>
+                                <input type='radio' name='number' value='major' checked={number == 'major'} onChange={event => setNumber(event.currentTarget.value)}/>
+                                <span>Major</span>
+                                <input type='radio' name='number' value='minor' checked={number == 'minor'} onChange={event => setNumber(event.currentTarget.value)}/>
+                                <span>Minor</span>
+                                <input type='radio' name='number' value='patch' checked={number == 'patch'} onChange={event => setNumber(event.currentTarget.value)}/>
+                                <span>Patch</span>
+                            </div>
+                            <div className='action'>
+                                <button className='button fill green' onClick={onSave}>
+                                    Save
+                                </button>
+                                <button className='button stroke green' onClick={() => setSave(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     )
