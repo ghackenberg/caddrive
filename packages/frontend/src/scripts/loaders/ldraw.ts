@@ -24,11 +24,27 @@ LDRAW_LOADER.smoothNormals = false
 
 const MATERIAL_LOADING = LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
     console.log('Materials loaded!')
-    console.log(LDRAW_LOADER.materials)
-    console.log(LDRAW_LOADER.materialsLibrary)
+    //console.log(LDRAW_LOADER.materials)
+    //console.log(LDRAW_LOADER.materialsLibrary)
 }).catch(error => {
     console.error(error)
 })
+
+export async function getMaterials() {
+    await MATERIAL_LOADING
+    return LDRAW_LOADER.materials
+}
+
+export function getMaterialColor(material: THREE.Material) {
+    if ('color' in material && material.color instanceof THREE.Color) {
+        const r = Math.round(material.color.r * 255)
+        const g = Math.round(material.color.g * 255)
+        const b = Math.round(material.color.b * 255)
+        return `rgb(${r},${g},${b})`
+    } else {
+        throw 'Material type not supported!'
+    }
+}
 
 export async function getMaterialCode(material: THREE.Material): Promise<string> {
     await MATERIAL_LOADING

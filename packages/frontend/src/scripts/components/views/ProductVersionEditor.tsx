@@ -2,12 +2,12 @@ import * as React from 'react'
 import { useContext } from 'react'
 import { useParams } from 'react-router'
 
-import { CylinderGeometry, Box3, GridHelper, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, MeshStandardMaterial, TorusGeometry, CircleGeometry } from 'three'
+import { CylinderGeometry, Box3, GridHelper, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, TorusGeometry, CircleGeometry, Material, LineSegments } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
 import { useAsyncHistory } from '../../hooks/history'
-import { getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
+import { getMaterialColor, getMaterials, getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
 
 export const ProductVersionEditorView = () => {
@@ -37,12 +37,15 @@ export const ProductVersionEditorView = () => {
     const [correctionVector, setCorrectionVector] = React.useState<Vector3>()
     const [vecCalculated, setVecCalculated] = React.useState<boolean>()
 
-    const [selectedMaterials, setSelectedMaterials] = React.useState<MeshStandardMaterial[]>()
+    const [selectedMaterials, setSelectedMaterials] = React.useState<Material[]>()
+    const [selectedLineMaterial, setSelectedLineMaterial] = React.useState<Material[]>()
     const [selectedIndex, setSelectedIndex] = React.useState<number>()
 
     const [rotationStartPos, setRotationStartPos] = React.useState<Vector3>()
     const [lastRotation, setlastRotation] = React.useState<number>()
-    //let lastRotation = 0
+
+    const [materials, setMaterials] = React.useState<Material[]>()
+    const [material, setMaterial] = React.useState<Material>()
 
     React.useEffect(() => {
         const size = 400
@@ -144,6 +147,7 @@ export const ProductVersionEditorView = () => {
         setManipulator(manipulator)
 
         setSelectedMaterials([])
+        setSelectedLineMaterial([])
         setSelectedPart([])
         setMultpleFallbackParts([])
 
@@ -153,6 +157,17 @@ export const ProductVersionEditorView = () => {
         model.add(manipulator)
         model.rotation.x = Math.PI
         setModel(model)
+    }, [])
+
+    React.useEffect(() => {
+        let exec = true
+        getMaterials().then(materials => {
+            if (exec) {
+                setMaterials(materials)
+                setMaterial(materials[10])
+            }
+        })
+        return () => { exec = false }
     }, [])
 
     React.useEffect(() => {
@@ -175,7 +190,7 @@ export const ProductVersionEditorView = () => {
     function onDragStart(event: React.DragEvent, file: string) {
         unselect()
         event.dataTransfer.setDragImage(new Image(), 0, 0)
-        parseLDrawModel(file, `1 10 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`,null,false).then(part => {
+        parseLDrawModel(file, `1 ${material.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`,null,false).then(part => {
             setPart([part.children[0]])
         })
         setCorrectionVector(new Vector3(0,0,0))
@@ -194,11 +209,6 @@ export const ProductVersionEditorView = () => {
         const offsetVector = new Vector3()
         const bbox = new Box3()
         if (index != undefined && index >= 0) {
-            /*const bbox = new Box3().setFromObject(part[index]);
-            
-            bbox.getSize(offsetVector)
-            offsetVector.round()
-            */
            bbox.setFromObject(part[index])
         }
         else {
@@ -234,16 +244,12 @@ export const ProductVersionEditorView = () => {
         if(selectedPart.length > 0) {
             let position = manipulator.position
             CalculateOffset(selectedPart, selectedIndex)
-            //let rotation = manipulator.rotation
             if(selectedIndex) {
                 position = selectedPart[selectedIndex].position
-                //rotation = selectedPart[selectedIndex].rotation
-                //CalculateOffset(selectedPart, selectedIndex)
             }
-            /*else if(!vecCalculated) {                
-                    setCorrectionVector(new Vector3(0,0,0))
-                    setVecCalculated(true) 
-            }*/
+            if (!correctionVector) {
+                return
+            }
             switch (axisName) {
                 case "x": {
                     const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - position.x
@@ -293,9 +299,9 @@ export const ProductVersionEditorView = () => {
             setSelectedIndex(0)
             setFallbackForMultiple([dragPart])
             CalculateOffset([dragPart],0)
-            dragPart.position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
+            dragPart.position.set(Math.round((pos.x)/20)*20,
                 Math.round(-pos.y/8)*8,
-                Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z
+                Math.round((-pos.z)/20)*20
             )
             setPart([dragPart])
         }
@@ -303,9 +309,9 @@ export const ProductVersionEditorView = () => {
             setSelectedIndex(index)
             setFallbackForMultiple(selectedPart)
             CalculateOffset([dragPart], 0)
-            moveParts(new Vector3((Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  dragPart.position.x,
+            moveParts(new Vector3((Math.round((pos.x)/20)*20) -  dragPart.position.x,
             (Math.round(-pos.y/8)*8) - dragPart.position.y,
-            (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - dragPart.position.z), selectedPart)
+            (Math.round((-pos.z)/20)*20) - dragPart.position.z), selectedPart)
             
             manipulator.position.set(selectedPart[index].position.x, selectedPart[index].position.y, selectedPart[index].position.z)
             setPart(selectedPart)
@@ -352,7 +358,7 @@ export const ProductVersionEditorView = () => {
             }
             CalculateOffset(part, 0)
             part[0].position.set(Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x,
-                Math.round(-pos.y/8)*8 - correctionVector.y,//(pos.y-correctionVector.y)/8)*8 + correctionVector.y,
+                Math.round(-pos.y/8)*8 - correctionVector.y,
                 Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
             )
         }
@@ -386,7 +392,6 @@ export const ProductVersionEditorView = () => {
             setFallbackForMultiple()
             setPart(selectedPart)
             setlastRotation(0)
-            //lastRotation = 0
             setRotationStartPos(pos)
             axisMovement(object.name, pos, selectedPart)
             setCreate(false)
@@ -444,26 +449,39 @@ export const ProductVersionEditorView = () => {
             unselect()
         }
     }
+    function onColorChanged(event: React.MouseEvent, mat: Material) {
+        event.stopPropagation()
+        setMaterial(mat)
+        if (selectedMaterials.length > 0) {
+            for (const i in selectedMaterials) {
+                selectedMaterials[i] = mat
+                selectedLineMaterial[i] = mat.userData.edgeMaterial
+            }
+        }
+    }
     function onClick(object: Object3D, isCtrlPressed: boolean) {
         !isCtrlPressed && unselect()
         if(object != null && object.name.endsWith(".dat")) {
             let index = selectedPart.indexOf(object)
             if (index == -1) {
                 object.traverse(function(obj) {
-                const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
-                if(mater.isMesh) {
-                    selectedMaterials.push(mater.material)
-                    selectedPart.push(object)
+                    if(obj instanceof Mesh) {
+                        selectedMaterials.push(obj.material)
+                        selectedPart.push(object)
 
-                    mater.material = mater.material.clone()
-                    mater.material.color.set("white")
+                        obj.material = obj.material.clone()
+                        obj.material.color.set("white")
+                    }
+                    else if (obj instanceof LineSegments && !obj.material.name.includes("Conditional")) {
+                        selectedLineMaterial.push(obj.material)
+                        obj.material = obj.material.clone()
+                        obj.material.color.set("red")
                     }
                 })
                 index = selectedMaterials.length - 1
             }
             setSelectedIndex(index)
-            //TODO: bonus: grid bei annäherung der Grenze expandieren; 
-            //      bonus: grid bei verschibung höher gelegener teile in passender ebene anzeigen
+            setMaterial(selectedMaterials[index])
 
             manipulator.position.set(object.position.x,object.position.y,object.position.z)
             manipulator.visible = true
@@ -483,10 +501,14 @@ export const ProductVersionEditorView = () => {
         for (let i = partsToUnselect.length; i > 0; i--) {
             const material = selectedMaterials.pop()
             const object = selectedPart.pop()
+            const lineMaterial = selectedLineMaterial.pop()
+
             object && object.traverse(function(obj) {
-                const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
-                if(mater.isMesh) {
-                    mater.material = material
+                if(obj instanceof Mesh) {
+                    obj.material = material
+                }
+                else if (obj instanceof LineSegments && !obj.material.name.includes("Conditional")) {
+                    obj.material = lineMaterial
                 }
             })        
         }
@@ -494,6 +516,7 @@ export const ProductVersionEditorView = () => {
     }
 
     async function save() {
+        unselect()
         const baseVersionIds =  versionId != 'new' ? [versionId] : []
         const major = parseInt(prompt('Major', '0'))
         const minor = parseInt(prompt('Minor', '0'))
@@ -505,12 +528,6 @@ export const ProductVersionEditorView = () => {
         for (const child of model.children) {
             if (child.name && child.name.endsWith('.dat')) {
                 const color = await getObjectMaterialCode(child)//'10'
-                /*child.traverse(obj =>{
-                    const mater = obj as Mesh<BufferGeometry,MeshStandardMaterial>
-                    if(mater.isMesh) {
-                        color = String(mater.material.color)
-                    }
-                })*/
 
                 const x = child.position.x//.toFixed(20)
                 const y = child.position.y//.toFixed(20)
@@ -545,19 +562,35 @@ export const ProductVersionEditorView = () => {
         await goBack()
     }
 
+    const BLOCKS = ['3001', '3002', '3003', '3004', '3005', '3006', '3007', '3008', '3622', '3009', '3010', '2357', '2456', '702', '14716', '2356', '6212', '4202', '4201', '4204']
+
     return  (
         <main className={`view product-version-editor`}>
-            <div className='model' style={{position: 'relative'}}>
-                {model && <ModelView3D model={model} over={onOver} out={onOut} click={onClick} keyDown={onkeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDragDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>}
-                <button style={{position: 'absolute', left: '1em', top: '1em'}} onClick={save}>
-                    Save
-                </button>
-            </div>
-            <div className="palette">
-                <img src='/rest/parts/3001.png' onDragStart={event => onDragStart(event, '3001.dat')}/>
-                <img src='/rest/parts/3002.png' onDragStart={event => onDragStart(event, '3002.dat')}/>
-                <img src='/rest/parts/3003.png' onDragStart={event => onDragStart(event, '3003.dat')}/>
-                <img src='/rest/parts/3004.png' onDragStart={event => onDragStart(event, '3004.dat')}/>
+            <div className='editor'>
+                <div className='model'>
+                    {model && <ModelView3D model={model} over={onOver} out={onOut} click={onClick} keyDown={onkeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDragDrop} moveAborted={onPartDragAbborted} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxis} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragAbborted}/>}
+                    <button onClick={save}>
+                        Save
+                    </button>
+                </div>
+                <div className="palette">
+                    <div className="parts">
+                        {BLOCKS.map(block => (
+                            <img key={block} src={`/rest/parts/${block}.png`} onDragStart={event => onDragStart(event, `${block}.dat`)}/>
+                        ))}
+                    </div>
+                    <div className="colors">
+                        {materials ? (
+                            <>
+                                {materials.map(mat => (
+                                    <a key={mat.userData.code} title={mat.name.trim()} className={mat == material ? 'selected' : ''} style={{backgroundColor: getMaterialColor(mat), borderColor: getMaterialColor(mat.userData.edgeMaterial)}} onClick={event => onColorChanged(event,mat)}/>
+                                ))}
+                            </>
+                        ) : (
+                            <span>Loading materials</span>
+                        )}
+                    </div>
+                </div>
             </div>
         </main>
     )

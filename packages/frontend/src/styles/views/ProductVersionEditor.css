@@ -1,12 +1,102 @@
 main.view.product-version-editor {
-    background-color: red;
+    position: relative;
+}
+
+main.view.product-version-editor div.editor {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+main.view.product-version-editor div.model {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 18em;
+    bottom: 0;
+
+    padding: 0 !important;
 }
 
 main.view.product-version-editor div.model div {
     padding: 0 !important;
+
     overflow: hidden;
 }
 
-main.view.product-version-editor div.palette img {
-    width: 5em;
+main.view.product-version-editor div.model canvas {
+    width: 100%;
+    height: 100%;
+}
+
+main.view.product-version-editor div.model button {
+    position: absolute;
+
+    top: 1em;
+    left: 1em;
+}
+
+main.view.product-version-editor div.palette {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 18em;
+
+    padding: 0 !important;
+}
+
+main.view.product-version-editor div.parts {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 12em;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    overflow: overlay;
+}
+
+main.view.product-version-editor div.parts img {
+    display: block;
+
+    width: 6em;
+    height: 6em;
+}
+
+main.view.product-version-editor div.colors {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 12em;
+
+    display: flex;
+
+    flex-wrap: wrap;
+}
+
+main.view.product-version-editor div.colors a {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+
+    box-sizing: border-box;
+}
+
+main.view.product-version-editor div.colors a.selected {
+    border: 0.1em solid white;
 }

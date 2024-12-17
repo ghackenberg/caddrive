@@ -335,7 +335,7 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     handleKeyDown(event: React.KeyboardEvent) {
-            this.props.keyDown(event)
+            this.props.keyDown && this.props.keyDown(event)
     }
 
     handleMouseDown(event: React.MouseEvent) {
@@ -345,7 +345,7 @@ export class ModelView3D extends React.Component<Props> {
         if (event.button != 0) {
             return
         }
-        if (this.hovered && (this.props.moveOnAxisStart && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y'))) {
+        if (this.hovered && this.props.moveOnAxisStart && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
             this.orbit.enabled = false
             //only move on one axis
             this.props.moveOnAxisStart(this.hovered,this.axisCalculation(event))
@@ -363,42 +363,40 @@ export class ModelView3D extends React.Component<Props> {
             this.updateHovered(event)
         }
 
-        if(!this.orbit.enabled) {
+        if(!this.orbit.enabled && this.hovered) {
             const border = this.renderer.domElement.getBoundingClientRect()
             const positionY = event.clientY - Math.floor(border.top)
             const positionX = event.clientX - Math.floor(border.left)
 
-            if((positionX < 0)||(positionX > this.renderer.domElement.offsetWidth)||(positionY > this.renderer.domElement.offsetHeight)||(positionY < 0)) {
+            if(this.props.moveAborted && ((positionX < 0)||(positionX > this.renderer.domElement.offsetWidth)||(positionY > this.renderer.domElement.offsetHeight)||(positionY < 0))) {
                 this.props.moveAborted(this.hovered)
                 this.orbit.enabled = true
             }
-            else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
+            else if (this.props.moveOnAxis && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
                 //only move on one axis
                 this.props.moveOnAxis(this.axisCalculation(event), this.hovered.name)
             }
-            else if(event.shiftKey) {
+            else if(this.props.move && event.shiftKey) {
                 this.props.move(this.unprojectXZ(event.clientX, event.clientY,this.hovered.position.y))
             }
-            else {
-                console.log("abort", this.hovered)
+            else if(this.props.moveAborted){
                 this.props.moveAborted(this.hovered)
                 this.orbit.enabled = true
-            }
-            
+            }      
         }
     }
 
     handleMouseUp(event: React.MouseEvent) {
-        if(!this.orbit.enabled) {
+        if(!this.orbit.enabled && this.hovered) {
             this.orbit.enabled = true
-            if (event.button != 0) {
+            if (this.props.moveAborted && event.button != 0) {
                 this.props.moveAborted(this.hovered)
-            } else if (this.hovered && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
+            } else if (this.props.moveOnAxisDrop && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
                 //only move on one axis
                 this.props.moveOnAxisDrop(this.axisCalculation(event), this.hovered.name)
-            } else if(event.shiftKey){
+            } else if(this.props.moveDrop && event.shiftKey){
                 this.props.moveDrop(this.unprojectXZ(event.clientX, event.clientY,this.hovered.position.y))
-            } else {
+            } else if(this.props.moveAborted){
                 this.props.moveAborted(this.hovered)
             }          
         }
@@ -549,9 +547,6 @@ export class ModelView3D extends React.Component<Props> {
 
         return pos
     }
-    /*protected unprojectRotationY(mouseX: number, mouseY: number, y = 0) {
-        //
-    }*/
 
     paint() {
         this.orbit.update()
