@@ -1,11 +1,6 @@
-import { CylinderGeometry, GridHelper, Group, Mesh, MeshBasicMaterial, TorusGeometry, CircleGeometry } from 'three'
+import { CylinderGeometry, Group, Mesh, MeshBasicMaterial, TorusGeometry, CircleGeometry } from 'three'
 
 export function createScene() {
-        // grid
-        const size = 400
-        const divisions = 20
-        const grid = new GridHelper( size, divisions, 'red', 'blue' )
-
         // translation (x-axis)
         const cyXB = new CylinderGeometry(1, 1, 20)
         const maXB = new MeshBasicMaterial({ color: 'green' ,depthTest: false})
@@ -102,9 +97,8 @@ export function createScene() {
 
         //Model
         const model = new Group()
-        model.add(grid)
         model.add(manipulator)
         model.rotation.x = Math.PI
         
-        return [model, manipulator]
+        return { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY }
 }

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useContext } from 'react'
 import { useParams } from 'react-router'
 
-import { Box3, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial } from 'three'
+import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
@@ -45,43 +45,35 @@ export const ProductVersionEditorView = () => {
 
     // STATES
 
-    const [loaded, setLoaded] = React.useState<number>()
-    const [total, setTotal] = React.useState<number>()
-
-    const [model, setModel] = React.useState<Group>()
-    const [manipulator, setManipulator] = React.useState<Group>()
-
     const [availableMaterials, setAvailableMaterials] = React.useState<Material[]>()
     const [selectedMaterial, setSelectedMaterial] = React.useState<Material>()
 
-    const [part, setPart] = React.useState<Object3D[]>()
+    const [model, setModel] = React.useState<Group>()
+    const [manipulator, setManipulator] = React.useState<Group>()
+    const [arrowX, setArrowX] = React.useState<Group>()
+    const [arrowY, setArrowY] = React.useState<Group>()
+    const [arrowZ, setArrowZ] = React.useState<Group>()
+    const [arrowRotY, setArrowRotY] = React.useState<Group>()
+
+    const [loaded, setLoaded] = React.useState<number>()
+    const [total, setTotal] = React.useState<number>()
+
+    const [selectedPart, setSelectedPart] = React.useState<Object3D>() 
+    const [selectedParts, setSelectedParts] = React.useState<Object3D[]>()
+
     const [isPartCreate, setIsPartCreate] = React.useState<boolean>()
     const [isPartInserted, setIsPartInserted] = React.useState<boolean>()
-    const [multipleFallbackParts, setMultipleFallbackParts] = React.useState<Object3D[]>([])
 
-    const [correctionVector, setCorrectionVector] = React.useState<Vector3>()
-    const [correctionVectorCalculated, setCorrectionVectorCalculated] = React.useState<boolean>()
+    const [offset] = React.useState<Vector3>(new Vector3(0, 0, 0))
 
-    const [selectedParts] = React.useState<Object3D[]>([])
-    const [selectedMeshMaterials] = React.useState<Material[]>([])
-    const [selectedLineMaterials] = React.useState<Material[]>([])
-    const [selectedPartIndex, setSelectedPartIndex] = React.useState<number>()
+    const [rotationStart, setRotationStart] = React.useState<Vector3>()
+    const [rotationAngle, setRotationAngle] = React.useState<number>()
 
-    const [rotationStartPos, setRotationStartPos] = React.useState<Vector3>()
-    const [lastRotation, setLastRotation] = React.useState<number>()
-
-    const [save, setSave] = React.useState(false)
-    const [description, setDescription] = React.useState('')
-    const [number, setNumber] = React.useState('patch')
+    const [save, setSave] = React.useState<boolean>()
+    const [description, setDescription] = React.useState<string>()
+    const [number, setNumber] = React.useState<string>()
 
     // EFFECTS
-
-    // Initialize 3D scene with grid and manipulators
-    React.useEffect(() => {
-        const [model, manipulator] = createScene()
-        setManipulator(manipulator)
-        setModel(model)
-    }, [])
 
     // Load available materials and set initial selected material
     React.useEffect(() => {
@@ -95,27 +87,57 @@ export const ProductVersionEditorView = () => {
         return () => { exec = false }
     }, [])
 
-    // Load existing LDraw model associated with version
+    // Initialize 3D scene with grid and manipulators
     React.useEffect(() => {
         let exec = true
-        if (model && versionId != 'new') {
-            let group: Group
-            loadLDrawModel(`${versionId}.ldr`, (_part, loaded, total) => {
-                if (exec) {
-                    setLoaded(loaded)
-                    setTotal(total)
-                    if (group) {
-                        for (const child of group.children) {
-                            model.add(child)
+
+        const { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY } = createScene()
+        
+        if (versionId != 'new') {
+            // Load existing LDraw model
+            (async () => {
+                const group = await loadLDrawModel(`${versionId}.ldr`, (_part, loaded, total) => {
+                    if (exec) {
+                        setLoaded(loaded)
+                        setTotal(total)
+                        if (loaded > 0) {
+                            for (const child of group.children) {
+                                model.add(child)
+                            }
+                            updateGrid(model)
                         }
                     }
-                }
-            }).then(g => {
-                group = g
-            })
+                })
+            })()
         }
+        
+        setModel(model)
+        setManipulator(manipulator)
+        setArrowX(arrowX)
+        setArrowY(arrowY)
+        setArrowZ(arrowZ)
+        setArrowRotY(arrowRotY)
+
+        setSelectedParts([])
+        setSelectedPart(undefined)
+
+        offset.x = 0
+        offset.y = 0
+        offset.z = 0
+
+        setRotationStart(undefined)
+        setRotationAngle(undefined)
+
+        setSave(false)
+        setDescription('')
+        setNumber('patch')
+
         return () => { exec = false }
-    }, [model, versionId])
+    }, [productId, versionId])
+
+    React.useEffect(() => {
+        model && updateGrid(model)
+    }, [model])
 
     React.useEffect(() => {
         inputRef.current && inputRef.current.focus()
@@ -123,107 +145,111 @@ export const ProductVersionEditorView = () => {
 
     // FUNCTIONS
 
-    function calculateOffset(parts: Object3D[], index: number) {
-        // Check parameter values
-        if (!parts || !parts[0].name || !parts[0].name.endsWith('.dat')) {
-            throw 'Unexpected part'
-        }
-        
-        // Check component state
-        if (correctionVectorCalculated) {
-            return
-        }
-
+    function updateOffset(selectedParts: Object3D[], selectedPart: Object3D) {
         // Calculate bounding box
         const bbox = new Box3()
-        if (index != undefined && index >= 0) {
-           bbox.setFromObject(parts[index])
+        if (selectedPart) {
+           bbox.setFromObject(selectedPart)
         } else {
-            for (const element of parts) {
+            for (const element of selectedParts) {
                 bbox.expandByObject(element,true)
             }
         }
 
         // Calculate offset vector
-        const offsetVector = bbox.getSize(new Vector3())
+        bbox.getSize(offset)
 
-        if (offsetVector.x === 0) {
-            // Update component state
-            setCorrectionVectorCalculated(false)
+        offset.x = Math.round(100 * (offset.x % 40) / 2) / 100
+        offset.z = Math.round(100 * (offset.z % 40) / 2) / 100
+        offset.y = Math.round(100 * (offset.y - 4 + ((offset.y - 4) % 8) / 2)) / 100
+    }
+
+    function updateGrid(model: Group) {
+        // remove grid
+        for (let i = 0; i < model.children.length; i++) {
+            const child = model.children[i]
+            if (child instanceof GridHelper) {
+                model.remove(child)
+                break
+            }
+        }
+        // bounding box
+        const bbox = new Box3()
+        if (model.children.length > 1) {
+            for (const child of model.children) {
+                if (child.name.endsWith('.dat')) {
+                    bbox.expandByObject(child, true)
+                }
+            }
         } else {
-            // Discretize vector coordinates
-            offsetVector.x = Math.round(100*(offsetVector.x%40)/2)/100
-            offsetVector.z = Math.round(100*(offsetVector.z%40)/2)/100
-            offsetVector.y = Math.round(100*(offsetVector.y-4 + ((offsetVector.y-4)%8)/2))/100
-
-            // Update component state
-            setCorrectionVector(offsetVector)
-            setCorrectionVectorCalculated(true)
+            bbox.expandByObject(model)
         }
+        // calculate bounds
+        const x = Math.max(Math.abs(bbox.min.x), Math.abs(bbox.max.x))
+        const z = Math.max(Math.abs(bbox.min.z), Math.abs(bbox.max.z))
+        const s = Math.max(x, z) * 2
+        // add grid
+        const size = Math.ceil(s / 20) * 20
+        const divisions = size / 20
+        const grid = new GridHelper( size, divisions, '#000', '#333' )
+        model.add(grid)
     }
 
-    function moveParts(delta: Vector3, parts = part) {
-        for (const element of parts) {
-            element.position.add(delta)
+    function moveBy(x: number, y: number, z: number) {
+        for (const part of selectedParts) {
+            part.position.set(part.position.x + x, part.position.y + y, part.position.z + z)
         }
-        manipulator.position.add(delta)
+        manipulator.position.set(manipulator.position.x + x, manipulator.position.y + y, manipulator.position.z + z)
     }
 
-    function setFallbackForMultiple(parts = selectedParts) {
-        const fallbackArray: Object3D[] = []
-        for (const element of parts) {
-            fallbackArray.push(element.clone())
+    function moveTo(x: number, y: number, z: number) {
+        for (const part of selectedParts) {
+            part.position.set(x, y, z)
         }
-        setMultipleFallbackParts(fallbackArray)
+        manipulator.position.set(x, y, z)
     }
 
-    function axisMovement(axisName: string, pos: Vector3, parts = part) {
+    function moveByAxis(axis: string, pos: Vector3) {
         if (selectedParts.length > 0) {
-            let position = manipulator.position
-            calculateOffset(selectedParts, selectedPartIndex)
-            if(selectedPartIndex) {
-                position = selectedParts[selectedPartIndex].position
-            }
-            if (!correctionVector) {
-                return
-            }
-            switch (axisName) {
+            const position = selectedPart ? selectedPart.position : manipulator.position
+            switch (axis) {
                 case "x": {
-                    const xcoord = (Math.round((pos.x - correctionVector.x)/20)*20 + correctionVector.x) - position.x
-                    moveParts(new Vector3(xcoord,0,0),parts)
+                    const xcoord = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - position.x
+                    moveBy(xcoord, 0, 0)
                     break
                 }
                 case "y": {
-                    const ycoord = (Math.round(-pos.y/8)*8) - position.y
-                    moveParts(new Vector3(0,ycoord,0),parts)
+                    const ycoord = Math.round(-pos.y / 8) * 8 - position.y
+                    moveBy(0, ycoord, 0)
                     break
                 }
                 case "z": {
-                    const zcoord = (Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z)- position.z
-                    moveParts(new Vector3(0,0,zcoord),parts)
+                    const zcoord = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z - position.z
+                    moveBy(0, 0, zcoord)
                     break
                 }
                 case "rotation y": {
-                    if(!rotationStartPos || lastRotation == undefined) {
-                        return
-                    }
-                    const vecA = new Vector3(rotationStartPos.x, -rotationStartPos.y, -rotationStartPos.z)
+                    const vecA = new Vector3(rotationStart.x, -rotationStart.y, -rotationStart.z)
                     const vecB = new Vector3(pos.x, -pos.y, -pos.z)
+
                     vecA.sub(manipulator.position)
                     vecB.sub(manipulator.position)
-                    let angle = -Math.round(vecA.angleTo(vecB)*4/Math.PI)*Math.PI/4
+
+                    let angle = -Math.round(vecA.angleTo(vecB) * 4 / Math.PI) * Math.PI / 4
+
                     if (vecA.cross(vecB).y > 0) {
                         angle *= -1 
                     }
-                    if (angle != lastRotation) {
-                        angle -= lastRotation
-                        for (const element of parts) {
+
+                    if (angle != rotationAngle) {
+                        angle -= rotationAngle
+                        for (const element of selectedParts) {
                             const rotationVec = element.position.clone()
                             element.position.sub(rotationVec.sub(manipulator.position))
-                            element.position.add(rotationVec.applyAxisAngle(new Vector3(0,1,0),angle))
+                            element.position.add(rotationVec.applyAxisAngle(new Vector3(0, 1, 0), angle))
                             element.rotateY(angle)
                         }
-                        setLastRotation(lastRotation + angle)
+                        setRotationAngle(rotationAngle + angle)
                     }
                 }
             }
@@ -232,231 +258,223 @@ export const ProductVersionEditorView = () => {
 
     // Define selected parts and start moving
     function onPartDragStart(part: Object3D, pos: Vector3) {
-        console.log('onPartDragStart', part, pos)
-
-        // Check input parameters
-        if (!part) {
-            throw 'Part expected'
-        }
+        //console.log('onPartDragStart', part, pos)
 
         // Update create state
         setIsPartCreate(false)
+        setIsPartInserted(true)
 
         // Check if part has been selected
-        const index = selectedParts.indexOf(part)
-
-        // Start moving single part or selected parts
-        if (index == -1) {
-            // Branch 1: Single part
-
+        if (selectedParts.indexOf(part) == -1) {
             unselect()
-            
-            setSelectedPartIndex(0)
-            setFallbackForMultiple([part])
-            
-            calculateOffset([part], 0)
 
-            const x = Math.round((pos.x)/20)*20
-            const y = Math.round(-pos.y/8)*8
-            const z = Math.round((-pos.z)/20)*20
-
-            part.position.set(x, y, z)
-
-            setPart([part])
-        } else {
-            // Branch 2: Multiple parts
-
-            setSelectedPartIndex(index)
-            setFallbackForMultiple(selectedParts)
-            
-            calculateOffset([part], 0)
-
-            const x = (Math.round((pos.x)/20)*20) - part.position.x
-            const y = (Math.round(-pos.y/8)*8) - part.position.y
-            const z = (Math.round((-pos.z)/20)*20) - part.position.z
-
-            moveParts(new Vector3(x, y, z), selectedParts)
-            
-            manipulator.position.set(selectedParts[index].position.x, selectedParts[index].position.y, selectedParts[index].position.z)
-
-            setPart(selectedParts)
+            selectedParts.push(part)
         }
+
+        // Perform movement
+        setSelectedPart(part)
+        
+        updateOffset(selectedParts, part)
+
+        const x = Math.round(+pos.x / 20) * 20
+        const y = Math.round(-pos.y /  8) *  8
+        const z = Math.round(-pos.z / 20) * 20
+
+        moveTo(x, y, z)
+        
+        manipulator.position.set(part.position.x, part.position.y, part.position.z)
+
+        updateGrid(model)
     }
 
     // Move selected parts
     function onPartDrag(pos: Vector3) {
-        console.log('onPartDrag', pos)
+        //console.log('onPartDrag', pos)
 
-        if (part) {
-            calculateOffset(part, selectedPartIndex)
+        if (selectedParts.length > 0) {
+            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - selectedPart.position.x
+            const y = Math.round(-pos.y / 8) * 8 - selectedPart.position.y
+            const z = Math.round((-pos.z - offset.z) / 20) * 20 + offset.z - selectedPart.position.z
 
-            const x = (Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedPartIndex].position.x
-            const y = (Math.round(-pos.y/8)*8) - part[selectedPartIndex].position.y
-            const z = (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - part[selectedPartIndex].position.z
+            moveBy(x, y, z)
 
-            moveParts(new Vector3(x, y, z))
+            updateGrid(model)
         }
     }
 
     // Move selected parts
     function onPartDrop(pos: Vector3) {
-        console.log('onPartDrop', pos)
+        //console.log('onPartDrop', pos)
 
-        if (part) {
-            calculateOffset(part, selectedPartIndex)
+        if (selectedParts.length > 0) {
+            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - selectedPart.position.x
+            const y = Math.round(-pos.y / 8) * 8 - selectedPart.position.y
+            const z = Math.round((-pos.z - offset.z) / 20) * 20 + offset.z - selectedPart.position.z
 
-            const x = (Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x) -  part[selectedPartIndex].position.x
-            const y = (Math.round(-pos.y/8)*8) - part[selectedPartIndex].position.y
-            const z = (Math.round((-pos.z - correctionVector.z)/20)*20 + correctionVector.z) - part[selectedPartIndex].position.z
+            moveBy(x, y, z)
 
-            moveParts(new Vector3(x, y, z))                
-            
-            setCorrectionVectorCalculated(false)
-            setPart(undefined)
+            updateGrid(model)
         }
     }
 
     // Remove new parts and move existing parts to their original location
     function onPartDragLeave() {
-        console.log('onPartDragLeave')
+        //console.log('onPartDragLeave')
 
         if (isPartCreate) {
             // Remove new part
-            if (part.length > 0) {
-                model.remove(part[0])
+            while (selectedParts.length > 0) {
+                model.remove(selectedParts.pop())
             }
-        } else {
-            // Move existing parts to their original location
-            if (multipleFallbackParts.length != 0) {
-                for (const i in multipleFallbackParts) {
-                    const x = multipleFallbackParts[i].position.x
-                    const y = multipleFallbackParts[i].position.y
-                    const z = multipleFallbackParts[i].position.z
-    
-                    part[i].position.set(x, y, z)
-                }
-    
-                setCorrectionVectorCalculated(false)
-                
-                unselect(multipleFallbackParts)
-            }
+
+            setIsPartInserted(false)
+
+            updateGrid(model)
         }
     }
 
     // Load part in the background
-    function onDragStart(event: React.DragEvent, file: string) {
-        console.log('onDragStart', file)
+    function onNewPartDragStart(event: React.DragEvent, file: string) {
+        //console.log('onDragStart', file)
 
         unselect()
 
         event.dataTransfer.setDragImage(BLANK, 0, 0)
 
         parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`, null, false).then(part => {
-            setPart([part.children[0]])
+            // Add to selected parts
+            selectedParts.push(part.children[0])
+            // Set as selected part
+            setSelectedPart(part.children[0])
+            // Calculate offset
+            updateOffset([part.children[0]], part.children[0])
         })
-        
-        setCorrectionVector(new Vector3(0, 0, 0))
-        setCorrectionVectorCalculated(false)
         
         setIsPartCreate(true)
         setIsPartInserted(false)
     }
 
     // Insert loaded part into scene and move part around the scene
-    function onDragEnter(_event: React.DragEvent, pos: Vector3) {
-        console.log('onDragEnter', pos)
+    function onNewPartDragEnter(_event: React.DragEvent, pos: Vector3) {
+        //console.log('onDragEnter', pos)
 
-        if (part && part.length > 0) {
+        if (selectedParts.length > 0) {
             // Insert loaded part into scene
-            if (isPartCreate) {
-                model.add(part[0])
+            if (isPartCreate && !isPartInserted) {
+                for (const part of selectedParts) {
+                    model.add(part)
+                }
                 setIsPartInserted(true)
+                manipulator.visible = true
             }
 
             // Move part around the scene
-            calculateOffset(part, 0)
+            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x
+            const y = Math.round(-pos.y / 8) * 8 - offset.y
+            const z = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z
 
-            const x = Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x
-            const y = Math.round(-pos.y/8)*8 - correctionVector.y
-            const z = Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
+            moveTo(x, y, z)
 
-            part[0].position.set(x, y, z)
+            updateGrid(model)
         }
     }
 
     // Insert loaded part into scene and move part around the scene
-    function onDrag(pos: Vector3) {
-        console.log('onDrag', pos)
+    function onNewPartDrag(pos: Vector3) {
+        //console.log('onDrag', pos)
 
-        if (part && part.length > 0) {
+        if (selectedParts.length > 0) {
             // Insert loaded part into scene
             if (isPartCreate && !isPartInserted) {
-                model.add(part[0])
+                for (const part of selectedParts) {
+                    model.add(part)
+                }
                 setIsPartInserted(true)
+                manipulator.visible = true
             }
 
             // Move part around the scene
-            calculateOffset(part, 0)
+            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x
+            const y = Math.round(-pos.y / 8) * 8 - offset.y
+            const z = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z
 
-            const x = Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x
-            const y = Math.round(-pos.y/8)*8 - correctionVector.y
-            const z = Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
+            moveTo(x, y, z)
 
-            part[0].position.set(x, y, z)
+            updateGrid(model)
         }
     }
 
     // Move loaded part to it's final position and stop moving
-    function onDrop(pos: Vector3) {
-        console.log('onDrop', pos)
+    function onNewPartDrop(pos: Vector3) {
+        //console.log('onDrop', pos)
 
-        if (part && part.length > 0) {
-            calculateOffset(part, 0)
+        if (selectedParts.length > 0) {
+            // Insert loaded part into scene
+            if (isPartCreate && !isPartInserted) {
+                for (const part of selectedParts) {
+                    model.add(part)
+                }
+                setIsPartInserted(true)
+            }
 
-            const x = Math.round((pos.x-correctionVector.x)/20)*20 + correctionVector.x
-            const y = Math.round(-pos.y/8)*8 - correctionVector.y
-            const z = Math.round((-pos.z + correctionVector.z)/20)*20 - correctionVector.z
+            // Move part around the scene
+            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x
+            const y = Math.round(-pos.y / 8) * 8 - offset.y
+            const z = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z
 
-            part[0].position.set(x, y, z)
+            moveTo(x, y, z)
 
-            setCorrectionVectorCalculated(false)
-            setPart(undefined)
+            manipulator.visible = false
+
+            updateGrid(model)
         }
     }
 
-    function onMoveOnAxisStart(object: Object3D, pos: Vector3) {
-        console.log('onMoveOnAxisStart', object, pos)
+    function onAxisDragStart(pos: Vector3, axis: string) {
+        //console.log('onMoveOnAxisStart', object, pos)
 
-        if (selectedParts) {
-            setFallbackForMultiple()
-            setPart(selectedParts)
-            setLastRotation(0)
-            setRotationStartPos(pos)
-            axisMovement(object.name, pos, selectedParts)
+        if (selectedParts.length > 0) {
+            moveByAxis(axis, pos)
+
+            setRotationAngle(0)
+            setRotationStart(pos)
+
             setIsPartCreate(false)
+            setIsPartInserted(true)
+
+            updateGrid(model)
         }
     }
 
-    function onMoveOnAxisContinue(pos: Vector3, axisName: string) {
-        console.log('onMoveOnAxisContinue', pos, axisName)
+    function onAxisDrag(pos: Vector3, axis: string) {
+        //console.log('onMoveOnAxisContinue', pos, axisName)
 
-        axisMovement(axisName, pos)
+        if (selectedParts.length > 0) {
+            moveByAxis(axis, pos)
+
+            updateGrid(model)
+        }
     }
 
-    function onMoveOnAxisDrop(pos: Vector3, axisName: string) {
-        console.log('onMoveOnAxisDrop', pos, axisName)
+    function onAxisDrop(pos: Vector3, axis: string) {
+        //console.log('onMoveOnAxisDrop', pos, axisName)
 
-        axisMovement(axisName, pos)
-        setRotationStartPos(undefined)
-        setCorrectionVectorCalculated(false)
-        setPart(undefined)
-        setLastRotation(undefined)
+        if (selectedParts.length > 0) {
+            moveByAxis(axis, pos)
+    
+            setRotationStart(undefined)
+            setRotationAngle(undefined)
+
+            updateGrid(model)
+        }
     }
 
     function onMouseOver(part: Object3D) {
-        console.log('onMouseOver', part)
+        //console.log('onMouseOver', part)
 
-        if (part.name === "x" || part.name === "y" || part.name === "z" || part.name === "rotation y") {
+        // Check manipulator objects
+        if (part == arrowX || part == arrowY || part == arrowZ || part == arrowRotY) {
+            // Update mesh color
             part.traverse(object => {
                 if (object instanceof Mesh) {
                     object.material.color.set("yellow")
@@ -466,137 +484,140 @@ export const ProductVersionEditorView = () => {
     }
 
     function onMouseOut(part: Object3D) {
-        console.log('onMouseOut', part)
+        //console.log('onMouseOut', part)
 
-        let color : string
-        switch (part.name) {
-            case "x": {
-                color = "green"
-                break
-            }
-            case "y":
-            case "rotation y": {
-                color = "red"
-                break
-            }
-            case "z": {
-                color = "blue"
-                break
-            }
+        // Object mesh color
+        if (part == arrowX || part == arrowY || part == arrowZ || part == arrowRotY) {
+            part.traverse(object => {
+                if(object instanceof Mesh) {
+                    if (part == arrowX) {
+                        object.material.color.set('green')
+                    } else if (part == arrowY) {
+                        object.material.color.set('red')
+                    } else if (part == arrowZ) {
+                        object.material.color.set('blue')
+                    } else if (part == arrowRotY) {
+                        object.material.color.set('red')
+                    }
+                }
+            })
         }
-        part.traverse(object => {
-            if(object instanceof Mesh) {
-                object.material.color.set(color)
-            }
-        })
     }
 
     function onKeyDown(key: React.KeyboardEvent) {
-        console.log('onKeyDown', key.key)
+        //console.log('onKeyDown', key.key)
 
-        if (selectedParts && key.key == "Delete") {
-            for (const element of selectedParts) {
-                model.remove(element)
+        if (key.key == "Delete") {
+            while (selectedParts.length > 0) {
+                model.remove(selectedParts.pop())
             }
-            unselect()
+            
+            setSelectedPart(undefined)
+
+            manipulator.visible = false
+
+            updateGrid(model)
         }
     }
 
     function onColorChanged(event: React.MouseEvent, material: Material) {
-        console.log('onColorChanged', material)
+        //console.log('onColorChanged', material)
 
         event.stopPropagation()
+
         // Remember material
         setSelectedMaterial(material)
+
         // Change material of selected parts
-        if (selectedMeshMaterials.length > 0) {
-            // Update target materials of selected parts
-            for (const i in selectedMeshMaterials) {
-                selectedMeshMaterials[i] = material
-                selectedLineMaterials[i] = material.userData.edgeMaterial
-            }
-            // Update current materials of selected parts
-            for (const part of selectedParts) {
-                part && part.traverse(object => {
-                    if (object instanceof Mesh) {
-                        object.material = material.clone()
-                        if (object.material instanceof MeshStandardMaterial) {
-                            object.material.emissive.setScalar(0.1)
-                        } else {
-                            throw 'Material type not supported'
-                        }
-                    } else if (object instanceof LineSegments) {
-                        if (!object.material.name.includes("Conditional")) {
-                            object.material = material.userData.edgeMaterial.clone()
-                        }
+        for (const part of selectedParts) {
+            part.traverse(object => {
+                if (object instanceof Mesh) {
+                    object.material = material.clone()
+                    if (object.material instanceof MeshStandardMaterial) {
+                        object.material.emissive.setScalar(0.1)
+                    } else {
+                        throw 'Material type not supported'
                     }
-                })  
-            }
+                } else if (object instanceof LineSegments) {
+                    if (object.material instanceof LineBasicMaterial) {
+                        object.material = material.userData.edgeMaterial
+                    }
+                }
+            })  
         }
     }
 
     function onClick(part: Object3D, isCtrlPressed: boolean) {
-        console.log('onClick', part, isCtrlPressed)
+        //console.log('onClick', part, isCtrlPressed)
 
-        !isCtrlPressed && unselect()
-        if (part != null && part.name.endsWith(".dat")) {
-            let index = selectedParts.indexOf(part)
-            if (index == -1) {
-                part.traverse(object => {
-                    if (object instanceof Mesh) {
-                        selectedParts.push(part)
-                        selectedMeshMaterials.push(object.material)
-                        object.material = object.material.clone()
-                        if (object.material instanceof MeshStandardMaterial) {
-                            object.material.emissive.setScalar(0.1)
-                        } else {
-                            console.log(object.material.constructor.name)
-                            throw 'Material type not supported'
+        // Unselect all parts
+        if (!isCtrlPressed) {
+            unselect()
+        }
+
+        // Check click target
+        if (part != null) {
+            // Branch 1: Click target is 3D object
+
+            // Check click target is part
+            if (part.name.endsWith(".dat")) {
+                // Compute index of selected part and update part material
+                if (selectedParts.indexOf(part) == -1) {
+                    selectedParts.push(part)
+
+                    part.traverse(object => {
+                        if (object instanceof Mesh) {
+                            // Update part material
+                            if (object.material instanceof MeshStandardMaterial) {
+                                object.material = object.material.clone()
+                                object.material.emissive.setScalar(0.1)
+                            } else {
+                                throw 'Material type not supported'
+                            }
+                            // Update selected material
+                            setSelectedMaterial(object.material)
                         }
-                    } else if (object instanceof LineSegments) {
-                        if (!object.material.name.includes("Conditional")) {
-                            selectedLineMaterials.push(object.material)
-                            object.material = object.material.clone()
-                        }
-                    }
-                })
-                index = selectedMeshMaterials.length - 1
+                    })
+                }
+
+                // Update manipulator
+                manipulator.position.set(part.position.x,part.position.y,part.position.z)
+                manipulator.visible = true
+
+                // Update selection
+                setSelectedPart(part)
             }
-            // Update selection
-            setSelectedPartIndex(index)
-            setSelectedMaterial(selectedMeshMaterials[index])
-            // Update manipulator
-            manipulator.position.set(part.position.x,part.position.y,part.position.z)
-            manipulator.visible = true
         } else if (isCtrlPressed) {
+            // Branch 2: Click target is background
+
+            // Compute bounding box around selected parts
             const box  = new Box3()
             for (const element of selectedParts) {
-                box.expandByObject(element,true)
+                box.expandByObject(element, true)
             }
-            const vec = new Vector3()
-            box.getCenter(vec)
-            manipulator.position.set(vec.x, -vec.y, -vec.z)
-            setSelectedPartIndex(undefined)
+
+            // Get center of bounding box
+            const center = box.getCenter(new Vector3())
+
+            // Move manipulator to center of bounding box
+            manipulator.position.set(center.x, -center.y, -center.z)
+
+            // Disable specific part selection
+            setSelectedPart(undefined)
         }
     }
 
-    function unselect(partsToUnselect = selectedParts) {
-        for (let i = partsToUnselect.length; i > 0; i--) {
-            const part = selectedParts.pop()
-            
-            const meshMaterial = selectedMeshMaterials.pop()
-            const lineMaterial = selectedLineMaterials.pop()
-
-            part && part.traverse(object => {
+    function unselect() {
+        while (selectedParts.length > 0) {
+            selectedParts.pop().traverse(object => {
                 if (object instanceof Mesh) {
-                    object.material = meshMaterial
-                } else if (object instanceof LineSegments) {
-                    if (!object.material.name.includes("Conditional")) {
-                        object.material = lineMaterial
+                    if (object.material instanceof MeshStandardMaterial) {
+                        object.material.emissive.setScalar(0)
                     }
                 }
             })        
         }
+        setSelectedPart(undefined)
         manipulator.visible = false
     }
 
@@ -667,7 +688,7 @@ export const ProductVersionEditorView = () => {
             <div className='editor'>
                 <div className='model'>
                     {model && (
-                        <ModelView3D model={model} over={onMouseOver} out={onMouseOut} click={onClick} keyDown={onKeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDrop} moveAborted={onPartDragLeave} moveOnAxisStart={onMoveOnAxisStart} moveOnAxis={onMoveOnAxisContinue} moveOnAxisDrop={onMoveOnAxisDrop} drop={onDrop} drag={onDrag} drageEnter={onDragEnter} dragLeave={onPartDragLeave}/>
+                        <ModelView3D model={model} update={loaded} over={onMouseOver} out={onMouseOut} click={onClick} keyDown={onKeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDrop} moveAborted={onPartDragLeave} moveOnAxisStart={onAxisDragStart} moveOnAxis={onAxisDrag} moveOnAxisDrop={onAxisDrop} drop={onNewPartDrop} drag={onNewPartDrag} drageEnter={onNewPartDragEnter} dragLeave={onPartDragLeave}/>
                     )}
                     {loaded != total && (
                         <div className='progress'>
@@ -684,14 +705,14 @@ export const ProductVersionEditorView = () => {
                 <div className="palette">
                     <div className="parts">
                         {BLOCKS.map(block => (
-                            <img key={block} src={`/rest/parts/${block}.png`} onDragStart={event => onDragStart(event, `${block}.dat`)}/>
+                            <img key={block} src={`/rest/parts/${block}.png`} onDragStart={event => onNewPartDragStart(event, `${block}.dat`)}/>
                         ))}
                     </div>
                     <div className="colors">
                         {availableMaterials ? (
                             <>
                                 {availableMaterials.map(mat => (
-                                    <a key={mat.userData.code} title={mat.name.trim()} className={mat == selectedMaterial ? 'selected' : ''} style={{backgroundColor: getMaterialColor(mat), borderColor: getMaterialColor(mat.userData.edgeMaterial)}} onClick={event => onColorChanged(event,mat)}/>
+                                    <a key={mat.userData.code} title={mat.name.trim()} className={selectedMaterial && mat.userData.code == selectedMaterial.userData.code ? 'selected' : ''} style={{backgroundColor: getMaterialColor(mat), borderColor: getMaterialColor(mat.userData.edgeMaterial)}} onClick={event => onColorChanged(event,mat)}/>
                                 ))}
                             </>
                         ) : (

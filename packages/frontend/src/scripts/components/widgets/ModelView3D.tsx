@@ -20,9 +20,9 @@ interface Props {
     move?: (pos: Vector3) => void
     moveDrop?: (pos:Vector3) => void
     moveAborted?: (object: Object3D) => void
-    moveOnAxis?: (pos: Vector3, axisName: string) => void
-    moveOnAxisStart?: (object: Object3D, pos: Vector3) => void
-    moveOnAxisDrop?: (pos: Vector3, axisName: string) => void
+    moveOnAxis?: (pos: Vector3, axis: string) => void
+    moveOnAxisStart?: (pos: Vector3, axis: string) => void
+    moveOnAxisDrop?: (pos: Vector3, axis: string) => void
     drageEnter?: (event: React.DragEvent, pos: Vector3) => void
     drag?: (pos: Vector3) => void
     dragLeave?: (event: React.DragEvent) => void
@@ -349,7 +349,7 @@ export class ModelView3D extends React.Component<Props> {
         if (this.hovered && this.props.moveOnAxisStart && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
             this.orbit.enabled = false
             // Move along one axis
-            this.props.moveOnAxisStart(this.hovered,this.axisCalculation(event))
+            this.props.moveOnAxisStart(this.axisCalculation(event), this.hovered.name)
             // Set cursor
             this.div.current.style.cursor = 'move'
         } else if (event.shiftKey && this.props.moveStart && this.hovered) {
