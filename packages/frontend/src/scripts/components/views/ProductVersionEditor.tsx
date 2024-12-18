@@ -627,7 +627,7 @@ export const ProductVersionEditorView = () => {
 
         for (const child of model.children) {
             if (child.name && child.name.endsWith('.dat')) {
-                const color = await getObjectMaterialCode(child)
+                const color = getObjectMaterialCode(child)
 
                 const x = child.position.x
                 const y = child.position.y

@@ -46,19 +46,9 @@ export function getMaterialColor(material: THREE.Material) {
     }
 }
 
-export async function getMaterialCode(material: THREE.Material): Promise<string> {
-    await MATERIAL_LOADING
-    for (const mat of LDRAW_LOADER.materials) {
-        if (mat == material) {
-            return mat.userData.code
-        }
-    }
-    throw 'Material not found!'
-}
-
-export async function getObjectMaterialCode(object: THREE.Object3D): Promise<string> {
+export function getObjectMaterialCode(object: THREE.Object3D): string {
     if (object instanceof THREE.Mesh) {
-        return getMaterialCode(object.material)
+        return object.material.userData.code
     } else {
         for (const child of object.children) {
             try {
