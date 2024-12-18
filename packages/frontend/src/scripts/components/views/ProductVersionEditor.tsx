@@ -348,6 +348,17 @@ export const ProductVersionEditorView = () => {
             setSelectedPart(part.children[0])
             // Calculate offset
             updateOffset([part.children[0]], part.children[0])
+            // Update part material
+            part.children[0].traverse(object => {
+                if (object instanceof Mesh) {
+                    if (object.material instanceof MeshStandardMaterial) {
+                        object.material = object.material.clone()
+                        object.material.emissive.setScalar(0.1)
+                    } else {
+                        throw 'Material type not supported'
+                    }
+                }
+            })
         })
         
         setIsPartCreate(true)
@@ -423,8 +434,6 @@ export const ProductVersionEditorView = () => {
             const z = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z
 
             moveTo(x, y, z)
-
-            manipulator.visible = false
 
             updateGrid(model)
         }
