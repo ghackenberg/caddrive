@@ -232,7 +232,7 @@ export const ProductVersionEditorView = () => {
                     if (!rotationStart) {
                         return
                     }
-                    
+
                     const vecA = new Vector3(rotationStart.x, -rotationStart.y, -rotationStart.z)
                     const vecB = new Vector3(pos.x, -pos.y, -pos.z)
 
@@ -740,7 +740,7 @@ export const ProductVersionEditorView = () => {
             <div className='editor'>
                 <div className='model'>
                     {model && (
-                        <ModelView3D model={model} update={loaded} over={onMouseOver} out={onMouseOut} click={onClick} keyDown={onKeyDown} moveStart={onPartDragStart} move={onPartDrag} moveDrop={onPartDrop} moveAborted={onPartDragLeave} moveOnAxisStart={onAxisDragStart} moveOnAxis={onAxisDrag} moveOnAxisDrop={onAxisDrop} drop={onNewPartDrop} drag={onNewPartDrag} drageEnter={onNewPartDragEnter} dragLeave={onPartDragLeave}/>
+                        <ModelView3D model={model} update={loaded} onMouseOver={onMouseOver} onMouseOut={onMouseOut} onClick={onClick} onKeyDown={onKeyDown} onPartDragStart={onPartDragStart} onPartDrag={onPartDrag} onPartDrop={onPartDrop} onPartDropLeave={onPartDragLeave} onAxisDragStart={onAxisDragStart} onAxisDrag={onAxisDrag} onAxisDrop={onAxisDrop} onNewPartDrop={onNewPartDrop} onNewPartDrag={onNewPartDrag} onNewPartDragEnter={onNewPartDragEnter} onNewPartDragLeave={onPartDragLeave}/>
                     )}
                     {loaded != total && (
                         <div className='progress'>
