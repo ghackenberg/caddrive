@@ -13,6 +13,11 @@ import { useVersions } from '../../hooks/list'
 import { getMaterialColor, getMaterials, getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
 
+import BlankIcon from '/src/images/blank.png'
+
+const BLANK = new Image()
+BLANK.src = BlankIcon
+
 const BLOCKS = ['3005', '3004', '3622', '3010', '3009', '3008', '6111', '6112', '2465', '3003', '3002', '3001', '2456', '3007', '3006', '2356', '6212', '4202', '4201', '4204', '30072']
 
 export const ProductVersionEditorView = () => {
@@ -273,7 +278,7 @@ export const ProductVersionEditorView = () => {
 
     function onDragStart(event: React.DragEvent, file: string) {
         unselect()
-        event.dataTransfer.setDragImage(new Image(), 0, 0)
+        event.dataTransfer.setDragImage(BLANK, 0, 0)
         parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`,null,false).then(part => {
             setPart([part.children[0]])
         })

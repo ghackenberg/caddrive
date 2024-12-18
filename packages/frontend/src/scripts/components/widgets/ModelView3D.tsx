@@ -345,14 +345,19 @@ export class ModelView3D extends React.Component<Props> {
         if (event.button != 0) {
             return
         }
+
         if (this.hovered && this.props.moveOnAxisStart && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
             this.orbit.enabled = false
-            //only move on one axis
+            // Move along one axis
             this.props.moveOnAxisStart(this.hovered,this.axisCalculation(event))
-        }
-        else if (event.shiftKey && this.props.moveStart && this.hovered) {
+            // Set cursor
+            this.div.current.style.cursor = 'move'
+        } else if (event.shiftKey && this.props.moveStart && this.hovered) {
             this.orbit.enabled = false
+            // Move in x-z-plane
             this.props.moveStart(this.hovered, this.unprojectXZ(event.clientX, event.clientY,this.hovered.position.y))
+            // Set cursor
+            this.div.current.style.cursor = 'move'
         }
     }
 
@@ -362,43 +367,53 @@ export class ModelView3D extends React.Component<Props> {
         } else {
             this.updateHovered(event)
         }
-
-        if(!this.orbit.enabled && this.hovered) {
+        if (!this.orbit.enabled && this.hovered) {
             const border = this.renderer.domElement.getBoundingClientRect()
             const positionY = event.clientY - Math.floor(border.top)
             const positionX = event.clientX - Math.floor(border.left)
-
-            if(this.props.moveAborted && ((positionX < 0)||(positionX > this.renderer.domElement.offsetWidth)||(positionY > this.renderer.domElement.offsetHeight)||(positionY < 0))) {
+            if (this.props.moveAborted && ((positionX < 0)||(positionX > this.renderer.domElement.offsetWidth)||(positionY > this.renderer.domElement.offsetHeight)||(positionY < 0))) {
+                // Abort move operation
                 this.props.moveAborted(this.hovered)
+                // Enable orbit
                 this.orbit.enabled = true
-            }
-            else if (this.props.moveOnAxis && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
-                //only move on one axis
+                // Reset cursor
+                this.div.current.style.cursor = undefined
+            } else if (this.props.moveOnAxis && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
+                // Move along one axis
                 this.props.moveOnAxis(this.axisCalculation(event), this.hovered.name)
-            }
-            else if(this.props.move && event.shiftKey) {
+                // Reset cursor
+                this.div.current.style.cursor = 'move'
+            } else if (this.props.move && event.shiftKey)  {
+                // Move in x-z-plane
                 this.props.move(this.unprojectXZ(event.clientX, event.clientY,this.hovered.position.y))
-            }
-            else if(this.props.moveAborted){
+                // Reset cursor
+                this.div.current.style.cursor = 'move'
+            } else if (this.props.moveAborted) {
+                // Abort move operation
                 this.props.moveAborted(this.hovered)
+                // Enable orbit
                 this.orbit.enabled = true
+                // Reset cursor
+                this.div.current.style.cursor = undefined
             }      
         }
     }
 
     handleMouseUp(event: React.MouseEvent) {
         if(!this.orbit.enabled && this.hovered) {
-            this.orbit.enabled = true
             if (this.props.moveAborted && event.button != 0) {
                 this.props.moveAborted(this.hovered)
             } else if (this.props.moveOnAxisDrop && (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y')) {
-                //only move on one axis
                 this.props.moveOnAxisDrop(this.axisCalculation(event), this.hovered.name)
-            } else if(this.props.moveDrop && event.shiftKey){
+            } else if (this.props.moveDrop && event.shiftKey) {
                 this.props.moveDrop(this.unprojectXZ(event.clientX, event.clientY,this.hovered.position.y))
-            } else if(this.props.moveAborted){
+            } else if (this.props.moveAborted) {
                 this.props.moveAborted(this.hovered)
-            }          
+            }     
+            // Enable orbit
+            this.orbit.enabled = true
+            // Reset cursor
+            this.div.current.style.cursor = undefined  
         }
         if (this.position_start && this.position_end) {
             if (this.calculateDistance() <= 1) {
@@ -427,13 +442,13 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     handleDragEnter(e: React.DragEvent) {
-        if(this.props.drageEnter) {
+        if (this.props.drageEnter) {
             this.props.drageEnter(e, this.unprojectXZ(e.clientX, e.clientY))
         }
     }
 
     handleDragOver(e: React.DragEvent) {
-        if(this.props.drag) {
+        if (this.props.drag) {
             e.stopPropagation()
             e.preventDefault()
             this.props.drag(this.unprojectXZ(e.clientX,e.clientY))
@@ -441,7 +456,7 @@ export class ModelView3D extends React.Component<Props> {
     }
 
     handleDragLeave(e: React.DragEvent) {
-        if(this.props.dragLeave) {
+        if (this.props.dragLeave) {
             this.props.dragLeave(e)
         }
     }
