@@ -571,9 +571,15 @@ export const ProductVersionEditorView = () => {
             // Check click target is part
             if (part.name.endsWith(".dat")) {
                 // Compute index of selected part and update part material
-                if (selectedParts.indexOf(part) == -1) {
+                const index = selectedParts.indexOf(part)
+                if (index == -1) {
+                    // Branch 1: Add part to selection
                     selectedParts.push(part)
+    
+                    // Update selection
+                    setSelectedPart(part)
 
+                    // Update part material
                     part.traverse(object => {
                         if (object instanceof Mesh) {
                             // Update part material
@@ -587,17 +593,53 @@ export const ProductVersionEditorView = () => {
                             setSelectedMaterial(object.material)
                         }
                     })
+
+                    // Update manipulator
+                    manipulator.position.set(part.position.x, part.position.y, part.position.z)
+                    manipulator.visible = true
+                } else {
+                    // Branch 2: Remove part from selection
+                    selectedParts.splice(index, 1)
+
+                    // Update selection
+                    setSelectedPart(undefined)
+
+                    // Reset part material
+                    part.traverse(object => {
+                        if (object instanceof Mesh) {
+                            if (object.material instanceof MeshStandardMaterial) {
+                                object.material.emissive.setScalar(0)
+                            }
+                        }
+                    })
+
+                    // Update manipulator
+                    if (selectedParts.length > 1) {
+                        // Compute bounding box around selected parts
+                        const box  = new Box3()
+                        for (const element of selectedParts) {
+                            box.expandByObject(element, true)
+                        }
+            
+                        // Get center of bounding box
+                        const center = box.getCenter(new Vector3())
+            
+                        // Move manipulator to center of bounding box
+                        manipulator.position.set(center.x, -center.y, -center.z)
+                    } else if (selectedParts.length == 1) {
+                        // Update manupulator position
+                        manipulator.position.set(selectedParts[0].position.x, selectedParts[0].position.y, selectedParts[0].position.z)
+                    } else {
+                        // Hide manipulator
+                        manipulator.visible = false
+                    }
                 }
-
-                // Update manipulator
-                manipulator.position.set(part.position.x,part.position.y,part.position.z)
-                manipulator.visible = true
-
-                // Update selection
-                setSelectedPart(part)
             }
         } else if (isCtrlPressed) {
             // Branch 2: Click target is background
+
+            // Disable specific part selection
+            setSelectedPart(undefined)
 
             // Compute bounding box around selected parts
             const box  = new Box3()
@@ -610,9 +652,6 @@ export const ProductVersionEditorView = () => {
 
             // Move manipulator to center of bounding box
             manipulator.position.set(center.x, -center.y, -center.z)
-
-            // Disable specific part selection
-            setSelectedPart(undefined)
         }
     }
 
