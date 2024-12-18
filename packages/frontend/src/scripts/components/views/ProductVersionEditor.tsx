@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useContext } from 'react'
 import { useParams } from 'react-router'
 
-import { Box3, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, Material, LineSegments } from 'three'
+import { Box3, Group, Mesh, Object3D, Vector3, MeshBasicMaterial, BufferGeometry, Material, LineSegments, MeshStandardMaterial } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
@@ -399,6 +399,18 @@ export const ProductVersionEditorView = () => {
                 selectedMeshMaterials[i] = mat
                 selectedLineMaterials[i] = mat.userData.edgeMaterial
             }
+            for (const object of selectedParts) {
+                object && object.traverse(function(obj) {
+                    if (obj instanceof Mesh) {
+                        obj.material = mat.clone()
+                        if (obj.material instanceof MeshStandardMaterial) {
+                            obj.material.emissive.setScalar(0.1)
+                        }
+                    } else if (obj instanceof LineSegments && !obj.material.name.includes("Conditional")) {
+                        obj.material = mat.userData.edgeMaterial.clone()
+                    }
+                })  
+            }
         }
     }
 
@@ -409,15 +421,18 @@ export const ProductVersionEditorView = () => {
             if (index == -1) {
                 object.traverse(function(obj) {
                     if (obj instanceof Mesh) {
-                        selectedMeshMaterials.push(obj.material)
                         selectedParts.push(object)
-
+                        selectedMeshMaterials.push(obj.material)
                         obj.material = obj.material.clone()
-                        obj.material.color.set("white")
+                        if (obj.material instanceof MeshStandardMaterial) {
+                            obj.material.emissive.setScalar(0.1)
+                        } else {
+                            console.log(obj.material.constructor.name)
+                            throw 'Material type not supported'
+                        }
                     } else if (obj instanceof LineSegments && !obj.material.name.includes("Conditional")) {
                         selectedLineMaterials.push(obj.material)
                         obj.material = obj.material.clone()
-                        obj.material.color.set("red")
                     }
                 })
                 index = selectedMeshMaterials.length - 1
@@ -504,7 +519,7 @@ export const ProductVersionEditorView = () => {
             }
         }
 
-        console.log(ldraw)
+        //console.log(ldraw)
 
         const model2 = new Blob([ldraw], { type: 'application/x-ldraw' })
         const image: Blob = null
