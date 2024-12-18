@@ -229,6 +229,10 @@ export const ProductVersionEditorView = () => {
                     break
                 }
                 case "rotation y": {
+                    if (!rotationStart) {
+                        return
+                    }
+                    
                     const vecA = new Vector3(rotationStart.x, -rotationStart.y, -rotationStart.z)
                     const vecB = new Vector3(pos.x, -pos.y, -pos.z)
 
@@ -627,7 +631,7 @@ export const ProductVersionEditorView = () => {
                         // Move manipulator to center of bounding box
                         manipulator.position.set(center.x, -center.y, -center.z)
                     } else if (selectedParts.length == 1) {
-                        // Update manupulator position
+                        // Move manipulator to origin of brick
                         manipulator.position.set(selectedParts[0].position.x, selectedParts[0].position.y, selectedParts[0].position.z)
                     } else {
                         // Hide manipulator
