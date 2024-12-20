@@ -284,7 +284,7 @@ export const ProductVersionEditorView = () => {
                     vecA.sub(manipulator.position)
                     vecB.sub(manipulator.position)
 
-                    let angle = -Math.round(vecA.angleTo(vecB) * 2 / Math.PI) * Math.PI / 2
+                    let angle = -Math.round(vecA.angleTo(vecB) * 8 / Math.PI) * Math.PI / 8
 
                     if (vecA.cross(vecB).y > 0) {
                         angle *= -1 
