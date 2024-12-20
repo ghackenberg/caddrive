@@ -6,12 +6,13 @@ import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegment
 
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
-import { createScene } from '../../functions/editor'
+import { COLOR_S, COLOR_X, COLOR_Y, COLOR_Z, createScene } from '../../functions/editor'
 import { useVersion } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
 import { useVersions } from '../../hooks/list'
 import { getMaterialColor, getMaterials, getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
 import { ModelView3D } from '../widgets/ModelView3D'
+import { LoadingView } from './Loading'
 
 import BlankIcon from '/src/images/blank.png'
 
@@ -88,55 +89,64 @@ export const ProductVersionEditorView = () => {
         return () => { exec = false }
     }, [])
 
+    // Check if version refers to plain LDraw model, else go back
+    React.useEffect(() => {
+        if (version && version.modelType != 'ldr') {
+            goBack()
+        }
+    }, [version])
+
     // Initialize 3D scene with grid and manipulators
     React.useEffect(() => {
         let exec = true
 
-        const { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY, box } = createScene()
-        
-        if (versionId != 'new') {
-            // Load existing LDraw model
-            (async () => {
-                const group = await loadLDrawModel(`${versionId}.ldr`, (_part, loaded, total) => {
-                    if (exec) {
-                        setLoaded(loaded)
-                        setTotal(total)
-                        if (loaded > 0) {
-                            for (const child of group.children) {
-                                model.add(child)
+        if (versionId == 'new' || (version && version.modelType == 'ldr')) {
+            const { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY, box } = createScene()
+            
+            if (version && version.modelType == 'ldr') {
+                // Load existing LDraw model
+                (async () => {
+                    const group = await loadLDrawModel(`${versionId}.ldr`, (_part, loaded, total) => {
+                        if (exec) {
+                            setLoaded(loaded)
+                            setTotal(total)
+                            if (loaded > 0) {
+                                for (const child of group.children) {
+                                    model.add(child)
+                                }
+                                updateGrid(model)
                             }
-                            updateGrid(model)
                         }
-                    }
-                })
-            })()
+                    })
+                })()
+            }
+            
+            setModel(model)
+
+            setManipulator(manipulator)
+            setArrowX(arrowX)
+            setArrowY(arrowY)
+            setArrowZ(arrowZ)
+            setArrowRotY(arrowRotY)
+
+            setBox(box)
+
+            setSelection({ part: undefined, parts: [] })
+
+            offset.x = 0
+            offset.y = 0
+            offset.z = 0
+
+            setRotationStart(undefined)
+            setRotationAngle(undefined)
+
+            setSave(false)
+            setDescription('')
+            setNumber('patch')
         }
-        
-        setModel(model)
-
-        setManipulator(manipulator)
-        setArrowX(arrowX)
-        setArrowY(arrowY)
-        setArrowZ(arrowZ)
-        setArrowRotY(arrowRotY)
-
-        setBox(box)
-
-        setSelection({ part: undefined, parts: [] })
-
-        offset.x = 0
-        offset.y = 0
-        offset.z = 0
-
-        setRotationStart(undefined)
-        setRotationAngle(undefined)
-
-        setSave(false)
-        setDescription('')
-        setNumber('patch')
 
         return () => { exec = false }
-    }, [productId, versionId])
+    }, [versionId, version])
 
     React.useEffect(() => {
         model && updateGrid(model)
@@ -178,24 +188,24 @@ export const ProductVersionEditorView = () => {
             }
         }
         // bounding box
-        const bbox = new Box3()
+        const bboxModel = new Box3()
         if (model.children.length > 2) {
             for (const child of model.children) {
                 if (child.name.endsWith('.dat')) {
-                    bbox.expandByObject(child, true)
+                    bboxModel.expandByObject(child, true)
                 }
             }
         } else {
-            bbox.expandByObject(model)
+            bboxModel.expandByObject(model)
         }
         // calculate bounds
-        const x = Math.max(Math.abs(bbox.min.x), Math.abs(bbox.max.x))
-        const z = Math.max(Math.abs(bbox.min.z), Math.abs(bbox.max.z))
+        const x = Math.max(Math.abs(bboxModel.min.x), Math.abs(bboxModel.max.x))
+        const z = Math.max(Math.abs(bboxModel.min.z), Math.abs(bboxModel.max.z))
         const s = Math.max(x, z) * 2
         // add grid
         const size = (Math.ceil(s / 20) + (Math.ceil(s / 20) % 2 ? 1 : 0) + 2) * 20
         const divisions = size / 20
-        const grid = new GridHelper( size, divisions, '#000', '#333' )
+        const grid = new GridHelper(size, divisions, '#000', '#333')
         model.add(grid)
     }
 
@@ -579,7 +589,7 @@ export const ProductVersionEditorView = () => {
             // Update mesh color
             part.traverse(object => {
                 if (object instanceof Mesh) {
-                    object.material.color.set("yellow")
+                    object.material.color.set(COLOR_S)
                 }
             })
         }
@@ -593,13 +603,13 @@ export const ProductVersionEditorView = () => {
             part.traverse(object => {
                 if(object instanceof Mesh) {
                     if (part == arrowX) {
-                        object.material.color.set('green')
+                        object.material.color.set(COLOR_X)
                     } else if (part == arrowY) {
-                        object.material.color.set('red')
+                        object.material.color.set(COLOR_Y)
                     } else if (part == arrowZ) {
-                        object.material.color.set('blue')
+                        object.material.color.set(COLOR_Z)
                     } else if (part == arrowRotY) {
-                        object.material.color.set('red')
+                        object.material.color.set(COLOR_Y)
                     }
                 }
             })
@@ -841,72 +851,76 @@ export const ProductVersionEditorView = () => {
     }
 
     return  (
-        <main className={`view product-version-editor`}>
-            <div className='editor'>
-                <div className='model'>
-                    {model && (
-                        <ModelView3D ref={viewRef} model={model} update={loaded} onMouseOver={onMouseOver} onMouseOut={onMouseOut} onClick={onClick} onKeyDown={onKeyDown} onPartDragStart={onPartDragStart} onPartDrag={onPartDrag} onPartDrop={onPartDrop} onPartDropLeave={onPartDragLeave} onAxisDragStart={onAxisDragStart} onAxisDrag={onAxisDrag} onAxisDrop={onAxisDrop} onNewPartDrop={onNewPartDrop} onNewPartDrag={onNewPartDrag} onNewPartDragEnter={onNewPartDragEnter} onNewPartDragLeave={onPartDragLeave}/>
-                    )}
-                    {loaded != total && (
-                        <div className='progress'>
-                            <div className='bar' style={{width: `${Math.floor(loaded / total * 100)}%`}}></div>
-                            <div className='text'>{loaded} / {total}</div>
-                        </div>
-                    )}
-                    <div className='buttons'>
-                        <button className='button fill green' onClick={() => setSave(true)}>
-                            Save
-                        </button>
-                    </div>
-                </div>
-                <div className="palette">
-                    <div className="parts">
-                        {BLOCKS.map(block => (
-                            <img key={block} src={`/rest/parts/${block}.png`} onDragStart={event => onNewPartDragStart(event, `${block}.dat`)}/>
-                        ))}
-                    </div>
-                    <div className="colors">
-                        {availableMaterials ? (
-                            availableMaterials.map(mat => {
-                                const key = mat.userData.code
-                                const title = mat.name.trim()
-                                const className = selectedMaterial && mat.userData.code == selectedMaterial.userData.code ? 'selected' : ''
-                                const backgroundColor = getMaterialColor(mat)
-                                const borderColor = getMaterialColor(mat.userData.edgeMaterial)
-                                const style = { backgroundColor, borderColor }
-                                return <a key={key} title={title} className={className} style={style} onClick={event => onColorChanged(event,mat)}/>
-                            })
-                        ) : (
-                            <span>Loading materials</span>
+        version && version.modelType == 'ldr' ? (
+            <main className={`view product-version-editor`}>
+                <div className='editor'>
+                    <div className='model'>
+                        {model && (
+                            <ModelView3D ref={viewRef} model={model} update={loaded} onMouseOver={onMouseOver} onMouseOut={onMouseOut} onClick={onClick} onKeyDown={onKeyDown} onPartDragStart={onPartDragStart} onPartDrag={onPartDrag} onPartDrop={onPartDrop} onPartDropLeave={onPartDragLeave} onAxisDragStart={onAxisDragStart} onAxisDrag={onAxisDrag} onAxisDrop={onAxisDrop} onNewPartDrop={onNewPartDrop} onNewPartDrag={onNewPartDrag} onNewPartDragEnter={onNewPartDragEnter} onNewPartDragLeave={onPartDragLeave}/>
                         )}
-                    </div>
-                </div>
-                {save && (
-                    <div className='save'>
-                        <div className='form'>
-                            <div className='text'>
-                                <input ref={inputRef} className='button fill lightgray' placeholder='Description' required={true} value={description} onChange={event => setDescription(event.currentTarget.value)}/>
+                        {loaded != total && (
+                            <div className='progress'>
+                                <div className='bar' style={{width: `${Math.floor(loaded / total * 100)}%`}}></div>
+                                <div className='text'>{loaded} / {total}</div>
                             </div>
-                            <div className='number'>
-                                <input type='radio' name='number' value='major' checked={number == 'major'} onChange={event => setNumber(event.currentTarget.value)}/>
-                                <span>Major</span>
-                                <input type='radio' name='number' value='minor' checked={number == 'minor'} onChange={event => setNumber(event.currentTarget.value)}/>
-                                <span>Minor</span>
-                                <input type='radio' name='number' value='patch' checked={number == 'patch'} onChange={event => setNumber(event.currentTarget.value)}/>
-                                <span>Patch</span>
-                            </div>
-                            <div className='action'>
-                                <button className='button fill green' onClick={onSave}>
-                                    Save
-                                </button>
-                                <button className='button stroke green' onClick={() => setSave(false)}>
-                                    Cancel
-                                </button>
-                            </div>
+                        )}
+                        <div className='buttons'>
+                            <button className='button fill green' onClick={() => setSave(true)}>
+                                Save
+                            </button>
                         </div>
                     </div>
-                )}
-            </div>
-        </main>
+                    <div className="palette">
+                        <div className="parts">
+                            {BLOCKS.map(block => (
+                                <img key={block} src={`/rest/parts/${block}.png`} onDragStart={event => onNewPartDragStart(event, `${block}.dat`)}/>
+                            ))}
+                        </div>
+                        <div className="colors">
+                            {availableMaterials ? (
+                                availableMaterials.map(mat => {
+                                    const key = mat.userData.code
+                                    const title = mat.name.trim()
+                                    const className = selectedMaterial && mat.userData.code == selectedMaterial.userData.code ? 'selected' : ''
+                                    const backgroundColor = getMaterialColor(mat)
+                                    const borderColor = getMaterialColor(mat.userData.edgeMaterial)
+                                    const style = { backgroundColor, borderColor }
+                                    return <a key={key} title={title} className={className} style={style} onClick={event => onColorChanged(event,mat)}/>
+                                })
+                            ) : (
+                                <span>Loading materials</span>
+                            )}
+                        </div>
+                    </div>
+                    {save && (
+                        <div className='save'>
+                            <div className='form'>
+                                <div className='text'>
+                                    <input ref={inputRef} className='button fill lightgray' placeholder='Description' required={true} value={description} onChange={event => setDescription(event.currentTarget.value)}/>
+                                </div>
+                                <div className='number'>
+                                    <input type='radio' name='number' value='major' checked={number == 'major'} onChange={event => setNumber(event.currentTarget.value)}/>
+                                    <span>Major</span>
+                                    <input type='radio' name='number' value='minor' checked={number == 'minor'} onChange={event => setNumber(event.currentTarget.value)}/>
+                                    <span>Minor</span>
+                                    <input type='radio' name='number' value='patch' checked={number == 'patch'} onChange={event => setNumber(event.currentTarget.value)}/>
+                                    <span>Patch</span>
+                                </div>
+                                <div className='action'>
+                                    <button className='button fill green' onClick={onSave}>
+                                        Save
+                                    </button>
+                                    <button className='button stroke green' onClick={() => setSave(false)}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </main>
+        ) : (
+            <LoadingView/>
+        )
     )
 }

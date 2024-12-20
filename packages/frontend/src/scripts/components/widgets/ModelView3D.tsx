@@ -6,6 +6,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { comparePath } from '../../functions/path'
 import { initializeCamera, initializeOrbit, initializeRenderer, initializeScene, reset } from '../../functions/render'
 
+const THRESHOLD = 3
+
 interface Props {
     model: Group
     update?: number
@@ -330,7 +332,7 @@ export class ModelView3D extends React.Component<Props> {
             // Check orbit
             if (this.hovered) {
                 // Check distance
-                if (this.drag || this.calculateDistance() > 1) {
+                if (this.drag || this.calculateDistance() > THRESHOLD) {
                     // Fire drag start and drag event
                     if (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y') {
                         if (this.props.onAxisDragStart) {
@@ -367,7 +369,7 @@ export class ModelView3D extends React.Component<Props> {
             } else {
                 // Check drag state
                 if (!this.drag) {
-                    this.drag = (this.calculateDistance() > 1)
+                    this.drag = (this.calculateDistance() > THRESHOLD)
                 }
             }
         } else {
@@ -427,7 +429,7 @@ export class ModelView3D extends React.Component<Props> {
 
     private handleTouchEnd(event: React.TouchEvent) {
         // Check distance
-        if (this.calculateDistance() <= 1) {
+        if (this.calculateDistance() <= THRESHOLD) {
             // Fire click event
             if (this.props.onClick) {
                 this.props.onClick(this.hovered, this.intersections, event.ctrlKey)

@@ -254,9 +254,11 @@ export const ProductVersionView = () => {
                                                                 <NavLink title="Edit settings" to={`/products/${productId}/versions/${curVers.versionId}/settings`}>
                                                                     <img src={EditIcon}/>
                                                                 </NavLink>
-                                                                <NavLink title="Edit model" to={`/products/${productId}/versions/${curVers.versionId}/editor`}>
-                                                                    <img src={ForkIcon}/>
-                                                                </NavLink>
+                                                                {curVers.modelType == 'ldr' && (
+                                                                    <NavLink title="Edit model" to={`/products/${productId}/versions/${curVers.versionId}/editor`}>
+                                                                        <img src={ForkIcon}/>
+                                                                    </NavLink>
+                                                                )}
                                                                 <a title="Download model" href={`/rest/files/${curVers.versionId}.${curVers.modelType}`}>
                                                                     <img src={DownloadIcon}/>
                                                                 </a>
