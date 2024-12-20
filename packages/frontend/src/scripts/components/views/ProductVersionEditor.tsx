@@ -851,7 +851,7 @@ export const ProductVersionEditorView = () => {
     }
 
     return  (
-        version && version.modelType == 'ldr' ? (
+        versionId == 'new' || (version && version.modelType == 'ldr') ? (
             <main className={`view product-version-editor`}>
                 <div className='editor'>
                     <div className='model'>
