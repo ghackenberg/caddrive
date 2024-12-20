@@ -20,6 +20,8 @@ import { ProductView3D } from '../widgets/ProductView3D'
 import { LoadingView } from './Loading'
 
 import LoadIcon from '/src/images/load.png'
+import EditIcon from '/src/images/setting.png'
+import ForkIcon from '/src/images/app.png'
 import DownloadIcon from '/src/images/download.png'
 import VersionIcon from '/src/images/version.png'
 import PartIcon from '/src/images/part.png'
@@ -69,16 +71,12 @@ export const ProductVersionView = () => {
 
     // FUNCTIONS
 
-    async function onClick(event: React.MouseEvent<HTMLDivElement>, version: VersionRead) {
-        if (event.ctrlKey) {
-            await push(`/products/${productId}/versions/${version.versionId}/settings`)
-        } else {
-            // Set context model
-            setContextVersion(version)
-            // Switch to model view on small screens
-            if (window.getComputedStyle(ref.current).display == 'none') {
-                await push('#model')
-            }
+    async function onClick(_event: React.MouseEvent<HTMLDivElement>, version: VersionRead) {
+        // Set context model
+        setContextVersion(version)
+        // Switch to model view on small screens
+        if (window.getComputedStyle(ref.current).display == 'none') {
+            await push('#model')
         }
     }
 
@@ -102,9 +100,14 @@ export const ProductVersionView = () => {
                             <div className='header'>
                                 {contextUser ? (
                                     contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
-                                        <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
-                                            <strong>New</strong> version
-                                        </NavLink>
+                                        <>
+                                            <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
+                                                <strong>Upload</strong> version
+                                            </NavLink>
+                                            <NavLink to={`/products/${productId}/versions/new/editor`} className='button green stroke'>
+                                                <strong>Create</strong> version (beta)
+                                            </NavLink>
+                                        </>
                                     ) : (
                                         <a className='button green fill'>
                                             <strong>New</strong> version <span className='badge'>requires role</span>
@@ -247,9 +250,17 @@ export const ProductVersionView = () => {
                                                     </div>
                                                     <div className="text">
                                                         <div>
-                                                            <a className="download" title="Download model" href={`/rest/files/${curVers.versionId}.${curVers.modelType}`}>
-                                                                <img src={DownloadIcon}/>
-                                                            </a>
+                                                            <span className='actions'>
+                                                                <NavLink title="Edit settings" to={`/products/${productId}/versions/${curVers.versionId}/settings`}>
+                                                                    <img src={EditIcon}/>
+                                                                </NavLink>
+                                                                <NavLink title="Edit model" to={`/products/${productId}/versions/${curVers.versionId}/editor`}>
+                                                                    <img src={ForkIcon}/>
+                                                                </NavLink>
+                                                                <a title="Download model" href={`/rest/files/${curVers.versionId}.${curVers.modelType}`}>
+                                                                    <img src={DownloadIcon}/>
+                                                                </a>
+                                                            </span>
                                                             <span className="label" style={{backgroundColor: hsl(color[curVers.versionId])}}>
                                                                 {curVers.major}.{curVers.minor}.{curVers.patch}
                                                             </span>

@@ -236,7 +236,7 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
                     {loaded != total ? (
                         <ModelView3D model={group} update={update}/>
                     ) : (
-                        <ModelView3D model={group} update={update} highlighted={props.highlighted} marked={props.marked} selected={selected} over={over} out={out} click={props.click}/>
+                        <ModelView3D model={group} update={update} highlighted={props.highlighted} marked={props.marked} selected={selected} onMouseOver={over} onMouseOut={out} onClick={props.click}/>
                     )}
                     
                     {loaded != total && (

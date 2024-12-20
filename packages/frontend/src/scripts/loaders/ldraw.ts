@@ -22,11 +22,44 @@ const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
 
 LDRAW_LOADER.smoothNormals = false
 
-LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
+const MATERIAL_LOADING = LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
     console.log('Materials loaded!')
+    //console.log(LDRAW_LOADER.materials)
+    //console.log(LDRAW_LOADER.materialsLibrary)
 }).catch(error => {
     console.error(error)
 })
+
+export async function getMaterials() {
+    await MATERIAL_LOADING
+    return LDRAW_LOADER.materials
+}
+
+export function getMaterialColor(material: THREE.Material) {
+    if ('color' in material && material.color instanceof THREE.Color) {
+        const r = Math.round(material.color.r * 255)
+        const g = Math.round(material.color.g * 255)
+        const b = Math.round(material.color.b * 255)
+        return `rgb(${r},${g},${b})`
+    } else {
+        throw 'Material type not supported!'
+    }
+}
+
+export function getObjectMaterialCode(object: THREE.Object3D): string {
+    if (object instanceof THREE.Mesh) {
+        return object.material.userData.code
+    } else {
+        for (const child of object.children) {
+            try {
+                return getObjectMaterialCode(child)
+            } catch (e) {
+                // ignore
+            }
+        }
+    }
+    throw 'Material not found!'
+}
 
 export async function loadLDrawModel(path: string, update = empty) {
     const file = await CacheAPI.loadFile(path)
@@ -49,7 +82,7 @@ export function resumeLoadLDrawPath(path: string) {
     LDRAW_RESUME[path] && LDRAW_RESUME[path]()
 }
 
-export async function parseLDrawModel(path: string, data: string, update = empty) {
+export async function parseLDrawModel(path: string, data: string, update = empty, asynchron = true) {
     LDRAW_PAUSE[path] = false
 
     LDRAW_ACTIVE[path] = async () => {
@@ -66,14 +99,14 @@ export async function parseLDrawModel(path: string, data: string, update = empty
 
     const model = new Parser().parse(data)
 
-    if (model.files.length > 0) {
+    if (asynchron && model.files.length > 0) {
         const group = new THREE.Group()
         const total = countParts(model, model.files[0])
         parseModel(path, group, model, model.files[0], 0, total, update)
         group.rotation.x = Math.PI
         return group
     } else {
-        if (model.shapes.length > 0) {
+        if (!asynchron || model.shapes.length > 0) {
             const group = await parseFull(data)
             group.rotation.x = Math.PI
             return group

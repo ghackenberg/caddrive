@@ -1,0 +1,188 @@
+main.view.product-version-editor {
+    position: relative;
+}
+
+main.view.product-version-editor div.editor {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+main.view.product-version-editor div.model {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 18em;
+    bottom: 0;
+
+    padding: 0 !important;
+}
+
+main.view.product-version-editor div.model div {
+    padding: 0 !important;
+
+    overflow: hidden;
+}
+
+main.view.product-version-editor div.model canvas {
+    width: 100%;
+    height: 100%;
+}
+
+main.view.product-version-editor div.model div.progress {
+    position: absolute;
+    
+    left: 1em;
+    right: 1em;
+    bottom: 1em;
+
+    border-radius: 0.5em;
+
+    overflow: hidden;
+    
+    background-color: white;
+    background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.1));
+}
+main.view.product-version-editor div.model div.progress div.bar {    
+    position: absolute;
+
+    z-index: 0;
+    
+    top: 0;
+    left: 0;
+    bottom: 0;
+    
+    background-color: orange;
+    background-image: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+}
+main.view.product-version-editor div.model div.progress div.text {
+    position: relative;
+    
+    z-index: 1;
+
+    text-align: center;
+}
+
+main.view.product-version-editor div.model div.buttons {
+    position: absolute;
+
+    top: 1em;
+    left: 1em;
+
+    display: flex;
+
+    gap: 1em;
+}
+
+main.view.product-version-editor div.palette {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 18em;
+
+    padding: 0 !important;
+}
+
+main.view.product-version-editor div.parts {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 12em;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    overflow: auto;
+}
+
+main.view.product-version-editor div.parts img {
+    display: block;
+
+    width: calc(100% / 3);
+}
+
+main.view.product-version-editor div.colors {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 12em;
+
+    display: flex;
+
+    flex-wrap: wrap;
+}
+
+main.view.product-version-editor div.colors a {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+
+    box-sizing: border-box;
+}
+
+main.view.product-version-editor div.colors a.selected {
+    border: 0.1em solid white;
+}
+
+main.view.product-version-editor div.save {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background-color: rgba(255, 255, 255, 0.75);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+main.view.product-version-editor div.save div.form {
+    background-color: white;
+
+    padding: 1em;
+
+    width: 30em;
+
+    max-width: calc(100% - 2em);
+
+    border-radius: 1em;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.5);
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1em;
+}
+main.view.product-version-editor div.save div.form div.text input {
+    width: 100%;
+}
+main.view.product-version-editor div.save div.form div.number {
+    text-align: center;
+}
+main.view.product-version-editor div.save div.form div.action {
+    display: flex;
+
+    gap: 1em;
+
+    justify-content: center;
+}

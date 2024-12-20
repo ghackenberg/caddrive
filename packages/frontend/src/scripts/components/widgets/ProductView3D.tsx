@@ -90,7 +90,7 @@ export const ProductView3D = (props: { productId: string, issueId?: string, mous
                                 </option>
                             ))}
                         </select>
-                        <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} over={props.over && (object => props.over(contextVersion, object))} out={props.out && (object => props.out(contextVersion, object))} click={props.click && (object => props.click(contextVersion, object))}/>
+                        <VersionView3D version={contextVersion} mouse={props.mouse} highlighted={highlighted} marked={marked} selected={selected} over={props.over && (object => props.over(contextVersion, object))} out={props.out && (object => props.out(contextVersion, object))} click={props.click && (object => object && props.click(contextVersion, object))}/>
                     </>
                 ) : (
                     <img src={EmptyIcon} className='icon medium position center'/>

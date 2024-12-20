@@ -14,6 +14,7 @@ import { ProductMilestoneIssueSettingView } from '../views/ProductMilestoneIssue
 import { ProductMilestoneSettingView } from '../views/ProductMilestoneSetting'
 import { ProductSettingView } from '../views/ProductSetting'
 import { ProductVersionView } from '../views/ProductVersion'
+import { ProductVersionEditorView } from '../views/ProductVersionEditor'
 import { ProductVersionSettingView } from '../views/ProductVersionSetting'
 
 const ProductRouter = () => {
@@ -40,6 +41,7 @@ const ProductRouter = () => {
                 <Redirect path="/products/:productId/issues/:issueId" to="/products/:productId/issues/:issueId/comments" push={false}/>
                 <Route path="/products/:productId/issues" component={ProductIssueView}/>
 
+                <Route path="/products/:productId/versions/:versionId/editor" component={ProductVersionEditorView}/>
                 <Route path="/products/:productId/versions/:versionId/settings" component={ProductVersionSettingView}/>
                 <Redirect path="/products/:productId/versions/:versionId" to="/products/:productId/versions/:versionId/settings" push={false}/>
                 <Route path="/products/:productId/versions" component={ProductVersionView}/>

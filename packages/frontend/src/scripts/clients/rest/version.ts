@@ -5,15 +5,15 @@ import { VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productb
 import { auth } from '../auth'
 import { CacheAPI } from '../cache'
 
-class VersionClientImpl implements VersionREST<VersionCreate, VersionUpdate, File, Blob> {
+class VersionClientImpl implements VersionREST<VersionCreate, VersionUpdate, Blob, Blob> {
     async findVersions(productId: string): Promise<VersionRead[]> {
         return (await axios.get<VersionRead[]>(`/rest/products/${productId}/versions`, auth)).data
     }
-    async addVersion(productId: string, data: VersionCreate, files: {model: File, image: Blob}): Promise<VersionRead> {
+    async addVersion(productId: string, data: VersionCreate, files: {model: Blob, image: Blob}): Promise<VersionRead> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files.model) {
-            body.append('model', files.model)
+            body.append('model', files.model, files.model.type == 'application/x-ldraw' && 'model.ldr')
         }
         if (files.image) {
             body.append('image', files.image)
@@ -25,7 +25,7 @@ class VersionClientImpl implements VersionREST<VersionCreate, VersionUpdate, Fil
     async getVersion(productId: string, versionId: string): Promise<VersionRead> {
         return (await axios.get<VersionRead>(`/rest/products/${productId}/versions/${versionId}`, auth)).data
     }
-    async updateVersion(productId: string, versionId: string, data: VersionUpdate, files?: {model: File, image: Blob}): Promise<VersionRead> {
+    async updateVersion(productId: string, versionId: string, data: VersionUpdate, files?: {model: Blob, image: Blob}): Promise<VersionRead> {
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files) {
