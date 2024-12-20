@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useContext } from 'react'
 import { useParams } from 'react-router'
 
-import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial } from 'three'
+import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
@@ -41,6 +41,7 @@ export const ProductVersionEditorView = () => {
 
     // REFS
 
+    const viewRef = React.createRef<ModelView3D>()
     const inputRef = React.createRef<HTMLInputElement>()
 
     // STATES
@@ -58,8 +59,7 @@ export const ProductVersionEditorView = () => {
     const [loaded, setLoaded] = React.useState<number>()
     const [total, setTotal] = React.useState<number>()
 
-    const [selectedPart, setSelectedPart] = React.useState<Object3D>() 
-    const [selectedParts, setSelectedParts] = React.useState<Object3D[]>()
+    const [selection, setSelection] = React.useState<{ part: Object3D, parts: Object3D[] }>() 
 
     const [isPartCreate, setIsPartCreate] = React.useState<boolean>()
     const [isPartInserted, setIsPartInserted] = React.useState<boolean>()
@@ -118,8 +118,7 @@ export const ProductVersionEditorView = () => {
         setArrowZ(arrowZ)
         setArrowRotY(arrowRotY)
 
-        setSelectedParts([])
-        setSelectedPart(undefined)
+        setSelection({ part: undefined, parts: [] })
 
         offset.x = 0
         offset.y = 0
@@ -145,13 +144,15 @@ export const ProductVersionEditorView = () => {
 
     // FUNCTIONS
 
-    function updateOffset(selectedParts: Object3D[], selectedPart: Object3D) {
+    // Update
+
+    function updateOffset() {
         // Calculate bounding box
         const bbox = new Box3()
-        if (selectedPart) {
-           bbox.setFromObject(selectedPart)
+        if (selection.part) {
+           bbox.setFromObject(selection.part)
         } else {
-            for (const element of selectedParts) {
+            for (const element of selection.parts) {
                 bbox.expandByObject(element,true)
             }
         }
@@ -195,23 +196,25 @@ export const ProductVersionEditorView = () => {
         model.add(grid)
     }
 
+    // Move
+
     function moveBy(x: number, y: number, z: number) {
-        for (const part of selectedParts) {
+        for (const part of selection.parts) {
             part.position.set(part.position.x + x, part.position.y + y, part.position.z + z)
         }
         manipulator.position.set(manipulator.position.x + x, manipulator.position.y + y, manipulator.position.z + z)
     }
 
     function moveTo(x: number, y: number, z: number) {
-        for (const part of selectedParts) {
+        for (const part of selection.parts) {
             part.position.set(x, y, z)
         }
         manipulator.position.set(x, y, z)
     }
 
     function moveByAxis(axis: string, pos: Vector3) {
-        if (selectedParts.length > 0) {
-            const position = selectedPart ? selectedPart.position : manipulator.position
+        if (selection.parts.length > 0) {
+            const position = selection.part ? selection.part.position : manipulator.position
             switch (axis) {
                 case "x": {
                     const xcoord = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - position.x
@@ -247,7 +250,7 @@ export const ProductVersionEditorView = () => {
 
                     if (angle != rotationAngle) {
                         angle -= rotationAngle
-                        for (const element of selectedParts) {
+                        for (const element of selection.parts) {
                             const rotationVec = element.position.clone()
                             element.position.sub(rotationVec.sub(manipulator.position))
                             element.position.add(rotationVec.applyAxisAngle(new Vector3(0, 1, 0), angle))
@@ -260,33 +263,59 @@ export const ProductVersionEditorView = () => {
         }
     }
 
+    // Part drag & drop
+
     // Define selected parts and start moving
-    function onPartDragStart(part: Object3D, pos: Vector3) {
+    function onPartDragStart(part: Object3D, _intersections: Intersection<Object3D<Event>>[], pos: Vector3) {
         //console.log('onPartDragStart', part, pos)
 
         // Update create state
         setIsPartCreate(false)
         setIsPartInserted(true)
 
-        // Check if part has been selected
-        if (selectedParts.indexOf(part) == -1) {
+        // Update selection
+        if (selection.parts.indexOf(part) == -1) {
             unselect()
 
-            selectedParts.push(part)
+            selection.parts.push(part)
+
+            // Update material
+            part.traverse(object => {
+                if (object instanceof Mesh) {
+                    if (object.material instanceof MeshStandardMaterial) {
+                        object.material = object.material.clone()
+                        object.material.emissive.setScalar(0.1)
+                    } else {
+                        throw 'Material type not supported'
+                    }
+                }
+            })
         }
 
-        // Perform movement
-        setSelectedPart(part)
+        selection.part = part
+
+        // Remember material
+        part.traverse(object => {
+            if (object instanceof Mesh) {
+                if (object.material instanceof MeshStandardMaterial) {
+                    setSelectedMaterial(object.material)
+                } else {
+                    throw 'Material type not supported'
+                }
+            }
+        })
         
-        updateOffset(selectedParts, part)
+        // Perform movement
+        updateOffset()
 
-        const x = Math.round(+pos.x / 20) * 20
-        const y = Math.round(-pos.y /  8) *  8
-        const z = Math.round(-pos.z / 20) * 20
+        const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x
+        const y = 0
+        const z = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z
 
-        moveTo(x, y, z)
+        moveBy(x, y, z)
         
         manipulator.position.set(part.position.x, part.position.y, part.position.z)
+        manipulator.visible = true
 
         updateGrid(model)
     }
@@ -295,10 +324,10 @@ export const ProductVersionEditorView = () => {
     function onPartDrag(pos: Vector3) {
         //console.log('onPartDrag', pos)
 
-        if (selectedParts.length > 0) {
-            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - selectedPart.position.x
-            const y = Math.round(-pos.y / 8) * 8 - selectedPart.position.y
-            const z = Math.round((-pos.z - offset.z) / 20) * 20 + offset.z - selectedPart.position.z
+        if (selection.parts.length > 0) {
+            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - selection.part.position.x
+            const y = 0
+            const z = Math.round((-pos.z - offset.z) / 20) * 20 + offset.z - selection.part.position.z
 
             moveBy(x, y, z)
 
@@ -310,10 +339,10 @@ export const ProductVersionEditorView = () => {
     function onPartDrop(pos: Vector3) {
         //console.log('onPartDrop', pos)
 
-        if (selectedParts.length > 0) {
-            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - selectedPart.position.x
-            const y = Math.round(-pos.y / 8) * 8 - selectedPart.position.y
-            const z = Math.round((-pos.z - offset.z) / 20) * 20 + offset.z - selectedPart.position.z
+        if (selection.parts.length > 0) {
+            const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - selection.part.position.x
+            const y = 0
+            const z = Math.round((-pos.z - offset.z) / 20) * 20 + offset.z - selection.part.position.z
 
             moveBy(x, y, z)
 
@@ -324,18 +353,9 @@ export const ProductVersionEditorView = () => {
     // Remove new parts and move existing parts to their original location
     function onPartDragLeave() {
         //console.log('onPartDragLeave')
-
-        if (isPartCreate) {
-            // Remove new part
-            while (selectedParts.length > 0) {
-                model.remove(selectedParts.pop())
-            }
-
-            setIsPartInserted(false)
-
-            updateGrid(model)
-        }
     }
+
+    // New part drag & drop
 
     // Load part in the background
     function onNewPartDragStart(event: React.DragEvent, file: string) {
@@ -347,11 +367,13 @@ export const ProductVersionEditorView = () => {
 
         parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`, null, false).then(part => {
             // Add to selected parts
-            selectedParts.push(part.children[0])
+            selection.parts.push(part.children[0])
             // Set as selected part
-            setSelectedPart(part.children[0])
+            selection.part = part.children[0]
+            
             // Calculate offset
-            updateOffset([part.children[0]], part.children[0])
+            updateOffset()
+
             // Update part material
             part.children[0].traverse(object => {
                 if (object instanceof Mesh) {
@@ -370,13 +392,13 @@ export const ProductVersionEditorView = () => {
     }
 
     // Insert loaded part into scene and move part around the scene
-    function onNewPartDragEnter(_event: React.DragEvent, pos: Vector3) {
+    function onNewPartDragEnter(pos: Vector3) {
         //console.log('onDragEnter', pos)
 
-        if (selectedParts.length > 0) {
+        if (selection.parts.length > 0) {
             // Insert loaded part into scene
             if (isPartCreate && !isPartInserted) {
-                for (const part of selectedParts) {
+                for (const part of selection.parts) {
                     model.add(part)
                 }
                 setIsPartInserted(true)
@@ -398,10 +420,10 @@ export const ProductVersionEditorView = () => {
     function onNewPartDrag(pos: Vector3) {
         //console.log('onDrag', pos)
 
-        if (selectedParts.length > 0) {
+        if (selection.parts.length > 0) {
             // Insert loaded part into scene
             if (isPartCreate && !isPartInserted) {
-                for (const part of selectedParts) {
+                for (const part of selection.parts) {
                     model.add(part)
                 }
                 setIsPartInserted(true)
@@ -423,10 +445,10 @@ export const ProductVersionEditorView = () => {
     function onNewPartDrop(pos: Vector3) {
         //console.log('onDrop', pos)
 
-        if (selectedParts.length > 0) {
+        if (selection.parts.length > 0) {
             // Insert loaded part into scene
             if (isPartCreate && !isPartInserted) {
-                for (const part of selectedParts) {
+                for (const part of selection.parts) {
                     model.add(part)
                 }
                 setIsPartInserted(true)
@@ -440,13 +462,17 @@ export const ProductVersionEditorView = () => {
             moveTo(x, y, z)
 
             updateGrid(model)
+
+            viewRef.current.focus()
         }
     }
+
+    // Axis
 
     function onAxisDragStart(pos: Vector3, axis: string) {
         //console.log('onMoveOnAxisStart', object, pos)
 
-        if (selectedParts.length > 0) {
+        if (selection.parts.length > 0) {
             moveByAxis(axis, pos)
 
             setRotationAngle(0)
@@ -462,7 +488,7 @@ export const ProductVersionEditorView = () => {
     function onAxisDrag(pos: Vector3, axis: string) {
         //console.log('onMoveOnAxisContinue', pos, axisName)
 
-        if (selectedParts.length > 0) {
+        if (selection.parts.length > 0) {
             moveByAxis(axis, pos)
 
             updateGrid(model)
@@ -472,7 +498,7 @@ export const ProductVersionEditorView = () => {
     function onAxisDrop(pos: Vector3, axis: string) {
         //console.log('onMoveOnAxisDrop', pos, axisName)
 
-        if (selectedParts.length > 0) {
+        if (selection.parts.length > 0) {
             moveByAxis(axis, pos)
     
             setRotationStart(undefined)
@@ -481,6 +507,8 @@ export const ProductVersionEditorView = () => {
             updateGrid(model)
         }
     }
+
+    // Mouse
 
     function onMouseOver(part: Object3D) {
         //console.log('onMouseOver', part)
@@ -517,21 +545,25 @@ export const ProductVersionEditorView = () => {
         }
     }
 
+    // Keyboard
+
     function onKeyDown(key: React.KeyboardEvent) {
         //console.log('onKeyDown', key.key)
 
         if (key.key == "Delete") {
-            while (selectedParts.length > 0) {
-                model.remove(selectedParts.pop())
+            while (selection.parts.length > 0) {
+                model.remove(selection.parts.pop())
             }
             
-            setSelectedPart(undefined)
+            selection.part = undefined
 
             manipulator.visible = false
 
             updateGrid(model)
         }
     }
+
+    // Other
 
     function onColorChanged(event: React.MouseEvent, material: Material) {
         //console.log('onColorChanged', material)
@@ -542,7 +574,7 @@ export const ProductVersionEditorView = () => {
         setSelectedMaterial(material)
 
         // Change material of selected parts
-        for (const part of selectedParts) {
+        for (const part of selection.parts) {
             part.traverse(object => {
                 if (object instanceof Mesh) {
                     object.material = material.clone()
@@ -560,7 +592,7 @@ export const ProductVersionEditorView = () => {
         }
     }
 
-    function onClick(part: Object3D, isCtrlPressed: boolean) {
+    function onClick(part: Object3D, _intersections: Intersection<Object3D<Event>>[], isCtrlPressed: boolean) {
         //console.log('onClick', part, isCtrlPressed)
 
         // Unselect all parts
@@ -575,13 +607,13 @@ export const ProductVersionEditorView = () => {
             // Check click target is part
             if (part.name.endsWith(".dat")) {
                 // Compute index of selected part and update part material
-                const index = selectedParts.indexOf(part)
+                const index = selection.parts.indexOf(part)
                 if (index == -1) {
                     // Branch 1: Add part to selection
-                    selectedParts.push(part)
+                    selection.parts.push(part)
     
                     // Update selection
-                    setSelectedPart(part)
+                    selection.part = part
 
                     // Update part material
                     part.traverse(object => {
@@ -603,10 +635,10 @@ export const ProductVersionEditorView = () => {
                     manipulator.visible = true
                 } else {
                     // Branch 2: Remove part from selection
-                    selectedParts.splice(index, 1)
+                    selection.parts.splice(index, 1)
 
                     // Update selection
-                    setSelectedPart(undefined)
+                    selection.part = undefined
 
                     // Reset part material
                     part.traverse(object => {
@@ -618,10 +650,10 @@ export const ProductVersionEditorView = () => {
                     })
 
                     // Update manipulator
-                    if (selectedParts.length > 1) {
+                    if (selection.parts.length > 1) {
                         // Compute bounding box around selected parts
                         const box  = new Box3()
-                        for (const element of selectedParts) {
+                        for (const element of selection.parts) {
                             box.expandByObject(element, true)
                         }
             
@@ -630,9 +662,9 @@ export const ProductVersionEditorView = () => {
             
                         // Move manipulator to center of bounding box
                         manipulator.position.set(center.x, -center.y, -center.z)
-                    } else if (selectedParts.length == 1) {
+                    } else if (selection.parts.length == 1) {
                         // Move manipulator to origin of brick
-                        manipulator.position.set(selectedParts[0].position.x, selectedParts[0].position.y, selectedParts[0].position.z)
+                        manipulator.position.set(selection.parts[0].position.x, selection.parts[0].position.y, selection.parts[0].position.z)
                     } else {
                         // Hide manipulator
                         manipulator.visible = false
@@ -643,11 +675,11 @@ export const ProductVersionEditorView = () => {
             // Branch 2: Click target is background
 
             // Disable specific part selection
-            setSelectedPart(undefined)
+            selection.part = undefined
 
             // Compute bounding box around selected parts
             const box  = new Box3()
-            for (const element of selectedParts) {
+            for (const element of selection.parts) {
                 box.expandByObject(element, true)
             }
 
@@ -660,8 +692,8 @@ export const ProductVersionEditorView = () => {
     }
 
     function unselect() {
-        while (selectedParts.length > 0) {
-            selectedParts.pop().traverse(object => {
+        while (selection.parts.length > 0) {
+            selection.parts.pop().traverse(object => {
                 if (object instanceof Mesh) {
                     if (object.material instanceof MeshStandardMaterial) {
                         object.material.emissive.setScalar(0)
@@ -669,7 +701,7 @@ export const ProductVersionEditorView = () => {
                 }
             })        
         }
-        setSelectedPart(undefined)
+        selection.part = undefined
         manipulator.visible = false
     }
 
@@ -740,7 +772,7 @@ export const ProductVersionEditorView = () => {
             <div className='editor'>
                 <div className='model'>
                     {model && (
-                        <ModelView3D model={model} update={loaded} onMouseOver={onMouseOver} onMouseOut={onMouseOut} onClick={onClick} onKeyDown={onKeyDown} onPartDragStart={onPartDragStart} onPartDrag={onPartDrag} onPartDrop={onPartDrop} onPartDropLeave={onPartDragLeave} onAxisDragStart={onAxisDragStart} onAxisDrag={onAxisDrag} onAxisDrop={onAxisDrop} onNewPartDrop={onNewPartDrop} onNewPartDrag={onNewPartDrag} onNewPartDragEnter={onNewPartDragEnter} onNewPartDragLeave={onPartDragLeave}/>
+                        <ModelView3D ref={viewRef} model={model} update={loaded} onMouseOver={onMouseOver} onMouseOut={onMouseOut} onClick={onClick} onKeyDown={onKeyDown} onPartDragStart={onPartDragStart} onPartDrag={onPartDrag} onPartDrop={onPartDrop} onPartDropLeave={onPartDragLeave} onAxisDragStart={onAxisDragStart} onAxisDrag={onAxisDrag} onAxisDrop={onAxisDrop} onNewPartDrop={onNewPartDrop} onNewPartDrag={onNewPartDrag} onNewPartDragEnter={onNewPartDragEnter} onNewPartDragLeave={onPartDragLeave}/>
                     )}
                     {loaded != total && (
                         <div className='progress'>
