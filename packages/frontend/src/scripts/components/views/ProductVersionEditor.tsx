@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useContext } from 'react'
 import { useParams } from 'react-router'
 
-import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event } from 'three'
+import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event, BoxHelper, BoxGeometry } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
@@ -55,6 +55,7 @@ export const ProductVersionEditorView = () => {
     const [arrowY, setArrowY] = React.useState<Group>()
     const [arrowZ, setArrowZ] = React.useState<Group>()
     const [arrowRotY, setArrowRotY] = React.useState<Group>()
+    const [box, setBox] = React.useState<BoxHelper>()
 
     const [loaded, setLoaded] = React.useState<number>()
     const [total, setTotal] = React.useState<number>()
@@ -91,7 +92,7 @@ export const ProductVersionEditorView = () => {
     React.useEffect(() => {
         let exec = true
 
-        const { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY } = createScene()
+        const { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY, box } = createScene()
         
         if (versionId != 'new') {
             // Load existing LDraw model
@@ -112,11 +113,14 @@ export const ProductVersionEditorView = () => {
         }
         
         setModel(model)
+
         setManipulator(manipulator)
         setArrowX(arrowX)
         setArrowY(arrowY)
         setArrowZ(arrowZ)
         setArrowRotY(arrowRotY)
+
+        setBox(box)
 
         setSelection({ part: undefined, parts: [] })
 
@@ -171,12 +175,11 @@ export const ProductVersionEditorView = () => {
             const child = model.children[i]
             if (child instanceof GridHelper) {
                 model.remove(child)
-                break
             }
         }
         // bounding box
         const bbox = new Box3()
-        if (model.children.length > 1) {
+        if (model.children.length > 2) {
             for (const child of model.children) {
                 if (child.name.endsWith('.dat')) {
                     bbox.expandByObject(child, true)
@@ -194,6 +197,45 @@ export const ProductVersionEditorView = () => {
         const divisions = size / 20
         const grid = new GridHelper( size, divisions, '#000', '#333' )
         model.add(grid)
+    }
+
+    function updateBox() {
+        if (selection.parts.length > 0) {
+            const bbox = new Box3()
+            for (const part of selection.parts) {
+                bbox.expandByObject(part, true)
+            }
+
+            bbox.max.y -= 4
+
+            const pad = 4
+
+            bbox.min.x -= pad
+            bbox.min.y -= pad
+            bbox.min.z -= pad
+
+            bbox.max.x += pad
+            bbox.max.y += pad
+            bbox.max.z += pad
+
+            const sx = bbox.max.x - bbox.min.x
+            const sy = bbox.max.y - bbox.min.y
+            const sz = bbox.max.z - bbox.min.z
+
+            const cx = (bbox.min.x + bbox.max.x) / 2
+            const cy = (bbox.min.y + bbox.max.y) / 2
+            const cz = (bbox.min.z + bbox.max.z) / 2
+
+            const geometry = new BoxGeometry(sx, sy, sz)
+
+            const mesh = new Mesh(geometry)
+            mesh.position.set(cx, -cy, -cz)
+
+            box.setFromObject(mesh)
+            box.visible = true
+        } else {
+            box.visible = false
+        }
     }
 
     // Move
@@ -304,6 +346,9 @@ export const ProductVersionEditorView = () => {
                 }
             }
         })
+
+        // Update bounding box
+        updateBox()
         
         // Perform movement
         updateOffset()
@@ -332,6 +377,8 @@ export const ProductVersionEditorView = () => {
             moveBy(x, y, z)
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 
@@ -347,6 +394,8 @@ export const ProductVersionEditorView = () => {
             moveBy(x, y, z)
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 
@@ -413,6 +462,8 @@ export const ProductVersionEditorView = () => {
             moveTo(x, y, z)
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 
@@ -438,6 +489,8 @@ export const ProductVersionEditorView = () => {
             moveTo(x, y, z)
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 
@@ -463,6 +516,8 @@ export const ProductVersionEditorView = () => {
 
             updateGrid(model)
 
+            updateBox()
+
             viewRef.current.focus()
         }
     }
@@ -482,6 +537,8 @@ export const ProductVersionEditorView = () => {
             setIsPartInserted(true)
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 
@@ -492,6 +549,8 @@ export const ProductVersionEditorView = () => {
             moveByAxis(axis, pos)
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 
@@ -505,6 +564,8 @@ export const ProductVersionEditorView = () => {
             setRotationAngle(undefined)
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 
@@ -648,6 +709,8 @@ export const ProductVersionEditorView = () => {
             // Move manipulator to center of bounding box
             manipulator.position.set(center.x, 4 - box.max.y, -center.z)
         }
+
+        updateBox()
     }
 
     // Keyboard
@@ -665,6 +728,8 @@ export const ProductVersionEditorView = () => {
             manipulator.visible = false
 
             updateGrid(model)
+
+            updateBox()
         }
     }
 

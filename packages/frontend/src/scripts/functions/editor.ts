@@ -1,4 +1,4 @@
-import { CylinderGeometry, Group, Mesh, MeshBasicMaterial, TorusGeometry, CircleGeometry } from 'three'
+import { CylinderGeometry, Group, Mesh, MeshBasicMaterial, TorusGeometry, CircleGeometry, BoxHelper, BoxGeometry } from 'three'
 
 export function createScene() {
         // translation (x-axis)
@@ -89,16 +89,25 @@ export function createScene() {
 
         // Manipulator
         const manipulator = new Group()
+        manipulator.name = 'manipulator'
         manipulator.visible = false
         manipulator.add(arrowX)
         manipulator.add(arrowY)
         manipulator.add(arrowZ)
         manipulator.add(arrowRotY)
 
+        // Box
+        const boxGeometry = new BoxGeometry()
+        const boxMesh = new Mesh(boxGeometry)
+        const box = new BoxHelper(boxMesh)
+        box.name = 'box'
+        box.visible = false
+
         //Model
         const model = new Group()
         model.add(manipulator)
+        model.add(box)
         model.rotation.x = Math.PI
         
-        return { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY }
+        return { model, manipulator, arrowX, arrowY, arrowZ, arrowRotY, box }
 }
