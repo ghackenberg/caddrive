@@ -312,12 +312,13 @@ export class ModelView3D extends React.Component<Props> {
         this.position_start = event
         this.position_end = event
 
+        // Initialize drag start
+        this.drag = false
+
         // Check selection target
         if (this.hovered) {
             // Disable orbit
             this.orbit.enabled = false
-            // Initialize drag start
-            this.drag = false
         }
     }
 
@@ -325,8 +326,9 @@ export class ModelView3D extends React.Component<Props> {
         if (this.position_start && this.position_end) {
             // Update cursor position
             this.position_end = event
+
             // Check orbit
-            if (!this.orbit.enabled) {
+            if (this.hovered) {
                 // Check distance
                 if (this.drag || this.calculateDistance() > 1) {
                     // Fire drag start and drag event
@@ -362,6 +364,11 @@ export class ModelView3D extends React.Component<Props> {
                     // Remember drag state
                     this.drag = true
                 }
+            } else {
+                // Check drag state
+                if (!this.drag) {
+                    this.drag = (this.calculateDistance() > 1)
+                }
             }
         } else {
             this.updateHovered(event)
@@ -372,20 +379,20 @@ export class ModelView3D extends React.Component<Props> {
         if (this.position_start && this.position_end) {
             // Check drag state
             if (this.drag) {
-                // Fire drop event
-                if (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y') {
-                    if (this.props.onAxisDrop) {
-                        this.props.onAxisDrop(this.unprojectAxis(event), this.hovered.name)
+                if (this.hovered) {
+                    // Fire drop event
+                    if (this.hovered.name == 'x' || this.hovered.name == 'y' || this.hovered.name == 'z' || this.hovered.name == 'rotation y') {
+                        if (this.props.onAxisDrop) {
+                            this.props.onAxisDrop(this.unprojectAxis(event), this.hovered.name)
+                        }
+                    } else {
+                        if (this.props.onPartDrop) {
+                            this.props.onPartDrop(this.unprojectXZ(event.clientX, event.clientY, this.hovered.position.y))
+                        }
                     }
-                } else {
-                    if (this.props.onPartDrop) {
-                        this.props.onPartDrop(this.unprojectXZ(event.clientX, event.clientY, this.hovered.position.y))
-                    }
+                    // Reset cursor
+                    this.div.current.style.cursor = undefined
                 }
-                // Reset cursor
-                this.div.current.style.cursor = undefined
-                // Update drag state
-                this.drag = undefined
             } else {
                 // Fire click event
                 if (this.props.onClick) {
@@ -396,6 +403,9 @@ export class ModelView3D extends React.Component<Props> {
             // Forget cursor position
             this.position_start = null
             this.position_end = null
+            
+            // Update drag state
+            this.drag = null
 
             // Enable orbit
             this.orbit.enabled = true

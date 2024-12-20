@@ -190,7 +190,7 @@ export const ProductVersionEditorView = () => {
         const z = Math.max(Math.abs(bbox.min.z), Math.abs(bbox.max.z))
         const s = Math.max(x, z) * 2
         // add grid
-        const size = Math.ceil(s / 20) * 20
+        const size = (Math.ceil(s / 20) + (Math.ceil(s / 20) % 2 ? 1 : 0) + 2) * 20
         const divisions = size / 20
         const grid = new GridHelper( size, divisions, '#000', '#333' )
         model.add(grid)
@@ -214,20 +214,20 @@ export const ProductVersionEditorView = () => {
 
     function moveByAxis(axis: string, pos: Vector3) {
         if (selection.parts.length > 0) {
-            const position = selection.part ? selection.part.position : manipulator.position
+            const position = manipulator.position
             switch (axis) {
                 case "x": {
-                    const xcoord = Math.round((pos.x - offset.x) / 20) * 20 + offset.x - position.x
+                    const xcoord = Math.round(pos.x / 20) * 20 - position.x + position.x % 20
                     moveBy(xcoord, 0, 0)
                     break
                 }
                 case "y": {
-                    const ycoord = Math.round(-pos.y / 8) * 8 - position.y
+                    const ycoord = Math.round(-pos.y / 24) * 24 - position.y
                     moveBy(0, ycoord, 0)
                     break
                 }
                 case "z": {
-                    const zcoord = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z - position.z
+                    const zcoord = Math.round(-pos.z / 20) * 20 - position.z + position.z % 20
                     moveBy(0, 0, zcoord)
                     break
                 }
@@ -242,7 +242,7 @@ export const ProductVersionEditorView = () => {
                     vecA.sub(manipulator.position)
                     vecB.sub(manipulator.position)
 
-                    let angle = -Math.round(vecA.angleTo(vecB) * 4 / Math.PI) * Math.PI / 4
+                    let angle = -Math.round(vecA.angleTo(vecB) * 2 / Math.PI) * Math.PI / 2
 
                     if (vecA.cross(vecB).y > 0) {
                         angle *= -1 
@@ -545,6 +545,111 @@ export const ProductVersionEditorView = () => {
         }
     }
 
+    function onClick(part: Object3D, _intersections: Intersection<Object3D<Event>>[], isCtrlPressed: boolean) {
+        //console.log('onClick', part, isCtrlPressed)
+
+        // Unselect all parts
+        if (!isCtrlPressed) {
+            unselect()
+        }
+
+        // Check click target
+        if (part != null) {
+            // Branch 1: Click target is 3D object
+
+            // Check click target is part
+            if (part.name.endsWith(".dat")) {
+                // Compute index of selected part and update part material
+                const index = selection.parts.indexOf(part)
+                if (index == -1) {
+                    // Branch 1: Add part to selection
+                    selection.parts.push(part)
+    
+                    // Update selection
+                    selection.part = part
+
+                    // Update offset
+                    updateOffset()
+
+                    // Update part material
+                    part.traverse(object => {
+                        if (object instanceof Mesh) {
+                            // Update part material
+                            if (object.material instanceof MeshStandardMaterial) {
+                                object.material = object.material.clone()
+                                object.material.emissive.setScalar(0.1)
+                            } else {
+                                throw 'Material type not supported'
+                            }
+                            // Update selected material
+                            setSelectedMaterial(object.material)
+                        }
+                    })
+
+                    // Update manipulator
+                    manipulator.position.set(part.position.x, part.position.y, part.position.z)
+                    manipulator.visible = true
+                } else {
+                    // Branch 2: Remove part from selection
+                    selection.parts.splice(index, 1)
+
+                    // Update selection
+                    selection.part = selection.parts.length == 1 ? selection.parts[0] : undefined
+
+                    // Update offset
+                    updateOffset()
+
+                    // Reset part material
+                    part.traverse(object => {
+                        if (object instanceof Mesh) {
+                            if (object.material instanceof MeshStandardMaterial) {
+                                object.material.emissive.setScalar(0)
+                            }
+                        }
+                    })
+
+                    // Update manipulator
+                    if (selection.parts.length > 1) {
+                        // Compute bounding box around selected parts
+                        const box  = new Box3()
+                        for (const element of selection.parts) {
+                            box.expandByObject(element, true)
+                        }
+            
+                        // Get center of bounding box
+                        const center = box.getCenter(new Vector3())
+            
+                        // Move manipulator to center of bounding box
+                        manipulator.position.set(center.x, 4 - box.max.y, 0 - center.z)
+                    } else if (selection.parts.length == 1) {
+                        // Move manipulator to origin of brick
+                        manipulator.position.set(selection.part.position.x, selection.part.position.y, selection.part.position.z)
+                    } else {
+                        // Hide manipulator
+                        manipulator.visible = false
+                    }
+                }
+            }
+        } else if (isCtrlPressed) {
+            // Branch 2: Click target is background
+
+            // Disable specific part selection
+            selection.part = undefined
+
+            // Compute bounding box around selected parts
+            const box  = new Box3()
+            for (const element of selection.parts) {
+                box.expandByObject(element, true)
+            }
+
+            // Get center of bounding box
+            const center = box.getCenter(new Vector3())
+
+            // Move manipulator to center of bounding box
+            manipulator.position.set(center.x, 4 - box.max.y, -center.z)
+        }
+    }
+
     // Keyboard
 
     function onKeyDown(key: React.KeyboardEvent) {
@@ -590,119 +695,6 @@ export const ProductVersionEditorView = () => {
                 }
             })  
         }
-    }
-
-    function onClick(part: Object3D, _intersections: Intersection<Object3D<Event>>[], isCtrlPressed: boolean) {
-        //console.log('onClick', part, isCtrlPressed)
-
-        // Unselect all parts
-        if (!isCtrlPressed) {
-            unselect()
-        }
-
-        // Check click target
-        if (part != null) {
-            // Branch 1: Click target is 3D object
-
-            // Check click target is part
-            if (part.name.endsWith(".dat")) {
-                // Compute index of selected part and update part material
-                const index = selection.parts.indexOf(part)
-                if (index == -1) {
-                    // Branch 1: Add part to selection
-                    selection.parts.push(part)
-    
-                    // Update selection
-                    selection.part = part
-
-                    // Update part material
-                    part.traverse(object => {
-                        if (object instanceof Mesh) {
-                            // Update part material
-                            if (object.material instanceof MeshStandardMaterial) {
-                                object.material = object.material.clone()
-                                object.material.emissive.setScalar(0.1)
-                            } else {
-                                throw 'Material type not supported'
-                            }
-                            // Update selected material
-                            setSelectedMaterial(object.material)
-                        }
-                    })
-
-                    // Update manipulator
-                    manipulator.position.set(part.position.x, part.position.y, part.position.z)
-                    manipulator.visible = true
-                } else {
-                    // Branch 2: Remove part from selection
-                    selection.parts.splice(index, 1)
-
-                    // Update selection
-                    selection.part = undefined
-
-                    // Reset part material
-                    part.traverse(object => {
-                        if (object instanceof Mesh) {
-                            if (object.material instanceof MeshStandardMaterial) {
-                                object.material.emissive.setScalar(0)
-                            }
-                        }
-                    })
-
-                    // Update manipulator
-                    if (selection.parts.length > 1) {
-                        // Compute bounding box around selected parts
-                        const box  = new Box3()
-                        for (const element of selection.parts) {
-                            box.expandByObject(element, true)
-                        }
-            
-                        // Get center of bounding box
-                        const center = box.getCenter(new Vector3())
-            
-                        // Move manipulator to center of bounding box
-                        manipulator.position.set(center.x, -center.y, -center.z)
-                    } else if (selection.parts.length == 1) {
-                        // Move manipulator to origin of brick
-                        manipulator.position.set(selection.parts[0].position.x, selection.parts[0].position.y, selection.parts[0].position.z)
-                    } else {
-                        // Hide manipulator
-                        manipulator.visible = false
-                    }
-                }
-            }
-        } else if (isCtrlPressed) {
-            // Branch 2: Click target is background
-
-            // Disable specific part selection
-            selection.part = undefined
-
-            // Compute bounding box around selected parts
-            const box  = new Box3()
-            for (const element of selection.parts) {
-                box.expandByObject(element, true)
-            }
-
-            // Get center of bounding box
-            const center = box.getCenter(new Vector3())
-
-            // Move manipulator to center of bounding box
-            manipulator.position.set(center.x, -center.y, -center.z)
-        }
-    }
-
-    function unselect() {
-        while (selection.parts.length > 0) {
-            selection.parts.pop().traverse(object => {
-                if (object instanceof Mesh) {
-                    if (object.material instanceof MeshStandardMaterial) {
-                        object.material.emissive.setScalar(0)
-                    }
-                }
-            })        
-        }
-        selection.part = undefined
-        manipulator.visible = false
     }
 
     async function onSave() {
@@ -765,6 +757,22 @@ export const ProductVersionEditorView = () => {
         setContextVersion(newVers)
 
         await goBack()
+    }
+
+    // Util
+
+    function unselect() {
+        while (selection.parts.length > 0) {
+            selection.parts.pop().traverse(object => {
+                if (object instanceof Mesh) {
+                    if (object.material instanceof MeshStandardMaterial) {
+                        object.material.emissive.setScalar(0)
+                    }
+                }
+            })        
+        }
+        selection.part = undefined
+        manipulator.visible = false
     }
 
     return  (
