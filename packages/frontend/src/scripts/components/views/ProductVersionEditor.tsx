@@ -749,7 +749,7 @@ export const ProductVersionEditorView = () => {
                         </div>
                     )}
                     <div className='buttons'>
-                        <button className='button fill green' onClick={() => { setSave(true) }}>
+                        <button className='button fill green' onClick={() => setSave(true)}>
                             Save
                         </button>
                     </div>
@@ -762,11 +762,15 @@ export const ProductVersionEditorView = () => {
                     </div>
                     <div className="colors">
                         {availableMaterials ? (
-                            <>
-                                {availableMaterials.map(mat => (
-                                    <a key={mat.userData.code} title={mat.name.trim()} className={selectedMaterial && mat.userData.code == selectedMaterial.userData.code ? 'selected' : ''} style={{backgroundColor: getMaterialColor(mat), borderColor: getMaterialColor(mat.userData.edgeMaterial)}} onClick={event => onColorChanged(event,mat)}/>
-                                ))}
-                            </>
+                            availableMaterials.map(mat => {
+                                const key = mat.userData.code
+                                const title = mat.name.trim()
+                                const className = selectedMaterial && mat.userData.code == selectedMaterial.userData.code ? 'selected' : ''
+                                const backgroundColor = getMaterialColor(mat)
+                                const borderColor = getMaterialColor(mat.userData.edgeMaterial)
+                                const style = { backgroundColor, borderColor }
+                                return <a key={key} title={title} className={className} style={style} onClick={event => onColorChanged(event,mat)}/>
+                            })
                         ) : (
                             <span>Loading materials</span>
                         )}
