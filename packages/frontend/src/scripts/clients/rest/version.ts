@@ -13,7 +13,11 @@ class VersionClientImpl implements VersionREST<VersionCreate, VersionUpdate, Blo
         const body = new FormData()
         body.append('data', JSON.stringify(data))
         if (files.model) {
-            body.append('model', files.model, files.model.type == 'application/x-ldraw' && 'model.ldr')
+            if (files.model.type == 'application/x-ldraw') {
+                body.append('model', files.model, 'model.ldr')
+            } else {
+                body.append('model', files.model)
+            }
         }
         if (files.image) {
             body.append('image', files.image)
