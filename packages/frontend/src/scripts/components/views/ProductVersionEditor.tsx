@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useContext } from 'react'
 import { useParams } from 'react-router'
 
+import shortid from 'shortid'
 import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event, BoxHelper, BoxGeometry } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
@@ -20,6 +21,71 @@ const BLANK = new Image()
 BLANK.src = BlankIcon
 
 const BLOCKS = ['3005', '3004', '3622', '3010', '3009', '3008', '6111', '6112', '2465', '3003', '3002', '3001', '2456', '3007', '3006', '2356', '6212', '4202', '4201', '4204', '30072']
+
+abstract class Operation {
+    abstract undo(): void
+    abstract redo(): void
+}
+
+export class Insert extends Operation {
+    constructor(public id: string, public part: string, public color: string, public position: Vector3) {
+        super()
+    }
+    override undo(): void {
+        // TODO
+    }
+    override redo(): void {
+        // TODO
+    }
+}
+
+export class Select extends Operation {
+    constructor(public after: string[], public before: string[]) {
+        super()
+    }
+    override undo(): void {
+        // TODO
+    }
+    override redo(): void {
+        // TODO
+    }
+}
+
+export class Move extends Operation {
+    constructor(public id: string[], public after: Vector3, public before: Vector3) {
+        super()
+    }
+    override undo(): void {
+        // TODO
+    }
+    override redo(): void {
+        // TODO
+    }
+}
+
+export class Rotate extends Operation {
+    constructor(public id: string[], public after: number, public before: number) {
+        super()
+    }
+    override undo(): void {
+        // TODO
+    }
+    override redo(): void {
+        // TODO
+    }
+}
+
+export class Delete extends Operation {
+    constructor(public id: string[], public part: string[], public color: string[], public position: Vector3[]) {
+        super()
+    }
+    override undo(): void {
+        // TODO
+    }
+    override redo(): void {
+        // TODO
+    }
+}
 
 export const ProductVersionEditorView = () => {
 
@@ -62,6 +128,8 @@ export const ProductVersionEditorView = () => {
     const [total, setTotal] = React.useState<number>()
 
     const [selection, setSelection] = React.useState<{ part: Object3D, parts: Object3D[] }>() 
+
+    const [operations, setOperations] = React.useState<Operation[]>([])
 
     const [isPartCreate, setIsPartCreate] = React.useState<boolean>()
     const [isPartInserted, setIsPartInserted] = React.useState<boolean>()
@@ -425,6 +493,8 @@ export const ProductVersionEditorView = () => {
         event.dataTransfer.setDragImage(BLANK, 0, 0)
 
         parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`, null, false).then(part => {
+            part.children[0].userData['id'] = shortid()
+
             // Add to selected parts
             selection.parts.push(part.children[0])
             // Set as selected part
@@ -528,6 +598,14 @@ export const ProductVersionEditorView = () => {
 
             updateBox()
 
+            // Update operations
+            const ops: Operation[] = []
+            for (const part of selection.parts) {
+                ops.push(new Insert(part.userData['id'], part.name, getObjectMaterialCode(part), new Vector3(x, y, z)))
+            }
+            setOperations([...operations, ...ops])
+
+            // Update focus
             viewRef.current.focus()
         }
     }
@@ -619,6 +697,11 @@ export const ProductVersionEditorView = () => {
     function onClick(part: Object3D, _intersections: Intersection<Object3D<Event>>[], isCtrlPressed: boolean) {
         //console.log('onClick', part, isCtrlPressed)
 
+        const IDsBeforeSelection : string[] = []
+            for (const part of selection.parts) {
+                IDsBeforeSelection.push(part.userData['id'])
+        }
+
         // Unselect all parts
         if (!isCtrlPressed) {
             unselect()
@@ -627,7 +710,7 @@ export const ProductVersionEditorView = () => {
         // Check click target
         if (part != null) {
             // Branch 1: Click target is 3D object
-
+            
             // Check click target is part
             if (part.name.endsWith(".dat")) {
                 // Compute index of selected part and update part material
@@ -720,6 +803,15 @@ export const ProductVersionEditorView = () => {
             manipulator.position.set(center.x, 4 - box.max.y, -center.z)
         }
 
+        const IDsAfterSelection : string[] = []
+        for(const part of selection.parts){
+            IDsAfterSelection.push(part.userData['id'])
+        }
+        
+        if((part != null || !isCtrlPressed)&&(IDsBeforeSelection.length > 0 || IDsAfterSelection.length > 0)){
+            setOperations([...operations, new Select(IDsAfterSelection, IDsBeforeSelection)])
+        }
+
         updateBox()
     }
 
@@ -729,8 +821,18 @@ export const ProductVersionEditorView = () => {
         //console.log('onKeyDown', key.key)
 
         if (key.key == "Delete") {
+            const id : string[] = []
+            const partName : string[] = []
+            const color : string[] = []
+            const position : Vector3[] = []
+
             while (selection.parts.length > 0) {
-                model.remove(selection.parts.pop())
+                const part = selection.parts.pop()
+                model.remove(part)
+                id.push(part.userData['id'])
+                partName.push(part.name)
+                color.push(getObjectMaterialCode(part))
+                position.push(part.position)
             }
             
             selection.part = undefined
@@ -740,6 +842,8 @@ export const ProductVersionEditorView = () => {
             updateGrid(model)
 
             updateBox()
+
+            setOperations([...operations, new Delete(id,partName,color,position)])
         }
     }
 
@@ -817,6 +921,7 @@ export const ProductVersionEditorView = () => {
 
                 const file = child.name
 
+                ldraw += `0 ID ${child.userData['id']}\n`
                 ldraw += `1 ${color} ${x} ${y} ${z} ${a} ${b} ${c} ${d} ${e} ${f} ${g} ${h} ${i} ${file}\n`
             }
         }
@@ -849,6 +954,8 @@ export const ProductVersionEditorView = () => {
         selection.part = undefined
         manipulator.visible = false
     }
+
+    console.log(operations)
 
     return  (
         versionId == 'new' || (version && version.modelType == 'ldr') ? (
