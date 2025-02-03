@@ -23,67 +23,85 @@ BLANK.src = BlankIcon
 const BLOCKS = ['3005', '3004', '3622', '3010', '3009', '3008', '6111', '6112', '2465', '3003', '3002', '3001', '2456', '3007', '3006', '2356', '6212', '4202', '4201', '4204', '30072']
 
 abstract class Operation {
+    constructor(public type: string) {
+        // empty
+    }
     abstract undo(): void
     abstract redo(): void
 }
 
+//TODO Color change operation
+
 export class Insert extends Operation {
-    constructor(public id: string, public part: string, public color: string, public position: Vector3) {
-        super()
+    constructor(public id: string, public part: string, public color: string, public position: Vector3,private undoFunc: (id: string, part: string, color: string, position: Vector3) => void,private redoFunc: (id: string, part: string, color: string, position: Vector3) => void, private updateOperations: (undo: boolean)=> void) {
+        super('insert')
     }
     override undo(): void {
-        // TODO
+        this.undoFunc(this.id,this.part,this.color,this.position)
+        this.updateOperations(true)
+
     }
     override redo(): void {
-        // TODO
+        this.redoFunc(this.id,this.part,this.color,this.position)
+        this.updateOperations(false)
     }
 }
 
 export class Select extends Operation {
-    constructor(public after: string[], public before: string[]) {
-        super()
+    constructor(public after: string[], public before: string[], private undoFunc: (before: string[])=> void,private redoFunc: (after: string[])=> void, private updateOperations: (undo: boolean)=> void) {
+        super('select')
     }
     override undo(): void {
-        // TODO
+        this.undoFunc(this.before)
+        this.updateOperations(true)
     }
     override redo(): void {
-        // TODO
+        this.redoFunc(this.after)
+        this.updateOperations(false)
     }
 }
 
 export class Move extends Operation {
-    constructor(public id: string[], public after: Vector3, public before: Vector3) {
-        super()
+    constructor(public id: string[], public movement: Vector3, private undoFunc: (id: string[], movement: Vector3)=> void, private redoFunc: (id: string[], movement: Vector3)=> void, private updateOperations: (undo: boolean)=> void) {
+        super('move')
     }
     override undo(): void {
-        // TODO
+        this.undoFunc(this.id,this.movement)
+        this.updateOperations(true)
     }
     override redo(): void {
-        // TODO
+        this.redoFunc(this.id,this.movement)
+        this.updateOperations(false)
     }
 }
 
 export class Rotate extends Operation {
-    constructor(public id: string[], public after: number, public before: number) {
-        super()
+    constructor(public id: string[], public selId: string, public rotation: number, private undoFunc: (id: string[], selId: string, rotation: number)=> void, private redoFunc: (id: string[], selId: string, rotation: number)=> void, private updateOperations: (undo: boolean)=> void) {
+        super('rotate')
     }
     override undo(): void {
-        // TODO
+        this.undoFunc(this.id,this.selId,this.rotation)
+        this.updateOperations(true)
+
     }
     override redo(): void {
-        // TODO
+        this.redoFunc(this.id,this.selId,this.rotation)
+        this.updateOperations(false)
     }
 }
 
 export class Delete extends Operation {
-    constructor(public id: string[], public part: string[], public color: string[], public position: Vector3[]) {
-        super()
+    constructor(public id: string[], public part: string[], public color: string[], public position: Vector3[], private undoFunc: (id: string[], part: string[], color: string[], position: Vector3[]) => void,private redoFunc: (id: string[], part: string[], color: string[], position: Vector3[]) => void, private updateOperations: (undo: boolean)=> void) {
+        super('delete')
     }
     override undo(): void {
-        // TODO
+        this.undoFunc(this.id, this.part, this.color, this.position)
+        this.updateOperations(true)
+
     }
     override redo(): void {
-        // TODO
+        this.redoFunc(this.id, this.part, this.color, this.position)
+        this.updateOperations(false)
     }
 }
 
@@ -130,11 +148,14 @@ export const ProductVersionEditorView = () => {
     const [selection, setSelection] = React.useState<{ part: Object3D, parts: Object3D[] }>() 
 
     const [operations, setOperations] = React.useState<Operation[]>([])
+    const [operationIndex, setOperationIndex] = React.useState<number>()
 
     const [isPartCreate, setIsPartCreate] = React.useState<boolean>()
     const [isPartInserted, setIsPartInserted] = React.useState<boolean>()
 
     const [offset] = React.useState<Vector3>(new Vector3(0, 0, 0))
+
+    const [movement] = React.useState(new Vector3())
 
     const [rotationStart, setRotationStart] = React.useState<Vector3>()
     const [rotationAngle, setRotationAngle] = React.useState<number>()
@@ -323,6 +344,9 @@ export const ProductVersionEditorView = () => {
             part.position.set(part.position.x + x, part.position.y + y, part.position.z + z)
         }
         manipulator.position.set(manipulator.position.x + x, manipulator.position.y + y, manipulator.position.z + z)
+
+        // Remember relative movement
+        movement.set(movement.x + x, movement.y + y, movement.z + z)
     }
 
     function moveTo(x: number, y: number, z: number) {
@@ -431,6 +455,9 @@ export const ProductVersionEditorView = () => {
         // Perform movement
         updateOffset()
 
+        // Remember relative movement
+        movement.set(0, 0, 0)
+
         const x = Math.round((pos.x - offset.x) / 20) * 20 + offset.x
         const y = 0
         const z = Math.round((-pos.z + offset.z) / 20) * 20 - offset.z
@@ -474,6 +501,8 @@ export const ProductVersionEditorView = () => {
             updateGrid(model)
 
             updateBox()
+
+            addOperations([new Move(selection.parts.map(part => part.userData['id']), movement.clone(), undoMove, redoMove, updateOperations)])
         }
     }
 
@@ -491,7 +520,7 @@ export const ProductVersionEditorView = () => {
         unselect()
 
         event.dataTransfer.setDragImage(BLANK, 0, 0)
-
+        
         parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`, null, false).then(part => {
             part.children[0].userData['id'] = shortid()
 
@@ -601,9 +630,9 @@ export const ProductVersionEditorView = () => {
             // Update operations
             const ops: Operation[] = []
             for (const part of selection.parts) {
-                ops.push(new Insert(part.userData['id'], part.name, getObjectMaterialCode(part), new Vector3(x, y, z)))
+                ops.push(new Insert(part.userData['id'], part.name, getObjectMaterialCode(part), new Vector3(x, y, z),undoInsert,redoInsert, updateOperations))
             }
-            setOperations([...operations, ...ops])
+            addOperations(ops)
 
             // Update focus
             viewRef.current.focus()
@@ -616,6 +645,8 @@ export const ProductVersionEditorView = () => {
         //console.log('onMoveOnAxisStart', object, pos)
 
         if (selection.parts.length > 0) {
+            movement.set(0, 0, 0)
+
             moveByAxis(axis, pos)
 
             setRotationAngle(0)
@@ -647,6 +678,12 @@ export const ProductVersionEditorView = () => {
 
         if (selection.parts.length > 0) {
             moveByAxis(axis, pos)
+
+            if (axis == 'rotation y') {
+                addOperations([new Rotate(selection.parts.map(part => part.userData['id']), selection.part && selection.part.userData['id'], rotationAngle, redoRotation, undoRotation, updateOperations)])
+            } else {
+                addOperations([new Move(selection.parts.map(part => part.userData['id']), movement.clone(), undoMove,redoMove, updateOperations)])
+            }
     
             setRotationStart(undefined)
             setRotationAngle(undefined)
@@ -809,7 +846,7 @@ export const ProductVersionEditorView = () => {
         }
         
         if((part != null || !isCtrlPressed)&&(IDsBeforeSelection.length > 0 || IDsAfterSelection.length > 0)){
-            setOperations([...operations, new Select(IDsAfterSelection, IDsBeforeSelection)])
+            addOperations([new Select(IDsAfterSelection, IDsBeforeSelection, undoSelect, redoSelect, updateOperations)])
         }
 
         updateBox()
@@ -843,8 +880,167 @@ export const ProductVersionEditorView = () => {
 
             updateBox()
 
-            setOperations([...operations, new Delete(id,partName,color,position)])
+            addOperations([new Delete(id,partName,color,position, undoDelete, redoDelete, updateOperations)])
         }
+    }
+
+    // Undo and Redo
+    
+    function redoMove(id: string[], movement: Vector3) {
+        for ( const element of id) {
+            model.children.find(obj => obj.userData['id'] == element)?.position.add(movement)
+        }
+        manipulator.position.add(movement)
+        updateBox()
+        updateGrid(model)
+    }
+
+    function undoMove(id: string[], movement: Vector3) {
+        for ( const element of id) {
+            model.children.find(obj => obj.userData['id'] == element)?.position.sub(movement)
+        }
+        manipulator.position.sub(movement)
+        updateBox()
+        updateGrid(model)
+    }
+
+    function redoRotation(id: string[], selId: string, rotation: number) {
+        undoRotation(id,selId, -rotation)
+    }
+
+    function undoRotation(id: string[], selId: string, rotation: number) {
+        let rotationCenter : Vector3
+        if (selId) {
+            rotationCenter = model.children.find(obj => obj.userData['id'] == selId).position
+        } else {
+            // center of rotation is the center of the bounding box
+            const box  = new Box3()
+            for (const element of selection.parts) {
+                box.expandByObject(element, true)
+            }
+
+            // Get center of bounding box
+            const center = box.getCenter(new Vector3())
+
+            // Move manipulator to center of bounding box
+            manipulator.position.set(center.x, 4 - box.max.y, 0 - center.z)
+            rotationCenter = manipulator.position
+        }
+
+        for (const element of id) {
+            const object = model.children.find(obj => obj.userData['id'] == element)
+            const rotationVec = object.position.clone()
+            object.position.sub(rotationVec.sub(rotationCenter))
+            object.position.add(rotationVec.applyAxisAngle(new Vector3(0, 1, 0), rotation))
+            object.rotateY(rotation)
+        }
+        setRotationAngle(rotationAngle + rotation)
+        updateBox()
+        updateGrid(model)
+    }
+
+    function redoDelete(id: string[]) {
+        for (const element of id) {
+            model.remove(model.children.find(obj => obj.userData['id'] == element))
+            selection.parts.splice(selection.parts.findIndex(obj => obj.userData['id'] == element),1)
+        }
+        manipulator.visible = false
+        updateBox()
+        updateGrid(model)
+    }
+
+    function undoDelete(id: string[], part: string[], color: string[], position: Vector3[]) {
+        unselect()
+
+        for (const index in id) {
+            parseLDrawModel(part[index], `1 ${color[index]} 0 0 0 1 0 0 0 1 0 0 0 1 ${part[index]}`, null, false).then(part => {
+                part.children[0].userData['id'] = id[index]
+    
+                // Add to selected parts
+                selection.parts.push(part.children[0])
+                // Set as selected part
+                selection.part = part.children[0]
+                
+                // Calculate offset
+                updateOffset()
+    
+                // Update part material
+                part.children[0].traverse(object => {
+                    if (object instanceof Mesh) {
+                        if (object.material instanceof MeshStandardMaterial) {
+                            object.material = object.material.clone()
+                            object.material.emissive.setScalar(0.1)
+                        } else {
+                            throw 'Material type not supported'
+                        }
+                    }
+                })
+                part.children[0].position.set(position[index].x,position[index].y,position[index].z)
+                model.add(part.children[0])
+                updateGrid(model)
+                updateBox()
+            })
+        } 
+        manipulator.position.set(position[position.length - 1].x, position[position.length - 1].y, position[position.length - 1].z)
+        manipulator.visible = true
+    }
+
+    function redoSelect(after: string[]) {
+        unselect()
+        if (after.length > 0)  {
+            for (const id of after) {
+                const part = model.children.find(obj => obj.userData['id'] == id)
+                selection.parts.push(part)
+                part && part.traverse(object => {
+                    if (object instanceof Mesh) {
+                        if (object.material instanceof MeshStandardMaterial) {
+                            object.material.emissive.setScalar(0.1)
+                        }
+                    }
+                })
+            }
+            selection.part = selection.parts[selection.parts.length-1]
+            manipulator.visible = true
+            manipulator.position.set(selection.part.position.x,selection.part.position.y,selection.part.position.z) 
+        }
+        updateBox()
+
+    }
+    function undoSelect(before: string[]) {
+        redoSelect(before)
+    }
+    function redoInsert(id: string, part: string, color: string, position: Vector3) {
+        undoDelete([id],[part],[color],[position])
+    }
+    function undoInsert(id: string) {
+        redoDelete([id])
+    }
+
+    // Operation management
+
+    function updateOperations(undo:boolean) {
+        //undo: true --> undo is used, false --> redo is used
+        if(undo) {
+            setOperationIndex(operationIndex)
+        } else {
+            if (operationIndex != undefined) {
+                setOperationIndex(operationIndex+1)
+            } else {
+                setOperationIndex(0)
+            }
+        }
+    } 
+    function addOperations(newOperations: Operation[]) {
+        if (operations.length-1 > operationIndex || (operationIndex == undefined && operations.length > 0)) {
+            operations.splice(operationIndex+1)
+        }
+        if (operationIndex != undefined) {
+            setOperationIndex(operationIndex+1)
+        } else {
+            setOperationIndex(0)
+        }
+
+        setOperations([...operations, ...newOperations])
     }
 
     // Other
@@ -955,7 +1151,7 @@ export const ProductVersionEditorView = () => {
         manipulator.visible = false
     }
 
-    console.log(operations)
+    console.log(operations, operationIndex)
 
     return  (
         versionId == 'new' || (version && version.modelType == 'ldr') ? (
@@ -974,6 +1170,18 @@ export const ProductVersionEditorView = () => {
                         <div className='buttons'>
                             <button className='button fill green' onClick={() => setSave(true)}>
                                 Save
+                            </button>
+                            <button className='button fill gray' onClick={() => operationIndex != undefined && operations[operationIndex].undo()}>
+                                Undo
+                            </button>
+                            <button className='button fill gray' onClick={() => {
+                                if (operations.length > 0 && operationIndex == undefined) {
+                                    operations[0].redo()
+                                } else if (operations.length - 1 > operationIndex) {
+                                    operations[operationIndex+1].redo()
+                                }
+                                }}>
+                                Redo
                             </button>
                         </div>
                     </div>
