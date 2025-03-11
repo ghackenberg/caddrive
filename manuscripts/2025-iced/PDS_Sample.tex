@@ -16,8 +16,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
 \usepackage{xcolor}
-\usepackage[colorlinks,allcolors=dscolor,bookmarks=false]{hyperref}
-
+\usepackage[colorlinks,allcolors=blue,bookmarks=false]{hyperref}
 
 
 
@@ -26,7 +25,7 @@
 \theoremstyle{definition}
 \newtheorem{remark}[theorem]{Remark}
 \newtheorem{example}[theorem]{Example}
- 
+
 
 \jyear{2025}
 
@@ -37,22 +36,47 @@
 \begin{document}
 
 
-\articletype{}%
+\articletype{DESIGN THEORY AND RESEARCH METHODS}%
 
-\title[\color{dscolor}A*-BASED BFO ALGORITHM FOR GLOBAL PATH PLANNING OF USVs]
+\title[A*-BASED BFO ALGORITHM FOR GLOBAL PATH PLANNING OF USVs]
 {An A*-based bacterial foraging optimisation algorithm for~global path planning of unmanned surface vehicles}
+
+
+\author[1,2]{Yang Long\orcid{0000-0000-0000-0000}}
+\author[3]{Zheming Zuo\orcid{0000-0000-0000-0000}}
+\author*[1]{Yixin Su\orcid{0000-0000-0000-0000}}
+\author[4]{Jie Li\orcid{0000-0000-0000-0000}}
+\author[1]{Huajun Zhang\orcid{0000-0000-0000-0000}}
+
+\authormark{Yang Long \textit{et al}.}
+
+
+\address[1]{School of Automation, Wuhan University of Technology, Wuhan, China,}
+\address[2]{Science and Technology College of Hubei Minzu University, Enshi, China,}
+\address[3]{Department of Computer Science, Durham University, Durham, UK,}
+\address[4]{School of Computing \& Digital Technologies, Teesside University, Middlesbrough, UK}
+
+\corresemail{tomislav.martinec@fsb.unizg.hr}
+
+
+\abstract{The bacterial foraging optimisation (BFO) algorithm is a commonly adopted bio-inspired optimisation
+algorithm. However, BFO is not a proper choice in coping with continuous global path
+planning in the context of unmanned surface vehicles (USVs). In this paper, a grid
+partition-based BFO algorithm, named AS-BFO, is proposed to address this issue in which
+the enhancement is contributed by the involvement of the A* algorithm. The chemotaxis
+operation is redesigned in AS-BFO. Through repeated simulations, the relative optimal
+parameter combination of the proposed algorithm is obtained and the most influential
+parameters are identified by sensitivity analysis. The performance of AS-BFO is
+evaluated via five size grid maps and the results show that AS-BFO has advantages in USV
+global path planning.}
+
+\keywords{USV, AS-BFO, chemotaxis operation, A* algorithm, sensitivity analysis}
 
 
 \maketitle
 
-\hrule{}
-\vspace{35mm}
-Leave empty for metadata
-\vspace{35mm}
-\hrule{}
 
 \section{Introduction}
-
 
 The development and application of freshwater and marine areas is becoming
 increasingly extensive. Owing to the special working requirements of water, most water
@@ -79,10 +103,11 @@ technologies can be generally divided into two groups: the pre-generative approa
 hybrid A* algorithm with motion primitive constraints is proposed to generate an initial
 reference path. In order to optimise the path, a number of computational intelligent
 algorithms have been applied. A genetic algorithm (GA) is used to determine the optimised
-path for a USV under environmental loads in \citet{r15}. The optimised paths are determined
+path for a USV under environmental loads in \citet{r15}. The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path. The optimised paths are determined
 by numerical simulations. An approach of fast path planning based on a Voronoi diagram
 and an improved GA has been proposed in \citet{r16}. Furthermore, as a branch of intelligent
-algorithms, the swarm intelligence algorithm plays an important role in research on USV
+algorithms, the swarm intelligence algorithm plays an important role the vehicle but also premises the reliability of a mission in research on USV
 global path planning. \citet{r17} proposed a method for USV global path planning based on
 particle swarm optimisation. By using typical obstacle modelling and the ant colony
 algorithm (ACO) for global path planning, the USV global path was achieved in \citet{r18}.
@@ -95,7 +120,8 @@ solve the problem of precocious and poor global search ability.
 
 The bacterial foraging optimisation (BFO) algorithm is a new bionic algorithm, which has become another hotspot in the field of heuristic
 computing. Owing to its advantages, such as parallel searching of the swarm intelligence algorithm
-and ease of jumping out from local minima, it has attracted more interest. At present,
+and ease of jumping out from local minima, it has attracted more interest. The relative optimal the AS-BFO algorithm
+run effectively in different working environments. At present,
 BFO has been successfully applied in many fields, such as image processing
 (\citealp{r22}; \citealp{r23}; \citealp{r24}), shop scheduling (\citealp{r25}; \citealp{r28}; \citealp{r27}; \citealp{r26}; \citealp{r29}), robotics (\citealp{r32}; \citealp{r31}; \citealp{r33}; \citealp{r30}; \citealp{r34}), etc.
 
@@ -105,15 +131,37 @@ This paper proposes a more efficient grid partition-based hybrid BFO path planni
 method, named AS-BFO, by integrating the A* algorithm to enhance the conventional
 BFO algorithm, thus solving the issue of the generation of a discontinuous path. The main
 contributions of this paper are listed below:
-\begin{enumerate}[(3)]
-\item[(1)] The bacterial foraging optimisation algorithm is improved and applied in USV
+\begin{enumerate}
+\item The bacterial foraging optimisation algorithm is improved and applied in USV
 global path planning under the grid environment.
 
-\item[(2)] The cost function of the A* algorithm is integrated into the tumble motion, which
+\item The cost function of the A* algorithm is integrated into the tumble motion, which
 solves the problem of repairing a discontinuous path.
 
-\item[(3)] The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+\item The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments.\begin{enumerate}
+\item The bacterial foraging optimisation algorithm is improved and applied in USV
+global path planning under the grid environment.
+
+\item The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path.
+
+\item The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
 run effectively in different working environments.
+
+\begin{enumerate}[--]
+\item[--] The bacterial foraging optimisation algorithm is improved and applied in USV
+global path planning under the grid environment.
+
+\item[--] The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path.
+
+\item[--] The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments.
+\end{enumerate}
+
+\end{enumerate}
+
 \end{enumerate}
 
 The rest of the paper is organised as follows. Section~2 describes the basic steps
@@ -137,12 +185,46 @@ solves the problem of repairing a discontinuous path. The BFO consists of three 
 mechanisms to find the relative optimal solution: chemotaxis, reproduction and
 elimination--dispersal, each of which is detailed below (\citealp{r21}; \citealp{r36};
 \citealp{r37}; \citealp{r35}).
+\begin{enumerate}[(3)]
+\item[(1)] The bacterial foraging optimisation algorithm is improved and applied in USV
+global path planning under the grid environment.
+
+\item[(2)] The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path.
+
+\item[(3)] The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments.
+\begin{enumerate}[(a)]
+\item[(a)] The bacterial foraging optimisation algorithm is improved and applied in USV
+global path planning under the grid environment.
+
+\item[(b)] The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path.
+
+\item[(c)] The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments.
+
+\begin{enumerate}[--]
+\item[--] The bacterial foraging optimisation algorithm is improved and applied in USV
+global path planning under the grid environment.
+
+\item[--] The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path.
+
+\item[--] The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments.
+\end{enumerate}
+
+\end{enumerate}
+\end{enumerate}
 
 %%\subsection{Chemotaxis}
 
 In biology, the movement of bacteria is called chemotactic behaviour, and there are two
 types of chemotaxis of bacteria: swim and tumble/rotate. The cost function of the A* algorithm is integrated into the tumble motion, which
-solves the problem of repairing a discontinuous path. Swimming is the motion of bacteria forwards along the same direction as the last stage; rotation is the bacteria staying in the
+solves the problem of repairing a discontinuous path. The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments. The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path. Swimming is the motion of bacteria the vehicle but also premises the reliability of a mission forwards along the same direction as the last stage; rotation is the bacteria staying in the
 same position and rotating itself into a new direction. These two chemotactic operations
 guarantee that bacteria search the problem space as well as avoid obstacles in the
 searching process. The new position of the bacteria after chemotaxis can be obtained by
@@ -218,7 +300,7 @@ the key components are detailed below.
 \caption{Flowchart of AS-BFO}
 \label{fig:1}
 \end{figure}
- 
+
 The grid method is an effective modelling method. The method is easy to construct, modify
 and simulate the geographical environment. The grid map not only can simulate relatively
 accurate environmental information for the USV, but also can provide simulation environments of
@@ -253,6 +335,28 @@ solves the problem of repairing a discontinuous path.
 
 \item The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
 run effectively in different working environments.
+\begin{itemize}
+\item The bacterial foraging optimisation algorithm is improved and applied in USV
+global path planning under the grid environment.
+
+\item The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path.
+
+\item The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments.
+\begin{itemize}
+\item The bacterial foraging optimisation algorithm is improved and applied in USV
+global path planning under the grid environment.
+
+\item The cost function of the A* algorithm is integrated into the tumble motion, which
+solves the problem of repairing a discontinuous path.
+
+\item The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments.
+\end{itemize}
+
+\end{itemize}
+
 \end{itemize}
 where mod(.) is the remainder operation and $\text{ceil}(\cdot)$ rounds an element to
 the nearest integer towards positive infinity. As mentioned above, the goal of path
@@ -283,7 +387,7 @@ traditional BFO means that any nodes will tumble and swim in any direction. Howe
 tumbling motions can result in discontinuous paths in the grid environment. Therefore, AS-BFO
 improves the chemotaxis operator. Firstly, it judges whether the tumbled nodes are
 continuous with the previous and the following nodes. Then, the discontinuous paths are
-repaired using the A* algorithm. 
+repaired using the A* algorithm.
 \begin{quote}
 Monitoring is a targeted search for in-depth information on the development of
 previously identified indicators for the future environment that are potentially relevant
@@ -299,7 +403,8 @@ stages. The closer the product comes to market launch, the clearer but also more
 become. Monitoring should be used to identify and take account of changes as early as possible. This
 should involve a two-way networking of the information flow with feedback between the boundary
 conditions and premises derived from the foresight and the solutions being developed for the various
-product generations to check their validity. This requires the definition of indicators that enable targeted
+product generations to check their validity. The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments. This requires the definition of indicators that enable targeted
 and comprehensible monitoring of individual aspects for all generations in different stages of a product.
 These are defined within the activity scanning and could be, for example, changed trends or adapted
 laws that significantly influence a specific product characteristic. If a change with an impact on the
@@ -319,7 +424,7 @@ exist approaches and methods If $n_2$ is a tumble node, it can be
 randomly tumbled to the adjacent free grids. Taking Figure~\ref{fig:3} as an
 \hbox{example,} $n_2$ tumbles to $n'_2$. Then, according to Equation~(4), it is judged
 whether $n_1$ and $n'_2$, $n'_2$ and $n_3$ are, respectively, continuous. If $\Delta=1$, then
-$n_1$ and $n'_2$, $n'_2$ and $n_3$ are continuous; otherwise, they are not: 
+$n_1$ and $n'_2$, $n'_2$ and $n_3$ are continuous; otherwise, they are not:
 \begin{figure}[h!]
 \centering{\includegraphics{PDS_fig3}}
 \caption{Schematic diagram of continuous nodes}
@@ -364,18 +469,18 @@ This paper introduces a novel methodology for analyzing the spatial distribution
 objects within home interiors utilizing graphs. This approach entails constructing a graph where nodes
 represent individual objects, such as furniture or decor, and edges denote these objects' co-presence or
 relational adjacency within a given space, such as a specific function of an entire home. The weight of
-each edge corresponds to the frequency or significance of the co-presence of the connected objects. This
-method facilitates an analysis of object-to-object relationships and their centrality within the domestic
-environment. A quantified domestic activities trend is enabled where traditionally invested based on the
-attributes of the physical environment, such as size, connectivity, and layout of the homes. In this graph,
+each edge corresponds to the frequency or significance of the co-presence of the connected objects. The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm run effectively in different working environments. This method facilitates an analysis of object-to-object relationships and their centrality within the domestic environment. A quantified domestic activities trend is enabled where traditionally invested based on the
+attributes of the physical environment, such as size, such as a
+specific function of connectivity, and layout of the homes. In this graph,
 unique object pairs are extracted to ensure no repetition of objects
-within a single graph representation. 
+within a single graph representation.
 
 
 
 Finally, the tumbled node is discontinuous with the previous node and the following node after
 the node is tumbled. Then, the repaired point can be found by
-Equations~(5)--(7) so that the path is continuous. Note that we need
+Equations~(5)--(7) so that the path is continuous. The relative optimal parameter combination is obtained and it makes the AS-BFO algorithm
+run effectively in different working environments. Note that we need
 to use the evaluation function of the A* algorithm twice in this condition.
 The method to deal with discontinuity with the previous and the following nodes is the
 same as the above method. Therefore, an effective method to repair discontinuous paths is
@@ -583,7 +688,7 @@ different in different environmental maps.
 \begin{Backmatter}
 
 
-\section*{\color{dscolor}Acknowledgments}
+\section*{Acknowledgements}
 We would like to express our sincere thanks to Wuhan University of Technology (WHUT) for supporting our work.
 
 
@@ -723,6 +828,7 @@ A study on path planning algorithms based upon particle swarm optimization.
 {Thomas, S., Howells, G. and Maier, M. D.} ({2008}).
 Autonomous ship collision avoidance navigation concepts, technologies and techniques.
 \textit{Journal of Navigation}, {61}(1), 129--142.
+\pagebreak
 
 \bibitem[Wang and Chi(2016)]{r18}
 {Wang, Y. H. and Chi, C.} ({2016}).
@@ -765,7 +871,7 @@ Second order sliding mode control for a quadrotor UAV.
 
 \appendix
 
-\section*{\color{dscolor}Appendix A}
+\section*{Appendix A}
 
 AS-BFO's MaxPL is 76{.}67 (53{.}01) smaller
 than ACO and 17{.}66 (12) smaller than GA. The MinPL of AS-BFO is 40{.}39 (57{.}93) smaller

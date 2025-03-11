@@ -15,7 +15,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
 \usepackage{xcolor}
-\usepackage[colorlinks,allcolors=dscolor,bookmarks=false]{hyperref}
+\usepackage[colorlinks,allcolors=blue,bookmarks=false]{hyperref}
 
 \jdoi{https://doi.org/10.1017/pds.2025.xxx}
 
@@ -23,19 +23,29 @@
 
 \begin{document}
 
-\articletype{}% Leave empty
+\articletype{Running footer}%
 
 \title[]{How to use the PDS \LaTeX\ class}
 
+\author[1]{First author\orcid{0000-0000-0000-0000}}
+\author[2]{Second author\orcid{0000-0000-0000-0000}}
+\author*[3]{Third author - Corresponding author\orcid{0000-0000-0000-0000}}
+
+\address[1]{First author address,}
+\address[2]{Second author address,}
+\address[3]{Third author address}
+
+\corresemail{xxxx@xxxx.xxx.xx}
+
+\abstract{This sample is a guideline for preparing technical papers using \LaTeX\
+for PDS manuscript submission. It contains the documentation for PDS \LaTeX\
+class file, which implements the layout of the manuscript for PDS journal.
+This sample file uses a class file named \texttt{PDS.cls} where the authors
+should use during their manuscript preparation.}
+
+\keywords{keyword entry 1, keyword entry 2, keyword entry 3}
 
 \maketitle
-
-\hrule{}
-\vspace{35mm}
-Leave empty for metadata
-\vspace{35mm}
-\hrule{}
-
 
 \section{Introduction}\label{sec1}
 
@@ -84,9 +94,9 @@ structure of your document should be as follows:
 
 \title{How to use the PDS \LaTeX\ class}
 
-\author[1]{First author}
-\author[2]{Second author}
-\author*[3]{Third author - Corres author}
+\author[1]{First author\orcid{0000-0000-0000-0000}}
+\author[2]{Second author\orcid{0000-0000-0000-0000}}
+\author*[3]{Third author - Corres author\orcid{0000-0000-0000-0000}}
 
 \address[1]{First author address,}
 \address[2]{Second author address,}
@@ -358,6 +368,8 @@ Acknowledgments
 Acknowledgements and other unnumbered sections are created
 using the \verb|\section*| command:
 
+\newpage
+
 \subsection{References}
 \label{sec3.18}
 
@@ -422,17 +434,17 @@ selection commands in \LaTeX.
 
 \newpage
 
-\section{\color{dscolor}Macro packages}
+\section{Macro packages}
 \label{sec4}
 
 The commonly used packages which can be used frequently are:
 
 \begin{verbatim}
-amsmath      graphicx     rotating         multirow
-amssymb      endnotes     subfigure        tikz
-amsfonts     setspace     array            siunitx
-xspace       latexsym     url              natbib
-amscd        multicol     algorithm        biblatex
+amsmath      graphicx     rotating         multirow            bm
+amssymb      endnotes     subfigure        tikz                dcolumn
+amsfonts     setspace     array            siunitx             amsthm
+xspace       latexsym     url              natbib              times
+amscd        multicol     algorithm        biblatex            xcolor
 \end{verbatim}
 
 
@@ -440,7 +452,7 @@ Additionally, you can use other packages and these should be loaded
 using the \verb|\usepackage| command in the preamble.
 
 \appendix
-\section*{\color{dscolor}Appendix}
+\section{Appendix}
 \label{sec3.16}
 
 The \verb|\appendix| command signals that all following sections are
