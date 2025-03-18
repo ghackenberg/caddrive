@@ -15,7 +15,7 @@ main.view.product-version-editor div.model {
     position: absolute;
 
     top: 0;
-    left: 0;
+    left: 10em;
     right: 18em;
     bottom: 0;
 
@@ -88,6 +88,34 @@ main.view.product-version-editor div.palette {
     width: 18em;
 
     padding: 0 !important;
+}
+
+main.view.product-version-editor div.OperationHistory {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 10em;
+
+    overflow: scroll;
+
+    padding: 0 !important;
+}
+
+main.view.product-version-editor div.OperationHistory ol {
+    display: flex;
+
+    flex-direction: column-reverse;
+}
+
+main.view.product-version-editor div.OperationHistory li{
+    cursor: pointer;
+}
+
+main.view.product-version-editor div.OperationHistory li.selected{
+    background-color: lightblue;
 }
 
 main.view.product-version-editor div.parts {

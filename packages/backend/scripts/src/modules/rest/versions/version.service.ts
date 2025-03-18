@@ -14,7 +14,7 @@ import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 import { unified } from 'unified'
 
-import { ModelType, ProductRead, VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
+import { DeltaType, ModelType, ProductRead, VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
 import { Database, convertVersion } from 'productboard-database'
 
 import { emitProductMessage } from '../../../functions/emit'
@@ -24,7 +24,7 @@ import { renderDae, renderFbx, renderGlb, renderLDraw, renderPly, renderStl } fr
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
-export class VersionService implements VersionREST<VersionCreate, VersionUpdate, Express.Multer.File[], Express.Multer.File[]> {
+export class VersionService implements VersionREST<VersionCreate, VersionUpdate, Express.Multer.File[], Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         @Inject(REQUEST)
         private readonly request: AuthorizedRequest
@@ -39,15 +39,16 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         return result
     }
  
-    async addVersion(productId: string, data: VersionCreate, files: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<VersionRead> {
+    async addVersion(productId: string, data: VersionCreate, files: {model: Express.Multer.File[], delta: Express.Multer.File[], image: Express.Multer.File[]}): Promise<VersionRead> {
         // Create version
         const versionId = shortid()
         const created = Date.now()
         const updated = created
         const userId = this.request.user.userId
         const modelType = await this.processModel(versionId, null, files)
+        const deltaType = await this.processDelta(versionId, null, files)
         const imageType = await this.processImage(versionId, null, files)
-        const version = await Database.get().versionRepository.save({ productId, versionId, created, updated, userId, modelType, imageType, ...data })
+        const version = await Database.get().versionRepository.save({ productId, versionId, created, updated, userId, modelType, deltaType, imageType, ...data })
         // Render image
         this.renderImage(productId, versionId, files)
         // Update product
@@ -65,7 +66,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         return convertVersion(version)
     }
 
-    async updateVersion(productId: string, versionId: string, data: VersionUpdate, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<VersionRead> {
+    async updateVersion(productId: string, versionId: string, data: VersionUpdate, files?: {model: Express.Multer.File[], delta: Express.Multer.File[], image: Express.Multer.File[]}): Promise<VersionRead> {
         // Update version
         const version = await Database.get().versionRepository.findOneByOrFail({ productId, versionId })
         version.updated = Date.now()
@@ -75,6 +76,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         version.patch = data.patch
         version.description = data.description
         version.modelType = await this.processModel(versionId, version.modelType, files)
+        version.deltaType = await this.processDelta(versionId, version.deltaType, files)
         version.imageType = await this.processImage(versionId, version.imageType, files)
         await Database.get().versionRepository.save(version)
         // Render image
@@ -114,7 +116,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         return convertVersion(version)
     }
 
-    async processModel(versionId: string, modelType: ModelType, files?: {model: Express.Multer.File[], image: Express.Multer.File[]}): Promise<ModelType> {
+    async processModel(versionId: string, modelType: ModelType, files?: {model: Express.Multer.File[]}): Promise<ModelType> {
         if (files.model) {
             if (files.model.length == 1) {
                 if (files.model[0].originalname.endsWith('.stl')) {
@@ -139,6 +141,9 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                 } else if (files.model[0].originalname.endsWith('.mpd')) {
                     writeFileSync(`./uploads/${versionId}.mpd`, files.model[0].buffer)
                     return 'mpd'
+                } else if (files.model[0].originalname.endsWith('.ldraw-model')) {
+                    writeFileSync(`./uploads/${versionId}.ldraw-model`, files.model[0].buffer)
+                    return 'ldraw-model'
                 } else if (files.model[0].originalname.endsWith('.FCStd')) {
                     writeFileSync(`./uploads/${versionId}.FCStd`, files.model[0].buffer)
                     return 'FCStd'
@@ -160,6 +165,23 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
             } else {
                 throw new HttpException('Model file must be provided.', 400)
             }
+        }
+    }
+
+    async processDelta(versionId: string, _deltaType: DeltaType, files?: {delta: Express.Multer.File[]}): Promise<DeltaType> {
+        if (files.delta) {
+            if (files.delta.length == 1) {
+                if (files.delta[0].originalname.endsWith('.ldraw-delta')) {
+                    writeFileSync(`./uploads/${versionId}.ldraw-delta`, files.delta[0].buffer)
+                    return 'ldraw-delta'
+                } else {
+                    throw new HttpException('Delta file type not supported.', 400)
+                }
+            } else {
+                throw new HttpException('Only one delta file supported.', 400)   
+            }
+        } else {
+            return null
         }
     }
     
@@ -242,6 +264,8 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                         } catch (e) {
                             console.error(new Date(), 'Could not render image', e)
                         }
+                    } else if (files.model[0].originalname.endsWith('.ldraw-model')) {
+                        // TODO Render custom LDraw format
                     } else {
                         throw new HttpException('Model file type not supported.', 400)
                     }

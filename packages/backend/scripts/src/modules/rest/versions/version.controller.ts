@@ -16,7 +16,7 @@ import { TokenOptionalGuard } from '../tokens/token.guard'
 @UseGuards(TokenOptionalGuard)
 @ApiBearerAuth()
 @ApiExtraModels(VersionCreate, VersionUpdate)
-export class VersionController implements VersionREST<string, string, Express.Multer.File[], Express.Multer.File[]> {
+export class VersionController implements VersionREST<string, string, Express.Multer.File[], Express.Multer.File[], Express.Multer.File[]> {
     constructor(
         private versionService: VersionService,
         @Inject(REQUEST)
@@ -37,6 +37,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     @UseInterceptors(
         FileFieldsInterceptor([
             { name: 'model', maxCount: 1 },
+            { name: 'delta', maxCount: 1 },
             { name: 'image', maxCount: 1 }
         ])
     )
@@ -48,9 +49,10 @@ export class VersionController implements VersionREST<string, string, Express.Mu
             properties: {
                 data: { $ref: getSchemaPath(VersionCreate) },
                 model: { type: 'string', format: 'binary' },
+                delta: { type: 'string', format: 'binary' },
                 image: { type: 'string', format: 'binary' }
             },
-            required: ['data', 'model', 'image']
+            required: ['data', 'model', 'delta', 'image']
         },
         required: true
     })
@@ -58,7 +60,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     async addVersion(
         @Param('productId') productId: string,
         @Body('data') data: string,
-        @UploadedFiles() files: { model: Express.Multer.File[], image: Express.Multer.File[] }
+        @UploadedFiles() files: { model: Express.Multer.File[], delta: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<VersionRead> {
         const dataParsed = <VersionCreate> JSON.parse(data)
         await canCreateVersionOrFail(this.request.user, productId)
@@ -81,6 +83,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
     @UseInterceptors(
         FileFieldsInterceptor([
             { name: 'model', maxCount: 1 },
+            { name: 'delta', maxCount: 1 },
             { name: 'image', maxCount: 1 }
         ])
     )
@@ -93,6 +96,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
             properties: {
                 data: { $ref: getSchemaPath(VersionUpdate) },
                 model: { type: 'string', format: 'binary' },
+                delta: { type: 'string', format: 'binary' },
                 image: { type: 'string', format: 'binary' }
             },
             required: ['data']
@@ -104,7 +108,7 @@ export class VersionController implements VersionREST<string, string, Express.Mu
         @Param('productId') productId: string,
         @Param('versionId') versionId: string,
         @Body('data') data: string,
-        @UploadedFiles() files?: { model: Express.Multer.File[], image: Express.Multer.File[] }
+        @UploadedFiles() files?: { model: Express.Multer.File[], delta: Express.Multer.File[], image: Express.Multer.File[] }
     ): Promise<VersionRead> {
         await canUpdateVersionOrFail(this.request.user, productId, versionId)
         return this.versionService.updateVersion(productId, versionId, JSON.parse(data), files)

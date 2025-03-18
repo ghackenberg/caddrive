@@ -206,13 +206,13 @@ export const ProductVersionSettingView = () => {
         event.preventDefault()
         if (versionId == 'new') {
             const data = { baseVersionIds, major, minor, patch, description }
-            const files = { model: file, image: blob }
+            const files = { model: file, delta: null as Blob, image: blob }
             const version = await VersionClient.addVersion(productId, data, files)
             setContextVersion(version)
         } else {
             const previous = `${versionId}.${version.modelType}`
             const data = { baseVersionIds, major, minor, patch, description }
-            const files = file && { model: file, image: blob }
+            const files = file && { model: file, delta: null as Blob, image: blob }
             await VersionClient.updateVersion(productId, versionId, data, files)
             if (file) {
                 CacheAPI.clearFile(previous)

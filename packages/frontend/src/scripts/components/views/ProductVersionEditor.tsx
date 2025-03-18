@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { useParams } from 'react-router'
 
 import shortid from 'shortid'
-import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event, BoxHelper, BoxGeometry } from 'three'
+import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event, BoxHelper, BoxGeometry, Euler } from 'three'
 
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
@@ -26,82 +26,93 @@ abstract class Operation {
     constructor(public type: string) {
         // empty
     }
-    abstract undo(): void
-    abstract redo(): void
+    abstract undo(): Promise<void>
+    abstract redo(): Promise<void>
 }
 
-//TODO Color change operation
-
 export class Insert extends Operation {
-    constructor(public id: string, public part: string, public color: string, public position: Vector3,private undoFunc: (id: string, part: string, color: string, position: Vector3) => void,private redoFunc: (id: string, part: string, color: string, position: Vector3) => void, private updateOperations: (undo: boolean)=> void) {
+    constructor(public id: string[], public part: string[], public color: string[], public position: Vector3[], public rotation: Euler[],private undoFunc: (id: string[]) => Promise<void>,private redoFunc: (id: string[], part: string[], color: string[], position: Vector3[], rotation: Euler[]) => Promise<void>, private updateOperations: (undo: boolean)=> void) {
         super('insert')
     }
-    override undo(): void {
-        this.undoFunc(this.id,this.part,this.color,this.position)
+    override undo(): Promise<void> {
         this.updateOperations(true)
-
+        return this.undoFunc(this.id)
     }
-    override redo(): void {
-        this.redoFunc(this.id,this.part,this.color,this.position)
+    override redo(): Promise<void> {
         this.updateOperations(false)
+        return this.redoFunc(this.id,this.part,this.color,this.position, this.rotation)
     }
 }
 
 export class Select extends Operation {
-    constructor(public after: string[], public before: string[], private undoFunc: (before: string[])=> void,private redoFunc: (after: string[])=> void, private updateOperations: (undo: boolean)=> void) {
+    constructor(public after: string[], public before: string[], private undoFunc: (before: string[])=> Promise<void>,private redoFunc: (after: string[])=> Promise<void>, private updateOperations: (undo: boolean)=> void) {
         super('select')
     }
-    override undo(): void {
-        this.undoFunc(this.before)
+    override undo(): Promise<void> {
         this.updateOperations(true)
+        return this.undoFunc(this.before)
     }
-    override redo(): void {
-        this.redoFunc(this.after)
+    override redo(): Promise<void> {
         this.updateOperations(false)
+        return this.redoFunc(this.after)
     }
 }
 
 export class Move extends Operation {
-    constructor(public id: string[], public movement: Vector3, private undoFunc: (id: string[], movement: Vector3)=> void, private redoFunc: (id: string[], movement: Vector3)=> void, private updateOperations: (undo: boolean)=> void) {
+    constructor(public id: string[], public movement: Vector3, private undoFunc: (id: string[], movement: Vector3)=> Promise<void>, private redoFunc: (id: string[], movement: Vector3)=> Promise<void>, private updateOperations: (undo: boolean)=> void) {
         super('move')
     }
-    override undo(): void {
-        this.undoFunc(this.id,this.movement)
+    override undo(): Promise<void> {
         this.updateOperations(true)
+        return this.undoFunc(this.id,this.movement)
     }
-    override redo(): void {
-        this.redoFunc(this.id,this.movement)
+    override redo(): Promise<void> {
         this.updateOperations(false)
+        return this.redoFunc(this.id,this.movement)
     }
 }
 
 export class Rotate extends Operation {
-    constructor(public id: string[], public selId: string, public rotation: number, private undoFunc: (id: string[], selId: string, rotation: number)=> void, private redoFunc: (id: string[], selId: string, rotation: number)=> void, private updateOperations: (undo: boolean)=> void) {
+    constructor(public id: string[], public selId: string, public rotation: number, private undoFunc: (id: string[], selId: string, rotation: number)=> Promise<void>, private redoFunc: (id: string[], selId: string, rotation: number)=> Promise<void>, private updateOperations: (undo: boolean)=> void) {
         super('rotate')
     }
-    override undo(): void {
-        this.undoFunc(this.id,this.selId,this.rotation)
+    override undo(): Promise<void> {
         this.updateOperations(true)
+        return this.undoFunc(this.id,this.selId,this.rotation)
 
     }
-    override redo(): void {
-        this.redoFunc(this.id,this.selId,this.rotation)
+    override redo(): Promise<void> {
         this.updateOperations(false)
+        return this.redoFunc(this.id,this.selId,this.rotation)
     }
 }
 
 export class Delete extends Operation {
-    constructor(public id: string[], public part: string[], public color: string[], public position: Vector3[], private undoFunc: (id: string[], part: string[], color: string[], position: Vector3[]) => void,private redoFunc: (id: string[], part: string[], color: string[], position: Vector3[]) => void, private updateOperations: (undo: boolean)=> void) {
+    constructor(public id: string[], public part: string[], public color: string[], public position: Vector3[], public rotation: Euler[], private undoFunc: (id: string[], part: string[], color: string[], position: Vector3[], rotation: Euler[]) => Promise<void>,private redoFunc: (id: string[]) => Promise<void>, private updateOperations: (undo: boolean)=> void) {
         super('delete')
     }
-    override undo(): void {
-        this.undoFunc(this.id, this.part, this.color, this.position)
+    override undo(): Promise<void> {
         this.updateOperations(true)
+        return this.undoFunc(this.id, this.part, this.color, this.position, this.rotation)
 
     }
-    override redo(): void {
-        this.redoFunc(this.id, this.part, this.color, this.position)
+    override redo(): Promise<void> {
         this.updateOperations(false)
+        return this.redoFunc(this.id)
+    }
+}
+
+export class Colorchange extends Operation {
+    constructor(public id: string[], public oldcolor: string[], public newcolor: string, private undoFunc: (id: string[], oldcolor: string[]) => Promise<void>,private redoFunc: (id: string[], newcolor: string) => Promise<void>, private updateOperations: (undo: boolean)=> void) {
+        super('color change')
+    }
+    override undo(): Promise<void> {
+        this.updateOperations(true)
+        return this.undoFunc(this.id, this.oldcolor)
+    }
+    override redo(): Promise<void> {
+        this.updateOperations(false)
+        return this.redoFunc(this.id, this.newcolor)
     }
 }
 
@@ -146,6 +157,8 @@ export const ProductVersionEditorView = () => {
     const [total, setTotal] = React.useState<number>()
 
     const [selection, setSelection] = React.useState<{ part: Object3D, parts: Object3D[] }>() 
+
+    const [copiedParts, setCopiedParts] = React.useState<Object3D[]>()
 
     const [operations, setOperations] = React.useState<Operation[]>([])
     const [operationIndex, setOperationIndex] = React.useState<number>()
@@ -221,6 +234,8 @@ export const ProductVersionEditorView = () => {
             setBox(box)
 
             setSelection({ part: undefined, parts: [] })
+
+            setCopiedParts([])
 
             offset.x = 0
             offset.y = 0
@@ -419,6 +434,10 @@ export const ProductVersionEditorView = () => {
 
         // Update selection
         if (selection.parts.indexOf(part) == -1) {
+            const idsbefore= []
+            for (const part of selection.parts) {
+                idsbefore.push(part.userData['id'])
+            }
             unselect()
 
             selection.parts.push(part)
@@ -434,6 +453,9 @@ export const ProductVersionEditorView = () => {
                     }
                 }
             })
+            if (idsbefore.length != 1 || idsbefore[0] != part.userData['id']) {
+                addOperations([new Select([part.userData['id']], idsbefore, undoSelect, redoSelect, updateOperations)])
+            }
         }
 
         selection.part = part
@@ -502,7 +524,7 @@ export const ProductVersionEditorView = () => {
 
             updateBox()
 
-            addOperations([new Move(selection.parts.map(part => part.userData['id']), movement.clone(), undoMove, redoMove, updateOperations)])
+            movement.length() != 0 && addOperations([new Move(selection.parts.map(part => part.userData['id']), movement.clone(), undoMove, redoMove, updateOperations)])
         }
     }
 
@@ -516,7 +538,12 @@ export const ProductVersionEditorView = () => {
     // Load part in the background
     function onNewPartDragStart(event: React.DragEvent, file: string) {
         //console.log('onDragStart', file)
+        const idsBefore = []
+        for (const element of selection.parts) {
+            idsBefore.push(element.userData['id'])
+        }
 
+        idsBefore.length != 0 &&addOperations([new Select([], idsBefore, undoSelect, redoSelect, updateOperations)])
         unselect()
 
         event.dataTransfer.setDragImage(BLANK, 0, 0)
@@ -630,7 +657,7 @@ export const ProductVersionEditorView = () => {
             // Update operations
             const ops: Operation[] = []
             for (const part of selection.parts) {
-                ops.push(new Insert(part.userData['id'], part.name, getObjectMaterialCode(part), new Vector3(x, y, z),undoInsert,redoInsert, updateOperations))
+                ops.push(new Insert([part.userData['id']], [part.name], [getObjectMaterialCode(part)], [new Vector3(x, y, z)], [new Euler(0, 0, 0)], undoInsert,redoInsert, updateOperations))
             }
             addOperations(ops)
 
@@ -680,9 +707,9 @@ export const ProductVersionEditorView = () => {
             moveByAxis(axis, pos)
 
             if (axis == 'rotation y') {
-                addOperations([new Rotate(selection.parts.map(part => part.userData['id']), selection.part && selection.part.userData['id'], rotationAngle, redoRotation, undoRotation, updateOperations)])
+                rotationAngle != 0 && addOperations([new Rotate(selection.parts.map(part => part.userData['id']), selection.part && selection.part.userData['id'], rotationAngle, redoRotation, undoRotation, updateOperations)])
             } else {
-                addOperations([new Move(selection.parts.map(part => part.userData['id']), movement.clone(), undoMove,redoMove, updateOperations)])
+                movement.length() != 0 && addOperations([new Move(selection.parts.map(part => part.userData['id']), movement.clone(), undoMove,redoMove, updateOperations)])
             }
     
             setRotationStart(undefined)
@@ -845,10 +872,9 @@ export const ProductVersionEditorView = () => {
             IDsAfterSelection.push(part.userData['id'])
         }
         
-        if((part != null || !isCtrlPressed)&&(IDsBeforeSelection.length > 0 || IDsAfterSelection.length > 0)){
+        if((part != null || !isCtrlPressed) && (IDsBeforeSelection.length > 0 || IDsAfterSelection.length > 0) && (IDsBeforeSelection.length != IDsAfterSelection.length || IDsAfterSelection[0] != IDsBeforeSelection[0])){
             addOperations([new Select(IDsAfterSelection, IDsBeforeSelection, undoSelect, redoSelect, updateOperations)])
         }
-
         updateBox()
     }
 
@@ -858,10 +884,12 @@ export const ProductVersionEditorView = () => {
         //console.log('onKeyDown', key.key)
 
         if (key.key == "Delete") {
-            const id : string[] = []
-            const partName : string[] = []
-            const color : string[] = []
-            const position : Vector3[] = []
+            const id = []
+            const partName = []
+            const color = []
+            const position = []
+            const rotation = []
+            let didDelete = false
 
             while (selection.parts.length > 0) {
                 const part = selection.parts.pop()
@@ -870,6 +898,8 @@ export const ProductVersionEditorView = () => {
                 partName.push(part.name)
                 color.push(getObjectMaterialCode(part))
                 position.push(part.position)
+                rotation.push(part.rotation)
+                didDelete = true
             }
             
             selection.part = undefined
@@ -880,32 +910,80 @@ export const ProductVersionEditorView = () => {
 
             updateBox()
 
-            addOperations([new Delete(id,partName,color,position, undoDelete, redoDelete, updateOperations)])
+            didDelete && addOperations([new Delete(id, partName, color, position, rotation, undoDelete, redoDelete, updateOperations)])
+        } else if (key.ctrlKey && key.key == "c") {
+            if (selection.parts.length == 0) {
+                return
+            }
+            copiedParts.length = 0
+
+            for (const obj of selection.parts) {
+                const part = obj.clone()
+                part.userData['id'] = shortid()
+                copiedParts.push(part)
+            }
+        } else if (key.ctrlKey && key.key == "v") {
+            unselect()
+
+            const id = []
+            const part = []
+            const color = []
+            const position = []
+            const  rotation = []
+
+            for (const obj of copiedParts) {
+                const copy = obj.clone()
+                model.add(copy)
+                selection.parts.push(copy)
+                id.push(copy.userData['id'])
+                part.push(copy.name)
+                color.push(getObjectMaterialCode(copy))
+                position.push(copy.position)
+                rotation.push(copy.rotation)
+                copy.traverse(object => {
+                    if (object instanceof Mesh) {
+                        // Update part material
+                        if (object.material instanceof MeshStandardMaterial) {
+                            object.material = object.material.clone()
+                            object.material.emissive.setScalar(0.1)
+                        } else {
+                            throw 'Material type not supported'
+                        }
+                    }
+                })
+                obj.userData['id'] = shortid()
+            }
+            selection.part = selection.parts[selection.parts.length-1]
+            selection.part.traverse(object => {object instanceof Mesh ? setSelectedMaterial(object.material) : null})
+
+            manipulator.position.set(selection.part.position.x,selection.part.position.y, selection.part.position.z)
+            manipulator.visible = true
+
+            updateBox()
+
+            addOperations([new Insert(id, part, color, position, rotation, undoInsert, redoInsert, updateOperations)])
         }
     }
 
     // Undo and Redo
     
     function redoMove(id: string[], movement: Vector3) {
+        //unselect()
         for ( const element of id) {
             model.children.find(obj => obj.userData['id'] == element)?.position.add(movement)
         }
         manipulator.position.add(movement)
         updateBox()
         updateGrid(model)
+        return new Promise<void>(resolve => resolve())
     }
 
     function undoMove(id: string[], movement: Vector3) {
-        for ( const element of id) {
-            model.children.find(obj => obj.userData['id'] == element)?.position.sub(movement)
-        }
-        manipulator.position.sub(movement)
-        updateBox()
-        updateGrid(model)
+        return redoMove(id,movement.clone().negate())
     }
 
     function redoRotation(id: string[], selId: string, rotation: number) {
-        undoRotation(id,selId, -rotation)
+        return undoRotation(id, selId, -rotation)
     }
 
     function undoRotation(id: string[], selId: string, rotation: number) {
@@ -927,19 +1005,24 @@ export const ProductVersionEditorView = () => {
             rotationCenter = manipulator.position
         }
 
+        console.log(rotationCenter, rotation)
+
         for (const element of id) {
             const object = model.children.find(obj => obj.userData['id'] == element)
             const rotationVec = object.position.clone()
             object.position.sub(rotationVec.sub(rotationCenter))
             object.position.add(rotationVec.applyAxisAngle(new Vector3(0, 1, 0), rotation))
             object.rotateY(rotation)
+            console.log(object.position)
         }
         setRotationAngle(rotationAngle + rotation)
         updateBox()
         updateGrid(model)
+        return new Promise<void>(resolve => resolve())
     }
 
     function redoDelete(id: string[]) {
+        unselect()
         for (const element of id) {
             model.remove(model.children.find(obj => obj.userData['id'] == element))
             selection.parts.splice(selection.parts.findIndex(obj => obj.userData['id'] == element),1)
@@ -947,13 +1030,14 @@ export const ProductVersionEditorView = () => {
         manipulator.visible = false
         updateBox()
         updateGrid(model)
+        return new Promise<void>(resolve => resolve())
     }
 
-    function undoDelete(id: string[], part: string[], color: string[], position: Vector3[]) {
+    async function undoDelete(id: string[], part: string[], color: string[], position: Vector3[], rotation: Euler[]) {
         unselect()
 
         for (const index in id) {
-            parseLDrawModel(part[index], `1 ${color[index]} 0 0 0 1 0 0 0 1 0 0 0 1 ${part[index]}`, null, false).then(part => {
+            await parseLDrawModel(part[index], `1 ${color[index]} 0 0 0 1 0 0 0 1 0 0 0 1 ${part[index]}`, null, false).then(part => {
                 part.children[0].userData['id'] = id[index]
     
                 // Add to selected parts
@@ -976,6 +1060,7 @@ export const ProductVersionEditorView = () => {
                     }
                 })
                 part.children[0].position.set(position[index].x,position[index].y,position[index].z)
+                part.children[0].rotation.set(rotation[index].x, rotation[index].y, rotation[index].z)
                 model.add(part.children[0])
                 updateGrid(model)
                 updateBox()
@@ -1000,20 +1085,52 @@ export const ProductVersionEditorView = () => {
                 })
             }
             selection.part = selection.parts[selection.parts.length-1]
-            manipulator.visible = true
-            manipulator.position.set(selection.part.position.x,selection.part.position.y,selection.part.position.z) 
+            if(selection.part) {
+                manipulator.visible = true
+                manipulator.position.set(selection.part.position.x,selection.part.position.y,selection.part.position.z) 
+            } else {
+                console.log("Part is undefiened")
+                manipulator.visible = false
+            }
         }
         updateBox()
-
+        return new Promise<void>(resolve => resolve())
     }
     function undoSelect(before: string[]) {
-        redoSelect(before)
+        return redoSelect(before)
     }
-    function redoInsert(id: string, part: string, color: string, position: Vector3) {
-        undoDelete([id],[part],[color],[position])
+    function redoInsert(id: string[], part: string[], color: string[], position: Vector3[], rotation: Euler[]) {
+        return undoDelete(id, part, color, position, rotation)
     }
-    function undoInsert(id: string) {
-        redoDelete([id])
+    function undoInsert(id: string[]) {
+        return redoDelete(id)
+    }
+    function redoColorchange(id: string[], newcolor: string) {
+        for (const nr of id) {
+            const part = model.children.find(obj => obj.userData["id"] == nr)
+            const material = availableMaterials.find(mat => mat.userData["code"] == newcolor)
+            part.traverse(object => {
+                if (object instanceof Mesh) {
+                    object.material = material.clone()
+                    if (object.material instanceof MeshStandardMaterial) {
+                        object.material.emissive.setScalar(0.1)
+                    } else {
+                        throw 'Material type not supported'
+                    }
+                } else if (object instanceof LineSegments) {
+                    if (object.material instanceof LineBasicMaterial) {
+                        object.material = material.userData.edgeMaterial
+                    }
+                }
+            })  
+        }
+        return new Promise<void>(resolve => resolve())
+    }
+    function undoColorchange(id: string[], oldcolor: string[]){
+        for (let index = 0; index < id.length; index++) {
+            redoColorchange([id[index]], oldcolor[index])
+        }
+        return new Promise<void>(resolve => resolve())
     }
 
     // Operation management
@@ -1043,6 +1160,22 @@ export const ProductVersionEditorView = () => {
         setOperations([...operations, ...newOperations])
     }
 
+    async function onSelectedOperation(_event: React.MouseEvent,index: number) {
+        //console.log(event, index)
+        if (operationIndex > index) {
+            for (let i = operationIndex; i > index; i--) {
+                //console.log(operations[i], i, operationIndex)
+                await operations[i].undo()               
+            }
+        } else if (operationIndex < index) {
+            for (let i = operationIndex+1; i <= index; i++) {
+                //console.log(operations[i], i, operationIndex)
+                await operations[i].redo()
+            }
+        }
+        setOperationIndex(index)
+    }
+
     // Other
 
     function onColorChanged(event: React.MouseEvent, material: Material) {
@@ -1053,8 +1186,13 @@ export const ProductVersionEditorView = () => {
         // Remember material
         setSelectedMaterial(material)
 
+        const oldMaterial : string[] = []
+        const id : string[] = []
+
         // Change material of selected parts
         for (const part of selection.parts) {
+            oldMaterial.push(getObjectMaterialCode(part))
+            id.push(part.userData["id"])
             part.traverse(object => {
                 if (object instanceof Mesh) {
                     object.material = material.clone()
@@ -1070,6 +1208,7 @@ export const ProductVersionEditorView = () => {
                 }
             })  
         }
+        addOperations([new Colorchange(id,oldMaterial,material.userData.code,undoColorchange, redoColorchange, updateOperations)])
     }
 
     async function onSave() {
@@ -1107,11 +1246,11 @@ export const ProductVersionEditorView = () => {
 
                 const a = child.matrix.elements[0]
                 const b = child.matrix.elements[1]
-                const c = child.matrix.elements[2]
+                const c = -child.matrix.elements[2]
                 const d = child.matrix.elements[4]
                 const e = child.matrix.elements[5]
                 const f = child.matrix.elements[6]
-                const g = child.matrix.elements[8]
+                const g = -child.matrix.elements[8]
                 const h = child.matrix.elements[9]
                 const i = child.matrix.elements[10]
 
@@ -1124,9 +1263,10 @@ export const ProductVersionEditorView = () => {
 
         //console.log(ldraw)
 
-        const model2 = new Blob([ldraw], { type: 'application/x-ldraw' })
+        const model2 = new Blob([ldraw], { type: 'application/x-ldraw-model' })
+        const delta = new Blob(['test'], { type: 'application/x-ldraw-delta' })
         const image: Blob = null
-        const files = { model: model2, image }
+        const files = { model: model2, delta, image }
 
         const newVers = await VersionClient.addVersion(productId, data, files)
 
@@ -1206,6 +1346,18 @@ export const ProductVersionEditorView = () => {
                                 <span>Loading materials</span>
                             )}
                         </div>
+                    </div>
+                    <div className='OperationHistory'>
+                        <ol>
+                            {operations && operations.length > 0 ? (
+                                operations.map(op => {
+                                    const index = operations.indexOf(op)
+                                    return <li key={index} className={operationIndex==index ? 'selected' : ''} onClick={event => onSelectedOperation(event,index)}>{op.type}</li>
+                                })
+                            ):(
+                                <span>No operations recorded</span>
+                            )}
+                        </ol>
                     </div>
                     {save && (
                         <div className='save'>

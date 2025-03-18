@@ -70,6 +70,7 @@ export async function convertVersion(version: VersionEntity): Promise<VersionRea
         patch: version.patch,
         description: version.description,
         modelType: version.modelType,
+        deltaType: version.deltaType,
         imageType: version.imageType
     }
 }

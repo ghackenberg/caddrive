@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export type ModelType = 'dae' | 'stl' | 'ply' | 'fbx' | 'glb' | 'ldr' | 'mpd' | 'FCStd' | 'stp' | 'step'
+export type ModelType = 'dae' | 'stl' | 'ply' | 'fbx' | 'glb' | 'ldr' | 'mpd' | 'ldraw-model' | 'FCStd' | 'stp' | 'step'
+
+export type DeltaType = 'ldraw-delta' | null
 
 export type ImageType = 'png' | null
 
@@ -38,6 +40,8 @@ export class VersionRead extends VersionCreate {
     
     @ApiProperty()
     modelType: ModelType
+    @ApiProperty()
+    deltaType: DeltaType
     @ApiProperty()
     imageType: ImageType
 }

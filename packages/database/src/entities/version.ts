@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
-import { ImageType, ModelType } from 'productboard-common'
+import { DeltaType, ImageType, ModelType } from 'productboard-common'
 
 import { ProductEntity } from './product'
 import { UserEntity } from './user'
@@ -42,6 +42,8 @@ export class VersionEntity {
 
     @Column({ nullable: false })
     modelType: ModelType
+    @Column({ nullable: true })
+    deltaType: DeltaType
     @Column({ nullable: true })
     imageType: ImageType
 }
