@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react'
 import { Group, Object3D } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
+import { parseCustomLDrawModel } from 'productboard-ldraw'
+
+import { FileClient } from '../../clients/rest/file'
 import { loadColladaModel } from '../../loaders/collada'
 import { loadFBXModel } from '../../loaders/fbx'
 import { loadFreeCADModel } from '../../loaders/freecad'
 import { loadGLTFModel } from '../../loaders/gltf'
-import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
+import { LDRAW_LOADER, MATERIAL_LOADING, loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
 import { loadPLYModel } from '../../loaders/ply'
 import { loadSTEPModel } from '../../loaders/step'
 import { loadSTLModel } from '../../loaders/stl'
@@ -32,6 +35,8 @@ const LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
 const LDRAW_LOADED_CACHE: {[path: string]: number} = {}
 const LDRAW_TOTAL_CACHE: {[path: string]: number} = {}
 const LDRAW_UPDATE_CACHE: {[path: string]: Callback[]} = {}
+
+const CUSTOM_LDRAW_MODEL_CACHE: {[path: string]: Group} = {}
 
 async function getSTLModel(path: string) {
     if (!(path in STL_MODEL_CACHE)) {
@@ -114,6 +119,15 @@ async function getLDrawModel(path: string) {
     return LDRAW_MODEL_CACHE[path]
 }
 
+async function getCustomLDrawModel(path: string) {
+    if (!(path in CUSTOM_LDRAW_MODEL_CACHE)) {
+        const file = await FileClient.getFile(path)
+        const data = new TextDecoder().decode(file)
+        CUSTOM_LDRAW_MODEL_CACHE[path] = await parseCustomLDrawModel(LDRAW_LOADER, MATERIAL_LOADING, data)
+    }
+    return CUSTOM_LDRAW_MODEL_CACHE[path]
+}
+
 export function clearModel(path: string) {
     if (path in GLTF_MODEL_CACHE) {
         delete GLTF_MODEL_CACHE[path]
@@ -149,6 +163,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
         initialGroup = GLTF_MODEL_CACHE[props.path] && GLTF_MODEL_CACHE[props.path].scene
     } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
         initialGroup = LDRAW_MODEL_CACHE[props.path]
+    } else if (props.path.endsWith('.ldraw-model')) {
+        initialGroup = CUSTOM_LDRAW_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.FCStd')) {
         initialGroup = FREECAD_MODEL_CACHE[props.path]
     } else if (props.path.endsWith('.stp')) {
@@ -206,6 +222,8 @@ export const FileView3D = (props: { path: string, mouse: boolean, highlighted?: 
                 getGLTFModel(props.path).then(model => exec && setGroup(model.scene))
             } else if (props.path.endsWith('.ldr') || props.path.endsWith('.mpd')) {
                 getLDrawModel(props.path).then(group => exec && setGroup(group))
+            } else if (props.path.endsWith('.ldraw-model')) {
+                getCustomLDrawModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.FCStd')) {
                 getFreeCADModel(props.path).then(group => exec && setGroup(group))
             } else if (props.path.endsWith('.stp') || props.path.endsWith('.step')) {

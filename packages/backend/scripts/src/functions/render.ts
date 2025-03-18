@@ -9,6 +9,8 @@ import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
+import { parseCustomLDrawModel } from 'productboard-ldraw'
+
 function initializeScene() {
     const ambient_light = new AmbientLight(0xffffff, 0.5)
     const directional_light = new DirectionalLight(0xffffff, 1)
@@ -174,17 +176,17 @@ LOADING_MANAGER.setURLModifier(url => {
     }
 })
 
-let LDRAW_MATERIALS = false
-
 const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
 
 LDRAW_LOADER.smoothNormals = false
 
+let MATERIAL_LOADING: Promise<void>
+
 export async function renderLDraw(model: string, width: number, height: number) {
-    if (!LDRAW_MATERIALS) {
-        await LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
-        LDRAW_MATERIALS = true
+    if (!MATERIAL_LOADING) {
+        MATERIAL_LOADING = LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
     }
+    await MATERIAL_LOADING
     return new Promise<Jimp>((resolve, reject) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (LDRAW_LOADER as any).parse(model, (group: Group) => {
@@ -194,6 +196,15 @@ export async function renderLDraw(model: string, width: number, height: number) 
             render(group, width, height).then(resolve).catch(reject)
         })
     })
+}
+
+export async function renderCustomLDraw(model: string, width: number, height: number) {
+    if (!MATERIAL_LOADING) {
+        MATERIAL_LOADING = LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
+    }
+    console.log(model)
+    const group = await parseCustomLDrawModel(LDRAW_LOADER, MATERIAL_LOADING, model)
+    return await render(group, width, height)
 }
 
 const FBX_LOADER = new FBXLoader()

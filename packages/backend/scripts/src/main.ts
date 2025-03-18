@@ -11,7 +11,7 @@ import { IsNull } from 'typeorm'
 import { Database } from 'productboard-database'
 
 import './mqtt'
-import { renderGlb, renderLDraw } from './functions/render'
+import { renderCustomLDraw, renderGlb, renderLDraw } from './functions/render'
 import { RESTModule } from './modules/rest.module'
 
 // Polyfill class ProgressEvent on Node.js backend
@@ -91,6 +91,11 @@ async function fix() {
             } else if (version.modelType == 'mpd') {
                 const model = readFileSync(file, 'utf-8')
                 const image = await renderLDraw(model, 1000, 1000)
+                await updateImage(version.productId, version.versionId, image)
+            } else if (version.modelType == 'ldraw-model') {
+                console.log(file)
+                const model = readFileSync(file, 'utf-8')
+                const image = await renderCustomLDraw(model, 1000, 1000)
                 await updateImage(version.productId, version.versionId, image)
             } else {
                 console.error(new Date(), 'Version model type not supported:', version.modelType)

@@ -18,11 +18,11 @@ const LOADING_MANAGER = new THREE.LoadingManager().setURLModifier(url => {
     }
 })
 
-const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
+export const LDRAW_LOADER = new LDrawLoader(LOADING_MANAGER)
 
 LDRAW_LOADER.smoothNormals = false
 
-const MATERIAL_LOADING = LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
+export const MATERIAL_LOADING = LDRAW_LOADER.preloadMaterials('/rest/parts/LDConfig.ldr').then(() => {
     console.log('Materials loaded!')
     //console.log(LDRAW_LOADER.materials)
     //console.log(LDRAW_LOADER.materialsLibrary)

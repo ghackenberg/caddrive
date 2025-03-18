@@ -5,6 +5,8 @@ import { useParams } from 'react-router'
 import shortid from 'shortid'
 import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event, BoxHelper, BoxGeometry, Euler } from 'three'
 
+import { CustomLDrawModel } from 'productboard-ldraw'
+
 import { VersionClient } from '../../clients/rest/version'
 import { VersionContext } from '../../contexts/Version'
 import { COLOR_S, COLOR_X, COLOR_Y, COLOR_Z, createScene } from '../../functions/editor'
@@ -1234,7 +1236,8 @@ export const ProductVersionEditorView = () => {
 
         const data = { baseVersionIds, major, minor, patch, description }
 
-        let ldraw = ''
+        /*
+        let ldrawModel = ''
 
         for (const child of model.children) {
             if (child.name && child.name.endsWith('.dat')) {
@@ -1256,17 +1259,37 @@ export const ProductVersionEditorView = () => {
 
                 const file = child.name
 
-                ldraw += `0 ID ${child.userData['id']}\n`
-                ldraw += `1 ${color} ${x} ${y} ${z} ${a} ${b} ${c} ${d} ${e} ${f} ${g} ${h} ${i} ${file}\n`
+                ldrawModel += `0 ID ${child.userData['id']}\n`
+                ldrawModel += `1 ${color} ${x} ${y} ${z} ${a} ${b} ${c} ${d} ${e} ${f} ${g} ${h} ${i} ${file}\n`
             }
         }
 
         //console.log(ldraw)
+        */
 
-        const model2 = new Blob([ldraw], { type: 'application/x-ldraw-model' })
-        const delta = new Blob(['test'], { type: 'application/x-ldraw-delta' })
-        const image: Blob = null
-        const files = { model: model2, delta, image }
+        const ldrawModel: CustomLDrawModel = model.children.filter(child => child.name && child.name.endsWith('.dat')).map(child => {
+            return {
+                id: child.userData['id'],
+                name: child.name,
+                color: getObjectMaterialCode(child),
+                position: child.position,
+                orientation: child.matrix.elements
+            }
+        })
+
+        const ldrawDelta = operations
+
+        const ldrawModelS = JSON.stringify(ldrawModel)
+        const ldrawDeltaS = JSON.stringify(ldrawDelta)
+
+        console.log(ldrawModelS)
+        console.log(ldrawDeltaS)
+
+        const modelBlob = new Blob([ldrawModelS], { type: 'application/x-ldraw-model' })
+        const deltaBlob = new Blob([ldrawDeltaS], { type: 'application/x-ldraw-delta' })
+        const imageBlob: Blob = null
+
+        const files = { model: modelBlob, delta: deltaBlob, image: imageBlob }
 
         const newVers = await VersionClient.addVersion(productId, data, files)
 

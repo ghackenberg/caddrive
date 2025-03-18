@@ -20,7 +20,7 @@ import { Database, convertVersion } from 'productboard-database'
 import { emitProductMessage } from '../../../functions/emit'
 import { TRANSPORTER } from '../../../functions/mail'
 import { packLDrawText } from '../../../functions/pack'
-import { renderDae, renderFbx, renderGlb, renderLDraw, renderPly, renderStl } from '../../../functions/render'
+import { renderCustomLDraw, renderDae, renderFbx, renderGlb, renderLDraw, renderPly, renderStl } from '../../../functions/render'
 import { AuthorizedRequest } from '../../../request'
 
 @Injectable()
@@ -265,7 +265,12 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                             console.error(new Date(), 'Could not render image', e)
                         }
                     } else if (files.model[0].originalname.endsWith('.ldraw-model')) {
-                        // TODO Render custom LDraw format
+                        try {
+                            const image = await renderCustomLDraw(files.model[0].buffer.toString(), 1000, 1000)
+                            await this.updateImage(productId, versionId, image)
+                        } catch (e) {
+                            console.error(new Date(), 'Could not render image', e)
+                        }
                     } else {
                         throw new HttpException('Model file type not supported.', 400)
                     }
