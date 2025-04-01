@@ -96,7 +96,8 @@ The use case comprises three product variants, an ultra-light drone (see \cref{f
 \subsection{Atomic modules}
 \label{sec:atomic-modules}
 
-TODO
+Each drone is made up of four modules, that deliver a certain function. 
+Each module has its own variants, which makes it possible to offer a greater variety of products. 
 
 \begin{figure*}[htbp]
     \subcaptionbox{Small frame\label{fig:frame-small}}{
@@ -146,22 +147,28 @@ TODO
 \subsubsection{Propellors}
 \label{sec:propellors}
 
-TODO
+Propellers generate thrust by spinning rapidly, allowing a drone to move in all directions. 
+A two-blade propeller provides better efficiency and longer flight times, while a triblade propeller offers more stability and maneuverability. 
+Smaller propellers provide better agility, while bigger ones provide more thrust and efficiency, allowing the drone fly longer distances. 
+However, larger propellers also require more power to spin.
 
 \subsubsection{Batteries}
 \label{sec:batteries}
 
-TODO
+A battery provides power for the drone to operate. 
+A smaller capacity battery is lighter and more compact, which can improve the agility and maneuverability of the drone. 
+However, smaller batteries have shorter flight times, which means that for longer flights a higher capacity battery is more suitable.
 
 \subsubsection{Frames}
 \label{sec:frames}
 
-TODO
+Frames serve as the structure that holds all the other parts together. 
+A small frame is more maneuverable and agile, while a large frame offers more space for additional components (e.g. larger batteries).
 
 \subsubsection{Covers}
 \label{sec:covers}
 
-TODO
+Covers protect internal components of the drone, help to improve aerodynamics and serve an aesthetic purpose as well.
 
 \subsection{Configuration options}
 \label{sec:configuration-options}
@@ -174,7 +181,27 @@ TODO \cref{fig:feature-tree}
     \label{fig:feature-tree}
 \end{figure*}
 
-TODO
+The modules can be combined to design customized end products.  For that purpose, the FPV drone variability model is developed. 
+When a customer wishes to design and buy a drone, multiple decisions have to be made before the final system can be build. 
+Figure 3 shows that the variation points Propeller, Battery, Frame and Cover have a mandatory dependency with the FPV drone, which means that they have to be included in the final product. 
+For each of these variation points a variant has to be selected. The variants are connected by an alternative choice dependency with a minimum and maximum equal to one, which means that only one variant has to be chosen to be included to the final product. 
+Additionally, two types of constraint dependencies exist: require constraint and exclude constraint. The require constraint means that when the small frame is selected, the small cover should be integrated to the system, and when the large frame is selected, the large cover should be integrated. 
+The excluding constraint means that when a large propeller is selected, the small frame can not be integrated to the design and this relationship goes the other way round as well.
+
+
+Physical interfaces between interacting modules enable their geometric connection. A frame for the drone example has three interfaces: with a battery, with propellers and with a cover. 
+However, several geometrical constraints should be considered. These include:
+
+•	Size and shape constraints: Modules must be designed in such a way that they can physically fit together without interference. 
+For the drone example, the large frame can accommodate all three types of batteries, while the small frame is limited to only small and medium batteries because of the size constraints.
+
+•	Alignment constraints: Modules must be aligned properly to ensure proper functioning when assembled together. 
+For example, covers must be oriented correctly relative to frames to serve the protective and aesthetic purposes. 
+
+•	Interference constraints: It is important to consider potential interferences between modules, such as conflicting shapes or components that may impede proper assembly or operation. 
+It is technically feasible to install any propeller on any frame, but practical constraints come into play. For instance, a large propeller cannot be mounted on a small frame without interference, as it would collide with the frame during rotation.
+These geometric restrictions cause constraint dependencies that are shown in Figure 3.
+
 
 \section{Conclusion}
 \label{sec:conclusion}
