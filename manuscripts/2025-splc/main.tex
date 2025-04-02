@@ -77,17 +77,23 @@ Finally, we explain the configuration options of the drone use case in the form 
 \cref{fig:product-variants} provides an overview of the product variants for the drone use case.
 The use case comprises three product variants, an ultra-light drone (see \cref{fig:ultra-light}), a free-style drone (see \cref{fig:free-style}), and a long-range drone (see \cref{fig:long-range}).
 
+\begin{description}
+    \item[Ultralight drones] designed to comply with regulations by being exceptionally lightweight and compact.
+    \item[Freestyle drones] optimized for agility, maneuverability, and creative flight in open environments with a focus on durability for performing aerial acrobatics and complex maneuvers.
+    \item[Long-range drones] built for extended flight distances, featuring stable flight characteristics and efficient power consumption.
+\end{description}
+
 \begin{figure*}[htbp]
     \subcaptionbox{Ultra-light variant\label{fig:ultra-light}}{
-        \includegraphics[height=4.4cm]{./drone-case-final-ultralight.jpg}
+        \includegraphics[height=3.1cm]{./UltralightVariant.jpg}
     }
     \hfill
     \subcaptionbox{Free-style variant\label{fig:free-style}}{
-        \includegraphics[height=4.4cm]{./drone-case-final-freestyle.jpg}
+        \includegraphics[height=3.1cm]{./FreestyleVariant.jpg}
     }
     \hfill
     \subcaptionbox{Long-range variant\label{fig:long-range}}{
-        \includegraphics[height=4.4cm]{./drone-case-final-longrange.jpg}
+        \includegraphics[height=3.1cm]{./LongRangeVariant.jpg}
     }
     \caption{Overview of the product variants for the drone use case.}
     \label{fig:product-variants}
@@ -99,50 +105,49 @@ The use case comprises three product variants, an ultra-light drone (see \cref{f
 Each drone is made up of four modules, that deliver a certain function. 
 Each module has its own variants, which makes it possible to offer a greater variety of products. 
 
-\begin{figure*}[htbp]
-    \subcaptionbox{Small frame\label{fig:frame-small}}{
-        \includegraphics[height=2.3cm]{./drone-case-modules-frame-small.jpg}
-    }
-    \hfill
-    \subcaptionbox{Large frame\label{fig:frame-large}}{
-        \includegraphics[height=2.3cm]{./drone-case-modules-frame-large.jpg}
-    }
-    \hfill
-    \subcaptionbox{Small battery\label{fig:battery-small}}{
-        \includegraphics[height=1.3cm]{./drone-case-modules-battery-small.jpg}
-    }
-    \hfill
-    \subcaptionbox{Medium battery\label{fig:battery-medium}}{
-        \includegraphics[height=1.3cm]{./drone-case-modules-battery-medium.jpg}
-    }
-    \hfill
-    \subcaptionbox{Large battery\label{fig:battery-large}}{
-        \includegraphics[height=1.3cm]{./drone-case-modules-battery-large.jpg}
-    }
-    
-    \subcaptionbox{Small cover\label{fig:cover-small}}{
-        \includegraphics[height=2.3cm]{./drone-case-modules-cover-small.jpg}
-    }
-    \hfill
-    \subcaptionbox{Large cover\label{fig:cover-large}}{
-        \includegraphics[height=2.3cm]{./drone-case-modules-cover-large.jpg}
-    }
-    \hfill
-    \subcaptionbox{Small propellor\label{fig:propellor-small}}{
-        \includegraphics[height=1.5cm]{./drone-case-modules-propellor-2-small.jpg}
-    }
-    \hfill
-    \subcaptionbox{Medium propellor\label{fig:propellor-medium}}{
-        \includegraphics[height=1.5cm]{./drone-case-modules-propellor-3.jpg}
-    }
-    \hfill
-    \subcaptionbox{Large propellor\label{fig:propellor-large}}{
-        \includegraphics[height=1.5cm]{./drone-case-modules-propellor-2-large.jpg}
-    }
+% \begin{figure*}[htbp]
+%     \subcaptionbox{Small frame\label{fig:frame-small}}{
+%         \includegraphics[height=2.3cm]{./drone-case-modules-frame-small.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Large frame\label{fig:frame-large}}{
+%         \includegraphics[height=2.3cm]{./drone-case-modules-frame-large.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Small battery\label{fig:battery-small}}{
+%         \includegraphics[height=1.3cm]{./drone-case-modules-battery-small.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Medium battery\label{fig:battery-medium}}{
+%         \includegraphics[height=1.3cm]{./drone-case-modules-battery-medium.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Large battery\label{fig:battery-large}}{
+%         \includegraphics[height=1.3cm]{./drone-case-modules-battery-large.jpg}
+%     } 
+%     \subcaptionbox{Small cover\label{fig:cover-small}}{
+%         \includegraphics[height=2.3cm]{./drone-case-modules-cover-small.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Large cover\label{fig:cover-large}}{
+%         \includegraphics[height=2.3cm]{./drone-case-modules-cover-large.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Small propellor\label{fig:propellor-small}}{
+%         \includegraphics[height=1.5cm]{./drone-case-modules-propellor-2-small.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Medium propellor\label{fig:propellor-medium}}{
+%         \includegraphics[height=1.5cm]{./drone-case-modules-propellor-3.jpg}
+%     }
+%     \hfill
+%     \subcaptionbox{Large propellor\label{fig:propellor-large}}{
+%         \includegraphics[height=1.5cm]{./drone-case-modules-propellor-2-large.jpg}
+%     }
 
-    \caption{Overview of the atomic modules for the drone use case.}
-    \label{fig:atomic-modules}
-\end{figure*}
+%     \caption{Overview of the atomic modules for the drone use case.}
+%     \label{fig:atomic-modules}
+% \end{figure*}
 
 \subsubsection{Propellors}
 \label{sec:propellors}
@@ -152,6 +157,22 @@ A two-blade propeller provides better efficiency and longer flight times, while 
 Smaller propellers provide better agility, while bigger ones provide more thrust and efficiency, allowing the drone fly longer distances. 
 However, larger propellers also require more power to spin.
 
+\begin{figure}[htbp]
+    \subcaptionbox{Small size\label{fig:propellor-small}}{
+        \includegraphics[height=1cm]{./drone-case-modules-propellor-2-small.jpg}
+    }
+    \hfill
+    \subcaptionbox{Medium size\label{fig:propellor-medium}}{
+        \includegraphics[height=1cm]{./drone-case-modules-propellor-3.jpg}
+    }
+    \hfill
+    \subcaptionbox{Large size\label{fig:propellor-large}}{
+        \includegraphics[height=1cm]{./drone-case-modules-propellor-2-large.jpg}
+    }
+    \caption{Overview of the propeller modules.}
+    \label{fig:propeller}
+\end{figure}
+
 \subsubsection{Batteries}
 \label{sec:batteries}
 
@@ -159,16 +180,58 @@ A battery provides power for the drone to operate.
 A smaller capacity battery is lighter and more compact, which can improve the agility and maneuverability of the drone. 
 However, smaller batteries have shorter flight times, which means that for longer flights a higher capacity battery is more suitable.
 
+\begin{figure}[htbp]
+    \subcaptionbox{Small size\label{fig:battery-small}}{
+        \includegraphics[height=1cm]{./drone-case-modules-battery-small.jpg}
+    }
+    \hfill
+    \subcaptionbox{Medium size\label{fig:battery-medium}}{
+        \includegraphics[height=1cm]{./drone-case-modules-battery-medium.jpg}
+    }
+    \hfill
+    \subcaptionbox{Large size\label{fig:battery-large}}{
+        \includegraphics[height=1cm]{./drone-case-modules-battery-large.jpg}
+    }
+    \caption{Overview of the battery modules.}
+    \label{fig:batteries}
+\end{figure}
+
 \subsubsection{Frames}
 \label{sec:frames}
 
 Frames serve as the structure that holds all the other parts together. 
 A small frame is more maneuverable and agile, while a large frame offers more space for additional components (e.g. larger batteries).
 
+\begin{figure}[htbp]
+    \subcaptionbox{Small frame\label{fig:frame-small}}{
+        \includegraphics[height=2.1cm]{./SmallFrame.jpg}
+    }
+    \hfill
+    \subcaptionbox{Large frame\label{fig:frame-large}}{
+        \includegraphics[height=2.1cm]{./LargeFrame.jpg}
+    }
+
+    \caption{Overview of the frame modules.}
+    \label{fig:frames}
+\end{figure}
+
 \subsubsection{Covers}
 \label{sec:covers}
 
 Covers protect internal components of the drone, help to improve aerodynamics and serve an aesthetic purpose as well.
+
+\begin{figure}[htbp]
+    
+    \subcaptionbox{Small cover\label{fig:cover-small}}{
+        \includegraphics[height=2.1cm]{./drone-case-modules-cover-small.jpg}
+    }
+    \hfill
+    \subcaptionbox{Large cover\label{fig:cover-large}}{
+        \includegraphics[height=2.1cm]{./drone-case-modules-cover-large.jpg}
+    }
+    \caption{Overview of the cover modules.}
+    \label{fig:atomic-modules}
+\end{figure}
 
 \subsection{Configuration options}
 \label{sec:configuration-options}
@@ -176,7 +239,7 @@ Covers protect internal components of the drone, help to improve aerodynamics an
 TODO \cref{fig:feature-tree}
 
 \begin{figure*}[htbp]
-    \includegraphics[width=\textwidth]{./drone-case-feature-tree.jpg}
+    \includegraphics[width=\textwidth]{./FeatureTreeWithLegend3.jpg}
     \caption{Overview of the configuration options for the drone use case.}
     \label{fig:feature-tree}
 \end{figure*}
@@ -188,20 +251,33 @@ For each of these variation points a variant has to be selected. The variants ar
 Additionally, two types of constraint dependencies exist: require constraint and exclude constraint. The require constraint means that when the small frame is selected, the small cover should be integrated to the system, and when the large frame is selected, the large cover should be integrated. 
 The excluding constraint means that when a large propeller is selected, the small frame can not be integrated to the design and this relationship goes the other way round as well.
 
+\subsubsection{Interface constraints}
 
 Physical interfaces between interacting modules enable their geometric connection. A frame for the drone example has three interfaces: with a battery, with propellers and with a cover. 
 However, several geometrical constraints should be considered. These include:
 
-•	Size and shape constraints: Modules must be designed in such a way that they can physically fit together without interference. 
+\begin{description}
+    \item[Size and shape constraints] Modules must be designed in such a way that they can physically fit together without interference. 
 For the drone example, the large frame can accommodate all three types of batteries, while the small frame is limited to only small and medium batteries because of the size constraints.
-
-•	Alignment constraints: Modules must be aligned properly to ensure proper functioning when assembled together. 
+    \item[Alignment constraints] Modules must be aligned properly to ensure proper functioning when assembled together. 
 For example, covers must be oriented correctly relative to frames to serve the protective and aesthetic purposes. 
-
-•	Interference constraints: It is important to consider potential interferences between modules, such as conflicting shapes or components that may impede proper assembly or operation. 
+    \item[Interference constraints] It is important to consider potential interferences between modules, such as conflicting shapes or components that may impede proper assembly or operation. 
 It is technically feasible to install any propeller on any frame, but practical constraints come into play. For instance, a large propeller cannot be mounted on a small frame without interference, as it would collide with the frame during rotation.
 These geometric restrictions cause constraint dependencies that are shown in Figure 3.
+\end{description}
 
+\subsection{150\% model}
+\label{sec:150-model}
+
+TODO
+
+\begin{figure*}[htbp]
+    \includegraphics[width=\textwidth]{./150_MODEL_3.jpg}
+    \caption{Overview of the 150\% model for the drone use case.}
+    \label{fig:150-model}
+\end{figure*}
+
+TODO
 
 \section{Conclusion}
 \label{sec:conclusion}
