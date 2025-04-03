@@ -61,7 +61,43 @@ TODO
 \section{Related work}
 \label{sec:related-work}
 
-TODO
+The research begins by conducting a literature review on various topics. 
+Firstly, the review focuses on modularity, followed by an exploration of product line engineering.
+
+\subsection{Modularity}
+\label{sec:modualarity}
+
+Li et al. explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. 
+However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design.
+The rules are referred among other things to the module interfaces which define how the interacting modules are connected.
+Interfaces may involve geometric connections between two components or may involve non-contact interactions. An interface specification defines the mating geometry in cases where there is a geometric connection.
+A connection provides a constraint condition at the contact point of the mechanical unit to guarantee the required function of the composition of parts.
+Constraints limit the range of possible solutions.
+Overall, the interfaces determine the possible configurations, flexibility in use, and number of variants. 
+
+Although modularity enables the production of  multiple end products from a limited number of building blocks, a company's product diversity should be managed and optimised to control complexity and balance too many versions. 
+It is imperative to clearly depict the product hierarchy encompassing all variant components and provide mechanisms for the creation and removal of variants. 
+These challenges are addressed by product line engineering through the consolidation of engineering assets and variants.
+\subsection{Product line engineering}
+\label{sec:product line engineering}
+
+Originating from the software development field, product line engineering is extensively applied in various industries including aerospace, defense, automotive, medical, consumer electronics, energy and telecommunications for the creation of products and systems. 
+It is a product development method that defines a procedure for developing product lines. 
+
+Product line is a set of products and/or services sharing explicitly defined and managed common and variable features and relying on the same domain architecture to meet the common and variable needs of specific markets.
+A concrete product of a product line is called a product variant.
+
+Van der Linden formulated several principles that are fundamental in product line engineering. They include a two-life-cycle approach, which includes the domain engineering and the application engineering lifecycle.
+
+Domain engineering a reuse-based approach to defining the scope (i.e., domain definition), specifying the structure (i.e., domain architecture), and building the assets (e.g. requirements, designs, software code, documentation) for a class of systems, subsystems, or member products.
+
+In domain engineering, the scope of the entire product line is analyzed and its common and variable features are identified, which are then documented in a variability model. That is typically a feature diagram.
+In parallel, a common design that represents all the possible combinations of features for all the possible variants is created. It is called a superset model, or a 150\% model, of the system, because it contains more information than what is needed for a specific product.
+A link is then made between the feature diagram and certain points in the design (they are called variation points) that need to vary depending on the feature selection.
+
+Application engineering is the process of deriving a single variant tailored to the requirements of a specific customer from a product line, based on the results of domain engineering. 
+It means, that a product variant is defined by making specific feature choices. A design for a particular variant can then be produced by taking the design documents of the family and narrowing it down according to the feature choices.
+
 
 \section{Case study}
 \label{sec:case-study}
