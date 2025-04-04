@@ -9,21 +9,33 @@
 
 \begin{document}
 
-\title{On digital LEGO product lines for engineering education}
+\title{Bridging Digital and Physical: Applying Software Product Line Engineering to Digital LEGO}
 
 \author{Aleksandra Erohina}
 \affiliation{
-    \institution{University of Applied Sciences Upper Austria}
+    \institution{FH Upper Austria (FH OÖ)}
     \department{School of Engineering}
     \city{Wels}
     \state{Upper Austria}
     \country{Austria}
 }
+%\email{aleksandra.erohina@fh-ooe.at}
+
+\author{Christian Zehetner}
+\orcid{0000-0002-3149-8476}
+\affiliation{
+    \institution{FH Upper Austria (FH OÖ)}
+    \department{School of Engineering}
+    \city{Wels}
+    \state{Upper Austria}
+    \country{Austria}
+}
+\email{christian.zehetner@fh-ooe.at}
 
 \author{Georg Hackenberg}
 \orcid{0000-0003-3913-4148}
 \affiliation{
-    \institution{University of Applied Sciences Upper Austria}
+    \institution{FH Upper Austria (FH OÖ)}
     \department{School of Engineering}
     \city{Wels}
     \state{Upper Austria}
@@ -32,25 +44,34 @@
 \email{georg.hackenberg@fh-ooe.at}
 
 \begin{abstract}
-
     In this paper, we explore the application of software product line engineering (SPLE) principles to the development of physical products, specifically using digital LEGO as a case study. 
     By translating key concepts from the SPLE community, we demonstrate how modularity, variability management, and systematic reuse can enhance the design and production of physical products. 
     Our experience highlights the benefits and challenges of this interdisciplinary approach, providing valuable insights for both software engineers and product designers.
-
 \end{abstract}
 
-\keywords{LEGO}
+\keywords{Software Product Line Engineering (SPLE); Digital LEGO; Modularity; Variability Management; Systematic Reuse; Physical Product Design; Interdisciplinary Approach}
 
 \maketitle
 
 \section{Introduction}
 \label{sec:introduction}
 
-TODO~\cite{Hackenberg_2023} TODO~\cite{Baldwin_2023}
+TODO~\cite{Hackenberg_2023} TODO~\cite{Baldwin_1997}
+
+Customers with individual needs and budgets
+
+Customer-specific design is inefficient, because too expensive for the average customer.
+
+Product line engineering has emerged. Common product platform. Modules for individual customer needs. Concrete example (automotive, engine, infotainment system, ...)
+
+Software product line engineering well established (e.g., available software features in the car). Configuration management is important (configuration = software features available for the customer).
+
+In other domains (physical products, geometric models) less well established.
 
 \paragraph{Research objective}
 
-TODO
+Translate ideas from software product line engineering to physical products.
+Improving product line engineering education for designers of phyiscal products.
 
 \paragraph{Research question}
 
@@ -60,7 +81,7 @@ Can we use existing tools for digital LEGO modeling to build up relevant use cas
 
 \paragraph{Contribution}
 
-TODO
+Literature review (see Section~\ref{sec:related-work}). Case study (see Section~\ref{sec:case-study}).
 
 \section{Related work}
 \label{sec:related-work}
@@ -68,10 +89,14 @@ TODO
 The research begins by conducting a literature review on various topics. 
 Firstly, the review focuses on modularity, followed by an exploration of product line engineering.
 
-\subsection{Modularity}
+\subsection{PLE in other domains}
 \label{sec:modualarity}
 
-Li et al. explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. 
+TODO
+
+\subsubsection{Modularity}
+
+Li et al.~\cite{Li_2019} explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. 
 However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design.
 The rules are referred among other things to the module interfaces which define how the interacting modules are connected.
 Interfaces may involve geometric connections between two components or may involve non-contact interactions. An interface specification defines the mating geometry in cases where there is a geometric connection.
@@ -82,7 +107,8 @@ Overall, the interfaces determine the possible configurations, flexibility in us
 Although modularity enables the production of  multiple end products from a limited number of building blocks, a company's product diversity should be managed and optimised to control complexity and balance too many versions. 
 It is imperative to clearly depict the product hierarchy encompassing all variant components and provide mechanisms for the creation and removal of variants. 
 These challenges are addressed by product line engineering through the consolidation of engineering assets and variants.
-\subsection{Product line engineering}
+
+\subsection{PLE in the software domain}
 \label{sec:product line engineering}
 
 Originating from the software development field, product line engineering is extensively applied in various industries including aerospace, defense, automotive, medical, consumer electronics, energy and telecommunications for the creation of products and systems. 
@@ -310,15 +336,28 @@ These geometric restrictions cause constraint dependencies that are shown in Fig
 \label{sec:150-model}
 
 The case study demonstrates the utilization of digital LEGOs to create a 150\% model of a 3D drone architecture. 
-This model is build in LeoCAD, a program that adheres to the LDraw standard. 
+This model is build in LeoCAD\footnote{Official LeoCAD website: \url{https://leocad.org}}, a program that adheres to the LDraw standard\footnote{Official LDraw website: \url{https:/ldraw.org}}. 
 Within the structure of the LDraw file, a main document serves as the foundation where all three variants of the drone are instantiated. 
 Each variant is further segmented into submodels, which consist of modular components. 
 These modules are essentially instances of the submodels, all organized within the same file.
+
+\begin{figure}[htbp]
+    \includegraphics[width=\columnwidth]{./ldraw-standard.png}
+    \caption{LDraw standard}
+    \label{fig:ldraw-standard}
+\end{figure}
 
 The approach enables to reuse the modules and submodels, promoting efficiency and versatility in design. 
 The 150\% model encompasses all feasible combinations of drone features across the different variants. 
 This abundance of information extends beyond the actual requirements of a specific drone type; for instance, showcasing three distinct battery sizes even though a practical FPV drone would only utilize one.
 
+\begin{figure}[htbp]
+    \includegraphics[width=\columnwidth]{./ldraw-model.png}
+    \caption{LDraw model}
+    \label{fig:ldraw-model}
+\end{figure}
+
+TODO
 
 \begin{figure*}[htbp]
     \includegraphics[width=\textwidth]{./150_MODEL_3.jpg}
