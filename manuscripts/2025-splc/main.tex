@@ -84,12 +84,6 @@ In this paper, we demonstrate the possibility of applying the PLE principles to 
 In the case study, we develop 3D models of the drones’ modules and assemblies, create a variability model and demonstrate a 3D drone product line using the LeoCAD software.
 
 
-% Customers with individual needs and budgets
-% Customer-specific design is inefficient, because too expensive for the average customer.
-% Product line engineering has emerged. Common product platform. Modules for individual customer needs. Concrete example (automotive, engine, infotainment system, ...)
-% Software product line engineering well established (e.g., available software features in the car). Configuration management is important (configuration = software features available for the customer).
-% In other domains (physical products, geometric models) less well established.
-
 \paragraph{Research objective}
 
 Translate ideas from software product line engineering to physical products.
@@ -108,96 +102,48 @@ Literature review (see Section~\ref{sec:related-work}). Case study (see Section~
 \section{Related work}
 \label{sec:related-work}
 
-
-
+Section~\ref{sec:ple-software}
+Section~\ref{sec:ple-other}
 
 \subsection{PLE in software domain}
-\subsection{PLE in other domains}
-\label{sec:modualarity}
+\label{sec:ple-software}
 
-TODO
-
-\subsubsection{Modularity}
-
-Li et al.~\cite{Li_2019} explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. 
-However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design.
-The rules are referred among other things to the module interfaces which define how the interacting modules are connected.
-Interfaces may involve geometric connections between two components or may involve non-contact interactions. An interface specification defines the mating geometry in cases where there is a geometric connection.
-A connection provides a constraint condition at the contact point of the mechanical unit to guarantee the required function of the composition of parts.
-Constraints limit the range of possible solutions.
-Overall, the interfaces determine the possible configurations, flexibility in use, and number of variants. 
-
-Although modularity enables the production of  multiple end products from a limited number of building blocks, a company's product diversity should be managed and optimised to control complexity and balance too many versions. 
-It is imperative to clearly depict the product hierarchy encompassing all variant components and provide mechanisms for the creation and removal of variants. 
-These challenges are addressed by product line engineering through the consolidation of engineering assets and variants.
-
-\subsection{PLE in the software domain}
-\label{sec:product line engineering}
-
-
-Product line is a set of products and/or services sharing explicitly defined and managed common and variable features and relying on the same domain architecture to meet the common and variable needs of specific markets.
+Product line is a set of systems that share a common, managed set of features satisfying the specific needs of a particular market segment or mission and that are developed from a common set of core assets in a prescribed way”.
+A feature is a characteristic of a member product in a product line that distinguishes it from other member products in the product line.
 A concrete product of a product line is called a product variant.
-
-Van der Linden formulated several principles that are fundamental in product line engineering. 
-They include, among others, the principle of the two-life-cycle approach, which includes the domain engineering and the application engineering lifecycle, and the principle of variability management.
+Van der Linden formulated several principles that are fundamental in product line engineering. They include, among others, the principle of the two-life-cycle approach, which includes the domain engineering and the application engineering lifecycle, and the principle of variability management.
 Domain engineering a reuse-based approach to defining the scope (i.e., domain definition), specifying the structure (i.e., domain architecture), and building the assets (e.g. requirements, designs, software code, documentation) for a class of systems, subsystems, or member products.
-During domain analysis, developers determine the scope of the software product line and identify its common and variable features, which they then document in a variability model.
-As an example of a variability model, the orthogonal variability model (OVM), introduced by Pohl et al., is used in the next section to manage variability of a drone product line. 
-
+During domain analysis, developers determine the scope of the software product line and identify its common and variable features, which they then document in a variability model. 
+A number of techniques have been developed to manage variability.
+For the drone use case, we use the orthogonal variability model (OVM), introduced by Pohl et al. It uses variants and variation points to denote variability, and dependencies to define relationships between variants and variation points.
 Application engineering is the process of deriving a single variant tailored to the requirements of a specific customer from a product line, based on the results of domain engineering. 
-However, with the appearance of second-generation product line engineering, application engineering shrinks to almost nothing; products are produced through the use of high-end industrial strength automation that configures the shared assets appropriately for each product.
-Product line engineering goes hand in hand with the concept of modularity.
-Li et al. explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products.
-However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design.
-The rules are referred among other things to the module interfaces which define how the interacting modules are connected.
+However, with the appearance of second-generation product line engineering, application engineering shrinks to almost nothing; products are produced through the use of high-end industrial strength automation that configures the shared assets appropriately for each product
+Product line engineering goes hand in hand with the concept of modularity. While modularity enables the production of multiple end products from a limited number of modules, product line engineering manages and optimizes a company's product diversity in order to control complexity and to balance out too many versions.
+Li et al. explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design.
+The rules are referred among other things to the module interfaces which define how the interacting modules are connected. 
 
-\subsection{Product line engineering for the development of physical products}
-\label{sec:modualarity}
+\subsection{PLE in other domains}
+\label{sec:ple-other}
 
-
-
-% Interfaces may involve geometric connections between two components or may involve non-contact interactions. An interface specification defines the mating geometry in cases where there is a geometric connection.
-% A connection provides a constraint condition at the contact point of the mechanical unit to guarantee the required function of the composition of parts.
-% Constraints limit the range of possible solutions.
-% Overall, the interfaces determine the possible configurations, flexibility in use, and number of variants. 
-
+When it comes to development of physical products, building blocks of a product in the product line, or shared assets, can include, but are not limited to, requirements, design specifications, design models, source code, build files, test plans and test cases, user documentation, repair manuals and installation guides, project budgets, schedules, and work plans, product calibration and configuration files, data models, parts lists, and more. 
+The product variant is instantiated from a common design that represents all the possible combinations of features for all the possible variants. The design is called a 150\% model, or a superset model, because it has the content necessary to support any product in the product line. 
+It is well-known that hardware engineering cannot be compared to software engineering because of software characteristics such as no mass, no color, and so on.
+While applying software product line engineering principles to the development of physical products, it is important to consider these characteristics, especially when it comes to interfaces. 
+For example, interfaces may involve geometric connections between two components.  
+A connection provides a constraint condition at the contact point of the mechanical unit to guarantee the required function of the composition of parts. 
+By specifying these geometric constraints in CAD models, designers can ensure the proper arrangement and compatibility of parts within the product.
+Due to the complexity of dealing with physical dimensions and constraints in 3D modeling, it is not yet possible to apply software PLE principle to physical domain.  Currently, there is no proof of the existence of a 150\% 3D model, and it is not feasible to generate 3D product variants from such a model. In the next, we propose exploring the application of PLE principles in designing product lines of physical products, particularly focusing on their geometric attributes.
 
 
 \section{Case study}
 \label{sec:case-study}
 
 In this third chapter we introduce the case study, which we have prepared for testing the viability of digital LEGO for product line engineering education.
-In the following, we first provide an overview of the selected product line and its product variants in Section~\ref{sec:product-variants}.
+% In the following, we first provide an overview of the selected product line and its product variants in Section~\ref{sec:product-variants}.
 Then, we introduce the atomic modules of the product line, from with the individual variants have been assembled in Section~\ref{sec:atomic-modules}.
 Finally, we explain the configuration options of the drone use case in the form of a feature tree model in Section~\ref{sec:configuration-options}.
 
-\subsection{Product variants}
-\label{sec:product-variants}
 
-\cref{fig:product-variants} provides an overview of the product variants for the drone use case.
-The use case comprises three product variants, an ultra-light drone (see \cref{fig:ultra-light}), a free-style drone (see \cref{fig:free-style}), and a long-range drone (see \cref{fig:long-range}).
-
-% \begin{description}
-%     \item[Ultralight drones] designed to comply with regulations by being exceptionally lightweight and compact.
-%     \item[Freestyle drones] optimized for agility, maneuverability, and creative flight in open environments with a focus on durability for performing aerial acrobatics and complex maneuvers.
-%     \item[Long-range drones] built for extended flight distances, featuring stable flight characteristics and efficient power consumption.
-% \end{description}
-
-% \begin{figure*}[htbp]
-%     \subcaptionbox{Ultra-light variant\label{fig:ultra-light}}{
-%         \includegraphics[height=3.1cm]{./UltralightVariant.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Free-style variant\label{fig:free-style}}{
-%         \includegraphics[height=3.1cm]{./FreestyleVariant.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Long-range variant\label{fig:long-range}}{
-%         \includegraphics[height=3.1cm]{./LongRangeVariant.jpg}
-%     }
-%     \caption{Overview of the product variants for the drone use case.}
-%     \label{fig:product-variants}
-% \end{figure*}
 
 \subsection{Atomic modules}
 \label{sec:atomic-modules}
@@ -205,49 +151,6 @@ The use case comprises three product variants, an ultra-light drone (see \cref{f
 Each drone is made up of four modules, that deliver a certain function. 
 Each module has its own variants, which makes it possible to offer a greater variety of products. 
 
-% \begin{figure*}[htbp]
-%     \subcaptionbox{Small frame\label{fig:frame-small}}{
-%         \includegraphics[height=2.3cm]{./drone-case-modules-frame-small.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Large frame\label{fig:frame-large}}{
-%         \includegraphics[height=2.3cm]{./drone-case-modules-frame-large.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Small battery\label{fig:battery-small}}{
-%         \includegraphics[height=1.3cm]{./drone-case-modules-battery-small.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Medium battery\label{fig:battery-medium}}{
-%         \includegraphics[height=1.3cm]{./drone-case-modules-battery-medium.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Large battery\label{fig:battery-large}}{
-%         \includegraphics[height=1.3cm]{./drone-case-modules-battery-large.jpg}
-%     } 
-%     \subcaptionbox{Small cover\label{fig:cover-small}}{
-%         \includegraphics[height=2.3cm]{./drone-case-modules-cover-small.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Large cover\label{fig:cover-large}}{
-%         \includegraphics[height=2.3cm]{./drone-case-modules-cover-large.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Small propellor\label{fig:propellor-small}}{
-%         \includegraphics[height=1.5cm]{./drone-case-modules-propellor-2-small.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Medium propellor\label{fig:propellor-medium}}{
-%         \includegraphics[height=1.5cm]{./drone-case-modules-propellor-3.jpg}
-%     }
-%     \hfill
-%     \subcaptionbox{Large propellor\label{fig:propellor-large}}{
-%         \includegraphics[height=1.5cm]{./drone-case-modules-propellor-2-large.jpg}
-%     }
-
-%     \caption{Overview of the atomic modules for the drone use case.}
-%     \label{fig:atomic-modules}
-% \end{figure*}
 
 \subsubsection{Propellors}
 \label{sec:propellors}
