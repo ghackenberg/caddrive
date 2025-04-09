@@ -1,0 +1,23 @@
+flowchart
+
+    subgraph "Drone Product Line : File"
+
+        main[["Main : Assembly"]]
+
+        main --"ref 1"--> ultralight[["Ultralight : Assembly"]]
+        main --"ref 2"--> freestyle[["Freestyle : Assembly"]]
+        main --"ref 3"--> longrange[["Longrange : Assembly"]]
+
+        freestyle --"ref 2.1"--> mediumb[["Battery : Assembly"]]
+        freestyle --"ref 2.2"--> smallf[["Frame : Assembly"]]
+        freestyle --"ref 2.3"--> smallc[["Cover : Assembly" ]]
+
+    end
+
+    subgraph "LDraw Brick Catalogue"
+
+        smallf --"ref 2.2.1"--> brick1["Brick 1 : Brick"]
+        smallf --"ref 2.2.?"--> brick2["Brick ... : Brick"]
+        smallf --"ref 2.2.n"--> brick3["Brick n : Brick"]
+
+    end
