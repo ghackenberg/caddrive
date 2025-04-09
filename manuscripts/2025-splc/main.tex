@@ -58,15 +58,37 @@
 
 TODO~\cite{Hackenberg_2023} TODO~\cite{Baldwin_1997}
 
-Customers with individual needs and budgets
+With today's shift from a seller's to a buyer's market, there is a clear trend towards product customization. 
+Customers are constantly seeking products that cater to their specific needs and budgets. 
+However, creating customer-specific designs can often be inefficient and costly, making it unaffordable for the average consumer.
+Besides, in most industries, very few or practically no systems are created “from scratch”, so engineers are likely to reuse knowledge from a previous project or product in the form of documents, processes, or models. 
+In order to find a balance between reuse and customization in software and systems development, product line engineering has emerged as a viable solution. 
+In PLE, the focus is shifted from building isolated products to building families of related products, while reuse is discussed not at an individual object level, e.g. libraries or components, but as a whole: organizational, process-wise, and also life cycle wise end-to-end from requirements to actually deployed variability at the customer. 
+This approach involves the development of a core platform of reusable components that can be easily customized to meet the specific needs of different products within a product line. 
+For example, in software development products that are being developed for the international market must be adapted for different legal or cultural environments, as well as for different languages, and so must provide adapted user interfaces. 
+To increase software reuse and streamline development processes, developers create a modular software framework that includes common functionalities. 
+These software modules can be reused across different product models and customized as needed to meet specific requirements for each market.
+Originating in software development, PLE has now spread far beyond the software domain. 
 
-Customer-specific design is inefficient, because too expensive for the average customer.
+Companies in many other industries, such as automotive, aerospace, consumer electronics and so on, are taking advantage of the benefits of reusability and variability management by reducing time-to-market, improving efficiency, and increasing customer satisfaction.
+Some of the many published examples of the improvements that have followed the implementation of PLE are as follows:
+•	Lockheed Martin has been employing Feature-based PLE for AWS since the mid-2000's and estimates that because of the approach, over \$47 million of cost is avoided each and every year.
+•	Hewlett-Packard reports that with a product line approach, they were able to build products 10 times as complex, with 1/4 of the staff, in 1/3 of the time, and with 1/25 of the number of bugs of earlier products. 
+•	In a railway domain, the lead time of software changes has decreased significantly: “The time needed for implementing new functionality is about a month, whereas it was estimated to be about six months to a year”. 
 
-Product line engineering has emerged. Common product platform. Modules for individual customer needs. Concrete example (automotive, engine, infotainment system, ...)
+However, when it comes to incorporating Product Line Engineering into the creation of technical systems, particularly when creating geometric representations of product lines of mechanical products, this approach has not yet become established. 
+In this paper, we demonstrate the possibility of applying the PLE principles to designing physical products by developing an FPV drone product line in CAD software. Building FPV drones means meeting different customer requirements, which vary primarily in performance. These include:     
+•	Ultralight drones, designed to comply with regulations by being exceptionally lightweight and compact.
+•	Freestyle drones, optimized for agility, maneuverability, and creative flight in open environments with a focus on durability. 
+•	Long-range drones, built for extended flight distances, featuring stable flight characteristics and efficient power consumption.
+In the case study, we develop 3D models of the drones’ modules and assemblies, create a variability model and demonstrate a 3D drone product line using the LeoCAD software.
 
-Software product line engineering well established (e.g., available software features in the car). Configuration management is important (configuration = software features available for the customer).
 
-In other domains (physical products, geometric models) less well established.
+% Customers with individual needs and budgets
+% Customer-specific design is inefficient, because too expensive for the average customer.
+% Product line engineering has emerged. Common product platform. Modules for individual customer needs. Concrete example (automotive, engine, infotainment system, ...)
+% Software product line engineering well established (e.g., available software features in the car). Configuration management is important (configuration = software features available for the customer).
+% In other domains (physical products, geometric models) less well established.
 
 \paragraph{Research objective}
 
@@ -86,11 +108,10 @@ Literature review (see Section~\ref{sec:related-work}). Case study (see Section~
 \section{Related work}
 \label{sec:related-work}
 
-The research begins by conducting a literature review on various topics. 
-Firstly, the review focuses on modularity, followed by an exploration of product line engineering.
 
 
-\subsection{Product line engineering in software domain}
+
+\subsection{PLE in software domain}
 \subsection{PLE in other domains}
 \label{sec:modualarity}
 
@@ -156,11 +177,11 @@ Finally, we explain the configuration options of the drone use case in the form 
 \cref{fig:product-variants} provides an overview of the product variants for the drone use case.
 The use case comprises three product variants, an ultra-light drone (see \cref{fig:ultra-light}), a free-style drone (see \cref{fig:free-style}), and a long-range drone (see \cref{fig:long-range}).
 
-\begin{description}
-    \item[Ultralight drones] designed to comply with regulations by being exceptionally lightweight and compact.
-    \item[Freestyle drones] optimized for agility, maneuverability, and creative flight in open environments with a focus on durability for performing aerial acrobatics and complex maneuvers.
-    \item[Long-range drones] built for extended flight distances, featuring stable flight characteristics and efficient power consumption.
-\end{description}
+% \begin{description}
+%     \item[Ultralight drones] designed to comply with regulations by being exceptionally lightweight and compact.
+%     \item[Freestyle drones] optimized for agility, maneuverability, and creative flight in open environments with a focus on durability for performing aerial acrobatics and complex maneuvers.
+%     \item[Long-range drones] built for extended flight distances, featuring stable flight characteristics and efficient power consumption.
+% \end{description}
 
 % \begin{figure*}[htbp]
 %     \subcaptionbox{Ultra-light variant\label{fig:ultra-light}}{
@@ -353,6 +374,14 @@ This model is build in LeoCAD\footnote{Official LeoCAD website: \url{https://leo
 Within the structure of the LDraw file, a main document serves as the foundation where all three variants of the drone are instantiated. 
 Each variant is further segmented into submodels, which consist of modular components. 
 These modules are essentially instances of the submodels, all organized within the same file.
+
+The structure of the LDraw file is shown in the Figure 7. 
+The main model serves as the primary assembly, the three different drone variants are also categorized as assemblies. 
+Moreover, components such as modules (e.g., covers, frames, batteries, and propellers) are also classified as assemblies. 
+An assembly consists of children, where each child is linked to either a brick or another assembly. 
+The bricks are standardized and belong to a brick catalog. 
+For instance, while a frame assembly is composed of numerous bricks, a freestyle drone assembly does not directly reference bricks. 
+Instead, it refers to other assemblies within the hierarchy.
 
 \begin{figure}[htbp]
     \includegraphics[width=\columnwidth]{./ldraw-standard.png}
