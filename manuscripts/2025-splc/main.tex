@@ -61,28 +61,33 @@ TODO~\cite{Hackenberg_2023} TODO~\cite{Baldwin_1997}
 With today's shift from a seller's to a buyer's market, there is a clear trend towards product customization. 
 Customers are constantly seeking products that cater to their specific needs and budgets. 
 However, creating customer-specific designs can often be inefficient and costly, making it unaffordable for the average consumer.
-Besides, in most industries, very few or practically no systems are created “from scratch”, so engineers are likely to reuse knowledge from a previous project or product in the form of documents, processes, or models. 
-In order to find a balance between reuse and customization in software and systems development, product line engineering has emerged as a viable solution. 
-In PLE, the focus is shifted from building isolated products to building families of related products, while reuse is discussed not at an individual object level, e.g. libraries or components, but as a whole: organizational, process-wise, and also life cycle wise end-to-end from requirements to actually deployed variability at the customer. 
+Besides, in most industries, very few or practically no systems are created “from scratch”, so engineers are likely to reuse knowledge from a previous project or product in the form of documents, processes, or models ~\cite{Góngora_2015}. 
+
+In order to find a balance between reuse and customization in software and systems development, software product line engineering (SPLE) has emerged as a viable solution. 
+SPLE is an approach to cost-efficiently derive tailored products to markets and customers, utilizing common components and services in a planned manner ~\cite{Runeson_2012}.
+The focus is shifted from building isolated products to building families of related products, while reuse is discussed not at an individual object level, e.g. libraries or components, but as a whole: organizational, process-wise, and also life cycle wise end-to-end from requirements to actually deployed variability at the customer ~\cite{Schwanninger_2009}. 
 This approach involves the development of a core platform of reusable components that can be easily customized to meet the specific needs of different products within a product line. 
-For example, in software development products that are being developed for the international market must be adapted for different legal or cultural environments, as well as for different languages, and so must provide adapted user interfaces. 
+
+For example, software products that are being developed for the international market must be adapted for different legal or cultural environments, as well as for different languages, and so must provide adapted user interfaces ~\cite{Beuche_2007}. 
 To increase software reuse and streamline development processes, developers create a modular software framework that includes common functionalities. 
 These software modules can be reused across different product models and customized as needed to meet specific requirements for each market.
-Originating in software development, PLE has now spread far beyond the software domain. 
 
-Companies in many other industries, such as automotive, aerospace, consumer electronics and so on, are taking advantage of the benefits of reusability and variability management by reducing time-to-market, improving efficiency, and increasing customer satisfaction.
-Some of the many published examples of the improvements that have followed the implementation of PLE are as follows:
-•	Lockheed Martin has been employing Feature-based PLE for AWS since the mid-2000's and estimates that because of the approach, over \$47 million of cost is avoided each and every year.
-•	Hewlett-Packard reports that with a product line approach, they were able to build products 10 times as complex, with 1/4 of the staff, in 1/3 of the time, and with 1/25 of the number of bugs of earlier products. 
-•	In a railway domain, the lead time of software changes has decreased significantly: “The time needed for implementing new functionality is about a month, whereas it was estimated to be about six months to a year”. 
+Originating in software development, SPLE principles have now spread far beyond the software domain. 
+ Companies in many other industries, such as automotive, aerospace, consumer electronics and so on, are taking advantage of the benefits of reusability and variability management by reducing time-to-market, improving efficiency, and increasing customer satisfaction. Some of the many published examples of the improvements that have followed the implementation of PLE are as follows:
 
-However, when it comes to incorporating Product Line Engineering into the creation of technical systems, particularly when creating geometric representations of product lines of mechanical products, this approach has not yet become established. 
-In this paper, we demonstrate the possibility of applying the PLE principles to designing physical products by developing an FPV drone product line in CAD software. Building FPV drones means meeting different customer requirements, which vary primarily in performance. These include:     
-•	Ultralight drones, designed to comply with regulations by being exceptionally lightweight and compact.
-•	Freestyle drones, optimized for agility, maneuverability, and creative flight in open environments with a focus on durability. 
-•	Long-range drones, built for extended flight distances, featuring stable flight characteristics and efficient power consumption.
-In the case study, we develop 3D models of the drones’ modules and assemblies, create a variability model and demonstrate a 3D drone product line using the LeoCAD software.
+•	Lockheed Martin has been employing Feature-based PLE for AWS since the mid-2000's and estimates that because of the approach, over \$47 million of cost is avoided each and every year ~\cite{Gregg_2015}.
 
+•	Hewlett-Packard reports that with a product line approach, they were able to build products 10 times as complex, with 1/4 of the staff, in 1/3 of the time, and with 1/25 of the number of bugs of earlier products ~\cite{Mebane_2007}. 
+
+•	A company from a railway domain reports, that the lead time of software changes has decreased significantly: “The time needed for implementing new functionality is about a month, whereas it was estimated to be about six months to a year”~\cite{Abbas_2020}. 
+
+However, when it comes to incorporating SPLE principles into the creation of technical systems, particularly when creating geometric representations of product lines of mechanical products, this approach has not yet become established. 
+% In this paper, we demonstrate the possibility of applying the PLE principles to designing physical products by developing an FPV drone product line in CAD software. Building FPV drones means meeting different customer requirements, which vary primarily in performance. These include:     
+
+% •	Ultralight drones, designed to comply with regulations by being exceptionally lightweight and compact.
+% •	Freestyle drones, optimized for agility, maneuverability, and creative flight in open environments with a focus on durability. 
+% •	Long-range drones, built for extended flight distances, featuring stable flight characteristics and efficient power consumption.
+% In the case study, we develop 3D models of the drones’ modules and assemblies, create a variability model and demonstrate a 3D drone product line using the LeoCAD software.
 
 \paragraph{Research objective}
 
@@ -102,46 +107,54 @@ Literature review (see Section~\ref{sec:related-work}). Case study (see Section~
 \section{Related work}
 \label{sec:related-work}
 
-Section~\ref{sec:ple-software}
-Section~\ref{sec:ple-other}
+Subsequently, a literature review about Product Line Engineering (PLE) in software domain is provided in Section~\ref{sec:ple-software},
+and a literature review about PLE in other domains is provided in Section~\ref{sec:ple-other}.
 
 \subsection{PLE in software domain}
 \label{sec:ple-software}
 
-Product line is a set of systems that share a common, managed set of features satisfying the specific needs of a particular market segment or mission and that are developed from a common set of core assets in a prescribed way”.
-A feature is a characteristic of a member product in a product line that distinguishes it from other member products in the product line.
-A concrete product of a product line is called a product variant.
-Van der Linden formulated several principles that are fundamental in product line engineering. They include, among others, the principle of the two-life-cycle approach, which includes the domain engineering and the application engineering lifecycle, and the principle of variability management.
-Domain engineering a reuse-based approach to defining the scope (i.e., domain definition), specifying the structure (i.e., domain architecture), and building the assets (e.g. requirements, designs, software code, documentation) for a class of systems, subsystems, or member products.
-During domain analysis, developers determine the scope of the software product line and identify its common and variable features, which they then document in a variability model. 
+Product line is a set of systems that share a common, managed set of features satisfying the specific needs of a particular market segment or mission and that are developed from a common set of core assets in a prescribed way ~\cite{Clements_2001}, where
+a feature is a characteristic of a member product in a product line that distinguishes it from other member products in the product line ~\cite{ISO/IEC_26550}.
+%A concrete product of a product line is called a product variant.
+Van der Linden ~\cite{Linden_2007} formulated several principles that are fundamental in PLE. They include, among others, the principle of the two-life-cycle approach, which includes the domain engineering and the application engineering lifecycle, and the principle of variability management.
+
+Domain engineering a reuse-based approach to defining the scope (i.e., domain definition), specifying the structure (i.e., domain architecture), and building the assets (e.g. requirements, designs, software code, documentation) for a class of systems, subsystems, or member products ~\cite{ISO/IEC_26550}. During domain analysis, developers determine the scope of the software product line and identify its common and variable features, which they then document in a variability model. 
 A number of techniques have been developed to manage variability.
-For the drone use case, we use the orthogonal variability model (OVM), introduced by Pohl et al. It uses variants and variation points to denote variability, and dependencies to define relationships between variants and variation points.
-Application engineering is the process of deriving a single variant tailored to the requirements of a specific customer from a product line, based on the results of domain engineering. 
-However, with the appearance of second-generation product line engineering, application engineering shrinks to almost nothing; products are produced through the use of high-end industrial strength automation that configures the shared assets appropriately for each product
-Product line engineering goes hand in hand with the concept of modularity. While modularity enables the production of multiple end products from a limited number of modules, product line engineering manages and optimizes a company's product diversity in order to control complexity and to balance out too many versions.
-Li et al. explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design.
-The rules are referred among other things to the module interfaces which define how the interacting modules are connected. 
+For the drone use case, we use the orthogonal variability model (OVM), introduced by Pohl et al. ~\cite{Pohl_2005}. It uses variants and variation points to denote variability, and dependencies to define relationships between variants and variation points.
+
+Application engineering is the process of deriving a single variant tailored to the requirements of a specific customer from a product line, based on the results of domain engineering ~\cite{Kästner_2013}. 
+However, with the appearance of second-generation product line engineering, application engineering shrinks to almost nothing; products are produced through the use of high-end industrial strength automation that configures the shared assets appropriately for each product ~\cite{Krueger_2013}.
+
+PLE goes hand in hand with the concept of modularity. While modularity enables the production of multiple end products from a limited number of modules, PLE manages and optimizes a company's product diversity in order to control complexity and to balance out too many versions.
+Li et al. ~\cite{Li_2019} explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design ~\cite{Baldwin_2003}. The rules are referred among other things to the module interfaces which define how the interacting modules are connected. The effects of a misspecified interface can go beyond
+module incompatibility to unexpected product behavior ~\cite{Parslov_2015}. 
 
 \subsection{PLE in other domains}
 \label{sec:ple-other}
 
-When it comes to development of physical products, building blocks of a product in the product line, or shared assets, can include, but are not limited to, requirements, design specifications, design models, source code, build files, test plans and test cases, user documentation, repair manuals and installation guides, project budgets, schedules, and work plans, product calibration and configuration files, data models, parts lists, and more. 
-The product variant is instantiated from a common design that represents all the possible combinations of features for all the possible variants. The design is called a 150\% model, or a superset model, because it has the content necessary to support any product in the product line. 
-It is well-known that hardware engineering cannot be compared to software engineering because of software characteristics such as no mass, no color, and so on.
-While applying software product line engineering principles to the development of physical products, it is important to consider these characteristics, especially when it comes to interfaces. 
-For example, interfaces may involve geometric connections between two components.  
-A connection provides a constraint condition at the contact point of the mechanical unit to guarantee the required function of the composition of parts. 
+When it comes to development of physical products, building blocks of a product in the product line, or shared assets, can include, but are not limited to, requirements, design specifications, design models, source code, build files, test plans and test cases, user documentation, repair manuals and installation guides, project budgets, schedules, and work plans, product calibration and configuration files, data models, parts lists, and more ~\cite{Clements_2015}. 
+
+The product variant is instantiated from a common design that represents all the possible combinations of features for all the possible variants. The design is called a 150\% model, or a superset model, because, as Clements ~\cite{Clements_2015} states, it has the content necessary to support any product in the product line. 
+
+It is well-known that due to software intangibility, hardware engineering cannot be compared to software engineering. 
+While applying SPLE principles to the development of hardware, it is important to consider its physical nature, especially when it comes to module interfaces. 
+Ulrich ~\cite{Ulrich_1995} states, that interfaces may involve geometric connections between two components or may involve non-contact interactions,  
+and that a connection provides a constraint condition at the contact point of the mechanical unit to guarantee the required function of the composition of parts. 
 By specifying these geometric constraints in CAD models, designers can ensure the proper arrangement and compatibility of parts within the product.
-Due to the complexity of dealing with physical dimensions and constraints in 3D modeling, it is not yet possible to apply software PLE principle to physical domain.  Currently, there is no proof of the existence of a 150\% 3D model, and it is not feasible to generate 3D product variants from such a model. In the next, we propose exploring the application of PLE principles in designing product lines of physical products, particularly focusing on their geometric attributes.
+
+Due to the complexity of dealing with physical dimensions and constraints in 3D modeling, it is not yet possible to apply SPLE principles to physical domain.  
+Currently, there is no proof of the existence of a 150\% 3D model, and it is not feasible to generate 3D product variants from such a model. 
+In the next section, we propose exploring the application of SPLE principles in designing product lines of physical products, particularly focusing on their geometric attributes.
 
 
 \section{Case study}
 \label{sec:case-study}
 
 In this third chapter we introduce the case study, which we have prepared for testing the viability of digital LEGO for product line engineering education.
-% In the following, we first provide an overview of the selected product line and its product variants in Section~\ref{sec:product-variants}.
-Then, we introduce the atomic modules of the product line, from with the individual variants have been assembled in Section~\ref{sec:atomic-modules}.
-Finally, we explain the configuration options of the drone use case in the form of a feature tree model in Section~\ref{sec:configuration-options}.
+The selected product line includes three first person view (FPV) drone variants: an ultralight drone, a freestyle drone and a long-range drone, which differ primarily in their performance characteristics.
+First, we provide an overview of the atomic modules of the product line, from which the individual variants have been assembled in Section~\ref{sec:atomic-modules}.
+Then, we explain the configuration options of the drone use case in the form of a feature tree model in Section~\ref{sec:configuration-options}.
+And finally, we introduce the 150\% model for the drone use case.
 
 
 
@@ -152,8 +165,8 @@ Each drone is made up of four modules, that deliver a certain function.
 Each module has its own variants, which makes it possible to offer a greater variety of products. 
 
 
-\subsubsection{Propellors}
-\label{sec:propellors}
+\subsubsection{Propellers}
+\label{sec:propellers}
 
 Propellers generate thrust by spinning rapidly, allowing a drone to move in all directions. 
 A two-blade propeller provides better efficiency and longer flight times, while a triblade propeller offers more stability and maneuverability. 
@@ -202,7 +215,7 @@ However, smaller batteries have shorter flight times, which means that for longe
 \subsubsection{Frames}
 \label{sec:frames}
 
-Frames serve as the structure that holds all the other parts together. 
+Frames serve as the structure that holds all the other parts (including legs and motors) together. 
 A small frame is more maneuverable and agile, while a large frame offers more space for additional components (e.g. larger batteries).
 
 \begin{figure}[htbp]
@@ -278,7 +291,11 @@ Within the structure of the LDraw file, a main document serves as the foundation
 Each variant is further segmented into submodels, which consist of modular components. 
 These modules are essentially instances of the submodels, all organized within the same file.
 
-The structure of the LDraw file is shown in the Figure 7. 
+The meta-model of the LDraw file is shown in the Figure 6. The file contains multiple assemblies. 
+Each assembly contains multiple references, which point to either a model (which itself can contain sub-assemblies) or a brick. 
+The reference includes transformation data (position, orientation) and optional appearance data (color).
+
+The LDraw model shown in Figure 7 is the instance of the meta-model. 
 The main model serves as the primary assembly, the three different drone variants are also categorized as assemblies. 
 Moreover, components such as modules (e.g., covers, frames, batteries, and propellers) are also classified as assemblies. 
 An assembly consists of children, where each child is linked to either a brick or another assembly. 
@@ -302,7 +319,6 @@ This abundance of information extends beyond the actual requirements of a specif
     \label{fig:ldraw-model}
 \end{figure}
 
-TODO
 
 \begin{figure*}[htbp]
     \includegraphics[width=\textwidth]{./150_MODEL_6.jpg}
@@ -310,7 +326,6 @@ TODO
     \label{fig:150-model}
 \end{figure*}
 
-TODO
 
 \section{Conclusion}
 \label{sec:conclusion}
