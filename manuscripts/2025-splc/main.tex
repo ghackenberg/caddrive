@@ -56,7 +56,7 @@
 \section{Introduction}
 \label{sec:introduction}
 
-TODO~\cite{Hackenberg_2023} TODO~\cite{Baldwin_1997}
+TODO~\cite{Hackenberg_2023} 
 
 With today's shift from a seller's to a buyer's market, there is a clear trend towards product customization. 
 Customers are constantly seeking products that cater to their specific needs and budgets. 
@@ -73,9 +73,9 @@ To increase software reuse and streamline development processes, developers crea
 These software modules can be reused across different product models and customized as needed to meet specific requirements for each market.
 
 Originating in software development, SPLE principles have now spread far beyond the software domain. 
- Companies in many other industries, such as automotive, aerospace, consumer electronics and so on, are taking advantage of the benefits of reusability and variability management by reducing time-to-market, improving efficiency, and increasing customer satisfaction. Some of the many published examples of the improvements that have followed the implementation of PLE are as follows:
+ Companies in many other industries, such as automotive, aerospace, consumer electronics, are taking advantage of reusability and variability management by reducing time-to-market, improving efficiency, and increasing customer satisfaction. Some of the many published examples of the improvements that have followed the implementation of PLE are as follows:
 
-•	Lockheed Martin has been employing Feature-based PLE for AWS since the mid-2000's and estimates that because of the approach, over \$47 million of cost is avoided each and every year ~\cite{Gregg_2015}.
+•	Lockheed Martin has been employing Feature-based Product Line Engineering (PLE) for Amazon Web Services (AWS) since the mid-2000's and estimates that because of the approach, over \$47 million of cost is avoided each and every year ~\cite{Gregg_2015}.
 
 •	Hewlett-Packard reports that with a product line approach, they were able to build products 10 times as complex, with 1/4 of the staff, in 1/3 of the time, and with 1/25 of the number of bugs of earlier products ~\cite{Mebane_2007}. 
 
@@ -107,23 +107,23 @@ Literature review (see Section~\ref{sec:related-work}). Case study (see Section~
 \section{Related work}
 \label{sec:related-work}
 
-Subsequently, a literature review about Product Line Engineering (PLE) in software domain is provided in Section~\ref{sec:ple-software},
+Subsequently, a literature review about PLE in software domain is provided in Section~\ref{sec:ple-software},
 and a literature review about PLE in other domains is provided in Section~\ref{sec:ple-other}.
 
 \subsection{PLE in software domain}
 \label{sec:ple-software}
 
-Product line is a set of systems that share a common, managed set of features satisfying the specific needs of a particular market segment or mission and that are developed from a common set of core assets in a prescribed way ~\cite{Clements_2001}, where
+A software product line is a set of systems that share a common, managed set of features satisfying the specific needs of a particular market segment or mission and that are developed from a common set of core assets in a prescribed way ~\cite{Clements_2002}, where
 a feature is a characteristic of a member product in a product line that distinguishes it from other member products in the product line ~\cite{ISO/IEC_26550}.
 %A concrete product of a product line is called a product variant.
 Van der Linden ~\cite{Linden_2007} formulated several principles that are fundamental in PLE. They include, among others, the principle of the two-life-cycle approach, which includes the domain engineering and the application engineering lifecycle, and the principle of variability management.
 
-Domain engineering a reuse-based approach to defining the scope (i.e., domain definition), specifying the structure (i.e., domain architecture), and building the assets (e.g. requirements, designs, software code, documentation) for a class of systems, subsystems, or member products ~\cite{ISO/IEC_26550}. During domain analysis, developers determine the scope of the software product line and identify its common and variable features, which they then document in a variability model. 
+Domain engineering is a reuse-based approach defining the scope (i.e., domain definition), specifying the structure (i.e., domain architecture), and building the assets (e.g. requirements, designs, software code, documentation) for a class of systems, subsystems, or member products ~\cite{ISO/IEC_26550}. During domain analysis, developers determine the scope of the software product line and identify its common and variable features, which they then document in a variability model. 
 A number of techniques have been developed to manage variability.
 For the drone use case, we use the orthogonal variability model (OVM), introduced by Pohl et al. ~\cite{Pohl_2005}. It uses variants and variation points to denote variability, and dependencies to define relationships between variants and variation points.
 
 Application engineering is the process of deriving a single variant tailored to the requirements of a specific customer from a product line, based on the results of domain engineering ~\cite{Kästner_2013}. 
-However, with the appearance of second-generation product line engineering, application engineering shrinks to almost nothing; products are produced through the use of high-end industrial strength automation that configures the shared assets appropriately for each product ~\cite{Krueger_2013}.
+However, with the appearance of second-generation PLE, application engineering shrinks to almost nothing; products are produced through the use of high-end industrial strength automation that configures the shared assets appropriately for each product ~\cite{Krueger_2013}.
 
 PLE goes hand in hand with the concept of modularity. While modularity enables the production of multiple end products from a limited number of modules, PLE manages and optimizes a company's product diversity in order to control complexity and to balance out too many versions.
 Li et al. ~\cite{Li_2019} explains modularity as a systematic process where a product or system is composed of various modules, and these modules can be combined in different ways which become different products. However, clear rules should be set up to reassure that all subsystems will fit and function together in the final design ~\cite{Baldwin_2003}. The rules are referred among other things to the module interfaces which define how the interacting modules are connected. The effects of a misspecified interface can go beyond
@@ -140,7 +140,7 @@ It is well-known that due to software intangibility, hardware engineering cannot
 While applying SPLE principles to the development of hardware, it is important to consider its physical nature, especially when it comes to module interfaces. 
 Ulrich ~\cite{Ulrich_1995} states, that interfaces may involve geometric connections between two components or may involve non-contact interactions,  
 and that a connection provides a constraint condition at the contact point of the mechanical unit to guarantee the required function of the composition of parts. 
-By specifying these geometric constraints in CAD models, designers can ensure the proper arrangement and compatibility of parts within the product.
+By specifying these geometric constraints in computer-aided design (CAD) models, designers can ensure the proper arrangement and compatibility of parts within the product.
 
 Due to the complexity of dealing with physical dimensions and constraints in 3D modeling, it is not yet possible to apply SPLE principles to physical domain.  
 Currently, there is no proof of the existence of a 150\% 3D model, and it is not feasible to generate 3D product variants from such a model. 
@@ -150,7 +150,7 @@ In the next section, we propose exploring the application of SPLE principles in 
 \section{Case study}
 \label{sec:case-study}
 
-In this third chapter we introduce the case study, which we have prepared for testing the viability of digital LEGO for product line engineering education.
+In this third chapter we introduce the case study, which is prepared for testing the viability of digital LEGO for product line engineering education.
 The selected product line includes three first person view (FPV) drone variants: an ultralight drone, a freestyle drone and a long-range drone, which differ primarily in their performance characteristics.
 First, we provide an overview of the atomic modules of the product line, from which the individual variants have been assembled in Section~\ref{sec:atomic-modules}.
 Then, we explain the configuration options of the drone use case in the form of a feature tree model in Section~\ref{sec:configuration-options}.
@@ -168,7 +168,7 @@ Each module has its own variants, which makes it possible to offer a greater var
 \subsubsection{Propellers}
 \label{sec:propellers}
 
-Propellers generate thrust by spinning rapidly, allowing a drone to move in all directions. 
+Propellers shown in \cref{fig:propeller} generate thrust by spinning rapidly, allowing a drone to move in all directions. 
 A two-blade propeller provides better efficiency and longer flight times, while a triblade propeller offers more stability and maneuverability. 
 Smaller propellers provide better agility, while bigger ones provide more thrust and efficiency, allowing the drone fly longer distances. 
 However, larger propellers also require more power to spin.
@@ -185,14 +185,14 @@ However, larger propellers also require more power to spin.
     \subcaptionbox{Large size\label{fig:propellor-large}}{
         \includegraphics[height=1cm]{./drone-case-modules-propellor-2-large.jpg}
     }
-    \caption{Overview of the propeller modules.}
+    \caption{Overview of the propeller modules}
     \label{fig:propeller}
 \end{figure}
 
 \subsubsection{Batteries}
 \label{sec:batteries}
 
-A battery provides power for the drone to operate. 
+Batteries shown in \cref{fig:batteries} provide power for the drone to operate. 
 A smaller capacity battery is lighter and more compact, which can improve the agility and maneuverability of the drone. 
 However, smaller batteries have shorter flight times, which means that for longer flights a higher capacity battery is more suitable.
 
@@ -208,14 +208,14 @@ However, smaller batteries have shorter flight times, which means that for longe
     \subcaptionbox{Large size\label{fig:battery-large}}{
         \includegraphics[height=1cm]{./drone-case-modules-battery-large.jpg}
     }
-    \caption{Overview of the battery modules.}
+    \caption{Overview of the battery modules}
     \label{fig:batteries}
 \end{figure}
 
 \subsubsection{Frames}
 \label{sec:frames}
 
-Frames serve as the structure that holds all the other parts (including legs and motors) together. 
+Frames shown in \cref{fig:frames} serve as the structure that holds all the other parts (legs and motors are pre-installed) together. 
 A small frame is more maneuverable and agile, while a large frame offers more space for additional components (e.g. larger batteries).
 
 \begin{figure}[htbp]
@@ -227,49 +227,52 @@ A small frame is more maneuverable and agile, while a large frame offers more sp
         \includegraphics[height=2.1cm]{./LargeFrame.jpg}
     }
 
-    \caption{Overview of the frame modules.}
+    \caption{Overview of the frame modules}
     \label{fig:frames}
 \end{figure}
 
 \subsubsection{Covers}
 \label{sec:covers}
 
-Covers protect internal components of the drone, help to improve aerodynamics and serve an aesthetic purpose as well.
+Covers shown in \cref{fig:atomic-modules} protect internal components of the drone, help to improve aerodynamics and serve an aesthetic purpose as well.
 
 \begin{figure}[htbp]
     
     \subcaptionbox{Small cover\label{fig:cover-small}}{
-        \includegraphics[height=2.1cm]{./drone-case-modules-cover-small.jpg}
+        \includegraphics[height=1.5cm]{./drone-case-modules-cover-small.jpg}
     }
     \hfill
     \subcaptionbox{Large cover\label{fig:cover-large}}{
-        \includegraphics[height=2.1cm]{./drone-case-modules-cover-large.jpg}
+        \includegraphics[height=1.5cm]{./drone-case-modules-cover-large.jpg}
     }
-    \caption{Overview of the cover modules.}
+    \caption{Overview of the cover modules}
     \label{fig:atomic-modules}
 \end{figure}
 
 \subsection{Configuration options}
 \label{sec:configuration-options}
 
-TODO \cref{fig:feature-tree}
 
 \begin{figure*}[htbp]
     \includegraphics[width=\textwidth]{./FeatureTreeWithLegend3.jpg}
-    \caption{Overview of the configuration options for the drone use case.}
+    \caption{Overview of the configuration options for the drone use case}
     \label{fig:feature-tree}
 \end{figure*}
 
-The modules can be combined to design customized end products.  For that purpose, the FPV drone variability model is developed. 
+The modules can be combined to design customized end products.  
+For that purpose, the FPV drone variability model is developed. 
 When a customer wishes to design and buy a drone, multiple decisions have to be made before the final system can be build. 
-Figure 3 shows that the variation points Propeller, Battery, Frame and Cover have a mandatory dependency with the FPV drone, which means that they have to be included in the final product. 
-For each of these variation points a variant has to be selected. The variants are connected by an alternative choice dependency with a minimum and maximum equal to one, which means that only one variant has to be chosen to be included to the final product. 
-Additionally, two types of constraint dependencies exist: require constraint and exclude constraint. The require constraint means that when the small frame is selected, the small cover should be integrated to the system, and when the large frame is selected, the large cover should be integrated. 
+\cref{fig:feature-tree} shows that the variation points Propeller, Battery, Frame and Cover have a mandatory dependency with the FPV drone, which means that they have to be included in the final product. 
+For each of these variation points a variant has to be selected. 
+The variants are connected by an alternative choice dependency with a minimum and maximum equal to one, which means that only one variant has to be chosen to be included to the final product. 
+Additionally, two types of constraint dependencies exist: require constraint and exclude constraint. 
+The require constraint means that when the small frame is selected, the small cover should be integrated to the system, and when the large frame is selected, the large cover should be integrated. 
 The excluding constraint means that when a large propeller is selected, the small frame can not be integrated to the design and this relationship goes the other way round as well.
 
 \subsubsection{Interface constraints}
 
-Physical interfaces between interacting modules enable their geometric connection. A frame for the drone example has three interfaces: with a battery, with propellers and with a cover. 
+Physical interfaces between interacting modules enable their geometric connection. 
+A frame for the drone example has three interfaces: with the batteries, with the propellers and with the covers. 
 However, several geometrical constraints should be considered. These include:
 
 \begin{description}
@@ -278,24 +281,26 @@ For the drone example, the large frame can accommodate all three types of batter
     \item[Alignment constraints] Modules must be aligned properly to ensure proper functioning when assembled together. 
 For example, covers must be oriented correctly relative to frames to serve the protective and aesthetic purposes. 
     \item[Interference constraints] It is important to consider potential interferences between modules, such as conflicting shapes or components that may impede proper assembly or operation. 
-It is technically feasible to install any propeller on any frame, but practical constraints come into play. For instance, a large propeller cannot be mounted on a small frame without interference, as it would collide with the frame during rotation.
-These geometric restrictions cause constraint dependencies that are shown in Figure 3.
+It is technically feasible to install any propeller on any frame, but practical constraints come into play. 
+For instance, a large propeller cannot be mounted on a small frame without interference, as it would collide with the frame during rotation.
+\cref{fig:feature-tree} illustrates constraint dependencies caused by these geometric restrictions.
 \end{description}
 
 \subsection{150\% model}
 \label{sec:150-model}
 
 The case study demonstrates the utilization of digital LEGOs to create a 150\% model of a 3D drone architecture. 
-This model is build in LeoCAD\footnote{Official LeoCAD website: \url{https://leocad.org}}, a program that adheres to the LDraw standard\footnote{Official LDraw website: \url{https:/ldraw.org}}. 
+The model shown in \cref{fig:150-model} is built in LeoCAD\footnote{Official LeoCAD website: \url{https://leocad.org}}, a program that adheres to the LDraw standard\footnote{Official LDraw website: \url{https:/ldraw.org}}. 
 Within the structure of the LDraw file, a main document serves as the foundation where all three variants of the drone are instantiated. 
 Each variant is further segmented into submodels, which consist of modular components. 
 These modules are essentially instances of the submodels, all organized within the same file.
 
-The meta-model of the LDraw file is shown in the Figure 6. The file contains multiple assemblies. 
+\cref{fig:ldraw-standard} demonstrates a meta-model of the LDraw file. 
+The file contains multiple assemblies. 
 Each assembly contains multiple references, which point to either a model (which itself can contain sub-assemblies) or a brick. 
 The reference includes transformation data (position, orientation) and optional appearance data (color).
 
-The LDraw model shown in Figure 7 is the instance of the meta-model. 
+As it can be seen in \cref{fig:ldraw-model}, the LDraw model is the instance of the meta-model. 
 The main model serves as the primary assembly, the three different drone variants are also categorized as assemblies. 
 Moreover, components such as modules (e.g., covers, frames, batteries, and propellers) are also classified as assemblies. 
 An assembly consists of children, where each child is linked to either a brick or another assembly. 
@@ -322,7 +327,7 @@ This abundance of information extends beyond the actual requirements of a specif
 
 \begin{figure*}[htbp]
     \includegraphics[width=\textwidth]{./150_MODEL_6.jpg}
-    \caption{Overview of the 150\% model for the drone use case.}
+    \caption{Overview of the 150\% model for the drone use case}
     \label{fig:150-model}
 \end{figure*}
 
@@ -330,7 +335,14 @@ This abundance of information extends beyond the actual requirements of a specif
 \section{Conclusion}
 \label{sec:conclusion}
 
-TODO
+The knowledge acquired from the literature review coupled with the case study have provided a comprehensive demonstration of how SPLE principles can be effectively applied to the development of physical products. 
+
+Initially, atomic modules were created for FPV drones, allowing for the assembly of individual variants from these modules. 
+Subsequently, a robust variability model was developed. Finally, a comprehensive 150\% model was established for the drone use case. 
+
+By utilizing these methodologies, we were able to derive a product line comprising three distinct drone variants from the model. 
+This process highlighted how modularity, effective variability management, and systematic reuse strategies can significantly improve the design and production processes of physical products.
+
 
 \bibliography{main}
 \bibliographystyle{ACM-Reference-Format}
