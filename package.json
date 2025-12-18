@@ -36,6 +36,7 @@
         "packages/brep",
         "packages/freecad",
         "packages/common",
+        "packages/client",
         "packages/database",
         "packages/broker",
         "packages/backend",
