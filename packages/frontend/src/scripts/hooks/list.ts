@@ -1,8 +1,7 @@
 import * as React from 'react'
 
-import { CacheAPI } from '../clients/cache'
-import { ProductClient } from '../clients/rest/product'
-import { UserClient } from '../clients/rest/user'
+import { CacheAPI, ProductClient, UserClient } from 'productboard-client'
+
 import { UserContext } from '../contexts/User'
 
 type Entity = { created: number }

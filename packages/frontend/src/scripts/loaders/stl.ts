@@ -1,7 +1,7 @@
 import { EdgesGeometry, Group, LineBasicMaterial, LineSegments, Mesh, MeshPhongMaterial } from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
-import { CacheAPI } from '../clients/cache'
+import { CacheAPI } from 'productboard-client'
 
 const STL_LOADER = new STLLoader()
 

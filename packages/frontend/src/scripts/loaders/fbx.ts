@@ -1,6 +1,6 @@
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
-import { CacheAPI } from '../clients/cache'
+import { CacheAPI } from 'productboard-client'
 
 const FBX_LOADER = new FBXLoader()
 

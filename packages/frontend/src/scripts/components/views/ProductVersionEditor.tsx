@@ -4,7 +4,8 @@ import { useParams } from 'react-router'
 
 import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event, BoxHelper, BoxGeometry } from 'three'
 
-import { VersionClient } from '../../clients/rest/version'
+import { VersionClient } from 'productboard-client'
+
 import { VersionContext } from '../../contexts/Version'
 import { COLOR_S, COLOR_X, COLOR_Y, COLOR_Z, createScene } from '../../functions/editor'
 import { useVersion } from '../../hooks/entity'

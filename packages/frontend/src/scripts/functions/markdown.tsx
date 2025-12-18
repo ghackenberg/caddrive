@@ -3,10 +3,10 @@ import { MouseEvent } from "react"
 
 import * as jsxRuntime from 'react/jsx-runtime'
 import rehypeMermaid from 'rehype-mermaid'
-import rehypeReact, { Options } from "rehype-react"
-import remarkParse from "remark-parse"
-import remarkRehype from "remark-rehype"
-import { unified } from "unified"
+import rehypeReact, { Options } from 'rehype-react'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import { unified } from 'unified'
 
 import { CommentRead } from 'productboard-common'
 

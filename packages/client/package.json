@@ -41,6 +41,7 @@
         "loc": "sloc src"
     },
     "dependencies": {
-        "productboard-common": "^0.0.1"
+        "productboard-common": "^0.0.1",
+        "mqtt-match": "^3.0.0"
     }
 }

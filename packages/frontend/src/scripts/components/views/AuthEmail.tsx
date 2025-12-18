@@ -1,6 +1,7 @@
 import * as React from 'react'
 
-import { TokenClient } from '../../clients/rest/token'
+import { TokenClient } from 'productboard-client'
+
 import { AuthContext } from '../../contexts/Auth'
 import { useAsyncHistory } from '../../hooks/history'
 import { LegalFooter } from '../snippets/LegalFooter'

@@ -1,9 +1,9 @@
 import * as React from 'react'
 
+import { CacheAPI } from 'productboard-client'
 import { CommentRead, IssueRead } from 'productboard-common'
 
 import { useIssues } from './list'
-import { CacheAPI } from '../clients/cache'
 
 type Unsubscribe = () => void
 

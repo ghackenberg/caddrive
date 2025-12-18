@@ -3,9 +3,9 @@ import { useContext } from 'react'
 import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
+import { MilestoneClient } from 'productboard-client'
 import { MilestoneRead } from 'productboard-common'
 
-import { MilestoneClient } from '../../clients/rest/milestone'
 import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'

@@ -1,7 +1,7 @@
 import { Group } from 'three'
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader'
 
-import { CacheAPI } from '../clients/cache'
+import { CacheAPI } from 'productboard-client'
 
 const TEXT_DECODER = new TextDecoder()
 

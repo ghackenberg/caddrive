@@ -3,15 +3,12 @@ import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
 
 import { importJWK, JWK, jwtVerify, JWTVerifyResult } from 'jose'
 
+import { CacheAPI, MqttAPI, TokenClient, UserClient } from 'productboard-client'
 import { CommentRead, IssueRead, MemberRead, MilestoneRead, ProductRead, UserRead, VersionRead } from 'productboard-common'
 
 import { PageHeaderRoot } from './snippets/PageHeaderRoot'
 import { LoadingView } from './views/Loading'
 import { MissingView } from './views/Missing'
-import { CacheAPI } from '../clients/cache'
-import { MqttAPI } from '../clients/mqtt'
-import { TokenClient } from '../clients/rest/token'
-import { UserClient } from '../clients/rest/user'
 import { AuthContext } from '../contexts/Auth'
 import { CommentContext } from '../contexts/Comment'
 import { IssueContext } from '../contexts/Issue'

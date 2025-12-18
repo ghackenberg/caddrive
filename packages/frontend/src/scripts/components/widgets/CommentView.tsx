@@ -2,10 +2,9 @@ import * as React from 'react'
 
 import { Object3D } from 'three'
 
+import { AttachmentClient, CommentClient } from 'productboard-client'
 import { VersionRead } from 'productboard-common'
 
-import { AttachmentClient } from '../../clients/rest/attachment'
-import { CommentClient } from '../../clients/rest/comment'
 import { CommentContext } from '../../contexts/Comment'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'

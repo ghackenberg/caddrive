@@ -3,9 +3,9 @@ import { useContext } from 'react'
 import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
+import { MemberClient } from 'productboard-client'
 import { MemberRead } from 'productboard-common'
 
-import { MemberClient } from '../../clients/rest/member'
 import { UserContext } from '../../contexts/User'
 import { useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'

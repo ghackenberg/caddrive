@@ -1,4 +1,4 @@
-import { VersionRead } from "productboard-common"
+import { VersionRead } from 'productboard-common'
 
 export function computeColor(versions: VersionRead[]) {
 

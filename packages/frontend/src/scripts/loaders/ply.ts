@@ -1,7 +1,7 @@
 import { EdgesGeometry, Group, LineBasicMaterial, LineSegments, Mesh, MeshPhongMaterial } from 'three'
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
 
-import { CacheAPI } from '../clients/cache'
+import { CacheAPI } from 'productboard-client'
 
 const TEXT_DECODER = new TextDecoder()
 

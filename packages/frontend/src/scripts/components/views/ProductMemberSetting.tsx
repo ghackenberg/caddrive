@@ -2,11 +2,9 @@ import  * as React from 'react'
 import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
 import { Redirect, useLocation, useParams } from 'react-router'
 
+import { CacheAPI, MemberClient, UserClient } from 'productboard-client'
 import { MemberRole, UserRead } from 'productboard-common'
 
-import { CacheAPI } from '../../clients/cache'
-import { MemberClient } from '../../clients/rest/member'
-import { UserClient } from '../../clients/rest/user'
 import { UserContext } from '../../contexts/User'
 import { useMember, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'

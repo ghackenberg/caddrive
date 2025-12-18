@@ -5,11 +5,10 @@ import { Redirect, useLocation, useParams } from 'react-router'
 import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
 
+import { CacheAPI, VersionClient } from 'productboard-client'
 import { VersionRead } from 'productboard-common'
 import { parseFreeCADModel } from 'productboard-freecad'
 
-import { CacheAPI } from '../../clients/cache'
-import { VersionClient } from '../../clients/rest/version'
 import { UserContext } from '../../contexts/User'
 import { VersionContext } from '../../contexts/Version'
 import { useProduct, useVersion } from '../../hooks/entity'

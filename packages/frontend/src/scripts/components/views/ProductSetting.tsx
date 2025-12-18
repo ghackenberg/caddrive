@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { Redirect, useLocation, useParams } from 'react-router'
 
-import { ProductClient } from '../../clients/rest/product'
+import { ProductClient } from 'productboard-client'
+
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'
 import { useProduct } from '../../hooks/entity'

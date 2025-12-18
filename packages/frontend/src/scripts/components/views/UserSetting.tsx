@@ -2,9 +2,9 @@ import  * as React from 'react'
 import { useState, useEffect, FormEvent, useContext } from 'react'
 import { Redirect, useParams } from 'react-router'
 
+import { auth, UserClient } from 'productboard-client'
+
 import { LoadingView } from './Loading'
-import { auth } from '../../clients/auth'
-import { UserClient } from '../../clients/rest/user'
 import { UserContext } from '../../contexts/User'
 import { useUser } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'

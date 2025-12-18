@@ -1,6 +1,7 @@
 import * as React from 'react'
 
-import { CacheAPI } from '../clients/cache'
+import { CacheAPI } from 'productboard-client'
+
 import { UserContext } from '../contexts/User'
 
 type Entity = { updated: number }

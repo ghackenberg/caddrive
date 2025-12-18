@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { Redirect } from 'react-router'
 
-import { UserClient } from '../../clients/rest/user'
+import { UserClient } from 'productboard-client'
+
 import { AuthContext } from '../../contexts/Auth'
 import { useAsyncHistory } from '../../hooks/history'
 import { LegalFooter } from '../snippets/LegalFooter'

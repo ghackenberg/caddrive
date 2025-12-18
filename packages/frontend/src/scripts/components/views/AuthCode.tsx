@@ -2,10 +2,8 @@ import * as React from 'react'
 
 import { JWK, JWTVerifyResult, importJWK, jwtVerify } from 'jose'
 
-import { auth } from '../../clients/auth'
-import { CacheAPI } from '../../clients/cache'
-import { TokenClient } from '../../clients/rest/token'
-import { UserClient } from '../../clients/rest/user'
+import { auth, CacheAPI, TokenClient, UserClient } from 'productboard-client'
+
 import { AuthContext } from '../../contexts/Auth'
 import { UserContext } from '../../contexts/User'
 import { useAsyncHistory } from '../../hooks/history'

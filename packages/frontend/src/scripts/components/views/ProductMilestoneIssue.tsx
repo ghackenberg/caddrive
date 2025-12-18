@@ -3,9 +3,9 @@ import { useState, useEffect, useContext } from 'react'
 import { Redirect, useLocation, useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
 
+import { CommentClient } from 'productboard-client'
 import { IssueRead } from 'productboard-common'
 
-import { CommentClient } from '../../clients/rest/comment'
 import { UserContext } from '../../contexts/User'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'

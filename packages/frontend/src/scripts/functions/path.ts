@@ -1,4 +1,4 @@
-import { Object3D } from "three"
+import { Object3D } from 'three'
 
 export function computePath(object: Object3D) {
     let path = ''

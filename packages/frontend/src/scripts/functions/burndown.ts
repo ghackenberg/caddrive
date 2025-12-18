@@ -1,4 +1,4 @@
-import { CommentRead, IssueRead } from "productboard-common"
+import { CommentRead, IssueRead } from 'productboard-common'
 
 export function calculateActual(startDate: number, endDate: number, issues: IssueRead[], comments: {[id: string]: CommentRead[]}) {
 

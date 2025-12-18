@@ -1,9 +1,8 @@
-import * as THREE from "three"
+import * as THREE from 'three'
 import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
 
-import { Model, Parser } from "productboard-ldraw"
-
-import { CacheAPI } from "../clients/cache"
+import { CacheAPI } from 'productboard-client'
+import { Model, Parser } from 'productboard-ldraw'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const empty = (_part: string, _loaded: number, _total: number) => {/**/}

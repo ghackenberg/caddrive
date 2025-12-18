@@ -2,8 +2,9 @@ import  * as React from 'react'
 import { useContext, useState, useEffect, FormEvent } from 'react'
 import { Redirect, useLocation, useParams } from 'react-router'
 
+import { MilestoneClient } from 'productboard-client'
+
 import { UserContext } from '../../contexts/User'
-import { MilestoneClient } from '../../clients/rest/milestone'
 import { calculateActual } from '../../functions/burndown'
 import { useMilestone, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'

@@ -1,7 +1,7 @@
-import { useLocation } from "react-router"
+import { useLocation } from 'react-router'
 
-import { useAsyncHistory } from "./history"
-import { PRODUCTS_4, PRODUCTS_6 } from "../pattern"
+import { useAsyncHistory } from './history'
+import { PRODUCTS_4, PRODUCTS_6 } from '../pattern'
 
 export function useNavigationStack() {
 

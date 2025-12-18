@@ -2,9 +2,9 @@ import  * as React from 'react'
 import { useState, useEffect, useContext, FormEvent } from 'react'
 import { Redirect, useLocation, useParams } from 'react-router'
 
+import { IssueClient } from 'productboard-client'
 import { MemberRead } from 'productboard-common'
 
-import { IssueClient } from '../../clients/rest/issue'
 import { UserContext } from '../../contexts/User'
 import { useIssue, useProduct } from '../../hooks/entity'
 import { useAsyncHistory } from '../../hooks/history'
