@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { ForbiddenException, NotFoundException } from '@nestjs/common'
-
-import { In, IsNull } from 'typeorm'
-
 import { UserRead } from 'productboard-common'
 import { getAttachmentOrFail, getCommentOrFail, getIssueOrFail, getMemberOrFail, getMilestoneOrFail, getProductOrFail, getVersionOrFail } from 'productboard-database'
+import { In, IsNull } from 'typeorm'
 
 // USER
 

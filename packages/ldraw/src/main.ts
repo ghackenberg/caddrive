@@ -1,2 +1,2 @@
-export * from './model'
-export * from './parser'
+export * from './model.js'
+export * from './parser.js'

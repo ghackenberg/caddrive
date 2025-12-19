@@ -1,7 +1,6 @@
-import * as React from 'react'
-
-import { CacheAPI } from '../clients/cache'
-import { UserContext } from '../contexts/User'
+import { useContext, useEffect, useState } from 'react'
+import { CacheAPI } from '../clients/cache.js'
+import { UserContext } from '../contexts/User.js'
 
 type Entity = { updated: number }
 type Update<T> = (value: T) => void
@@ -17,11 +16,11 @@ function valid(ids: string[]) {
 // Entity
 
 export function useEntity<T extends Entity>(ids: string[], initialValue: T, subscribe: Subscribe<T>) {
-    const { contextUser } = React.useContext(UserContext)
+    const { contextUser } = useContext(UserContext)
 
-    const [value, setValue] = React.useState(initialValue)
+    const [value, setValue] = useState(initialValue)
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (valid(ids)) {
             return subscribe(setValue)
         } else {

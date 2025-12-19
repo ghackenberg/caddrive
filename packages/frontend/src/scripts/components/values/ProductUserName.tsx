@@ -1,7 +1,5 @@
-import * as React from 'react'
-
-import { useUser } from '../../hooks/entity'
-import { useMembers } from '../../hooks/list'
+import { useUser } from '../../hooks/entity.js'
+import { useMembers } from '../../hooks/list.js'
 
 export const ProductUserName = (props: { productId: string, userId: string, class?: string }) => {
     // HOOKS

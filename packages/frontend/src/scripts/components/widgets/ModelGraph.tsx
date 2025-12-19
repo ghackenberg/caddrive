@@ -1,15 +1,11 @@
-import * as React from 'react'
-
 import { Group, Object3D } from 'three'
-
-import { comparePath } from '../../functions/path'
-
-import ObjectIcon from '/src/images/types/Object.png'
+import { comparePath } from '../../functions/path.js'
+import BoneIcon from '/src/images/types/Bone.png'
+import CameraIcon from '/src/images/types/Camera.png'
 import GroupIcon from '/src/images/types/Group.png'
 import LineIcon from '/src/images/types/Line.png'
 import MeshIcon from '/src/images/types/Mesh.png'
-import BoneIcon from '/src/images/types/Bone.png'
-import CameraIcon from '/src/images/types/Camera.png'
+import ObjectIcon from '/src/images/types/Object.png'
 
 const icons: {[key: string]: string} = {
     Object3D: ObjectIcon,

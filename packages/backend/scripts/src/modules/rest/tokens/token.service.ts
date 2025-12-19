@@ -1,17 +1,14 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common"
 import { REQUEST } from "@nestjs/core"
-
 import { SignJWT } from 'jose'
 import { getTestMessageUrl } from "nodemailer"
-import shortid from "shortid"
-
 import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenREST, TokenRefreshResponse, UserRead } from "productboard-common"
 import { Database, getTokenOrFail, getUserOrFail } from "productboard-database"
-
-import { emitUserMessage } from "../../../functions/emit"
-import { TRANSPORTER } from "../../../functions/mail"
-import { KEY_PAIR } from "../../../key"
-import { AuthorizedRequest } from "../../../request"
+import shortid from "shortid"
+import { emitUserMessage } from "../../../functions/emit.js"
+import { TRANSPORTER } from "../../../functions/mail.js"
+import { KEY_PAIR } from "../../../key.js"
+import { AuthorizedRequest } from "../../../request.js"
 
 function generateCode() {
     let code = ''

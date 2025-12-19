@@ -1,6 +1,5 @@
 import axios from "axios"
 import { JWK } from "jose"
-
 import { KeyREST } from "productboard-common"
 
 class KeyClientImpl implements KeyREST {

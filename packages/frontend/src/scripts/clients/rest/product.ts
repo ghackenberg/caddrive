@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { ProductCreate, ProductREST, ProductRead, ProductUpdate } from 'productboard-common'
-
-import { auth } from '../auth'
-import { CacheAPI } from '../cache'
+import { auth } from '../auth.js'
+import { CacheAPI } from '../cache.js'
 
 class ProductClientImpl implements ProductREST {
     async findProducts(_public?: 'true' | 'false'): Promise<ProductRead[]> {

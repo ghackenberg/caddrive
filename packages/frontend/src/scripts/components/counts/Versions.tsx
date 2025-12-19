@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { useVersions } from '../../hooks/list'
+import { useVersions } from '../../hooks/list.js'
 
 export const VersionCount = (props: { productId: string }) => {
     const versions = useVersions(props.productId)

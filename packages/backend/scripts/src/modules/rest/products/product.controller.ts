@@ -1,13 +1,11 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { ApiBody, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger'
-
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { ProductCreate, ProductREST, ProductRead, ProductUpdate } from 'productboard-common'
-
-import { ProductService } from './product.service'
-import { canReadProductOrFail, canUpdateProductOrFail, canDeleteProductOrFail, canCreateProductOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canCreateProductOrFail, canDeleteProductOrFail, canReadProductOrFail, canUpdateProductOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { ProductService } from './product.service.js'
 
 @Controller('rest/products')
 @UseGuards(TokenOptionalGuard)

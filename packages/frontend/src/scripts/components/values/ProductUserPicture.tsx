@@ -1,8 +1,5 @@
-import * as React from 'react'
-
-import { useUser } from '../../hooks/entity'
-import { useMembers } from '../../hooks/list'
-
+import { useUser } from '../../hooks/entity.js'
+import { useMembers } from '../../hooks/list.js'
 import DiagonalIcon from '/src/images/diagonal.png'
 import LoadIcon from '/src/images/load.png'
 import PixelIcon from '/src/images/pixel.png'

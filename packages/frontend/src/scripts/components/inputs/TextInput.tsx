@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { GenericInput } from './GenericInput'
+import { GenericInput } from './GenericInput.js'
 
 export const TextInput = (props: {class?: string, value: string, label?: string, input?: (value: string) => void, change?: (value: string) => void, placeholder?: string, disabled?: boolean, required?: boolean}) => {
     const label = props.label

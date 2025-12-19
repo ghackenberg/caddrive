@@ -1,7 +1,6 @@
-import * as React from 'react'
-
-import { collectParts } from '../../functions/markdown'
-import { useComments } from '../../hooks/list'
+import { useEffect, useState } from 'react'
+import { collectParts } from '../../functions/markdown.js'
+import { useComments } from '../../hooks/list.js'
 
 export const PartCount = (props: { productId: string, issueId: string }) => {
     const productId = props.productId
@@ -12,10 +11,10 @@ export const PartCount = (props: { productId: string, issueId: string }) => {
     const initialCommentsPartCount = comments && comments.map(comment => collectParts(comment.text).length)
     const initialPartCount = initialCommentsPartCount && initialCommentsPartCount.reduce((a, b) => a + b, 0)
 
-    const [commentsPartCount, setCommentsPartCount] = React.useState(initialCommentsPartCount)
-    const [partCount, setPartCount] = React.useState(initialPartCount)
+    const [commentsPartCount, setCommentsPartCount] = useState(initialCommentsPartCount)
+    const [partCount, setPartCount] = useState(initialPartCount)
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (comments) {
             setCommentsPartCount(comments.map(comment => collectParts(comment.text).length))
         } else {
@@ -23,7 +22,7 @@ export const PartCount = (props: { productId: string, issueId: string }) => {
         }
     }, [comments])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (commentsPartCount != undefined) {
             setPartCount(commentsPartCount.reduce((a, b) => a + b, 0))
         } else {

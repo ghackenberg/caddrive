@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import { MilestoneRead } from 'productboard-common'
 
 export const MilestoneProgressWidget = (props: { milestone: MilestoneRead }) => {

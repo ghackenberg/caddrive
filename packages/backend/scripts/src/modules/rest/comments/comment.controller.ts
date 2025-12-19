@@ -1,15 +1,12 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiResponse } from '@nestjs/swagger'
-
 import 'multer'
-
 import { CommentCreate, CommentREST, CommentRead, CommentUpdate } from 'productboard-common'
-
-import { CommentService } from './comment.service'
-import { canReadCommentOrFail, canUpdateCommentOrFail, canDeleteCommentOrFail, canCreateCommentOrFail, canFindCommentOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canCreateCommentOrFail, canDeleteCommentOrFail, canFindCommentOrFail, canReadCommentOrFail, canUpdateCommentOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { CommentService } from './comment.service.js'
 
 @Controller('rest/products/:productId/issues/:issueId/comments')
 @UseGuards(TokenOptionalGuard)

@@ -1,21 +1,17 @@
-import * as React from 'react'
 import { useEffect, useState } from 'react'
-
 import { Group, Object3D } from 'three'
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader'
-
-import { loadColladaModel } from '../../loaders/collada'
-import { loadFBXModel } from '../../loaders/fbx'
-import { loadFreeCADModel } from '../../loaders/freecad'
-import { loadGLTFModel } from '../../loaders/gltf'
-import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw'
-import { loadPLYModel } from '../../loaders/ply'
-import { loadSTEPModel } from '../../loaders/step'
-import { loadSTLModel } from '../../loaders/stl'
-import { computePath } from '../../functions/path'
-import { ModelGraph } from './ModelGraph'
-import { ModelView3D } from './ModelView3D'
-
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { computePath } from '../../functions/path.js'
+import { loadColladaModel } from '../../loaders/collada.js'
+import { loadFBXModel } from '../../loaders/fbx.js'
+import { loadFreeCADModel } from '../../loaders/freecad.js'
+import { loadGLTFModel } from '../../loaders/gltf.js'
+import { loadLDrawModel, pauseLoadLDrawPath, resumeLoadLDrawPath } from '../../loaders/ldraw.js'
+import { loadPLYModel } from '../../loaders/ply.js'
+import { loadSTEPModel } from '../../loaders/step.js'
+import { loadSTLModel } from '../../loaders/stl.js'
+import { ModelGraph } from './ModelGraph.js'
+import { ModelView3D } from './ModelView3D.js'
 import LoadIcon from '/src/images/load.png'
 
 type Callback = (part: string, loaded: number, total: number) => void

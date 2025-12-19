@@ -1,16 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-
 import { getTestMessageUrl } from 'nodemailer'
-import shortid from 'shortid'
-import { IsNull } from 'typeorm'
-
 import { MemberCreate, MemberREST, MemberRead, MemberUpdate, ProductRead } from 'productboard-common'
 import { Database, convertMember } from 'productboard-database'
-
-import { emitProductMessage } from '../../../functions/emit'
-import { TRANSPORTER } from '../../../functions/mail'
-import { AuthorizedRequest } from '../../../request'
+import shortid from 'shortid'
+import { IsNull } from 'typeorm'
+import { emitProductMessage } from '../../../functions/emit.js'
+import { TRANSPORTER } from '../../../functions/mail.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 @Injectable()
 export class MemberService implements MemberREST {

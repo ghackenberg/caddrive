@@ -1,8 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
-
-import { IssueEntity } from './issue'
-import { ProductEntity } from './product'
-import { UserEntity } from './user'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
+import { IssueEntity } from './issue.js'
+import { ProductEntity } from './product.js'
+import { UserEntity } from './user.js'
 
 @Entity()
 export class CommentEntity {
@@ -17,13 +16,13 @@ export class CommentEntity {
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
-    product: ProductEntity
+    product: Relation<ProductEntity>
     @ManyToOne(() => IssueEntity)
     @JoinColumn({ name: 'issueId' })
-    issue: IssueEntity
+    issue: Relation<IssueEntity>
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
-    user: UserEntity
+    user: Relation<UserEntity>
 
     @Column({ nullable: false })
     created: number

@@ -1,10 +1,8 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "target": "ES2017",
-        "rootDirs": ["src/scripts", "../common/src", "../ldraw/src", "../brep/src", "../freecad/src", "../codeaster/src"],
-        "outDir": "bin/scripts",
-        "lib": ["ES2017", "DOM"],
-        "jsx": "react"
+        "rootDirs": ["src/scripts", "../common/src", "../brep/src", "../freecad/src", "../ldraw/src"],
+        "lib": ["DOM"],
+        "jsx": "react-jsx"
     }
 }

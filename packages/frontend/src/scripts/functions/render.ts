@@ -1,5 +1,5 @@
-import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, Group, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 const scene = initializeScene()
 const camera = initializeCamera()
@@ -32,7 +32,6 @@ export function initializeCamera(aspect = 1, near = 1, far = 1) {
 
 export function initializeRenderer(width = 1, height = 1, loop: XRFrameRequestCallback = undefined) {
     const renderer = new WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true })
-    renderer.outputEncoding = sRGBEncoding
     renderer.toneMapping = ACESFilmicToneMapping
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(width, height)

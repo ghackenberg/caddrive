@@ -1,21 +1,16 @@
 import 'process/browser'
-
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import { Helmet } from 'react-helmet'
-import { BrowserRouter } from 'react-router-dom'
-
+import { lazy, Suspense } from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router'
 import './clients/mqtt'
-import { PageHeaderBoot } from './components/snippets/PageHeaderBoot'
-import { LoadingView } from './components/views/Loading'
+import { PageHeaderBoot } from './components/snippets/PageHeaderBoot.js'
+import { LoadingView } from './components/views/Loading.js'
 import './plausible'
 import './worker'
-
 import AppIcon from '/src/images/app.png'
-
 import '/src/styles/root.css'
 
-const Root = React.lazy(() => import('./components/Root'))
+const Root = lazy(() => import('./components/Root.js'))
 
 const Fallback = () => {
     return (
@@ -27,18 +22,18 @@ const Fallback = () => {
 }
 
 // Create root
-const root = document.createElement('div')
+const container = document.createElement('div')
 // Append root
-document.body.appendChild(root)
+document.body.appendChild(container)
+// Create root
+const root = createRoot(container)
 // Render root
-ReactDOM.render((
+root.render(
     <BrowserRouter>
-        <Helmet>
-            <title>CADdrive - Your collaborative workspace for LDraw&trade; models</title>
-            <link rel="icon" href={AppIcon}/>
-        </Helmet>
-        <React.Suspense fallback={<Fallback/>}>
+        <title>CADdrive - Your collaborative workspace for LDraw&trade; models</title>
+        <link rel="icon" href={AppIcon}/>
+        <Suspense fallback={<Fallback/>}>
             <Root/>
-        </React.Suspense>
+        </Suspense>
     </BrowserRouter>
-), root)
+)

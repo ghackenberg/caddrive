@@ -1,21 +1,18 @@
-import http from 'http'
-import net from 'net'
-
-import Aedes from 'aedes'
+import aedes from 'aedes'
 import axios from "axios"
-import { importJWK, jwtVerify, JWK, KeyLike } from 'jose'
-import { exec } from 'mqtt-pattern'
-import { IsNull } from 'typeorm'
-import ws from 'ws'
-
-import { ProductMessage, UserMessage } from 'productboard-common'
+import http from 'http'
+import { JWK, importJWK, jwtVerify } from 'jose'
+import net from 'net'
+import { ProductMessage, UserMessage, matchProductTopic, matchUserTopic } from 'productboard-common'
 import { Database, compileProductMessage, compileUserMessage } from 'productboard-database'
+import { IsNull } from 'typeorm'
+import { WebSocketServer, createWebSocketStream } from 'ws'
 
 type Index<T> = { [key: string]: T }
 
 // Variables
 
-let JWK_PUBLIC_KEY: KeyLike | Uint8Array // Load JWT public key from Nest.js backend later!
+let JWK_PUBLIC_KEY: CryptoKey | Uint8Array // Load JWT public key from Nest.js backend later!
 
 // Constants
 
@@ -66,11 +63,11 @@ async function boot() {
 
     // MQTT Broker
 
-    const aedes = new Aedes()
+    const broker = aedes.createBroker()
 
     // MQTT Broker - Authenticate
 
-    aedes.authenticate = async (client, username, _password, callback) => {
+    broker.authenticate = async (client, username, _password, callback) => {
         try {
 
             console.log(new Date(), 'authenticate', client.id)
@@ -111,17 +108,14 @@ async function boot() {
 
     // MQTT Broker - Authorize
 
-    aedes.authorizeSubscribe = async (client, subscription, callback) => {
+    broker.authorizeSubscribe = async (client, subscription, callback) => {
         try {
 
             console.log(new Date(), 'authorizeSubscribe', client.id, subscription.topic)
 
             // User topics do not require any further action
-            const userMatch = exec('/users/+userId', subscription.topic)
-            if (userMatch) {
-                // Parse topic
-                const userId = userMatch.userId
-
+            const userId = matchUserTopic(subscription.topic)
+            if (userId) {
                 // Schedule initialization
                 setTimeout(async () => {
                     const users = await Database.get().userRepository.findBy({ userId, deleted: IsNull() })
@@ -145,11 +139,8 @@ async function boot() {
             }
 
             // For product topics, the product data has to be loaded
-            const productMatch = exec('/products/+productId', subscription.topic)
-            if (productMatch) {
-                // Parse topic
-                const productId = productMatch.productId
-
+            const productId = matchProductTopic(subscription.topic)
+            if (productId) {
                 // Load product public
                 if (!(productId in PRODUCT_PUBLIC)) {
                     const product = await Database.get().productRepository.findOneByOrFail({ productId, deleted: IsNull() })
@@ -206,7 +197,7 @@ async function boot() {
         }
     }
     
-    aedes.authorizePublish = async (client, packet, callback) => {
+    broker.authorizePublish = async (client, packet, callback) => {
 
         console.log(new Date(), 'authorizePublish', client.id, packet.topic)
 
@@ -217,10 +208,9 @@ async function boot() {
             callback(null)
 
             // Update user admin
-            const userMatch = exec('/users/+userId', packet.topic)
-            if (userMatch) {
-                // Parse topic and payload
-                const userId = userMatch.userId
+            const userId = matchUserTopic(packet.topic)
+            if (userId) {
+                // Parse payload
                 const userMessage = JSON.parse(packet.payload.toString()) as UserMessage
 
                 // Update user asdmin
@@ -231,10 +221,9 @@ async function boot() {
             }
 
             // Update product public
-            const productMatch = exec('/products/+productId', packet.topic)
-            if (productMatch) {
-                // Parse topic and payload
-                const productId = productMatch.productId
+            const productId = matchProductTopic(packet.topic)
+            if (productId) {
+                // Parse payload
                 const productMessage = JSON.parse(packet.payload.toString()) as ProductMessage
 
                 // Update product public
@@ -257,23 +246,22 @@ async function boot() {
         }
     }
 
-    aedes.authorizeForward = (client, packet) => {
+    broker.authorizeForward = (client, packet) => {
 
         console.log(new Date(), 'authorizeForward', client.id, packet.topic)
 
         // User topics can be forwarded without further checks
-        const userMatch = exec('/users/+userId', packet.topic)
-        if (userMatch) {
+        const userId = matchUserTopic(packet.topic)
+        if (userId) {
             // Allow forward
             return packet
         }
 
         // Product topics have to be checked more carefully
-        const productMatch = exec('/products/+productId', packet.topic)
-        if (productMatch) {
-            // Get IDs
+        const productId = matchProductTopic(packet.topic)
+        if (productId) {
+            // Get user ID
             const userId = CLIENT_USER_IDS[client.id]
-            const productId = productMatch.productId
 
             // Check user admin
             if (USER_ADMINS[userId]) {
@@ -301,22 +289,22 @@ async function boot() {
 
     // MQTT Broker - Events
 
-    aedes.on('subscribe', (subscriptions, client) => {
+    broker.on('subscribe', (subscriptions, client) => {
 
         console.log(new Date(), 'subscribe', client.id, subscriptions[0].topic)
 
     })
-    aedes.on('unsubscribe', (unsubscriptions, client) => {
+    broker.on('unsubscribe', (unsubscriptions, client) => {
 
         console.log(new Date(), 'unsubscribe', client.id, unsubscriptions[0])
 
     })
-    aedes.on('publish', (packet, client) => {
+    broker.on('publish', (packet, client) => {
 
         client && console.log(new Date(), 'publish', client.id, packet.topic)
 
     })
-    aedes.on('clientDisconnect', client => {
+    broker.on('clientDisconnect', client => {
 
         console.log(new Date(), 'clientDisconnect', client.id)
 
@@ -325,7 +313,7 @@ async function boot() {
 
     // Net server
 
-    const netServer = net.createServer(socket => aedes.handle(socket, undefined))
+    const netServer = net.createServer(socket => broker.handle(socket, undefined))
     netServer.listen(NET_PORT, () => {
 
         console.log(new Date(), 'NET server listening')
@@ -343,10 +331,10 @@ async function boot() {
 
     // WebSocket server
 
-    const wsServer = new ws.Server({ server: httpServer })
+    const wsServer = new WebSocketServer({ server: httpServer })
     wsServer.on('connection', (socket, request) => {
-        const stream = ws.createWebSocketStream(socket)
-        aedes.handle(stream, request)
+        const stream = createWebSocketStream(socket)
+        broker.handle(stream, request)
     })
 }
 

@@ -1,28 +1,24 @@
-import  * as React from 'react'
-import { useState, useEffect, Fragment, FormEvent, useContext } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-
 import { MemberRole, UserRead } from 'productboard-common'
-
-import { CacheAPI } from '../../clients/cache'
-import { MemberClient } from '../../clients/rest/member'
-import { UserClient } from '../../clients/rest/user'
-import { UserContext } from '../../contexts/User'
-import { useMember, useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useMembers } from '../../hooks/list'
-import { ButtonInput } from '../inputs/ButtonInput'
-import { TextInput } from '../inputs/TextInput'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { Column, Table } from '../widgets/Table'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { UserPictureWidget } from '../widgets/UserPicture'
-import { LoadingView } from './Loading'
-
+import { FormEvent, Fragment, useContext, useEffect, useState } from 'react'
+import { Navigate, useLocation, useParams } from 'react-router'
+import { CacheAPI } from '../../clients/cache.js'
+import { MemberClient } from '../../clients/rest/member.js'
+import { UserClient } from '../../clients/rest/user.js'
+import { UserContext } from '../../contexts/User.js'
+import { useMember, useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useMembers } from '../../hooks/list.js'
+import { ButtonInput } from '../inputs/ButtonInput.js'
+import { TextInput } from '../inputs/TextInput.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { Column, Table } from '../widgets/Table.js'
+import { UserPictureWidget } from '../widgets/UserPicture.js'
+import { LoadingView } from './Loading.js'
 import DeleteIcon from '/src/images/delete.png'
-import LeftIcon from '/src/images/setting.png'
 import RightIcon from '/src/images/part.png'
+import LeftIcon from '/src/images/setting.png'
 
 const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 
@@ -157,7 +153,7 @@ export const ProductMemberSettingView = () => {
     return (
         (product && members) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className={`view product-member-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>

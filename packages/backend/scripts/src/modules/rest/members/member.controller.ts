@@ -1,13 +1,11 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
-
 import { MemberCreate, MemberREST, MemberRead, MemberUpdate } from 'productboard-common'
-
-import { MemberService } from './member.service'
-import { canReadMemberOrFail, canUpdateMemberOrFail, canDeleteMemberOrFail, canFindMemberOrFail, canCreateMemberOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canCreateMemberOrFail, canDeleteMemberOrFail, canFindMemberOrFail, canReadMemberOrFail, canUpdateMemberOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { MemberService } from './member.service.js'
 
 @Controller('rest/products/:productId/members')
 @UseGuards(TokenOptionalGuard)

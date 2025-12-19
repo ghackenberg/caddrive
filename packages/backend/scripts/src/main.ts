@@ -1,18 +1,14 @@
-import { existsSync, mkdirSync, readFileSync } from 'fs'
-
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-
 import compression from 'compression'
 import { json, NextFunction, Request, Response, urlencoded } from 'express'
-import Jimp from 'jimp'
-import { IsNull } from 'typeorm'
-
+import { existsSync, mkdirSync, readFileSync } from 'fs'
+import { JimpInstance } from 'jimp'
 import { Database } from 'productboard-database'
-
-import './mqtt'
-import { renderGlb, renderLDraw } from './functions/render'
-import { RESTModule } from './modules/rest.module'
+import { IsNull } from 'typeorm'
+import { renderGlb, renderLDraw } from './functions/render.js'
+import { RESTModule } from './modules/rest.module.js'
+import './mqtt.js'
 
 // Polyfill class ProgressEvent on Node.js backend
 if (!global.ProgressEvent) {
@@ -101,9 +97,9 @@ async function fix() {
     }
 }
 
-async function updateImage(productId: string, versionId: string, image: Jimp) {
+async function updateImage(productId: string, versionId: string, image: JimpInstance) {
     // Save image
-    await image.writeAsync(`./uploads/${versionId}.png`)
+    await image.write(`./uploads/${versionId}.png`)
     // Update version
     const version = await Database.get().versionRepository.findOneBy({ productId, versionId })
     version.updated = Date.now()

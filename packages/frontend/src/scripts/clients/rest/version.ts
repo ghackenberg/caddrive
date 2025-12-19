@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
-
-import { auth } from '../auth'
-import { CacheAPI } from '../cache'
+import { auth } from '../auth.js'
+import { CacheAPI } from '../cache.js'
 
 class VersionClientImpl implements VersionREST<VersionCreate, VersionUpdate, Blob, Blob> {
     async findVersions(productId: string): Promise<VersionRead[]> {

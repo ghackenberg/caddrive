@@ -1,10 +1,8 @@
-import * as React from 'react'
-
-import { Scene, PerspectiveCamera, WebGLRenderer, Group, Object3D, Raycaster, Vector2, Mesh, Material, MeshStandardMaterial, Vector3, Intersection, Event } from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-
-import { comparePath } from '../../functions/path'
-import { initializeCamera, initializeOrbit, initializeRenderer, initializeScene, reset } from '../../functions/render'
+import { Component, createRef } from 'react'
+import { Group, Intersection, Material, Mesh, MeshStandardMaterial, Object3D, PerspectiveCamera, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { comparePath } from '../../functions/path.js'
+import { initializeCamera, initializeOrbit, initializeRenderer, initializeScene, reset } from '../../functions/render.js'
 
 const THRESHOLD = 3
 
@@ -15,14 +13,14 @@ interface Props {
     marked?: string[]
     selected?: string[]
 
-    onMouseOver?: (object: Object3D, intersections: Intersection<Object3D<Event>>[]) => void
-    onMouseOut?: (object: Object3D, intersections: Intersection<Object3D<Event>>[]) => void
+    onMouseOver?: (object: Object3D, intersections: Intersection<Object3D>[]) => void
+    onMouseOut?: (object: Object3D, intersections: Intersection<Object3D>[]) => void
     
-    onClick?: (object: Object3D, intersections: Intersection<Object3D<Event>>[], isCtrlPressed: boolean) => void
+    onClick?: (object: Object3D, intersections: Intersection<Object3D>[], isCtrlPressed: boolean) => void
 
     onKeyDown?: (event: React.KeyboardEvent) => void
 
-    onPartDragStart?: (object: Object3D, intersections: Intersection<Object3D<Event>>[], pos: Vector3) => void
+    onPartDragStart?: (object: Object3D, intersections: Intersection<Object3D>[], pos: Vector3) => void
     onPartDrag?: (pos: Vector3) => void
     onPartDrop?: (pos: Vector3) => void
     onPartDropLeave?: () => void
@@ -37,7 +35,7 @@ interface Props {
     onNewPartDragLeave?: () => void
 }
 
-export class ModelView3D extends React.Component<Props> {
+export class ModelView3D extends Component<Props> {
 
     // Fields
 
@@ -53,7 +51,7 @@ export class ModelView3D extends React.Component<Props> {
     private position_start: {clientX: number, clientY: number}
     private position_end: {clientX: number, clientY: number}
     
-    private intersections: Intersection<Object3D<Event>>[] = []
+    private intersections: Intersection<Object3D>[] = []
     private hovered: Object3D
 
     // Constructor
@@ -61,7 +59,7 @@ export class ModelView3D extends React.Component<Props> {
     constructor(props: Props) {
         super(props)
         // Create
-        this.div = React.createRef()
+        this.div = createRef()
         // Bind
         this.resize = this.resize.bind(this)
 

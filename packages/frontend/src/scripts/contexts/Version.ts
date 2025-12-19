@@ -1,10 +1,9 @@
-import * as React from 'react'
-
 import { VersionRead } from 'productboard-common'
+import { createContext } from 'react'
 
 type VersionContextProps = {
     contextVersion: VersionRead
     setContextVersion: (version: VersionRead) => void
 }
 
-export const VersionContext = React.createContext<VersionContextProps>(undefined)
+export const VersionContext = createContext<VersionContextProps>(undefined)

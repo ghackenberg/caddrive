@@ -1,24 +1,20 @@
-import * as React from 'react'
-
-import { Object3D } from 'three'
-
 import { VersionRead } from 'productboard-common'
-
-import { AttachmentClient } from '../../clients/rest/attachment'
-import { CommentClient } from '../../clients/rest/comment'
-import { CommentContext } from '../../contexts/Comment'
-import { UserContext } from '../../contexts/User'
-import { VersionContext } from '../../contexts/Version'
-import { useComment, useIssue } from '../../hooks/entity'
-import { useMembers, useVersions } from '../../hooks/list'
-import { collectParts, createProcessor } from '../../functions/markdown'
-import { formatDateHourMinute } from '../../functions/time'
-import { computePath } from '../../functions/path'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { ProductUserName } from '../values/ProductUserName'
-
-import PartIcon from '/src/images/part.png'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { Object3D } from 'three'
+import { AttachmentClient } from '../../clients/rest/attachment.js'
+import { CommentClient } from '../../clients/rest/comment.js'
+import { CommentContext } from '../../contexts/Comment.js'
+import { UserContext } from '../../contexts/User.js'
+import { VersionContext } from '../../contexts/Version.js'
+import { collectParts, createProcessor } from '../../functions/markdown.js'
+import { computePath } from '../../functions/path.js'
+import { formatDateHourMinute } from '../../functions/time.js'
+import { useComment, useIssue } from '../../hooks/entity.js'
+import { useMembers, useVersions } from '../../hooks/list.js'
+import { ProductUserName } from '../values/ProductUserName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
 import CloseIcon from '/src/images/close.png'
+import PartIcon from '/src/images/part.png'
 import ReopenIcon from '/src/images/reopen.png'
 
 interface Part {
@@ -41,13 +37,13 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     // REFERENCES
 
-    const textRef = React.useRef<HTMLTextAreaElement>()
+    const textRef = useRef<HTMLTextAreaElement>(null)
 
     // CONTEXTS
 
-    const { contextUser } = React.useContext(UserContext)
-    const { contextVersion } = React.useContext(VersionContext)
-    const { contextComment, setContextComment } = React.useContext(CommentContext)
+    const { contextUser } = useContext(UserContext)
+    const { contextVersion } = useContext(VersionContext)
+    const { contextComment, setContextComment } = useContext(CommentContext)
 
     // CONSTANTS
 
@@ -85,21 +81,21 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     // STATES
 
-    const [textView, setTextView] = React.useState(initialTextView)
-    const [textEdit, setTextEdit] = React.useState(initialTextEdit)
+    const [textView, setTextView] = useState(initialTextView)
+    const [textEdit, setTextEdit] = useState(initialTextEdit)
 
-    const [htmlView, setHtmlView] = React.useState(initialHtmlView)
-    const [htmlEdit, setHtmlEdit] = React.useState(initialHtmlEdit)
+    const [htmlView, setHtmlView] = useState(initialHtmlView)
+    const [htmlEdit, setHtmlEdit] = useState(initialHtmlEdit)
 
-    const [partsView, setPartsView] = React.useState(initialPartsView)
-    const [partsEdit, setPartsEdit] = React.useState(initialPartsEdit)
+    const [partsView, setPartsView] = useState(initialPartsView)
+    const [partsEdit, setPartsEdit] = useState(initialPartsEdit)
 
-    const [mode, setMode] = React.useState(initialMode)
-    const [upload, setUpload] = React.useState(false)
+    const [mode, setMode] = useState(initialMode)
+    const [upload, setUpload] = useState(false)
 
     // EFFECTS
 
-    React.useEffect(() => {
+    useEffect(() => {
         return sub(commentId || '', (version, object) => {
             if (contextComment == comment && mode == Mode.EDIT) {
                 const text = textEdit || ''
@@ -117,7 +113,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
         })
     })
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (textEdit) {
             setPartsEdit(collectParts(textEdit))
         } else {
@@ -125,7 +121,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
         }
     }, [textEdit])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (textView) {
             const vfile = createProcessor(over, out, click, false).processSync(textView)
             setHtmlView(vfile.result)
@@ -136,7 +132,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
         }
     }, [textView, contextVersion, versions])
 
-    React.useEffect(() => {
+    useEffect(() => {
         const view = (mode == Mode.VIEW ? partsView : (mode == Mode.PREVIEW ? partsEdit : undefined))
         const edit = (mode == Mode.EDIT && partsEdit)
         up(commentId || '', view, edit)

@@ -1,9 +1,8 @@
-import * as React from 'react'
-
-import { CacheAPI } from '../clients/cache'
-import { ProductClient } from '../clients/rest/product'
-import { UserClient } from '../clients/rest/user'
-import { UserContext } from '../contexts/User'
+import { useContext, useEffect, useState } from 'react'
+import { CacheAPI } from '../clients/cache.js'
+import { ProductClient } from '../clients/rest/product.js'
+import { UserClient } from '../clients/rest/user.js'
+import { UserContext } from '../contexts/User.js'
 
 type Entity = { created: number }
 type Predicate<T> = (value: T) => boolean
@@ -21,11 +20,11 @@ function valid(ids: string[]) {
 // REST entities
 
 function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
-    const { contextUser } = React.useContext(UserContext)
+    const { contextUser } = useContext(UserContext)
 
-    const [value, setValue] = React.useState<T[]>()
+    const [value, setValue] = useState<T[]>()
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (valid(ids)) {
             let execute = true
             load().then(entities => execute && setValue(entities.filter(predicate).sort(compare)))
@@ -43,11 +42,11 @@ function useRestEntites<T extends Entity>(ids: string[], load: () => Promise<T[]
 // MQTT entities
 
 function useMqttEntities<T extends Entity>(ids: string[], initialValue: T[], subscribe: Subscribe<T[]>, predicate: Predicate<T> = (() => true), compare: Compare<T> = ((a, b) => a.created - b.created)) {
-    const { contextUser } = React.useContext(UserContext)
+    const { contextUser } = useContext(UserContext)
     
-    const [value, setValue] = React.useState(initialValue && initialValue.filter(predicate).sort(compare))
+    const [value, setValue] = useState(initialValue && initialValue.filter(predicate).sort(compare))
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (valid(ids)) {
             return subscribe(entities => setValue(entities.filter(predicate).sort(compare)))
         } else {

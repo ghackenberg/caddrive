@@ -1,7 +1,6 @@
-import * as React from 'react'
-
-import { ButtonInput } from './ButtonInput'
-import { TextInput } from './TextInput'
+import { useRef, useState } from 'react'
+import { ButtonInput } from './ButtonInput.js'
+import { TextInput } from './TextInput.js'
 
 export const FileInput = (props: {class?: string, label: string, change: (value: File) => void, accept?: string, placeholder?: string, disabled?: boolean, required: boolean}) => {
     const label = props.label
@@ -13,11 +12,11 @@ export const FileInput = (props: {class?: string, label: string, change: (value:
 
     // REFERENCES
     
-    const fileInput = React.useRef(null)
+    const fileInput = useRef(null)
 
     // STATES
     
-    const [fileName, setFileName] = React.useState<string>('')
+    const [fileName, setFileName] = useState<string>('')
 
     // FUNCTIONS
 
@@ -25,7 +24,7 @@ export const FileInput = (props: {class?: string, label: string, change: (value:
         props.change(event.currentTarget.files.length > 0 ? event.currentTarget.files[0] : undefined)
         setFileName(event.currentTarget.files.length > 0 ? event.currentTarget.files[0].name : '')
     }
-    function onClick(event: React.MouseEvent<HTMLInputElement>) {
+    function onClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
         fileInput.current.click()
     }

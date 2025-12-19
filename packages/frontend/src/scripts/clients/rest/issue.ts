@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { IssueCreate, IssueREST, IssueRead, IssueUpdate } from 'productboard-common'
-
-import { auth } from '../auth'
-import { CacheAPI } from '../cache'
+import { auth } from '../auth.js'
+import { CacheAPI } from '../cache.js'
 
 class IssueClientImpl implements IssueREST {
     async findIssues(productId: string): Promise<IssueRead[]> {

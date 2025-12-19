@@ -1,17 +1,11 @@
-import * as React from 'react'
+import { CommentRead } from 'productboard-common'
 import { MouseEvent } from "react"
-
-import * as jsxRuntime from 'react/jsx-runtime'
+import reactJsxRuntime from 'react/jsx-runtime'
 import rehypeMermaid from 'rehype-mermaid'
-import rehypeReact, { Options } from "rehype-react"
+import rehypeReact, { Options } from 'rehype-react'
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { unified } from "unified"
-
-import { CommentRead } from 'productboard-common'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const JSX_RUNTIME: any = jsxRuntime
 
 const PART_REGEX = /\/products\/(.*)\/versions\/(.*)\/objects\/(.*)/
 
@@ -67,7 +61,7 @@ function collectPartsInternal(parent: Node, parts: Part[]) {
 
 export function createProcessor(handleMouseOver: Handler, handleMouseOut: Handler, handleClick: Handler, mermaid: boolean) {
     const options: Options = {
-        ...JSX_RUNTIME,
+        ...reactJsxRuntime,
         components: {
             a: props => {
                 let match: RegExpMatchArray

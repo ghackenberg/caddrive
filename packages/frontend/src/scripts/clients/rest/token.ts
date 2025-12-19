@@ -1,8 +1,6 @@
 import axios from "axios"
-
 import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenREST, TokenRefreshResponse } from "productboard-common"
-
-import { auth } from "../auth"
+import { auth } from "../auth.js"
 
 class TokenClientImpl implements TokenREST {
     async createToken(request: TokenCreateRequest): Promise<TokenCreateResponse> {

@@ -1,16 +1,12 @@
-import { createReadStream, writeFileSync } from 'fs'
-
 import { Inject, StreamableFile } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-
-import shortid from 'shortid'
-import { IsNull } from 'typeorm'
-
+import { createReadStream, writeFileSync } from 'fs'
 import { AttachmentCreate, AttachmentREST, AttachmentRead, AttachmentUpdate } from 'productboard-common'
 import { Database, convertAttachment } from 'productboard-database'
-
-import { emitProductMessage } from '../../../functions/emit'
-import { AuthorizedRequest } from '../../../request'
+import shortid from 'shortid'
+import { IsNull } from 'typeorm'
+import { emitProductMessage } from '../../../functions/emit.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 export class AttachmentService implements AttachmentREST<AttachmentCreate, AttachmentUpdate, Express.Multer.File> {
 

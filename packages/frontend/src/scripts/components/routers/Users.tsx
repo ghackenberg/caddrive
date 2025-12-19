@@ -1,10 +1,9 @@
-import * as React from 'react'
-import { Route, Switch } from 'react-router'
+import { lazy } from 'react'
+import { Route, Routes } from 'react-router'
+import { UsersHeader } from '../snippets/UsersHeader.js'
+import { UserView } from '../views/User.js'
 
-import { UsersHeader } from '../snippets/UsersHeader'
-import { UserView } from '../views/User'
-
-const UserRouter = React.lazy(() => import('./User'))
+const UserRouter = lazy(() => import('./User.js'))
 
 const Overview = () => (
     <>
@@ -15,10 +14,10 @@ const Overview = () => (
 
 const UsersRouter = () => {
     return (
-        <Switch>
-            <Route path="/users/:userId" component={UserRouter}/>
-            <Route path="/users" component={Overview}/>
-        </Switch>
+        <Routes>
+            <Route path="/users/:userId" element={<UserRouter/>}/>
+            <Route path="/users" element={<Overview/>}/>
+        </Routes>
     )
 }
 

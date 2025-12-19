@@ -1,6 +1,5 @@
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
-
-import { CacheAPI } from "../clients/cache"
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+import { CacheAPI } from "../clients/cache.js"
 
 const GLTF_LOADER = new GLTFLoader()
 

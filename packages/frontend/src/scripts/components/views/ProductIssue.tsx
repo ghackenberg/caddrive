@@ -1,26 +1,21 @@
-import  * as React from 'react'
-import { useState, useContext } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-import { NavLink } from 'react-router-dom'
-
 import { IssueRead } from 'productboard-common'
-
-import { IssueClient } from '../../clients/rest/issue'
-import { UserContext } from '../../contexts/User'
-import { useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useIssues, useMembers } from '../../hooks/list'
-import { PartCount } from '../counts/Parts'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { Column, Table } from '../widgets/Table'
-import { MilestoneName } from '../values/MilestoneName'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { LoadingView } from './Loading'
-
-import IssueIcon from '/src/images/issue.png'
+import { useContext, useState } from 'react'
+import { Navigate, NavLink, useLocation, useParams } from 'react-router'
+import { IssueClient } from '../../clients/rest/issue.js'
+import { UserContext } from '../../contexts/User.js'
+import { useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useIssues, useMembers } from '../../hooks/list.js'
+import { PartCount } from '../counts/Parts.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { MilestoneName } from '../values/MilestoneName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { Column, Table } from '../widgets/Table.js'
+import { LoadingView } from './Loading.js'
 import DeleteIcon from '/src/images/delete.png'
+import IssueIcon from '/src/images/issue.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
@@ -142,7 +137,7 @@ export const ProductIssueView = () => {
     return (
         (product && members && issues) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className={`view product-issue sidebar ${!hash ? 'hidden' : 'visible'}`}>

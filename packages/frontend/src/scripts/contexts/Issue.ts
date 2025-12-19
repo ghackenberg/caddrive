@@ -1,10 +1,9 @@
-import * as React from 'react'
-
 import { IssueRead } from 'productboard-common'
+import { createContext } from 'react'
 
 type IssueContextProps = {
     contextIssue: IssueRead
     setContextIssue: (issue: IssueRead) => void
 }
 
-export const IssueContext = React.createContext<IssueContextProps>(undefined)
+export const IssueContext = createContext<IssueContextProps>(undefined)

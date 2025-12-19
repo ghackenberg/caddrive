@@ -1,9 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
-
 import { ImageType, ModelType } from 'productboard-common'
-
-import { ProductEntity } from './product'
-import { UserEntity } from './user'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
+import { ProductEntity } from './product.js'
+import { UserEntity } from './user.js'
 
 @Entity()
 export class VersionEntity {
@@ -18,10 +16,10 @@ export class VersionEntity {
 
     @ManyToOne(() => ProductEntity)
     @JoinColumn({ name: 'productId' })
-    product: ProductEntity
+    product: Relation<ProductEntity>
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
-    user: UserEntity
+    user: Relation<UserEntity>
 
     @Column({ nullable: false })
     created: number

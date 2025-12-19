@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 export interface Column <T,> {
     class?: string
     label: React.ReactNode

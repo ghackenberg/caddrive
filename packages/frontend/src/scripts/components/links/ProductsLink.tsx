@@ -1,6 +1,4 @@
-import * as React from 'react'
-import { NavLink } from 'react-router-dom'
-
+import { NavLink } from 'react-router'
 import ProductIcon from '/src/images/product.png'
 
 export const ProductsLink = () => (

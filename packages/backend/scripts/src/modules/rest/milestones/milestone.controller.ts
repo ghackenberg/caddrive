@@ -1,13 +1,11 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger'
-
 import { MilestoneCreate, MilestoneREST, MilestoneRead, MilestoneUpdate } from 'productboard-common'
-
-import { MilestoneService } from './milestone.service'
-import { canReadMilestoneOrFail, canDeleteMilestoneOrFail, canUpdateMilestoneOrFail, canCreateMilestoneOrFail, canFindMilestoneOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canCreateMilestoneOrFail, canDeleteMilestoneOrFail, canFindMilestoneOrFail, canReadMilestoneOrFail, canUpdateMilestoneOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { MilestoneService } from './milestone.service.js'
 
 @Controller('rest/products/:productId/milestones')
 @UseGuards(TokenOptionalGuard)

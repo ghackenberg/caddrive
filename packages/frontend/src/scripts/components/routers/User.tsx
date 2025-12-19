@@ -1,17 +1,15 @@
-import * as React from 'react'
-import { Redirect, Route, Switch } from 'react-router'
-
-import { UserHeader } from '../snippets/UserHeader'
-import { UserSettingView } from '../views/UserSetting'
+import { Navigate, Route, Routes } from 'react-router'
+import { UserHeader } from '../snippets/UserHeader.js'
+import { UserSettingView } from '../views/UserSetting.js'
 
 const UserRouter = () => {
     return (
         <>
             <UserHeader/>
-            <Switch>
-                <Route path="/users/:userId/settings" component={UserSettingView}/>
-                <Redirect path="/users/:userId" to="/users/:userId/settings" push={false}/>
-            </Switch>
+            <Routes>
+                <Route path="/users/:userId/settings" element={<UserSettingView/>}/>
+                <Route path="/users/:userId" element={<Navigate replace to="/users/:userId/settings"/>}/>
+            </Routes>
         </>
     )
 }

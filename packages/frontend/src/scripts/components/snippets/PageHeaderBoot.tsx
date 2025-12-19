@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import AppIcon from '/src/images/app.png'
 
 export const PageHeaderBoot = () => {

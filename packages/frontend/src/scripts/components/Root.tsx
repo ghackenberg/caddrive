@@ -1,31 +1,28 @@
-import * as React from 'react'
-import { Route, Switch, Redirect, useLocation } from 'react-router-dom'
-
-import { importJWK, JWK, jwtVerify, JWTVerifyResult, KeyLike } from 'jose'
-
+import { importJWK, JWK, jwtVerify, JWTVerifyResult } from 'jose'
 import { CommentRead, IssueRead, MemberRead, MilestoneRead, ProductRead, UserRead, VersionRead } from 'productboard-common'
+import { lazy, Suspense, useEffect, useState } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
+import { CacheAPI } from '../clients/cache.js'
+import { MqttAPI } from '../clients/mqtt.js'
+import { TokenClient } from '../clients/rest/token.js'
+import { UserClient } from '../clients/rest/user.js'
+import { AuthContext } from '../contexts/Auth.js'
+import { CommentContext } from '../contexts/Comment.js'
+import { IssueContext } from '../contexts/Issue.js'
+import { MemberContext } from '../contexts/Member.js'
+import { MilestoneContext } from '../contexts/Milestone.js'
+import { ProductContext } from '../contexts/Product.js'
+import { UserContext } from '../contexts/User.js'
+import { VersionContext } from '../contexts/Version.js'
+import { useAsyncHistory } from '../hooks/history.js'
+import { AUTH_0, AUTH_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, PRODUCTS_5, PRODUCTS_6, USERS_0, USERS_1, USERS_2 } from '../pattern.js'
+import { PageHeaderRoot } from './snippets/PageHeaderRoot.js'
+import { LoadingView } from './views/Loading.js'
+import { MissingView } from './views/Missing.js'
 
-import { PageHeaderRoot } from './snippets/PageHeaderRoot'
-import { LoadingView } from './views/Loading'
-import { MissingView } from './views/Missing'
-import { CacheAPI } from '../clients/cache'
-import { MqttAPI } from '../clients/mqtt'
-import { TokenClient } from '../clients/rest/token'
-import { UserClient } from '../clients/rest/user'
-import { AuthContext } from '../contexts/Auth'
-import { CommentContext } from '../contexts/Comment'
-import { IssueContext } from '../contexts/Issue'
-import { MemberContext } from '../contexts/Member'
-import { MilestoneContext } from '../contexts/Milestone'
-import { ProductContext } from '../contexts/Product'
-import { UserContext } from '../contexts/User'
-import { VersionContext } from '../contexts/Version'
-import { useAsyncHistory } from '../hooks/history'
-import { AUTH_0, AUTH_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, PRODUCTS_5, PRODUCTS_6, USERS_0, USERS_1, USERS_2 } from '../pattern'
-
-const AuthRouter = React.lazy(() => import('./routers/Auth'))
-const ProductsRouter = React.lazy(() => import('./routers/Products'))
-const UsersRouter = React.lazy(() => import('./routers/Users'))
+const AuthRouter = lazy(() => import('./routers/Auth.js'))
+const ProductsRouter = lazy(() => import('./routers/Products.js'))
+const UsersRouter = lazy(() => import('./routers/Users.js'))
 
 const Root = () => {
     
@@ -34,26 +31,26 @@ const Root = () => {
 
     // STATES
 
-    const [publicJWK, setPublicJWK] = React.useState<JWK>()
-    const [publicKey, setPublicKey] = React.useState<KeyLike | Uint8Array>()
-    const [jwt] = React.useState<string>(localStorage.getItem('jwt'))
-    const [jwtVerifyResult, setJWTVerifyResult] = React.useState<JWTVerifyResult>()
-    const [payload, setPayload] = React.useState<{ userId: string }>()
-    const [userId, setUserId] = React.useState<string>()
-    const [authContextToken, setAuthContextToken] = React.useState<string>()
-    const [authContextUser, setAuthContextUser] = React.useState<UserRead>()
-    const [contextUser, setContextUser] = React.useState<UserRead>(jwt ? undefined : null)
-    const [contextProduct, setContextProduct] = React.useState<ProductRead>()
-    const [contextMember, setContextMember] = React.useState<MemberRead>()
-    const [contextVersion, setContextVersion] = React.useState<VersionRead>()
-    const [contextIssue, setContextIssue] = React.useState<IssueRead>()
-    const [contextComment, setContextComment] = React.useState<CommentRead>()
-    const [contextMilestone, setContextMilestone] = React.useState<MilestoneRead>()
-    const [initialized, setInitialized] = React.useState(false)
+    const [publicJWK, setPublicJWK] = useState<JWK>()
+    const [publicKey, setPublicKey] = useState<CryptoKey | Uint8Array>()
+    const [jwt] = useState<string>(localStorage.getItem('jwt'))
+    const [jwtVerifyResult, setJWTVerifyResult] = useState<JWTVerifyResult>()
+    const [payload, setPayload] = useState<{ userId: string }>()
+    const [userId, setUserId] = useState<string>()
+    const [authContextToken, setAuthContextToken] = useState<string>()
+    const [authContextUser, setAuthContextUser] = useState<UserRead>()
+    const [contextUser, setContextUser] = useState<UserRead>(jwt ? undefined : null)
+    const [contextProduct, setContextProduct] = useState<ProductRead>()
+    const [contextMember, setContextMember] = useState<MemberRead>()
+    const [contextVersion, setContextVersion] = useState<VersionRead>()
+    const [contextIssue, setContextIssue] = useState<IssueRead>()
+    const [contextComment, setContextComment] = useState<CommentRead>()
+    const [contextMilestone, setContextMilestone] = useState<MilestoneRead>()
+    const [initialized, setInitialized] = useState(false)
 
     // EFFECTS
 
-    React.useEffect(() => {
+    useEffect(() => {
         CacheAPI.loadPublicJWK().then(
             jwk => setPublicJWK(jwk)
         ).catch(
@@ -61,7 +58,7 @@ const Root = () => {
         )
     })
 
-    React.useEffect(() => {
+    useEffect(() => {
         publicJWK && importJWK(publicJWK, "PS256").then(
             key => setPublicKey(key)
         ).catch(
@@ -69,7 +66,7 @@ const Root = () => {
         )
     }, [publicJWK])
 
-    React.useEffect(() => {
+    useEffect(() => {
         jwt && publicKey && jwtVerify(jwt, publicKey).then(
             result => setJWTVerifyResult(result)
         ).catch(
@@ -77,7 +74,7 @@ const Root = () => {
         )
     }, [jwt, publicKey])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (jwtVerifyResult) {
             // Extract payload
             setPayload(jwtVerifyResult.payload as { userId: string })
@@ -90,11 +87,11 @@ const Root = () => {
         }
     }, [jwtVerifyResult])
 
-    React.useEffect(() => {
+    useEffect(() => {
         payload && setUserId(payload.userId)
     }, [payload])
 
-    React.useEffect(() => {
+    useEffect(() => {
         userId && UserClient.getUser(userId).then(user => {
             setContextUser(user)
         }).catch(() => {
@@ -102,7 +99,7 @@ const Root = () => {
         })
     }, [userId])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (contextUser === undefined) return
         if (initialized) return
 
@@ -229,15 +226,15 @@ const Root = () => {
                                     <MilestoneContext.Provider value={{ contextMilestone, setContextMilestone }}>
                                         <PageHeaderRoot/>
                                         {initialized ? (
-                                            <React.Suspense fallback={<LoadingView/>}>
-                                                <Switch>
-                                                    <Route path="/auth" component={AuthRouter}/>
-                                                    <Route path="/users" component={UsersRouter}/>
-                                                    <Route path="/products" component={ProductsRouter}/>
-                                                    <Redirect path="/" exact to="/products" push={false}/>
-                                                    <Route component={MissingView}/>
-                                                </Switch>
-                                            </React.Suspense>
+                                            <Suspense fallback={<LoadingView/>}>
+                                                <Routes>
+                                                    <Route path="/auth" element={<AuthRouter/>}/>
+                                                    <Route path="/users" element={<UsersRouter/>}/>
+                                                    <Route path="/products" element={<ProductsRouter/>}/>
+                                                    <Route path="/" element={<Navigate replace to="/products"/>}/>
+                                                    <Route element={<MissingView/>}/>
+                                                </Routes>
+                                            </Suspense>
                                         ) : (
                                             <LoadingView/>
                                         )}

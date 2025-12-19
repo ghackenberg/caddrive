@@ -1,14 +1,11 @@
-import * as React from 'react'
-import { NavLink, useParams } from 'react-router-dom'
-
-import { useNavigationStack } from '../../hooks/navigation'
-import { useProduct } from '../../hooks/entity'
-import { IssuesLink } from '../links/IssuesLink'
-import { MembersLink } from '../links/MembersLink'
-import { MilestonesLink } from '../links/MilestonesLink'
-import { ProductLink } from '../links/ProductLink'
-import { VersionsLink } from '../links/VersionsLink'
-
+import { NavLink, useParams } from 'react-router'
+import { useProduct } from '../../hooks/entity.js'
+import { useNavigationStack } from '../../hooks/navigation.js'
+import { IssuesLink } from '../links/IssuesLink.js'
+import { MembersLink } from '../links/MembersLink.js'
+import { MilestonesLink } from '../links/MilestonesLink.js'
+import { ProductLink } from '../links/ProductLink.js'
+import { VersionsLink } from '../links/VersionsLink.js'
 import SettingIcon from '/src/images/setting.png'
 
 export const ProductHeader = () => {

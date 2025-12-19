@@ -1,6 +1,5 @@
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-
-import { CacheAPI } from '../clients/cache'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+import { CacheAPI } from '../clients/cache.js'
 
 const FBX_LOADER = new FBXLoader()
 

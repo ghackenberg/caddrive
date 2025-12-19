@@ -1,14 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-
-import shortid from 'shortid'
-import { IsNull } from 'typeorm'
-
 import { MilestoneCreate, MilestoneREST, MilestoneRead, MilestoneUpdate } from 'productboard-common'
 import { Database, convertMilestone } from 'productboard-database'
-
-import { emitProductMessage } from '../../../functions/emit'
-import { AuthorizedRequest } from '../../../request'
+import shortid from 'shortid'
+import { IsNull } from 'typeorm'
+import { emitProductMessage } from '../../../functions/emit.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 @Injectable()
 export class MilestoneService implements MilestoneREST {

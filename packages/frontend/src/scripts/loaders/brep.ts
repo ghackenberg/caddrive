@@ -1,4 +1,4 @@
-import { worker } from "../worker"
+import { worker } from "../worker.js"
 
 export function parseBRep(content: string): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve, reject) => {

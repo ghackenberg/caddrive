@@ -1,6 +1,5 @@
 import { Controller, Get, Header, Param, StreamableFile } from "@nestjs/common"
-
-import { PartService } from "./part.service"
+import { PartService } from "./part.service.js"
 
 @Controller('rest/parts')
 export class PartController {

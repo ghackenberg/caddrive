@@ -1,6 +1,5 @@
-import * as React from 'react'
-
 import { UserRead } from 'productboard-common'
+import { createContext } from 'react'
 
 type AuthContextProps = {
     authContextToken: string
@@ -9,4 +8,4 @@ type AuthContextProps = {
     setAuthContextUser: (user: UserRead) => void
 }
 
-export const AuthContext = React.createContext<AuthContextProps>(undefined)
+export const AuthContext = createContext<AuthContextProps>(undefined)

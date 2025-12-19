@@ -1,12 +1,9 @@
+import { Injectable, NotFoundException, StreamableFile } from "@nestjs/common"
+import axios from 'axios'
 import { createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "fs"
 import { dirname, join } from "path"
-
-import { Injectable, NotFoundException, StreamableFile } from "@nestjs/common"
-
-import axios from 'axios'
 import { Entry, fromBuffer } from 'yauzl'
-
-import { renderLDraw } from "../../../functions/render"
+import { renderLDraw } from "../../../functions/render.js"
 
 @Injectable()
 export class PartService {
@@ -94,9 +91,9 @@ export class PartService {
                     console.log(new Date(), `Rendering ${partName}`)
                     const partPath = this.paths[partName]
                     const partData = readFileSync(partPath, 'utf-8')
-                    const imagePath = partPath.replace('.dat', '.png')
+                    const imagePath = partPath.replace('.dat', '.png') as `${string}.${string}`
                     const imageData = await renderLDraw(partData, 512, 512)
-                    await imageData.writeAsync(imagePath)
+                    imageData.write(imagePath)
                     this.paths[name] = imagePath
                 }
             }

@@ -1,17 +1,12 @@
-import * as React from 'react'
-import { useEffect, useState, useContext } from 'react'
-
-import { Object3D } from 'three'
-
 import { VersionRead } from 'productboard-common'
-
-import { VersionContext } from '../../contexts/Version'
-import { useComments, useVersions } from '../../hooks/list'
-import { collectParts } from '../../functions/markdown'
-import { VersionView3D } from './VersionView3D'
-
-import LoadIcon from '/src/images/load.png'
+import { useContext, useEffect, useState } from 'react'
+import { Object3D } from 'three'
+import { VersionContext } from '../../contexts/Version.js'
+import { collectParts } from '../../functions/markdown.js'
+import { useComments, useVersions } from '../../hooks/list.js'
+import { VersionView3D } from './VersionView3D.js'
 import EmptyIcon from '/src/images/empty.png'
+import LoadIcon from '/src/images/load.png'
 
 interface Part {
     productId: string

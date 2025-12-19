@@ -1,10 +1,7 @@
 import { Controller, Get, Header } from "@nestjs/common"
-
 import { JWK } from "jose"
-
 import { KeyREST } from "productboard-common"
-
-import { KeyService } from "./key.service"
+import { KeyService } from "./key.service.js"
 
 @Controller('rest/keys')
 export class KeyController implements KeyREST {

@@ -1,8 +1,7 @@
 import { SignJWT } from 'jose'
 import { connect } from 'mqtt'
 import shortid from 'shortid'
-
-import { KEY_PAIR } from './key'
+import { KEY_PAIR } from './key.js'
 
 const protocol = 'mqtt'
 const hostname = 'localhost'

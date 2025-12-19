@@ -1,9 +1,6 @@
-import * as React from 'react'
-import { useState } from 'react'
-
+import { useEffect, useState } from 'react'
 import { CartesianGrid, Label, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts'
-
-import { formatDate, formatDateHourMinute, formatMonth, formatTime } from '../../functions/time'
+import { formatDate, formatDateHourMinute, formatMonth, formatTime } from '../../functions/time.js'
 
 function monthTickFormatter(time: number) {
     return formatMonth(new Date(time))
@@ -152,7 +149,7 @@ export const BurndownChartWidget = (props: { start: number, end: number, total: 
 
     // EFFECTS
 
-    React.useEffect(() => {
+    useEffect(() => {
         setTarget([{ time: props.start, target: total }, { time: props.end, target: 0 }])
     }, [props.start, props.end, total])
 

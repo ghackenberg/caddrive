@@ -1,6 +1,5 @@
-import { existsSync, writeFileSync, readFileSync } from 'fs'
-
-import { generateKeyPair, exportJWK, importJWK } from 'jose'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { exportJWK, generateKeyPair, importJWK } from 'jose'
 
 async function init() {
     if (!existsSync('public_key.jwk')) {

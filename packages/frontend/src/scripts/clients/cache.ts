@@ -1,10 +1,8 @@
 import { JWK } from "jose"
-
 import { AttachmentRead, CommentRead, IssueRead, MemberRead, MilestoneRead, ProductRead, UserRead, VersionRead } from "productboard-common"
-
-import { MqttAPI } from "./mqtt"
-import { FileClient } from "./rest/file"
-import { KeyClient } from "./rest/key"
+import { MqttAPI } from "./mqtt.js"
+import { FileClient } from "./rest/file.js"
+import { KeyClient } from "./rest/key.js"
 
 type Index<T> = { [id: string]: T }
 type Put<T> = (value: T) => T

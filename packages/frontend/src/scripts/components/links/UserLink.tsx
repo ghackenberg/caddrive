@@ -1,8 +1,5 @@
-import * as React from 'react'
-import { NavLink } from 'react-router-dom'
-
 import { UserRead } from 'productboard-common'
-
+import { NavLink } from 'react-router'
 import UserIcon from '/src/images/user.png'
 
 export const UserLink = (props: {user?: UserRead}) => (

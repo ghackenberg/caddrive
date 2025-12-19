@@ -1,7 +1,6 @@
 import { Group } from 'three'
-import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader'
-
-import { CacheAPI } from '../clients/cache'
+import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js'
+import { CacheAPI } from '../clients/cache.js'
 
 const TEXT_DECODER = new TextDecoder()
 

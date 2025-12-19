@@ -1,11 +1,8 @@
-import * as React from 'react'
 import { useContext } from 'react'
-import { NavLink, Route, Switch } from 'react-router-dom'
-
-import { UserContext } from '../../contexts/User'
-import { useAsyncHistory } from '../../hooks/history'
-import { UserPictureWidget } from '../widgets/UserPicture'
-
+import { NavLink, Route, Routes } from 'react-router'
+import { UserContext } from '../../contexts/User.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { UserPictureWidget } from '../widgets/UserPicture.js'
 import AppIcon from '/src/images/app.png'
 import BackIcon from '/src/images/back.png'
 import LoadIcon from '/src/images/load.png'
@@ -25,7 +22,7 @@ export const PageHeaderRoot = () => {
         <header className='page'>
             <div>
                 <span>
-                    <Switch>
+                    <Routes>
                         <Route path="/legal">
                             <a onClick={handleClick}>
                                 <img src={BackIcon} className='icon small'/>
@@ -58,12 +55,12 @@ export const PageHeaderRoot = () => {
                                 <span>Your collaborative workspace for LDraw&trade; models</span>
                             </NavLink>
                         </Route>
-                    </Switch>
+                    </Routes>
                 </span>
             </div>
             <div>
                 <span>
-                    <Switch>
+                    <Routes>
                         <Route path="/legal">
 
                         </Route>
@@ -87,7 +84,7 @@ export const PageHeaderRoot = () => {
                                 </NavLink>
                             )}
                         </Route>
-                    </Switch>
+                    </Routes>
                 </span>
             </div>
         </header>

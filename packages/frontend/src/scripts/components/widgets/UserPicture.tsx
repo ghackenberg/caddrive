@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import { UserRead } from 'productboard-common'
 
 import PixelIcon from '/src/images/pixel.png'

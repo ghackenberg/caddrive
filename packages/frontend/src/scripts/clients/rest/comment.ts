@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { CommentCreate, CommentREST, CommentRead, CommentUpdate } from 'productboard-common'
-
-import { auth } from '../auth'
-import { CacheAPI } from '../cache'
+import { auth } from '../auth.js'
+import { CacheAPI } from '../cache.js'
 
 class CommentClientImpl implements CommentREST {
     async findComments(productId: string, issueId: string): Promise<CommentRead[]> {

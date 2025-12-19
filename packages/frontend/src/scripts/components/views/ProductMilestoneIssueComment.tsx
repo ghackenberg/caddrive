@@ -1,30 +1,24 @@
-import * as React from 'react'
-import { useState, useContext, useRef } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-import { NavLink } from 'react-router-dom'
-
-import { Object3D } from 'three'
-
 import { CommentRead, VersionRead } from 'productboard-common'
-
-import { CommentContext } from '../../contexts/Comment'
-import { VersionContext } from '../../contexts/Version'
-import { UserContext } from '../../contexts/User'
-import { useIssue, useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useComments, useMembers, useVersions } from '../../hooks/list'
-import { Part, collectParts } from '../../functions/markdown'
-import { formatDateHourMinute } from '../../functions/time'
-import { computePath } from '../../functions/path'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { CommentView } from '../widgets/CommentView'
-import { MilestoneName } from '../values/MilestoneName'
-import { ProductUserName } from '../values/ProductUserName'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { LoadingView } from './Loading'
-
+import { useContext, useEffect, useRef, useState } from 'react'
+import { Navigate, NavLink, useLocation, useParams } from 'react-router'
+import { Object3D } from 'three'
+import { CommentContext } from '../../contexts/Comment.js'
+import { UserContext } from '../../contexts/User.js'
+import { VersionContext } from '../../contexts/Version.js'
+import { collectParts, Part } from '../../functions/markdown.js'
+import { computePath } from '../../functions/path.js'
+import { formatDateHourMinute } from '../../functions/time.js'
+import { useIssue, useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useComments, useMembers, useVersions } from '../../hooks/list.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { MilestoneName } from '../values/MilestoneName.js'
+import { ProductUserName } from '../values/ProductUserName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { CommentView } from '../widgets/CommentView.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { LoadingView } from './Loading.js'
 import LeftIcon from '/src/images/comment.png'
 import RightIcon from '/src/images/part.png'
 
@@ -61,7 +55,7 @@ export const ProductMilestoneIssueCommentView = () => {
 
     // REFS
 
-    const ref = useRef<HTMLDivElement>()
+    const ref = useRef<HTMLDivElement>(null)
 
     // INITIAL STATES
 
@@ -96,7 +90,7 @@ export const ProductMilestoneIssueCommentView = () => {
 
     // EFFECTS
 
-    React.useEffect(() => {
+    useEffect(() => {
         const highlighted: Part[] = []
         const marked: Part[] = []
         for (const commentId in partsView || {}) {
@@ -180,7 +174,7 @@ export const ProductMilestoneIssueCommentView = () => {
     return (
         ((issueId == 'new' || issue) && product) ? (
             (issue && issue.deleted) ? (
-                <Redirect to='/' />
+                <Navigate to='/' />
             ) : (
                 <CommentContext.Provider value={{ contextComment, setContextComment }}>
                     <main className={`view product-issue-comment sidebar ${!hash ? 'hidden' : 'visible'}`}>

@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 export const LegalFooter = () => {
     return (
         <div className='footer'>

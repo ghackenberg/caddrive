@@ -1,10 +1,8 @@
 import { Body, Controller, Param, Patch, Post, Put, UseGuards } from "@nestjs/common"
 import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse } from "@nestjs/swagger"
-
 import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenREST, TokenRefreshResponse } from "productboard-common"
-
-import { TokenRequiredGuard } from "./token.guard"
-import { TokenService } from "./token.service"
+import { TokenRequiredGuard } from "./token.guard.js"
+import { TokenService } from "./token.service.js"
 
 @Controller('rest/tokens')
 export class TokenController implements TokenREST {

@@ -1,27 +1,22 @@
-import { writeFileSync } from 'fs'
-
 import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-
-import Jimp from 'jimp'
+import { writeFileSync } from 'fs'
+import { JimpInstance } from 'jimp'
 import 'multer'
 import { getTestMessageUrl } from 'nodemailer'
-//import rehypeMermaid from 'rehype-mermaid'
+import { ModelType, ProductRead, VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
+import { Database, convertVersion } from 'productboard-database'
 import rehypeStringify from 'rehype-stringify'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 import { unified } from 'unified'
-
-import { ModelType, ProductRead, VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
-import { Database, convertVersion } from 'productboard-database'
-
-import { emitProductMessage } from '../../../functions/emit'
-import { TRANSPORTER } from '../../../functions/mail'
-import { packLDrawText } from '../../../functions/pack'
-import { renderDae, renderFbx, renderGlb, renderLDraw, renderPly, renderStl } from '../../../functions/render'
-import { AuthorizedRequest } from '../../../request'
+import { emitProductMessage } from '../../../functions/emit.js'
+import { TRANSPORTER } from '../../../functions/mail.js'
+import { packLDrawText } from '../../../functions/pack.js'
+import { renderDae, renderFbx, renderGlb, renderLDraw, renderPly, renderStl } from '../../../functions/render.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 @Injectable()
 export class VersionService implements VersionREST<VersionCreate, VersionUpdate, Express.Multer.File[], Express.Multer.File[]> {
@@ -195,7 +190,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                 if (files.model.length == 1) {
                     if (files.model[0].originalname.endsWith('.stl')) {
                         try {
-                            const image = await renderStl(files.model[0].buffer, 1000, 1000)
+                            const image = await renderStl(files.model[0].buffer.buffer as ArrayBuffer, 1000, 1000)
                             await this.updateImage(productId, versionId, image)
                         } catch (e) {
                             console.error(new Date(), 'Could not render image', e)
@@ -216,7 +211,7 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
                         }
                     } else if (files.model[0].originalname.endsWith('.fbx')) {
                         try {
-                            const image = await renderFbx(files.model[0].buffer, 1000, 1000)
+                            const image = await renderFbx(files.model[0].buffer.buffer as ArrayBuffer, 1000, 1000)
                             await this.updateImage(productId, versionId, image)
                         } catch (e) {
                             console.error(new Date(), 'Could not render image', e)
@@ -254,9 +249,9 @@ export class VersionService implements VersionREST<VersionCreate, VersionUpdate,
         }
     }
     
-    async updateImage(productId: string, versionId: string, image: Jimp) {
+    async updateImage(productId: string, versionId: string, image: JimpInstance) {
         // Save image
-        await image.writeAsync(`./uploads/${versionId}.png`)
+        await image.write(`./uploads/${versionId}.png`)
         // Update version
         const version = await Database.get().versionRepository.findOneBy({ productId, versionId })
         version.updated = Date.now()

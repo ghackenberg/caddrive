@@ -1,3 +1,5 @@
+/*
+
 import Plausible from 'plausible-tracker'
 
 export const plausible = Plausible({
@@ -7,3 +9,5 @@ export const plausible = Plausible({
 
 plausible.enableAutoPageviews()
 //plausible.enableAutoOutboundTracking()
+
+*/

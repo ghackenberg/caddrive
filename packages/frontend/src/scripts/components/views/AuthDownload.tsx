@@ -1,11 +1,9 @@
-import * as React from 'react'
-import { Redirect } from 'react-router'
-
-import { DESKTOP, LINUX, MAC, WINDOWS } from '../../platform'
-import { AuthContext } from '../../contexts/Auth'
-import { useAsyncHistory } from '../../hooks/history'
-import { LegalFooter } from '../snippets/LegalFooter'
-
+import { useContext } from 'react'
+import { Navigate } from 'react-router'
+import { AuthContext } from '../../contexts/Auth.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { DESKTOP, LINUX, MAC, WINDOWS } from '../../platform.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthDownloadView = () => {
@@ -14,7 +12,7 @@ export const AuthDownloadView = () => {
 
     // CONTEXTS
 
-    const { authContextUser } = React.useContext(AuthContext)
+    const { authContextUser } = useContext(AuthContext)
 
     // FUNCTIONS
 
@@ -60,7 +58,7 @@ export const AuthDownloadView = () => {
                 </div>
             </main>
         ) : (
-            <Redirect to="/auth"/>
+            <Navigate to="/auth"/>
         )
     )
 }

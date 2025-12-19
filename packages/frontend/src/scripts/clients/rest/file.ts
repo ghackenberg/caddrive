@@ -1,8 +1,6 @@
 import axios from 'axios'
-
 import { FileREST } from 'productboard-common'
-
-import { auth } from '../auth'
+import { auth } from '../auth.js'
 
 class FileClientImpl implements FileREST<ArrayBuffer> {
     async getFile(fileId: string): Promise<ArrayBuffer> {

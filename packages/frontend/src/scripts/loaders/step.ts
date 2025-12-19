@@ -1,8 +1,7 @@
 import { BufferGeometry, EdgesGeometry, Group, LineBasicMaterial, LineSegments, Mesh, Object3D } from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-
-import { CacheAPI } from '../clients/cache'
-import { worker } from '../worker'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { CacheAPI } from '../clients/cache.js'
+import { worker } from '../worker.js'
 
 const TEXT_DECODER = new TextDecoder()
 
@@ -22,7 +21,7 @@ export async function parseSTEPModel(data: string) {
             worker.removeEventListener('messageerror', handleMessageError)
             worker.removeEventListener('error', handleError)
             if (message.data instanceof Uint8Array) {
-                GLTF.parse(message.data.buffer, undefined, gltf => {
+                GLTF.parse(message.data.buffer as ArrayBuffer, undefined, gltf => {
                     gltf.scene.rotateX(-Math.PI / 2)
                     postProcess(gltf.scene)
                     resolve(gltf.scene)

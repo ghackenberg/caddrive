@@ -1,10 +1,6 @@
-import * as React from 'react'
-
-import { Object3D } from 'three'
-
 import { VersionRead } from 'productboard-common'
-
-import { FileView3D } from './FileView3D'
+import { Object3D } from 'three'
+import { FileView3D } from './FileView3D.js'
 
 export const VersionView3D = (props: { version: VersionRead, mouse: boolean, highlighted?: string[], marked?: string[], selected?: string[], over?: (object: Object3D) => void, out?: (object: Object3D) => void, click?: (object: Object3D) => void }) => {
     const version = props.version

@@ -1,9 +1,7 @@
-import * as React from 'react'
-
 import { CommentRead, IssueRead } from 'productboard-common'
-
-import { useIssues } from './list'
-import { CacheAPI } from '../clients/cache'
+import { useEffect, useState } from 'react'
+import { CacheAPI } from '../clients/cache.js'
+import { useIssues } from './list.js'
 
 type Unsubscribe = () => void
 
@@ -20,9 +18,9 @@ export function useIssuesComments(productId: string, milestoneId?: string) {
 
     const initialIssuesComments: {[issueId: string]: CommentRead[]} = recompute(issues)
 
-    const [issuesComments, setIssuesComments] = React.useState(initialIssuesComments)
+    const [issuesComments, setIssuesComments] = useState(initialIssuesComments)
 
-    React.useEffect(() => {
+    useEffect(() => {
         const unsubscribes: Unsubscribe[] = []
         for (const issue of issues || []) {
             const unsubscribe = CacheAPI.subscribeComments(productId, issue.issueId, () => {

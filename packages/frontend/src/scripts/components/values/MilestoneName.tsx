@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { useMilestone } from '../../hooks/entity'
+import { useMilestone } from '../../hooks/entity.js'
 
 export const MilestoneName = (props: { productId: string, milestoneId: string, class?: string }) => {
     const milestone = useMilestone(props.productId, props.milestoneId)

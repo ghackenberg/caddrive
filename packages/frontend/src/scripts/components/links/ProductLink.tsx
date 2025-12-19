@@ -1,10 +1,6 @@
-import * as React from 'react'
-import { NavLink } from 'react-router-dom'
-
 import { ProductRead } from 'productboard-common'
-
-import { useNavigationStack } from '../../hooks/navigation'
-
+import { NavLink } from 'react-router'
+import { useNavigationStack } from '../../hooks/navigation.js'
 import ProductIcon from '/src/images/product.png'
 
 export const ProductLink = (props: {product?: ProductRead}) => {

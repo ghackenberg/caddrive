@@ -1,11 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
-
 import { JWTPayload, jwtVerify } from 'jose'
-
 import { Database } from 'productboard-database'
-
-import { KEY_PAIR } from '../../../key'
-import { AuthorizedRequest } from '../../../request'
+import { KEY_PAIR } from '../../../key.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 abstract class TokenGuard implements CanActivate {
 

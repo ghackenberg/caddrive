@@ -1,16 +1,14 @@
-import * as THREE from "three"
-import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
-
 import { Model, Parser } from "productboard-ldraw"
-
-import { CacheAPI } from "../clients/cache"
+import { Color, Group, LoadingManager, Material, Matrix4, Mesh, Object3D, Quaternion, Vector3 } from 'three'
+import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader.js'
+import { CacheAPI } from "../clients/cache.js"
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const empty = (_part: string, _loaded: number, _total: number) => {/**/}
 
 const TEXT_DECODER = new TextDecoder()
 
-const LOADING_MANAGER = new THREE.LoadingManager().setURLModifier(url => {
+const LOADING_MANAGER = new LoadingManager().setURLModifier(url => {
     if (url.indexOf('/') == -1) {
         return `/rest/parts/${url}`
     } else {
@@ -35,8 +33,8 @@ export async function getMaterials() {
     return LDRAW_LOADER.materials
 }
 
-export function getMaterialColor(material: THREE.Material) {
-    if ('color' in material && material.color instanceof THREE.Color) {
+export function getMaterialColor(material: Material) {
+    if ('color' in material && material.color instanceof Color) {
         const r = Math.round(material.color.r * 255)
         const g = Math.round(material.color.g * 255)
         const b = Math.round(material.color.b * 255)
@@ -46,8 +44,8 @@ export function getMaterialColor(material: THREE.Material) {
     }
 }
 
-export function getObjectMaterialCode(object: THREE.Object3D): string {
-    if (object instanceof THREE.Mesh) {
+export function getObjectMaterialCode(object: Object3D): string {
+    if (object instanceof Mesh) {
         return object.material.userData.code
     } else {
         for (const child of object.children) {
@@ -100,7 +98,7 @@ export async function parseLDrawModel(path: string, data: string, update = empty
     const model = new Parser().parse(data)
 
     if (asynchron && model.files.length > 0) {
-        const group = new THREE.Group()
+        const group = new Group()
         const total = countParts(model, model.files[0])
         parseModel(path, group, model, model.files[0], 0, total, update)
         group.rotation.x = Math.PI
@@ -111,7 +109,7 @@ export async function parseLDrawModel(path: string, data: string, update = empty
             group.rotation.x = Math.PI
             return group
         } else {
-            const group = new THREE.Group()
+            const group = new Group()
             const total = countParts(model, model)
             parseModel(path, group, model, model, 0, total, update)
             group.rotation.x = Math.PI
@@ -140,7 +138,7 @@ async function pause(milliseconds: number) {
     })
 }
 
-async function parseModel(path: string, group: THREE.Group, context: Model, model: Model, loaded: number, total: number, update = empty, time = Date.now()) {
+async function parseModel(path: string, group: Group, context: Model, model: Model, loaded: number, total: number, update = empty, time = Date.now()) {
 
     update(undefined, loaded, total)
 
@@ -167,22 +165,22 @@ async function parseModel(path: string, group: THREE.Group, context: Model, mode
 
             const submodel = context.fileIndex[reference.file]
 
-            const child = new THREE.Group()
+            const child = new Group()
 
             child.userData = {
                 name: reference.file
             }
 
-            const matrix = new THREE.Matrix4().set(
+            const matrix = new Matrix4().set(
                 reference.orientation.a, reference.orientation.b, reference.orientation.c, reference.position.x,
                 reference.orientation.d, reference.orientation.e, reference.orientation.f, reference.position.y,
                 reference.orientation.g, reference.orientation.h, reference.orientation.i, reference.position.z,
                 0, 0, 0, 1
             )
 
-            const position = new THREE.Vector3()
-            const quaternion = new THREE.Quaternion()
-            const scale = new THREE.Vector3()
+            const position = new Vector3()
+            const quaternion = new Quaternion()
+            const scale = new Vector3()
 
             matrix.decompose(position, quaternion, scale)
 
@@ -211,9 +209,9 @@ async function parseModel(path: string, group: THREE.Group, context: Model, mode
 }
 
 function parseFull(data: string) {
-    return new Promise<THREE.Group>(resolve => {
+    return new Promise<Group>(resolve => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (LDRAW_LOADER as any).parse(data, (group: THREE.Group) => {
+        (LDRAW_LOADER as any).parse(data, (group: Group) => {
             // Resolve
             resolve(group)
         })

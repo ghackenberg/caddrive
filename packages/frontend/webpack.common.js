@@ -58,6 +58,9 @@ export default {
             '@nestjs/swagger': false
         },
         extensions: ['.tsx', '.ts', '.js'],
+        extensionAlias: {
+            '.js': ['.js', '.ts', '.tsx']
+        }
     },
     plugins: [
         new NormalModuleReplacementPlugin(/node:/, resource => {

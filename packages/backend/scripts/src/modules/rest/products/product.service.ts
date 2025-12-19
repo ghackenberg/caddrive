@@ -1,14 +1,11 @@
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-
-import shortid from 'shortid'
-import { FindOptionsWhere, IsNull } from 'typeorm'
-
 import { ProductCreate, ProductREST, ProductRead, ProductUpdate } from 'productboard-common'
 import { Database, ProductEntity, convertProduct } from 'productboard-database'
-
-import { emitProductMessage } from '../../../functions/emit'
-import { AuthorizedRequest } from '../../../request'
+import shortid from 'shortid'
+import { FindOptionsWhere, IsNull } from 'typeorm'
+import { emitProductMessage } from '../../../functions/emit.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService implements ProductREST {

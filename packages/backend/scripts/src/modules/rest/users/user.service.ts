@@ -1,16 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-
+import { Jimp } from 'jimp'
 import 'multer'
-import Jimp from 'jimp'
+import { UserRead, UserREST, UserUpdate } from 'productboard-common'
+import { convertUser, Database, getMemberOrFail, UserEntity } from 'productboard-database'
 import shortid from 'shortid'
 import { FindOptionsWhere, IsNull, Raw } from 'typeorm'
-
-import { UserREST, UserRead, UserUpdate } from 'productboard-common'
-import { convertUser, Database, getMemberOrFail, UserEntity } from 'productboard-database'
-
-import { emitProductMessage, emitUserMessage } from '../../../functions/emit'
-import { AuthorizedRequest } from '../../../request'
+import { emitProductMessage, emitUserMessage } from '../../../functions/emit.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 @Injectable()
 export class UserService implements UserREST<UserUpdate, Express.Multer.File> {
@@ -57,15 +54,15 @@ export class UserService implements UserREST<UserUpdate, Express.Multer.File> {
             // Parse
             const parsed = await Jimp.read(file.buffer)
             // Crop
-            const width = parsed.getWidth()
-            const height = parsed.getHeight()
+            const width = parsed.width
+            const height = parsed.height
             const size = Math.min(width, height)
-            const cropped = parsed.crop((width - size) / 2, (height - size) / 2, size, size)
+            const cropped = parsed.crop({ x: (width - size) / 2, y: (height - size) / 2, w: size, h: size })
             // Resize
-            const resized = cropped.resize(128, 128)
+            const resized = cropped.resize({ w: 128, h: 128 })
             // Write
             const pictureId = shortid()
-            await resized.writeAsync(`./uploads/${pictureId}.jpg`)
+            await resized.write(`./uploads/${pictureId}.jpg`)
             user.pictureId = pictureId
         }
         await Database.get().userRepository.save(user)

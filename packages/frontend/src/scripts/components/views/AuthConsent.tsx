@@ -1,11 +1,9 @@
-import * as React from 'react'
-import { Redirect } from 'react-router'
-
-import { UserClient } from '../../clients/rest/user'
-import { AuthContext } from '../../contexts/Auth'
-import { useAsyncHistory } from '../../hooks/history'
-import { LegalFooter } from '../snippets/LegalFooter'
-
+import { useContext, useState } from 'react'
+import { Navigate } from 'react-router'
+import { UserClient } from '../../clients/rest/user.js'
+import { AuthContext } from '../../contexts/Auth.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthConsentView = () => {
@@ -14,12 +12,12 @@ export const AuthConsentView = () => {
 
     // CONTEXTS
 
-    const { authContextUser, setAuthContextUser } = React.useContext(AuthContext)
+    const { authContextUser, setAuthContextUser } = useContext(AuthContext)
 
     // STATES
 
-    const [load, setLoad] = React.useState<boolean>(false)
-    const [error, setError] = React.useState<string>()
+    const [load, setLoad] = useState<boolean>(false)
+    const [error, setError] = useState<string>()
 
     // FUNCTIONS
 
@@ -72,7 +70,7 @@ export const AuthConsentView = () => {
                 </div>
             </main>
         ) : (
-            <Redirect to="/auth"/>
+            <Navigate to="/auth"/>
         )
     )
 }

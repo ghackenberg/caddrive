@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { GenericInput } from './GenericInput'
+import { GenericInput } from './GenericInput.js'
 
 export const BooleanInput = (props: {label: string, change?: (value: boolean) => void, value: boolean, disabled?: boolean, required?: boolean}) => {
     const label = props.label

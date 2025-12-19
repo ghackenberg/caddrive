@@ -1,15 +1,12 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { ApiBearerAuth, ApiBody, ApiExtraModels, ApiParam, ApiResponse } from '@nestjs/swagger'
-
 import "multer"
-
 import { IssueCreate, IssueREST, IssueRead, IssueUpdate } from 'productboard-common'
-
-import { IssueService } from './issue.service'
-import { canReadIssueOrFail, canUpdateIssueOrFail, canDeleteIssueOrFail, canCreateIssueOrFail, canReadProductOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canCreateIssueOrFail, canDeleteIssueOrFail, canReadIssueOrFail, canReadProductOrFail, canUpdateIssueOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { IssueService } from './issue.service.js'
 
 @Controller('rest/products/:productId/issues')
 @UseGuards(TokenOptionalGuard)

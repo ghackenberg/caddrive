@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 export const GenericInput = (props: {label?: string, children: React.ReactNode}) => (
     <div>
         <div className={props.label ? '' : 'empty'}>

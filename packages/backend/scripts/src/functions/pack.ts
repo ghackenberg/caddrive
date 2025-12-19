@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-
 import shortid from 'shortid'
 
 const ldrawPath = 'assets/ldraw'

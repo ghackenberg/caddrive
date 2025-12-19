@@ -1,10 +1,9 @@
-import * as React from 'react'
-import { Route, Switch } from 'react-router'
+import { lazy } from 'react'
+import { Route, Routes } from 'react-router'
+import { ProductsHeader } from '../snippets/ProductsHeader.js'
+import { ProductView } from '../views/Product.js'
 
-import { ProductsHeader } from '../snippets/ProductsHeader'
-import { ProductView } from '../views/Product'
-
-const ProductRouter = React.lazy(() => import('./Product'))
+const ProductRouter = lazy(() => import('./Product.js'))
 
 const Overview = () => (
     <>
@@ -15,10 +14,10 @@ const Overview = () => (
 
 const ProductsRouter = () => {
     return (
-        <Switch>
-            <Route path="/products/:productId" component={ProductRouter}/>
-            <Route path="/products" component={Overview}/>
-        </Switch>
+        <Routes>
+            <Route path="/products/:productId" element={<ProductRouter/>}/>
+            <Route path="/products" element={<Overview/>}/>
+        </Routes>
     )
 }
 

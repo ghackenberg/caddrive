@@ -25,6 +25,9 @@ export default {
             'three': resolve('../../node_modules/three')
         },
         extensions: ['.ts', '.js'],
+        extensionAlias: {
+            '.js': ['.js', '.ts']
+        }
     },
     output: {
         path: resolve('public'),

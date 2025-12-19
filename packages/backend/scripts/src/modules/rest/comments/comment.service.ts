@@ -1,21 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-
 import { getTestMessageUrl } from 'nodemailer'
-//import rehypeMermaid from 'rehype-mermaid'
+import { CommentCreate, CommentREST, CommentRead, CommentUpdate, IssueRead, ProductRead } from 'productboard-common'
+import { Database, MilestoneEntity, convertComment } from 'productboard-database'
 import rehypeStringify from 'rehype-stringify'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import shortid from 'shortid'
 import { IsNull } from 'typeorm'
 import { unified } from 'unified'
-
-import { CommentCreate, CommentREST, CommentRead, CommentUpdate, IssueRead, ProductRead } from 'productboard-common'
-import { Database, MilestoneEntity, convertComment } from 'productboard-database'
-
-import { emitProductMessage } from '../../../functions/emit'
-import { TRANSPORTER } from '../../../functions/mail'
-import { AuthorizedRequest } from '../../../request'
+import { emitProductMessage } from '../../../functions/emit.js'
+import { TRANSPORTER } from '../../../functions/mail.js'
+import { AuthorizedRequest } from '../../../request.js'
 
 @Injectable()
 export class CommentService implements CommentREST {

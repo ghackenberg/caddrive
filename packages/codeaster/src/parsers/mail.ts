@@ -1,4 +1,8 @@
-import { Face, Hexa, MailGroup, Node, NodeGroup, Quad } from "../main"
+import { Face } from '../models/face.js'
+import { MailGroup, NodeGroup } from '../models/group.js'
+import { Hexa } from '../models/hexa.js'
+import { Node } from '../models/node.js'
+import { Quad } from '../models/quad.js'
 
 enum Mode {
     NONE, COOR_3D, HEXA8, GROUP_MA, GROUP_NO, QUAD4, FIN

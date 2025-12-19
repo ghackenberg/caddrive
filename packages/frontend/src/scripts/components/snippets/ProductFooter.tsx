@@ -1,7 +1,5 @@
-import * as React from 'react'
 import { useLocation } from 'react-router'
-
-import { useAsyncHistory } from '../../hooks/history'
+import { useAsyncHistory } from '../../hooks/history.js'
 
 export type ProductFooterItem = {
     hash: string

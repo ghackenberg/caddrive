@@ -1,14 +1,13 @@
 import { JWK } from 'jose'
-
-import { AttachmentRead } from './data/attachment'
-import { CommentRead, CommentCreate, CommentUpdate } from './data/comment'
-import { IssueRead, IssueCreate, IssueUpdate } from './data/issue'
-import { MemberRead, MemberCreate, MemberUpdate } from './data/member'
-import { MilestoneRead, MilestoneCreate, MilestoneUpdate } from './data/milestone'
-import { ProductRead, ProductCreate, ProductUpdate } from './data/product'
-import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenRefreshResponse } from './data/token'
-import { UserRead } from './data/user'
-import { VersionRead } from './data/version'
+import { AttachmentRead } from './data/attachment.js'
+import { CommentCreate, CommentRead, CommentUpdate } from './data/comment.js'
+import { IssueCreate, IssueRead, IssueUpdate } from './data/issue.js'
+import { MemberCreate, MemberRead, MemberUpdate } from './data/member.js'
+import { MilestoneCreate, MilestoneRead, MilestoneUpdate } from './data/milestone.js'
+import { ProductCreate, ProductRead, ProductUpdate } from './data/product.js'
+import { TokenActivateRequest, TokenActivateResponse, TokenCreateRequest, TokenCreateResponse, TokenRefreshResponse } from './data/token.js'
+import { UserRead } from './data/user.js'
+import { VersionRead } from './data/version.js'
 
 export interface KeyREST {
     getPublicJWK(): Promise<JWK>

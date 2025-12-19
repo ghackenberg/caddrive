@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { MilestoneCreate, MilestoneREST, MilestoneRead, MilestoneUpdate } from 'productboard-common'
-
-import { auth } from '../auth'
-import { CacheAPI } from '../cache'
+import { auth } from '../auth.js'
+import { CacheAPI } from '../cache.js'
 
 class MilestoneClientImpl implements MilestoneREST {
     async findMilestones(productId: string): Promise<MilestoneRead[]> {

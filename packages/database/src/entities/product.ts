@@ -1,10 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
-
-import { IssueEntity } from './issue'
-import { MemberEntity } from './member'
-import { MilestoneEntity } from './milestone'
-import { UserEntity } from './user'
-import { VersionEntity } from './version'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, Relation } from 'typeorm'
+import { IssueEntity } from './issue.js'
+import { MemberEntity } from './member.js'
+import { MilestoneEntity } from './milestone.js'
+import { UserEntity } from './user.js'
+import { VersionEntity } from './version.js'
 
 @Entity()
 export class ProductEntity {
@@ -15,7 +14,7 @@ export class ProductEntity {
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
-    user: UserEntity
+    user: Relation<UserEntity>
 
     @Column({ nullable: false })
     created: number
@@ -32,11 +31,11 @@ export class ProductEntity {
     public: boolean
     
     @OneToMany(() => VersionEntity, version => version.product)
-    versions: VersionEntity[]
+    versions: Relation<VersionEntity>[]
     @OneToMany(() => MemberEntity, member => member.product)
-    members: MemberEntity[]
+    members: Relation<MemberEntity>[]
     @OneToMany(() => MilestoneEntity, milestone => milestone.product)
-    milestones: MilestoneEntity[]
+    milestones: Relation<MilestoneEntity>[]
     @OneToMany(() => IssueEntity, issue => issue.product)
-    issues: IssueEntity[]
+    issues: Relation<IssueEntity>[]
 }

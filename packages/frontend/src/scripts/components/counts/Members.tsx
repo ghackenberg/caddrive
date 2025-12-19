@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { useMembers } from '../../hooks/list'
+import { useMembers } from '../../hooks/list.js'
 
 export const MemberCount = (props: { productId: string }) => {
     const members = useMembers(props.productId)

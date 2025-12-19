@@ -2,15 +2,12 @@ import { Body, Controller, Delete, Get, Inject, Param, Put, Query, Scope, Upload
 import { REQUEST } from '@nestjs/core'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger'
-
 import 'multer'
-
 import { UserREST, UserRead, UserUpdate } from 'productboard-common'
-
-import { UserService } from './user.service'
-import { canFindUserOrFail, canReadUserOrFail, canUpdateUserOrFail, canDeleteUserOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canDeleteUserOrFail, canFindUserOrFail, canReadUserOrFail, canUpdateUserOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { UserService } from './user.service.js'
 
 @Controller({path: 'rest/users', scope: Scope.REQUEST})
 @UseGuards(TokenOptionalGuard)

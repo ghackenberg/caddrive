@@ -1,12 +1,10 @@
-import * as React from 'react'
-import { Redirect } from 'react-router-dom'
-
-import { DESKTOP } from '../../platform'
-import { AuthContext } from '../../contexts/Auth'
-import { UserContext } from '../../contexts/User'
-import { useAsyncHistory } from '../../hooks/history'
-import { LegalFooter } from '../snippets/LegalFooter'
-
+import { useContext } from 'react'
+import { Navigate } from 'react-router'
+import { AuthContext } from '../../contexts/Auth.js'
+import { UserContext } from '../../contexts/User.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { DESKTOP } from '../../platform.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthWelcomeView = () => {
@@ -15,8 +13,8 @@ export const AuthWelcomeView = () => {
 
     // CONTEXTS
 
-    const { authContextUser } = React.useContext(AuthContext)
-    const { setContextUser } = React.useContext(UserContext)
+    const { authContextUser } = useContext(AuthContext)
+    const { setContextUser } = useContext(UserContext)
 
     // FUNCTIONS
 
@@ -51,7 +49,7 @@ export const AuthWelcomeView = () => {
                 </div>
             </main>
         ) : (
-            <Redirect to="/auth"/>
+            <Navigate to="/auth"/>
         )
     )
 }

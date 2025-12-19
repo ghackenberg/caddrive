@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { UserREST, UserRead, UserUpdate } from 'productboard-common'
-
-import { auth } from '../auth'
-import { CacheAPI } from '../cache'
+import { auth } from '../auth.js'
+import { CacheAPI } from '../cache.js'
 
 class UserClientImpl implements UserREST<UserUpdate, File> {
     async findUsers(productId?: string, query?: string): Promise<UserRead[]> {

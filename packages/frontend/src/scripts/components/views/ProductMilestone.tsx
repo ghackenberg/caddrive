@@ -1,27 +1,22 @@
-import  * as React from 'react'
-import { useContext } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-import { NavLink } from 'react-router-dom'
-
 import { MilestoneRead } from 'productboard-common'
-
-import { MilestoneClient } from '../../clients/rest/milestone'
-import { UserContext } from '../../contexts/User'
-import { useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useMilestones, useMembers } from '../../hooks/list'
-import { formatDateHourMinute } from '../../functions/time'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { MilestoneProgressWidget } from '../widgets/MilestoneProgress'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { Column, Table } from '../widgets/Table'
-import { LoadingView } from './Loading'
-
-import MilestoneIcon from '/src/images/milestone.png'
+import { useContext } from 'react'
+import { Navigate, NavLink, useLocation, useParams } from 'react-router'
+import { MilestoneClient } from '../../clients/rest/milestone.js'
+import { UserContext } from '../../contexts/User.js'
+import { formatDateHourMinute } from '../../functions/time.js'
+import { useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useMembers, useMilestones } from '../../hooks/list.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { MilestoneProgressWidget } from '../widgets/MilestoneProgress.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { Column, Table } from '../widgets/Table.js'
+import { LoadingView } from './Loading.js'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
+import MilestoneIcon from '/src/images/milestone.png'
 import RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = () => {
@@ -107,7 +102,7 @@ export const ProductMilestoneView = () => {
     return (
         (product && members && milestones) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className={`view product-milestone sidebar ${!hash ? 'hidden' : 'visible'}`}>

@@ -1,10 +1,7 @@
-import { existsSync, writeFileSync, createReadStream, readFileSync, statSync } from 'fs'
-
 import { Injectable, NotFoundException, StreamableFile } from '@nestjs/common'
-
+import { createReadStream, existsSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { FileREST } from 'productboard-common'
-
-import { packLDrawText } from '../../../functions/pack'
+import { packLDrawText } from '../../../functions/pack.js'
 
 @Injectable()
 export class FileService implements FileREST<StreamableFile> {

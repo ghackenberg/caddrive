@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { GenericInput } from './GenericInput'
+import { GenericInput } from './GenericInput.js'
 
 export const ButtonInput = (props: {label?: string, value: string, badge?: string, class?: string, click?: (event: React.MouseEvent<HTMLButtonElement>) => void, disabled?: boolean}) => {
     const label = props.label

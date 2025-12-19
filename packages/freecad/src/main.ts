@@ -1,6 +1,6 @@
-import { BlobReader, Entry, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
+import { BlobReader, Entry, FileEntry, TextWriter, Uint8ArrayWriter, ZipReader } from '@zip.js/zip.js'
 import { BufferGeometry, Color, EdgesGeometry, Group, LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
-import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const GLTF = new GLTFLoader()
 
@@ -69,20 +69,20 @@ export async function parseFreeCADModel(data: ReadableStream | BlobReader, brep2
         if (entry.filename == 'Document.xml') {
             // Read document
             const writer = new TextWriter()
-            const content = await entry.getData(writer)
+            const content = await (entry as FileEntry).getData(writer)
             const parser = new DOMParser()
             const document = parser.parseFromString(content, 'application/xml')
             doc = parseFCStdDocument(document)
         } else if (entry.filename == 'GuiDocument.xml') {
             // Read GUI document
             const writer = new TextWriter()
-            const content = await entry.getData(writer)
+            const content = await (entry as FileEntry).getData(writer)
             const parser = new DOMParser()
             guiDoc = parser.parseFromString(content, 'application/xml')
         } else if (entry.filename.startsWith('DiffuseColor')) {
             // Read color specification
             const writer = new Uint8ArrayWriter()
-            const content = await entry.getData(writer)
+            const content = await (entry as FileEntry).getData(writer)
             colors[entry.filename] = []
             for (let i = 1; i < content.length / 4; i++) {
                 const a = content[i * 4 + 0]
@@ -361,11 +361,11 @@ async function convertFCObject(obj: FreeCADObject, colors: {[name: string]: Mesh
             // Parse brep
             const entry = breps[file]
             const writer = new TextWriter()
-            const content = await entry.getData(writer)
+            const content = await (entry as FileEntry).getData(writer)
             //console.log('Converting', file)
             const data = await brep2Glb(content)
             const gltf = await new Promise<GLTF>((resolve, reject) => {
-                GLTF.parse(data.buffer, undefined, resolve, reject)
+                GLTF.parse(data.buffer as ArrayBuffer, undefined, resolve, reject)
             })
             // Post-process scene objects
             postProcess(gltf.scene, colors[obj.diffuse][0])

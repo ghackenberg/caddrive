@@ -1,6 +1,5 @@
 import { ProductMessageData, UserMessageData, compileProductMessage, compileUserMessage } from "productboard-database"
-
-import { MqttAPI } from "../mqtt"
+import { MqttAPI } from "../mqtt.js"
 
 export async function emitUserMessage(userId: string, data: UserMessageData) {
     const message = await compileUserMessage(data);

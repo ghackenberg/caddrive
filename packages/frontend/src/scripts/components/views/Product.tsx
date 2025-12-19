@@ -1,16 +1,13 @@
-import * as React from 'react'
-import { useEffect, useContext } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
-
-import { UserContext } from '../../contexts/User'
-import { VersionContext } from '../../contexts/Version'
-import { useProducts } from '../../hooks/list'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductImageWidget } from '../widgets/ProductImage'
-import { ProductUserName } from '../values/ProductUserName'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { LoadingView } from './Loading'
-
+import { useContext, useEffect } from 'react'
+import { NavLink, useLocation } from 'react-router'
+import { UserContext } from '../../contexts/User.js'
+import { VersionContext } from '../../contexts/Version.js'
+import { useProducts } from '../../hooks/list.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductUserName } from '../values/ProductUserName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { ProductImageWidget } from '../widgets/ProductImage.js'
+import { LoadingView } from './Loading.js'
 import ProductIcon from '/src/images/product.png'
 
 export const ProductView = () => {

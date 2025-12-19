@@ -2,13 +2,11 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, StreamableFile
 import { REQUEST } from '@nestjs/core'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiResponse, getSchemaPath } from '@nestjs/swagger'
-
 import { AttachmentCreate, AttachmentREST, AttachmentRead, AttachmentUpdate } from 'productboard-common'
-
-import { AttachmentService } from './attachment.service'
-import { canCreateAttachmentOrFail, canDeleteAttachmentOrFail, canFindAttachmentOrFail, canReadAttachmentOrFail, canUpdateAttachmentOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canCreateAttachmentOrFail, canDeleteAttachmentOrFail, canFindAttachmentOrFail, canReadAttachmentOrFail, canUpdateAttachmentOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { AttachmentService } from './attachment.service.js'
 
 @Controller('rest/products/:productId/attachments')
 @UseGuards(TokenOptionalGuard)

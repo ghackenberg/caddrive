@@ -1,16 +1,13 @@
-import * as React from 'react'
-
-import { JWK, JWTVerifyResult, KeyLike, importJWK, jwtVerify } from 'jose'
-
-import { auth } from '../../clients/auth'
-import { CacheAPI } from '../../clients/cache'
-import { TokenClient } from '../../clients/rest/token'
-import { UserClient } from '../../clients/rest/user'
-import { AuthContext } from '../../contexts/Auth'
-import { UserContext } from '../../contexts/User'
-import { useAsyncHistory } from '../../hooks/history'
-import { LegalFooter } from '../snippets/LegalFooter'
-
+import { JWK, JWTVerifyResult, importJWK, jwtVerify } from 'jose'
+import { createRef, useContext, useEffect, useState } from 'react'
+import { auth } from '../../clients/auth.js'
+import { CacheAPI } from '../../clients/cache.js'
+import { TokenClient } from '../../clients/rest/token.js'
+import { UserClient } from '../../clients/rest/user.js'
+import { AuthContext } from '../../contexts/Auth.js'
+import { UserContext } from '../../contexts/User.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthCodeView = () => {
@@ -19,60 +16,60 @@ export const AuthCodeView = () => {
 
     // REFS
 
-    const inputRef = React.createRef<HTMLInputElement>()
+    const inputRef = createRef<HTMLInputElement>()
 
     // CONTEXTS
 
-    const { authContextToken, setAuthContextUser } = React.useContext(AuthContext)
-    const { setContextUser } = React.useContext(UserContext)
+    const { authContextToken, setAuthContextUser } = useContext(AuthContext)
+    const { setContextUser } = useContext(UserContext)
 
     // STATES
 
-    const [publicJWK, setPublicJWK] = React.useState<JWK>()
-    const [publicKey, setPublicKey] = React.useState<KeyLike | Uint8Array>()
-    const [jwtVerifyResult, setJWTVerifyResult] = React.useState<JWTVerifyResult>()
-    const [payload, setPayload] = React.useState<{ userId: string }>()
-    const [userId, setUserId] = React.useState<string>()
+    const [publicJWK, setPublicJWK] = useState<JWK>()
+    const [publicKey, setPublicKey] = useState<CryptoKey | Uint8Array>()
+    const [jwtVerifyResult, setJWTVerifyResult] = useState<JWTVerifyResult>()
+    const [payload, setPayload] = useState<{ userId: string }>()
+    const [userId, setUserId] = useState<string>()
 
-    const [code, setCode] = React.useState<string>('')
-    const [jwt, setJWT] = React.useState<string>()
+    const [code, setCode] = useState<string>('')
+    const [jwt, setJWT] = useState<string>()
 
-    const [load, setLoad] = React.useState<boolean>(false)
-    const [error, setError] = React.useState<string>()
+    const [load, setLoad] = useState<boolean>(false)
+    const [error, setError] = useState<string>()
 
     // EFFECTS
 
-    React.useEffect(() => {
+    useEffect(() => {
         inputRef.current.focus()
     })
 
-    React.useEffect(() => {
+    useEffect(() => {
         let exec = true
         CacheAPI.loadPublicJWK().then(publicJWK => exec && setPublicJWK(publicJWK))
         return () => { exec = false }
     })
 
-    React.useEffect(() => {
+    useEffect(() => {
         let exec = true
         publicJWK && importJWK(publicJWK, "PS256").then(publicKey => exec && setPublicKey(publicKey))
         return () => { exec = false }
     }, [publicJWK])
 
-    React.useEffect(() => {
+    useEffect(() => {
         let exec = true
         jwt && publicKey && jwtVerify(jwt, publicKey).then(jwtVerifyResult => exec && setJWTVerifyResult(jwtVerifyResult))
         return () => { exec = false }
     }, [jwt, publicKey])
 
-    React.useEffect(() => {
+    useEffect(() => {
         jwtVerifyResult && setPayload(jwtVerifyResult.payload as { userId: string })
     }, [jwtVerifyResult])
     
-    React.useEffect(() => {
+    useEffect(() => {
         payload && setUserId(payload.userId)
     }, [payload])
 
-    React.useEffect(() => {
+    useEffect(() => {
         let exec = true
         if (userId) {
             setLoad(true)

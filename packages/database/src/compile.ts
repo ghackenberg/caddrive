@@ -1,14 +1,13 @@
 import { ProductMessage, UserMessage } from "productboard-common"
-
-import { convertAttachment, convertComment, convertIssue, convertMember, convertMilestone, convertProduct, convertUser, convertVersion } from "./convert"
-import { AttachmentEntity } from "./entities/attachment"
-import { CommentEntity } from "./entities/comment"
-import { IssueEntity } from "./entities/issue"
-import { MemberEntity } from "./entities/member"
-import { MilestoneEntity } from "./entities/milestone"
-import { ProductEntity } from "./entities/product"
-import { UserEntity } from "./entities/user"
-import { VersionEntity } from "./entities/version"
+import { convertAttachment, convertComment, convertIssue, convertMember, convertMilestone, convertProduct, convertUser, convertVersion } from "./convert.js"
+import { AttachmentEntity } from "./entities/attachment.js"
+import { CommentEntity } from "./entities/comment.js"
+import { IssueEntity } from "./entities/issue.js"
+import { MemberEntity } from "./entities/member.js"
+import { MilestoneEntity } from "./entities/milestone.js"
+import { ProductEntity } from "./entities/product.js"
+import { UserEntity } from "./entities/user.js"
+import { VersionEntity } from "./entities/version.js"
 
 export type UserMessageData = {
     type: 'state' | 'patch'

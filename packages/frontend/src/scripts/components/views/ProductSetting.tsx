@@ -1,21 +1,19 @@
-import * as React from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-
-import { ProductClient } from '../../clients/rest/product'
-import { UserContext } from '../../contexts/User'
-import { useAsyncHistory } from '../../hooks/history'
-import { useProduct } from '../../hooks/entity'
-import { useMembers } from '../../hooks/list'
-import { BooleanInput } from '../inputs/BooleanInput'
-import { ButtonInput } from '../inputs/ButtonInput'
-import { TextInput } from '../inputs/TextInput'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { LoadingView } from './Loading'
-
-import LeftIcon from '/src/images/setting.png'
+import { useContext, useEffect, useState } from 'react'
+import { Navigate, useLocation, useParams } from 'react-router'
+import { ProductClient } from '../../clients/rest/product.js'
+import { UserContext } from '../../contexts/User.js'
+import { useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useMembers } from '../../hooks/list.js'
+import { BooleanInput } from '../inputs/BooleanInput.js'
+import { ButtonInput } from '../inputs/ButtonInput.js'
+import { TextInput } from '../inputs/TextInput.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { LoadingView } from './Loading.js'
 import RightIcon from '/src/images/part.png'
+import LeftIcon from '/src/images/setting.png'
 
 export const ProductSettingView = () => {
 
@@ -25,7 +23,7 @@ export const ProductSettingView = () => {
 
     // CONTEXTS
 
-    const { contextUser } = React.useContext(UserContext)
+    const { contextUser } = useContext(UserContext)
 
     // LOCATION
 
@@ -53,15 +51,15 @@ export const ProductSettingView = () => {
     // STATES
 
     // - Values
-    const [name, setName] = React.useState<string>(initialName)
-    const [description, setDescription] = React.useState<string>(initialDescription)
-    const [_public, setPublic] = React.useState<boolean>(initialPublic)
+    const [name, setName] = useState<string>(initialName)
+    const [description, setDescription] = useState<string>(initialDescription)
+    const [_public, setPublic] = useState<boolean>(initialPublic)
     
     // EFFECTS
     
-    React.useEffect(() => { product && setName(product.name) }, [product])
-    React.useEffect(() => { product && setDescription(product.description) }, [product])
-    React.useEffect(() => { product && setPublic(product.public) }, [product])
+    useEffect(() => { product && setName(product.name) }, [product])
+    useEffect(() => { product && setDescription(product.description) }, [product])
+    useEffect(() => { product && setPublic(product.public) }, [product])
 
     // FUNCTIONS
 
@@ -112,7 +110,7 @@ export const ProductSettingView = () => {
     return (
         (productId == 'new' || (product && members)) ? (
             (product && product.deleted) ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className= {`view product-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>

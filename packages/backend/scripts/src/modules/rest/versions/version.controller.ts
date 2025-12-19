@@ -1,16 +1,13 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ApiBody, ApiResponse, ApiParam, ApiConsumes, getSchemaPath, ApiExtraModels, ApiBearerAuth } from '@nestjs/swagger'
-
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiParam, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 import 'multer'
-
 import { VersionCreate, VersionREST, VersionRead, VersionUpdate } from 'productboard-common'
-
-import { VersionService } from './version.service'
-import { canReadVersionOrFail, canDeleteVersionOrFail, canUpdateVersionOrFail, canCreateVersionOrFail, canFindVersionOrFail } from '../../../functions/permission'
-import { AuthorizedRequest } from '../../../request'
-import { TokenOptionalGuard } from '../tokens/token.guard'
+import { canCreateVersionOrFail, canDeleteVersionOrFail, canFindVersionOrFail, canReadVersionOrFail, canUpdateVersionOrFail } from '../../../functions/permission.js'
+import { AuthorizedRequest } from '../../../request.js'
+import { TokenOptionalGuard } from '../tokens/token.guard.js'
+import { VersionService } from './version.service.js'
 
 @Controller('rest/products/:productId/versions')
 @UseGuards(TokenOptionalGuard)

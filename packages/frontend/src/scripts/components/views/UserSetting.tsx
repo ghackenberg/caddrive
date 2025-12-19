@@ -1,19 +1,17 @@
-import  * as React from 'react'
-import { useState, useEffect, FormEvent, useContext } from 'react'
-import { Redirect, useParams } from 'react-router'
-
-import { LoadingView } from './Loading'
-import { auth } from '../../clients/auth'
-import { UserClient } from '../../clients/rest/user'
-import { UserContext } from '../../contexts/User'
-import { useUser } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { BooleanInput } from '../inputs/BooleanInput'
-import { ButtonInput } from '../inputs/ButtonInput'
-import { EmailInput } from '../inputs/EmailInput'
-import { FileInput } from '../inputs/FileInput'
-import { TextInput } from '../inputs/TextInput'
-import { LegalFooter } from '../snippets/LegalFooter'
+import { FormEvent, useContext, useEffect, useState } from 'react'
+import { Navigate, useParams } from 'react-router'
+import { auth } from '../../clients/auth.js'
+import { UserClient } from '../../clients/rest/user.js'
+import { UserContext } from '../../contexts/User.js'
+import { useUser } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { BooleanInput } from '../inputs/BooleanInput.js'
+import { ButtonInput } from '../inputs/ButtonInput.js'
+import { EmailInput } from '../inputs/EmailInput.js'
+import { FileInput } from '../inputs/FileInput.js'
+import { TextInput } from '../inputs/TextInput.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { LoadingView } from './Loading.js'
 
 export const UserSettingView = () => {
 
@@ -73,7 +71,7 @@ export const UserSettingView = () => {
     return (
         (userId == 'new' || user) ? (
             (user && user.deleted) ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <main className="view user-setting">
                     <div>

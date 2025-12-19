@@ -1,4 +1,4 @@
-import { Color, Command, Comment, Finish, FinishName, FinishType, Line, Matrix, Model, OptionalLine, Quadrilateral, Reference, Triangle, Vector } from "./model"
+import { Color, Command, Comment, Finish, FinishName, FinishType, Line, Matrix, Model, OptionalLine, Quadrilateral, Reference, Triangle, Vector } from './model.js'
 
 interface Context {
     root: Model

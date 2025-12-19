@@ -1,30 +1,25 @@
-import * as React from 'react'
-import { useContext, useRef, Fragment } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-import { NavLink } from 'react-router-dom'
-
 import { VersionRead } from 'productboard-common'
-
-import { UserContext } from '../../contexts/User'
-import { VersionContext } from '../../contexts/Version'
-import { useAsyncHistory } from '../../hooks/history'
-import { useProduct } from '../../hooks/entity'
-import { useMembers, useVersions } from '../../hooks/list'
-import { computeColor, computeTree } from '../../functions/tree'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductUserName } from '../values/ProductUserName'
-import { ProductUserEmail } from '../values/ProductUserEmail'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { LoadingView } from './Loading'
-
-import LoadIcon from '/src/images/load.png'
-import EditIcon from '/src/images/setting.png'
+import { Fragment, useContext, useRef } from 'react'
+import { Navigate, NavLink, useLocation, useParams } from 'react-router'
+import { UserContext } from '../../contexts/User.js'
+import { VersionContext } from '../../contexts/Version.js'
+import { computeColor, computeTree } from '../../functions/tree.js'
+import { useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useMembers, useVersions } from '../../hooks/list.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { ProductUserEmail } from '../values/ProductUserEmail.js'
+import { ProductUserName } from '../values/ProductUserName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { LoadingView } from './Loading.js'
 import ForkIcon from '/src/images/app.png'
 import DownloadIcon from '/src/images/download.png'
-import VersionIcon from '/src/images/version.png'
+import LoadIcon from '/src/images/load.png'
 import PartIcon from '/src/images/part.png'
+import EditIcon from '/src/images/setting.png'
+import VersionIcon from '/src/images/version.png'
 
 const SVG_HEIGHT = 33
 
@@ -62,7 +57,7 @@ export const ProductVersionView = () => {
 
     // REFS
 
-    const ref = useRef<HTMLDivElement>()
+    const ref = useRef<HTMLDivElement>(null)
 
     // CONSTANTS
 
@@ -92,7 +87,7 @@ export const ProductVersionView = () => {
     return (
         (product && members && versions) ? (
             (product && product.deleted) ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className={`view product-version sidebar ${!hash ? 'hidden' : 'visible'}` }>

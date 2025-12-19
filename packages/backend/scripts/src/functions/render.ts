@@ -1,13 +1,13 @@
 import gl from 'gl'
-import Jimp from 'jimp'
-import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, EdgesGeometry, Group, LineBasicMaterial, LineSegments, LoadingManager, Mesh, MeshPhongMaterial, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer, sRGBEncoding } from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader'
-import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader'
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
+import { Jimp, JimpInstance } from 'jimp'
+import { ACESFilmicToneMapping, AmbientLight, Box3, DirectionalLight, EdgesGeometry, Group, LineBasicMaterial, LineSegments, LoadingManager, Mesh, MeshPhongMaterial, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { LDrawLoader } from 'three/examples/jsm/loaders/LDrawLoader.js'
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js'
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 
 function initializeScene() {
     const ambient_light = new AmbientLight(0xffffff, 0.5)
@@ -58,7 +58,6 @@ function initializeRenderer(canvas: any, context: any) {
     const logarithmicDepthBuffer = true
     
     const renderer = new WebGLRenderer({ antialias, alpha, logarithmicDepthBuffer, canvas, context })
-    renderer.outputEncoding = sRGBEncoding
     renderer.toneMapping = ACESFilmicToneMapping
 
     return renderer
@@ -88,75 +87,81 @@ function reset(model: Group, camera: PerspectiveCamera, orbit: OrbitControls) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const TASKS: { model: Group, width: number, height: number, resolve: (value: Jimp) => void, reject: (reason?: any) => void }[] = []
+const TASKS: { model: Group, width: number, height: number, resolve: (value: JimpInstance) => void, reject: (reason?: any) => void }[] = []
 
 let THREAD: NodeJS.Timeout
 
 function renderNext() {
     const { model, width, height, resolve, reject } = TASKS.pop()
 
-    // Scene
-    const scene = initializeScene()
-    scene.remove(scene.children[scene.children.length - 1])
-    scene.add(model)
+    try {
+        // Scene
+        const scene = initializeScene()
+        scene.remove(scene.children[scene.children.length - 1])
+        scene.add(model)
 
-    // Camera
-    const camera = initializeCamera()
-    camera.aspect = width / height
+        // Camera
+        const camera = initializeCamera()
+        camera.aspect = width / height
 
-    // Context
-    const context = initializeContext(width, height)
+        // Context
+        const context = initializeContext(width, height)
 
-    // Canvas
-    const canvas = initializeCanvas(context, width, height)
+        // Canvas
+        const canvas = initializeCanvas(context, width, height)
 
-    // Renderer
-    const renderer = initializeRenderer(canvas, context)
+        // Renderer
+        const renderer = initializeRenderer(canvas, context)
 
-    // Orbit
-    const orbit = initializeOrbit(camera, renderer)
+        // Orbit
+        const orbit = initializeOrbit(camera, renderer)
 
-    // Prepare
-    reset(model, camera, orbit)
+        // Prepare
+        reset(model, camera, orbit)
 
-    // Renderer
-    renderer.render(scene, camera)
+        // Renderer
+        renderer.render(scene, camera)
 
-    // Write buffer
-    const buffer = new Uint8Array(width * height * 4)
-    context.readPixels(0, 0, width, height, context.RGBA, context.UNSIGNED_BYTE, buffer)
+        // Write buffer
+        const buffer = new Uint8Array(width * height * 4)
+        context.readPixels(0, 0, width, height, context.RGBA, context.UNSIGNED_BYTE, buffer)
 
-    // Destroy context
-    context.getExtension('STACKGL_destroy_context').destroy()
+        // Destroy context
+        context.getExtension('STACKGL_destroy_context').destroy()
 
-    // Write image
-    new Jimp(width, height, (error, image) => {
-        if (TASKS.length > 0) {
-            THREAD = setTimeout(renderNext, 0)
-        } else {
-            THREAD = null
-        }
-        if (error) {
-            reject(error)
-        } else {
-            const data = image.bitmap.data
-            for (let x = 0; x < width; x++) {
-                for (let y = 0; y < height; y++) {
-                    const bufferOffset = y * width * 4 + x * 4
-                    const dataOffset = (height - y - 1) * width * 4 + x * 4
-                    data[dataOffset + 0] = buffer[bufferOffset + 0]
-                    data[dataOffset + 1] = buffer[bufferOffset + 1]
-                    data[dataOffset + 2] = buffer[bufferOffset + 2]
-                    data[dataOffset + 3] = buffer[bufferOffset + 3]
-                }
+        // Create image
+        const image = new Jimp({ width, height })
+        
+        const data = image.bitmap.data
+
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                const bufferOffset = y * width * 4 + x * 4
+                const dataOffset = (height - y - 1) * width * 4 + x * 4
+                data[dataOffset + 0] = buffer[bufferOffset + 0]
+                data[dataOffset + 1] = buffer[bufferOffset + 1]
+                data[dataOffset + 2] = buffer[bufferOffset + 2]
+                data[dataOffset + 3] = buffer[bufferOffset + 3]
             }
-            resolve(image)
         }
-    })
+
+        // Resolve image
+        resolve(image)
+    } catch (e) {
+        // Reject error
+        reject(e)
+    }
+
+    // Run next task
+    if (TASKS.length > 0) {
+        THREAD = setTimeout(renderNext, 0)
+    } else {
+        THREAD = null
+    }
 }
 
-function render(model: Group, width: number, height: number): Promise<Jimp> {
-    return new Promise<Jimp>((resolve, reject) => {
+function render(model: Group, width: number, height: number): Promise<JimpInstance> {
+    return new Promise<JimpInstance>((resolve, reject) => {
         TASKS.push({ model, width, height, resolve, reject })
         if (!THREAD) {
             THREAD = setTimeout(renderNext, 0)
@@ -185,7 +190,7 @@ export async function renderLDraw(model: string, width: number, height: number) 
         await LDRAW_LOADER.preloadMaterials('LDConfig.ldr')
         LDRAW_MATERIALS = true
     }
-    return new Promise<Jimp>((resolve, reject) => {
+    return new Promise<JimpInstance>((resolve, reject) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (LDRAW_LOADER as any).parse(model, (group: Group) => {
             // Fix coordinates
@@ -198,7 +203,7 @@ export async function renderLDraw(model: string, width: number, height: number) 
 
 const FBX_LOADER = new FBXLoader()
 
-export async function renderFbx(buffer: Buffer, width: number, height: number) {
+export async function renderFbx(buffer: ArrayBuffer, width: number, height: number) {
     const group = FBX_LOADER.parse(buffer, '')
 
     return await render(group, width, height)
@@ -227,7 +232,7 @@ export async function renderGlb(buffer: Buffer, width: number, height: number) {
     for (let i = 0; i < buffer.length; i++) {
         view[i] = buffer[i]
     }
-    return new Promise<Jimp>((resolve, reject) => {
+    return new Promise<JimpInstance>((resolve, reject) => {
         GLTF_LOADER.parse(array, undefined, model => {
             render(model.scene, width, height).then(resolve).catch(reject)
         }, error => {
@@ -238,7 +243,7 @@ export async function renderGlb(buffer: Buffer, width: number, height: number) {
 
 const STL_LOADER = new STLLoader()
 
-export async function renderStl(buffer: Buffer, width: number, height: number) {
+export async function renderStl(buffer: ArrayBuffer, width: number, height: number) {
     const face_geometry = STL_LOADER.parse(buffer)
     const face_material = new MeshPhongMaterial({ color: 'orange' })
 

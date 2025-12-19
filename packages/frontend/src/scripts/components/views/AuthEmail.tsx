@@ -1,10 +1,8 @@
-import * as React from 'react'
-
-import { TokenClient } from '../../clients/rest/token'
-import { AuthContext } from '../../contexts/Auth'
-import { useAsyncHistory } from '../../hooks/history'
-import { LegalFooter } from '../snippets/LegalFooter'
-
+import { useContext, useEffect, useRef, useState } from 'react'
+import { TokenClient } from '../../clients/rest/token.js'
+import { AuthContext } from '../../contexts/Auth.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthEmailView = () => {
@@ -13,21 +11,21 @@ export const AuthEmailView = () => {
 
     // REFS
 
-    const inputRef = React.useRef<HTMLInputElement>()
+    const inputRef = useRef<HTMLInputElement>(null)
 
     // CONTEXTS
 
-    const { setAuthContextToken } = React.useContext(AuthContext)
+    const { setAuthContextToken } = useContext(AuthContext)
 
     // STATES
 
-    const [email, setEmail] = React.useState<string>('')
-    const [load, setLoad] = React.useState<boolean>(false)
-    const [error, setError] = React.useState<string>()
+    const [email, setEmail] = useState<string>('')
+    const [load, setLoad] = useState<boolean>(false)
+    const [error, setError] = useState<string>()
 
     // EFFECTS
 
-    React.useEffect(() => {
+    useEffect(() => {
         inputRef.current.focus()
     })
 

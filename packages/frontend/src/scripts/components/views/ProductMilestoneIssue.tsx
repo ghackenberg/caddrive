@@ -1,32 +1,27 @@
-import  * as React from 'react'
-import { useState, useEffect, useContext } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-import { NavLink } from 'react-router-dom'
-
 import { IssueRead } from 'productboard-common'
-
-import { CommentClient } from '../../clients/rest/comment'
-import { UserContext } from '../../contexts/User'
-import { useMilestone, useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useMembers, useIssues } from '../../hooks/list'
-import { useIssuesComments } from '../../hooks/map'
-import { calculateActual } from '../../functions/burndown'
-import { formatDateHourMinute } from '../../functions/time'
-import { PartCount } from '../counts/Parts'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { BurndownChartWidget } from '../widgets/BurndownChart'
-import { ProductUserName } from '../values/ProductUserName'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { Column, Table } from '../widgets/Table'
-import { LoadingView } from './Loading'
-
-import IssueIcon from '/src/images/issue.png'
+import { useContext, useEffect, useState } from 'react'
+import { Navigate, NavLink, useLocation, useParams } from 'react-router'
+import { CommentClient } from '../../clients/rest/comment.js'
+import { UserContext } from '../../contexts/User.js'
+import { calculateActual } from '../../functions/burndown.js'
+import { formatDateHourMinute } from '../../functions/time.js'
+import { useMilestone, useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useIssues, useMembers } from '../../hooks/list.js'
+import { useIssuesComments } from '../../hooks/map.js'
+import { PartCount } from '../counts/Parts.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { ProductUserName } from '../values/ProductUserName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { BurndownChartWidget } from '../widgets/BurndownChart.js'
+import { Column, Table } from '../widgets/Table.js'
+import { LoadingView } from './Loading.js'
+import RightIcon from '/src/images/chart.png'
 import CloseIcon from '/src/images/close.png'
+import IssueIcon from '/src/images/issue.png'
 import LeftIcon from '/src/images/list.png'
 import ReopenIcon from '/src/images/reopen.png'
-import RightIcon from '/src/images/chart.png'
 
 export const ProductMilestoneIssueView = () => {
 
@@ -75,7 +70,7 @@ export const ProductMilestoneIssueView = () => {
         function updateActualBurndown() {
             setActualBurndown(milestone && issues && comments && calculateActual(milestone.start, milestone.end, issues, comments))
         }
-        let interval: NodeJS.Timer
+        let interval: NodeJS.Timeout
         const timeout = setTimeout(() => {
             interval = setInterval(updateActualBurndown, 1000)
             updateActualBurndown()
@@ -176,7 +171,7 @@ export const ProductMilestoneIssueView = () => {
     return (
         (issues && product && milestone) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className= {`view product-milestone-issue sidebar ${!hash ? 'hidden' : 'visible'}`}>

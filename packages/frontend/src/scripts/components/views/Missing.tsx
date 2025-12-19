@@ -1,7 +1,4 @@
-import * as React from 'react'
-
-import { LegalFooter } from '../snippets/LegalFooter'
-
+import { LegalFooter } from '../snippets/LegalFooter.js'
 import EmptyIcon from '/src/images/empty.png'
 
 export const MissingView = () => (

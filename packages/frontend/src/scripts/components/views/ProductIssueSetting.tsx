@@ -1,26 +1,22 @@
-import  * as React from 'react'
-import { useState, useEffect, useContext, FormEvent } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-
 import { MemberRead } from 'productboard-common'
-
-import { IssueClient } from '../../clients/rest/issue'
-import { UserContext } from '../../contexts/User'
-import { useIssue, useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useMembers, useMilestones } from '../../hooks/list'
-import { ButtonInput } from '../inputs/ButtonInput'
-import { TextInput } from '../inputs/TextInput'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { Column, Table } from '../widgets/Table'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { ProductUserName } from '../values/ProductUserName'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { LoadingView } from './Loading'
-
-import LeftIcon from '/src/images/setting.png'
+import { FormEvent, useContext, useEffect, useState } from 'react'
+import { Navigate, useLocation, useParams } from 'react-router'
+import { IssueClient } from '../../clients/rest/issue.js'
+import { UserContext } from '../../contexts/User.js'
+import { useIssue, useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useMembers, useMilestones } from '../../hooks/list.js'
+import { ButtonInput } from '../inputs/ButtonInput.js'
+import { TextInput } from '../inputs/TextInput.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { ProductUserName } from '../values/ProductUserName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { Column, Table } from '../widgets/Table.js'
+import { LoadingView } from './Loading.js'
 import RightIcon from '/src/images/part.png'
+import LeftIcon from '/src/images/setting.png'
 
 export const ProductIssueSettingView = () => {
 
@@ -120,7 +116,7 @@ export const ProductIssueSettingView = () => {
     return (
         ((issueId == 'new' || issue) && product && members) ? (
             issue && issue.deleted ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className={`view product-issue-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>

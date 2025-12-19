@@ -1,27 +1,22 @@
-import  * as React from 'react'
-import { useContext } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-import { NavLink } from 'react-router-dom'
-
 import { MemberRead } from 'productboard-common'
-
-import { MemberClient } from '../../clients/rest/member'
-import { UserContext } from '../../contexts/User'
-import { useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useMembers } from '../../hooks/list'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { ProductView3D } from '../widgets/ProductView3D'
-import { Column, Table } from '../widgets/Table'
-import { ProductUserName } from '../values/ProductUserName'
-import { ProductUserPicture } from '../values/ProductUserPicture'
-import { LoadingView } from './Loading'
-
-import MemberIcon from '/src/images/user.png'
+import { useContext } from 'react'
+import { Navigate, NavLink, useLocation, useParams } from 'react-router'
+import { MemberClient } from '../../clients/rest/member.js'
+import { UserContext } from '../../contexts/User.js'
+import { useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useMembers } from '../../hooks/list.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { ProductUserName } from '../values/ProductUserName.js'
+import { ProductUserPicture } from '../values/ProductUserPicture.js'
+import { ProductView3D } from '../widgets/ProductView3D.js'
+import { Column, Table } from '../widgets/Table.js'
+import { LoadingView } from './Loading.js'
 import DeleteIcon from '/src/images/delete.png'
 import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
+import MemberIcon from '/src/images/user.png'
 
 export const ProductMemberView = () => {
 
@@ -85,7 +80,7 @@ export const ProductMemberView = () => {
     return (
         (product && members) ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className={`view product-member sidebar ${!hash ? 'hidden' : 'visible'}` }>

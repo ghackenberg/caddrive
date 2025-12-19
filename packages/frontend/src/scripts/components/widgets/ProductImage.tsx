@@ -1,9 +1,6 @@
-import * as React from 'react'
-
-import { useVersions } from '../../hooks/list'
-
-import LoadIcon from '/src/images/load.png'
+import { useVersions } from '../../hooks/list.js'
 import EmptyIcon from '/src/images/empty.png'
+import LoadIcon from '/src/images/load.png'
 
 export const ProductImageWidget = (props: { productId: string }) => {
     const versions = useVersions(props.productId)

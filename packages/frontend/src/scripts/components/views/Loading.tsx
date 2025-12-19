@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import LoadIcon from '/src/images/load.png'
 
 export const LoadingView = () => (

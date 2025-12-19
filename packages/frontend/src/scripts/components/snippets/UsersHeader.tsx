@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { UsersLink } from '../links/UsersLink'
+import { UsersLink } from '../links/UsersLink.js'
 
 export const UsersHeader = () => {
     return (

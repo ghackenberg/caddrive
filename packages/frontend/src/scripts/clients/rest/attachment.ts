@@ -1,9 +1,7 @@
 import axios from 'axios'
-
 import { AttachmentCreate, AttachmentREST, AttachmentRead, AttachmentUpdate } from 'productboard-common'
-
-import { auth } from '../auth'
-import { CacheAPI } from '../cache'
+import { auth } from '../auth.js'
+import { CacheAPI } from '../cache.js'
 
 class AttachmentClientImpl implements AttachmentREST<AttachmentCreate, AttachmentUpdate, File> {
     async findAttachments(productId: string): Promise<AttachmentRead[]> {

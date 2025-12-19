@@ -1,6 +1,6 @@
-import { Face } from "./face"
-import { Hexa } from "./hexa"
-import { Node } from "./node"
+import { Face } from "./face.js"
+import { Hexa } from "./hexa.js"
+import { Node } from "./node.js"
 
 class Group<T> {
     constructor(public name: string, public objects: T[]) {

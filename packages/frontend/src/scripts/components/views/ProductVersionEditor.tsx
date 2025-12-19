@@ -1,19 +1,15 @@
-import * as React from 'react'
-import { useContext } from 'react'
+import { createRef, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-
-import { Box3, GridHelper, Group, Mesh, Object3D, Vector3, Material, LineSegments, MeshStandardMaterial, LineBasicMaterial, Intersection, Event, BoxHelper, BoxGeometry } from 'three'
-
-import { VersionClient } from '../../clients/rest/version'
-import { VersionContext } from '../../contexts/Version'
-import { COLOR_S, COLOR_X, COLOR_Y, COLOR_Z, createScene } from '../../functions/editor'
-import { useVersion } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useVersions } from '../../hooks/list'
-import { getMaterialColor, getMaterials, getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw'
-import { ModelView3D } from '../widgets/ModelView3D'
-import { LoadingView } from './Loading'
-
+import { Box3, BoxGeometry, BoxHelper, GridHelper, Group, Intersection, LineBasicMaterial, LineSegments, Material, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
+import { VersionClient } from '../../clients/rest/version.js'
+import { VersionContext } from '../../contexts/Version.js'
+import { COLOR_S, COLOR_X, COLOR_Y, COLOR_Z, createScene } from '../../functions/editor.js'
+import { useVersion } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useVersions } from '../../hooks/list.js'
+import { getMaterialColor, getMaterials, getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw.js'
+import { ModelView3D } from '../widgets/ModelView3D.js'
+import { LoadingView } from './Loading.js'
 import BlankIcon from '/src/images/blank.png'
 
 const BLANK = new Image()
@@ -42,43 +38,43 @@ export const ProductVersionEditorView = () => {
 
     // REFS
 
-    const viewRef = React.createRef<ModelView3D>()
-    const inputRef = React.createRef<HTMLInputElement>()
+    const viewRef = createRef<ModelView3D>()
+    const inputRef = createRef<HTMLInputElement>()
 
     // STATES
 
-    const [availableMaterials, setAvailableMaterials] = React.useState<Material[]>()
-    const [selectedMaterial, setSelectedMaterial] = React.useState<Material>()
+    const [availableMaterials, setAvailableMaterials] = useState<Material[]>()
+    const [selectedMaterial, setSelectedMaterial] = useState<Material>()
 
-    const [model, setModel] = React.useState<Group>()
-    const [manipulator, setManipulator] = React.useState<Group>()
-    const [arrowX, setArrowX] = React.useState<Group>()
-    const [arrowY, setArrowY] = React.useState<Group>()
-    const [arrowZ, setArrowZ] = React.useState<Group>()
-    const [arrowRotY, setArrowRotY] = React.useState<Group>()
-    const [box, setBox] = React.useState<BoxHelper>()
+    const [model, setModel] = useState<Group>()
+    const [manipulator, setManipulator] = useState<Group>()
+    const [arrowX, setArrowX] = useState<Group>()
+    const [arrowY, setArrowY] = useState<Group>()
+    const [arrowZ, setArrowZ] = useState<Group>()
+    const [arrowRotY, setArrowRotY] = useState<Group>()
+    const [box, setBox] = useState<BoxHelper>()
 
-    const [loaded, setLoaded] = React.useState<number>()
-    const [total, setTotal] = React.useState<number>()
+    const [loaded, setLoaded] = useState<number>()
+    const [total, setTotal] = useState<number>()
 
-    const [selection, setSelection] = React.useState<{ part: Object3D, parts: Object3D[] }>() 
+    const [selection, setSelection] = useState<{ part: Object3D, parts: Object3D[] }>() 
 
-    const [isPartCreate, setIsPartCreate] = React.useState<boolean>()
-    const [isPartInserted, setIsPartInserted] = React.useState<boolean>()
+    const [isPartCreate, setIsPartCreate] = useState<boolean>()
+    const [isPartInserted, setIsPartInserted] = useState<boolean>()
 
-    const [offset] = React.useState<Vector3>(new Vector3(0, 0, 0))
+    const [offset] = useState<Vector3>(new Vector3(0, 0, 0))
 
-    const [rotationStart, setRotationStart] = React.useState<Vector3>()
-    const [rotationAngle, setRotationAngle] = React.useState<number>()
+    const [rotationStart, setRotationStart] = useState<Vector3>()
+    const [rotationAngle, setRotationAngle] = useState<number>()
 
-    const [save, setSave] = React.useState<boolean>()
-    const [description, setDescription] = React.useState<string>()
-    const [number, setNumber] = React.useState<string>()
+    const [save, setSave] = useState<boolean>()
+    const [description, setDescription] = useState<string>()
+    const [number, setNumber] = useState<string>()
 
     // EFFECTS
 
     // Load available materials and set initial selected material
-    React.useEffect(() => {
+    useEffect(() => {
         let exec = true
         getMaterials().then(materials => {
             if (exec) {
@@ -90,14 +86,14 @@ export const ProductVersionEditorView = () => {
     }, [])
 
     // Check if version refers to plain LDraw model, else go back
-    React.useEffect(() => {
+    useEffect(() => {
         if (version && version.modelType != 'ldr') {
             goBack()
         }
     }, [version])
 
     // Initialize 3D scene with grid and manipulators
-    React.useEffect(() => {
+    useEffect(() => {
         let exec = true
 
         if (versionId == 'new' || (version && version.modelType == 'ldr')) {
@@ -148,11 +144,11 @@ export const ProductVersionEditorView = () => {
         return () => { exec = false }
     }, [versionId, version])
 
-    React.useEffect(() => {
+    useEffect(() => {
         model && updateGrid(model)
     }, [model])
 
-    React.useEffect(() => {
+    useEffect(() => {
         inputRef.current && inputRef.current.focus()
     }, [inputRef])
 
@@ -318,7 +314,7 @@ export const ProductVersionEditorView = () => {
     // Part drag & drop
 
     // Define selected parts and start moving
-    function onPartDragStart(part: Object3D, _intersections: Intersection<Object3D<Event>>[], pos: Vector3) {
+    function onPartDragStart(part: Object3D, _intersections: Intersection<Object3D>[], pos: Vector3) {
         //console.log('onPartDragStart', part, pos)
 
         // Update create state
@@ -424,7 +420,7 @@ export const ProductVersionEditorView = () => {
 
         event.dataTransfer.setDragImage(BLANK, 0, 0)
 
-        parseLDrawModel(file, `1 ${selectedMaterial.userData.code} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`, null, false).then(part => {
+        parseLDrawModel(file, `1 ${selectedMaterial.userData['code']} 0 0 0 1 0 0 0 1 0 0 0 1 ${file}`, null, false).then(part => {
             // Add to selected parts
             selection.parts.push(part.children[0])
             // Set as selected part
@@ -616,7 +612,7 @@ export const ProductVersionEditorView = () => {
         }
     }
 
-    function onClick(part: Object3D, _intersections: Intersection<Object3D<Event>>[], isCtrlPressed: boolean) {
+    function onClick(part: Object3D, _intersections: Intersection<Object3D>[], isCtrlPressed: boolean) {
         //console.log('onClick', part, isCtrlPressed)
 
         // Unselect all parts
@@ -765,7 +761,7 @@ export const ProductVersionEditorView = () => {
                     }
                 } else if (object instanceof LineSegments) {
                     if (object.material instanceof LineBasicMaterial) {
-                        object.material = material.userData.edgeMaterial
+                        object.material = material.userData['edgeMaterial']
                     }
                 }
             })  
@@ -879,11 +875,11 @@ export const ProductVersionEditorView = () => {
                         <div className="colors">
                             {availableMaterials ? (
                                 availableMaterials.map(mat => {
-                                    const key = mat.userData.code
+                                    const key = mat.userData['code']
                                     const title = mat.name.trim()
-                                    const className = selectedMaterial && mat.userData.code == selectedMaterial.userData.code ? 'selected' : ''
+                                    const className = selectedMaterial && mat.userData['code'] == selectedMaterial.userData['code'] ? 'selected' : ''
                                     const backgroundColor = getMaterialColor(mat)
-                                    const borderColor = getMaterialColor(mat.userData.edgeMaterial)
+                                    const borderColor = getMaterialColor(mat.userData['edgeMaterial'])
                                     const style = { backgroundColor, borderColor }
                                     return <a key={key} title={title} className={className} style={style} onClick={event => onColorChanged(event,mat)}/>
                                 })

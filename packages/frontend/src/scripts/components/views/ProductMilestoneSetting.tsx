@@ -1,25 +1,22 @@
-import  * as React from 'react'
-import { useContext, useState, useEffect, FormEvent } from 'react'
-import { Redirect, useLocation, useParams } from 'react-router'
-
-import { UserContext } from '../../contexts/User'
-import { MilestoneClient } from '../../clients/rest/milestone'
-import { calculateActual } from '../../functions/burndown'
-import { useMilestone, useProduct } from '../../hooks/entity'
-import { useAsyncHistory } from '../../hooks/history'
-import { useIssues, useMembers } from '../../hooks/list'
-import { useIssuesComments } from '../../hooks/map'
-import { ButtonInput } from '../inputs/ButtonInput'
-import { DateInput } from '../inputs/DateInput'
-import { GenericInput } from '../inputs/GenericInput'
-import { TextInput } from '../inputs/TextInput'
-import { LegalFooter } from '../snippets/LegalFooter'
-import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter'
-import { BurndownChartWidget } from '../widgets/BurndownChart'
-import { LoadingView } from './Loading'
-
-import LeftIcon from '/src/images/setting.png'
+import { FormEvent, useContext, useEffect, useState } from 'react'
+import { Navigate, useLocation, useParams } from 'react-router'
+import { MilestoneClient } from '../../clients/rest/milestone.js'
+import { UserContext } from '../../contexts/User.js'
+import { calculateActual } from '../../functions/burndown.js'
+import { useMilestone, useProduct } from '../../hooks/entity.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { useIssues, useMembers } from '../../hooks/list.js'
+import { useIssuesComments } from '../../hooks/map.js'
+import { ButtonInput } from '../inputs/ButtonInput.js'
+import { DateInput } from '../inputs/DateInput.js'
+import { GenericInput } from '../inputs/GenericInput.js'
+import { TextInput } from '../inputs/TextInput.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
+import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
+import { BurndownChartWidget } from '../widgets/BurndownChart.js'
+import { LoadingView } from './Loading.js'
 import RightIcon from '/src/images/chart.png'
+import LeftIcon from '/src/images/setting.png'
 
 export const ProductMilestoneSettingView = () => {
 
@@ -83,7 +80,7 @@ export const ProductMilestoneSettingView = () => {
         function updateActualBurndown() {
             setActualBurndown(milestone && issues && comments && calculateActual(start.getTime(), end.getTime(), issues, comments))
         }
-        let interval: NodeJS.Timer
+        let interval: NodeJS.Timeout
         const timeout = setTimeout(() => {
             interval = setInterval(updateActualBurndown, 1000)
             updateActualBurndown()
@@ -140,7 +137,7 @@ export const ProductMilestoneSettingView = () => {
     return (
         product ? (
             product.deleted ? (
-                <Redirect to='/'/>
+                <Navigate to='/'/>
             ) : (
                 <>
                     <main className={`view product-milestone-setting sidebar ${!hash ? 'hidden' : 'visible'}`}>

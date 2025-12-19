@@ -1,14 +1,13 @@
-import { connect, MqttClient } from 'mqtt'
-import { matches } from 'mqtt-pattern'
-import shortid from 'shortid'
-
+import mqtt from 'mqtt'
+import match from 'mqtt-match'
 import { ProductMessage, UserMessage } from 'productboard-common'
+import shortid from 'shortid'
 
 type handler = (topic: string, object: unknown) => void
 
 const handlers: { [topic: string]: handler[] } = {}
 
-let client: MqttClient
+let client: mqtt.MqttClient
 
 const protocol = location.protocol == 'http:' ? 'ws' : 'wss'
 const hostname = location.hostname
@@ -20,7 +19,7 @@ function init() {
     const username = localStorage.getItem('jwt')
     
     // Connect client
-    client = connect({ protocol, hostname, port, path, clientId, username })
+    client = mqtt.connect({ protocol, hostname, port, path, clientId, username })
 
     // Subscribe after connecting
     client.on('connect', () => {
@@ -34,7 +33,7 @@ function init() {
         const object = JSON.parse(payload.toString())
         //console.log(object)
         for (const pattern in handlers) {
-            if (matches(pattern, topic)) {
+            if (match(pattern, topic)) {
                 for (const handler of handlers[pattern]) {
                     handler(topic, object)
                 }

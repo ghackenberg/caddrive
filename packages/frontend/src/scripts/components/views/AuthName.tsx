@@ -1,11 +1,9 @@
-import * as React from 'react'
-import { Redirect } from 'react-router'
-
-import { UserClient } from '../../clients/rest/user'
-import { AuthContext } from '../../contexts/Auth'
-import { useAsyncHistory } from '../../hooks/history'
-import { LegalFooter } from '../snippets/LegalFooter'
-
+import { useContext, useEffect, useRef, useState } from 'react'
+import { Navigate } from 'react-router'
+import { UserClient } from '../../clients/rest/user.js'
+import { AuthContext } from '../../contexts/Auth.js'
+import { useAsyncHistory } from '../../hooks/history.js'
+import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthNameView = () => {
@@ -14,21 +12,21 @@ export const AuthNameView = () => {
 
     // REFS
 
-    const inputRef = React.useRef<HTMLInputElement>()
+    const inputRef = useRef<HTMLInputElement>(null)
 
     // CONTEXTS
 
-    const { authContextUser, setAuthContextUser } = React.useContext(AuthContext)
+    const { authContextUser, setAuthContextUser } = useContext(AuthContext)
 
     // STATES
 
-    const [name, setName] = React.useState<string>(authContextUser ? authContextUser.name || '' : '')
-    const [load, setLoad] = React.useState<boolean>(false)
-    const [error, setError] = React.useState<string>()
+    const [name, setName] = useState<string>(authContextUser ? authContextUser.name || '' : '')
+    const [load, setLoad] = useState<boolean>(false)
+    const [error, setError] = useState<string>()
 
     // EFFECTS
 
-    React.useEffect(() => {
+    useEffect(() => {
         authContextUser && inputRef.current.focus()
     }, [authContextUser])
 
@@ -76,7 +74,7 @@ export const AuthNameView = () => {
                 </div>
             </main>
         ) : (
-            <Redirect to="/auth"/>
+            <Navigate to="/auth"/>
         )
     )
 }

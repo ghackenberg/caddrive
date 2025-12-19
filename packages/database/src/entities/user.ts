@@ -1,11 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
-
-import { CommentEntity } from './comment'
-import { IssueEntity } from './issue'
-import { MemberEntity } from './member'
-import { MilestoneEntity } from './milestone'
-import { ProductEntity } from './product'
-import { VersionEntity } from './version'
+import { Column, Entity, OneToMany, PrimaryColumn, Relation } from 'typeorm'
+import { CommentEntity } from './comment.js'
+import { IssueEntity } from './issue.js'
+import { MemberEntity } from './member.js'
+import { MilestoneEntity } from './milestone.js'
+import { ProductEntity } from './product.js'
+import { VersionEntity } from './version.js'
 
 @Entity()
 export class UserEntity {
@@ -33,15 +32,15 @@ export class UserEntity {
     admin: boolean
 
     @OneToMany(() => ProductEntity, product => product.user)
-    products: ProductEntity[]
+    products: Relation<ProductEntity>[]
     @OneToMany(() => MemberEntity, member => member.user)
-    members: MemberEntity[]
+    members: Relation<MemberEntity>[]
     @OneToMany(() => VersionEntity, version => version.user)
-    versions: VersionEntity[]
+    versions: Relation<VersionEntity>[]
     @OneToMany(() => MilestoneEntity, milestone => milestone.user)
-    milestones: MilestoneEntity[]
+    milestones: Relation<MilestoneEntity>[]
     @OneToMany(() => IssueEntity, issue => issue.user)
-    issues: IssueEntity[]
+    issues: Relation<IssueEntity>[]
     @OneToMany(() => CommentEntity, comment => comment.user)
-    comments: CommentEntity[]
+    comments: Relation<CommentEntity>[]
 }

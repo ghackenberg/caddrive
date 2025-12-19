@@ -1,6 +1,4 @@
-import * as React from 'react'
-
-import { GenericInput } from './GenericInput'
+import { GenericInput } from './GenericInput.js'
 
 export const EmailInput = (props: {class?: string, label: string, change?: (value: string) => void, value: string, placeholder?: string, disabled?: boolean}) => {
     const label = props.label

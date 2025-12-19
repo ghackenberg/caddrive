@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
-        "moduleResolution": "node",
-        "module": "ES2022",
-        "target": "ES5",
-        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "nodenext",
+        "module": "nodenext",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "allowSyntheticDefaultImports": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
         "noImplicitAny": true,
         "noImplicitOverride": true,
         "noImplicitReturns": true,
@@ -13,10 +14,9 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
         "noUncheckedIndexedAccess": true,
         "noPropertyAccessFromIndexSignature": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "preserveWatchOutput": true
     }
 }

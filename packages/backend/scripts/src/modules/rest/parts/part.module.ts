@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
-
-import { PartController } from './part.controller'
-import { PartService } from './part.service'
+import { PartController } from './part.controller.js'
+import { PartService } from './part.service.js'
 
 @Module({
     controllers: [PartController],
