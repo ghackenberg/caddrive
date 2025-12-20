@@ -10,14 +10,14 @@ import { AuthWelcomeView } from '../views/AuthWelcome.js'
 const AuthRouter = () => {
     return (
         <Routes>
-            <Route path="/auth/email" element={<AuthEmailView/>}/>
-            <Route path="/auth/code" element={<AuthCodeView/>}/>
-            <Route path="/auth/consent" element={<AuthConsentView/>}/>
-            <Route path="/auth/name" element={<AuthNameView/>}/>
-            <Route path="/auth/picture" element={<AuthPictureView/>}/>
-            <Route path="/auth/download" element={<AuthDownloadView/>}/>
-            <Route path="/auth/welcome" element={<AuthWelcomeView/>}/>
-            <Route path="/auth" element={<Navigate replace to="/auth/email"/>}/>
+            <Route path="/email" element={<AuthEmailView/>}/>
+            <Route path="/code" element={<AuthCodeView/>}/>
+            <Route path="/consent" element={<AuthConsentView/>}/>
+            <Route path="/name" element={<AuthNameView/>}/>
+            <Route path="/picture" element={<AuthPictureView/>}/>
+            <Route path="/download" element={<AuthDownloadView/>}/>
+            <Route path="/welcome" element={<AuthWelcomeView/>}/>
+            <Route path="/" element={<Navigate replace to="/auth/email"/>}/>
         </Routes>
     )
 }

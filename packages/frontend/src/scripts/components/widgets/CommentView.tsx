@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { Object3D } from 'three'
 import { AttachmentClient } from '../../clients/rest/attachment.js'
 import { CommentClient } from '../../clients/rest/comment.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { CommentContext } from '../../contexts/Comment.js'
 import { UserContext } from '../../contexts/User.js'
 import { VersionContext } from '../../contexts/Version.js'
@@ -42,6 +43,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
     const { contextVersion } = useContext(VersionContext)
     const { contextComment, setContextComment } = useContext(CommentContext)
 
@@ -64,7 +66,7 @@ export const CommentView = (props: { productId: string, issueId: string, comment
     const issue = useIssue(productId, issueId)
     const comment = commentId && useComment(productId, issueId, commentId)
 
-    const userId = comment ? comment.userId : (contextUser ? contextUser.userId : undefined)
+    const userId = comment ? comment.userId : (contextUser ? contextUser.uid : undefined)
 
     // INITIAL STATES
 
@@ -275,17 +277,17 @@ export const CommentView = (props: { productId: string, issueId: string, comment
 
     const save = commentId ? update : <>{add} | {issue.state == 'open' ? close : open}</>
     const toggle = mode == Mode.VIEW ? edit : (mode == Mode.PREVIEW ? <>{edit} | preview | {cancel} | {save}</> : <>edit | {preview} | {cancel} | {save}</>) 
-    const action = contextUser && comment && (contextUser.admin || contextUser.userId == comment.userId) ? <>({toggle})</> : <></>
+    const action = contextUser && contextAccount && comment && (contextAccount.data.admin || contextUser.uid == comment.userId) ? <>({toggle})</> : <></>
 
     const parts = (mode == Mode.VIEW && partsView) || (mode == Mode.PREVIEW && partsEdit) || []
 
-    const disabled = !members || !userId || !contextUser || (!contextUser.admin && members.filter(member => member.userId == userId).length == 0)
+    const disabled = !members || !userId || !contextUser || !contextAccount || (!contextAccount.data.admin && members.filter(member => member.userId == userId).length == 0)
     const placeholder = 'Enter your comment here.'
 
     // RETURN
 
     return (
-        <div className={`widget comment_view ${contextUser && contextUser.userId == userId ? 'self' : ''}`}>
+        <div className={`widget comment_view ${contextUser && contextUser.uid == userId ? 'self' : ''}`}>
             <div className="head">
                 <div className="icon">
                     <a href={`/users/${userId}`}>

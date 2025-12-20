@@ -15,8 +15,8 @@ const Overview = () => (
 const ProductsRouter = () => {
     return (
         <Routes>
-            <Route path="/products/:productId" element={<ProductRouter/>}/>
-            <Route path="/products" element={<Overview/>}/>
+            <Route path="/:productId/*" element={<ProductRouter/>}/>
+            <Route path="/" element={<Overview/>}/>
         </Routes>
     )
 }

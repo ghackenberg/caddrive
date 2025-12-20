@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router'
 import { ProductClient } from '../../clients/rest/product.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
-import { back, push, replace } from '../../functions/history.js'
+import { back, pushState, replaceState } from '../../functions/history.js'
 import { useProduct } from '../../hooks/entity.js'
 import { useMembers } from '../../hooks/list.js'
 import { BooleanInput } from '../inputs/BooleanInput.js'
@@ -20,6 +21,7 @@ export const ProductSettingView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -66,15 +68,15 @@ export const ProductSettingView = () => {
             if (name && description) {
                 const product = await ProductClient.addProduct({ name, description, public: _public })
                 await back()
-                await replace(`/products?public=${_public}`)
-                await push(`/products/${product.productId}`)
+                await replaceState(`/products?public=${_public}`)
+                await pushState(`/products/${product.productId}`)
             }
         } else {
             if (name && description) {
                 await ProductClient.updateProduct(productId, { name, description, public: _public })
                 await back()
-                await replace(`/products?public=${_public}`)
-                await push(`/products/${productId}`)
+                await replaceState(`/products?public=${_public}`)
+                await pushState(`/products/${productId}`)
             }
         }
     }
@@ -95,11 +97,11 @@ export const ProductSettingView = () => {
     ]
 
     const isNew = productId == 'new'
-    const isManager = contextUser && members && members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1
-    const isOwner = contextUser && product && contextUser.userId == product.userId
+    const isManager = contextUser && members && members.filter(member => member.userId == contextUser.uid && member.role == 'manager').length == 1
+    const isOwner = contextUser && product && contextUser.uid == product.userId
 
-    const canSave = contextUser && (contextUser.admin || isNew || isManager)
-    const canDelete = contextUser && (contextUser.admin || isOwner)
+    const canSave = contextAccount && (contextAccount.data.admin || isNew || isManager)
+    const canDelete = contextAccount && (contextAccount.data.admin || isOwner)
 
     // RETURN
 

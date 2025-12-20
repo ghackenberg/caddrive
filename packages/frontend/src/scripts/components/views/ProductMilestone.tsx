@@ -2,8 +2,9 @@ import { MilestoneRead } from 'productboard-common'
 import { useContext } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { MilestoneClient } from '../../clients/rest/milestone.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { formatDateHourMinute } from '../../functions/time.js'
 import { useProduct } from '../../hooks/entity.js'
 import { useMembers, useMilestones } from '../../hooks/list.js'
@@ -24,6 +25,7 @@ export const ProductMilestoneView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -104,8 +106,8 @@ export const ProductMilestoneView = () => {
                     <main className={`view product-milestone sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
-                                {contextUser ? (
-                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/new/settings`} className='button fill green'>
                                             <strong>New</strong> milestone
                                         </NavLink>
@@ -129,7 +131,7 @@ export const ProductMilestoneView = () => {
                                 </div>
                             ) : (
                                 <div className='main'>
-                                    <Table columns={columns} items={milestones} onClick={milestone => push(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)}/>
+                                    <Table columns={columns} items={milestones} onClick={milestone => pushState(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)}/>
                                 </div>
                             ) }
                             <LegalFooter/>

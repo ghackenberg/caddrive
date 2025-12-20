@@ -2,8 +2,9 @@ import { MemberRead } from 'productboard-common'
 import { FormEvent, useContext, useEffect, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router'
 import { IssueClient } from '../../clients/rest/issue.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
-import { back, replace } from '../../functions/history.js'
+import { back, replaceState } from '../../functions/history.js'
 import { useIssue, useProduct } from '../../hooks/entity.js'
 import { useMembers, useMilestones } from '../../hooks/list.js'
 import { ButtonInput } from '../inputs/ButtonInput.js'
@@ -23,6 +24,7 @@ export const ProductIssueSettingView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -67,7 +69,7 @@ export const ProductIssueSettingView = () => {
         if (issueId == 'new') {
             if (label) {
                 const issue = await IssueClient.addIssue(productId, { label, assignedUserIds, milestoneId: milestoneId ? milestoneId : null })
-                await replace(`/products/${productId}/issues/${issue.issueId}/comments`)
+                await replaceState(`/products/${productId}/issues/${issue.issueId}/comments`)
             }
         } else {
             if (label) {
@@ -153,8 +155,8 @@ export const ProductIssueSettingView = () => {
                                             )}
                                         </div>
                                     </div>
-                                    {contextUser ? (
-                                        contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
+                                    {contextUser && contextAccount ? (
+                                        contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid).length == 1 ? (
                                             <ButtonInput value='Save'/>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>

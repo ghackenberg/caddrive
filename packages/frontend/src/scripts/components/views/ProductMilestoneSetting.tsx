@@ -1,9 +1,10 @@
 import { FormEvent, useContext, useEffect, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router'
 import { MilestoneClient } from '../../clients/rest/milestone.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
 import { calculateActual } from '../../functions/burndown.js'
-import { back, replace } from '../../functions/history.js'
+import { back, replaceState } from '../../functions/history.js'
 import { useMilestone, useProduct } from '../../hooks/entity.js'
 import { useIssues, useMembers } from '../../hooks/list.js'
 import { useIssuesComments } from '../../hooks/map.js'
@@ -23,6 +24,7 @@ export const ProductMilestoneSettingView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -113,7 +115,7 @@ export const ProductMilestoneSettingView = () => {
         } else {
             if(milestoneId == 'new') {
                 const milestone = await MilestoneClient.addMilestone(productId, { label, start: start.getTime(), end: end.getTime() })
-                await replace(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)
+                await replaceState(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)
             } else {
                 await MilestoneClient.updateMilestone(productId, milestoneId, { label, start: start.getTime(), end: end.getTime() })
                 await back()
@@ -155,8 +157,8 @@ export const ProductMilestoneSettingView = () => {
                                             <span style={{color: 'red'}}>Start must be before end!</span>
                                         </GenericInput>
                                     }
-                                    {contextUser ? (
-                                        contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                    {contextUser && contextAccount ? (
+                                        contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid && member.role == 'manager').length == 1 ? (
                                             <ButtonInput value='Save' disabled={start >= end}/>
                                         ) : (
                                             <ButtonInput value='Save' badge='requires role' disabled={true}/>

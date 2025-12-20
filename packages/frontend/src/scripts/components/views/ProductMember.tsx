@@ -2,8 +2,9 @@ import { MemberRead } from 'productboard-common'
 import { useContext } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { MemberClient } from '../../clients/rest/member.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { useProduct } from '../../hooks/entity.js'
 import { useMembers } from '../../hooks/list.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
@@ -23,6 +24,7 @@ export const ProductMemberView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -82,8 +84,8 @@ export const ProductMemberView = () => {
                     <main className={`view product-member sidebar ${!hash ? 'hidden' : 'visible'}` }>
                         <div>
                             <div className='header'>
-                                {contextUser ? (
-                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/members/new/settings`} className='button fill green'>
                                             <strong>New</strong> member
                                         </NavLink>
@@ -107,7 +109,7 @@ export const ProductMemberView = () => {
                                 </div>
                             ) : (
                                 <div className='main'>
-                                    <Table columns={columns} items={members} onClick={member => push(`/products/${productId}/members/${member.memberId}/settings`)}/>
+                                    <Table columns={columns} items={members} onClick={member => pushState(`/products/${productId}/members/${member.memberId}/settings`)}/>
                                 </div>
                             ) }
                             <LegalFooter/>

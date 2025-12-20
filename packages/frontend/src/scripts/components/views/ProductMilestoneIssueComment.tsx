@@ -2,10 +2,11 @@ import { CommentRead, VersionRead } from 'productboard-common'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { Object3D } from 'three'
+import { AccountContext } from '../../contexts/Account.js'
 import { CommentContext } from '../../contexts/Comment.js'
 import { UserContext } from '../../contexts/User.js'
 import { VersionContext } from '../../contexts/Version.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { collectParts, Part } from '../../functions/markdown.js'
 import { computePath } from '../../functions/path.js'
 import { formatDateHourMinute } from '../../functions/time.js'
@@ -31,6 +32,7 @@ export const ProductMilestoneIssueCommentView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
     const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // LOCATION
@@ -133,7 +135,7 @@ export const ProductMilestoneIssueCommentView = () => {
         }
         // Switch to model view on small screens
         if (window.getComputedStyle(ref.current).display == 'none') {
-            await push('#model')
+            await pushState('#model')
         }
     }
     function outPart() {
@@ -176,8 +178,8 @@ export const ProductMilestoneIssueCommentView = () => {
                     <main className={`view product-issue-comment sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
-                                {contextUser ? (
-                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid).length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues/${issueId}/settings`} className='button fill gray right'>
                                             <strong>Edit</strong> issue
                                         </NavLink>

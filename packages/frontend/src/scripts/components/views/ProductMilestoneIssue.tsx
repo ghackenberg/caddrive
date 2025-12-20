@@ -2,9 +2,10 @@ import { IssueRead } from 'productboard-common'
 import { useContext, useEffect, useState } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { CommentClient } from '../../clients/rest/comment.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
 import { calculateActual } from '../../functions/burndown.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { formatDateHourMinute } from '../../functions/time.js'
 import { useMilestone, useProduct } from '../../hooks/entity.js'
 import { useIssues, useMembers } from '../../hooks/list.js'
@@ -28,6 +29,7 @@ export const ProductMilestoneIssueView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -110,7 +112,7 @@ export const ProductMilestoneIssueView = () => {
     }
 
     async function handleClickIssue(issue: IssueRead) {
-        await push(`/products/${productId}/milestones/${milestoneId}/issues/${issue.issueId}/comments`)
+        await pushState(`/products/${productId}/milestones/${milestoneId}/issues/${issue.issueId}/comments`)
     }
     
     // CONSTANTS
@@ -173,8 +175,8 @@ export const ProductMilestoneIssueView = () => {
                     <main className= {`view product-milestone-issue sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
-                                {contextUser ? (
-                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid && member.role == 'manager').length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/settings`} className='button fill gray right'>
                                             <strong>Edit</strong> milestone
                                         </NavLink>
@@ -208,8 +210,8 @@ export const ProductMilestoneIssueView = () => {
                                         {formatDateHourMinute(new Date(milestone.end))}
                                     </span>
                                 </p>
-                                {contextUser ? (
-                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid).length == 1 ? (
                                         <NavLink to={`/products/${productId}/milestones/${milestoneId}/issues/new/settings`} className='button fill green block-when-responsive'>
                                             <strong>New</strong> issue
                                         </NavLink>

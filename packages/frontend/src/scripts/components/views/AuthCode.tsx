@@ -5,8 +5,7 @@ import { CacheAPI } from '../../clients/cache.js'
 import { TokenClient } from '../../clients/rest/token.js'
 import { UserClient } from '../../clients/rest/user.js'
 import { AuthContext } from '../../contexts/Auth.js'
-import { UserContext } from '../../contexts/User.js'
-import { go, replace } from '../../functions/history.js'
+import { go, replaceState } from '../../functions/history.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
@@ -19,7 +18,6 @@ export const AuthCodeView = () => {
     // CONTEXTS
 
     const { authContextToken, setAuthContextUser } = useContext(AuthContext)
-    const { setContextUser } = useContext(UserContext)
 
     // STATES
 
@@ -77,9 +75,8 @@ export const AuthCodeView = () => {
                     if (!user.consent || !user.name) {
                         setAuthContextUser(user)
                         setLoad(false)
-                        await replace('/auth/consent')
+                        await replaceState('/auth/consent')
                     } else {
-                        setContextUser(user)
                         setLoad(false)
                         await go(-2)
                     }

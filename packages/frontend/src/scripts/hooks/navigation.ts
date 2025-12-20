@@ -1,5 +1,5 @@
 import { useLocation } from "react-router"
-import { go, replace } from '../functions/history.js'
+import { go, replaceState } from '../functions/history.js'
 import { PRODUCTS_4, PRODUCTS_6 } from "../pattern.js"
 
 export function useNavigationStack() {
@@ -21,7 +21,7 @@ export function useNavigationStack() {
         } else {
             hash && await go(-1)
         }
-        await replace(nextpath)
+        await replaceState(nextpath)
     }
 
     return { navigate }

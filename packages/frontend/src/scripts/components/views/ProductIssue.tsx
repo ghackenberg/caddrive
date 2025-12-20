@@ -2,8 +2,9 @@ import { IssueRead } from 'productboard-common'
 import { useContext, useState } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { IssueClient } from '../../clients/rest/issue.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { useProduct } from '../../hooks/entity.js'
 import { useIssues, useMembers } from '../../hooks/list.js'
 import { PartCount } from '../counts/Parts.js'
@@ -24,6 +25,7 @@ export const ProductIssueView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -139,8 +141,8 @@ export const ProductIssueView = () => {
                     <main className={`view product-issue sidebar ${!hash ? 'hidden' : 'visible'}`}>
                         <div>
                             <div className='header'>
-                                {contextUser ? (
-                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId).length == 1 ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid).length == 1 ? (
                                         <NavLink to={`/products/${productId}/issues/new/settings`} className='button fill green button block-when-responsive'>
                                             <strong>New</strong> issue
                                         </NavLink>
@@ -170,7 +172,7 @@ export const ProductIssueView = () => {
                                 </div>
                             ) : (
                                 <div className='main'>
-                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => push(`/products/${productId}/issues/${issue.issueId}/comments`)}/>
+                                    <Table columns={columns} items={issues.filter(issue => issue.state == state)} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onClick={issue => pushState(`/products/${productId}/issues/${issue.issueId}/comments`)}/>
                                 </div>
                             ) }
                             <LegalFooter/>

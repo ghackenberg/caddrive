@@ -7,8 +7,8 @@ const UserRouter = () => {
         <>
             <UserHeader/>
             <Routes>
-                <Route path="/users/:userId/settings" element={<UserSettingView/>}/>
-                <Route path="/users/:userId" element={<Navigate replace to="/users/:userId/settings"/>}/>
+                <Route path="/:userId/settings" element={<UserSettingView/>}/>
+                <Route path="/:userId" element={<Navigate replace to="/users/:userId/settings"/>}/>
             </Routes>
         </>
     )

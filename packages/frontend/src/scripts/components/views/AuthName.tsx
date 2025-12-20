@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { Navigate } from 'react-router'
 import { UserClient } from '../../clients/rest/user.js'
 import { AuthContext } from '../../contexts/Auth.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
@@ -39,7 +39,7 @@ export const AuthNameView = () => {
             const user = await UserClient.updateUser(authContextUser.userId, { consent: authContextUser.consent, name, emailNotification: true })
             setAuthContextUser(user)
             setLoad(false)
-            await push('/auth/picture')
+            await pushState('/auth/picture')
         } catch (e) {
             setError('Action failed.')
             setLoad(false)

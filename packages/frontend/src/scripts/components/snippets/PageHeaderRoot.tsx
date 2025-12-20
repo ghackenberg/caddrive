@@ -50,8 +50,8 @@ export const PageHeaderRoot = () => {
                     </NavLink>
                 )}
                 {contextUser && (
-                    <NavLink to={`/users/${contextUser.userId}/settings`}>
-                        <UserPictureWidget user={contextUser} background='gray' class='icon small round'/>
+                    <NavLink to={`/users/${contextUser.uid}/settings`}>
+                        <UserPictureWidget userId={contextUser.uid} background='gray' class='icon small round'/>
                     </NavLink>
                 )}
             </>

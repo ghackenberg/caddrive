@@ -15,8 +15,8 @@ const Overview = () => (
 const UsersRouter = () => {
     return (
         <Routes>
-            <Route path="/users/:userId" element={<UserRouter/>}/>
-            <Route path="/users" element={<Overview/>}/>
+            <Route path="/:userId/*" element={<UserRouter/>}/>
+            <Route path="/" element={<Overview/>}/>
         </Routes>
     )
 }

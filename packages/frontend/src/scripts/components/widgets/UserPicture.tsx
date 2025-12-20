@@ -1,17 +1,19 @@
-import { UserRead } from 'productboard-common'
 
+import { useProfile } from '../../hooks/entity.js'
 import PixelIcon from '/src/images/pixel.png'
 import UserIcon from '/src/images/user.png'
 
-export const UserPictureWidget = (props: { user: UserRead, background?: string, class?: string }) => {
-    const isDeleted = props.user.deleted
+export const UserPictureWidget = (props: { userId: string, background?: string, class?: string }) => {
+    const profile = useProfile(props.userId)
+
+    const isDeleted = profile && profile.data.deleted
 
     const src = isDeleted ? UserIcon : PixelIcon
-    const title =  props.user.email
+    const title =  profile && profile.data.name
 
     const className = props.class
 
-    const backgroundImage = `url(${props.user.pictureId ? `/rest/files/${props.user.pictureId}.jpg` : UserIcon})`
+    const backgroundImage = `url(${profile && profile.data.pictureId ? `/rest/files/${profile.data.pictureId}.jpg` : UserIcon})`
     const backgroundSize = 'cover'
     const backgroundPosition = 'center'
     const backgroundColor = props.background || 'lightgray'

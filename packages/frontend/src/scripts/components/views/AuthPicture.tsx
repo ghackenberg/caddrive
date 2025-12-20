@@ -2,7 +2,7 @@ import { createRef, useContext, useState } from 'react'
 import { Navigate } from 'react-router'
 import { UserClient } from '../../clients/rest/user.js'
 import { AuthContext } from '../../contexts/Auth.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { DESKTOP } from '../../platform.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
@@ -34,7 +34,7 @@ export const AuthPictureView = () => {
                 const picture = fileInput.current.files[0]
                 const user = await UserClient.updateUser(authContextUser.userId, { consent: authContextUser.consent, name: authContextUser.name, emailNotification: true }, picture)
                 setAuthContextUser(user)
-                await push(DESKTOP ? '/auth/download' : '/auth/welcome')
+                await pushState(DESKTOP ? '/auth/download' : '/auth/welcome')
             } catch (e) {
                 setError('Action failed.')
                 setLoad(false)
@@ -49,7 +49,7 @@ export const AuthPictureView = () => {
 
     async function handleSkip(event: React.UIEvent) {
         event.preventDefault()
-        await push(DESKTOP ? '/auth/download' : '/auth/welcome')
+        await pushState(DESKTOP ? '/auth/download' : '/auth/welcome')
     }
 
     return (

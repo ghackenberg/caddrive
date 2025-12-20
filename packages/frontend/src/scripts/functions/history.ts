@@ -1,3 +1,4 @@
+
 export async function go(total: number) {
     return new Promise<void>(resolve => {
         const handler = () => {
@@ -10,21 +11,21 @@ export async function go(total: number) {
 }
 
 export async function back() {
-    await go(-1)
-}
-
-export async function replace(path: string) {
     return new Promise<void>(resolve => {
         const handler = () => {
             window.removeEventListener('popstate', handler)
             resolve()
         }
         window.addEventListener('popstate', handler)
-        history.replaceState(null, null, path)
+        history.back()
     })
 }
 
-export async function push(path: string) {
+export async function replaceState(path: string) {
+    history.replaceState(null, null, path)
+}
+
+export async function pushState(path: string) {
     return new Promise<void>(resolve => {
         const handler = () => {
             window.removeEventListener('popstate', handler)

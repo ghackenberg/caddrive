@@ -4,6 +4,7 @@ import { Navigate, useLocation, useParams } from 'react-router'
 import { CacheAPI } from '../../clients/cache.js'
 import { MemberClient } from '../../clients/rest/member.js'
 import { UserClient } from '../../clients/rest/user.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
 import { back } from '../../functions/history.js'
 import { useMember, useProduct } from '../../hooks/entity.js'
@@ -27,6 +28,7 @@ export const ProductMemberSettingView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // LOCATION
 
@@ -116,7 +118,7 @@ export const ProductMemberSettingView = () => {
 
     const selectedUserColumns: Column<UserRead>[] = [
         { label: '👤', class: 'center', content: user => (
-            <UserPictureWidget user={user} class='icon medium round'/>
+            <UserPictureWidget userId={user.userId} class='icon medium round'/>
         ) },
         { label: 'Name', class: 'left fill', content: user => (
             user ? user.name : '?'
@@ -132,7 +134,7 @@ export const ProductMemberSettingView = () => {
 
     const queriedUserColumns: Column<UserRead>[] = [
         { label: '👤', class: 'center', content: user => (
-            <UserPictureWidget user={user} class='icon medium round'/>
+            <UserPictureWidget userId={user.userId} class='icon medium round'/>
         ) },
         { label: 'Name', class: 'left fill', content: (_, index) => (
             names ? names[index] : '?'
@@ -187,8 +189,8 @@ export const ProductMemberSettingView = () => {
                                                     </select>
                                                 </div>
                                             </div>
-                                            {contextUser ? (
-                                                contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role == 'manager').length == 1 ? (
+                                            {contextUser && contextAccount ? (
+                                                contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid && member.role == 'manager').length == 1 ? (
                                                     <ButtonInput value='Save'/>
                                                 ) : (
                                                     <ButtonInput value='Save' badge='requires role' disabled={true}/>

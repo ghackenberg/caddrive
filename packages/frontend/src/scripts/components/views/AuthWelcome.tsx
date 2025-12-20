@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { Navigate } from 'react-router'
 import { AuthContext } from '../../contexts/Auth.js'
-import { UserContext } from '../../contexts/User.js'
 import { go } from '../../functions/history.js'
 import { DESKTOP } from '../../platform.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
@@ -12,13 +11,11 @@ export const AuthWelcomeView = () => {
     // CONTEXTS
 
     const { authContextUser } = useContext(AuthContext)
-    const { setContextUser } = useContext(UserContext)
 
     // FUNCTIONS
 
     async function handleSubmit(event: React.UIEvent) {
         event.preventDefault()
-        setContextUser(authContextUser)
         await go(DESKTOP ? -6 : -5) // [download,] picture, name, consent, email, root
     }
 

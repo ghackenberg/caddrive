@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { Navigate } from 'react-router'
 import { AuthContext } from '../../contexts/Auth.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { DESKTOP, LINUX, MAC, WINDOWS } from '../../platform.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
@@ -25,12 +25,12 @@ export const AuthDownloadView = () => {
         } else {
             alert('We do not support your platform yet!')
         }
-        await push('/auth/welcome')
+        await pushState('/auth/welcome')
     }
 
     async function handleSkip(event: React.UIEvent) {
         event.preventDefault()
-        await push('/auth/welcome')
+        await pushState('/auth/welcome')
     }
 
     return (

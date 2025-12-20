@@ -18,7 +18,7 @@ export const UserView = () => {
     const columns: Column<UserRead>[] = [
         { label: '👤', content: user => (
             <NavLink to={`/users/${user.userId}/settings`}>
-                <UserPictureWidget user={user} class='icon medium round'/>
+                <UserPictureWidget userId={user.userId} class='icon medium round'/>
             </NavLink>
         ) },
         { label: 'Name', class: 'left nowrap fill', content: user => (

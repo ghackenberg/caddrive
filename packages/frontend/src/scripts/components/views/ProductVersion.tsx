@@ -1,9 +1,10 @@
 import { VersionRead } from 'productboard-common'
 import { Fragment, useContext, useRef } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
 import { VersionContext } from '../../contexts/Version.js'
-import { push } from '../../functions/history.js'
+import { pushState } from '../../functions/history.js'
 import { computeColor, computeTree } from '../../functions/tree.js'
 import { useProduct } from '../../hooks/entity.js'
 import { useMembers, useVersions } from '../../hooks/list.js'
@@ -35,6 +36,7 @@ export const ProductVersionView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
     const { contextVersion, setContextVersion } = useContext(VersionContext)
 
     // LOCATION
@@ -67,7 +69,7 @@ export const ProductVersionView = () => {
         setContextVersion(version)
         // Switch to model view on small screens
         if (window.getComputedStyle(ref.current).display == 'none') {
-            await push('#model')
+            await pushState('#model')
         }
     }
 
@@ -89,8 +91,8 @@ export const ProductVersionView = () => {
                     <main className={`view product-version sidebar ${!hash ? 'hidden' : 'visible'}` }>
                         <div>
                             <div className='header'>
-                                {contextUser ? (
-                                    contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid && member.role != 'customer').length == 1 ? (
                                         <>
                                             <NavLink to={`/products/${productId}/versions/new/settings`} className='button green fill'>
                                                 <strong>Upload</strong> version

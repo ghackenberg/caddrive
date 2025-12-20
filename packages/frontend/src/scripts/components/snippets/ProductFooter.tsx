@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router'
-import { back, push, replace } from '../../functions/history.js'
+import { back, pushState, replaceState } from '../../functions/history.js'
 
 export type ProductFooterItem = {
     hash: string
@@ -23,11 +23,11 @@ export const ProductFooter = (props: { items: ProductFooterItem[] }) => {
         event.preventDefault()
         if (!hash) {
             if (item.hash) {
-                await push(item.hash)
+                await pushState(item.hash)
             }
         } else {
             if (item.hash) {
-                await replace(item.hash)
+                await replaceState(item.hash)
             } else {
                 await back()
             }

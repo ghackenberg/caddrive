@@ -1,10 +1,12 @@
+import { signOut } from 'firebase/auth'
 import { FormEvent, useContext, useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
-import { auth } from '../../clients/auth.js'
 import { UserClient } from '../../clients/rest/user.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
 import { back } from '../../functions/history.js'
 import { useUser } from '../../hooks/entity.js'
+import { auth } from '../../services/firebase.js'
 import { BooleanInput } from '../inputs/BooleanInput.js'
 import { ButtonInput } from '../inputs/ButtonInput.js'
 import { EmailInput } from '../inputs/EmailInput.js'
@@ -17,7 +19,8 @@ export const UserSettingView = () => {
     
     // CONTEXTS
 
-    const { contextUser, setContextUser } = useContext(UserContext)
+    const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
 
     // PARAMS
 
@@ -46,19 +49,14 @@ export const UserSettingView = () => {
         // TODO handle unmount!
         event.preventDefault()
         if (name) {
-            const newUser = await UserClient.updateUser(userId, { consent: user.consent, name, emailNotification }, picture)
-            if (contextUser.userId == userId) {
-                setContextUser({ ...contextUser, ...newUser })
-            }
+            await UserClient.updateUser(userId, { consent: user.consent, name, emailNotification }, picture)
         }
         await back() 
     }
 
     async function onClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault()
-        localStorage.removeItem('jwt')
-        auth.headers.Authorization = ''
-        setContextUser(null)
+        signOut(auth)
         await back()
     }
 
@@ -83,7 +81,7 @@ export const UserSettingView = () => {
                                 {email && (
                                     <EmailInput label='Email' disabled={true} value={email} change={setEmail}/>
                                 )}
-                                {contextUser && contextUser.userId == userId && (
+                                {contextUser && contextUser.uid == userId && (
                                     <TextInput label='Token' disabled={true} value={localStorage.getItem('jwt')}/>
                                 )}
                                 {true && (
@@ -95,8 +93,8 @@ export const UserSettingView = () => {
                                 {true && (
                                     <BooleanInput label='Email notification' value={emailNotification} change={setEmailNotification}/>
                                 )}
-                                {contextUser ? (
-                                    contextUser.admin || userId == contextUser.userId ? (
+                                {contextUser && contextAccount ? (
+                                    contextAccount.data.admin || userId == contextUser.uid ? (
                                         <ButtonInput value='Save'/>
                                     ) : (
                                         <ButtonInput value='Save' badge='requires permission' disabled={true}/>
@@ -104,7 +102,7 @@ export const UserSettingView = () => {
                                 ) : (
                                     <ButtonInput value="Save" badge='requires login' disabled={true}/>
                                 )}
-                                {contextUser && contextUser.userId == userId && (
+                                {contextUser && contextUser.uid == userId && (
                                     <ButtonInput value='Leave' class='red' click={onClick}/>
                                 )}
                             </form>

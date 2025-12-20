@@ -6,6 +6,7 @@ import { Group } from 'three'
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { CacheAPI } from '../../clients/cache.js'
 import { VersionClient } from '../../clients/rest/version.js'
+import { AccountContext } from '../../contexts/Account.js'
 import { UserContext } from '../../contexts/User.js'
 import { VersionContext } from '../../contexts/Version.js'
 import { back } from '../../functions/history.js'
@@ -46,6 +47,7 @@ export const ProductVersionSettingView = () => {
     // CONTEXTS
 
     const { contextUser } = useContext(UserContext)
+    const { contextAccount } = useContext(AccountContext)
     const { setContextVersion } = useContext(VersionContext)
 
     // LOCATION
@@ -289,8 +291,8 @@ export const ProductVersionSettingView = () => {
                                             )
                                         )}
                                     </GenericInput>
-                                    {contextUser ? (
-                                        contextUser.admin || members.filter(member => member.userId == contextUser.userId && member.role != 'customer').length == 1 ? (
+                                    {contextUser && contextAccount ? (
+                                        contextAccount.data.admin || members.filter(member => member.userId == contextUser.uid && member.role != 'customer').length == 1 ? (
                                             <>
                                                 {version || blob ? (
                                                     <ButtonInput value='Save'/>

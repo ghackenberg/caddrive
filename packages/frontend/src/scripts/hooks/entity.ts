@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import { CacheAPI } from '../clients/cache.js'
 import { UserContext } from '../contexts/User.js'
+import { ProfileSchema } from '../schemas/profile.js'
+import { Document, onProfile } from '../services/firebase.js'
 
 type Entity = { updated: number }
 type Update<T> = (value: T) => void
@@ -39,6 +41,18 @@ export function useUser(userId: string) {
         CacheAPI.getUser(userId),
         callback => CacheAPI.subscribeUser(userId, callback)
     )
+}
+
+// Profile
+
+export function useProfile(userId: string) {
+    const [document, setDocument] = useState<Document<ProfileSchema>>()
+
+    useEffect(() => {
+        return onProfile(userId, setDocument)
+    }, [userId])
+
+    return document
 }
 
 // Product
