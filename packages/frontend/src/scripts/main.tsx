@@ -1,12 +1,8 @@
-import 'process/browser'
 import { lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
-import './clients/mqtt'
 import { PageHeaderBoot } from './components/snippets/PageHeaderBoot.js'
 import { LoadingView } from './components/views/Loading.js'
-import './plausible'
-import './worker'
 import AppIcon from '/src/images/app.png'
 import '/src/styles/root.css'
 
