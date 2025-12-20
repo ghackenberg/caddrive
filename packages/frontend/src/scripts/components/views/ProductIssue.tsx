@@ -3,8 +3,8 @@ import { useContext, useState } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { IssueClient } from '../../clients/rest/issue.js'
 import { UserContext } from '../../contexts/User.js'
+import { push } from '../../functions/history.js'
 import { useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useIssues, useMembers } from '../../hooks/list.js'
 import { PartCount } from '../counts/Parts.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
@@ -20,10 +20,6 @@ import LeftIcon from '/src/images/list.png'
 import RightIcon from '/src/images/part.png'
 
 export const ProductIssueView = () => {
-
-    // HISTORY
-
-    const { push } = useAsyncHistory()
 
     // CONTEXTS
 

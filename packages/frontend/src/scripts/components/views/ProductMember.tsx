@@ -3,8 +3,8 @@ import { useContext } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { MemberClient } from '../../clients/rest/member.js'
 import { UserContext } from '../../contexts/User.js'
+import { push } from '../../functions/history.js'
 import { useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useMembers } from '../../hooks/list.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
@@ -19,10 +19,6 @@ import RightIcon from '/src/images/part.png'
 import MemberIcon from '/src/images/user.png'
 
 export const ProductMemberView = () => {
-
-    // HISTORY
-
-    const { push } = useAsyncHistory()
 
     // CONTEXTS
 

@@ -2,14 +2,12 @@ import { useContext } from 'react'
 import { Navigate } from 'react-router'
 import { AuthContext } from '../../contexts/Auth.js'
 import { UserContext } from '../../contexts/User.js'
-import { useAsyncHistory } from '../../hooks/history.js'
+import { go } from '../../functions/history.js'
 import { DESKTOP } from '../../platform.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthWelcomeView = () => {
-    
-    const { go } = useAsyncHistory()
 
     // CONTEXTS
 

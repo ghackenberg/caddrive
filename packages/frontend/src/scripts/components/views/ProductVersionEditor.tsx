@@ -4,8 +4,8 @@ import { Box3, BoxGeometry, BoxHelper, GridHelper, Group, Intersection, LineBasi
 import { VersionClient } from '../../clients/rest/version.js'
 import { VersionContext } from '../../contexts/Version.js'
 import { COLOR_S, COLOR_X, COLOR_Y, COLOR_Z, createScene } from '../../functions/editor.js'
+import { back } from '../../functions/history.js'
 import { useVersion } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useVersions } from '../../hooks/list.js'
 import { getMaterialColor, getMaterials, getObjectMaterialCode, loadLDrawModel, parseLDrawModel } from '../../loaders/ldraw.js'
 import { ModelView3D } from '../widgets/ModelView3D.js'
@@ -18,10 +18,6 @@ BLANK.src = BlankIcon
 const BLOCKS = ['3005', '3004', '3622', '3010', '3009', '3008', '6111', '6112', '2465', '3003', '3002', '3001', '2456', '3007', '3006', '2356', '6212', '4202', '4201', '4204', '30072']
 
 export const ProductVersionEditorView = () => {
-
-    // HISTORY
-
-    const { goBack } = useAsyncHistory()
 
     // PARAMS
 
@@ -88,7 +84,7 @@ export const ProductVersionEditorView = () => {
     // Check if version refers to plain LDraw model, else go back
     useEffect(() => {
         if (version && version.modelType != 'ldr') {
-            goBack()
+            back()
         }
     }, [version])
 
@@ -827,7 +823,7 @@ export const ProductVersionEditorView = () => {
 
         setContextVersion(newVers)
 
-        await goBack()
+        await back()
     }
 
     // Util

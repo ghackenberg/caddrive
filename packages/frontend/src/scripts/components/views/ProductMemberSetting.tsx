@@ -5,8 +5,8 @@ import { CacheAPI } from '../../clients/cache.js'
 import { MemberClient } from '../../clients/rest/member.js'
 import { UserClient } from '../../clients/rest/user.js'
 import { UserContext } from '../../contexts/User.js'
+import { back } from '../../functions/history.js'
 import { useMember, useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useMembers } from '../../hooks/list.js'
 import { ButtonInput } from '../inputs/ButtonInput.js'
 import { TextInput } from '../inputs/TextInput.js'
@@ -23,10 +23,6 @@ import LeftIcon from '/src/images/setting.png'
 const ROLES: MemberRole[] = ['manager', 'engineer', 'customer']
 
 export const ProductMemberSettingView = () => {
-
-    // HISTORY
-    
-    const { goBack } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -102,12 +98,12 @@ export const ProductMemberSettingView = () => {
         if (memberId == 'new') {
             if (confirm('Do you really want to add this member?')) {
                 await MemberClient.addMember(productId, { userId: user.userId, role: role })
-                await goBack()
+                await back()
             }
         } else {
             if (confirm('Do you really want to change this member?')) {
                 await MemberClient.updateMember(productId, memberId, { role: role })
-                await goBack()
+                await back()
             }
         }
     }

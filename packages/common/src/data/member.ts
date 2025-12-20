@@ -1,27 +1,26 @@
-import { ApiProperty } from '@nestjs/swagger'
 
 export type MemberRole = 'manager' | 'engineer' | 'customer'
 
 export class MemberUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     role: MemberRole
 }
 
 export class MemberCreate extends MemberUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     userId: string
 }
 
 export class MemberRead extends MemberCreate {
-    @ApiProperty()
+    //@ApiProperty()
     productId: string
-    @ApiProperty()
+    //@ApiProperty()
     memberId: string
     
-    @ApiProperty()
+    //@ApiProperty()
     created: number
-    @ApiProperty()
+    //@ApiProperty()
     updated: number
-    @ApiProperty()
+    //@ApiProperty()
     deleted: number
 }

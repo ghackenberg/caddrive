@@ -1,9 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger'
 
 export class AttachmentUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     name: string
-    @ApiProperty()
+    //@ApiProperty()
     type: string
 }
 
@@ -12,17 +11,17 @@ export class AttachmentCreate extends AttachmentUpdate {
 }
 
 export class AttachmentRead extends AttachmentCreate {
-    @ApiProperty()
+    //@ApiProperty()
     userId: string
-    @ApiProperty()
+    //@ApiProperty()
     productId: string
-    @ApiProperty()
+    //@ApiProperty()
     attachmentId: string
 
-    @ApiProperty()
+    //@ApiProperty()
     created: number
-    @ApiProperty()
+    //@ApiProperty()
     updated: number
-    @ApiProperty()
+    //@ApiProperty()
     deleted: number
 }

@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router'
 import { ProductClient } from '../../clients/rest/product.js'
 import { UserContext } from '../../contexts/User.js'
+import { back, push, replace } from '../../functions/history.js'
 import { useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useMembers } from '../../hooks/list.js'
 import { BooleanInput } from '../inputs/BooleanInput.js'
 import { ButtonInput } from '../inputs/ButtonInput.js'
@@ -16,10 +16,6 @@ import RightIcon from '/src/images/part.png'
 import LeftIcon from '/src/images/setting.png'
 
 export const ProductSettingView = () => {
-
-    // HISTORY
-
-    const { goBack, replace, push } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -69,14 +65,14 @@ export const ProductSettingView = () => {
         if(productId == 'new') {
             if (name && description) {
                 const product = await ProductClient.addProduct({ name, description, public: _public })
-                await goBack()
+                await back()
                 await replace(`/products?public=${_public}`)
                 await push(`/products/${product.productId}`)
             }
         } else {
             if (name && description) {
                 await ProductClient.updateProduct(productId, { name, description, public: _public })
-                await goBack()
+                await back()
                 await replace(`/products?public=${_public}`)
                 await push(`/products/${productId}`)
             }
@@ -87,7 +83,7 @@ export const ProductSettingView = () => {
         event.preventDefault()
         if (confirm('Do you really want to delete the product?')) {
             await ProductClient.deleteProduct(productId)
-            await goBack()
+            await back()
         }
     }
 

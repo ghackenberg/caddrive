@@ -1,43 +1,42 @@
-import { ApiProperty } from '@nestjs/swagger'
 
 export type ModelType = 'dae' | 'stl' | 'ply' | 'fbx' | 'glb' | 'ldr' | 'mpd' | 'FCStd' | 'stp' | 'step'
 
 export type ImageType = 'png' | null
 
 export class VersionUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     baseVersionIds: string[]
     
-    @ApiProperty()
+    //@ApiProperty()
     major: number
-    @ApiProperty()
+    //@ApiProperty()
     minor: number
-    @ApiProperty()
+    //@ApiProperty()
     patch: number
     
-    @ApiProperty()
+    //@ApiProperty()
     description: string
 }
 export class VersionCreate extends VersionUpdate {
 }
 
 export class VersionRead extends VersionCreate {
-    @ApiProperty()
+    //@ApiProperty()
     userId: string
-    @ApiProperty()
+    //@ApiProperty()
     productId: string
-    @ApiProperty()
+    //@ApiProperty()
     versionId: string
 
-    @ApiProperty()
+    //@ApiProperty()
     created: number
-    @ApiProperty()
+    //@ApiProperty()
     updated: number
-    @ApiProperty()
+    //@ApiProperty()
     deleted: number
     
-    @ApiProperty()
+    //@ApiProperty()
     modelType: ModelType
-    @ApiProperty()
+    //@ApiProperty()
     imageType: ImageType
 }

@@ -1,14 +1,12 @@
 import { useContext } from 'react'
 import { Navigate } from 'react-router'
 import { AuthContext } from '../../contexts/Auth.js'
-import { useAsyncHistory } from '../../hooks/history.js'
+import { push } from '../../functions/history.js'
 import { DESKTOP, LINUX, MAC, WINDOWS } from '../../platform.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthDownloadView = () => {
-
-    const { push } = useAsyncHistory()
 
     // CONTEXTS
 

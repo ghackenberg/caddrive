@@ -3,8 +3,8 @@ import { Navigate, useParams } from 'react-router'
 import { auth } from '../../clients/auth.js'
 import { UserClient } from '../../clients/rest/user.js'
 import { UserContext } from '../../contexts/User.js'
+import { back } from '../../functions/history.js'
 import { useUser } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { BooleanInput } from '../inputs/BooleanInput.js'
 import { ButtonInput } from '../inputs/ButtonInput.js'
 import { EmailInput } from '../inputs/EmailInput.js'
@@ -14,10 +14,6 @@ import { LegalFooter } from '../snippets/LegalFooter.js'
 import { LoadingView } from './Loading.js'
 
 export const UserSettingView = () => {
-
-    // HISTORY
-    
-    const { goBack } = useAsyncHistory()
     
     // CONTEXTS
 
@@ -55,7 +51,7 @@ export const UserSettingView = () => {
                 setContextUser({ ...contextUser, ...newUser })
             }
         }
-        await goBack() 
+        await back() 
     }
 
     async function onClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -63,7 +59,7 @@ export const UserSettingView = () => {
         localStorage.removeItem('jwt')
         auth.headers.Authorization = ''
         setContextUser(null)
-        await goBack()
+        await back()
     }
 
     // RETURN

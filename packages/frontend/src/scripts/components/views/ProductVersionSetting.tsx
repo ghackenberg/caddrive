@@ -8,9 +8,9 @@ import { CacheAPI } from '../../clients/cache.js'
 import { VersionClient } from '../../clients/rest/version.js'
 import { UserContext } from '../../contexts/User.js'
 import { VersionContext } from '../../contexts/Version.js'
+import { back } from '../../functions/history.js'
 import { render } from '../../functions/render.js'
 import { useProduct, useVersion } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useMembers, useVersions } from '../../hooks/list.js'
 import { parseBRep } from '../../loaders/brep.js'
 import { parseColladaModel } from '../../loaders/collada.js'
@@ -42,10 +42,6 @@ const PREVIEW_WIDTH = 1000
 const PREVIEW_HEIGHT = 1000
 
 export const ProductVersionSettingView = () => {
-
-    // HISTORY
-
-    const { goBack } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -215,7 +211,7 @@ export const ProductVersionSettingView = () => {
             }
             setContextVersion(version)
         }
-        await goBack()
+        await back()
     }
 
     async function onClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -228,7 +224,7 @@ export const ProductVersionSettingView = () => {
             } else {
                 setContextVersion(undefined)
             }
-            await goBack()
+            await back()
         }
     }
 

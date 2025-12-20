@@ -3,9 +3,9 @@ import { useContext } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { MilestoneClient } from '../../clients/rest/milestone.js'
 import { UserContext } from '../../contexts/User.js'
+import { push } from '../../functions/history.js'
 import { formatDateHourMinute } from '../../functions/time.js'
 import { useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useMembers, useMilestones } from '../../hooks/list.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
@@ -20,10 +20,6 @@ import MilestoneIcon from '/src/images/milestone.png'
 import RightIcon from '/src/images/part.png'
 
 export const ProductMilestoneView = () => {
-
-    // HISTORY
-
-    const { push } = useAsyncHistory()
 
     // CONTEXTS
 

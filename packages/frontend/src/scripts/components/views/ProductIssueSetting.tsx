@@ -3,8 +3,8 @@ import { FormEvent, useContext, useEffect, useState } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router'
 import { IssueClient } from '../../clients/rest/issue.js'
 import { UserContext } from '../../contexts/User.js'
+import { back, replace } from '../../functions/history.js'
 import { useIssue, useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useMembers, useMilestones } from '../../hooks/list.js'
 import { ButtonInput } from '../inputs/ButtonInput.js'
 import { TextInput } from '../inputs/TextInput.js'
@@ -19,10 +19,6 @@ import RightIcon from '/src/images/part.png'
 import LeftIcon from '/src/images/setting.png'
 
 export const ProductIssueSettingView = () => {
-
-    // HISTORY
-
-    const { goBack, replace } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -76,7 +72,7 @@ export const ProductIssueSettingView = () => {
         } else {
             if (label) {
                 await IssueClient.updateIssue(productId, issueId, { label, assignedUserIds,  milestoneId: milestoneId ? milestoneId : null })
-                await goBack()    
+                await back()    
             }
         }
     }
@@ -129,7 +125,7 @@ export const ProductIssueSettingView = () => {
                                         `Issue settings`
                                     )}
                                 </h1>
-                                <form onSubmit={submitIssue} onReset={goBack}>
+                                <form onSubmit={submitIssue} onReset={back}>
                                     {issue && <TextInput label='Number' value={`${issue.number}`} disabled={true}/>}
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <div>

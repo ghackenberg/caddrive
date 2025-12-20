@@ -6,13 +6,11 @@ import { TokenClient } from '../../clients/rest/token.js'
 import { UserClient } from '../../clients/rest/user.js'
 import { AuthContext } from '../../contexts/Auth.js'
 import { UserContext } from '../../contexts/User.js'
-import { useAsyncHistory } from '../../hooks/history.js'
+import { go, replace } from '../../functions/history.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthCodeView = () => {
-    
-    const { go, replace } = useAsyncHistory()
 
     // REFS
 

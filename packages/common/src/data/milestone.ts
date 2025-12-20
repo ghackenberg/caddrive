@@ -1,12 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger'
 
 export class MilestoneUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     label: string
     
-    @ApiProperty()
+    //@ApiProperty()
     start: number
-    @ApiProperty()
+    //@ApiProperty()
     end: number
 }
 
@@ -14,24 +13,24 @@ export class MilestoneCreate extends MilestoneUpdate {
 }
 
 export class MilestoneRead extends MilestoneCreate {
-    @ApiProperty()
+    //@ApiProperty()
     userId: string
-    @ApiProperty()
+    //@ApiProperty()
     productId: string
-    @ApiProperty()
+    //@ApiProperty()
     milestoneId: string
 
-    @ApiProperty()
+    //@ApiProperty()
     created: number
-    @ApiProperty()
+    //@ApiProperty()
     updated: number
-    @ApiProperty()
+    //@ApiProperty()
     deleted: number
 
     // Computed properties
 
-    @ApiProperty()
+    //@ApiProperty()
     openIssueCount?: number
-    @ApiProperty()
+    //@ApiProperty()
     closedIssueCount?: number
 }

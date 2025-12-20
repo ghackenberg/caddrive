@@ -4,9 +4,9 @@ import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { CommentClient } from '../../clients/rest/comment.js'
 import { UserContext } from '../../contexts/User.js'
 import { calculateActual } from '../../functions/burndown.js'
+import { push } from '../../functions/history.js'
 import { formatDateHourMinute } from '../../functions/time.js'
 import { useMilestone, useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useIssues, useMembers } from '../../hooks/list.js'
 import { useIssuesComments } from '../../hooks/map.js'
 import { PartCount } from '../counts/Parts.js'
@@ -24,10 +24,6 @@ import LeftIcon from '/src/images/list.png'
 import ReopenIcon from '/src/images/reopen.png'
 
 export const ProductMilestoneIssueView = () => {
-
-    // HISTORY
-    
-    const { push } = useAsyncHistory()
 
     // CONTEXTS
 

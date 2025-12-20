@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router'
-import { useAsyncHistory } from '../../hooks/history.js'
+import { back, push, replace } from '../../functions/history.js'
 
 export type ProductFooterItem = {
     hash: string
@@ -8,10 +8,6 @@ export type ProductFooterItem = {
 }
 
 export const ProductFooter = (props: { items: ProductFooterItem[] }) => {
-
-    // HISTORY
-
-    const { goBack, push, replace } = useAsyncHistory()
 
     // LOCATION
 
@@ -33,7 +29,7 @@ export const ProductFooter = (props: { items: ProductFooterItem[] }) => {
             if (item.hash) {
                 await replace(item.hash)
             } else {
-                await goBack()
+                await back()
             }
         }
     }

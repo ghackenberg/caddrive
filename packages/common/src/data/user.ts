@@ -1,11 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger'
 
 export class UserUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     consent: boolean
-    @ApiProperty()
+    //@ApiProperty()
     name: string
-    @ApiProperty()
+    //@ApiProperty()
     emailNotification: boolean
 }
 
@@ -14,20 +13,20 @@ export class UserCreate extends UserUpdate {
 }
 
 export class UserRead extends UserCreate {
-    @ApiProperty()
+    //@ApiProperty()
     userId: string
-    @ApiProperty()
+    //@ApiProperty()
     pictureId: string
     
-    @ApiProperty()
+    //@ApiProperty()
     created: number
-    @ApiProperty()
+    //@ApiProperty()
     updated: number
-    @ApiProperty()
+    //@ApiProperty()
     deleted: number
 
-    @ApiProperty()
+    //@ApiProperty()
     email: string
-    @ApiProperty()
+    //@ApiProperty()
     admin?: boolean
 }

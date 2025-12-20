@@ -13,8 +13,7 @@
     "scripts": {
         "lint": "eslint src",
         "loc": "sloc src",
-        "dev": "tsx watch --clear-screen=false src/main.ts",
-        "start": "tsx src/main.ts"
+        "start": "tsx watch --clear-screen=false src/main.ts"
     },
     "dependencies": {
         "@types/http-proxy-middleware": "^1.0.0",

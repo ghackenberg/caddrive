@@ -3,9 +3,9 @@ import { Fragment, useContext, useRef } from 'react'
 import { Navigate, NavLink, useLocation, useParams } from 'react-router'
 import { UserContext } from '../../contexts/User.js'
 import { VersionContext } from '../../contexts/Version.js'
+import { push } from '../../functions/history.js'
 import { computeColor, computeTree } from '../../functions/tree.js'
 import { useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useMembers, useVersions } from '../../hooks/list.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
@@ -31,10 +31,6 @@ function hsl(hue: number, saturation = 50, level = 50) {
 }
 
 export const ProductVersionView = () => {
-
-    // HISTORY
-
-    const { push } = useAsyncHistory()
 
     // CONTEXTS
 

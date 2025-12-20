@@ -1,11 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger'
 
 export class ProductUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     name: string
-    @ApiProperty()
+    //@ApiProperty()
     description: string
-    @ApiProperty()
+    //@ApiProperty()
     public: boolean
 }
 
@@ -13,30 +12,30 @@ export class ProductCreate extends ProductUpdate {
 }
 
 export class ProductRead extends ProductCreate {
-    @ApiProperty()
+    //@ApiProperty()
     userId: string
-    @ApiProperty()
+    //@ApiProperty()
     productId: string
 
-    @ApiProperty()
+    //@ApiProperty()
     created: number
-    @ApiProperty()
+    //@ApiProperty()
     updated: number
-    @ApiProperty()
+    //@ApiProperty()
     deleted: number
 
     // Computed properties
 
-    @ApiProperty()
+    //@ApiProperty()
     versionCount?: number
-    @ApiProperty()
+    //@ApiProperty()
     openIssueCount?: number
-    @ApiProperty()
+    //@ApiProperty()
     closedIssueCount?: number
-    @ApiProperty()
+    //@ApiProperty()
     openMilestoneCount?: number
-    @ApiProperty()
+    //@ApiProperty()
     closedMilestoneCount?: number
-    @ApiProperty()
+    //@ApiProperty()
     memberCount?: number
 }

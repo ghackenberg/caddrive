@@ -33,7 +33,7 @@ root.render(
         <title>CADdrive - Your collaborative workspace for LDraw&trade; models</title>
         <link rel="icon" href={AppIcon}/>
         <Suspense fallback={<Fallback/>}>
-            <Root/>
+            <Root/>           
         </Suspense>
     </BrowserRouter>
 )

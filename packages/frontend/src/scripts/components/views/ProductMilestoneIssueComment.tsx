@@ -5,11 +5,11 @@ import { Object3D } from 'three'
 import { CommentContext } from '../../contexts/Comment.js'
 import { UserContext } from '../../contexts/User.js'
 import { VersionContext } from '../../contexts/Version.js'
+import { push } from '../../functions/history.js'
 import { collectParts, Part } from '../../functions/markdown.js'
 import { computePath } from '../../functions/path.js'
 import { formatDateHourMinute } from '../../functions/time.js'
 import { useIssue, useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useComments, useMembers, useVersions } from '../../hooks/list.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import { ProductFooter, ProductFooterItem } from '../snippets/ProductFooter.js'
@@ -27,10 +27,6 @@ type SubHandler = (version: VersionRead, object: Object3D) => void
 type Index = {[commentId: string]: Part[]}
 
 export const ProductMilestoneIssueCommentView = () => {
-
-    // HISTORY
-
-    const { push } = useAsyncHistory()
 
     // CONTEXTS
 

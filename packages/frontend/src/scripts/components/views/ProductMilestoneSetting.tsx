@@ -3,8 +3,8 @@ import { Navigate, useLocation, useParams } from 'react-router'
 import { MilestoneClient } from '../../clients/rest/milestone.js'
 import { UserContext } from '../../contexts/User.js'
 import { calculateActual } from '../../functions/burndown.js'
+import { back, replace } from '../../functions/history.js'
 import { useMilestone, useProduct } from '../../hooks/entity.js'
-import { useAsyncHistory } from '../../hooks/history.js'
 import { useIssues, useMembers } from '../../hooks/list.js'
 import { useIssuesComments } from '../../hooks/map.js'
 import { ButtonInput } from '../inputs/ButtonInput.js'
@@ -19,10 +19,6 @@ import RightIcon from '/src/images/chart.png'
 import LeftIcon from '/src/images/setting.png'
 
 export const ProductMilestoneSettingView = () => {
-
-    // HISTORY
-    
-    const { goBack, replace } = useAsyncHistory()
 
     // CONTEXTS
 
@@ -120,7 +116,7 @@ export const ProductMilestoneSettingView = () => {
                 await replace(`/products/${productId}/milestones/${milestone.milestoneId}/issues`)
             } else {
                 await MilestoneClient.updateMilestone(productId, milestoneId, { label, start: start.getTime(), end: end.getTime() })
-                await goBack()
+                await back()
             }
         }
     }
@@ -150,7 +146,7 @@ export const ProductMilestoneSettingView = () => {
                                         'Milestone settings'
                                     )}
                                 </h1>
-                                <form onSubmit={submitMilestone} onReset={goBack}>
+                                <form onSubmit={submitMilestone} onReset={back}>
                                     <TextInput label='Label' placeholder='Type label' value={label} change={setLabel} required/>
                                     <DateInput label='Start' placeholder='YYYY-MM-DD' value={start} change={setStart} required/>
                                     <DateInput label='End' placeholder='YYYY-MM-DD' value={end} change={setEnd} required/>

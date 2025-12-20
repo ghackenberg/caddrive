@@ -1,13 +1,11 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { TokenClient } from '../../clients/rest/token.js'
 import { AuthContext } from '../../contexts/Auth.js'
-import { useAsyncHistory } from '../../hooks/history.js'
+import { push } from '../../functions/history.js'
 import { LegalFooter } from '../snippets/LegalFooter.js'
 import AuthIcon from '/src/images/auth.png'
 
 export const AuthEmailView = () => {
-
-    const { push } = useAsyncHistory()
 
     // REFS
 

@@ -1,11 +1,10 @@
 import { useLocation } from "react-router"
+import { go, replace } from '../functions/history.js'
 import { PRODUCTS_4, PRODUCTS_6 } from "../pattern.js"
-import { useAsyncHistory } from "./history.js"
 
 export function useNavigationStack() {
 
     const { pathname, hash } = useLocation()
-    const { go, replace } = useAsyncHistory()
 
     async function navigate(event: React.MouseEvent<HTMLAnchorElement>) {
         event.preventDefault()

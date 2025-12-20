@@ -2,11 +2,9 @@
     "compilerOptions": {
         "moduleResolution": "nodenext",
         "module": "nodenext",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
         "allowSyntheticDefaultImports": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
+        "allowUnreachableCode": true,
+        "allowUnusedLabels": true,
         "noImplicitAny": true,
         "noImplicitOverride": true,
         "noImplicitReturns": true,

@@ -14,7 +14,7 @@ import { MilestoneContext } from '../contexts/Milestone.js'
 import { ProductContext } from '../contexts/Product.js'
 import { UserContext } from '../contexts/User.js'
 import { VersionContext } from '../contexts/Version.js'
-import { useAsyncHistory } from '../hooks/history.js'
+import { push, replace } from '../functions/history.js'
 import { AUTH_0, AUTH_1, PRODUCTS_1, PRODUCTS_2, PRODUCTS_3, PRODUCTS_4, PRODUCTS_5, PRODUCTS_6, USERS_0, USERS_1, USERS_2 } from '../pattern.js'
 import { PageHeaderRoot } from './snippets/PageHeaderRoot.js'
 import { LoadingView } from './views/Loading.js'
@@ -27,7 +27,6 @@ const UsersRouter = lazy(() => import('./routers/Users.js'))
 const Root = () => {
     
     const { pathname } = useLocation()
-    const { replace, push } = useAsyncHistory()
 
     // STATES
 

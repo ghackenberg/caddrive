@@ -1,29 +1,28 @@
-import { ApiProperty } from '@nestjs/swagger'
 
 export class CommentUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     text: string
 }
 
 export class CommentCreate extends CommentUpdate {
-    @ApiProperty()
+    //@ApiProperty()
     action: 'none' | 'close' | 'reopen'
 }
 
 export class CommentRead extends CommentCreate {
-    @ApiProperty()
+    //@ApiProperty()
     userId: string
-    @ApiProperty()
+    //@ApiProperty()
     productId: string
-    @ApiProperty()
+    //@ApiProperty()
     issueId: string
-    @ApiProperty()
+    //@ApiProperty()
     commentId: string
 
-    @ApiProperty()
+    //@ApiProperty()
     created: number
-    @ApiProperty()
+    //@ApiProperty()
     updated: number
-    @ApiProperty()
+    //@ApiProperty()
     deleted: number
 }
