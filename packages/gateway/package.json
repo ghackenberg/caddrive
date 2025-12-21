@@ -16,7 +16,6 @@
         "start": "tsx watch --clear-screen=false src/main.ts"
     },
     "dependencies": {
-        "@types/http-proxy-middleware": "^1.0.0",
         "http-proxy-middleware": "^3.0.5"
     }
 }
