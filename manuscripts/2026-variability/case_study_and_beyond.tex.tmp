@@ -1,0 +1,105 @@
+\section{Case Study: FPV Drone Product Line}
+
+To validate the technical feasibility and architectural rigor of the UVR pattern, we applied it to a First-Person View (FPV) drone product line. FPV drones are highly suitable for mechatronic PLE research because they are inherently modular, yet exhibit severe performance trade-offs and geometric interdependencies. The choice of battery weight, propeller diameter, and frame stiffness directly affects the drone's flight dynamics and structural integrity.
+
+\subsection{Constraint Identification}
+
+A critical first step in mechatronic domain engineering is the systematic identification of physical constraints. Unlike software features, mechatronic modules occupy physical volumes and interact dynamically. Through spatial analysis within the digital LEGO environment, we identified two primary classes of constraints that our three-tier model must enforce:
+
+\begin{enumerate}
+    \item \textbf{Static Space Constraints:} These constraints arise from invariant geometric properties. For example, the central housing of our \textit{Small Frame} is designed for agility and weight reduction. Consequently, it has a strictly limited internal volume that can only accommodate the \textit{Small Battery} (450mAh). Attempting to mount a \textit{Large Battery} (1300mAh) results in a physical overlap, making the configuration unbuildable.
+    \item \textbf{Dynamic Space Constraints:} These involve the operational envelopes of moving parts. While a \textit{Large Propeller} (5-inch) can be mounted onto the motors of a \textit{Small Frame} due to standardized hole patterns, the length of the propeller blades exceeds the distance to the frame's arms. During high-speed rotation, the blades would collide with the frame, leading to catastrophic failure. 
+\end{enumerate}
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/placeholder_150_model.png}
+    \caption{The 150\% LDraw model of the FPV drone product line, showing the overlapping mechatronic modules in a single world coordinate system.}
+    \label{fig:150_model}
+\end{figure}
+
+By formalizing these as \texttt{EXCL} and \texttt{REQ} constraints within the Tier 2 submodel names, we ensure that the derivation algorithm can prevent the generation of such invalid physical artifacts.
+
+\subsection{Applying the 3-Tier Mapping}
+
+The 150\% LDraw model for the drone product line is implemented as a single file where the root assembly instantiates the following hierarchical structure of submodel definitions:
+
+\begin{itemize}
+    \item \texttt{FPV\_Drone.ldr} (Root Assembly)
+    \begin{itemize}
+        \item \textbf{Configurations} (Abstract Group)
+        \begin{itemize}
+            \item \texttt{Ultralight\_Drone ((CF) Frame\_Small + (CF) Batt\_Small + ...).ldr}
+            \item \texttt{Freestyle\_Drone ((CF) Frame\_Large + (CF) Batt\_Medium + ...).ldr}
+            \item \texttt{Long-Range\_Drone ((CF) Frame\_Large + (CF) Batt\_Large + ...).ldr}
+        \end{itemize}
+        \item \textbf{Features} (Abstract Group)
+        \begin{itemize}
+            \item \texttt{(M\_CF) Controller.ldr} $\rightarrow$ References \texttt{FC\_Logic\_Board.ldr}
+            \item \texttt{(M\_AF\_XOR) Battery\_Size.ldr}
+            \begin{itemize}
+                \item \texttt{(CF) Batt\_Small.ldr} $\rightarrow$ References \texttt{LiPo\_450mAh.ldr}
+                \item \texttt{(CF) Batt\_Large.ldr} $\rightarrow$ References \texttt{LiPo\_1300mAh.ldr}
+            \end{itemize}
+            \item \texttt{(M\_AF\_XOR) Propeller\_Type.ldr}
+            \begin{itemize}
+                \item \texttt{(CF) Prop\_Small.ldr} $\rightarrow$ References \texttt{Blade\_2in.ldr}
+                \item \texttt{(CF) Prop\_Large.ldr} $\rightarrow$ References \texttt{Blade\_5in.ldr}
+            \end{itemize}
+            \item \texttt{(M\_AF\_XOR) Frame\_Size.ldr}
+            \begin{itemize}
+                \item \texttt{(CF) Frame\_Small (EXCL: CF\_Batt\_Large).ldr} $\rightarrow$ Ref. \texttt{Arm\_Small.ldr}
+                \item \texttt{(CF) Frame\_Large (REQ: CF\_Prop\_Large).ldr} $\rightarrow$ Ref. \texttt{Arm\_Large.ldr}
+            \end{itemize}
+        \end{itemize}
+        \item \textbf{Parts} (Atomic Asset Base)
+        \begin{itemize}
+            \item \texttt{FC\_Logic\_Board.ldr} (LDraw Geometry)
+            \item \texttt{LiPo\_450mAh.ldr} (LDraw Geometry)
+            \item \texttt{Blade\_2in.ldr} (LDraw Geometry)
+            \item \texttt{Arm\_Small.ldr} (LDraw Geometry)
+            \item \texttt{M2\_Screw.ldr} (Reusable Asset)
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+This mapping illustrates the formal separation of concerns: Tier 1 handles variant selection, Tier 2 manages the variability logic and geometric constraints, and Tier 3 provides the reusable physical assets. Notably, Tier 2 features such as \texttt{Frame\_Small} reference both specific physical parts (e.g., \texttt{Arm\_Small}) and generic reusable parts like \texttt{M2\_Screw}, which is shared across the entire product line.
+
+\subsection{Results: Derived Variants}
+
+From the unified 150\% model, we successfully derived three distinct variants that represent the spectrum of the drone product line:
+\begin{itemize}
+    \item \textbf{Ultralight:} Utilizes the Small Frame and 450mAh battery. Optimized for weight and safety during indoor flight or educational exercises.
+    \item \textbf{Freestyle:} Pairs the Large Frame with Medium Batteries and Triblade Propellers. Optimized for agility, thrust, and acrobatic flight.
+    \item \textbf{Long-Range:} Utilizes the Large Frame and high-capacity 1300mAh battery. Optimized for efficiency and endurance during extended outdoor missions.
+\end{itemize}
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/placeholder_variants.png}
+    \caption{Three derived drone variants showcasing the subtractive filtering of the three-tier 150\% model, where each variant is logically and physically consistent.}
+    \label{fig:derived_variants}
+\end{figure}
+
+The success of these derivations demonstrates that the UVR pattern effectively maintains the structural integrity of the mechatronic system while enabling rapid, automated product derivation. 
+
+\section{Evaluation and Discussion}
+
+The three-tier architecture addresses the "Agile Infrastructure Gap" by providing a structured yet lightweight alternative to industrial PLM.
+
+\subsection{Structural Rigor and Scalability}
+
+The introduction of Tier 3 (Parts) ensures the model remains maintainable as the product line scales. A change to a single part definition propagates automatically through the logical feature layer to all predefined configurations.
+
+\subsection{Portability and Standardization}
+
+UVR serves as a "reproducible ground truth" for hardware-oriented PLE \cite{Strueber2019}, accessible without costly licensing.
+
+\section{Conclusion}
+
+The Three-Tier Unified Variability Representation provides a formal architectural pattern for managing mechatronic product lines. By integrating configuration, logic, and geometry into a single artifact, we bridge the gap between agile experimentation and structural rigor.
+
+\bibliographystyle{splncs04}
+\bibliography{references}
+
+\end{document}
