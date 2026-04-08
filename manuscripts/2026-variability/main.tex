@@ -1,0 +1,205 @@
+\documentclass[runningheads]{llncs}
+%
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{booktabs}
+\usepackage{subcaption}
+
+\begin{document}
+%
+\title{Three-Tier Embedded Variability Management for Mechatronic Product Lines: A Portable Integration Pattern in Digital LEGO}
+%
+\titlerunning{Three-Tier Embedded Variability in Digital LEGO}
+%
+\author{Aleksandra Erohina\inst{1} \and Christian Zehetner\inst{1} \and Georg Hackenberg\inst{1}}
+%
+\authorrunning{A. Erohina et al.}
+%
+\institute{University of Applied Sciences Upper Austria, Wels, Austria\\
+\email{\{aleksandra.erohina, christian.zehetner, georg.hackenberg\}@fh-wels.at}}
+%
+\maketitle              % typeset the header of the contribution
+%
+\begin{abstract}
+Managing variability in mechatronic systems requires a tight coupling between logical feature models and physical geometric assets. However, a significant "Agile Infrastructure Gap" exists between lightweight early-phase design and heavy industrial Product Lifecycle Management (PLM) solutions. This paper presents a novel three-tier architectural pattern for embedding variability management directly into the solution space using the open LDraw file format. By enforcing a formal separation between Configurations (Product Map), Features (Variability Logic), and Parts (Atomic Asset Base) within a single file, we enable a self-contained 150\% model. This approach utilizes a structured naming convention and hierarchical references to encode configuration rules, ensuring maximum portability across CAD editors without proprietary plugins. We validate the pattern through a First-Person View (FPV) drone product line, demonstrating its ability to manage complex geometric constraints and automate variant derivation.
+
+\keywords{Product Line Engineering \and Mechatronics \and 3-Tier Architecture \and Digital LEGO \and Variability Modeling \and Baukasten.}
+\end{abstract}
+%
+%
+%
+\section{Introduction}
+
+The engineering of modern mechatronic systems is increasingly defined by the "Baukasten" (Modular Platform) principle \cite{VolkswagenMQB}, where diverse product variants are derived from a common pool of standardized assets. In the mature stages of production, this complexity is managed by high-end Product Lifecycle Management (PLM) systems. However, during the early, agile phases of design and in educational settings, such systems are often too heavy and costly, creating an "Agile Infrastructure Gap."
+
+One of the primary challenges in this gap is the synchronization between the problem space (feature trees) and the solution space (3D models). Traditional Software Product Line Engineering (SPLE) \cite{Pohl2005} tools often maintain these as separate artifacts, leading to fragile mappings. For physical products, this separation is even more problematic, as it obscures critical geometric interdependencies and space constraints.
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=\textwidth]{figures/placeholder_baukasten.png}
+    \caption{Conceptual evolution from traditional product development to the Product Line Engineering (PLE) approach inspired by the "Baukasten" principle.}
+    \label{fig:baukasten_concept}
+\end{figure}
+
+This paper addresses this gap by introducing a three-tier architectural pattern for embedded variability management. Our approach, termed the Unified Variability Representation (UVR), integrates the entire PLM stack into a single, portable LDraw file—the standard for digital LEGO modeling. By leveraging LDraw's hierarchical referencing and a structured naming convention, we allow the geometry to carry its own "intelligence."
+
+\section{Related Work}
+
+Software Product Line Engineering (SPLE) foundational principles \cite{Pohl2005, Linden2007} have recently been extended toward standardized modeling with the Universal Variability Language (UVL) \cite{Benavides2025UVL}. In mechatronics, research has focused on SysML-based geometric profiling \cite{warniez2014sysml} and feature-based extensions for technical systems \cite{Koch2016}. However, these approaches often lack a direct, low-barrier link to the actual 3D geometric representation. Our work bridges this by aligning with modern pedagogical frameworks \cite{KuiterTK25} and extending the open CADdrive platform \cite{Hackenberg2023} with a robust, portable mechanism for handling variant-rich hardware systems.
+
+\section{The Three-Tier Architecture for Embedded PLE}
+
+The core contribution of this work is a formal separation of concerns within the CAD data structure. We organize the 150\% model into three distinct tiers, all contained within a single LDraw hierarchy.
+
+\subsection{Architectural Layers}
+
+As illustrated in Fig. \ref{fig:3_tier_arch}, the hierarchy is split into three functional branches:
+\begin{enumerate}
+    \item \textbf{Tier 1: Configurations (The Product Map):} Defines the specific products in the line. It uses empty submodels where the variant's logic is stored in the name.
+    \item \textbf{Tier 2: Features (The Logical Model):} Implements the variability tree and constraints by referencing Tier 3 assets.
+    \item \textbf{Tier 3: Parts (The Atomic Asset Base):} Contains the "Baukasten" assets (bricks, screws, motors) with simple descriptive names and no logic.
+\end{enumerate}
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=\textwidth]{figures/placeholder_3_tier.png}
+    \caption{The Three-Tier UVR Architecture: Separating product configurations from variability logic and physical assets within a single file hierarchy.}
+    \label{fig:3_tier_arch}
+\end{figure}
+
+\subsection{Formal Naming Convention}
+
+To enable machine-interpretability across any CAD editor, UVR defines a systematic naming convention for submodel definitions in Tier 1 and Tier 2. This convention is divided into four semantic categories:
+
+\subsubsection{Feature Classification (Tier 2)}
+These prefixes define the role of a feature within the derivation tree:
+\begin{itemize}
+    \item \texttt{(M)} \textbf{Mandatory:} The feature and its entire resolved subtree must be included in every variant.
+    \item \texttt{(CF)} \textbf{Concrete Feature:} A feature that directly maps to physical geometry or a mechatronic assembly.
+    \item \texttt{(AF)} \textbf{Abstract Feature:} A purely logical node used for hierarchical grouping (e.g., grouping all battery sizes).
+\end{itemize}
+
+\subsubsection{Group Logic (Tier 2)}
+Applied to abstract features to govern the selection of their direct child references:
+\begin{itemize}
+    \item \texttt{(XOR)} \textbf{Exclusive OR:} Exactly one child feature must be selected.
+    \item \texttt{(OR)} \textbf{Inclusive OR:} At least one child feature must be selected.
+\end{itemize}
+
+\subsubsection{Cross-Tree Constraints (Tier 2)}
+Suffixes used to encode dependencies that violate the strict hierarchy:
+\begin{itemize}
+    \item \texttt{(REQ: [Target])} \textbf{Requires:} Selection of this feature forces the inclusion of the target feature.
+    \item \texttt{(EXCL: [Target])} \textbf{Excludes:} Selection of this feature prevents the inclusion of the target feature.
+\end{itemize}
+
+\subsubsection{Configuration Formulas (Tier 1)}
+Preconfigured variants are defined as empty submodels where the formula is embedded in the name using a simple additive syntax:
+\begin{center}
+    \texttt{Variant\_Name ((CF) Feature\_A + (CF) Feature\_B + ...)}
+\end{center}
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/placeholder_feature_tree.png}
+    \caption{Mapping of the naming convention to a graphical feature tree representation.}
+    \label{fig:naming_convention}
+\end{figure}
+
+\subsection{Derivation Algorithm}
+
+The derivation of a specific variant follows a subtractive tree-filtering approach:
+\begin{enumerate}
+    \item \textbf{Parse Hierarchy:} Build a tree of submodel definitions and references.
+    \item \textbf{Retrieve Formula:} Identify the Tier 1 configuration submodel and extract the formula from its name.
+    \item \textbf{Resolve References:} Recursively mark nodes as "Active" if they are mandatory, part of the resolved formula, or essential abstract parents.
+    \item \textbf{Prune and Export:} Remove all non-active nodes and generate a specific 3D variant file.
+\end{enumerate}
+
+\section{Case Study: FPV Drone Product Line}
+
+We applied the three-tier pattern to an FPV drone product line, which features high geometric interdependency between motors, props, and frames.
+
+\subsection{Constraint Identification}
+
+Through spatial analysis, we categorized constraints managed by the Tier 2 layer:
+\begin{enumerate}
+    \item \textbf{Static Space Constraints:} The \textit{Small Frame} compartment is physically too small for the \textit{Large Battery}.
+    \item \textbf{Dynamic Space Constraints:} \textit{Large Propellers} will collide with the arms of a \textit{Small Frame} during high-speed rotation.
+\end{enumerate}
+
+\begin{figure}[bt]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/placeholder_150_model.png}
+    \caption{The 150\% LDraw model showing the overlapping mechatronic modules in a single coordinate system.}
+    \label{fig:150_model}
+\end{figure}
+
+\subsection{Applying the 3-Tier Mapping}
+
+The 150\% LDraw model for the drone product line is implemented as a single file where the root assembly instantiates the following hierarchical structure of submodel definitions:
+
+\begin{itemize}
+    \item \texttt{FPV\_Drone.ldr} (Root Assembly)
+    \begin{itemize}
+        \item \textbf{Configurations} (Abstract Group)
+        \begin{itemize}
+            \item \texttt{Ultralight\_Drone ((CF) Frame\_Small + (CF) Batt\_Small + ...).ldr}
+            \item \texttt{Freestyle\_Drone ((CF) Frame\_Large + (CF) Batt\_Medium + ...).ldr}
+            \item \texttt{Long-Range\_Drone ((CF) Frame\_Large + (CF) Batt\_Large + ...).ldr}
+        \end{itemize}
+        \item \textbf{Features} (Abstract Group)
+        \begin{itemize}
+            \item \texttt{(M\_CF) Controller.ldr} $\rightarrow$ References \texttt{FC\_Logic\_Board.ldr}
+            \item \texttt{(M\_AF\_XOR) Battery\_Size.ldr}
+            \begin{itemize}
+                \item \texttt{(CF) Batt\_Small.ldr} $\rightarrow$ References \texttt{LiPo\_450mAh.ldr}
+                \item \texttt{(CF) Batt\_Large.ldr} $\rightarrow$ References \texttt{LiPo\_1300mAh.ldr}
+            \end{itemize}
+            \item \texttt{(M\_AF\_XOR) Propeller\_Type.ldr}
+            \begin{itemize}
+                \item \texttt{(CF) Prop\_Small.ldr} $\rightarrow$ References \texttt{Blade\_2in.ldr}
+                \item \texttt{(CF) Prop\_Large.ldr} $\rightarrow$ References \texttt{Blade\_5in.ldr}
+            \end{itemize}
+            \item \texttt{(M\_AF\_XOR) Frame\_Size.ldr}
+            \begin{itemize}
+                \item \texttt{(CF) Frame\_Small (EXCL: CF\_Batt\_Large).ldr} $\rightarrow$ Ref. \texttt{Arm\_Small.ldr}
+                \item \texttt{(CF) Frame\_Large (REQ: CF\_Prop\_Large).ldr} $\rightarrow$ Ref. \texttt{Arm\_Large.ldr}
+            \end{itemize}
+        \end{itemize}
+        \item \textbf{Parts} (Atomic Asset Base)
+        \begin{itemize}
+            \item \texttt{FC\_Logic\_Board.ldr} (LDraw Geometry)
+            \item \texttt{LiPo\_450mAh.ldr} (LDraw Geometry)
+            \item \texttt{Blade\_2in.ldr} (LDraw Geometry)
+            \item \texttt{Arm\_Small.ldr} (LDraw Geometry)
+            \item \texttt{M2\_Screw.ldr} (Reusable Asset)
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+This mapping illustrates the formal separation of concerns: Tier 1 handles variant selection, Tier 2 manages the variability logic and geometric constraints, and Tier 3 provides the reusable physical assets. Notably, Tier 2 features such as \texttt{Frame\_Small} reference both specific physical parts (e.g., \texttt{Arm\_Small}) and generic reusable parts like \texttt{M2\_Screw}, which is shared across the entire product line.
+
+\section{Evaluation and Discussion}
+
+The three-tier architecture addresses the "Agile Infrastructure Gap" by providing a structured yet lightweight alternative to industrial PLM.
+
+\subsection{Structural Rigor and Scalability}
+
+The introduction of Tier 3 (Parts) ensures the model remains maintainable as the product line scales. A change to a single part definition propagates automatically through the logical feature layer to all predefined configurations.
+
+\subsection{Portability and Standardization}
+
+UVR serves as a "reproducible ground truth" for hardware-oriented PLE \cite{Strueber2019}, accessible without costly licensing.
+
+\section{Conclusion}
+
+The Three-Tier Unified Variability Representation provides a formal architectural pattern for managing mechatronic product lines. By integrating configuration, logic, and geometry into a single artifact, we bridge the gap between agile experimentation and structural rigor.
+
+\bibliographystyle{splncs04}
+\bibliography{references}
+
+\end{document}
