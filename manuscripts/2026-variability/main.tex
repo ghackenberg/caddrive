@@ -92,8 +92,12 @@ Code & Presence & Nature & Structural Role \\ \midrule
 \end{tabular}
 \end{table}
 
-\paragraph{Boolean Constraints:}
-To handle complex interdependencies, UVR uses dedicated empty submodels with the syntax \texttt{ft\_cst\_[Name] ([Expression])}. These encode boolean equations using standard operators (\texttt{!}, \texttt{\&}, \texttt{|}, \texttt{->}). For example, \texttt{ft\_cst\_collision (ft\_c\_small -> !ft\_c\_large)} globally prevents physically incompatible combinations.
+\paragraph{Constraint Logic:}
+UVR supports a dual-layered approach to handle mechatronic interdependencies:
+\begin{itemize}
+    \item \textbf{Local Constraints (Suffixes):} For simple binary dependencies, suffixes are appended directly to the feature name, such as \texttt{(REQ: [Target])} or \texttt{(EXCL: [Target])}. This provides immediate visibility of constraints when browsing the feature hierarchy.
+    \item \textbf{Global Constraints (Submodels):} For complex n-ary logic, dedicated empty submodels are used with the syntax \texttt{ft\_cst\_[Name] ([Expression])}. These encode boolean equations using standard operators (\texttt{!}, \texttt{\&}, \texttt{|}, \texttt{->}). For example, \texttt{ft\_cst\_safe (ft\_c\_high\_speed -> ft\_c\_extra\_cooling)} globally validates the configuration.
+\end{itemize}
 
 \subsubsection{Tier 3: Part Tier (PT)}
 The Part Tier represents the physical asset base (the "Baukasten"). This layer is intentionally logic-free to ensure that assets remain reusable across different product lines. Components follow the simple syntax \texttt{pt\_[Description]} (e.g., \texttt{pt\_m2\_screw}) and contain only raw geometric data. By decoupling geometry from logic, mechatronic engineers can update physical designs without affecting the variability rules.
