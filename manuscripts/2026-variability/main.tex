@@ -95,7 +95,7 @@ Code & Presence & Nature & Structural Role \\ \midrule
 \paragraph{Constraint Logic:}
 UVR supports a dual-layered approach to handle mechatronic interdependencies:
 \begin{itemize}
-    \item \textbf{Local Constraints (Suffixes):} For simple binary dependencies, suffixes are appended directly to the feature name, such as \texttt{(REQ: [Target])} or \texttt{(EXCL: [Target])}. This provides immediate visibility of constraints when browsing the feature hierarchy.
+    \item \textbf{Local Constraints (Suffixes):} For simple binary dependencies, suffixes are appended directly to the feature name, such as \texttt{(REQ: [T1, T2])} or \texttt{(EXCL: [T1, T2])}. This allows a single feature to define multiple dependencies in a comma-separated list, providing immediate visibility of constraints when browsing the feature hierarchy.
     \item \textbf{Global Constraints (Submodels):} For complex n-ary logic, dedicated empty submodels are used with the syntax \texttt{ft\_cst\_[Name] ([Expression])}. These encode boolean equations using standard operators (\texttt{!}, \texttt{\&}, \texttt{|}, \texttt{->}). For example, \texttt{ft\_cst\_safe (ft\_c\_high\_speed -> ft\_c\_extra\_cooling)} globally validates the configuration.
 \end{itemize}
 
@@ -171,7 +171,7 @@ The 150\% LDraw model for the drone product line is implemented as a single file
             \end{itemize}
             \item \texttt{ft\_ma\_xor\_frame\_size.ldr}
             \begin{itemize}
-                \item \texttt{ft\_c\_frame\_small (EXCL: ft\_c\_batt\_large).ldr} $\rightarrow$ Ref. \texttt{pt\_arm\_small.ldr}
+                \item \texttt{ft\_c\_frame\_small (EXCL: ft\_c\_batt\_large, ft\_c\_prop\_large).ldr} $\rightarrow$ Ref. \texttt{pt\_arm\_small.ldr}
                 \item \texttt{ft\_c\_frame\_large (REQ: ft\_c\_prop\_large).ldr} $\rightarrow$ Ref. \texttt{pt\_arm\_large.ldr}
             \end{itemize}
         \end{itemize}
