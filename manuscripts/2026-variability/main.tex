@@ -114,19 +114,22 @@ A critical first step in mechatronic domain engineering is the systematic identi
 
 \begin{figure*}[bt]
     \centering
-    \subcaptionbox{Small Prop.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-propellor-2-small.jpg}}\hfill
-    \subcaptionbox{Med. Prop.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-propellor-3.jpg}}\hfill
-    \subcaptionbox{Large Prop.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-propellor-2-large.jpg}}\hfill
-    \subcaptionbox{Small Batt.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-battery-small.jpg}}\hfill
-    \subcaptionbox{Med. Batt.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-battery-medium.jpg}}
+    \subcaptionbox{Small Prop.}{\includegraphics[height=1.3cm]{figures/drone-case-modules-propellor-2-small.jpg}}\quad
+    \subcaptionbox{Med. Prop.}{\includegraphics[height=1.3cm]{figures/drone-case-modules-propellor-3.jpg}}\quad
+    \subcaptionbox{Large Prop.}{\includegraphics[height=1.3cm]{figures/drone-case-modules-propellor-2-large.jpg}}
     
     \vspace{2mm}
     
-    \subcaptionbox{Large Batt.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-battery-large.jpg}}\hfill
-    \subcaptionbox{Small Frame}{\includegraphics[height=1.2cm]{figures/SmallFrame.jpg}}\hfill
-    \subcaptionbox{Large Frame}{\includegraphics[height=1.2cm]{figures/LargeFrame.jpg}}\hfill
-    \subcaptionbox{Small Cover}{\includegraphics[height=1.2cm]{figures/SmallCover9.jpg}}\hfill
-    \subcaptionbox{Large Cover}{\includegraphics[height=1.2cm]{figures/LargeCover9.jpg}}
+    \subcaptionbox{Small Batt.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-battery-small.jpg}}\quad
+    \subcaptionbox{Med. Batt.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-battery-medium.jpg}}\quad
+    \subcaptionbox{Large Batt.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-battery-large.jpg}}
+    
+    \vspace{2mm}
+    
+    \subcaptionbox{Small Frame}{\includegraphics[height=1.5cm]{figures/drone-case-modules-frame-small.jpg}}\quad
+    \subcaptionbox{Large Frame}{\includegraphics[height=1.5cm]{figures/drone-case-modules-frame-large.jpg}}\quad
+    \subcaptionbox{Small Cover}{\includegraphics[height=1.5cm]{figures/drone-case-modules-cover-small.jpg}}\quad
+    \subcaptionbox{Large Cover}{\includegraphics[height=1.5cm]{figures/drone-case-modules-cover-large.jpg}}
     \caption{The mechatronic "Baukasten" (Tier 3: Parts) for the drone product line.}
     \label{fig:baukasten}
 \end{figure*}
@@ -146,26 +149,29 @@ The 150\% LDraw model for the drone product line is implemented as a single file
 \begin{verbatim}
 FPV_Drone.ldr (Root Assembly)
 |-- Configurations (Abstract Group)
-|   |-- ct_ultralight (ft_c_frame_small + ft_c_batt_small + ...).ldr
-|   |-- ct_freestyle  (ft_c_frame_large + ft_c_batt_med + ...).ldr
-|   `-- ct_long-range (ft_c_frame_large + ft_c_batt_large + ...).ldr
+|   |-- ct_ultralight (ft_c_frame_sm + ft_c_batt_sm + ft_c_prop_sm).ldr
+|   |-- ct_freestyle  (ft_c_frame_lg + ft_c_batt_md + ft_c_prop_md).ldr
+|   `-- ct_long-range (ft_c_frame_lg + ft_c_batt_lg + ft_c_prop_lg).ldr
 |-- Features (Abstract Group)
-|   |-- ft_mc_controller.ldr -> References pt_fc_logic_board.ldr
 |   |-- ft_ma_xor_battery_size.ldr
 |   |   |-- ft_c_batt_small.ldr -> References pt_lipo_450mAh.ldr
+|   |   |-- ft_c_batt_med.ldr   -> References pt_lipo_850mAh.ldr
 |   |   `-- ft_c_batt_large.ldr -> References pt_lipo_1300mAh.ldr
 |   |-- ft_ma_xor_propeller_type.ldr
 |   |   |-- ft_c_prop_small.ldr -> References pt_blade_2in.ldr
+|   |   |-- ft_c_prop_med.ldr   -> References pt_blade_3in.ldr
 |   |   `-- ft_c_prop_large.ldr -> References pt_blade_5in.ldr
-|   `-- ft_ma_xor_frame_size.ldr
-|       |-- ft_c_frame_small (EXCL: ft_c_batt_large, ...).ldr -> pt_arm_sm.ldr
-|       `-- ft_c_frame_large (REQ: ft_c_prop_large).ldr -> pt_arm_lg.ldr
+|   |-- ft_ma_xor_frame_size.ldr
+|   |   |-- ft_c_frame_small (EXCL: ft_c_batt_lg, ...) -> pt_arm_sm.ldr
+|   |   `-- ft_c_frame_large (REQ: ft_c_prop_lg) -> pt_arm_lg.ldr
+|   `-- ft_ma_xor_cover_size.ldr
+|       |-- ft_c_cover_small.ldr -> References pt_cover_sm.ldr
+|       `-- ft_c_cover_large.ldr -> References pt_cover_lg.ldr
 `-- Parts (Atomic Asset Base)
-    |-- pt_fc_logic_board.ldr (LDraw Geometry)
-    |-- pt_lipo_450mAh.ldr (LDraw Geometry)
-    |-- pt_blade_2in.ldr (LDraw Geometry)
-    |-- pt_arm_small.ldr (LDraw Geometry)
-    `-- pt_m2_screw.ldr (Reusable Asset)
+    |-- pt_lipo_450mAh.ldr / pt_lipo_850mAh / pt_lipo_1300mAh
+    |-- pt_blade_2in.ldr   / pt_blade_3in   / pt_blade_5in
+    |-- pt_arm_sm.ldr      / pt_arm_lg.ldr
+    `-- pt_cover_sm.ldr    / pt_cover_lg.ldr
 \end{verbatim}
 }
 
@@ -173,7 +179,13 @@ This mapping illustrates the formal separation of concerns: Tier 1 handles varia
 
 \subsection{Automated Derivation Results}
 
-The automated variant derivation algorithm successfully resolved the hierarchical references within the 150\% model to produce three physically consistent drone variants. As shown in Fig. \ref{fig:variants}, each variant correctly inherits its specific mechatronic modules while maintaining the global coordinate system integrity.
+The automated variant derivation algorithm successfully resolved the hierarchical references within the 150\% model to produce three physically consistent drone variants. As shown in Fig. \ref{fig:variants}, each variant represents a specific mechatronic trade-off within the product line:
+
+\begin{itemize}
+    \item \textbf{Ultralight variant:} Designed for indoor flight and safety. It pairs the \textit{Small Frame} with the 450mAh \textit{Small Battery} and 2-inch \textit{Small Propellers}. The algorithm enforces the \texttt{EXCL} constraint, preventing the heavy 1300mAh battery from being selected, which would compromise the frame's structural limits.
+    \item \textbf{Freestyle variant:} Optimized for agility and thrust during acrobatic flight. It utilizes the \textit{Large Frame} to accommodate the medium-weight 850mAh battery while employing high-torque 3-inch \textit{Medium Propellers} (triblade).
+    \item \textbf{Long-range variant:} Built for maximum endurance. It leverages the \textit{Large Frame} to carry the 1300mAh \textit{Large Battery}. The \texttt{REQ} constraint ensures that only the 5-inch \textit{Large Propellers} are used, providing the necessary lift for the high-capacity battery.
+\end{itemize}
 
 \begin{figure*}[bt]
     \centering
