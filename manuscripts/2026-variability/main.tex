@@ -150,7 +150,7 @@ The 150\% LDraw model for the drone product line is implemented as a single file
 FPV_Drone.ldr (Root Assembly)
 |-- Configurations (Abstract Group)
 |   |-- ct_ultralight (ft_c_frame_sm + ft_c_batt_sm + ...).ldr
-|   |-- ct_freestyle  (ft_c_frame_lg + ft_c_batt_md + ...).ldr
+|   |-- ct_freestyle  (ft_c_frame_sm + ft_c_batt_md + ...).ldr
 |   `-- ct_long-range (ft_c_frame_lg + ft_c_batt_lg + ...).ldr
 |-- Features (Abstract Group)
 |   |-- ft_ma_xor_battery_size.ldr
@@ -183,7 +183,7 @@ The automated variant derivation algorithm successfully resolved the hierarchica
 
 \begin{itemize}
     \item \textbf{Ultralight variant:} Designed for indoor flight and safety. It pairs the \textit{Small Frame} with the 450mAh \textit{Small Battery} and 2-inch \textit{Small Propellers}. The algorithm enforces the \texttt{EXCL} constraint, preventing the heavy 1300mAh battery from being selected, which would compromise the frame's structural limits.
-    \item \textbf{Freestyle variant:} Optimized for agility and thrust during acrobatic flight. It utilizes the \textit{Large Frame} to accommodate the medium-weight 850mAh battery while employing high-torque 3-inch \textit{Medium Propellers} (triblade).
+    \item \textbf{Freestyle variant:} Optimized for agility and thrust during acrobatic flight. It utilizes the \textit{Small Frame} to accommodate the medium-weight 850mAh battery while employing high-torque 3-inch \textit{Medium Propellers} (triblade).
     \item \textbf{Long-range variant:} Built for maximum endurance. It leverages the \textit{Large Frame} to carry the 1300mAh \textit{Large Battery}. The \texttt{REQ} constraint ensures that only the 5-inch \textit{Large Propellers} are used, providing the necessary lift for the high-capacity battery.
 \end{itemize}
 
