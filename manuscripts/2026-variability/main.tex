@@ -114,22 +114,22 @@ A critical first step in mechatronic domain engineering is the systematic identi
 
 \begin{figure*}[bt]
     \centering
-    \subcaptionbox{Small Prop.}{\includegraphics[height=1.3cm]{figures/drone-case-modules-propellor-2-small.jpg}}\quad
-    \subcaptionbox{Med. Prop.}{\includegraphics[height=1.3cm]{figures/drone-case-modules-propellor-3.jpg}}\quad
-    \subcaptionbox{Large Prop.}{\includegraphics[height=1.3cm]{figures/drone-case-modules-propellor-2-large.jpg}}
+    \subcaptionbox{Small Prop.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-propellor-2-small.jpg}}\quad
+    \subcaptionbox{Med. Prop.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-propellor-3.jpg}}\quad
+    \subcaptionbox{Large Prop.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-propellor-2-large.jpg}}
     
     \vspace{2mm}
     
-    \subcaptionbox{Small Batt.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-battery-small.jpg}}\quad
-    \subcaptionbox{Med. Batt.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-battery-medium.jpg}}\quad
-    \subcaptionbox{Large Batt.}{\includegraphics[height=1.4cm]{figures/drone-case-modules-battery-large.jpg}}
+    \subcaptionbox{Small Batt.}{\includegraphics[height=1.6cm]{figures/drone-case-modules-battery-small.jpg}}\quad
+    \subcaptionbox{Med. Batt.}{\includegraphics[height=1.6cm]{figures/drone-case-modules-battery-medium.jpg}}\quad
+    \subcaptionbox{Large Batt.}{\includegraphics[height=1.6cm]{figures/drone-case-modules-battery-large.jpg}}
     
     \vspace{2mm}
     
-    \subcaptionbox{Small Frame}{\includegraphics[height=1.5cm]{figures/drone-case-modules-frame-small.jpg}}\quad
-    \subcaptionbox{Large Frame}{\includegraphics[height=1.5cm]{figures/drone-case-modules-frame-large.jpg}}\quad
-    \subcaptionbox{Small Cover}{\includegraphics[height=1.5cm]{figures/drone-case-modules-cover-small.jpg}}\quad
-    \subcaptionbox{Large Cover}{\includegraphics[height=1.5cm]{figures/drone-case-modules-cover-large.jpg}}
+    \subcaptionbox{Small Frame}{\includegraphics[height=1.9cm]{figures/drone-case-modules-frame-small.jpg}}\quad
+    \subcaptionbox{Large Frame}{\includegraphics[height=1.9cm]{figures/drone-case-modules-frame-large.jpg}}\quad
+    \subcaptionbox{Small Cover}{\includegraphics[height=1.9cm]{figures/drone-case-modules-cover-small.jpg}}\quad
+    \subcaptionbox{Large Cover}{\includegraphics[height=1.9cm]{figures/drone-case-modules-cover-large.jpg}}
     \caption{The mechatronic "Baukasten" (Tier 3: Parts) for the drone product line.}
     \label{fig:baukasten}
 \end{figure*}
@@ -149,9 +149,9 @@ The 150\% LDraw model for the drone product line is implemented as a single file
 \begin{verbatim}
 FPV_Drone.ldr (Root Assembly)
 |-- Configurations (Abstract Group)
-|   |-- ct_ultralight (ft_c_frame_sm + ft_c_batt_sm + ft_c_prop_sm).ldr
-|   |-- ct_freestyle  (ft_c_frame_lg + ft_c_batt_md + ft_c_prop_md).ldr
-|   `-- ct_long-range (ft_c_frame_lg + ft_c_batt_lg + ft_c_prop_lg).ldr
+|   |-- ct_ultralight (ft_c_frame_sm + ft_c_batt_sm + ...).ldr
+|   |-- ct_freestyle  (ft_c_frame_lg + ft_c_batt_md + ...).ldr
+|   `-- ct_long-range (ft_c_frame_lg + ft_c_batt_lg + ...).ldr
 |-- Features (Abstract Group)
 |   |-- ft_ma_xor_battery_size.ldr
 |   |   |-- ft_c_batt_small.ldr -> References pt_lipo_450mAh.ldr
