@@ -70,22 +70,15 @@ The naming follows the syntax \texttt{ct\_[VariantName] ([Formula])}, where the 
 This layer implements the logical variability model and cross-tree constraints, acting as the "intelligence" of the 150\% model. It defines the hierarchical feature tree and resolves selection rules.
 
 \paragraph{Variability Features:}
-The logical role of a feature is defined by a matrix of its \textbf{Presence} (Mandatory \texttt{m} / Optional \texttt{o}) and \textbf{Nature} (Abstract \texttt{a} / Concrete \texttt{c}). Labels follow the pattern \scalebox{0.9}{\texttt{ft\_[Presence][Nature][\_Logic]\_[Desc]}}. Table \ref{tab:ft_syntax} summarizes combinations. For abstract nodes, children rules are refined by appending \texttt{\_xor} or \texttt{\_or}.
-
-\begin{table}[h]
-\centering
-\caption{Feature Tier (FT) Syntactic Matrix.}
-\label{tab:ft_syntax}
-\begin{tabular}{@{}llll@{}}
-\toprule
-Code & Presence & Nature & Structural Role \\ \midrule
-\texttt{mc} & Mandatory & Concrete & A required singleton part. \\
-\texttt{oc} & Optional & Concrete & A toggleable optional part. \\
-\texttt{ma} & Mandatory & Abstract & A required variation point. \\
-\texttt{oa} & Optional & Abstract & A toggleable variation point. \\
-\texttt{c/a} & Derived & C/A & A variant child within a group. \\ \bottomrule
-\end{tabular}
-\end{table}
+The logical role of a feature is defined by a matrix of its \textbf{Presence} (Mandatory \texttt{m} / Optional \texttt{o}) and \textbf{Nature} (Abstract \texttt{a} / Concrete \texttt{c}). Feature labels follow the pattern \scalebox{0.9}{\texttt{ft\_[Presence][Nature][\_Logic]\_[Desc]}}. The primary structural roles are:
+\begin{itemize}
+    \item \texttt{mc}: Mandatory Concrete (a required singleton part).
+    \item \texttt{oc}: Optional Concrete (a toggleable optional part).
+    \item \texttt{ma}: Mandatory Abstract (a required variation point).
+    \item \texttt{oa}: Optional Abstract (a toggleable variation point).
+    \item \texttt{c/a}: Derived (a variant child within a group).
+\end{itemize}
+For abstract nodes, selection rules for children are further refined by appending \texttt{\_xor} (exactly one) or \texttt{\_or} (at least one) to the logic segment.
 
 \paragraph{Constraint Logic:}
 UVR supports a dual-layered approach for mechatronic interdependencies:
