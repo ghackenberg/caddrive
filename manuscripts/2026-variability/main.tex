@@ -87,17 +87,10 @@ UVR supports a dual-layered approach for mechatronic interdependencies:
     \item \textbf{Global Constraints (Submodels):} For complex logic, empty submodels with syntax \scalebox{0.9}{\texttt{ft\_cst\_[Name]([Expr])}} are used. These encode boolean equations (operators \texttt{!}, \texttt{\&}, \texttt{|}, \texttt{->}).
 \end{itemize}
 
-The mapping of this naming language to a concrete logical structure is visualized in Fig. \ref{fig:naming_convention}, which shows how hierarchical and cross-tree relationships are represented within the feature tier.
+The mapping of this naming language to a concrete logical structure is visualized in the implementation structure in Section 4.2, which shows how hierarchical and cross-tree relationships are represented within the feature tier.
 
 \subsubsection{Tier 3: Part Tier (PT)}
 The Part Tier represents the physical asset base (the "Baukasten"). This layer is intentionally logic-free to ensure that assets remain reusable across different product lines. Components follow the simple syntax \texttt{pt\_[Description]} (e.g., \texttt{pt\_m2\_screw}) and contain only raw geometric data. By decoupling geometry from logic, mechatronic engineers can update physical designs without affecting the variability rules.
-
-\begin{figure}[bt]
-    \centering
-    \includegraphics[width=\textwidth]{figures/placeholder_feature_tree.png}
-    \caption{Visual mapping of the UVR naming language to a graphical feature tree (drone-specific example).}
-    \label{fig:naming_convention}
-\end{figure}
 
 \subsection{Derivation Algorithm}
 
@@ -119,19 +112,31 @@ To validate the technical feasibility and architectural rigor of the UVR pattern
 
 A critical first step in mechatronic domain engineering is the systematic identification of physical constraints. Unlike software features, mechatronic modules occupy physical volumes and interact dynamically. Through spatial analysis within the digital LEGO environment, we identified two primary classes of constraints that our three-tier model must enforce:
 
+\begin{figure*}[bt]
+    \centering
+    \subcaptionbox{Small Prop.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-propellor-2-small.jpg}}\hfill
+    \subcaptionbox{Med. Prop.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-propellor-3.jpg}}\hfill
+    \subcaptionbox{Large Prop.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-propellor-2-large.jpg}}\hfill
+    \subcaptionbox{Small Batt.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-battery-small.jpg}}\hfill
+    \subcaptionbox{Med. Batt.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-battery-medium.jpg}}
+    
+    \vspace{2mm}
+    
+    \subcaptionbox{Large Batt.}{\includegraphics[height=1.2cm]{figures/drone-case-modules-battery-large.jpg}}\hfill
+    \subcaptionbox{Small Frame}{\includegraphics[height=1.2cm]{figures/SmallFrame.jpg}}\hfill
+    \subcaptionbox{Large Frame}{\includegraphics[height=1.2cm]{figures/LargeFrame.jpg}}\hfill
+    \subcaptionbox{Small Cover}{\includegraphics[height=1.2cm]{figures/SmallCover9.jpg}}\hfill
+    \subcaptionbox{Large Cover}{\includegraphics[height=1.2cm]{figures/LargeCover9.jpg}}
+    \caption{The mechatronic "Baukasten" (Tier 3: Parts) for the drone product line.}
+    \label{fig:baukasten}
+\end{figure*}
+
 \begin{enumerate}
     \item \textbf{Static Space Constraints:} These constraints arise from invariant geometric properties. For example, the central housing of our \textit{Small Frame} is designed for agility and weight reduction. Consequently, it has a strictly limited internal volume that can only accommodate the \textit{Small Battery} (450mAh). Attempting to mount a \textit{Large Battery} (1300mAh) results in a physical overlap, making the configuration unbuildable.
     \item \textbf{Dynamic Space Constraints:} These involve the operational envelopes of moving parts. While a \textit{Large Propeller} (5-inch) can be mounted onto the motors of a \textit{Small Frame} due to standardized hole patterns, the length of the propeller blades exceeds the distance to the frame's arms. During high-speed rotation, the blades would collide with the frame, leading to catastrophic failure. 
 \end{enumerate}
 
-\begin{figure}[bt]
-    \centering
-    \includegraphics[width=\textwidth]{figures/placeholder_150_model.jpg}
-    \caption{The 150\% LDraw model of the FPV drone product line, showing the overlapping mechatronic modules in a single world coordinate system.}
-    \label{fig:150_model}
-\end{figure}
-
-The overlapping nature of these modules is visualized in the 150\% drone model in Fig. \ref{fig:150_model}. By formalizing these as \texttt{EXCL} and \texttt{REQ} constraints within the Tier 2 submodel names, we ensure that the derivation algorithm can prevent the generation of such invalid physical artifacts.
+By formalizing these as \texttt{EXCL} and \texttt{REQ} constraints within the Tier 2 submodel names, we ensure that the derivation algorithm can prevent the generation of such invalid physical artifacts.
 
 \subsection{Applying the 3-Tier Mapping}
 
@@ -164,7 +169,22 @@ FPV_Drone.ldr (Root Assembly)
 \end{verbatim}
 }
 
-This mapping illustrates the formal separation of concerns: Tier 1 handles variant selection, Tier 2 manages the variability logic and geometric constraints, and Tier 3 provides the reusable physical assets. Notably, Tier 2 features such as \texttt{ft\_c\_frame\_small} reference both specific physical parts (e.g., \texttt{pt\_arm\_small}) and generic reusable parts like \texttt{pt\_m2\_screw}, which is shared across the entire product line. The automated derivation algorithm successfully resolved these hierarchical references to produce the three predefined drone variants, confirming that the UVR pattern maintain both logical and physical consistency.
+This mapping illustrates the formal separation of concerns: Tier 1 handles variant selection, Tier 2 manages the variability logic and geometric constraints, and Tier 3 provides the reusable physical assets. Notably, Tier 2 features such as \texttt{ft\_c\_frame\_small} reference both specific physical parts (e.g., \texttt{pt\_arm\_small}) and generic reusable parts like \texttt{pt\_m2\_screw}, which is shared across the entire product line.
+
+\subsection{Automated Derivation Results}
+
+The automated variant derivation algorithm successfully resolved the hierarchical references within the 150\% model to produce three physically consistent drone variants. As shown in Fig. \ref{fig:variants}, each variant correctly inherits its specific mechatronic modules while maintaining the global coordinate system integrity.
+
+\begin{figure*}[bt]
+    \centering
+    \subcaptionbox{Ultralight variant.}{\includegraphics[width=0.3\textwidth]{figures/drone-case-final-ultralight.jpg}}\hfill
+    \subcaptionbox{Freestyle variant.}{\includegraphics[width=0.3\textwidth]{figures/drone-case-final-freestyle.jpg}}\hfill
+    \subcaptionbox{Long-range variant.}{\includegraphics[width=0.3\textwidth]{figures/drone-case-final-longrange.jpg}}
+    \caption{Derived FPV drone variants representing the spectrum of the mechatronic product line.}
+    \label{fig:variants}
+\end{figure*}
+
+The successful derivation of these distinct mechatronic products from a single portable file validates the architectural rigor of the Three-Tier UVR pattern.
 
 \section{Evaluation and Discussion}
 
