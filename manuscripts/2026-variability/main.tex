@@ -154,13 +154,13 @@ FPV_Drone.ldr (Root Assembly)
 |   `-- ct_long-range (ft_c_frame_lg + ft_c_batt_lg + ...).ldr
 |-- Features (Abstract Group)
 |   |-- ft_ma_xor_battery_size.ldr
-|   |   |-- ft_c_batt_small.ldr -> References pt_lipo_450mAh.ldr
-|   |   |-- ft_c_batt_med.ldr   -> References pt_lipo_850mAh.ldr
-|   |   `-- ft_c_batt_large.ldr -> References pt_lipo_1300mAh.ldr
+|   |   |-- ft_c_batt_small.ldr  -> References pt_lipo_450mAh.ldr
+|   |   |-- ft_c_batt_medium.ldr -> References pt_lipo_850mAh.ldr
+|   |   `-- ft_c_batt_large.ldr  -> References pt_lipo_1300mAh.ldr
 |   |-- ft_ma_xor_propeller_type.ldr
-|   |   |-- ft_c_prop_small.ldr -> References pt_blade_2in.ldr
-|   |   |-- ft_c_prop_med.ldr   -> References pt_blade_3in.ldr
-|   |   `-- ft_c_prop_large.ldr -> References pt_blade_5in.ldr
+|   |   |-- ft_c_prop_small.ldr  -> References pt_blade_2in.ldr
+|   |   |-- ft_c_prop_medium.ldr -> References pt_blade_3in.ldr
+|   |   `-- ft_c_prop_large.ldr  -> References pt_blade_5in.ldr
 |   |-- ft_ma_xor_frame_size.ldr
 |   |   |-- ft_c_frame_small (EXCL: ft_c_batt_lg, ...) -> pt_arm_sm.ldr
 |   |   `-- ft_c_frame_large (REQ: ft_c_prop_lg) -> pt_arm_lg.ldr
