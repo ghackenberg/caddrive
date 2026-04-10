@@ -210,6 +210,10 @@ One of the most significant advantages of the three-tier separation is the decou
 
 Beyond technical efficiency, the UVR pattern offers substantial educational value. By using digital LEGO as a "low-fidelity, high-rigor" proxy for mechatronic systems, we lower the barrier for students to experiment with complex PLE concepts. Students can visualize the impact of an \texttt{EXCL} constraint (e.g., propeller collisions) immediately in the 3D viewer, making abstract logical dependencies tangible. This hands-on experience aligns with modern pedagogical trends in systems engineering \cite{KuiterTK25} and provides a scalable alternative to costly industrial PLM training.
 
+\subsection{Scalability and Multi-Domain Integration}
+
+The Three-Tier UVR pattern is designed to scale to larger product lines. Adding a configuration only requires a formula in Tier 1, leaving the feature tree (Tier 2) and assets (Tier 3) untouched. The namespace-based convention could also be adapted for other mechatronic domains, such as embedding firmware versions as submodels. While this suggests a potential path toward unified variant derivation across domains, further research is needed to empirically validate integration and consistency in complex industrial settings.
+
 \subsection{Portability and the Research Ground Truth}
 
 The reliance on standard LDraw submodel names and referencing hierarchies ensures that the UVR pattern is fully portable across different software environments. This is particularly relevant for the PLE research community, which often lacks shared, reproducible benchmarks for hardware-oriented variability. By providing a single-file "150\% ground truth" \cite{Strueber2019}, our approach enables researchers to test variant derivation and collision detection algorithms on a common, mechatronic artifact that does not require proprietary database access.
